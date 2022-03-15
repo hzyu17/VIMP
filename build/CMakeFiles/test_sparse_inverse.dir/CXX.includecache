@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/hongzhe/hongzhe/git/MPVI/include/SparseInverseMatrix.h
+gtsam/3rdparty/Eigen/Eigen/Dense
+-
+gtsam/3rdparty/Eigen/Eigen/Sparse
+-
+gtsam/3rdparty/Eigen/Eigen/SparseCore
+-
+gtsam/3rdparty/Eigen/Eigen/SparseCholesky
+-
+iostream
+-
+
+/home/hongzhe/hongzhe/git/MPVI/src/test_sparse_inverse.cpp
+../include/SparseInverseMatrix.h
+/home/hongzhe/hongzhe/git/MPVI/include/SparseInverseMatrix.h
+
