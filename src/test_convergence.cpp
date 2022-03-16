@@ -57,7 +57,7 @@ int main(){
     VariationalIferenceMPOptimizer<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>, Gaussian_distribution, gtsam::Vector> optimizer(ndim,
             target_cost, target_distr, vec_Pks);
 
-    const int num_iter = 10;
+    const int num_iter = 20;
     double step_size = 0.9;
 
     for (int i=0; i<num_iter; i++) {

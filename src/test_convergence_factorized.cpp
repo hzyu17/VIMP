@@ -41,7 +41,8 @@ int main(){
          << target_distr.get_covariance().format(CleanFmt) << endl;
 
     // optimizer
-    VariationalIferenceMPOptimizerTwoByTwo<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>, Gaussian_distribution, gtsam::Vector> optimizer(ndim, target_cost, target_distr);
+    VariationalIferenceMPOptimizerTwoByTwo<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>,
+                                           Gaussian_distribution, gtsam::Vector> optimizer(ndim, target_cost, target_distr);
 
     // inverser
     using namespace SparseInverse;
@@ -58,15 +59,6 @@ int main(){
     for (int i=0; i<n_iter; i++){
         step_size = step_size / pow((i+1), 1/3);
         optimizer.set_step_size(step_size, step_size);
-        cout << "==== iteration " << i << " ====" << endl
-             << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl
-             << "precision matrix " << endl <<optimizer.get_precision().format(CleanFmt) << endl;
-
-        if (i % 20 == 0){
-            cout << "==== iteration " << i << " ====" << endl
-                 << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl
-                 << "precision matrix " << endl <<optimizer.get_precision().format(CleanFmt) << endl;
-        }
 
         bool decrease = optimizer.step();
 
@@ -77,12 +69,11 @@ int main(){
 
         // use the sparse inverse algorithm
         optimizer.updateMean();
-        MatrixXd precision{optimizer.get_precision()};
-        optimizer.updateCovarianceMatrix(precision.inverse());
+        optimizer.updateCovarianceMatrix(inverser_.inverse(optimizer.get_precision()));
 
-        cout << "precision.inverse() " << endl << precision.inverse() << endl;
-        cout << "inverser_.inverse(precision) " << endl << inverser_.inverse(precision) << endl;
-//        optimizer.updateCovarianceMatrix(inverser_.inverse(precision));
+        cout << "==== iteration " << i << " ====" << endl
+             << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl
+             << "precision matrix " << endl <<optimizer.get_precision().format(CleanFmt) << endl;
 
         if (not decrease){
             cout << "end of iteration " << endl;
