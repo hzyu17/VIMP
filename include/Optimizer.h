@@ -13,11 +13,11 @@
 #include <utility>
 #include "SparseInverseMatrix.h"
 #include "OptimizerTwoByTwo.h"
-#include <vector>
 
 using namespace GaussianSampler;
 using namespace std;
 using namespace SparseInverse;
+typedef Triplet<double> T;
 
 // template function and classes to calculate the costs
 template <typename Function, typename costClass, typename... Args>
@@ -27,9 +27,9 @@ public:
                                    const costClass& _cost_class, const vector<MatrixXd>& _vec_Pks):
                                    dim{dimension},
                                    num_sub_vars{_vec_Pks.size()},
-                                   precision_{SpMatrix(dim, dim)},
-                                   d_precision{SpMatrix(dim, dim)},
-                                   cost_function_{std::forward<Function>(_function)},
+                                   precision_{MatrixXd::Identity(dim, dim).sparseView()},
+                                   d_precision{MatrixXd::Zero(dim, dim).sparseView()},
+                                   cost_function_{_function},
                                    cost_class_{_cost_class},
                                    vec_Pks_{_vec_Pks},
                                    mu_{VectorXd::Zero(dimension)},
@@ -38,9 +38,10 @@ public:
                                    vec_sub_precisions_{vector<MatrixXd>(num_sub_vars)},
                                    vec_sub_mus{vector<VectorXd>(num_sub_vars)}{
 
-        /// initialize sparse precision matrix and the inverse  helper
+        /// initialize sparse precision matrix and the inverse helper
         precision_.reserve(3*dimension-2);
         d_precision.reserve(3*dimension-2);
+
         inverser_.update_sparse_precision(precision_);
 
         /// initialize the factors
@@ -50,27 +51,23 @@ public:
 
             vec_sub_mus.emplace_back(sub_mu_);
             vec_sub_precisions_.emplace_back(sub_precision_);
-            vec_factor_optimizers_.emplace_back(VariationalIferenceMPOptimizerTwoByTwo<Function, costClass>{2, _function, _cost_class});
+            VariationalIferenceMPOptimizerTwoByTwo<Function, costClass, Args...> optimizer_k{2, _function, _cost_class};
+            vec_factor_optimizers_.emplace_back(optimizer_k);
         }
     }
 protected:
     // optimization variables
     int dim;
     int num_sub_vars;
-    int num_samples = 10000;
+
     gtsam::Vector mu_, d_mu;
     SpMatrix precision_, d_precision;
 
     vector<MatrixXd> vec_sub_precisions_;
     vector<VectorXd> vec_sub_mus;
 
-
-    // step sizes
-    double step_size_mu = 0.05;
-    double step_size_Sigma = 0.05;
-
     // sampler
-    vector<VariationalIferenceMPOptimizerTwoByTwo<Function, costClass>> vec_factor_optimizers_;
+    vector<VariationalIferenceMPOptimizerTwoByTwo<Function, costClass, Args...>> vec_factor_optimizers_;
 
     // cost functional. Input: samples vector; Output: cost
     Function cost_function_;
@@ -81,24 +78,22 @@ protected:
     sparse_inverser inverser_;
 
 public:
-    auto cost_function(Args... args){
-        return cost_function_(args..., cost_class_);
-    }
-
-    void set_step_size(double ss_mean, double ss_precision){
-        step_size_mu = ss_mean;
-        step_size_Sigma = ss_precision;
-    }
 
     bool step(){
-        MatrixXd Sigma = inverser_.inverse();
+        MatrixXd Sigma = inverser_.inverse(precision_);
+
+        SpMatrix new_precision(dim, dim);
+        VectorXd new_mu{VectorXd::Zero(dim)};
         for (int k=0; k<num_sub_vars; k++){
             MatrixXd Pk = vec_Pks_[k];
 
-            cout << "Pk" << endl << Pk << endl;
+//            VectorXd sub_mu_k = Pk * mu_;
+//            MatrixXd sub_Sigma_k = Pk * Sigma * Pk.transpose();
 
-            VectorXd sub_mu_k = Pk * mu_;
-            MatrixXd sub_Sigma_k = Pk * Sigma * Pk.transpose();
+            VectorXd sub_mu_k{mu_};
+            MatrixXd sub_Sigma_k{Sigma};
+
+            cout << "sigma k" << endl << sub_Sigma_k << endl;
 
             auto optimizer_k = vec_factor_optimizers_[k];
             optimizer_k.updateMean(sub_mu_k);
@@ -106,7 +101,26 @@ public:
 
             optimizer_k.step();
 
+//            cout << "new_precision " << endl << new_precision << endl;
+//            cout << "Pk.transpose() * optimizer_k.get_precision() * Pk " << endl << Pk.transpose() * optimizer_k.get_precision() * Pk << endl;
+
+//            new_precision = new_precision + Pk.transpose() * optimizer_k.get_precision() * Pk;
+//            new_mu = new_mu + Pk.transpose() * optimizer_k.get_mean();
+            new_precision = optimizer_k.get_precision().sparseView();
+            new_mu = optimizer_k.get_mean();
+
+//            cout << "new_precision " << endl << new_precision << endl;
+
         }
+
+        precision_ = new_precision;
+        mu_ = new_mu;
+//        inverser_.update_sparse_precision(precision_);
+
+        cout << "mu_ " << endl << mu_ << endl;
+        cout << "precision " << endl << precision_.toDense() << endl;
+
+        return true;
     }
 
     gtsam::Vector get_mean(){
@@ -119,6 +133,11 @@ public:
 
     gtsam::Matrix get_covariance(){
         return inverser_.inverse();
+    }
+
+    void set_step_size(double ss_mean, double ss_precision){
+        for (auto & k_optimizer:vec_factor_optimizers_)
+            k_optimizer.set_step_size(ss_mean, ss_precision);
     }
 
 };

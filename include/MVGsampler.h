@@ -94,16 +94,9 @@ namespace GaussianSampler {
 //            // not psd, project back
             LDLT<MatrixXd> choleskySolverLDLT(newPrecision);
             Eigen::VectorXd vectorD{choleskySolverLDLT.vectorD()};
-//            if (vectorD.minCoeff() < 0){
-//                cout << "not psd before" << endl << vectorD << endl;
-//                for (int i=0; i<vectorD.size(); i++){
-//                    if (vectorD(i) < 0) vectorD(i) = 0.0001;
-//                }
-//                cout << "not psd after" << endl << vectorD << endl;
-//            }
+
             assert(vectorD.minCoeff() > 0);
-//            Eigen::MatrixXd matrixL{choleskySolverLDLT.matrixL()};
-//            precision_ = matrixL * vectorD.asDiagonal() * matrixL.transpose();
+
             precision_ = newPrecision;
             LLT<MatrixXd> choleskySolver(precision_);
             transform = choleskySolver.matrixL();

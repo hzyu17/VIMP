@@ -19,7 +19,6 @@ using namespace std;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
-
 template <typename Function, typename costClass, typename... Args>
 class VariationalIferenceMPOptimizerTwoByTwo{
 public:
@@ -36,15 +35,15 @@ protected:
     // optimization variables
     int dim;
     int num_samples = 20000;
-    gtsam::Vector mu_, d_mu;
-    gtsam::Matrix precision_, d_precision;
+    VectorXd mu_, d_mu;
+    MatrixXd precision_, d_precision;
 
     gtsam::Vector Vdmu = gtsam::Vector::Zero(dim);
     gtsam::Matrix Vddmu = gtsam::Matrix::Zero(dim, dim);
 
     // step sizes
-    double step_size_mu = 0.05;
-    double step_size_Sigma = 0.05;
+    double step_size_mu = 0.5;
+    double step_size_Sigma = 0.5;
 
     // sampler
     normal_random_variable sampler_;
@@ -69,8 +68,18 @@ public:
         return true;
     }
 
+    bool updateCovarianceMatrix(){
+        sampler_.updateCovariance(precision_.inverse());
+        return true;
+    }
+
     bool updateMean(const VectorXd& new_mu){
         sampler_.updateMean(new_mu);
+        return true;
+    }
+
+    bool updateMean(){
+        sampler_.updateMean(mu_);
         return true;
     }
 
@@ -82,10 +91,9 @@ public:
         Vddmu.setZero();
 
         gtsam::Matrix samples = sampler_(num_samples);
-        int B = 0;
 
         // see sample mean and covariance
-        VectorXd mean_sample {samples.rowwise().sum() / num_samples};
+        VectorXd mean_sample{samples.rowwise().sum() / num_samples};
         MatrixXd cov_samples{((samples.colwise() - mean_sample) * (samples.colwise() - mean_sample).transpose()) / (num_samples-1)};
 
         auto colwise = samples.colwise();
@@ -119,10 +127,6 @@ public:
         d_mu = precision_.colPivHouseholderQr().solve(-Vdmu);
 
         mu_ = mu_ + step_size_mu * d_mu;
-
-        // Update the sampler parameters
-        updateMean(mu_);
-        updateCovarianceMatrix(precision_.inverse());
 
         return true;
 
@@ -177,15 +181,15 @@ public:
 
     }
 
-    gtsam::Vector get_mean(){
+    VectorXd get_mean(){
         return mu_;
     }
 
-    gtsam::Matrix get_precision(){
+    MatrixXd get_precision(){
         return precision_;
     }
 
-    gtsam::Matrix get_covariance(){
+    MatrixXd get_covariance(){
         return precision_.inverse();
     }
 
