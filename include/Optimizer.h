@@ -45,9 +45,11 @@ public:
 //        inverser_.update_sparse_precision(precision_);
 
         /// initialize the factors
-        for (int i=0; i<num_sub_vars; i++){
-            FactorizedOptimizer optimizer_k{2, _function, _cost_class};
-            vec_factor_optimizers_.emplace_back(optimizer_k);
+        for (int k=0; k<num_sub_vars; k++){
+            const Function& function_k = vec_cost_function_[k];
+            const costClass& cost_class_k = _vec_cost_class[k];
+//            FactorizedOptimizer optimizer_k{2, function_k, cost_class_k};
+            vec_factor_optimizers_.emplace_back(FactorizedOptimizer{2, function_k, cost_class_k});
         }
     }
 protected:
@@ -90,12 +92,11 @@ public:
 
             optimizer_k.step();
 
-            cout << "new_precision " << endl << new_precision << endl;
-
+//            cout << "new_precision " << endl << new_precision << endl;
             new_precision = new_precision + Pk.transpose() * optimizer_k.get_precision() * Pk;
             new_mu = new_mu + Pk.transpose() * optimizer_k.get_mean();
 
-            cout << "new_precision " << endl << new_precision << endl;
+//            cout << "new_precision " << endl << new_precision << endl;
         }
 
         precision_ = new_precision;
@@ -105,6 +106,11 @@ public:
         cout << "new precision " << endl << precision_ << endl;
 
         return true;
+    }
+
+    void set_step_size(double ss_mean, double ss_precision){
+        for (auto & k_optimizer:vec_factor_optimizers_)
+            k_optimizer.set_step_size(ss_mean, ss_precision);
     }
 
     gtsam::Vector get_mean(){
@@ -117,11 +123,6 @@ public:
 
     gtsam::Matrix get_covariance(){
         return inverser_.inverse();
-    }
-
-    void set_step_size(double ss_mean, double ss_precision){
-        for (auto & k_optimizer:vec_factor_optimizers_)
-            k_optimizer.set_step_size(ss_mean, ss_precision);
     }
 
 };

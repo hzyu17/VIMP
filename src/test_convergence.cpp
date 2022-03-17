@@ -46,20 +46,25 @@ int main(){
 
     // construct block matrices Sigma_k, P_k
     vector<gtsam::Matrix> vec_Pks;
+    vector<Gaussian_distribution> vec_target_distr;
+    vector<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>> vec_target_cost;
     for (int i=0; i<ndim-1; i++){
         gtsam::Matrix Pk{gtsam::Matrix::Zero(2, ndim)};
         Pk(0, i) = 1;
         Pk(1, i+1) = 1;
+
         cout << "i th mean " << endl << Pk * mean_t << endl;
-        cout << "i the precision matrix " << endl << Pk * precision_t * Pk.transpose() << endl;
+        cout << "i the covariance matrix " << endl << Pk * covariance_t * Pk.transpose() << endl;
+
         vec_Pks.emplace_back(Pk);
+        vec_target_distr.emplace_back(Gaussian_distribution{Pk*mean_t, Pk*covariance_t*Pk.transpose()});
+        vec_target_cost.emplace_back(target_cost);
     }
-    Gaussian_distribution target_distr(vec_Pks[0]*mean_t, vec_Pks[0]*precision_t*vec_Pks[0].transpose());
 
     VariationalIferenceMPOptimizer<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>, Gaussian_distribution, gtsam::Vector> optimizer(ndim,
-            target_cost, target_distr, vec_Pks);
+            vec_target_cost, vec_target_distr, vec_Pks);
 
-    const int num_iter = 5;
+    const int num_iter = 20;
     double step_size = 0.9;
 
     for (int i=0; i<num_iter; i++) {
