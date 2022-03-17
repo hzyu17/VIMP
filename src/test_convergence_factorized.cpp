@@ -34,7 +34,7 @@ int main(){
     precision_t(1, 0) = -0.74;
     mean_t = gtsam::Vector::Ones(ndim);
 
-    Gaussian_distribution target_distr(mean_t, precision_t);
+    Gaussian_distribution target_distr(mean_t, precision_t.inverse());
 
     cout << "==== target distribution ====" << endl << "mean " << endl << target_distr.get_mean().format(CleanFmt) << endl
          << "precision matrix " << endl << target_distr.get_precision().format(CleanFmt) << endl << "covariance matrix " << endl

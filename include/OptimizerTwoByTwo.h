@@ -42,8 +42,8 @@ protected:
     gtsam::Matrix Vddmu = gtsam::Matrix::Zero(dim, dim);
 
     // step sizes
-    double step_size_mu = 0.5;
-    double step_size_Sigma = 0.5;
+    double step_size_mu = 0.9;
+    double step_size_Sigma = 0.9;
 
     // sampler
     normal_random_variable sampler_;

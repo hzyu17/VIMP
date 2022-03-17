@@ -173,11 +173,11 @@ namespace GaussianSampler {
 
     class Gaussian_distribution{
     public:
-        Gaussian_distribution(const Eigen::VectorXd& mean, const Eigen::MatrixXd& Precision):mean_(mean), precision_(Precision){
+        Gaussian_distribution(const Eigen::VectorXd& mean, const Eigen::MatrixXd& covariance):mean_(mean), Covariance_(covariance){
             dimension_ = mean.size();
+            precision_ = Covariance_.inverse();
             SelfAdjointEigenSolver<MatrixXd> eigenSolver(precision_);
             assert(eigenSolver.eigenvalues().minCoeff() > 0);
-            Covariance_ = precision_.inverse();
         }
         double probability(Eigen::VectorXd x) const{
             double temp = (-(x-mean_).transpose()*precision_*(x-mean_))(0)/2.0;
