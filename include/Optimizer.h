@@ -45,18 +45,10 @@ public:
                                    inverser_{MatrixXd::Identity(dim, dim)}{
 
         /// initialize the factors
-<<<<<<< HEAD
         for (int i=0; i<num_sub_vars; i++){
 
             FactorizedOptimizer optimizer_k{2, vec_cost_function_[i], vec_cost_class_[i]};
             vec_factor_optimizers_.emplace_back(optimizer_k);
-=======
-        for (int k=0; k<num_sub_vars; k++){
-            const Function& function_k = vec_cost_function_[k];
-            const costClass& cost_class_k = _vec_cost_class[k];
-//            FactorizedOptimizer optimizer_k{2, function_k, cost_class_k};
-            vec_factor_optimizers_.emplace_back(FactorizedOptimizer{2, function_k, cost_class_k});
->>>>>>> 385bb864810f0ca42098a2819b81733bd7b64366
         }
     }
 protected:
@@ -104,19 +96,11 @@ public:
             optimizer_k.update_mu(VectorXd{Pk*mu_});
             optimizer_k.update_precision(MatrixXd{Pk * precision_ * Pk.transpose()});
 
-<<<<<<< HEAD
 //            optimizer_k.step();
             optimizer_k.calculate_partial_V();
 
             Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();
             Vddmu_ = Vddmu_ + Pk.transpose() * optimizer_k.get_Vddmu() * Pk;
-=======
-//            cout << "new_precision " << endl << new_precision << endl;
-            new_precision = new_precision + Pk.transpose() * optimizer_k.get_precision() * Pk;
-            new_mu = new_mu + Pk.transpose() * optimizer_k.get_mean();
-
-//            cout << "new_precision " << endl << new_precision << endl;
->>>>>>> 385bb864810f0ca42098a2819b81733bd7b64366
         }
 
         d_precision_ = -precision_ + Vddmu_;
@@ -133,11 +117,6 @@ public:
         return true;
     }
 
-    void set_step_size(double ss_mean, double ss_precision){
-        for (auto & k_optimizer:vec_factor_optimizers_)
-            k_optimizer.set_step_size(ss_mean, ss_precision);
-    }
-
     gtsam::Vector get_mean(){
         return mu_;
     }
@@ -150,12 +129,9 @@ public:
         return inverser_.inverse();
     }
 
-<<<<<<< HEAD
     void set_step_size(double ss_mean, double ss_precision){
         step_size_mu = ss_mean;
         step_size_precision = ss_precision;
     }
 
-=======
->>>>>>> 385bb864810f0ca42098a2819b81733bd7b64366
 };
