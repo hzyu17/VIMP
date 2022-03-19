@@ -31,22 +31,23 @@ public:
                                    const vector<costClass>& _vec_cost_class, const vector<MatrixXd>& _vec_Pks):
                                    dim{dimension},
                                    num_sub_vars{_vec_Pks.size()},
-                                   precision_{MatrixXd::Identity(dim, dim).sparseView()},
                                    vec_cost_function_{_vec_function},
                                    vec_cost_class_{_vec_cost_class},
+//                                   vec_distr_class_{_vec_distr_class},
                                    vec_Pks_{_vec_Pks},
                                    mu_{VectorXd::Zero(dimension)},
+                                   d_mu_{VectorXd::Zero(dimension)},
+                                   precision_{MatrixXd::Identity(dim, dim)},
+                                   precision_sparse_{MatrixXd::Identity(dim, dim).sparseView()},
+                                   d_precision_(MatrixXd::Identity(dim, dim)),
+                                   Vdmu_{VectorXd::Zero(dimension)},
+                                   Vddmu_(MatrixXd::Identity(dim, dim)),
                                    inverser_{MatrixXd::Identity(dim, dim)}{
-
-        /// initialize sparse precision matrix and the inverse helper
-//        precision_.reserve(3*dimension-2);
-//        d_precision.reserve(3*dimension-2);
-
-//        inverser_.update_sparse_precision(precision_);
 
         /// initialize the factors
         for (int i=0; i<num_sub_vars; i++){
-            FactorizedOptimizer optimizer_k{2, _function, _cost_class};
+
+            FactorizedOptimizer optimizer_k{2, vec_cost_function_[i], vec_cost_class_[i]};
             vec_factor_optimizers_.emplace_back(optimizer_k);
         }
     }
@@ -55,8 +56,9 @@ protected:
     int dim;
     int num_sub_vars;
 
-    gtsam::Vector mu_;
-    MatrixXd precision_;
+    VectorXd mu_, Vdmu_, d_mu_;
+    MatrixXd precision_, Vddmu_, d_precision_;
+    SpMatrix precision_sparse_;
 
     // sampler
     vector<FactorizedOptimizer> vec_factor_optimizers_;
@@ -69,37 +71,45 @@ protected:
     // Sparse matrix inverse helper
 //    sparse_inverser inverser_;
     dense_inverser inverser_;
+    double step_size_precision = 0.9;
+    double step_size_mu = 0.9;
 
 public:
 
     bool step(){
+
+        Vdmu_.setZero();
+        Vddmu_.setZero();
+        d_mu_.setZero();
+        d_precision_.setZero();
+
         MatrixXd Sigma{inverser_.inverse(precision_)};
 
-        MatrixXd new_precision{MatrixXd::Zero(dim, dim)};
-        VectorXd new_mu{VectorXd::Zero(dim)};
-
         for (int k=0; k<num_sub_vars; k++){
+
             MatrixXd Pk = vec_Pks_[k];
 
-            VectorXd sub_mu_k{Pk * mu_};
-            MatrixXd sub_Sigma_k{Pk * Sigma * Pk.transpose()};
-
             auto &optimizer_k = vec_factor_optimizers_[k];
-            optimizer_k.updateMean(sub_mu_k);
-            optimizer_k.updateCovarianceMatrix(sub_Sigma_k);
+            optimizer_k.updateSamplerMean(VectorXd{Pk * mu_});
+            optimizer_k.updateSamplerCovarianceMatrix(MatrixXd{Pk * Sigma * Pk.transpose()});
 
-            optimizer_k.step();
+            optimizer_k.update_mu(VectorXd{Pk*mu_});
+            optimizer_k.update_precision(MatrixXd{Pk * precision_ * Pk.transpose()});
 
-            cout << "new_precision " << endl << new_precision << endl;
+//            optimizer_k.step();
+            optimizer_k.calculate_partial_V();
 
-            new_precision = new_precision + Pk.transpose() * optimizer_k.get_precision() * Pk;
-            new_mu = new_mu + Pk.transpose() * optimizer_k.get_mean();
-
-            cout << "new_precision " << endl << new_precision << endl;
+            Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();
+            Vddmu_ = Vddmu_ + Pk.transpose() * optimizer_k.get_Vddmu() * Pk;
         }
 
-        precision_ = new_precision;
-        mu_ = new_mu;
+        d_precision_ = -precision_ + Vddmu_;
+        precision_ = precision_.eval() + step_size_precision*d_precision_;
+        precision_sparse_ = precision_.sparseView();
+
+        SparseQR<SpMatrix, Eigen::NaturalOrdering<int>> qr_solver(precision_sparse_);
+        d_mu_ = qr_solver.solve(-Vdmu_);
+        mu_ = mu_.eval() + step_size_mu * d_mu_;
 
         cout << "mu_ " << endl << mu_ << endl;
         cout << "new precision " << endl << precision_ << endl;
@@ -120,8 +130,8 @@ public:
     }
 
     void set_step_size(double ss_mean, double ss_precision){
-        for (auto & k_optimizer:vec_factor_optimizers_)
-            k_optimizer.set_step_size(ss_mean, ss_precision);
+        step_size_mu = ss_mean;
+        step_size_precision = ss_precision;
     }
 
 };

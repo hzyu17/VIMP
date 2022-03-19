@@ -6,8 +6,8 @@
 #define C_DRAFT_SPARSEMATRIXHELPER_H
 
 #endif //C_DRAFT_SPARSEMATRIXHELPER_H
-#include <gtsam/3rdparty/Eigen/Eigen/Sparse>
-#include <gtsam/3rdparty/Eigen/Eigen/SparseCore>
+#include <Eigen/Sparse>
+#include <Eigen/SparseCore>
 
 using namespace Eigen;
 using namespace std;

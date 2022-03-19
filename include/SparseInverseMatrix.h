@@ -7,10 +7,10 @@
 #define MPVI_SPARSEINVERSEMATRIX_H
 
 #endif //MPVI_SPARSEINVERSEMATRIX_H
-#include <gtsam/3rdparty/Eigen/Eigen/Dense>
-#include <gtsam/3rdparty/Eigen/Eigen/Sparse>
-#include <gtsam/3rdparty/Eigen/Eigen/SparseCore>
-#include <gtsam/3rdparty/Eigen/Eigen/SparseCholesky>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <Eigen/SparseCore>
+#include <Eigen/SparseCholesky>
 #include <iostream>
 
 typedef Eigen::SparseMatrix<double> SpMatrix;

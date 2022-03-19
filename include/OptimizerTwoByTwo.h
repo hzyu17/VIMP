@@ -38,8 +38,8 @@ protected:
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision;
 
-    gtsam::Vector Vdmu = gtsam::Vector::Zero(dim);
-    gtsam::Matrix Vddmu = gtsam::Matrix::Zero(dim, dim);
+    VectorXd Vdmu = VectorXd::Zero(dim);
+    MatrixXd Vddmu = MatrixXd::Zero(dim, dim);
 
     // step sizes
     double step_size_mu = 0.9;
@@ -63,38 +63,35 @@ public:
         step_size_Sigma = ss_precision;
     }
 
-    bool updateCovarianceMatrix(const MatrixXd& new_cov){
+    void updateSamplerCovarianceMatrix(const MatrixXd& new_cov){
         sampler_.updateCovariance(new_cov);
-        return true;
     }
 
-    bool updateCovarianceMatrix(){
+    void updateSamplerCovarianceMatrix(){
         sampler_.updateCovariance(precision_.inverse());
-        return true;
     }
 
-    bool updateMean(const VectorXd& new_mu){
-        sampler_.updateMean(new_mu);
-        return true;
-    }
-
-    bool updateMean(){
+    void updateSamplerMean(){
         sampler_.updateMean(mu_);
-        return true;
     }
 
-    bool step(){
-        // Zero grad
-        d_mu.setZero();
-        d_precision.setZero();
+    void updateSamplerMean(const VectorXd& new_mu){
+        sampler_.updateMean(new_mu);
+    }
+
+    void update_mu(const VectorXd& new_mu){
+        mu_ = new_mu;
+    }
+
+    void update_precision(const MatrixXd& new_precision){
+        precision_ = new_precision;
+    }
+
+    void calculate_partial_V(){
         Vdmu.setZero();
         Vddmu.setZero();
 
         gtsam::Matrix samples = sampler_(num_samples);
-
-        // see sample mean and covariance
-        VectorXd mean_sample{samples.rowwise().sum() / num_samples};
-        MatrixXd cov_samples{((samples.colwise() - mean_sample) * (samples.colwise() - mean_sample).transpose()) / (num_samples-1)};
 
         auto colwise = samples.colwise();
         double accum_phi = 0;
@@ -119,6 +116,22 @@ public:
 
         Vddmu.triangularView<Upper>() = Vddmu - precision_ * avg_phi;
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+    }
+
+    MatrixXd get_Vddmu(){
+        return Vddmu;
+    }
+
+    VectorXd get_Vdmu(){
+        return Vdmu;
+    }
+
+    bool step(){
+        // Zero grad
+        d_mu.setZero();
+        d_precision.setZero();
+
+        calculate_partial_V();
 
         d_precision = -precision_ + Vddmu;
 

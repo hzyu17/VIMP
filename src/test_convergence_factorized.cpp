@@ -48,7 +48,7 @@ int main(){
     using namespace SparseInverse;
     dense_inverser inverser_(MatrixXd::Identity(ndim, ndim));
 
-    int n_iter = 20;
+    int n_iter = 30;
     double step_size = 0.9;
     optimizer.set_step_size(step_size, step_size);
 
@@ -68,8 +68,8 @@ int main(){
 //        optimizer.updateCovarianceMatrix();
 
         // use the sparse inverse algorithm
-        optimizer.updateMean();
-        optimizer.updateCovarianceMatrix(inverser_.inverse(optimizer.get_precision()));
+        optimizer.updateSamplerMean();
+        optimizer.updateSamplerCovarianceMatrix(inverser_.inverse(optimizer.get_precision()));
 
         cout << "==== iteration " << i << " ====" << endl
              << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl

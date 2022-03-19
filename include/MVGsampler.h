@@ -6,10 +6,10 @@
 #define C_DRAFT_MGVSAMPLER_H
 
 #endif //C_DRAFT_MGVSAMPLER_H
-#include <gtsam/3rdparty/Eigen/Eigen/Dense>
-#include <gtsam/3rdparty/Eigen/Eigen/Sparse>
-#include <gtsam/3rdparty/Eigen/Eigen/SparseCore>
-#include <gtsam/3rdparty/Eigen/Eigen/SparseCholesky>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <Eigen/SparseCore>
+#include <Eigen/SparseCholesky>
 #include <random>
 #include <iostream>
 
@@ -27,7 +27,7 @@ namespace GaussianSampler {
                 : mean(mean), covariance(covar) {
             SelfAdjointEigenSolver<MatrixXd> eigenSolver(covar);
             transform = eigenSolver.eigenvectors() * eigenSolver.eigenvalues().cwiseSqrt().asDiagonal();
-            cout << "covar eigen transformation " << endl << transform << endl;
+//            cout << "covar eigen transformation " << endl << transform << endl;
         }
 
         VectorXd mean;
