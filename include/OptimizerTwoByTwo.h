@@ -23,23 +23,25 @@ template <typename Function, typename costClass, typename... Args>
 class VariationalIferenceMPOptimizerTwoByTwo{
 public:
     VariationalIferenceMPOptimizerTwoByTwo(const int& dimension, Function _function, const costClass& _cost_class):
-    cost_function_{std::forward<Function>(_function)},
-    cost_class_{_cost_class},
-    dim{dimension},
-    d_mu{gtsam::Vector::Zero(dimension)},
-    mu_{gtsam::Vector::Zero(dimension)},
-    precision_{gtsam::Matrix::Identity(dimension, dimension)},
-    d_precision{gtsam::Matrix::Zero(dimension, dimension)},
-    sampler_{normal_random_variable(mu_, precision_.inverse())}{}
+            dim{dimension},
+            cost_function_{std::forward<Function>(_function)},
+            cost_class_{_cost_class},
+            d_mu{VectorXd::Zero(dimension)},
+            mu_{VectorXd::Zero(dimension)},
+            Vdmu{VectorXd::Zero(dimension)},
+            Vddmu{MatrixXd::Zero(dimension, dimension)},
+            precision_{gtsam::Matrix::Identity(dimension, dimension)},
+            d_precision{gtsam::Matrix::Zero(dimension, dimension)},
+            sampler_{normal_random_variable(mu_, precision_.inverse())}{}
 protected:
     // optimization variables
     int dim;
-    int num_samples = 20000;
+    int num_samples = 100000;
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision;
 
-    VectorXd Vdmu = VectorXd::Zero(dim);
-    MatrixXd Vddmu = MatrixXd::Zero(dim, dim);
+    VectorXd Vdmu;
+    MatrixXd Vddmu;
 
     // step sizes
     double step_size_mu = 0.9;
@@ -84,6 +86,8 @@ public:
     }
 
     void update_precision(const MatrixXd& new_precision){
+        cout << "current precision " << endl << precision_ << endl;
+        cout << "new precision " << endl << new_precision << endl;
         precision_ = new_precision;
     }
 
@@ -91,7 +95,7 @@ public:
         Vdmu.setZero();
         Vddmu.setZero();
 
-        gtsam::Matrix samples = sampler_(num_samples);
+        MatrixXd samples{sampler_(num_samples)};
 
         auto colwise = samples.colwise();
         double accum_phi = 0;
@@ -100,12 +104,12 @@ public:
 
             accum_phi += phi;
 
-            Vdmu = Vdmu.eval() + (sample - mu_) * phi;
-            Vddmu = Vddmu.eval() + (sample - mu_) * (sample - mu_).transpose().eval() * phi;
+            Vdmu = Vdmu + (sample - mu_) * phi;
+            Vddmu = Vddmu + (sample - mu_) * (sample - mu_).transpose().eval() * phi;
         });
 
         Vdmu = precision_ * Vdmu.eval() / double(num_samples);
-        Vddmu.triangularView<Upper>() = precision_ * Vddmu.selfadjointView<Upper>() * precision_;
+        Vddmu.triangularView<Upper>() = (precision_ * Vddmu * precision_).triangularView<Upper>();
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
 
         Vddmu = Vddmu.eval() / double(num_samples);
@@ -114,7 +118,7 @@ public:
 
         gtsam::Matrix tmp{precision_ * avg_phi};
 
-        Vddmu.triangularView<Upper>() = Vddmu - precision_ * avg_phi;
+        Vddmu.triangularView<Upper>() = (Vddmu - precision_ * avg_phi).triangularView<Upper>();
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
     }
 

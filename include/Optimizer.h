@@ -96,20 +96,21 @@ public:
             optimizer_k.update_mu(VectorXd{Pk*mu_});
             optimizer_k.update_precision(MatrixXd{Pk * precision_ * Pk.transpose()});
 
-//            optimizer_k.step();
             optimizer_k.calculate_partial_V();
+//            optimizer_k.step();
 
             Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();
-            Vddmu_ = Vddmu_ + Pk.transpose() * optimizer_k.get_Vddmu() * Pk;
+            Vddmu_ = Vddmu_ + Pk.transpose().eval() * optimizer_k.get_Vddmu() * Pk;
         }
 
         d_precision_ = -precision_ + Vddmu_;
-        precision_ = precision_.eval() + step_size_precision*d_precision_;
-        precision_sparse_ = precision_.sparseView();
+        precision_ = precision_ + step_size_precision*d_precision_;
+//        precision_sparse_ = precision_.sparseView();
+//        SparseQR<SpMatrix, Eigen::NaturalOrdering<int>> qr_solver(precision_sparse_);
+//        d_mu_ = qr_solver.solve(-Vdmu_);
 
-        SparseQR<SpMatrix, Eigen::NaturalOrdering<int>> qr_solver(precision_sparse_);
-        d_mu_ = qr_solver.solve(-Vdmu_);
-        mu_ = mu_.eval() + step_size_mu * d_mu_;
+        d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
+        mu_ = mu_ + step_size_mu * d_mu_;
 
         cout << "mu_ " << endl << mu_ << endl;
         cout << "new precision " << endl << precision_ << endl;
