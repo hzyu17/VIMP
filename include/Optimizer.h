@@ -94,7 +94,7 @@ public:
             optimizer_k.updateSamplerCovarianceMatrix(MatrixXd{Pk * Sigma * Pk.transpose()});
 
             optimizer_k.update_mu(VectorXd{Pk*mu_});
-            optimizer_k.update_precision(MatrixXd{Pk * precision_ * Pk.transpose()});
+            optimizer_k.update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
 
             optimizer_k.calculate_partial_V();
 //            optimizer_k.step();
@@ -104,6 +104,7 @@ public:
         }
 
         d_precision_ = -precision_ + Vddmu_;
+
         precision_ = precision_ + step_size_precision*d_precision_;
 //        precision_sparse_ = precision_.sparseView();
 //        SparseQR<SpMatrix, Eigen::NaturalOrdering<int>> qr_solver(precision_sparse_);

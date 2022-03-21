@@ -22,7 +22,7 @@ double target_cost(const gtsam::Vector& sample,
 }
 
 void test_coupled(){
-    const int ndim = 5;
+    const int ndim = 10;
 
     // known posteria Gaussian
     gtsam::Vector mean_t(ndim);
@@ -84,7 +84,7 @@ void test_coupled(){
     double step_size = 0.9;
 
     for (int i=0; i<num_iter; i++) {
-        step_size = step_size / pow((i + 1), 1 / 6);
+        step_size = step_size / pow((i + 1), 1 / 3);
         optimizer.set_step_size(step_size, step_size);
 
         cout << "==== iteration " << i << " ====" << endl
@@ -174,6 +174,7 @@ void test_decoupled(){
 
 int main(){
 
-    test_decoupled();
+//    test_decoupled();
+    test_coupled();
 
 };

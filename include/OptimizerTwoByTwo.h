@@ -86,8 +86,6 @@ public:
     }
 
     void update_precision(const MatrixXd& new_precision){
-        cout << "current precision " << endl << precision_ << endl;
-        cout << "new precision " << endl << new_precision << endl;
         precision_ = new_precision;
     }
 
