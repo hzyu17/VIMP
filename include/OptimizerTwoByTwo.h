@@ -36,7 +36,7 @@ public:
 protected:
     // optimization variables
     int dim;
-    int num_samples = 100000;
+    int num_samples = 50000;
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision;
 
@@ -118,6 +118,12 @@ public:
 
         Vddmu.triangularView<Upper>() = (Vddmu - precision_ * avg_phi).triangularView<Upper>();
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+    }
+
+    void calculate_exact_partial_V(){
+        // In the case of a Gaussian posterior, the expectations can be calculated exactly
+
+
     }
 
     MatrixXd get_Vddmu(){

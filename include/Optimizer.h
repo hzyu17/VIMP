@@ -33,7 +33,6 @@ public:
                                    num_sub_vars{_vec_Pks.size()},
                                    vec_cost_function_{_vec_function},
                                    vec_cost_class_{_vec_cost_class},
-//                                   vec_distr_class_{_vec_distr_class},
                                    vec_Pks_{_vec_Pks},
                                    mu_{VectorXd::Zero(dimension)},
                                    d_mu_{VectorXd::Zero(dimension)},

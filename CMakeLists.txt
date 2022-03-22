@@ -52,6 +52,9 @@ target_link_libraries(vimp ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRAR
 add_executable(test_conv src/test_convergence.cpp)
 target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
+#add_executable(test_mp_point_robot src/test_motion_planning_point_robot.cpp)
+#target_link_libraries(test_mp_point_robot ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+
 add_executable(test_conv_factor src/test_convergence_factorized.cpp)
 target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 

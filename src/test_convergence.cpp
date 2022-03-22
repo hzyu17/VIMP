@@ -22,7 +22,7 @@ double target_cost(const gtsam::Vector& sample,
 }
 
 void test_coupled(){
-    const int ndim = 10;
+    const int ndim = 15;
 
     // known posteria Gaussian
     gtsam::Vector mean_t(ndim);
