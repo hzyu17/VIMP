@@ -64,7 +64,7 @@ protected:
 
     // cost functional. Input: samples vector; Output: cost
     const vector<Function> vec_cost_function_;
-    const vector<costClass> vec_cost_class_;
+    vector<costClass> vec_cost_class_;
     const vector<MatrixXd> vec_Pks_;
 
     // Sparse matrix inverse helper
@@ -75,7 +75,7 @@ protected:
 
 public:
 
-    bool step(){
+    void step(){
 
         Vdmu_.setZero();
         Vddmu_.setZero();
@@ -96,6 +96,7 @@ public:
             optimizer_k.update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
 
             optimizer_k.calculate_partial_V();
+
 //            optimizer_k.step();
 
             Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();
@@ -115,7 +116,49 @@ public:
         cout << "mu_ " << endl << mu_ << endl;
         cout << "new precision " << endl << precision_ << endl;
 
-        return true;
+    }
+
+    void step_closed_form(){
+
+        Vdmu_.setZero();
+        Vddmu_.setZero();
+        d_mu_.setZero();
+        d_precision_.setZero();
+
+        MatrixXd Sigma{inverser_.inverse(precision_)};
+
+        for (int k=0; k<num_sub_vars; k++){
+
+            MatrixXd Pk = vec_Pks_[k];
+
+            auto &optimizer_k = vec_factor_optimizers_[k];
+            optimizer_k.updateSamplerMean(VectorXd{Pk * mu_});
+            optimizer_k.updateSamplerCovarianceMatrix(MatrixXd{Pk * Sigma * Pk.transpose()});
+
+            optimizer_k.update_mu(VectorXd{Pk*mu_});
+            optimizer_k.update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
+
+            // closed form verification for a Gaussian posterior
+            auto &cost_class_k = vec_cost_class_[k];
+            optimizer_k.calculate_exact_partial_V(cost_class_k.get_mean(), cost_class_k.get_covariance());
+
+            Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();
+            Vddmu_ = Vddmu_ + Pk.transpose().eval() * optimizer_k.get_Vddmu() * Pk;
+        }
+
+        d_precision_ = -precision_ + Vddmu_;
+
+        precision_ = precision_ + step_size_precision*d_precision_;
+//        precision_sparse_ = precision_.sparseView();
+//        SparseQR<SpMatrix, Eigen::NaturalOrdering<int>> qr_solver(precision_sparse_);
+//        d_mu_ = qr_solver.solve(-Vdmu_);
+
+        d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
+        mu_ = mu_ + step_size_mu * d_mu_;
+
+        cout << "mu_ " << endl << mu_ << endl;
+        cout << "new precision " << endl << precision_ << endl;
+
     }
 
     gtsam::Vector get_mean(){

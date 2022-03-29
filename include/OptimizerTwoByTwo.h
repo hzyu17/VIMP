@@ -16,6 +16,7 @@
 
 using namespace GaussianSampler;
 using namespace std;
+using namespace Eigen;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
@@ -30,15 +31,16 @@ public:
             mu_{VectorXd::Zero(dimension)},
             Vdmu{VectorXd::Zero(dimension)},
             Vddmu{MatrixXd::Zero(dimension, dimension)},
-            precision_{gtsam::Matrix::Identity(dimension, dimension)},
-            d_precision{gtsam::Matrix::Zero(dimension, dimension)},
+            precision_{MatrixXd::Identity(dimension, dimension)},
+            d_precision{MatrixXd::Zero(dimension, dimension)},
+            covariance_{precision_.inverse()},
             sampler_{normal_random_variable(mu_, precision_.inverse())}{}
 protected:
     // optimization variables
     int dim;
-    int num_samples = 50000;
+    int num_samples = 100000;
     VectorXd mu_, d_mu;
-    MatrixXd precision_, d_precision;
+    MatrixXd precision_, d_precision, covariance_;
 
     VectorXd Vdmu;
     MatrixXd Vddmu;
@@ -89,6 +91,11 @@ public:
         precision_ = new_precision;
     }
 
+    void update_covariance(){
+        covariance_ = precision_.inverse();
+    }
+
+
     void calculate_partial_V(){
         Vdmu.setZero();
         Vddmu.setZero();
@@ -120,11 +127,37 @@ public:
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
     }
 
-    void calculate_exact_partial_V(){
-        // In the case of a Gaussian posterior, the expectations can be calculated exactly
 
+    /// Gaussian posterior: closed-form expression
+    void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t){
+        Vdmu.setZero();
+        Vddmu.setZero();
+        update_covariance();
 
-    }
+        // helper vectors
+        VectorXd eps{mu_ - mu_t};
+        MatrixXd tmp{MatrixXd::Zero(dim, dim)};
+        MatrixXd precision_t{covariance_t.inverse()};
+
+        // partial V / partial mu
+        Vdmu = precision_t * eps;
+
+        // partial V^2 / partial mu*mu^T
+        // update tmp matrix
+        for (int i=0; i<dim; i++){
+            for (int j=0; j<dim; j++) {
+                for (int k=0; k<dim; k++){
+                    for (int l=0; l<dim; l++){
+                        tmp(i, j) += (covariance_(i, j)*covariance_(k, l) + covariance_(i,k)*covariance_(j,l) + covariance_(i,l)*covariance_(j,k))*precision_t(k,l);
+                    }
+                }
+            }
+        }
+
+        Vddmu = precision_ * tmp * precision_ - precision_ * (precision_t*covariance_).trace();
+        Vddmu = Vddmu / 2;
+
+        }
 
     MatrixXd get_Vddmu(){
         return Vddmu;
@@ -139,7 +172,8 @@ public:
         d_mu.setZero();
         d_precision.setZero();
 
-        calculate_partial_V();
+//        calculate_partial_V();
+        calculate_exact_partial_V(cost_class_.get_mean(), cost_class_.get_covariance());
 
         d_precision = -precision_ + Vddmu;
 

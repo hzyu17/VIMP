@@ -91,7 +91,11 @@ void test_coupled(){
              << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl
              << "precision matrix " << endl << optimizer.get_precision().format(CleanFmt) << endl;
 
-        optimizer.step();
+        // get the derivatives from samples
+         optimizer.step();
+
+        // test for a known Gaussian posterior
+//        optimizer.step_closed_form();
     }
 }
 
@@ -163,11 +167,13 @@ void test_decoupled(){
         step_size = step_size / pow((i + 1), 1 / 6);
         optimizer.set_step_size(step_size, step_size);
 
-        cout << "==== iteration " << i << " ====" << endl
-             << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl
-             << "precision matrix " << endl << optimizer.get_precision().format(CleanFmt) << endl;
-
         optimizer.step();
+
+        if (i%5==0 && i>0){
+            cout << "==== iteration " << i << " ====" << endl
+                 << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl
+                 << "precision matrix " << endl << optimizer.get_precision().format(CleanFmt) << endl;
+        }
     }
 }
 

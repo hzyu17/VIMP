@@ -54,6 +54,14 @@ namespace GaussianSampler {
             mean = new_mean;
             return true;
         }
+
+        MatrixXd get_covariance(){
+            return covariance;
+        }
+
+        VectorXd get_mean(){
+            return mean;
+        }
     };
 
     struct gaussian_sampler_precision {

@@ -209,8 +209,8 @@ bool test_impirical_expectation() {
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    test_Gaussian_samplers();
+//    test_Gaussian_samplers();
 //    test_tridiag_trunc();
-//    test_impirical_expectation();
+    test_impirical_expectation();
     return 0;
 }
