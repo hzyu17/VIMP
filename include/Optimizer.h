@@ -76,6 +76,8 @@ protected:
 public:
 
     void step(){
+        cout << "mu_ " << endl << mu_ << endl;
+        cout << "new precision " << endl << precision_ << endl;
 
         Vdmu_.setZero();
         Vddmu_.setZero();
@@ -90,6 +92,7 @@ public:
 
             auto &optimizer_k = vec_factor_optimizers_[k];
             optimizer_k.updateSamplerMean(VectorXd{Pk * mu_});
+
             optimizer_k.updateSamplerCovarianceMatrix(MatrixXd{Pk * Sigma * Pk.transpose()});
 
             optimizer_k.update_mu(VectorXd{Pk*mu_});
@@ -112,9 +115,6 @@ public:
 
         d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
         mu_ = mu_ + step_size_mu * d_mu_;
-
-        cout << "mu_ " << endl << mu_ << endl;
-        cout << "new precision " << endl << precision_ << endl;
 
     }
 
@@ -176,6 +176,10 @@ public:
     void set_step_size(double ss_mean, double ss_precision){
         step_size_mu = ss_mean;
         step_size_precision = ss_precision;
+    }
+
+    void set_mu(const VectorXd& mean){
+        mu_ = mean;
     }
 
 };

@@ -24,20 +24,20 @@ template <typename Function, typename costClass, typename... Args>
 class VariationalInferenceMPOptimizerTwoByTwo{
 public:
     VariationalInferenceMPOptimizerTwoByTwo(const int& dimension, Function _function, const costClass& _cost_class):
-            dim{dimension},
+            dim_{dimension},
             cost_function_{std::forward<Function>(_function)},
             cost_class_{_cost_class},
-            d_mu{VectorXd::Zero(dimension)},
-            mu_{VectorXd::Zero(dimension)},
-            Vdmu{VectorXd::Zero(dimension)},
-            Vddmu{MatrixXd::Zero(dimension, dimension)},
-            precision_{MatrixXd::Identity(dimension, dimension)},
-            d_precision{MatrixXd::Zero(dimension, dimension)},
+            d_mu{VectorXd::Zero(dim_)},
+            mu_{VectorXd::Zero(dim_)},
+            Vdmu{VectorXd::Zero(dim_)},
+            Vddmu{MatrixXd::Zero(dim_, dim_)},
+            precision_{MatrixXd::Identity(dim_, dim_)},
+            d_precision{MatrixXd::Zero(dim_, dim_)},
             covariance_{precision_.inverse()},
             sampler_{normal_random_variable(mu_, precision_.inverse())}{}
 protected:
     // optimization variables
-    int dim;
+    int dim_;
     int num_samples = 50000;
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision, covariance_;
@@ -136,7 +136,7 @@ public:
 
         // helper vectors
         VectorXd eps{mu_ - mu_t};
-        MatrixXd tmp{MatrixXd::Zero(dim, dim)};
+        MatrixXd tmp{MatrixXd::Zero(dim_, dim_)};
         MatrixXd precision_t{covariance_t.inverse()};
 
         // partial V / partial mu
@@ -144,10 +144,10 @@ public:
 
         // partial V^2 / partial mu*mu^T
         // update tmp matrix
-        for (int i=0; i<dim; i++){
-            for (int j=0; j<dim; j++) {
-                for (int k=0; k<dim; k++){
-                    for (int l=0; l<dim; l++){
+        for (int i=0; i<dim_; i++){
+            for (int j=0; j<dim_; j++) {
+                for (int k=0; k<dim_; k++){
+                    for (int l=0; l<dim_; l++){
                         tmp(i, j) += (covariance_(i, j)*covariance_(k, l) + covariance_(i,k)*covariance_(j,l) + covariance_(i,l)*covariance_(j,k))*precision_t(k,l);
                     }
                 }

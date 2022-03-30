@@ -5,6 +5,7 @@
 #include "../include/Optimizer.h"
 #include <gtsam/base/numericalDerivative.h>
 #include <gtsam/inference/Symbol.h>
+#include "../include/matplotlibcpp.h"
 
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorGPPointRobot.h>
 #include <gpmp2/gp/GaussianProcessPriorLinear.h>
@@ -14,6 +15,7 @@ using namespace std;
 using namespace GaussianSampler;
 using namespace gpmp2;
 using namespace Eigen;
+namespace plt = matplotlibcpp;
 
 /**
  * The definition of error funciton h(x) using the cost class 'factor'.
@@ -36,6 +38,36 @@ inline double errorWrapper(const gtsam::Vector& theta, const ObstaclePlanarSDFFa
 inline gtsam::Vector convertSDFtoErr(const gtsam::Vector& sdf, double eps) {
     gtsam::Vector err_ori = 0.0 - sdf.array() + eps;
     return (err_ori.array() > 0.0).select(err_ori, gtsam::Vector::Zero(err_ori.rows()));  // (R < s ? P : Q)
+}
+
+/**
+ * Plot the iteration results
+ * input: results: (num_iteration, num_states)
+ * output: figure
+**/
+void plot_result(const MatrixXd& results, int N, int dim_theta){
+    // plotting in the 2D case
+    plt::figure();
+    MatrixXd x(results.rows(), N), y(results.rows(), N);
+    vector<double> vec_x, vec_y;
+    vec_x.resize(x.cols());
+    vec_y.resize(x.cols());
+
+    for (int i=0; i<N; i++){
+        x.col(i) = results.col(i*dim_theta);
+        y.col(i) = results.col(i*dim_theta+1);
+    }
+    for (int k=0; k<x.rows(); k++){
+        VectorXd::Map(&vec_x[0], x.cols()) = VectorXd{x.row(k)};
+        VectorXd::Map(&vec_y[0], y.cols()) = VectorXd{y.row(k)};
+        plt::plot(vec_x, vec_y, "*");
+    }
+
+    cout << "x" << endl << x << endl;
+    cout << "y" << endl << y << endl;
+
+    plt::grid(true);
+    plt::show();
 }
 
 void test_point_robot(){
@@ -65,11 +97,11 @@ void test_point_robot(){
 
     // 2D point robot
     double total_time = 5.0;
-    int num_support_states = 20, num_interp = 5;
+    int num_support_states = 5, num_interp = 2, N=num_support_states+1;
 
     const int ndof = 2, nlinks = 1, nspheres = 1;
     const int dim_theta = 2 * ndof * nlinks;
-    const int ndim = dim_theta * num_support_states;
+    const int ndim = dim_theta * N;
 
     double delta_t = total_time / num_support_states, tau = delta_t / num_interp;
     double obs_eps = 0.2, obs_sigma = 1.0;
@@ -88,18 +120,25 @@ void test_point_robot(){
     // just check cost of two link joint
     gtsam::Matrix H1_act, H2_act, H3_act, H4_act;
 
-    // origin zero  and stationary case
+    // origin zero and stationary case
+    // initialize the mean by linear interpolation
     double start_x = 0.0, start_y = 0.0, goal_x = 5.5, goal_y = 4;
-    VectorXd q1{gtsam::Vector2(start_x, start_y)};
-    VectorXd q2{gtsam::Vector2(goal_x, goal_y)};
-    VectorXd qdot1{gtsam::Vector2(0, 0)};
-    VectorXd qdot2{gtsam::Vector2(0, 0)};
+    VectorXd start_conf(dim_theta);
+    start_conf << start_x, start_y, 0, 0;
+    VectorXd goal_conf(dim_theta);
+    goal_conf << goal_x, goal_y, 0, 0;
+
+    VectorXd init_mean{VectorXd::Zero(ndim)};
+    for (int j=0; j<N; j++){
+        init_mean.segment<dim_theta>(j*dim_theta) = start_conf + double(j)*(goal_conf - start_conf)/num_support_states;
+
+    }
 
     vector<std::function<double(const gtsam::Vector&, const ObstaclePlanarSDFFactorGPPointRobot&)>> vec_cost_functions;
     vector<ObstaclePlanarSDFFactorGPPointRobot> vec_cost_classes;
     vector<gtsam::Matrix> vec_Pks;
 
-    for (int i=0; i<num_support_states-1; i++){
+    for (int i=0; i<N-1; i++){
         // cost classes
         vec_cost_classes.emplace_back(ObstaclePlanarSDFFactorGPPointRobot{symbol((unsigned char) 'x', i),
                                                                           symbol((unsigned char) 'v', i),
@@ -118,33 +157,36 @@ void test_point_robot(){
         MatrixXd Pk{MatrixXd::Zero(2*dim_theta, ndim)};
         Pk.block<dim_theta, dim_theta>(0, i*dim_theta) = MatrixXd::Identity(dim_theta, dim_theta);
         Pk.block<dim_theta, dim_theta>(dim_theta, (i+1)*dim_theta) = MatrixXd::Identity(dim_theta, dim_theta);
-//        cout << "Pk " << endl << Pk << endl;
         vec_Pks.emplace_back(Pk);
     }
 
     // declare the optimizer
     // template <typename Function, typename costClass, typename... Args>
     VariationalInferenceMPOptimizer<std::function<double(const gtsam::Vector&, const ObstaclePlanarSDFFactorGPPointRobot&)>,
-            ObstaclePlanarSDFFactorGPPointRobot, gtsam::Vector> optimizer(ndim, dim_theta, vec_cost_functions, vec_cost_classes, vec_Pks);
+            ObstaclePlanarSDFFactorGPPointRobot, gtsam::Vector> optimizer(ndim, 2*dim_theta, vec_cost_functions, vec_cost_classes, vec_Pks);
+    cout << "init_mean" << endl << init_mean << endl;
+    optimizer.set_mu(init_mean);
 
-    const int num_iter = 10;
+    const int num_iter = 8;
     double step_size = 0.9;
+
+    MatrixXd results{MatrixXd::Zero(num_iter, ndim)};
 
     for (int i=0; i<num_iter; i++) {
         step_size = step_size / pow((i + 1), 1 / 3);
         optimizer.set_step_size(step_size, step_size);
-
-        cout << "==== iteration " << i << " ====" << endl
-             << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl;
-//             << "precision matrix " << endl << optimizer.get_precision().format(CleanFmt) << endl;
-
-        // get the derivatives from samples
+        VectorXd mean_iter{optimizer.get_mean()};
+        cout << "==== iteration " << i << " ====" << endl;
+        for (int j=0; j<N; j++){
+            cout <<"position mean" << endl << mean_iter.segment<2>(j*dim_theta) << endl;
+        }
+        results.row(i) = optimizer.get_mean().transpose();
         optimizer.step();
-
-        // test for a known Gaussian posterior
-//        optimizer.step_closed_form();
     }
+
+    plot_result(results, N, dim_theta);
 }
+
 
 int main(){
     test_point_robot();
