@@ -21,9 +21,9 @@ using namespace Eigen;
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
 template <typename Function, typename costClass, typename... Args>
-class VariationalIferenceMPOptimizerTwoByTwo{
+class VariationalInferenceMPOptimizerTwoByTwo{
 public:
-    VariationalIferenceMPOptimizerTwoByTwo(const int& dimension, Function _function, const costClass& _cost_class):
+    VariationalInferenceMPOptimizerTwoByTwo(const int& dimension, Function _function, const costClass& _cost_class):
             dim{dimension},
             cost_function_{std::forward<Function>(_function)},
             cost_class_{_cost_class},
@@ -38,7 +38,7 @@ public:
 protected:
     // optimization variables
     int dim;
-    int num_samples = 100000;
+    int num_samples = 50000;
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision, covariance_;
 

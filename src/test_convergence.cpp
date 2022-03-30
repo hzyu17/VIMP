@@ -57,7 +57,6 @@ void test_coupled(){
         vec_Pks.emplace_back(Pk);
 
         vec_target_costs.emplace_back(target_cost);
-        vec_target_costs.emplace_back(target_cost);
 
         vec_target_classes.emplace_back(Gaussian_distribution{Pk*mean_t, Pk*covariance_t*Pk.transpose()});
 
@@ -76,9 +75,9 @@ void test_coupled(){
 
     }
 
-    VariationalIferenceMPOptimizer<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>,
+    VariationalInferenceMPOptimizer<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>,
             Gaussian_distribution,
-            gtsam::Vector> optimizer(ndim, vec_target_costs, vec_cost_class, vec_Pks);
+            gtsam::Vector> optimizer(ndim, 2, vec_target_costs, vec_cost_class, vec_Pks);
 
     const int num_iter = 10;
     double step_size = 0.9;
@@ -156,9 +155,9 @@ void test_decoupled(){
 
     }
 
-    VariationalIferenceMPOptimizer<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>,
+    VariationalInferenceMPOptimizer<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>,
             Gaussian_distribution,
-            gtsam::Vector> optimizer(ndim, vec_target_costs, vec_cost_class, vec_Pks);
+            gtsam::Vector> optimizer(ndim, 2, vec_target_costs, vec_cost_class, vec_Pks);
 
     const int num_iter = 10;
     double step_size = 0.9;

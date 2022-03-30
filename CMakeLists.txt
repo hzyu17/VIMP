@@ -52,8 +52,8 @@ target_link_libraries(vimp ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRAR
 add_executable(test_conv src/test_convergence.cpp)
 target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
-#add_executable(test_mp_point_robot src/test_motion_planning_point_robot.cpp)
-#target_link_libraries(test_mp_point_robot ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+add_executable(test_point_robot src/test_motion_planning_point_robot.cpp)
+target_link_libraries(test_point_robot ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(test_conv_factor src/test_convergence_factorized.cpp)
 target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
@@ -61,6 +61,25 @@ target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${
 add_executable(test_sparse_inverse src/test_sparse_inverse.cpp)
 target_link_libraries(test_sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
+# python wrapper
+option(MPVI_BUILD_PYTHON "whether build python toolbox, need shared lib" OFF)
+
+if(MPVI_BUILD_PYTHON)
+#    include_directories(${GTSAM_DIR}/cython)
+#    include_directories(/usr/local/cython)
+#    include(GtsamCythonWrap)
+#    include_directories(${GTSAM_EIGENCY_INSTALL_PATH})
+#
+#    wrap_and_install_library_cython("gpmp2.h"
+#            "from gtsam.gtsam cimport *" # extra import of gtsam/gtsam.pxd Cython header
+#            "${CMAKE_INSTALL_PREFIX}/cython" # install path
+#            gpmp2  # library to link with
+#            "gtsam"  # dependencies which need to be built before wrapping
+#            )
+#    add_definitions(-DBOOST_OPTIONAL_ALLOW_BINDING_TO_RVALUES -DBOOST_OPTIONAL_CONFIG_ALLOW_BINDING_TO_RVALUES)
+endif()
+
 install(TARGETS matplotlib MVGsampler SpHelper
         CONFIGURATIONS Release
         LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+

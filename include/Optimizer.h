@@ -23,13 +23,14 @@ typedef Triplet<double> T;
 template <typename Function, typename costClass, typename... Args>
 
 // template function and classes to calculate the costs
-class VariationalIferenceMPOptimizer{
-    using FactorizedOptimizer = VariationalIferenceMPOptimizerTwoByTwo<Function, costClass, Args...>;
+class VariationalInferenceMPOptimizer{
+    using FactorizedOptimizer = VariationalInferenceMPOptimizerTwoByTwo<Function, costClass, Args...>;
 
 public:
-    VariationalIferenceMPOptimizer(const int& dimension, const vector<Function>& _vec_function,
+    VariationalInferenceMPOptimizer(const int& dimension, const int& sub_dim, const vector<Function>& _vec_function,
                                    const vector<costClass>& _vec_cost_class, const vector<MatrixXd>& _vec_Pks):
                                    dim{dimension},
+                                   sub_dim{sub_dim},
                                    num_sub_vars{_vec_Pks.size()},
                                    vec_cost_function_{_vec_function},
                                    vec_cost_class_{_vec_cost_class},
@@ -46,14 +47,13 @@ public:
         /// initialize the factors
         for (int i=0; i<num_sub_vars; i++){
 
-            FactorizedOptimizer optimizer_k{2, vec_cost_function_[i], vec_cost_class_[i]};
+            FactorizedOptimizer optimizer_k{sub_dim, vec_cost_function_[i], vec_cost_class_[i]};
             vec_factor_optimizers_.emplace_back(optimizer_k);
         }
     }
 protected:
     // optimization variables
-    int dim;
-    int num_sub_vars;
+    int dim, sub_dim, num_sub_vars;
 
     VectorXd mu_, Vdmu_, d_mu_;
     MatrixXd precision_, Vddmu_, d_precision_;
