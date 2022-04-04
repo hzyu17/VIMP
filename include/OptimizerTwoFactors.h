@@ -12,7 +12,7 @@
 #include <random>
 #include <utility>
 #include "SparseInverseMatrix.h"
-#include "OptimizerFactorized.h"
+#include "OptimizerFactorizedTwoFactors.h"
 #include <boost/scoped_ptr.hpp>
 
 using namespace GaussianSampler;
@@ -20,20 +20,22 @@ using namespace std;
 using namespace SparseInverse;
 typedef Triplet<double> T;
 
-template <typename Function, typename costClass, typename... Args>
+template <typename Function, typename PriorFactorClass, typename CollisionFactorClass, typename... Args>
 
 // template function and classes to calculate the costs
-class VariationalInferenceMPOptimizer{
-    using FactorizedOptimizer = VariationalInferenceMPOptimizerFactorized<Function, costClass, Args...>;
+class VariationalInferenceMPOptimizerTwoFactors{
+    using FactorizedOptimizerTwoFactors = VariationalInferenceMPOptimizerFactorizedTwoFactors<Function, PriorFactorClass, CollisionFactorClass, Args...>;
 
 public:
-    VariationalInferenceMPOptimizer(const int& dimension, const int& sub_dim, const vector<Function>& _vec_function,
-                                   const vector<costClass>& _vec_cost_class, const vector<MatrixXd>& _vec_Pks):
+    VariationalInferenceMPOptimizerTwoFactors(const int& dimension, const int& sub_dim, const vector<Function>& _vec_function,
+                                   const vector<PriorFactorClass>& _vec_prior_factor_class,
+                                   const vector<CollisionFactorClass>& _vec_collision_factor_class, const vector<MatrixXd>& _vec_Pks):
                                    dim{dimension},
                                    sub_dim{sub_dim},
                                    num_sub_vars{_vec_Pks.size()},
                                    vec_cost_function_{_vec_function},
-                                   vec_cost_class_{_vec_cost_class},
+                                   vec_collision_factor_class_{_vec_collision_factor_class},
+                                   vec_prior_factor_class_{_vec_prior_factor_class},
                                    vec_Pks_{_vec_Pks},
                                    mu_{VectorXd::Zero(dimension)},
                                    d_mu_{VectorXd::Zero(dimension)},
@@ -46,7 +48,7 @@ public:
         /// initialize the factors
         for (int i=0; i<num_sub_vars; i++){
 
-            FactorizedOptimizer optimizer_k{sub_dim, vec_cost_function_[i], vec_cost_class_[i]};
+            FactorizedOptimizerTwoFactors optimizer_k{sub_dim, vec_cost_function_[i], vec_prior_factor_class_[i], vec_collision_factor_class_[i]};
             vec_factor_optimizers_.emplace_back(optimizer_k);
         }
     }
@@ -58,11 +60,12 @@ protected:
     MatrixXd precision_, Vddmu_, d_precision_;
 
     // sampler
-    vector<FactorizedOptimizer> vec_factor_optimizers_;
+    vector<FactorizedOptimizerTwoFactors> vec_factor_optimizers_;
 
     // cost functional. Input: samples vector; Output: cost
     const vector<Function> vec_cost_function_;
-    vector<costClass> vec_cost_class_;
+    vector<CollisionFactorClass> vec_collision_factor_class_;
+    vector<PriorFactorClass> vec_prior_factor_class_;
     const vector<MatrixXd> vec_Pks_;
 
     // Sparse matrix inverse helper
@@ -115,7 +118,6 @@ public:
 
         d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
 
-
         mu_ = mu_ + step_size_mu * d_mu_;
 
         cout << "d_precision_" << endl << d_precision_ << endl;
@@ -146,7 +148,7 @@ public:
             optimizer_k.update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
 
             // closed form verification for a Gaussian posterior
-            auto &cost_class_k = vec_cost_class_[k];
+            auto &cost_class_k = vec_collision_factor_class_[k];
             optimizer_k.calculate_exact_partial_V(cost_class_k.get_mean(), cost_class_k.get_covariance());
 
             Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();

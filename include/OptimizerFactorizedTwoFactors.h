@@ -1,6 +1,10 @@
 //
-// Created by hongzhe on 3/7/22.
+// Created by hongzhe on 4/2/22.
 //
+
+/**
+ * Factorized optimizer for Variational GPMP, cost including Gaussian prior and collisions.
+ */
 
 #ifndef MPVI_OPTIMIZER_H
 #define MPVI_OPTIMIZER_H
@@ -20,13 +24,18 @@ using namespace Eigen;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
-template <typename Function, typename costClass, typename... Args>
-class VariationalInferenceMPOptimizerTwoByTwo{
+template <typename Function, typename PriorFactorClass, typename CollisionFactorClass, typename... Args>
+class VariationalInferenceMPOptimizerFactorizedTwoFactors{
 public:
-    VariationalInferenceMPOptimizerTwoByTwo(const int& dimension, Function _function, const costClass& _cost_class):
+    VariationalInferenceMPOptimizerFactorizedTwoFactors(
+            const int& dimension,
+            Function _function,
+            const PriorFactorClass& _prior_class,
+            const CollisionFactorClass& _collision_class):
             dim_{dimension},
             cost_function_{std::forward<Function>(_function)},
-            cost_class_{_cost_class},
+            prior_factor_class_{_prior_class},
+            collision_factor_class_{_collision_class},
             d_mu{VectorXd::Zero(dim_)},
             mu_{VectorXd::Zero(dim_)},
             Vdmu{VectorXd::Zero(dim_)},
@@ -54,12 +63,13 @@ protected:
 
     // cost functional. Input: samples vector; Output: cost
     Function cost_function_;
-    costClass cost_class_;
+    CollisionFactorClass collision_factor_class_;
+    PriorFactorClass prior_factor_class_;
 
 public:
 
     auto cost_function(Args... args){
-        return cost_function_(args..., cost_class_);
+        return cost_function_(args..., prior_factor_class_, collision_factor_class_);
     }
 
     void set_step_size(double ss_mean, double ss_precision){
@@ -95,7 +105,6 @@ public:
         covariance_ = precision_.inverse();
     }
 
-
     void calculate_partial_V(){
         Vdmu.setZero();
         Vddmu.setZero();
@@ -104,8 +113,10 @@ public:
 
         auto colwise = samples.colwise();
         double accum_phi = 0;
+
         std::for_each(colwise.begin(), colwise.end(), [&](auto const &sample) {
             double phi = cost_function(sample);
+//            double phi = 1;
 
             accum_phi += phi;
 
@@ -119,6 +130,16 @@ public:
 
         Vddmu = Vddmu.eval() / double(num_samples);
 
+//        cout << "mu" << endl << mu_ << endl;
+//        cout << "covariance " << endl << covariance_ << endl;
+//
+//        cout << "sampler precision matrix" << endl << sampler_.get_precision() << endl;
+//
+//        cout << "error" << endl << (sampler_.get_precision() - Vddmu).norm() << endl;
+//
+//        cout << "Vdmu " << endl << Vdmu << endl;
+//        cout << "Vddmu " << endl << Vddmu << endl;
+
         double avg_phi = accum_phi / double(num_samples);
 
         gtsam::Matrix tmp{precision_ * avg_phi};
@@ -126,7 +147,6 @@ public:
         Vddmu.triangularView<Upper>() = (Vddmu - precision_ * avg_phi).triangularView<Upper>();
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
     }
-
 
     /// Gaussian posterior: closed-form expression
     void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t){
@@ -172,8 +192,8 @@ public:
         d_mu.setZero();
         d_precision.setZero();
 
-//        calculate_partial_V();
-        calculate_exact_partial_V(cost_class_.get_mean(), cost_class_.get_covariance());
+        calculate_partial_V();
+//        calculate_exact_partial_V(collision_factor_class_.get_mean(), collision_factor_class_.get_covariance());
 
         d_precision = -precision_ + Vddmu;
 

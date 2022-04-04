@@ -35,11 +35,12 @@ namespace GaussianSampler {
         MatrixXd covariance;
 
         MatrixXd operator()(const int &nn) const {
-            static std::mt19937 gen{std::random_device{}()};
+//            static std::mt19937 generator{std::random_device{}()};
 //        std::mt19937 gen{ 1 };
+            std::default_random_engine generator;
             std::normal_distribution<> dist(0, 1);
 
-            return (transform * MatrixXd::NullaryExpr(mean.size(), nn, [&](auto x) { return dist(gen); })).colwise() +
+            return (transform * MatrixXd::NullaryExpr(mean.size(), nn, [&](auto x) { return dist(generator); })).colwise() +
                    mean;
         }
 
@@ -57,6 +58,10 @@ namespace GaussianSampler {
 
         MatrixXd get_covariance(){
             return covariance;
+        }
+
+        MatrixXd get_precision(){
+            return covariance.inverse();
         }
 
         VectorXd get_mean(){

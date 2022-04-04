@@ -4,7 +4,7 @@
 
 // Test the factorized optimizer convergence
 
-#include "../include/OptimizerTwoByTwo.h"
+#include "../include/OptimizerFactorized.h"
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
@@ -41,7 +41,7 @@ int main(){
          << target_distr.get_covariance().format(CleanFmt) << endl;
 
     // optimizer
-    VariationalIferenceMPOptimizerTwoByTwo<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>,
+    VariationalInferenceMPOptimizerFactorized<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>,
                                            Gaussian_distribution, gtsam::Vector> optimizer(ndim, target_cost, target_distr);
 
     // inverser
