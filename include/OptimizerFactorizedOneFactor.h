@@ -26,20 +26,18 @@ using namespace Eigen;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
-template <typename Function, typename PriorFactorClass, typename CollisionFactorClass, typename... Args>
-class VariationalInferenceMPOptimizerFactorizedTwoFactors{
+template <typename Function, typename FactorClass, typename... Args>
+class VariationalInferenceMPOptimizerFactorizedOneFactor{
 public:
 
-    VariationalInferenceMPOptimizerFactorizedTwoFactors(
+    VariationalInferenceMPOptimizerFactorizedOneFactor(
             const int& dimension,
             Function _function,
-            const PriorFactorClass& _prior_class,
-            const CollisionFactorClass& _collision_class,
-            const MatrixXd& Pk):
+            const FactorClass& _factor_class,
+            const MatrixXd Pk):
             dim_{dimension},
-            cost_function_{std::forward<Function>(_function)},
-            prior_factor_class_{_prior_class},
-            collision_factor_class_{_collision_class},
+            cost_function_{std::forward<Function>(_function)},},
+            factor_class_{_factor_class},
             d_mu{VectorXd::Zero(dim_)},
             mu_{VectorXd::Zero(dim_)},
             Vdmu{VectorXd::Zero(dim_)},
@@ -70,13 +68,13 @@ protected:
 
     // cost functional. Input: samples vector; Output: cost
     Function cost_function_;
-    CollisionFactorClass collision_factor_class_;
-    PriorFactorClass prior_factor_class_;
+    FactorClass factor_class_;
+
 
 public:
 
     auto cost_function(Args... args){
-        return cost_function_(args..., prior_factor_class_, collision_factor_class_);
+        return cost_function_(args..., factor_class_);
     }
 
     void set_step_size(double ss_mean, double ss_precision){
@@ -200,7 +198,7 @@ public:
         d_precision.setZero();
 
         calculate_partial_V();
-//        calculate_exact_partial_V(collision_factor_class_.get_mean(), collision_factor_class_.get_covariance());
+//        calculate_exact_partial_V(factor_class_.get_mean(), factor_class_.get_covariance());
 
         d_precision = -precision_ + Vddmu;
 

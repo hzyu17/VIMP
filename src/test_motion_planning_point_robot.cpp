@@ -2,14 +2,14 @@
 // Created by Hongzhe Yu on 3/20/22.
 //
 
-#include "../include/OptimizerTwoFactors.h"
+#include "../include/OptimizerPlanarPointRobot.h"
 #include <gtsam/base/numericalDerivative.h>
 #include <gtsam/inference/Symbol.h>
 #include "../include/matplotlibcpp.h"
-#include <gpmp2/gp/GaussianProcessPriorPose2.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorGPPointRobot.h>
-//#include <gpmp2/gp/GaussianProcessPriorLinear.h>
+#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 #include "../include/GaussianPriorLinearPlus.h"
+#include "../include/GaussianPriorPose2Plus.h"
 
 using namespace gtsam;
 using namespace std;
@@ -20,29 +20,58 @@ namespace plt = matplotlibcpp;
 
 /**
  * The definition of error funciton h(x) using the cost class 'factor'.
- * The definition of any cost function should be
- * in the form: f(Args ..., cost class).
+ * Form: f(Args ..., cost class).
  * **/
-inline double errorWrapper(const gtsam::Vector& theta, const GaussianPriorLinearPlus& prior_factor, const ObstaclePlanarSDFFactorGPPointRobot& collision_factor) {
+inline double errorWrapperInterp(const gtsam::Vector& theta,
+        const GaussianPriorLinearPlus& prior_factor,
+        const ObstaclePlanarSDFFactorGPPointRobot& collision_factor_interp) {
     VectorXd conf1{theta.segment<2>(0)};
     VectorXd vel1{theta.segment<2>(2)};
     VectorXd conf2{theta.segment<2>(4)};
     VectorXd vel2{theta.segment<2>(6)};
 
-    VectorXd vec_err = collision_factor.evaluateError(conf1, vel1, conf2, vel2);
+    // collision cost on the support states
+    VectorXd vec_err = collision_factor_interp.evaluateError(conf1, vel1, conf2, vel2);
+
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     double sig_obs = 1.0;
     precision_obs = precision_obs / sig_obs;
 
     double collision_cost = vec_err.transpose() * precision_obs * vec_err;
+
     VectorXd vec_prior_err = prior_factor.evaluateError(conf1, vel1, conf2, vel2);
     MatrixXd Qi = calcQ(prior_factor.get_Qc(), prior_factor.get_delta_t());
-//    cout << "Qc" << endl << prior_factor.get_Qc() << endl;
-//    cout << "delta_t" << endl << prior_factor.get_delta_t() << endl;
-//    cout << "Qi" << endl << Qi << endl;
+
     double prior_err = vec_prior_err.transpose() * Qi.inverse() * vec_prior_err;
-//    cout << "prior err" << endl << prior_err << endl;
+
     return collision_cost + prior_err;
+}
+
+inline double errorWrapperSinglePrior(const gtsam::Vector& theta, const GaussianPriorPose2Plus & prior_factor) {
+    VectorXd conf1{theta.segment<2>(0)};
+    VectorXd vel1{theta.segment<2>(2)};
+    VectorXd conf2{theta.segment<2>(4)};
+    VectorXd vel2{theta.segment<2>(6)};
+
+    VectorXd vec_prior_err = prior_factor.evaluateError(conf1, vel1, conf2, vel2);
+    MatrixXd Qi = calcQ(prior_factor.get_Qc(), prior_factor.get_delta_t());
+
+    double prior_err = vec_prior_err.transpose() * Qi.inverse() * vec_prior_err;
+
+    return prior_err;
+}
+
+inline double errorWrapperSingleCollision(const gtsam::Vector& theta, const ObstaclePlanarSDFFactorPointRobot& obstacle_factor) {
+
+    VectorXd vec_err = obstacle_factor.evaluateError(theta);
+
+    MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
+    double sig_obs = 1.0;
+    precision_obs = precision_obs / sig_obs;
+
+    double collision_cost = vec_err.transpose() * precision_obs * vec_err;
+
+    return collision_cost;
 }
 
 // convert sdf vector to hinge loss err vector
@@ -148,17 +177,48 @@ void test_point_robot(){
         init_mean.segment<dim_theta>(j*dim_theta) = start_conf + double(j)*(goal_conf - start_conf)/num_support_states;
     }
 
-    vector<std::function<double(const gtsam::Vector&, const GaussianPriorLinearPlus&, const ObstaclePlanarSDFFactorGPPointRobot&)>> vec_cost_functions;
+    vector<std::function<double(const gtsam::Vector&, const GaussianPriorLinearPlus&, const ObstaclePlanarSDFFactorPointRobot&, const ObstaclePlanarSDFFactorGPPointRobot&)>> vec_cost_functions;
     vector<ObstaclePlanarSDFFactorGPPointRobot> vec_collision_classes;
     vector<GaussianPriorLinearPlus> vec_prior_classes;
     vector<gtsam::Matrix> vec_Pks;
 
+    using OptimizerOnePrior = VariationalInferenceMPOptimizerFactorizedOneFactor<std::function<double(const gtsam::Vector&, const GaussianProcessPriorPose2&)>,
+            const GaussianProcessPriorPose2&,
+            const gtsam::Vector&>;
+    using OptimizerOneCollision = VariationalInferenceMPOptimizerFactorizedOneFactor<std::function<double(const gtsam::Vector&, const ObstaclePlanarSDFFactorPointRobot&)>,
+            const ObstaclePlanarSDFFactorPointRobot&,
+            const gtsam::Vector&>;
+    using OptimizerInterp = VariationalInferenceMPOptimizerFactorizedTwoFactors<std::function<double(const gtsam::Vector&, const GaussianPriorLinearPlus&, const ObstaclePlanarSDFFactorGPPointRobot&)>,
+            const GaussianPriorLinearPlus&,
+            const ObstaclePlanarSDFFactorGPPointRobot&,
+            const gtsam::Vector&>;
+
+    vector<OptimizerOnePrior> vec_optimizer_one_priors;
+    vector<OptimizerOneCollision> vec_optimizer_one_collision;
+    vector<OptimizerInterp> vec_optimizer_interp;
+
     SharedNoiseModel Qc_model = noiseModel::Isotropic::Sigma(2, 1.0);
     cout << "Qc" << endl << getQc(Qc_model) << endl;
 
+    SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(2, 1.0);
+    SharedNoiseModel K_N = noiseModel::Isotropic::Sigma(2, 1.0);
+
     for (int i=0; i<N-1; i++){
+
+        if (i==0 or i==N-1){
+            // prior at start and end pose
+            GaussianPriorPose2Plus factor_prior_single{symbol((unsigned char) 'x', i),
+                                                       symbol((unsigned char) 'v', i),
+                                                       symbol((unsigned char) 'x', i+1),
+                                                       symbol((unsigned char) 'v', i+1),
+                                                       delta_t,
+                                                       Qc_model};
+            vec_optimizer_one_priors.emplace_back(OptimizerOnePrior{})
+
+        }
+
         // collision cost classes
-        vec_collision_classes.emplace_back(ObstaclePlanarSDFFactorGPPointRobot{symbol((unsigned char) 'x', i),
+        ObstaclePlanarSDFFactorGPPointRobot factor_collision_interp{symbol((unsigned char) 'x', i),
                                                                           symbol((unsigned char) 'v', i),
                                                                           symbol((unsigned char) 'x', i+1),
                                                                           symbol((unsigned char) 'v', i+1),
@@ -168,20 +228,19 @@ void test_point_robot(){
                                                                           obs_eps,
                                                                           Qc_model,
                                                                           delta_t,
-                                                                          tau});
+                                                                          tau};
         // prior cost classes
-        vec_prior_classes.emplace_back(GaussianPriorLinearPlus{symbol((unsigned char) 'x', i),
+        GaussianPriorLinearPlus factor_prior_interp{symbol((unsigned char) 'x', i),
                                                                   symbol((unsigned char) 'v', i),
                                                                   symbol((unsigned char) 'x', i+1),
                                                                   symbol((unsigned char) 'v', i+1),
                                                                   delta_t,
-                                                                  Qc_model});
+                                                                  Qc_model};
 
-        // prior at start and end pose
+        // single cost factor
 
 
-        // cost functions
-        vec_cost_functions.emplace_back(errorWrapper);
+        vec_cost_functions.emplace_back(errorWrapperInterp);
         // Pk matrices
         MatrixXd Pk{MatrixXd::Zero(2*dim_theta, ndim)};
         Pk.block<dim_theta, dim_theta>(0, i*dim_theta) = MatrixXd::Identity(dim_theta, dim_theta);
@@ -192,8 +251,7 @@ void test_point_robot(){
 
     // declare the optimizer
     // template <typename Function, typename PriorFactorClass, typename CollisionFactorClass, typename... Args>
-    VariationalInferenceMPOptimizerTwoFactors<std::function<double(const gtsam::Vector&, const GaussianPriorLinearPlus&,
-            const ObstaclePlanarSDFFactorGPPointRobot&)>,
+    VariationalInferenceMPOptimizerTwoFactors<std::function<double(const gtsam::Vector&, const GaussianPriorLinearPlus&, const ObstaclePlanarSDFFactorGPPointRobot&)>,
             GaussianPriorLinearPlus,
             ObstaclePlanarSDFFactorGPPointRobot, gtsam::Vector> optimizer(ndim, 2*dim_theta, vec_cost_functions, vec_prior_classes, vec_collision_classes, vec_Pks);
     optimizer.set_mu(init_mean);

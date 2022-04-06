@@ -2,11 +2,6 @@
 // Created by hongzhe on 4/3/22.
 //
 
-#ifndef MPVI_GAUSSIANPRIORLINEARPLUS_H
-#define MPVI_GAUSSIANPRIORLINEARPLUS_H
-
-#endif //MPVI_GAUSSIANPRIORLINEARPLUS_H
-
 #include <gpmp2/gp/GaussianProcessPriorLinear.h>
 
 using namespace gtsam;

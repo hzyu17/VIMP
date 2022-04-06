@@ -1,7 +1,7 @@
 # remember to add -I/usr/include/python2.7 -lpython2.7 in the cmake options when building
 cmake_minimum_required(VERSION 3.16)
 project(MPVI CXX C)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(PythonLibs REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -40,6 +40,8 @@ set_target_properties(FactorizedOptimizer PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(FactorizedOptimizerTwoFactors PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SparseInverser PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(GaussianProcessPriorLinearPlus PROPERTIES LINKER_LANGUAGE CXX)
+
+target_compile_features(FactorizedOptimizerTwoFactors PUBLIC cxx_std_17)
 
 target_link_libraries(matplotlib ${PYTHON_LIBRARIES})
 target_link_libraries(MVGsampler ${GPMP2_LIBRARIES})
