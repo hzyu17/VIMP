@@ -5,38 +5,30 @@
 /**
  * Factorized optimizer for Variational GPMP, cost including Gaussian prior and collisions.
  */
+#ifndef MPVI_OPTIMIZERONEFACTOR_H
+#define MPVI_OPTIMIZERONEFACTOR_H
 
-#ifndef MPVI_OPTIMIZER_H
-#define MPVI_OPTIMIZER_H
-
-#endif //MPVI_OPTIMIZER_H
-
-#include "SparseMatrixHelper.h"
+//#include "SparseMatrixHelper.h"
 #include "MVGsampler.h"
-#include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
 #include <utility>
-#include <boost/optional.hpp>
-#include <optional>
 
 using namespace GaussianSampler;
 using namespace std;
 using namespace Eigen;
 
-IOFormat CleanFmt(4, 0, ", ", "\n");
-
 template <typename Function, typename FactorClass, typename... Args>
-class VariationalInferenceMPOptimizerFactorizedOneFactor{
+class VIMPOptimizerFactorizedOneFactor{
 public:
 
-    VariationalInferenceMPOptimizerFactorizedOneFactor(
+    VIMPOptimizerFactorizedOneFactor(
             const int& dimension,
             Function _function,
             const FactorClass& _factor_class,
             const MatrixXd Pk):
             dim_{dimension},
-            cost_function_{std::forward<Function>(_function)},},
+            cost_function_{std::forward<Function>(_function)},
             factor_class_{_factor_class},
             d_mu{VectorXd::Zero(dim_)},
             mu_{VectorXd::Zero(dim_)},
@@ -72,6 +64,10 @@ protected:
 
 
 public:
+
+    MatrixXd Pk(){
+        return Pk_;
+    }
 
     auto cost_function(Args... args){
         return cost_function_(args..., factor_class_);
@@ -116,13 +112,13 @@ public:
 
         MatrixXd samples{sampler_(num_samples)};
 
+        cout << "samples" << endl << samples << endl;
+
         auto colwise = samples.colwise();
         double accum_phi = 0;
 
         std::for_each(colwise.begin(), colwise.end(), [&](auto const &sample) {
             double phi = cost_function(sample);
-//            double phi = 1;
-
             accum_phi += phi;
 
             Vdmu = Vdmu + (sample - mu_) * phi;
@@ -274,3 +270,5 @@ public:
     }
 
 };
+
+#endif //MPVI_OPTIMIZERONEFACTOR_H

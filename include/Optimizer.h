@@ -86,7 +86,7 @@ public:
 
         for (int k=0; k<num_sub_vars; k++){
 
-            MatrixXd Pk = vec_Pks_[k];
+            const MatrixXd& Pk = vec_Pks_[k];
 
             auto &optimizer_k = vec_factor_optimizers_[k];
 //            cout << "mu_k" << endl << Pk * mu_ << endl;
@@ -136,7 +136,7 @@ public:
 
         for (int k=0; k<num_sub_vars; k++){
 
-            MatrixXd Pk = vec_Pks_[k];
+            const MatrixXd& Pk = vec_Pks_[k];
 
             auto &optimizer_k = vec_factor_optimizers_[k];
             optimizer_k.updateSamplerMean(VectorXd{Pk * mu_});

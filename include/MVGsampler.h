@@ -5,7 +5,6 @@
 #ifndef C_DRAFT_MGVSAMPLER_H
 #define C_DRAFT_MGVSAMPLER_H
 
-#endif //C_DRAFT_MGVSAMPLER_H
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/SparseCore>
@@ -222,3 +221,5 @@ namespace GaussianSampler {
 
     };
 }
+
+#endif //C_DRAFT_MGVSAMPLER_H

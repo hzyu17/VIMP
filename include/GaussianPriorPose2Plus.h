@@ -1,37 +1,34 @@
 //
 // Created by hongzhe on 4/3/22.
 //
+#include <gtsam/geometry/Pose2.h>
+#include <gtsam/slam/PoseTranslationPrior.h>
+#include <gpmp2/gp/GPutils.h>
 
-#include <gpmp2/gp/GaussianProcessPriorPose2.h>
+using namespace gtsam;
+using namespace gpmp2;
 
-class GaussianPriorPose2Plus : public GaussianProcessPriorPose2{
-public:
-    GaussianPriorPose2Plus(gtsam::Key poseKey1, gtsam::Key velKey1,
-                           gtsam::Key poseKey2, gtsam::Key velKey2,
-                           double delta_t, const gtsam::SharedNoiseModel& Qc_model):GaussianProcessPriorPose2(
-                                   poseKey1,
-                                   poseKey2,
-                                   velKey1,
-                                   velKey2,
-                                   delta_t,
-                                   Qc_model){
-        delta_t_ = delta_t;
-        Qc_ = getQc(Qc_model);
+namespace MPVI{
+    class UnaryFactorVector2: public NoiseModelFactor1<gtsam::Vector2> {
+    public:
+        UnaryFactorVector2(Key j, const gtsam::Vector2& conf, const SharedNoiseModel& model):
+                NoiseModelFactor1<gtsam::Vector2>(model, j), mx_(conf(0)), my_(conf(1)) {
+            Qc_ = getQc(model);
+        }
 
-    }
+        gtsam::Vector evaluateError(const gtsam::Vector2& q, boost::optional<gtsam::Matrix &> H=boost::none) const
+        {
+            return (gtsam::Vector(2) << q(0) - mx_, q(1) - my_).finished();
+        }
 
-public:
-    double get_delta_t() const{
-        return delta_t_;
-    }
+        MatrixXd get_Qc() const{
+            return Qc_;
+        }
 
-    MatrixXd get_Qc() const{
-        return Qc_;
-    }
+    private:
+        MatrixXd Qc_;
+        double mx_, my_; ///< X and Y measurements
+    };
+}
 
-private:
-    double delta_t_;
-    MatrixXd Qc_;
-
-};
 
