@@ -22,17 +22,19 @@ using namespace SparseInverse;
 typedef Triplet<double> T;
 
 namespace MPVI {
-    template<class Function_Interp, class Function_Prior, class Function_Collision, class PriorFactorClass, class CollisionFactorClass, class PriorFactorClassInterp, class CollisionFactorClassInterp, class... Args>
+    template<class FunctionPriorTwo, class FunctionCollisionInterp, class Function_Prior, class Function_Collision, class PriorFactorClass, class CollisionFactorClass, class PriorFactorClassInterp, class CollisionFactorClassInterp, class... Args>
     class VIMPOptimizerFourFactors {
-        using FactorizedOptimizerTwoFactors = VIMPOptimizerFactorizedTwoFactors<Function_Interp, PriorFactorClassInterp, CollisionFactorClassInterp, Args...>;
-        using FactorizedOptimizerOnePriorFactor = VIMPOptimizerFactorizedOneFactor<Function_Prior, PriorFactorClass, Args...>;
-        using FactorizedOptimizerOneCollisionFactor = VIMPOptimizerFactorizedOneFactor<Function_Collision, CollisionFactorClass, Args...>;
+        using PriorTwoFactors = VIMPOptimizerFactorizedTwoFactors<FunctionPriorTwo, PriorFactorClassInterp, Args...>;
+        using CollisionTwoFactors = VIMPOptimizerFactorizedTwoFactors<FunctionCollisionInterp, CollisionFactorClassInterp, Args...>;
+        using OnePriorFactor = VIMPOptimizerFactorizedOneFactor<Function_Prior, PriorFactorClass, Args...>;
+        using OneCollisionFactor = VIMPOptimizerFactorizedOneFactor<Function_Collision, CollisionFactorClass, Args...>;
 
     public:
         VIMPOptimizerFourFactors(int dimension,
-                                 vector<FactorizedOptimizerTwoFactors> _vec_optimizer_interp,
-                                 vector<FactorizedOptimizerOnePriorFactor> _vec_optimizer_one_prior,
-                                 vector<FactorizedOptimizerOneCollisionFactor> _vec_optimizer_one_collision):
+                                 vector<PriorTwoFactors> _vec_two_prior,
+                                 vector<CollisionTwoFactors> _vec_collision_interp,
+                                 vector<OnePriorFactor> _vec_one_prior,
+                                 vector<OneCollisionFactor> _vec_one_collision):
                 dim{dimension},
                 mu_{VectorXd::Zero(dimension)},
                 d_mu_{VectorXd::Zero(dimension)},
@@ -41,16 +43,18 @@ namespace MPVI {
                 Vdmu_{VectorXd::Zero(dimension)},
                 Vddmu_{MatrixXd::Identity(dim, dim)},
                 inverser_{MatrixXd::Identity(dim, dim)},
-                vec_optimizer_interp_{_vec_optimizer_interp},
-                vec_optimizer_one_prior_{_vec_optimizer_one_prior},
-                vec_optimizer_one_collision_{_vec_optimizer_one_collision},
-                num_opti_interp{_vec_optimizer_interp.size()},
-                num_opti_prior{_vec_optimizer_one_prior.size()},
-                num_opti_collision{_vec_optimizer_one_collision.size()} {}
+                vec_two_prior_{_vec_two_prior},
+                vec_collision_interp_{_vec_collision_interp},
+                vec_optimizer_one_prior_{_vec_one_prior},
+                vec_optimizer_one_collision_{_vec_one_collision},
+                num_two_prior{_vec_two_prior.size()},
+                num_collision_interp{_vec_collision_interp.size()},
+                num_one_prior{_vec_one_prior.size()},
+                num_one_collision{_vec_one_collision.size()} {}
 
     protected:
         // optimization variables
-        int dim, num_opti_interp, num_opti_prior, num_opti_collision;
+        int dim, num_two_prior, num_collision_interp, num_one_prior, num_one_collision;
 
         VectorXd mu_, Vdmu_, d_mu_;
         MatrixXd precision_, Vddmu_, d_precision_;
@@ -60,9 +64,10 @@ namespace MPVI {
         double step_size_precision = 0.9;
         double step_size_mu = 0.9;
 
-        vector<FactorizedOptimizerTwoFactors> vec_optimizer_interp_;
-        vector<FactorizedOptimizerOnePriorFactor> vec_optimizer_one_prior_;
-        vector<FactorizedOptimizerOneCollisionFactor> vec_optimizer_one_collision_;
+        vector<PriorTwoFactors> vec_two_prior_;
+        vector<CollisionTwoFactors> vec_collision_interp_;
+        vector<OnePriorFactor> vec_optimizer_one_prior_;
+        vector<OneCollisionFactor> vec_optimizer_one_collision_;
 
     public:
 
@@ -77,9 +82,29 @@ namespace MPVI {
 
             MatrixXd Sigma{inverser_.inverse(precision_)};
 
-            for (int k = 0; k < num_opti_interp; k++) {
+            for (int k = 0; k < num_two_prior; k++) {
 
-                auto &optimizer_k = vec_optimizer_interp_[k];
+                auto &optimizer_k = vec_two_prior_[k];
+
+                optimizer_k.updateSamplerMean(VectorXd{optimizer_k.Pk() * mu_});
+
+                optimizer_k.updateSamplerCovarianceMatrix(
+                        MatrixXd{optimizer_k.Pk() * Sigma * optimizer_k.Pk().transpose()});
+
+                optimizer_k.update_mu(VectorXd{optimizer_k.Pk() * mu_});
+                optimizer_k.update_precision(
+                        MatrixXd{(optimizer_k.Pk() * Sigma * optimizer_k.Pk().transpose()).inverse()});
+
+                optimizer_k.calculate_partial_V();
+
+                Vdmu_ = Vdmu_ + optimizer_k.Pk().transpose() * optimizer_k.get_Vdmu();
+                Vddmu_ = Vddmu_ + optimizer_k.Pk().transpose().eval() * optimizer_k.get_Vddmu() * optimizer_k.Pk();
+
+            }
+
+            for (int k = 0; k < num_collision_interp; k++) {
+
+                auto &optimizer_k = vec_collision_interp_[k];
 
                 optimizer_k.updateSamplerMean(VectorXd{optimizer_k.Pk() * mu_});
 
@@ -99,7 +124,7 @@ namespace MPVI {
 
             cout << "finish step 1" << endl;
 
-            for (int k = 0; k < num_opti_prior; k++) {
+            for (int k = 0; k < num_one_prior; k++) {
 
                 auto &optimizer_k = vec_optimizer_one_prior_[k];
 
@@ -121,7 +146,7 @@ namespace MPVI {
 
             cout << "finish step 2" << endl;
 
-            for (int k = 0; k < num_opti_collision; k++) {
+            for (int k = 0; k < num_one_collision; k++) {
 
                 auto &optimizer_k = vec_optimizer_one_collision_[k];
 

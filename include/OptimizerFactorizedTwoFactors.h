@@ -24,20 +24,18 @@ using namespace Eigen;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 namespace MPVI {
-    template<typename Function, typename PriorFactorClass, typename CollisionFactorClass, typename... Args>
+    template<typename Function, typename CostClass, typename... Args>
     class VIMPOptimizerFactorizedTwoFactors {
     public:
 
         VIMPOptimizerFactorizedTwoFactors(
                 const int &dimension,
                 Function _function,
-                const PriorFactorClass &_prior_class,
-                const CollisionFactorClass &_collision_class,
+                const CostClass &_cost_class,
                 const MatrixXd &Pk) :
                 dim_{dimension},
                 cost_function_{std::forward<Function>(_function)},
-                prior_factor_class_{_prior_class},
-                collision_factor_class_{_collision_class},
+                cost_class_{_cost_class},
                 d_mu{VectorXd::Zero(dim_)},
                 mu_{VectorXd::Zero(dim_)},
                 Vdmu{VectorXd::Zero(dim_)},
@@ -69,8 +67,7 @@ namespace MPVI {
 
         // cost functional. Input: samples vector; Output: cost
         Function cost_function_;
-        CollisionFactorClass collision_factor_class_;
-        PriorFactorClass prior_factor_class_;
+        CostClass cost_class_;
 
     public:
 
@@ -79,7 +76,7 @@ namespace MPVI {
         }
 
         auto cost_function(Args... args) {
-            return cost_function_(args..., prior_factor_class_, collision_factor_class_);
+            return cost_function_(args..., cost_class_);
         }
 
         void set_step_size(double ss_mean, double ss_precision) {

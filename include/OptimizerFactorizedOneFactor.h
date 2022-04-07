@@ -118,6 +118,7 @@ public:
         double accum_phi = 0;
 
         std::for_each(colwise.begin(), colwise.end(), [&](auto const &sample) {
+            cout << "sample" << endl << sample << endl;
             double phi = cost_function(sample);
             accum_phi += phi;
 
