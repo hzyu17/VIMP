@@ -77,6 +77,9 @@ target_link_libraries(test_sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES}
 add_executable(test_GH src/test_GH.cpp)
 target_link_libraries(test_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
+add_executable(test_conv_GH src/test_convergence_GH.cpp)
+target_link_libraries(test_conv_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+
 # python wrapper
 option(MPVI_BUILD_PYTHON "whether build python toolbox, need shared lib" OFF)
 

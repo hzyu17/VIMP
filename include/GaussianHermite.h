@@ -139,10 +139,5 @@ private:
     VectorXd sigmapts_;
 };
 
-//template<typename Function>
-//GaussHermite<Function>::GaussHermite(const int &p, const int &dim, const VectorXd &mean, const MatrixXd &P,
-//                                     const Function &function) {
-//
-//}
 
 #endif //MPVI_GAUSSIANHERMITE_H

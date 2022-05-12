@@ -12,7 +12,6 @@
 
 using namespace gtsam;
 using namespace std;
-using namespace GaussianSampler;
 
 typedef SparseMatrix<double> SpMatrix;
 typedef Triplet<double> T;
@@ -61,15 +60,6 @@ int main(){
         optimizer.set_step_size(step_size, step_size);
 
         bool decrease = optimizer.step();
-
-        /// Update the sampler parameters
-        // use direct inverse
-//        optimizer.updateMean();
-//        optimizer.updateCovarianceMatrix();
-
-        // use the sparse inverse algorithm
-        optimizer.updateSamplerMean();
-        optimizer.updateSamplerCovarianceMatrix(inverser_.inverse(optimizer.get_precision()));
 
         cout << "==== iteration " << i << " ====" << endl
              << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl

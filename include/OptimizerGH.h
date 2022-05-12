@@ -12,7 +12,7 @@
 #include <random>
 #include <utility>
 #include "SparseInverseMatrix.h"
-#include "OptimizerFactorized.h"
+#include "OptimizerFactorizedGaussHermite.h"
 #include <boost/scoped_ptr.hpp>
 
 using namespace GaussianSampler;
@@ -23,11 +23,11 @@ typedef Triplet<double> T;
 template <typename Function, typename costClass, typename... Args>
 
 // template function and classes to calculate the costs
-class VariationalInferenceMPOptimizer{
-    using FactorizedOptimizer = VariationalInferenceMPOptimizerFactorized<Function, costClass, Args...>;
+class VariationalInferenceMPOptimizerGH{
+    using FactorizedOptimizer = VariationalInferenceMPOptimizerFactorizedGaussHermite<Function, costClass, Args...>;
 
 public:
-    VariationalInferenceMPOptimizer(const int& dimension, const int& sub_dim, const vector<Function>& _vec_function,
+    VariationalInferenceMPOptimizerGH(const int& dimension, const int& sub_dim, const vector<Function>& _vec_function,
                                    const vector<costClass>& _vec_cost_class, const vector<MatrixXd>& _vec_Pks):
                                    dim{dimension},
                                    sub_dim{sub_dim},
@@ -76,7 +76,6 @@ public:
 
     void step(){
         cout << "mu_ " << endl << mu_ << endl;
-//        cout << "new precision " << endl << precision_ << endl;
 
         Vdmu_.setZero();
         Vddmu_.setZero();
@@ -90,10 +89,6 @@ public:
             const MatrixXd& Pk = vec_Pks_[k];
 
             auto &optimizer_k = vec_factor_optimizers_[k];
-//            cout << "mu_k" << endl << Pk * mu_ << endl;
-            optimizer_k.updateSamplerMean(VectorXd{Pk * mu_});
-
-            optimizer_k.updateSamplerCovarianceMatrix(MatrixXd{Pk * Sigma * Pk.transpose()});
 
             optimizer_k.update_mu(VectorXd{Pk*mu_});
             optimizer_k.update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
@@ -110,20 +105,11 @@ public:
         d_precision_ = -precision_ + Vddmu_;
 
         precision_ = precision_ + step_size_precision*d_precision_;
-//        precision_sparse_ = precision_.sparseView();
-//        SparseQR<SpMatrix, Eigen::NaturalOrdering<int>> qr_solver(precision_sparse_);
-//        d_mu_ = qr_solver.solve(-Vdmu_);
 
         d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
 
-
         mu_ = mu_ + step_size_mu * d_mu_;
 
-//        cout << "d_precision_" << endl << d_precision_ << endl;
-//        cout << "d_mean" << endl << d_mu_ << endl;
-//
-//        cout << "precision" << endl << precision_ << endl;
-//        cout << "mu" << endl << mu_ << endl;
     }
 
     void step_closed_form(){

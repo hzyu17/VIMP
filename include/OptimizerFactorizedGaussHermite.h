@@ -35,7 +35,6 @@ public:
             precision_{MatrixXd::Identity(dim_, dim_)},
             d_precision{MatrixXd::Zero(dim_, dim_)},
             covariance_{precision_.inverse()},
-            sampler_{normal_random_variable(mu_, precision_.inverse())},
             func_Vmu{[&](const VectorXd& x){return MatrixXd{(x-mu_)*cost_function_(x, cost_class_)};}},
             func_Vmumu{[&](const VectorXd& x){return MatrixXd{(x - mu_) * (x - mu_).transpose().eval()*cost_function_(x, cost_class_)};}},
             func_phi{[&](const VectorXd& x){return Matrix<double, 1, 1>{cost_function_(x, cost_class_)};}},
@@ -52,9 +51,6 @@ protected:
     // step sizes
     double step_size_mu = 0.9;
     double step_size_Sigma = 0.9;
-
-    // sampler
-    normal_random_variable sampler_;
 
     // cost functional. Input: samples vector; Output: cost
     Function cost_function_;
@@ -117,24 +113,6 @@ public:
         covariance_ = precision_.inverse();
     }
 
-    /**
-     * Update the mean and covariance in the sampler
-     * */
-    void updateSamplerCovarianceMatrix(const MatrixXd& new_cov){
-        sampler_.updateCovariance(new_cov);
-    }
-
-    void updateSamplerCovarianceMatrix(){
-        sampler_.updateCovariance(precision_.inverse());
-    }
-
-    void updateSamplerMean(){
-        sampler_.updateMean(mu_);
-    }
-
-    void updateSamplerMean(const VectorXd& new_mu){
-        sampler_.updateMean(new_mu);
-    }
 
     /**
      * Update the mean and variance in the Gauss-Hermite approximator
