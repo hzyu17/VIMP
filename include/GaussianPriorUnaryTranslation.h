@@ -12,10 +12,8 @@ namespace MPVI{
     template <class T>
     class UnaryFactorTranslation: public NoiseModelFactor1<T> {
     public:
-        UnaryFactorTranslation(Key key, const T& conf, const SharedNoiseModel& model):
-                NoiseModelFactor1<T>(model, key), conf_(conf) {
-            Qc_ = getQc(model);
-        }
+        UnaryFactorTranslation(Key key, const T& conf, const gtsam::SharedNoiseModel model):
+                NoiseModelFactor1<T>(model, key), conf_(conf),K_(getQc(model)) {}
 
         gtsam::Vector evaluateError(const T& q, boost::optional<gtsam::Matrix &> H=boost::none) const
         {
@@ -23,11 +21,11 @@ namespace MPVI{
         }
 
         MatrixXd get_Qc() const{
-            return Qc_;
+            return K_;
         }
 
     private:
-        MatrixXd Qc_;
+        MatrixXd K_;
         T conf_; ///< X and Y measurements
     };
 }

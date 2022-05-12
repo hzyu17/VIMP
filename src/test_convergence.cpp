@@ -48,7 +48,6 @@ void test_coupled(){
     vector<Gaussian_distribution> vec_target_classes;
     vector<Gaussian_distribution> vec_cost_class;
 
-    cout << "whole precision " << endl << precision_t << endl;
     vector<gtsam::Matrix> vec_Pks;
     for (int i=0; i<ndim-1; i++){
         MatrixXd Pk{MatrixXd::Zero(2, ndim)};
@@ -174,6 +173,11 @@ void test_decoupled(){
                  << "precision matrix " << endl << optimizer.get_precision().format(CleanFmt) << endl;
         }
     }
+
+    cout << "==== end of iterations ====" << endl
+         << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl
+         << "precision matrix " << endl << optimizer.get_precision().format(CleanFmt) << endl;
+
 }
 
 
@@ -181,5 +185,6 @@ int main(){
 
 //    test_decoupled();
     test_coupled();
+
 
 };

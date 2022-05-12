@@ -32,6 +32,7 @@ add_library(SpHelper SHARED include/SparseMatrixHelper.h)
 add_library(FactorizedOptimizer SHARED include/OptimizerFactorized.h)
 add_library(FactorizedOptimizerTwoFactors SHARED include/OptimizerFactorizedTwoFactors.h)
 add_library(GaussianProcessPriorLinearPlus SHARED include/GaussianPriorLinearPlus.h)
+add_library(GaussianHermite SHARED include/GaussianHermite.h)
 
 set_target_properties(matplotlib PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SpHelper PROPERTIES LINKER_LANGUAGE CXX)
@@ -40,6 +41,7 @@ set_target_properties(FactorizedOptimizer PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(FactorizedOptimizerTwoFactors PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SparseInverser PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(GaussianProcessPriorLinearPlus PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(GaussianHermite PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_features(FactorizedOptimizerTwoFactors PUBLIC cxx_std_17)
 
@@ -63,11 +65,17 @@ target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_
 add_executable(test_point_robot src/test_motion_planning_point_robot.cpp)
 target_link_libraries(test_point_robot ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
+add_executable(test_conv_factor_GH src/test_convergence_GH_factorized.cpp)
+target_link_libraries(test_conv_factor_GH ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+
 add_executable(test_conv_factor src/test_convergence_factorized.cpp)
 target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 add_executable(test_sparse_inverse src/test_sparse_inverse.cpp)
 target_link_libraries(test_sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+
+add_executable(test_GH src/test_GH.cpp)
+target_link_libraries(test_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 # python wrapper
 option(MPVI_BUILD_PYTHON "whether build python toolbox, need shared lib" OFF)

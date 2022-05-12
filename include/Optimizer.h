@@ -12,7 +12,7 @@
 #include <random>
 #include <utility>
 #include "SparseInverseMatrix.h"
-#include "OptimizerFactorized.h"
+#include "OptimizerFactorizedGaussHermite.h"
 #include <boost/scoped_ptr.hpp>
 
 using namespace GaussianSampler;
@@ -24,7 +24,7 @@ template <typename Function, typename costClass, typename... Args>
 
 // template function and classes to calculate the costs
 class VariationalInferenceMPOptimizer{
-    using FactorizedOptimizer = VariationalInferenceMPOptimizerFactorized<Function, costClass, Args...>;
+    using FactorizedOptimizer = VariationalInferenceMPOptimizerFactorizedGaussHermite<Function, costClass, Args...>;
 
 public:
     VariationalInferenceMPOptimizer(const int& dimension, const int& sub_dim, const vector<Function>& _vec_function,
@@ -38,6 +38,7 @@ public:
                                    mu_{VectorXd::Zero(dimension)},
                                    d_mu_{VectorXd::Zero(dimension)},
                                    precision_{MatrixXd::Identity(dim, dim) * 5.0},
+//                                   precision_{MatrixXd::Identity(dim, dim)},
                                    d_precision_(MatrixXd::Identity(dim, dim)),
                                    Vdmu_{VectorXd::Zero(dimension)},
                                    Vddmu_(MatrixXd::Identity(dim, dim)),
@@ -118,11 +119,11 @@ public:
 
         mu_ = mu_ + step_size_mu * d_mu_;
 
-        cout << "d_precision_" << endl << d_precision_ << endl;
-        cout << "d_mean" << endl << d_mu_ << endl;
-
-        cout << "precision" << endl << precision_ << endl;
-        cout << "mu" << endl << mu_ << endl;
+//        cout << "d_precision_" << endl << d_precision_ << endl;
+//        cout << "d_mean" << endl << d_mu_ << endl;
+//
+//        cout << "precision" << endl << precision_ << endl;
+//        cout << "mu" << endl << mu_ << endl;
     }
 
     void step_closed_form(){

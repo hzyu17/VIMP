@@ -24,9 +24,8 @@ using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
 inline double errorWrapperSinglePrior(const gtsam::Vector2& conf, const UnaryFactorTranslation2D& prior_factor) {
 
     VectorXd vec_prior_err = prior_factor.evaluateError(conf);
-    MatrixXd Qi = calcQ(prior_factor.get_Qc(), 0);
-
-    double prior_err = vec_prior_err.transpose() * Qi.inverse() * vec_prior_err;
+    MatrixXd K = prior_factor.get_Qc();
+    double prior_err = vec_prior_err.transpose() * K.inverse() * vec_prior_err;
 
     return prior_err;
 }
@@ -40,8 +39,6 @@ inline double errorWrapperPriorTwoFactors(const gtsam::Vector& theta,
 
     VectorXd vec_prior_err = prior_factor.evaluateError(conf1, vel1, conf2, vel2);
     MatrixXd Qi = calcQ(prior_factor.get_Qc(), prior_factor.get_delta_t());
-
-//    double prior_err = vec_prior_err.transpose() * Qi.inverse() * vec_prior_err;
 
     return vec_prior_err.transpose() * Qi.inverse() * vec_prior_err;
 }
@@ -149,14 +146,13 @@ void test_point_robot() {
 
     // 2D point robot
     double total_time = 10.0;
-    int num_support_states = 5, num_interp = 2, N = num_support_states + 1;
+    int num_support_states = 3, num_interp = 2, N = num_support_states + 1;
 
     // parameters
     const int ndof = 2, nlinks = 1;
     const int dim_conf = ndof * nlinks;
     const int dim_theta = 2 * dim_conf;
     const int ndim = dim_theta * N;
-    const int n_interp = 2;
 
     double delta_t = total_time / num_support_states;
     double obs_eps = 0.2, obs_sigma = 1.0;
@@ -194,6 +190,7 @@ void test_point_robot() {
     SharedNoiseModel Qc_model = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
     cout << "Qc" << endl << getQc(Qc_model) << endl;
     SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
+//    MatrixXd K_0{MatrixXd::Identity(ndof, ndof)};
 
     for (int i = 0; i < N - 1; i++) {
         // Pk matrices
@@ -222,7 +219,7 @@ void test_point_robot() {
        }
 
         // collision cost classes: interpolation
-        for(int j=1; j<n_interp; j++){
+        for(int j=1; j<num_interp; j++){
             double tau = j * delta_t / num_interp;
             ObstaclePlanarSDFFactorGPPointRobot factor_collision_interp{symbol('x', i),
                                                                         symbol('v', i),
@@ -245,11 +242,17 @@ void test_point_robot() {
                                                                                                     symbol('x', i + 1),
                                                                                                     symbol('v', i + 1),
                                                                                                     delta_t,
-                                                                                                    Qc_model}, Pk});
+                                                                                                    Qc_model},
+                                Pk});
 
         // single cost factor
         vec_one_collision.emplace_back(
-                OptimizerOneCollision{dim_conf, errorWrapperSingleCollision, ObstaclePlanarSDFFactorPointRobot{symbol('x', i), pRModel, sdf, obs_sigma, obs_eps}, Pk_conf1}); // only conf is involved, velocity is not relavant
+                OptimizerOneCollision{dim_conf, errorWrapperSingleCollision, ObstaclePlanarSDFFactorPointRobot{symbol('x', i),
+                                                                                                               pRModel,
+                                                                                                               sdf,
+                                                                                                               obs_sigma,
+                                                                                                               obs_eps},
+                                      Pk_conf1}); // only conf is involved, velocity is not relavant
 
         cout << "Pk" << endl << Pk << endl;
         cout << "Pk_single" << endl << Pk_vel1 << endl;
@@ -260,16 +263,27 @@ void test_point_robot() {
     MatrixXd Pk_conf1{MatrixXd::Zero(dim_conf, ndim)};
     Pk_conf1.block<dim_conf, dim_conf>(0, (N-1) * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
     vec_one_prior.emplace_back(
-            OptimizerOnePrior{1 * dim_conf, errorWrapperSinglePrior, UnaryFactorTranslation2D{symbol('x', N-1), gtsam::Vector2{goal_conf.segment<dim_conf>(0)}, K_0}, Pk_conf1});
+            OptimizerOnePrior{1 * dim_conf, errorWrapperSinglePrior, UnaryFactorTranslation2D{symbol('x', N-1),
+                                                                                              gtsam::Vector2{goal_conf.segment<dim_conf>(0)},
+                                                                                              K_0},
+                              Pk_conf1});
     // goal vel
     MatrixXd Pk_vel1{MatrixXd::Zero(dim_conf, ndim)};
     Pk_vel1.block<dim_conf, dim_conf>(0, (N-1) * dim_theta + dim_conf) = MatrixXd::Identity(dim_conf, dim_conf);
     vec_one_prior.emplace_back(
-            OptimizerOnePrior{1 * dim_conf, errorWrapperSinglePrior, UnaryFactorTranslation2D{symbol('v', N-1), gtsam::Vector2{goal_conf.segment<dim_conf>(dim_conf)}, K_0}, Pk_vel1});
+            OptimizerOnePrior{1 * dim_conf, errorWrapperSinglePrior, UnaryFactorTranslation2D{symbol('v', N-1),
+                                                                                              gtsam::Vector2{goal_conf.segment<dim_conf>(dim_conf)},
+                                                                                              K_0},
+                              Pk_vel1});
 
     // collision at N
     vec_one_collision.emplace_back(
-            OptimizerOneCollision{dim_conf, errorWrapperSingleCollision, ObstaclePlanarSDFFactorPointRobot{symbol('x', N-1), pRModel, sdf, obs_sigma, obs_eps}, Pk_conf1});
+            OptimizerOneCollision{dim_conf, errorWrapperSingleCollision, ObstaclePlanarSDFFactorPointRobot{symbol('x', N-1),
+                                                                                                           pRModel,
+                                                                                                           sdf,
+                                                                                                           obs_sigma,
+                                                                                                           obs_eps},
+                                  Pk_conf1});
 
     // declare the optimizer
     // template<class FunctionPriorTwo, class FunctionCollisionInterp, class Function_Prior, class Function_Collision, class PriorFactorClass, class CollisionFactorClass, class PriorFactorClassInterp, class CollisionFactorClassInterp, class... Args>
@@ -284,7 +298,7 @@ void test_point_robot() {
                             gtsam::Vector> optimizer{ndim, vec_two_priors, vec_collision_interp, vec_one_prior, vec_one_collision};
     optimizer.set_mu(init_mean);
 
-    const int num_iter = 8;
+    const int num_iter = 80;
     double step_size = 0.9;
 
     MatrixXd results{MatrixXd::Zero(num_iter, ndim)};

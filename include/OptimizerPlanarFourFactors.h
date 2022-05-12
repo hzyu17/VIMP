@@ -72,9 +72,6 @@ namespace MPVI {
     public:
 
         void step() {
-            cout << "mu_ " << endl << mu_ << endl;
-//        cout << "new precision " << endl << precision_ << endl;
-
             Vdmu_.setZero();
             Vddmu_.setZero();
             d_mu_.setZero();
@@ -122,8 +119,6 @@ namespace MPVI {
 
             }
 
-            cout << "finish step 1" << endl;
-
             for (int k = 0; k < num_one_prior; k++) {
 
                 auto &optimizer_k = vec_optimizer_one_prior_[k];
@@ -144,8 +139,6 @@ namespace MPVI {
 
             }
 
-            cout << "finish step 2" << endl;
-
             for (int k = 0; k < num_one_collision; k++) {
 
                 auto &optimizer_k = vec_optimizer_one_collision_[k];
@@ -165,8 +158,6 @@ namespace MPVI {
                 Vddmu_ = Vddmu_ + optimizer_k.Pk().transpose().eval() * optimizer_k.get_Vddmu() * optimizer_k.Pk();
 
             }
-
-            cout << "finish step" << endl;
 
             d_precision_ = -precision_ + Vddmu_;
 

@@ -1,10 +1,9 @@
-//
-// Created by hongzhe on 4/2/22.
-//
-
 /**
  * Factorized optimizer for Variational GPMP, cost including Gaussian prior and collisions.
+ * Author: Hongzhe Yu
+ * Date: 4/2/22
  */
+
 #ifndef MPVI_OPTIMIZERONEFACTOR_H
 #define MPVI_OPTIMIZERONEFACTOR_H
 
@@ -112,13 +111,12 @@ public:
 
         MatrixXd samples{sampler_(num_samples)};
 
-        cout << "samples" << endl << samples << endl;
+//        cout << "samples" << endl << samples << endl;
 
         auto colwise = samples.colwise();
         double accum_phi = 0;
 
         std::for_each(colwise.begin(), colwise.end(), [&](auto const &sample) {
-            cout << "sample" << endl << sample << endl;
             double phi = cost_function(sample);
             accum_phi += phi;
 
