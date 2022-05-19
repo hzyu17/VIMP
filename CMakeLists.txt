@@ -30,9 +30,10 @@ add_library(MVGsampler SHARED include/MVGsampler.h)
 add_library(SparseInverser SHARED include/SparseInverseMatrix.h)
 add_library(SpHelper SHARED include/SparseMatrixHelper.h)
 add_library(FactorizedOptimizer SHARED include/OptimizerFactorized.h)
+add_library(FactorizedOptimizerGaussHermite SHARED include/OptimizerFactorizedGaussHermite.h)
 add_library(FactorizedOptimizerTwoFactors SHARED include/OptimizerFactorizedTwoFactors.h)
 add_library(GaussianProcessPriorLinearPlus SHARED include/GaussianPriorLinearPlus.h)
-add_library(GaussianHermite SHARED include/GaussianHermite.h)
+add_library(GaussianHermite SHARED include/GaussHermite.h)
 
 set_target_properties(matplotlib PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SpHelper PROPERTIES LINKER_LANGUAGE CXX)
@@ -42,6 +43,7 @@ set_target_properties(FactorizedOptimizerTwoFactors PROPERTIES LINKER_LANGUAGE C
 set_target_properties(SparseInverser PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(GaussianProcessPriorLinearPlus PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(GaussianHermite PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(FactorizedOptimizerGaussHermite PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_features(FactorizedOptimizerTwoFactors PUBLIC cxx_std_17)
 

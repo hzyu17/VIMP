@@ -2,10 +2,6 @@
 // Created by hongzhe on 3/7/22.
 //
 
-#ifndef MPVI_OPTIMIZER_H
-#define MPVI_OPTIMIZER_H
-
-#endif //MPVI_OPTIMIZER_H
 
 #include "SparseMatrixHelper.h"
 #include "MVGsampler.h"
@@ -13,7 +9,9 @@
 #include <iostream>
 #include <random>
 #include <utility>
-#include "../include/GaussianHermite.h"
+#include "../include/GaussHermite.h"
+#include "../include/MVGsampler.h"
+
 
 using namespace GaussianSampler;
 using namespace std;
@@ -30,23 +28,23 @@ public:
             cost_class_{_cost_class},
             d_mu{VectorXd::Zero(dim_)},
             mu_{VectorXd::Zero(dim_)},
-            Vdmu{VectorXd::Zero(dim_)},
-            Vddmu{MatrixXd::Zero(dim_, dim_)},
+            Vdmu_{VectorXd::Zero(dim_)},
+            Vddmu_{MatrixXd::Zero(dim_, dim_)},
             precision_{MatrixXd::Identity(dim_, dim_)},
             d_precision{MatrixXd::Zero(dim_, dim_)},
             covariance_{precision_.inverse()},
-            func_Vmu{[&](const VectorXd& x){return MatrixXd{(x-mu_)*cost_function_(x, cost_class_)};}},
-            func_Vmumu{[&](const VectorXd& x){return MatrixXd{(x - mu_) * (x - mu_).transpose().eval()*cost_function_(x, cost_class_)};}},
-            func_phi{[&](const VectorXd& x){return Matrix<double, 1, 1>{cost_function_(x, cost_class_)};}},
-            gauss_hermite_Vmu_{10, dim_, mu_, covariance_, func_Vmu}{}
+//            func_Vmu_{[&](const VectorXd& x){return MatrixXd{(x-mu_)*cost_function_(x, cost_class_)};}},
+//            func_Vmumu_{[&](const VectorXd& x){return MatrixXd{(x - mu_) * (x - mu_).transpose().eval()*cost_function_(x, cost_class_)};}},
+            func_phi_{[&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};}},
+            gauss_hermite_{10, dim_, mu_, covariance_, func_phi_}{}
 protected:
     // optimization variables
     int dim_;
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision, covariance_;
 
-    VectorXd Vdmu;
-    MatrixXd Vddmu;
+    VectorXd Vdmu_;
+    MatrixXd Vddmu_;
 
     // step sizes
     double step_size_mu = 0.9;
@@ -56,31 +54,30 @@ protected:
     Function cost_function_;
     costClass cost_class_;
 
-    std::function<MatrixXd(const VectorXd&)> func_Vmu;
-    std::function<MatrixXd(const VectorXd&)> func_Vmumu;
-    std::function<MatrixXd(const VectorXd&)> func_phi;
+//    std::function<MatrixXd(const VectorXd&)> func_Vmu_;
+//    std::function<MatrixXd(const VectorXd&)> func_Vmumu_;
+    std::function<MatrixXd(const VectorXd&)> func_phi_;
 
-
-    GaussHermite<std::function<VectorXd(const VectorXd&)>> gauss_hermite_Vmu_;
+    GaussHermite<std::function<MatrixXd(const VectorXd&)>> gauss_hermite_;
 
 public:
     /**
      * Function used in the GH approximated integration for partial_V/partial_mu
      * */
-//    VectorXd func_Vmu(const VectorXd& x){
-//        return (x - mu_) * cost_function(x, cost_class_);
+//    MatrixXd func_Vmumu(const VectorXd& x){
+//        return (x - VectorXd{mu_}) * (x - VectorXd{mu_}).transpose().eval() * cost_function(x, cost_class_);
 //    }
 
     /**
      * update the GH approximator
      * */
      void updateGH(){
-        gauss_hermite_Vmu_.update_mean(mu_);
-        gauss_hermite_Vmu_.update_P(covariance_);
+        gauss_hermite_.update_mean(VectorXd{mu_});
+        gauss_hermite_.update_P(MatrixXd{covariance_});
      }
 
      void updateGHfunc(const std::function<MatrixXd(const VectorXd&)>& func){
-         gauss_hermite_Vmu_.update_integrand(func);
+         gauss_hermite_.update_integrand(func);
      }
 
     /**
@@ -118,42 +115,46 @@ public:
      * Update the mean and variance in the Gauss-Hermite approximator
      * */
     void update_GH_mean(){
-        gauss_hermite_Vmu_.update_mean(mu_);
+        gauss_hermite_.update_mean(mu_);
     }
 
     void update_GH_covariance(){
-        gauss_hermite_Vmu_.update_P(covariance_);
+        gauss_hermite_.update_P(covariance_);
     }
 
     /**
      * Main code: calculate phi * (partial V) / (partial mu), and phi * (partial V^2) / (partial mu * partial mu^T)
      * */
     void calculate_partial_V(){
-        Vdmu.setZero();
-        Vddmu.setZero();
+        Vdmu_.setZero();
+        Vddmu_.setZero();
 
         // GH approximation
         updateGH();
-        /** Integrate for Vdmu **/
-        gauss_hermite_Vmu_.update_integrand(func_Vmu);
-        MatrixXd Vdmu = gauss_hermite_Vmu_.Integrate();
-        Vdmu = precision_ * Vdmu;
 
-        /** Integrate for Vddmu **/
-        gauss_hermite_Vmu_.update_integrand(func_Vmumu);
-        Vddmu = gauss_hermite_Vmu_.Integrate();
+        /** Integrate for Vdmu_ **/
+        std::function<MatrixXd(const VectorXd&)> func_Vmu_ = [&](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * cost_function_(x, cost_class_)};};
+        gauss_hermite_.update_integrand(func_Vmu_);
+        Vdmu_ = gauss_hermite_.Integrate();
+        Vdmu_ = precision_ * Vdmu_;
 
         /** Integrate for phi(x) **/
-        gauss_hermite_Vmu_.update_integrand(func_phi);
-        double avg_phi = gauss_hermite_Vmu_.Integrate()(0, 0);
+        std::function<MatrixXd(const VectorXd&)> func_phi_ = [&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};};
+        gauss_hermite_.update_integrand(func_phi_);
+        double avg_phi = gauss_hermite_.Integrate()(0, 0);
 
-        Vddmu.triangularView<Upper>() = (precision_ * Vddmu * precision_).triangularView<Upper>();
-        Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+        /** Integrate for Vddmu_ **/
+        std::function<MatrixXd(const VectorXd&)> func_Vmumu_ = [&](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * (x-VectorXd{mu_}).transpose().eval() * cost_function_(x, cost_class_)};};
+        gauss_hermite_.update_integrand(func_Vmumu_);
+        Vddmu_ = gauss_hermite_.Integrate();
+
+        Vddmu_.triangularView<Upper>() = (precision_ * Vddmu_ * precision_).triangularView<Upper>();
+        Vddmu_.triangularView<StrictlyLower>() = Vddmu_.triangularView<StrictlyUpper>().transpose();
 
         gtsam::Matrix tmp{precision_ * avg_phi};
 
-        Vddmu.triangularView<Upper>() = (Vddmu - precision_ * avg_phi).triangularView<Upper>();
-        Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+        Vddmu_.triangularView<Upper>() = (Vddmu_ - precision_ * avg_phi).triangularView<Upper>();
+        Vddmu_.triangularView<StrictlyLower>() = Vddmu_.triangularView<StrictlyUpper>().transpose();
     }
 
 
@@ -161,8 +162,8 @@ public:
      * Gaussian posterior: closed-form expression
      * */
     void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t){
-        Vdmu.setZero();
-        Vddmu.setZero();
+        Vdmu_.setZero();
+        Vddmu_.setZero();
         update_covariance();
 
         // helper vectors
@@ -171,7 +172,7 @@ public:
         MatrixXd precision_t{covariance_t.inverse()};
 
         // partial V / partial mu
-        Vdmu = precision_t * eps;
+        Vdmu_ = precision_t * eps;
 
         // partial V^2 / partial mu*mu^T
         // update tmp matrix
@@ -185,17 +186,17 @@ public:
             }
         }
 
-        Vddmu = precision_ * tmp * precision_ - precision_ * (precision_t*covariance_).trace();
-        Vddmu = Vddmu / 2;
+        Vddmu_ = precision_ * tmp * precision_ - precision_ * (precision_t*covariance_).trace();
+        Vddmu_ = Vddmu_ / 2;
 
         }
 
     MatrixXd get_Vddmu(){
-        return Vddmu;
+        return Vddmu_;
     }
 
     VectorXd get_Vdmu(){
-        return Vdmu;
+        return Vdmu_;
     }
 
     bool step(){
@@ -203,14 +204,14 @@ public:
         d_mu.setZero();
         d_precision.setZero();
 
-//        calculate_partial_V();
-        calculate_exact_partial_V(cost_class_.get_mean(), cost_class_.get_covariance());
+        calculate_partial_V();
+//        calculate_exact_partial_V(cost_class_.get_mean(), cost_class_.get_covariance());
 
-        d_precision = -precision_ + Vddmu;
+        d_precision = -precision_ + Vddmu_;
 
         /// without backtracking
         precision_ = precision_ + step_size_Sigma * d_precision;
-        d_mu = precision_.colPivHouseholderQr().solve(-Vdmu);
+        d_mu = precision_.colPivHouseholderQr().solve(-Vdmu_);
 
         mu_ = mu_ + step_size_mu * d_mu;
 

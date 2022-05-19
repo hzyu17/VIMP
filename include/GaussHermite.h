@@ -4,9 +4,6 @@
  * Date: 05/11/2022
  * */
 
-#ifndef MPVI_GAUSSIANHERMITE_H
-#define MPVI_GAUSSIANHERMITE_H
-
 #include <Eigen/Dense>
 #include <iostream>
 #include <boost/math/special_functions/factorials.hpp>
@@ -17,15 +14,13 @@ template <typename Function>
 class GaussHermite{
 public:
     GaussHermite(const int& p, const int& dim, const VectorXd& mean, const MatrixXd& P, const Function& func):
-    p_{p},
-    dim_{dim},
-    mean_{mean},
-    P_{P},
-    f_{func}{
-        W_ = VectorXd::Zero(p_);
-        sigmapts_ = VectorXd::Zero(p_);
-    }
-
+        p_{p},
+        dim_{dim},
+        mean_{mean},
+        P_{P},
+        f_{func},
+        W_{VectorXd::Zero(p_)},
+        sigmapts_{VectorXd::Zero(p_)}{}
 
     void getSigmaPts(){
         VectorXd a{VectorXd::Ones(p_-1)};
@@ -79,16 +74,22 @@ public:
         MatrixXd pts{sig * sigmpts_h};
         pts.colwise() += mean_;
 
-        MatrixXd res;
+        VectorXd pt_0 = VectorXd::Zero(dim_);
+        pt_0 << pts(0, 0), pts(1, 0);
+
+        MatrixXd res{MatrixXd::Zero(f_(pt_0).rows(), f_(pt_0).cols())};
+
         if (dim_ == 1){
             for (int i=0; i<p_; i++){
+                auto res1 =f_(pts.col(i));
+                cout << res1 << endl;
                 res += W_(i)*f_(pts.col(i));
             }
         }
 
-        else if (dim_ == 2){
-            for (int i=0; i<p_; i++){
-                for(int j=0; j<p_; j++){
+        else if (dim_ == 2) {
+            for (int i = 0; i < p_; i++) {
+                for (int j = 0; j < p_; j++) {
                     VectorXd pt_ij = VectorXd::Zero(dim_);
                     pt_ij << pts(0, i), pts(1, j);
                     res += W_(i) * W_(j) * f_(pt_ij);
@@ -129,6 +130,10 @@ public:
         f_ = fun;
     }
 
+    void update_dimension(const int dim){
+        dim_ = dim;
+    }
+
 private:
     int p_;
     int dim_;
@@ -138,6 +143,3 @@ private:
     VectorXd W_;
     VectorXd sigmapts_;
 };
-
-
-#endif //MPVI_GAUSSIANHERMITE_H

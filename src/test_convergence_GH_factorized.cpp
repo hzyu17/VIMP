@@ -1,8 +1,8 @@
-//
-// Created by hongzhe on 3/7/22.
-//
-
-// Test the factorized optimizer convergence
+/**
+ * Test the factorized optimizer convergence with GH integrator
+ * Author: Hongzhe Yu
+ * Date: 05/11/22
+ * */
 
 #include "../include/OptimizerFactorizedGaussHermite.h"
 #include <gtsam/base/Matrix.h>
@@ -10,6 +10,7 @@
 #include <random>
 #include "../include/SparseInverseMatrix.h"
 
+using namespace GaussianSampler;
 using namespace gtsam;
 using namespace std;
 
@@ -47,7 +48,7 @@ int main(){
     using namespace SparseInverse;
     dense_inverser inverser_(MatrixXd::Identity(ndim, ndim));
 
-    int n_iter = 5;
+    int n_iter = 10;
     double step_size = 0.9;
     optimizer.set_step_size(step_size, step_size);
 

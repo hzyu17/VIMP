@@ -13,6 +13,7 @@
 #include <iostream>
 #include <random>
 #include <utility>
+#include "../include/GaussHermite.h"
 
 using namespace GaussianSampler;
 using namespace std;
@@ -34,11 +35,13 @@ public:
             precision_{MatrixXd::Identity(dim_, dim_)},
             d_precision{MatrixXd::Zero(dim_, dim_)},
             covariance_{precision_.inverse()},
-            sampler_{normal_random_variable(mu_, precision_.inverse())}{}
+            sampler_{normal_random_variable(mu_, precision_.inverse())},
+            func_phi_{[&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};}},
+            gauss_hermite_{30, dim_, mu_, covariance_, func_phi_}{}
 protected:
     // optimization variables
     int dim_;
-    int num_samples = 500000;
+    int num_samples = 50000;
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision, covariance_;
 
@@ -55,6 +58,9 @@ protected:
     // cost functional. Input: samples vector; Output: cost
     Function cost_function_;
     costClass cost_class_;
+
+    std::function<MatrixXd(const VectorXd&)> func_phi_;
+    GaussHermite<std::function<MatrixXd(const VectorXd&)>> gauss_hermite_;
 
 public:
 
@@ -98,6 +104,11 @@ public:
         covariance_ = precision_.inverse();
     }
 
+    void updateGH(){
+        gauss_hermite_.update_mean(mu_);
+        gauss_hermite_.update_P(covariance_);
+    }
+
     void calculate_partial_V(){
         Vdmu.setZero();
         Vddmu.setZero();
@@ -117,28 +128,38 @@ public:
             Vddmu = Vddmu + (sample - mu_) * (sample - mu_).transpose().eval() * phi;
         });
 
+        updateGH();
+        /** Integrate for Vdmu_ **/
+        std::function<MatrixXd(const VectorXd&)> func_Vmu_ = [&](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * cost_function_(x, cost_class_)};};
+        gauss_hermite_.update_integrand(func_Vmu_);
+        MatrixXd Vdmu_new = gauss_hermite_.Integrate();
+        Vdmu_new = precision_ * Vdmu_new;
+
         Vdmu = precision_ * Vdmu.eval() / double(num_samples);
+
+        cout << "Vdmu old" << endl << Vdmu << endl;
+        cout << "Vdmu new" << endl << Vdmu_new << endl;
+
         Vddmu.triangularView<Upper>() = (precision_ * Vddmu * precision_).triangularView<Upper>();
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
 
         Vddmu = Vddmu.eval() / double(num_samples);
 
-//        cout << "mu" << endl << mu_ << endl;
-//        cout << "covariance " << endl << covariance_ << endl;
-//
-//        cout << "sampler precision matrix" << endl << sampler_.get_precision() << endl;
-//
-//        cout << "error" << endl << (sampler_.get_precision() - Vddmu).norm() << endl;
-//
-//        cout << "Vdmu " << endl << Vdmu << endl;
-//        cout << "Vddmu " << endl << Vddmu << endl;
+        /** Integrate for phi(x) **/
+        std::function<MatrixXd(const VectorXd&)> func_phi_ = [&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};};
+        gauss_hermite_.update_integrand(func_phi_);
+        double avg_phi = gauss_hermite_.Integrate()(0, 0);
 
-        double avg_phi = accum_phi / double(num_samples);
+        double avg_phi1 = accum_phi / double(num_samples);
 
         gtsam::Matrix tmp{precision_ * avg_phi};
 
         Vddmu.triangularView<Upper>() = (Vddmu - precision_ * avg_phi).triangularView<Upper>();
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+        cout << "Vddmu " << endl << Vddmu << endl;
+        cout << "avg_phi" << endl << avg_phi << endl;
+        cout << "old avg_phi" << endl << avg_phi1 << endl;
+
     }
 
 
@@ -186,8 +207,8 @@ public:
         d_mu.setZero();
         d_precision.setZero();
 
-//        calculate_partial_V();
-        calculate_exact_partial_V(cost_class_.get_mean(), cost_class_.get_covariance());
+        calculate_partial_V();
+//        calculate_exact_partial_V(cost_class_.get_mean(), cost_class_.get_covariance());
 
         d_precision = -precision_ + Vddmu;
 

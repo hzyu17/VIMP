@@ -2,11 +2,6 @@
 // Created by hongzhe on 3/7/22.
 //
 
-#ifndef MPVI_OPTIMIZER_H
-#define MPVI_OPTIMIZER_H
-
-#endif //MPVI_OPTIMIZER_H
-
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
@@ -15,7 +10,7 @@
 #include "OptimizerFactorizedGaussHermite.h"
 #include <boost/scoped_ptr.hpp>
 
-using namespace GaussianSampler;
+//using namespace GaussianSampler;
 using namespace std;
 using namespace SparseInverse;
 typedef Triplet<double> T;
@@ -38,7 +33,6 @@ public:
                                    mu_{VectorXd::Zero(dimension)},
                                    d_mu_{VectorXd::Zero(dimension)},
                                    precision_{MatrixXd::Identity(dim, dim) * 5.0},
-//                                   precision_{MatrixXd::Identity(dim, dim)},
                                    d_precision_(MatrixXd::Identity(dim, dim)),
                                    Vdmu_{VectorXd::Zero(dimension)},
                                    Vddmu_(MatrixXd::Identity(dim, dim)),
