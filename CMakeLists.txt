@@ -67,7 +67,7 @@ target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_
 add_executable(test_point_robot src/test_motion_planning_point_robot.cpp)
 target_link_libraries(test_point_robot ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
-add_executable(test_conv_factor_GH src/test_convergence_GH_factorized.cpp)
+add_executable(test_conv_factor_GH src/test_convergence_factorized_GH.cpp)
 target_link_libraries(test_conv_factor_GH ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 add_executable(test_conv_factor src/test_convergence_factorized.cpp)

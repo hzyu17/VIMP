@@ -22,6 +22,9 @@ public:
         W_{VectorXd::Zero(p_)},
         sigmapts_{VectorXd::Zero(p_)}{}
 
+    /**
+     * Sigmapoints as the root of Hermite polynomials.
+     * */
     void getSigmaPts(){
         VectorXd a{VectorXd::Ones(p_-1)};
         VectorXd c{VectorXd::LinSpaced(p_-1, 1, p_-1)};
@@ -35,6 +38,9 @@ public:
         sigmapts_ = L.eigenvalues().real();
     }
 
+    /**
+     * Define the Hermite polynomial of degree deg, evaluate at x.
+     * */
     double HermitePolynomial(const int& deg, const double& x){
         if (deg == 0) return 1;
         if (deg == 1) return x;
@@ -51,6 +57,9 @@ public:
         }
     }
 
+    /**
+     * Compute the weights in the Gauss-Hermite cubature method.
+     * */
     VectorXd getWeights(){
         getSigmaPts();
         VectorXd W(p_);
@@ -63,27 +72,24 @@ public:
         return W;
     }
 
+    /**
+     * Compute the approximated integration using Gauss-Hermite.
+     * */
     MatrixXd Integrate(){
+
+//        cout << "mean_GH" << endl << mean_ << endl;
+//        cout << "cov_GH" << endl << P_ << endl;
 
         getWeights();
         LLT<MatrixXd> lltP(P_);
         MatrixXd sig{lltP.matrixL()};
 
-        MatrixXd sigmpts_h = sigmapts_.transpose().replicate(dim_, 1);
-
-        MatrixXd pts{sig * sigmpts_h};
-        pts.colwise() += mean_;
-
         VectorXd pt_0 = VectorXd::Zero(dim_);
-        pt_0 << pts(0, 0), pts(1, 0);
-
         MatrixXd res{MatrixXd::Zero(f_(pt_0).rows(), f_(pt_0).cols())};
 
         if (dim_ == 1){
             for (int i=0; i<p_; i++){
-                auto res1 =f_(pts.col(i));
-                cout << res1 << endl;
-                res += W_(i)*f_(pts.col(i));
+                res += W_(i)*f_(sig*sigmapts_(i)+mean_);
             }
         }
 
@@ -91,8 +97,10 @@ public:
             for (int i = 0; i < p_; i++) {
                 for (int j = 0; j < p_; j++) {
                     VectorXd pt_ij = VectorXd::Zero(dim_);
-                    pt_ij << pts(0, i), pts(1, j);
-                    res += W_(i) * W_(j) * f_(pt_ij);
+                    pt_ij << sigmapts_(i), sigmapts_(j);
+
+                    VectorXd pt_ij_t = sig * pt_ij + mean_;
+                    res += W_(i) * W_(j) * f_(pt_ij_t);
                 }
             }
         }
@@ -101,8 +109,10 @@ public:
                 for(int j=0; j<p_; j++){
                     for(int k=0; k<p_; k++){
                         VectorXd pt_ijk = VectorXd::Zero(dim_);
-                        pt_ijk << pts(0, i), pts(1, j), pts(2, k);
-                        res += W_(i) * W_(j) * W_(k) * f_(pt_ijk);
+                        pt_ijk << sigmapts_(i), sigmapts_(j), sigmapts_(k);
+
+                        VectorXd pt_ijk_t = sig * pt_ijk + mean_;
+                        res += W_(i) * W_(j) * W_(k) * f_(pt_ijk_t);
                     }
                 }
             }

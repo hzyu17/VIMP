@@ -37,7 +37,7 @@ public:
             covariance_{precision_.inverse()},
             sampler_{normal_random_variable(mu_, precision_.inverse())},
             func_phi_{[&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};}},
-            gauss_hermite_{30, dim_, mu_, covariance_, func_phi_}{}
+            gauss_hermite_{10, dim_, mu_, covariance_, func_phi_}{}
 protected:
     // optimization variables
     int dim_;
@@ -101,7 +101,9 @@ public:
     }
 
     void update_covariance(){
-        covariance_ = precision_.inverse();
+        covariance_ = precision_.llt().solve(MatrixXd::Identity(precision_.rows(), precision_.cols()));
+//        MatrixXd covariance1 = precision_.inverse();
+//        cout << "covariance1 - covariance_" << endl << covariance1 - covariance_ << endl;
     }
 
     void updateGH(){
@@ -128,6 +130,7 @@ public:
             Vddmu = Vddmu + (sample - mu_) * (sample - mu_).transpose().eval() * phi;
         });
 
+        update_covariance();
         updateGH();
         /** Integrate for Vdmu_ **/
         std::function<MatrixXd(const VectorXd&)> func_Vmu_ = [&](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * cost_function_(x, cost_class_)};};

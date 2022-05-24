@@ -130,6 +130,7 @@ public:
         Vddmu_.setZero();
 
         // GH approximation
+        update_covariance();
         updateGH();
 
         /** Integrate for Vdmu_ **/
@@ -211,6 +212,7 @@ public:
 
         /// without backtracking
         precision_ = precision_ + step_size_Sigma * d_precision;
+
         d_mu = precision_.colPivHouseholderQr().solve(-Vdmu_);
 
         mu_ = mu_ + step_size_mu * d_mu;
