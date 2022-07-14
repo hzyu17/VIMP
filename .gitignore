@@ -2,3 +2,7 @@
 build/*
 .vscode/*
 mpvi/latex/*
+mpvi/html/*
+mpvi/doxygen/*
+
+
