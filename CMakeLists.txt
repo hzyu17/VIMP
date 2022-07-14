@@ -1,106 +1,84 @@
-# remember to add -I/usr/include/python2.7 -lpython2.7 in the cmake options when building
-cmake_minimum_required(VERSION 3.16)
-project(MPVI CXX C)
-set(CMAKE_CXX_STANDARD 17)
+cmake_minimum_required(VERSION 3.0)
+enable_testing()
+project(mpvi CXX C)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
-find_package(PythonLibs REQUIRED)
-find_package(Eigen3 REQUIRED)
-find_package(gpmp2 REQUIRED)
-find_package(GTSAM REQUIRED)
+# Mac ONLY. Define Relative Path on Mac OS
+if(NOT DEFINED CMAKE_MACOSX_RPATH)
+    set(CMAKE_MACOSX_RPATH 0)
+endif()
 
-include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${EIGEN3_INCLUDE_DIRS})
-include_directories(${GPMP2_INCLUDE_DIRS})
-include_directories(${GTSAM_INCLUDE_DIRS})
-set(GTSAM_LIBRARIES gtsam)
+
+# option: whether turn on Matlab toolbox
+option(MPVI_BUILD_STATIC_LIBRARY "whether build static library" OFF)
+option(MPVI_BUILD_MATLAB_TOOLBOX "whether build matlab toolbox, need shared lib" OFF)
+option(MPVI_BUILD_PYTHON_TOOLBOX "whether build python toolbox, need shared lib" OFF)
+
+if(MPVI_BUILD_STATIC_LIBRARY AND MPVI_BUILD_MATLAB_TOOLBOX)
+    message(FATAL_ERROR "matlab toolbox needs shared lib")
+endif()
+
+# Find GTSAM components
+find_package(GTSAM REQUIRED) # Uses installed package
+include_directories(${GTSAM_INCLUDE_DIR})
+set(GTSAM_LIBRARIES gtsam)   # TODO: automatic search libs
 
 find_package(GTSAMCMakeTools)
 include(GtsamMakeConfigFile)
 include(GtsamBuildTypes)
 include(GtsamTesting)
 
-set(GPMP2_LIBRARIES gpmp2)
+# for unittest scripts
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 
-#include(Gpmp2MakeConfigFile)
-#include(Gpmp2BuildTypes)
-#include(Gpmp2Testing)
+# Boost - same requirement as gtsam
+find_package(Boost 1.50 REQUIRED)
+find_package(Boost COMPONENTS filesystem REQUIRED)
+find_package(Boost COMPONENTS system REQUIRED)
+find_package(Boost COMPONENTS thread REQUIRED)
+find_package(Boost COMPONENTS serialization REQUIRED)
 
-add_library(matplotlib SHARED include/matplotlibcpp.h)
-add_library(MVGsampler SHARED include/MVGsampler.h)
-add_library(SparseInverser SHARED include/SparseInverseMatrix.h)
-add_library(SpHelper SHARED include/SparseMatrixHelper.h)
-add_library(FactorizedOptimizer SHARED include/OptimizerFactorized.h)
-add_library(FactorizedOptimizerGaussHermite SHARED include/OptimizerFactorizedGaussHermite.h)
-add_library(FactorizedOptimizerTwoFactors SHARED include/OptimizerFactorizedTwoFactors.h)
-add_library(GaussianProcessPriorLinearPlus SHARED include/GaussianPriorLinearPlus.h)
-add_library(GaussianHermite SHARED include/GaussHermite.h)
+include_directories(${Boost_INCLUDE_DIR})
 
-set_target_properties(matplotlib PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(SpHelper PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(MVGsampler PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(FactorizedOptimizer PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(FactorizedOptimizerTwoFactors PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(SparseInverser PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(GaussianProcessPriorLinearPlus PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(GaussianHermite PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(FactorizedOptimizerGaussHermite PROPERTIES LINKER_LANGUAGE CXX)
+# Generate and install config and dllexport files
+#configure_file("mpvi/config.h.in" "mpvi/config.h")
+list(APPEND mpvi_srcs "${PROJECT_BINARY_DIR}/mpvi/config.h")
+include_directories(BEFORE ${PROJECT_BINARY_DIR}) # So we can include generated config header files
+install(FILES "${PROJECT_BINARY_DIR}/mpvi/config.h" DESTINATION include/mpvi)
 
-target_compile_features(FactorizedOptimizerTwoFactors PUBLIC cxx_std_17)
+# include current source folder, at the very beginning
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(matplotlib ${PYTHON_LIBRARIES})
-target_link_libraries(MVGsampler ${GPMP2_LIBRARIES})
-target_link_libraries(SpHelper ${GPMP2_LIBRARIES})
-target_link_libraries(FactorizedOptimizer ${GPMP2_LIBRARIES})
-target_link_libraries(FactorizedOptimizerTwoFactors ${GPMP2_LIBRARIES})
-target_link_libraries(SparseInverser ${GPMP2_LIBRARIES})
-target_link_libraries(GaussianProcessPriorLinearPlus ${GPMP2_LIBRARIES})
+# Process source subdirs
+add_subdirectory(mpvi)
 
-add_executable(main src/main.cpp)
-target_link_libraries(main ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES})
+# Wrapping to MATLAB
+if(MPVI_BUILD_MATLAB_TOOLBOX)
+    # wrap
+    include(GtsamMatlabWrap)
+    wrap_and_install_library(mpvi.h ${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}" "")
 
-add_executable(vimp src/VariationalInferenceMP.cpp)
-target_link_libraries(vimp ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
-add_executable(test_conv src/test_convergence.cpp)
-target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
-add_executable(test_point_robot src/test_motion_planning_point_robot.cpp)
-target_link_libraries(test_point_robot ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
-
-add_executable(test_conv_factor_GH src/test_convergence_factorized_GH.cpp)
-target_link_libraries(test_conv_factor_GH ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
-add_executable(test_conv_factor src/test_convergence_factorized.cpp)
-target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
-add_executable(test_sparse_inverse src/test_sparse_inverse.cpp)
-target_link_libraries(test_sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
-add_executable(test_GH src/test_GH.cpp)
-target_link_libraries(test_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
-add_executable(test_conv_GH src/test_convergence_GH.cpp)
-target_link_libraries(test_conv_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
-# python wrapper
-option(MPVI_BUILD_PYTHON "whether build python toolbox, need shared lib" OFF)
-
-if(MPVI_BUILD_PYTHON)
-#    include_directories(${GTSAM_DIR}/cython)
-#    include_directories(/usr/local/cython)
-#    include(GtsamCythonWrap)
-#    include_directories(${GTSAM_EIGENCY_INSTALL_PATH})
-#
-#    wrap_and_install_library_cython("gpmp2.h"
-#            "from gtsam.gtsam cimport *" # extra import of gtsam/gtsam.pxd Cython header
-#            "${CMAKE_INSTALL_PREFIX}/cython" # install path
-#            gpmp2  # library to link with
-#            "gtsam"  # dependencies which need to be built before wrapping
-#            )
-#    add_definitions(-DBOOST_OPTIONAL_ALLOW_BINDING_TO_RVALUES -DBOOST_OPTIONAL_CONFIG_ALLOW_BINDING_TO_RVALUES)
+    # install matlab functions and scripts
+    add_subdirectory(matlab)
 endif()
 
-install(TARGETS matplotlib MVGsampler SpHelper
-        CONFIGURATIONS Release
-        LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+# Wrapping to Python
+if(MPVI_BUILD_PYTHON_TOOLBOX)
+    include_directories(${GTSAM_DIR}/cython)
+    include_directories(/usr/local/cython)
+    include(GtsamCythonWrap)
+    include_directories(${GTSAM_EIGENCY_INSTALL_PATH})
 
+    wrap_and_install_library_cython("mpvi.h"
+            "from gtsam.gtsam cimport *" # extra import of gtsam/gtsam.pxd Cython header
+            "${CMAKE_INSTALL_PREFIX}/cython" # install path
+            mpvi  # library to link with
+            "gtsam"  # dependencies which need to be built before wrapping
+            )
+    add_definitions(-DBOOST_OPTIONAL_ALLOW_BINDING_TO_RVALUES -DBOOST_OPTIONAL_CONFIG_ALLOW_BINDING_TO_RVALUES)
+endif()
+
+# Install config and export files
+GtsamMakeConfigFile(mpvi)
+export(TARGETS ${MPVI_EXPORTED_TARGETS} FILE mpvi-exports.cmake)

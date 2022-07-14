@@ -1,0 +1,94 @@
+\hypertarget{classVIMPOptimizer}{}\doxysection{VIMPOptimizer\texorpdfstring{$<$}{<} Function, cost\+Class, Args \texorpdfstring{$>$}{>} Class Template Reference}
+\label{classVIMPOptimizer}\index{VIMPOptimizer$<$ Function, costClass, Args $>$@{VIMPOptimizer$<$ Function, costClass, Args $>$}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classVIMPOptimizer_ac5db0fe9048c3ee9ad553ef88b416393}{VIMPOptimizer}} (const int \&dimension, const int \&sub\+\_\+dim, const vector$<$ Function $>$ \&\+\_\+vec\+\_\+function, const vector$<$ cost\+Class $>$ \&\+\_\+vec\+\_\+cost\+\_\+class, const vector$<$ Matrix\+Xd $>$ \&\+\_\+vec\+\_\+\+Pks)
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a6e21e440cbe62a1e60e7d47423f66c89}\label{classVIMPOptimizer_a6e21e440cbe62a1e60e7d47423f66c89}} 
+void {\bfseries step} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_abbca4973a363e52729d86e675c0bb0d6}\label{classVIMPOptimizer_abbca4973a363e52729d86e675c0bb0d6}} 
+void {\bfseries step\+\_\+closed\+\_\+form} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_aabf21e1beb686530d99b3bf52bd3314a}\label{classVIMPOptimizer_aabf21e1beb686530d99b3bf52bd3314a}} 
+gtsam\+::\+Vector {\bfseries get\+\_\+mean} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_af3cf6f89ea3b93982045f1c594f2a6ee}\label{classVIMPOptimizer_af3cf6f89ea3b93982045f1c594f2a6ee}} 
+gtsam\+::\+Matrix {\bfseries get\+\_\+precision} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a03fbf39c6de0fcc0bbb76cce410cb728}\label{classVIMPOptimizer_a03fbf39c6de0fcc0bbb76cce410cb728}} 
+gtsam\+::\+Matrix {\bfseries get\+\_\+covariance} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a9e8caf10a59cfd1f2f3d3b833bcfa1b6}\label{classVIMPOptimizer_a9e8caf10a59cfd1f2f3d3b833bcfa1b6}} 
+void {\bfseries set\+\_\+step\+\_\+size} (double ss\+\_\+mean, double ss\+\_\+precision)
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a0456b958634b02120de40e70512755b2}\label{classVIMPOptimizer_a0456b958634b02120de40e70512755b2}} 
+void {\bfseries set\+\_\+mu} (const Vector\+Xd \&mean)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_ad334db6ea8966f0cbde95ebc52e74669}\label{classVIMPOptimizer_ad334db6ea8966f0cbde95ebc52e74669}} 
+int {\bfseries dim}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_afd0456eac1d3f489a8aeafd329277700}\label{classVIMPOptimizer_afd0456eac1d3f489a8aeafd329277700}} 
+int {\bfseries sub\+\_\+dim}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_aaf8b49ff9564f974da23ff326df495f4}\label{classVIMPOptimizer_aaf8b49ff9564f974da23ff326df495f4}} 
+int {\bfseries num\+\_\+sub\+\_\+vars}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_af96ee655e876f970095af0d624873a8b}\label{classVIMPOptimizer_af96ee655e876f970095af0d624873a8b}} 
+Vector\+Xd {\bfseries mu\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_ab3684fddf5b9f56edb97ff4dd27564c2}\label{classVIMPOptimizer_ab3684fddf5b9f56edb97ff4dd27564c2}} 
+Vector\+Xd {\bfseries Vdmu\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a404c54354e98972898a42334b12cf47b}\label{classVIMPOptimizer_a404c54354e98972898a42334b12cf47b}} 
+Vector\+Xd {\bfseries d\+\_\+mu\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a9b55b9edbf345eceb42f7a8dc43416f4}\label{classVIMPOptimizer_a9b55b9edbf345eceb42f7a8dc43416f4}} 
+Matrix\+Xd {\bfseries precision\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_af5f22dd0cab747b5d3af3d09aa8d51ef}\label{classVIMPOptimizer_af5f22dd0cab747b5d3af3d09aa8d51ef}} 
+Matrix\+Xd {\bfseries Vddmu\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a350393d68f2aae52e3596a43db88641a}\label{classVIMPOptimizer_a350393d68f2aae52e3596a43db88641a}} 
+Matrix\+Xd {\bfseries d\+\_\+precision\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_aa36d480a5469fa3350e9e27d72e7710f}\label{classVIMPOptimizer_aa36d480a5469fa3350e9e27d72e7710f}} 
+vector$<$ \mbox{\hyperlink{classVIMPOptimizerFactorized}{Factorized\+Optimizer}} $>$ {\bfseries vec\+\_\+factor\+\_\+optimizers\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_aa8f69e752bc505fc914e5da493e0d958}\label{classVIMPOptimizer_aa8f69e752bc505fc914e5da493e0d958}} 
+const vector$<$ Function $>$ {\bfseries vec\+\_\+cost\+\_\+function\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a9d36956d309205f28f1300f598a64ac5}\label{classVIMPOptimizer_a9d36956d309205f28f1300f598a64ac5}} 
+vector$<$ cost\+Class $>$ {\bfseries vec\+\_\+cost\+\_\+class\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_adb6047f1e90671ac0171179af15a4b82}\label{classVIMPOptimizer_adb6047f1e90671ac0171179af15a4b82}} 
+const vector$<$ Matrix\+Xd $>$ {\bfseries vec\+\_\+\+Pks\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_aa7ebb10c58998c6a3e94527752e99ba7}\label{classVIMPOptimizer_aa7ebb10c58998c6a3e94527752e99ba7}} 
+\mbox{\hyperlink{structSparseInverse_1_1dense__inverser}{dense\+\_\+inverser}} {\bfseries inverser\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_a389b00d256e91a79bddd7c8dc812cb5f}\label{classVIMPOptimizer_a389b00d256e91a79bddd7c8dc812cb5f}} 
+double {\bfseries step\+\_\+size\+\_\+precision} = 0.\+9
+\item 
+\mbox{\Hypertarget{classVIMPOptimizer_aeccc2c938cd716d5e75f7cb6b6fa54c1}\label{classVIMPOptimizer_aeccc2c938cd716d5e75f7cb6b6fa54c1}} 
+double {\bfseries step\+\_\+size\+\_\+mu} = 0.\+9
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classVIMPOptimizer_ac5db0fe9048c3ee9ad553ef88b416393}\label{classVIMPOptimizer_ac5db0fe9048c3ee9ad553ef88b416393}} 
+\index{VIMPOptimizer$<$ Function, costClass, Args $>$@{VIMPOptimizer$<$ Function, costClass, Args $>$}!VIMPOptimizer@{VIMPOptimizer}}
+\index{VIMPOptimizer@{VIMPOptimizer}!VIMPOptimizer$<$ Function, costClass, Args $>$@{VIMPOptimizer$<$ Function, costClass, Args $>$}}
+\doxysubsubsection{\texorpdfstring{VIMPOptimizer()}{VIMPOptimizer()}}
+{\footnotesize\ttfamily template$<$typename Function , typename cost\+Class , typename... Args$>$ \\
+\mbox{\hyperlink{classVIMPOptimizer}{VIMPOptimizer}}$<$ Function, cost\+Class, Args $>$\mbox{\hyperlink{classVIMPOptimizer}{\+::\+VIMPOptimizer}} (\begin{DoxyParamCaption}\item[{const int \&}]{dimension,  }\item[{const int \&}]{sub\+\_\+dim,  }\item[{const vector$<$ Function $>$ \&}]{\+\_\+vec\+\_\+function,  }\item[{const vector$<$ cost\+Class $>$ \&}]{\+\_\+vec\+\_\+cost\+\_\+class,  }\item[{const vector$<$ Matrix\+Xd $>$ \&}]{\+\_\+vec\+\_\+\+Pks }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+initialize the factors
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Optimizer.\+h\end{DoxyCompactItemize}

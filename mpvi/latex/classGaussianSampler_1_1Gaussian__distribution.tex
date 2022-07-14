@@ -1,0 +1,55 @@
+\hypertarget{classGaussianSampler_1_1Gaussian__distribution}{}\doxysection{Gaussian\+Sampler\+::Gaussian\+\_\+distribution Class Reference}
+\label{classGaussianSampler_1_1Gaussian__distribution}\index{GaussianSampler::Gaussian\_distribution@{GaussianSampler::Gaussian\_distribution}}
+
+
+Class definition of a Gaussian distribution. It is fully defined by mean and covariance matrix.  
+
+
+
+
+{\ttfamily \#include $<$MVGsampler.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_ad260ab1ccb9b2c07a01cb097eddeaf6e}\label{classGaussianSampler_1_1Gaussian__distribution_ad260ab1ccb9b2c07a01cb097eddeaf6e}} 
+{\bfseries Gaussian\+\_\+distribution} (const Eigen\+::\+Vector\+Xd \&mean, const Eigen\+::\+Matrix\+Xd \&covariance)
+\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_a4c109fdc7edf13abd4c5b85d3afe92a0}\label{classGaussianSampler_1_1Gaussian__distribution_a4c109fdc7edf13abd4c5b85d3afe92a0}} 
+double {\bfseries probability} (Eigen\+::\+Vector\+Xd x) const
+\begin{DoxyCompactList}\small\item\em The pdf for a given value x. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_ac312a7be718da8c7c83cac0e568fcd76}\label{classGaussianSampler_1_1Gaussian__distribution_ac312a7be718da8c7c83cac0e568fcd76}} 
+double {\bfseries log\+\_\+prob} (Eigen\+::\+Vector\+Xd x) const
+\begin{DoxyCompactList}\small\item\em The log probability for a given value x. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_a51d83dea00de66915fda8684af9619fa}\label{classGaussianSampler_1_1Gaussian__distribution_a51d83dea00de66915fda8684af9619fa}} 
+Eigen\+::\+Matrix\+Xd {\bfseries get\+\_\+precision} ()
+\begin{DoxyCompactList}\small\item\em Returns the precision matrix. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_af9aceb3281a1b854165b3355c520e324}\label{classGaussianSampler_1_1Gaussian__distribution_af9aceb3281a1b854165b3355c520e324}} 
+Eigen\+::\+Vector\+Xd {\bfseries get\+\_\+mean} ()
+\begin{DoxyCompactList}\small\item\em Returns the mean vector. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_a24f7a59dafbaed55b4a364eecf65bba5}\label{classGaussianSampler_1_1Gaussian__distribution_a24f7a59dafbaed55b4a364eecf65bba5}} 
+Eigen\+::\+Matrix\+Xd {\bfseries get\+\_\+covariance} ()
+\begin{DoxyCompactList}\small\item\em Returns the covariance matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_a26dc607071c5b629bc07a697552522a0}\label{classGaussianSampler_1_1Gaussian__distribution_a26dc607071c5b629bc07a697552522a0}} 
+int {\bfseries dimension\+\_\+}
+\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_a20b32a7ce8e1b955b76a18575dc44373}\label{classGaussianSampler_1_1Gaussian__distribution_a20b32a7ce8e1b955b76a18575dc44373}} 
+Eigen\+::\+Vector\+Xd {\bfseries mean\+\_\+}
+\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_a1246a0830034b425ab30c443e1e387b3}\label{classGaussianSampler_1_1Gaussian__distribution_a1246a0830034b425ab30c443e1e387b3}} 
+Eigen\+::\+Matrix\+Xd {\bfseries Covariance\+\_\+}
+\item 
+\mbox{\Hypertarget{classGaussianSampler_1_1Gaussian__distribution_ac8bb4b747b3ac8ea888716f229b86da4}\label{classGaussianSampler_1_1Gaussian__distribution_ac8bb4b747b3ac8ea888716f229b86da4}} 
+Eigen\+::\+Matrix\+Xd {\bfseries precision\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class definition of a Gaussian distribution. It is fully defined by mean and covariance matrix. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{MVGsampler_8h}{MVGsampler.\+h}}\end{DoxyCompactItemize}

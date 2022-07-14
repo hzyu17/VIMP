@@ -1,0 +1,25 @@
+\hypertarget{OptimizerFactorizedObstaclePlanarPointRobot_8h_source}{}\doxysection{Optimizer\+Factorized\+Obstacle\+Planar\+Point\+Robot.\+h}
+\label{OptimizerFactorizedObstaclePlanarPointRobot_8h_source}\index{include/OptimizerFactorizedObstaclePlanarPointRobot.h@{include/OptimizerFactorizedObstaclePlanarPointRobot.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//}}
+\DoxyCodeLine{2 \textcolor{comment}{// Created by hongzhe on 4/6/22.}}
+\DoxyCodeLine{3 \textcolor{comment}{//}}
+\DoxyCodeLine{4 }
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#ifndef MPVI\_OPTIMIZERFACTORIZEDOBSTACLEPLANARPOINTROBOT\_H}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#define MPVI\_OPTIMIZERFACTORIZEDOBSTACLEPLANARPOINTROBOT\_H}}
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include "{}OptimizerFactorizedOneFactorPointRobot.h"{}}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>}}
+\DoxyCodeLine{9 \textcolor{keyword}{using namespace }gpmp2;}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{keyword}{namespace }MPVI \{}
+\DoxyCodeLine{12     \textcolor{keyword}{using }Function\_collision = std::function<double(\textcolor{keyword}{const} gtsam::Vector\&, \textcolor{keyword}{const} ObstaclePlanarSDFFactorPointRobot\&)>;}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14     \textcolor{keyword}{using }OptimizerOneCollision = VIMPOptimizerFactorizedOneFactor<Function\_collision,}
+\DoxyCodeLine{15             ObstaclePlanarSDFFactorPointRobot,}
+\DoxyCodeLine{16             gtsam::Vector>;}
+\DoxyCodeLine{17 \}}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//MPVI\_OPTIMIZERFACTORIZEDOBSTACLEPLANARPOINTROBOT\_H}}
+
+\end{DoxyCode}

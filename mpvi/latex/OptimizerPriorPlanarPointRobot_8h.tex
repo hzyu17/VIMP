@@ -1,0 +1,66 @@
+\hypertarget{OptimizerPriorPlanarPointRobot_8h}{}\doxysection{include/\+Optimizer\+Prior\+Planar\+Point\+Robot.h File Reference}
+\label{OptimizerPriorPlanarPointRobot_8h}\index{include/OptimizerPriorPlanarPointRobot.h@{include/OptimizerPriorPlanarPointRobot.h}}
+{\ttfamily \#include \char`\"{}../include/\+Optimizer\+GH.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}../include/\+Optimizer\+Factorized\+GH.\+h\char`\"{}}\newline
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{OptimizerPriorPlanarPointRobot_8h_a29e66997efe15135d564d01d1ff34ae4}{Unary\+Factor\+Translation2D}} = \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation}}$<$ gtsam\+::\+Vector2 $>$
+\begin{DoxyCompactList}\small\item\em Description\+: The definition of joint optimizer for planar point robot with only prior factors. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{OptimizerPriorPlanarPointRobot_8h_a3cbed1f88bbd0e14dec070d521bcecce}\label{OptimizerPriorPlanarPointRobot_8h_a3cbed1f88bbd0e14dec070d521bcecce}} 
+typedef \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{VIMPOptimizer\+Factorized\+Gauss\+Hermite}}$<$ std\+::function$<$ double(const Vector\+Xd \&, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&)$>$, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&, const Vector\+Xd \& $>$ {\bfseries Optimizer\+Factor\+Prior\+PRGH}
+\begin{DoxyCompactList}\small\item\em Definition of the factorized optimizer. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{OptimizerPriorPlanarPointRobot_8h_a06a2a66fada254bde83a2e83fc46481a}\label{OptimizerPriorPlanarPointRobot_8h_a06a2a66fada254bde83a2e83fc46481a}} 
+typedef \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{VIMPOptimizer\+GH}}$<$ \mbox{\hyperlink{OptimizerPriorPlanarPointRobot_8h_a3cbed1f88bbd0e14dec070d521bcecce}{Optimizer\+Factor\+Prior\+PRGH}} $>$ {\bfseries Optimizer\+Prior\+Point\+Robot}
+\begin{DoxyCompactList}\small\item\em Definition of the joint optimizer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{OptimizerPriorPlanarPointRobot_8h_a22e22d8af8fbb60ec8f2534436b16cb6}{error\+Wrapper\+Prior}} (const Vector\+Xd \&theta, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&prior\+\_\+factor)
+\begin{DoxyCompactList}\small\item\em phi(x) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Hongzhe Yu (\href{mailto:hyu419@gatech.edu}{\texttt{ hyu419@gatech.\+edu}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2022-\/07-\/12
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2022 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{OptimizerPriorPlanarPointRobot_8h_a29e66997efe15135d564d01d1ff34ae4}\label{OptimizerPriorPlanarPointRobot_8h_a29e66997efe15135d564d01d1ff34ae4}} 
+\index{OptimizerPriorPlanarPointRobot.h@{OptimizerPriorPlanarPointRobot.h}!UnaryFactorTranslation2D@{UnaryFactorTranslation2D}}
+\index{UnaryFactorTranslation2D@{UnaryFactorTranslation2D}!OptimizerPriorPlanarPointRobot.h@{OptimizerPriorPlanarPointRobot.h}}
+\doxysubsubsection{\texorpdfstring{UnaryFactorTranslation2D}{UnaryFactorTranslation2D}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} =  \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation}}$<$gtsam\+::\+Vector2$>$}
+
+
+
+Description\+: The definition of joint optimizer for planar point robot with only prior factors. 
+
+Renaming of the prior cost class.
+
+Function calculating two cost factors\+: prior and the collision factor. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{OptimizerPriorPlanarPointRobot_8h_a22e22d8af8fbb60ec8f2534436b16cb6}\label{OptimizerPriorPlanarPointRobot_8h_a22e22d8af8fbb60ec8f2534436b16cb6}} 
+\index{OptimizerPriorPlanarPointRobot.h@{OptimizerPriorPlanarPointRobot.h}!errorWrapperPrior@{errorWrapperPrior}}
+\index{errorWrapperPrior@{errorWrapperPrior}!OptimizerPriorPlanarPointRobot.h@{OptimizerPriorPlanarPointRobot.h}}
+\doxysubsubsection{\texorpdfstring{errorWrapperPrior()}{errorWrapperPrior()}}
+{\footnotesize\ttfamily double error\+Wrapper\+Prior (\begin{DoxyParamCaption}\item[{const Vector\+Xd \&}]{theta,  }\item[{const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&}]{prior\+\_\+factor }\end{DoxyParamCaption})}
+
+
+
+phi(x) 
+
+Prior factor
+
+TODO\+: verify the sign is + or -\/ here

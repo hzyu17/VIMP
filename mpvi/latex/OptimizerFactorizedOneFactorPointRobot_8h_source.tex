@@ -1,0 +1,21 @@
+\hypertarget{OptimizerFactorizedOneFactorPointRobot_8h_source}{}\doxysection{Optimizer\+Factorized\+One\+Factor\+Point\+Robot.\+h}
+\label{OptimizerFactorizedOneFactorPointRobot_8h_source}\index{include/OptimizerFactorizedOneFactorPointRobot.h@{include/OptimizerFactorizedOneFactorPointRobot.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{GaussianPriorUnaryTranslation_8h}{GaussianPriorUnaryTranslation.h}}"{}}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include "{}../include/OptimizerFactorizedPriorCollisionGH.h"{}}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{keyword}{using namespace }MPVI;}
+\DoxyCodeLine{13 \textcolor{keyword}{using namespace }gpmp2;}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{keyword}{using }\mbox{\hyperlink{classUnaryFactorTranslation}{UnaryFactorTranslation2D}} = \mbox{\hyperlink{classUnaryFactorTranslation}{UnaryFactorTranslation<gtsam::Vector2>}};}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{keyword}{typedef} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{VIMPOptimizerFactorizedGaussHermite}}<std::function<double(\textcolor{keyword}{const} gtsam::Vector\&, \textcolor{keyword}{const} \mbox{\hyperlink{classUnaryFactorTranslation}{UnaryFactorTranslation2D}}\&, \textcolor{keyword}{const} ObstaclePlanarSDFFactorPointRobot\&)>,}
+\DoxyCodeLine{18         \textcolor{keyword}{const} gtsam::Vector\&,}
+\DoxyCodeLine{19         \textcolor{keyword}{const} \mbox{\hyperlink{classUnaryFactorTranslation}{UnaryFactorTranslation2D}}\&,}
+\DoxyCodeLine{20         \textcolor{keyword}{const} ObstaclePlanarSDFFactorPointRobot\&>}
+\DoxyCodeLine{21         \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{OptimizerFactorizedPriorColPlanarPointRobot}};}
+
+\end{DoxyCode}

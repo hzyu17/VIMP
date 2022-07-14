@@ -1,0 +1,59 @@
+\hypertarget{test__gtsam__factor__passage_8cpp}{}\doxysection{src/test\+\_\+gtsam\+\_\+factor\+\_\+passage.cpp File Reference}
+\label{test__gtsam__factor__passage_8cpp}\index{src/test\_gtsam\_factor\_passage.cpp@{src/test\_gtsam\_factor\_passage.cpp}}
+{\ttfamily \#include \char`\"{}../include/\+Optimizer\+Prior\+Planar\+Point\+Robot.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$gtsam/inference/\+Symbol.\+h$>$}\newline
+{\ttfamily \#include $<$gpmp2/obstacle/\+Obstacle\+Planar\+SDFFactor\+Point\+Robot.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{test__gtsam__factor__passage_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\begin{DoxyCompactList}\small\item\em Test the passage of factors defined in gtsam in the classes defined in VIMP optimizers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Hongzhe Yu (\href{mailto:hyu419@gatech.edu}{\texttt{ hyu419@gatech.\+edu}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2022-\/07-\/14
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2022 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{test__gtsam__factor__passage_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{test__gtsam__factor__passage_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{test\_gtsam\_factor\_passage.cpp@{test\_gtsam\_factor\_passage.cpp}!main@{main}}
+\index{main@{main}!test\_gtsam\_factor\_passage.cpp@{test\_gtsam\_factor\_passage.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Test the passage of factors defined in gtsam in the classes defined in VIMP optimizers. 
+
+2D point robot
+
+parameters
+
+Robot model
+
+Noise models
+
+Vector of Pks
+
+Vector of factored optimizers
+
+Pk matrices
+
+Pk.\+block$<$dim\+\_\+conf, dim\+\_\+conf$>$(dim\+\_\+conf, (i + 1) $\ast$ dim\+\_\+conf) = Matrix\+Xd\+::\+Identity(dim\+\_\+conf, dim\+\_\+conf);
+
+unary factor
+
+Factored optimizer
+
+The joint optimizer

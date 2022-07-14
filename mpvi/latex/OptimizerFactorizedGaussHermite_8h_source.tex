@@ -1,0 +1,201 @@
+\hypertarget{OptimizerFactorizedGaussHermite_8h_source}{}\doxysection{Optimizer\+Factorized\+Gauss\+Hermite.\+h}
+\label{OptimizerFactorizedGaussHermite_8h_source}\index{include/OptimizerFactorizedGaussHermite.h@{include/OptimizerFactorizedGaussHermite.h}}
+\mbox{\hyperlink{OptimizerFactorizedGaussHermite_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{SparseMatrixHelper_8h}{SparseMatrixHelper.h}}"{}}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{MVGsampler_8h}{MVGsampler.h}}"{}}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <gtsam/base/Matrix.h>}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <random>}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include <utility>}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include "{}GaussHermite.h"{}}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{MVGsampler_8h}{MVGsampler.h}}"{}}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{keyword}{using namespace }GaussianSampler;}
+\DoxyCodeLine{22 \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{23 \textcolor{keyword}{using namespace }Eigen;}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25 \textcolor{comment}{// IOFormat CleanFmt(4, 0, "{}, "{}, "{}\(\backslash\)n"{});}}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27 \textcolor{keyword}{namespace }MPVI\{}
+\DoxyCodeLine{28     \textcolor{keyword}{template} <\textcolor{keyword}{typename} Function, \textcolor{keyword}{typename}... Args>}
+\DoxyCodeLine{30     \textcolor{keyword}{class }\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{VIMPOptimizerFactorizedGaussHermite}}\{}
+\DoxyCodeLine{31     \textcolor{keyword}{public}:}
+\DoxyCodeLine{34         \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aba955c2cc093fd5ebf13db773b4f08bb}{VIMPOptimizerFactorizedGaussHermite}}(\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& dimension, Function \_function):}
+\DoxyCodeLine{35                 dim\_\{dimension\},}
+\DoxyCodeLine{36                 cost\_function\_\{std::forward<Function>(\_function)\},}
+\DoxyCodeLine{37                 d\_mu\{VectorXd::Zero(dim\_)\},}
+\DoxyCodeLine{38                 mu\_\{VectorXd::Zero(dim\_)\},}
+\DoxyCodeLine{39                 Vdmu\_\{VectorXd::Zero(dim\_)\},}
+\DoxyCodeLine{40                 Vddmu\_\{MatrixXd::Zero(dim\_, dim\_)\},}
+\DoxyCodeLine{41                 precision\_\{MatrixXd::Identity(dim\_, dim\_)\},}
+\DoxyCodeLine{42                 d\_precision\{MatrixXd::Zero(dim\_, dim\_)\},}
+\DoxyCodeLine{43                 covariance\_\{precision\_.inverse()\},}
+\DoxyCodeLine{44                 func\_phi\_\{[\&](const VectorXd\& x)\{\textcolor{keywordflow}{return} MatrixXd\{MatrixXd::Constant(1, 1, cost\_function\_(x))\};\}\},}
+\DoxyCodeLine{45                 gauss\_hermite\_\{10, dim\_, mu\_, covariance\_, func\_phi\_\}\{\}}
+\DoxyCodeLine{46     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{47         \textcolor{comment}{// optimization variables}}
+\DoxyCodeLine{48         \textcolor{keywordtype}{int} dim\_;}
+\DoxyCodeLine{49         VectorXd mu\_, d\_mu;}
+\DoxyCodeLine{50         MatrixXd precision\_, d\_precision, covariance\_;}
+\DoxyCodeLine{51 }
+\DoxyCodeLine{52         VectorXd Vdmu\_;}
+\DoxyCodeLine{53         MatrixXd Vddmu\_;}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55         \textcolor{comment}{// step sizes}}
+\DoxyCodeLine{56         \textcolor{keywordtype}{double} step\_size\_mu = 0.9;}
+\DoxyCodeLine{57         \textcolor{keywordtype}{double} step\_size\_Sigma = 0.9;}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59         \textcolor{comment}{// cost functional. Input: samples vector; Output: cost}}
+\DoxyCodeLine{60         Function cost\_function\_;}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62         std::function<MatrixXd(\textcolor{keyword}{const} VectorXd\&)> func\_phi\_;}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64         GaussHermite<std::function<MatrixXd(\textcolor{keyword}{const} VectorXd\&)>> gauss\_hermite\_;}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66     \textcolor{keyword}{public}:}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{69         \textcolor{keywordtype}{void} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ad2240d58386bc3efac8d6894a2a986ff}{updateGH}}()\{}
+\DoxyCodeLine{70             gauss\_hermite\_.update\_mean(VectorXd\{mu\_\});}
+\DoxyCodeLine{71             gauss\_hermite\_.update\_P(MatrixXd\{covariance\_\});}
+\DoxyCodeLine{72         \}}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{75         \textcolor{keywordtype}{void} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a4a22f74a3acd788125990c65433fb2e4}{updateGHfunc}}(\textcolor{keyword}{const} std::function<MatrixXd(\textcolor{keyword}{const} VectorXd\&)>\& func)\{}
+\DoxyCodeLine{76             gauss\_hermite\_.update\_integrand(func);}
+\DoxyCodeLine{77         \}}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{80         \textcolor{keyword}{auto} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a97527fa77c6064cf4b54e619f0e98c4d}{cost\_function}}(Args... args)\{}
+\DoxyCodeLine{81             \textcolor{keywordflow}{return} cost\_function\_(args...);}
+\DoxyCodeLine{82         \}}
+\DoxyCodeLine{83 }
+\DoxyCodeLine{85         \textcolor{keywordtype}{void} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_adcce1d2751eb3766e8a83b718505c31b}{set\_step\_size}}(\textcolor{keywordtype}{double} ss\_mean, \textcolor{keywordtype}{double} ss\_precision)\{}
+\DoxyCodeLine{86             step\_size\_mu = ss\_mean;}
+\DoxyCodeLine{87             step\_size\_Sigma = ss\_precision;}
+\DoxyCodeLine{88         \}}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{91         \textcolor{keywordtype}{void} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a47c571edfce8dcdcd04425d834b49f91}{update\_mu}}(\textcolor{keyword}{const} VectorXd\& new\_mu)\{}
+\DoxyCodeLine{92             mu\_ = new\_mu;}
+\DoxyCodeLine{93         \}}
+\DoxyCodeLine{94 }
+\DoxyCodeLine{95         \textcolor{keywordtype}{void} update\_precision(\textcolor{keyword}{const} MatrixXd\& new\_precision)\{}
+\DoxyCodeLine{96             precision\_ = new\_precision;}
+\DoxyCodeLine{97         \}}
+\DoxyCodeLine{98 }
+\DoxyCodeLine{99         \textcolor{keywordtype}{void} update\_covariance()\{}
+\DoxyCodeLine{100             covariance\_ = precision\_.inverse();}
+\DoxyCodeLine{101         \}}
+\DoxyCodeLine{102 }
+\DoxyCodeLine{104         \textcolor{keywordtype}{void} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ae0ff0546685306b999aa1a540054abe0}{update\_GH\_mean}}()\{}
+\DoxyCodeLine{105             gauss\_hermite\_.update\_mean(mu\_);}
+\DoxyCodeLine{106         \}}
+\DoxyCodeLine{107 }
+\DoxyCodeLine{108         \textcolor{keywordtype}{void} update\_GH\_covariance()\{}
+\DoxyCodeLine{109             gauss\_hermite\_.update\_P(covariance\_);}
+\DoxyCodeLine{110         \}}
+\DoxyCodeLine{111 }
+\DoxyCodeLine{112         }
+\DoxyCodeLine{114         \textcolor{keywordtype}{void} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_adb8055c4e3cc2823d49c6d750d022b26}{calculate\_partial\_V}}()\{}
+\DoxyCodeLine{115             Vdmu\_.setZero();}
+\DoxyCodeLine{116             Vddmu\_.setZero();}
+\DoxyCodeLine{117 }
+\DoxyCodeLine{118             \textcolor{comment}{// GH approximation}}
+\DoxyCodeLine{119             update\_covariance();}
+\DoxyCodeLine{120             updateGH();}
+\DoxyCodeLine{121 }
+\DoxyCodeLine{123             std::function<MatrixXd(\textcolor{keyword}{const} VectorXd\&)> func\_Vmu\_ = [\&](\textcolor{keyword}{const} VectorXd\& x)\{\textcolor{keywordflow}{return} MatrixXd\{(x-\/VectorXd\{mu\_\}) * cost\_function\_(x)\};\};}
+\DoxyCodeLine{124             gauss\_hermite\_.update\_integrand(func\_Vmu\_);}
+\DoxyCodeLine{125             Vdmu\_ = gauss\_hermite\_.Integrate();}
+\DoxyCodeLine{126             Vdmu\_ = precision\_ * Vdmu\_;}
+\DoxyCodeLine{127 }
+\DoxyCodeLine{129             std::function<MatrixXd(\textcolor{keyword}{const} VectorXd\&)> func\_phi\_ = [\&](\textcolor{keyword}{const} VectorXd\& x)\{\textcolor{keywordflow}{return} MatrixXd\{MatrixXd::Constant(1, 1, cost\_function\_(x))\};\};}
+\DoxyCodeLine{130             gauss\_hermite\_.update\_integrand(func\_phi\_);}
+\DoxyCodeLine{131             \textcolor{keywordtype}{double} avg\_phi = gauss\_hermite\_.Integrate()(0, 0);}
+\DoxyCodeLine{132 }
+\DoxyCodeLine{134             std::function<MatrixXd(\textcolor{keyword}{const} VectorXd\&)> func\_Vmumu\_ = [\&](\textcolor{keyword}{const} VectorXd\& x)\{\textcolor{keywordflow}{return} MatrixXd\{(x-\/VectorXd\{mu\_\}) * (x-\/VectorXd\{mu\_\}).transpose().eval() * cost\_function\_(x)\};\};}
+\DoxyCodeLine{135             gauss\_hermite\_.update\_integrand(func\_Vmumu\_);}
+\DoxyCodeLine{136             Vddmu\_ = gauss\_hermite\_.Integrate();}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{138             Vddmu\_.triangularView<Upper>() = (precision\_ * Vddmu\_ * precision\_).triangularView<Upper>();}
+\DoxyCodeLine{139             Vddmu\_.triangularView<StrictlyLower>() = Vddmu\_.triangularView<StrictlyUpper>().transpose();}
+\DoxyCodeLine{140 }
+\DoxyCodeLine{141             gtsam::Matrix tmp\{precision\_ * avg\_phi\};}
+\DoxyCodeLine{142 }
+\DoxyCodeLine{143             Vddmu\_.triangularView<Upper>() = (Vddmu\_ -\/ precision\_ * avg\_phi).triangularView<Upper>();}
+\DoxyCodeLine{144             Vddmu\_.triangularView<StrictlyLower>() = Vddmu\_.triangularView<StrictlyUpper>().transpose();}
+\DoxyCodeLine{145         \}}
+\DoxyCodeLine{146 }
+\DoxyCodeLine{148         \textcolor{keywordtype}{void} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a7b418d525deba5686ecc024fc53bbcf0}{calculate\_exact\_partial\_V}}(VectorXd mu\_t, MatrixXd covariance\_t)\{}
+\DoxyCodeLine{149             Vdmu\_.setZero();}
+\DoxyCodeLine{150             Vddmu\_.setZero();}
+\DoxyCodeLine{151             update\_covariance();}
+\DoxyCodeLine{152 }
+\DoxyCodeLine{153             \textcolor{comment}{// helper vectors}}
+\DoxyCodeLine{154             VectorXd eps\{mu\_ -\/ mu\_t\};}
+\DoxyCodeLine{155             MatrixXd tmp\{MatrixXd::Zero(dim\_, dim\_)\};}
+\DoxyCodeLine{156             MatrixXd precision\_t\{covariance\_t.inverse()\};}
+\DoxyCodeLine{157 }
+\DoxyCodeLine{158             \textcolor{comment}{// partial V / partial mu}}
+\DoxyCodeLine{159             Vdmu\_ = precision\_t * eps;}
+\DoxyCodeLine{160 }
+\DoxyCodeLine{161             \textcolor{comment}{// partial V\string^2 / partial mu*mu\string^T}}
+\DoxyCodeLine{162             \textcolor{comment}{// update tmp matrix}}
+\DoxyCodeLine{163             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=0; i<dim\_; i++)\{}
+\DoxyCodeLine{164                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j=0; j<dim\_; j++) \{}
+\DoxyCodeLine{165                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} k=0; k<dim\_; k++)\{}
+\DoxyCodeLine{166                         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} l=0; l<dim\_; l++)\{}
+\DoxyCodeLine{167                             tmp(i, j) += (covariance\_(i, j)*covariance\_(k, l) + covariance\_(i,k)*covariance\_(j,l) + covariance\_(i,l)*covariance\_(j,k))*precision\_t(k,l);}
+\DoxyCodeLine{168                         \}}
+\DoxyCodeLine{169                     \}}
+\DoxyCodeLine{170                 \}}
+\DoxyCodeLine{171             \}}
+\DoxyCodeLine{172 }
+\DoxyCodeLine{173             Vddmu\_ = precision\_ * tmp * precision\_ -\/ precision\_ * (precision\_t*covariance\_).trace();}
+\DoxyCodeLine{174             Vddmu\_ = Vddmu\_ / 2;}
+\DoxyCodeLine{175 }
+\DoxyCodeLine{176             \}}
+\DoxyCodeLine{177 }
+\DoxyCodeLine{178         MatrixXd get\_Vddmu()\{}
+\DoxyCodeLine{179             \textcolor{keywordflow}{return} Vddmu\_;}
+\DoxyCodeLine{180         \}}
+\DoxyCodeLine{181 }
+\DoxyCodeLine{182         VectorXd get\_Vdmu()\{}
+\DoxyCodeLine{183             \textcolor{keywordflow}{return} Vdmu\_;}
+\DoxyCodeLine{184         \}}
+\DoxyCodeLine{185 }
+\DoxyCodeLine{186         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_af0ea29fe73cb60429d477de8e1f0609d}{step}}()\{}
+\DoxyCodeLine{187             \textcolor{comment}{// Zero grad}}
+\DoxyCodeLine{188             d\_mu.setZero();}
+\DoxyCodeLine{189             d\_precision.setZero();}
+\DoxyCodeLine{190 }
+\DoxyCodeLine{191             calculate\_partial\_V();}
+\DoxyCodeLine{192     \textcolor{comment}{//        calculate\_exact\_partial\_V(cost\_class\_.get\_mean(), cost\_class\_.get\_covariance());}}
+\DoxyCodeLine{193 }
+\DoxyCodeLine{194             d\_precision = -\/precision\_ + Vddmu\_;}
+\DoxyCodeLine{195 }
+\DoxyCodeLine{197             precision\_ = precision\_ + step\_size\_Sigma * d\_precision;}
+\DoxyCodeLine{198 }
+\DoxyCodeLine{199             d\_mu = precision\_.colPivHouseholderQr().solve(-\/Vdmu\_);}
+\DoxyCodeLine{200 }
+\DoxyCodeLine{201             mu\_ = mu\_ + step\_size\_mu * d\_mu;}
+\DoxyCodeLine{202 }
+\DoxyCodeLine{203             \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{204 }
+\DoxyCodeLine{205         \}}
+\DoxyCodeLine{206 }
+\DoxyCodeLine{207         VectorXd get\_mean()\{}
+\DoxyCodeLine{208             \textcolor{keywordflow}{return} mu\_;}
+\DoxyCodeLine{209         \}}
+\DoxyCodeLine{210 }
+\DoxyCodeLine{211         MatrixXd get\_precision()\{}
+\DoxyCodeLine{212             \textcolor{keywordflow}{return} precision\_;}
+\DoxyCodeLine{213         \}}
+\DoxyCodeLine{214 }
+\DoxyCodeLine{215         MatrixXd get\_covariance()\{}
+\DoxyCodeLine{216             \textcolor{keywordflow}{return} precision\_.inverse();}
+\DoxyCodeLine{217         \}}
+\DoxyCodeLine{218 }
+\DoxyCodeLine{219     \};}
+\DoxyCodeLine{220 \}}
+
+\end{DoxyCode}

@@ -1,0 +1,137 @@
+\hypertarget{SparseInverseMatrix_8h_source}{}\doxysection{Sparse\+Inverse\+Matrix.\+h}
+\label{SparseInverseMatrix_8h_source}\index{include/SparseInverseMatrix.h@{include/SparseInverseMatrix.h}}
+\mbox{\hyperlink{SparseInverseMatrix_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#ifndef MPVI\_SPARSEINVERSEMATRIX\_H}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#define MPVI\_SPARSEINVERSEMATRIX\_H}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#endif }}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include <Eigen/Dense>}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#include <Eigen/Sparse>}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#include <Eigen/SparseCore>}}
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#include <Eigen/SparseCholesky>}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{keyword}{typedef} Eigen::SparseMatrix<double> \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}};}
+\DoxyCodeLine{25 \textcolor{keyword}{using namespace }Eigen;}
+\DoxyCodeLine{26 \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28 \textcolor{keyword}{namespace }SparseInverse\{}
+\DoxyCodeLine{29     \textcolor{keyword}{struct }\mbox{\hyperlink{structSparseInverse_1_1sparse__inverser}{sparse\_inverser}}\{}
+\DoxyCodeLine{30         \mbox{\hyperlink{structSparseInverse_1_1sparse__inverser}{sparse\_inverser}}(\textcolor{keyword}{const} \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}\& \_input\_sparse):}
+\DoxyCodeLine{31         K(\_input\_sparse.cols())\{}
+\DoxyCodeLine{32             input\_matrix\_ = \_input\_sparse;}
+\DoxyCodeLine{33             inverse\_.resize(K, K);}
+\DoxyCodeLine{34             SimplicialLLT<SpMatrix, Eigen::Lower, Eigen::NaturalOrdering<int>> choleskyLLT\{\_input\_sparse\};}
+\DoxyCodeLine{35             L\_ = choleskyLLT.matrixL();}
+\DoxyCodeLine{36             D\_ = L\_.diagonal().array().square().matrix().asDiagonal();}
+\DoxyCodeLine{37             inv\_sqrt\_D\_ = L\_.diagonal().array().inverse().matrix().asDiagonal();}
+\DoxyCodeLine{38             L\_ = L\_ * inv\_sqrt\_D\_;}
+\DoxyCodeLine{39 }
+\DoxyCodeLine{40         \}}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42         Eigen::MatrixXd \mbox{\hyperlink{structSparseInverse_1_1sparse__inverser_afc33e087641f57e97c418eacbd1f7d23}{inverse}}()\{}
+\DoxyCodeLine{43             cout << \textcolor{stringliteral}{"{}true inverse "{}} << endl << input\_matrix\_.toDense().inverse() << endl;}
+\DoxyCodeLine{44             inverse\_(K-\/1, K-\/1) = 1.0 / D\_.coeff(K-\/1, K-\/1);}
+\DoxyCodeLine{45             inverse\_(K-\/1, K-\/2) = -\/inverse\_(K-\/1, K-\/1) * L\_.coeff(K-\/1, K-\/2);}
+\DoxyCodeLine{46             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} k=K-\/2; k>=0; k-\/-\/)\{}
+\DoxyCodeLine{47                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j=K-\/1; j>=k; j-\/-\/)\{}
+\DoxyCodeLine{49                     \textcolor{keywordtype}{double} value = -\/inverse\_(j, k+1) * L\_.coeff(k+1, k);}
+\DoxyCodeLine{50                     \textcolor{keywordflow}{if} (j==k)\{}
+\DoxyCodeLine{51                         value += 1.0 / D\_.coeff(j, j);}
+\DoxyCodeLine{52                     \}}
+\DoxyCodeLine{53                     inverse\_(j, k) = value;}
+\DoxyCodeLine{54                     inverse\_(k, j) = value;}
+\DoxyCodeLine{55                 \}}
+\DoxyCodeLine{56             \}}
+\DoxyCodeLine{57             cout << \textcolor{stringliteral}{"{}inverse calculated "{}} << endl << inverse\_ << endl;}
+\DoxyCodeLine{58             \textcolor{keywordflow}{return} inverse\_;}
+\DoxyCodeLine{59         \}}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61         \textcolor{keywordtype}{void} update\_sparse\_precision(\textcolor{keyword}{const} \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}\& new\_precision)\{}
+\DoxyCodeLine{62             assert(new\_precision.cols() == L\_.cols());}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64             input\_matrix\_ = new\_precision;}
+\DoxyCodeLine{65             SimplicialLLT<SpMatrix, Eigen::Lower, Eigen::NaturalOrdering<int>> choleskyLLT\{new\_precision\};}
+\DoxyCodeLine{66             L\_ = choleskyLLT.matrixL();}
+\DoxyCodeLine{67             D\_ = L\_.diagonal().array().square().matrix().asDiagonal();}
+\DoxyCodeLine{68             inv\_sqrt\_D\_ = L\_.diagonal().array().inverse().matrix().asDiagonal();}
+\DoxyCodeLine{69             L\_ = L\_ * inv\_sqrt\_D\_;}
+\DoxyCodeLine{70 }
+\DoxyCodeLine{71             cout << \textcolor{stringliteral}{"{}L\_"{}} << endl << L\_.toDense() << endl;}
+\DoxyCodeLine{72             cout << \textcolor{stringliteral}{"{}precision"{}} << endl << new\_precision.toDense() << endl;}
+\DoxyCodeLine{73             cout << \textcolor{stringliteral}{"{}LDLT"{}} << endl << (L\_ * D\_ * L\_.transpose()).toDense() << endl;}
+\DoxyCodeLine{74 }
+\DoxyCodeLine{75             cout << \textcolor{stringliteral}{"{}aa"{}} << endl;}
+\DoxyCodeLine{76         \}}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{78         Eigen::MatrixXd \mbox{\hyperlink{structSparseInverse_1_1sparse__inverser_afc33e087641f57e97c418eacbd1f7d23}{inverse}}(\textcolor{keyword}{const} \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}\& input\_matrix)\{}
+\DoxyCodeLine{79             update\_sparse\_precision(input\_matrix);}
+\DoxyCodeLine{80             \textcolor{keywordflow}{return} \mbox{\hyperlink{structSparseInverse_1_1sparse__inverser_afc33e087641f57e97c418eacbd1f7d23}{inverse}}();}
+\DoxyCodeLine{81         \}}
+\DoxyCodeLine{82 }
+\DoxyCodeLine{83         MatrixXd inverse\_;}
+\DoxyCodeLine{84         \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}} L\_;}
+\DoxyCodeLine{85         \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}} input\_matrix\_;}
+\DoxyCodeLine{86         \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}} D\_;}
+\DoxyCodeLine{87         \textcolor{keywordtype}{int} K;}
+\DoxyCodeLine{88         \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}} inv\_sqrt\_D\_;}
+\DoxyCodeLine{89     \};}
+\DoxyCodeLine{90 }
+\DoxyCodeLine{91     \textcolor{keyword}{struct }\mbox{\hyperlink{structSparseInverse_1_1dense__inverser}{dense\_inverser}}\{}
+\DoxyCodeLine{92         \mbox{\hyperlink{structSparseInverse_1_1dense__inverser}{dense\_inverser}}(\textcolor{keyword}{const} MatrixXd\& \_input\_dense):K\_(\_input\_dense.cols())\{}
+\DoxyCodeLine{93             inverse\_.resize(K\_, K\_);}
+\DoxyCodeLine{94             input\_dense\_ = \_input\_dense;}
+\DoxyCodeLine{95             LLT<MatrixXd, Eigen::Lower> choleskyLDLT = \_input\_dense.llt();}
+\DoxyCodeLine{96             L\_ = choleskyLDLT.matrixL();}
+\DoxyCodeLine{97 }
+\DoxyCodeLine{98             D\_ = L\_.diagonal().array().square().matrix().asDiagonal();}
+\DoxyCodeLine{99             inv\_sqrt\_D\_ = D\_.diagonal().array().sqrt().inverse().matrix().asDiagonal();}
+\DoxyCodeLine{100             L\_ = L\_ * inv\_sqrt\_D\_;}
+\DoxyCodeLine{101         \}}
+\DoxyCodeLine{102 }
+\DoxyCodeLine{103         Eigen::MatrixXd \mbox{\hyperlink{structSparseInverse_1_1dense__inverser_a58b2afee2028386c8410837a0c11db85}{inverse}}()\{}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{105             LLT<MatrixXd, Eigen::Lower> choleskyLDLT = input\_dense\_.llt();}
+\DoxyCodeLine{106 }
+\DoxyCodeLine{107             L\_ = choleskyLDLT.matrixL();}
+\DoxyCodeLine{108 }
+\DoxyCodeLine{109             D\_ = L\_.diagonal().array().square().matrix().asDiagonal();}
+\DoxyCodeLine{110             inv\_sqrt\_D\_ = L\_.diagonal().array().inverse().matrix().asDiagonal();}
+\DoxyCodeLine{111 }
+\DoxyCodeLine{112             L\_ = L\_ * inv\_sqrt\_D\_;}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114             inverse\_(K\_-\/1, K\_-\/1) = 1.0 / D\_(K\_-\/1, K\_-\/1);}
+\DoxyCodeLine{115             inverse\_(K\_-\/1, K\_-\/2) = -\/inverse\_(K\_-\/1, K\_-\/1) * L\_(K\_-\/1, K\_-\/2);}
+\DoxyCodeLine{116             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} k=K\_-\/2; k>=0; k-\/-\/)\{}
+\DoxyCodeLine{117                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j=K\_-\/1; j>=k; j-\/-\/)\{}
+\DoxyCodeLine{119                     \textcolor{keywordtype}{double} value = -\/inverse\_(j, k+1) * L\_(k+1, k);}
+\DoxyCodeLine{120                     \textcolor{keywordflow}{if} (j==k)\{}
+\DoxyCodeLine{121                         value += 1.0 / D\_(j, j);}
+\DoxyCodeLine{122                     \}}
+\DoxyCodeLine{123                     inverse\_(j, k) = value;}
+\DoxyCodeLine{124                     inverse\_(k, j) = value;}
+\DoxyCodeLine{125                 \}}
+\DoxyCodeLine{126             \}}
+\DoxyCodeLine{127             \textcolor{keywordflow}{return} inverse\_;}
+\DoxyCodeLine{128         \}}
+\DoxyCodeLine{129 }
+\DoxyCodeLine{130         Eigen::MatrixXd \mbox{\hyperlink{structSparseInverse_1_1dense__inverser_a58b2afee2028386c8410837a0c11db85}{inverse}}(\textcolor{keyword}{const} MatrixXd\& input\_matrix)\{}
+\DoxyCodeLine{131             assert(input\_matrix.cols() == L\_.cols());}
+\DoxyCodeLine{132             input\_dense\_ = input\_matrix;}
+\DoxyCodeLine{133             \textcolor{keywordflow}{return} \mbox{\hyperlink{structSparseInverse_1_1dense__inverser_a58b2afee2028386c8410837a0c11db85}{inverse}}();}
+\DoxyCodeLine{134         \}}
+\DoxyCodeLine{135 }
+\DoxyCodeLine{136         MatrixXd inverse\_;}
+\DoxyCodeLine{137         MatrixXd L\_;}
+\DoxyCodeLine{138         MatrixXd D\_;}
+\DoxyCodeLine{139         \textcolor{keywordtype}{int} K\_;}
+\DoxyCodeLine{140         MatrixXd input\_dense\_;}
+\DoxyCodeLine{141         MatrixXd inv\_sqrt\_D\_;}
+\DoxyCodeLine{142     \};}
+\DoxyCodeLine{143 }
+\DoxyCodeLine{144 \}}
+
+\end{DoxyCode}

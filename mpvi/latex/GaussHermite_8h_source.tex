@@ -1,0 +1,147 @@
+\hypertarget{GaussHermite_8h_source}{}\doxysection{Gauss\+Hermite.\+h}
+\label{GaussHermite_8h_source}\index{include/GaussHermite.h@{include/GaussHermite.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include <eigen3/Eigen/Dense>}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include <boost/math/special\_functions/factorials.hpp>}}
+\DoxyCodeLine{10 \textcolor{keyword}{using namespace }Eigen;}
+\DoxyCodeLine{11 \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{keyword}{namespace}\{}
+\DoxyCodeLine{14     \textcolor{keyword}{template} <\textcolor{keyword}{typename} Function, \textcolor{keyword}{typename}... Args>}
+\DoxyCodeLine{15 \textcolor{keyword}{class }GaussHermite\{}
+\DoxyCodeLine{16 \textcolor{keyword}{public}:}
+\DoxyCodeLine{17     GaussHermite(\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& p, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& dim, \textcolor{keyword}{const} VectorXd\& mean, \textcolor{keyword}{const} MatrixXd\& P, \textcolor{keyword}{const} Function\& func):}
+\DoxyCodeLine{18         p\_\{p\},}
+\DoxyCodeLine{19         dim\_\{dim\},}
+\DoxyCodeLine{20         mean\_\{mean\},}
+\DoxyCodeLine{21         P\_\{P\},}
+\DoxyCodeLine{22         f\_\{func\},}
+\DoxyCodeLine{23         W\_\{VectorXd::Zero(p\_)\},}
+\DoxyCodeLine{24         sigmapts\_\{VectorXd::Zero(p\_)\}\{\}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{29     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} getSigmaPts()\{}
+\DoxyCodeLine{30         VectorXd a\{VectorXd::Ones(p\_-\/1)\};}
+\DoxyCodeLine{31         VectorXd c\{VectorXd::LinSpaced(p\_-\/1, 1, p\_-\/1)\};}
+\DoxyCodeLine{32         VectorXd c\_over\_a = (c.array() / a.array()).matrix();}
+\DoxyCodeLine{33         MatrixXd L\{MatrixXd::Zero(p\_, p\_)\};}
+\DoxyCodeLine{34         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=0; i<p\_-\/1; i++)\{}
+\DoxyCodeLine{35             L(i+1, i) = c\_over\_a(i);}
+\DoxyCodeLine{36             L(i, i+1) = a(i);}
+\DoxyCodeLine{37         \}}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39         sigmapts\_ = L.eigenvalues().real();}
+\DoxyCodeLine{40     \}}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{45     \textcolor{keyword}{inline} \textcolor{keywordtype}{double} HermitePolynomial(\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& deg, \textcolor{keyword}{const} \textcolor{keywordtype}{double}\& x)\{}
+\DoxyCodeLine{46         \textcolor{keywordflow}{if} (deg == 0) \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{47         \textcolor{keywordflow}{if} (deg == 1) \textcolor{keywordflow}{return} x;}
+\DoxyCodeLine{48         \textcolor{keywordflow}{else}\{}
+\DoxyCodeLine{49             \textcolor{keywordtype}{double} H0 = 1;}
+\DoxyCodeLine{50             \textcolor{keywordtype}{double} H1 = x;}
+\DoxyCodeLine{51             \textcolor{keywordtype}{double} H2 = x*x -\/ 1;}
+\DoxyCodeLine{52             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=3; i<deg+1; i++)\{}
+\DoxyCodeLine{53                 H0 = H1;}
+\DoxyCodeLine{54                 H1 = H2;}
+\DoxyCodeLine{55                 H2 = x*H1 -\/ (i-\/1)*H0;}
+\DoxyCodeLine{56             \}}
+\DoxyCodeLine{57             \textcolor{keywordflow}{return} H2;}
+\DoxyCodeLine{58         \}}
+\DoxyCodeLine{59     \}}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{64     \textcolor{keyword}{inline} VectorXd getWeights()\{}
+\DoxyCodeLine{65         getSigmaPts();}
+\DoxyCodeLine{66         VectorXd W(p\_);}
+\DoxyCodeLine{67         \textcolor{keywordtype}{int} cnt = 0;}
+\DoxyCodeLine{68         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{double} i\_pt : sigmapts\_)\{}
+\DoxyCodeLine{69             W(cnt) = boost::math::factorial<double>(p\_) / p\_ / p\_ / HermitePolynomial(p\_-\/1, i\_pt) / HermitePolynomial(p\_-\/1, i\_pt);}
+\DoxyCodeLine{70             cnt += 1;}
+\DoxyCodeLine{71         \}}
+\DoxyCodeLine{72         W\_ = W;}
+\DoxyCodeLine{73         \textcolor{keywordflow}{return} W;}
+\DoxyCodeLine{74     \}}
+\DoxyCodeLine{75 }
+\DoxyCodeLine{79     MatrixXd Integrate()\{}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81         getWeights();}
+\DoxyCodeLine{82         LLT<MatrixXd> lltP(P\_);}
+\DoxyCodeLine{83         MatrixXd sig\{lltP.matrixL()\};}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85         VectorXd pt\_0 = VectorXd::Zero(dim\_);}
+\DoxyCodeLine{86         MatrixXd res\{MatrixXd::Zero(f\_(pt\_0).rows(), f\_(pt\_0).cols())\};}
+\DoxyCodeLine{87 }
+\DoxyCodeLine{88         cout << \textcolor{stringliteral}{"{}res"{}} << endl << res << endl;}
+\DoxyCodeLine{89         }
+\DoxyCodeLine{90         \textcolor{keywordflow}{if} (dim\_ == 1)\{}
+\DoxyCodeLine{91             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=0; i<p\_; i++)\{}
+\DoxyCodeLine{92                 res += W\_(i)*f\_(sig*sigmapts\_(i) + mean\_);}
+\DoxyCodeLine{93             \}}
+\DoxyCodeLine{94             cout << \textcolor{stringliteral}{"{}res"{}} << endl << res << endl;}
+\DoxyCodeLine{95         \}}
+\DoxyCodeLine{96 }
+\DoxyCodeLine{97         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (dim\_ == 2) \{}
+\DoxyCodeLine{98                     cout << \textcolor{stringliteral}{"{}res"{}} << endl << res << endl;}
+\DoxyCodeLine{99             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < p\_; i++) \{}
+\DoxyCodeLine{100                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j = 0; j < p\_; j++) \{}
+\DoxyCodeLine{101                     VectorXd pt\_ij = VectorXd::Zero(dim\_);}
+\DoxyCodeLine{102                     pt\_ij << sigmapts\_(i), sigmapts\_(j);}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104                     VectorXd pt\_ij\_t = sig * pt\_ij + mean\_;}
+\DoxyCodeLine{105                     res += W\_(i) * W\_(j) * f\_(pt\_ij\_t);}
+\DoxyCodeLine{106                 \}}
+\DoxyCodeLine{107             \}}
+\DoxyCodeLine{108             cout << \textcolor{stringliteral}{"{}res"{}} << endl << res << endl;}
+\DoxyCodeLine{109         \}}
+\DoxyCodeLine{110         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (dim\_ == 3)\{}
+\DoxyCodeLine{111             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=0; i<p\_; i++)\{}
+\DoxyCodeLine{112                 \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} j=0; j<p\_; j++)\{}
+\DoxyCodeLine{113                     \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} k=0; k<p\_; k++)\{}
+\DoxyCodeLine{114                         VectorXd pt\_ijk = VectorXd::Zero(dim\_);}
+\DoxyCodeLine{115                         pt\_ijk << sigmapts\_(i), sigmapts\_(j), sigmapts\_(k);}
+\DoxyCodeLine{116 }
+\DoxyCodeLine{117                         VectorXd pt\_ijk\_t = sig * pt\_ijk + mean\_;}
+\DoxyCodeLine{118                         res += W\_(i) * W\_(j) * W\_(k) * f\_(pt\_ijk\_t);}
+\DoxyCodeLine{119                     \}}
+\DoxyCodeLine{120                 \}}
+\DoxyCodeLine{121             \}}
+\DoxyCodeLine{122             cout << \textcolor{stringliteral}{"{}res"{}} << endl << res << endl;}
+\DoxyCodeLine{123         \}}
+\DoxyCodeLine{124         }
+\DoxyCodeLine{125         \textcolor{keywordflow}{return} res;}
+\DoxyCodeLine{126     \}}
+\DoxyCodeLine{127 }
+\DoxyCodeLine{131     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} update\_mean(\textcolor{keyword}{const} VectorXd\& mean)\{}
+\DoxyCodeLine{132         mean\_ = mean;}
+\DoxyCodeLine{133     \}}
+\DoxyCodeLine{134 }
+\DoxyCodeLine{135     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} update\_P(\textcolor{keyword}{const} MatrixXd\& P)\{}
+\DoxyCodeLine{136         P\_ = P;}
+\DoxyCodeLine{137     \}}
+\DoxyCodeLine{138 }
+\DoxyCodeLine{139     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} set\_p(\textcolor{keywordtype}{int} p)\{}
+\DoxyCodeLine{140         p\_ = p;}
+\DoxyCodeLine{141     \}}
+\DoxyCodeLine{142 }
+\DoxyCodeLine{143     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} update\_integrand(\textcolor{keyword}{const} Function\& fun)\{}
+\DoxyCodeLine{144         f\_ = fun;}
+\DoxyCodeLine{145     \}}
+\DoxyCodeLine{146 }
+\DoxyCodeLine{147     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} update\_dimension(\textcolor{keyword}{const} \textcolor{keywordtype}{int} dim)\{}
+\DoxyCodeLine{148         dim\_ = dim;}
+\DoxyCodeLine{149     \}}
+\DoxyCodeLine{150 }
+\DoxyCodeLine{151 \textcolor{keyword}{private}:}
+\DoxyCodeLine{152     \textcolor{keywordtype}{int} p\_;}
+\DoxyCodeLine{153     \textcolor{keywordtype}{int} dim\_;}
+\DoxyCodeLine{154     VectorXd mean\_;}
+\DoxyCodeLine{155     MatrixXd P\_;}
+\DoxyCodeLine{156     Function f\_;}
+\DoxyCodeLine{157     VectorXd W\_;}
+\DoxyCodeLine{158     VectorXd sigmapts\_;}
+\DoxyCodeLine{159 \};}
+\DoxyCodeLine{160 }
+\DoxyCodeLine{161 \}}
+
+\end{DoxyCode}

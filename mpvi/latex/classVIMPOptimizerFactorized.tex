@@ -1,0 +1,180 @@
+\hypertarget{classVIMPOptimizerFactorized}{}\doxysection{VIMPOptimizer\+Factorized\texorpdfstring{$<$}{<} Function, cost\+Class, Args \texorpdfstring{$>$}{>} Class Template Reference}
+\label{classVIMPOptimizerFactorized}\index{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}}
+
+
+Decription\+: The marginal optimizer using vanilla Mnte Carlo sampling to calculate the expectations.  
+
+
+
+
+{\ttfamily \#include $<$Optimizer\+Factorized.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classVIMPOptimizerFactorized_a21a6d4e1220635abe7c7d2882e42cf66}{VIMPOptimizer\+Factorized}} (const int \&dimension, Function \+\_\+function, const cost\+Class \&\+\_\+cost\+\_\+class)
+\item 
+auto \mbox{\hyperlink{classVIMPOptimizerFactorized_afd9c0cf4d421ece2a1d433ec0c8c5d36}{cost\+\_\+function}} (Args... args)
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a080ff09b78d77b7c1ac33a1945a621d6}\label{classVIMPOptimizerFactorized_a080ff09b78d77b7c1ac33a1945a621d6}} 
+void {\bfseries set\+\_\+step\+\_\+size} (double ss\+\_\+mean, double ss\+\_\+precision)
+\begin{DoxyCompactList}\small\item\em Update the step size. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a51adea582370a78ea761c59978bb4fad}\label{classVIMPOptimizerFactorized_a51adea582370a78ea761c59978bb4fad}} 
+void {\bfseries update\+Sampler\+Covariance\+Matrix} (const Matrix\+Xd \&new\+\_\+cov)
+\begin{DoxyCompactList}\small\item\em Update the mean and covariance in the sampler with a user inputed one. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_aa96b3cd82590fa43b6109ed24b80142b}\label{classVIMPOptimizerFactorized_aa96b3cd82590fa43b6109ed24b80142b}} 
+void {\bfseries update\+Sampler\+Covariance\+Matrix} ()
+\begin{DoxyCompactList}\small\item\em Update the covariance matrix in the sampler by the inverse of precision matrix. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a07e0c43ab97ca1d29c38bffd9d08442f}\label{classVIMPOptimizerFactorized_a07e0c43ab97ca1d29c38bffd9d08442f}} 
+void {\bfseries update\+Sampler\+Mean} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a2689d5496a20223ca40bf940d97adfad}\label{classVIMPOptimizerFactorized_a2689d5496a20223ca40bf940d97adfad}} 
+void {\bfseries update\+Sampler\+Mean} (const Vector\+Xd \&new\+\_\+mu)
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a1b6548a04433a8a0e503d11ba31cf8d9}\label{classVIMPOptimizerFactorized_a1b6548a04433a8a0e503d11ba31cf8d9}} 
+void {\bfseries update\+\_\+mu} (const Vector\+Xd \&new\+\_\+mu)
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a7fae0ccec27ab92dc74dec59a384393c}\label{classVIMPOptimizerFactorized_a7fae0ccec27ab92dc74dec59a384393c}} 
+void {\bfseries update\+\_\+precision} (const Matrix\+Xd \&new\+\_\+precision)
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a55a4f086d8110d63096363946ee95101}\label{classVIMPOptimizerFactorized_a55a4f086d8110d63096363946ee95101}} 
+void {\bfseries update\+\_\+covariance} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_aa2cb68cd02c0f55f4f462ad3c46dc2bb}\label{classVIMPOptimizerFactorized_aa2cb68cd02c0f55f4f462ad3c46dc2bb}} 
+void {\bfseries update\+GH} ()
+\item 
+void \mbox{\hyperlink{classVIMPOptimizerFactorized_a2fcd53afbdb97128741d1beef1d5303c}{calculate\+\_\+partial\+\_\+V}} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_ac9afbfcbf549e12972bef9f7581ecb97}\label{classVIMPOptimizerFactorized_ac9afbfcbf549e12972bef9f7581ecb97}} 
+void {\bfseries calculate\+\_\+exact\+\_\+partial\+\_\+V} (Vector\+Xd mu\+\_\+t, Matrix\+Xd covariance\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Gaussian posterior\+: closed-\/form expression. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a8108ec4f70fc1afb6b785aa1d9f61287}\label{classVIMPOptimizerFactorized_a8108ec4f70fc1afb6b785aa1d9f61287}} 
+Matrix\+Xd {\bfseries get\+\_\+\+Vddmu} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_ab330b468b1ace9751b2a5589760ae078}\label{classVIMPOptimizerFactorized_ab330b468b1ace9751b2a5589760ae078}} 
+Vector\+Xd {\bfseries get\+\_\+\+Vdmu} ()
+\item 
+bool \mbox{\hyperlink{classVIMPOptimizerFactorized_adfb10284880da6d8c49eead2bf35d7c7}{step}} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a5ddc8dd3b4bbd7572c47cda94379754a}\label{classVIMPOptimizerFactorized_a5ddc8dd3b4bbd7572c47cda94379754a}} 
+Vector\+Xd {\bfseries get\+\_\+mean} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_addedfd59bf42cd4d93f244082f703d52}\label{classVIMPOptimizerFactorized_addedfd59bf42cd4d93f244082f703d52}} 
+Matrix\+Xd {\bfseries get\+\_\+precision} ()
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a1c87f0a70ba231c50ffc71febcbb4b69}\label{classVIMPOptimizerFactorized_a1c87f0a70ba231c50ffc71febcbb4b69}} 
+Matrix\+Xd {\bfseries get\+\_\+covariance} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a884d5132b44e7429cbce8c80d7d573b2}\label{classVIMPOptimizerFactorized_a884d5132b44e7429cbce8c80d7d573b2}} 
+int {\bfseries dim\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_adc2c5623dc053080f6713598c3b80eb0}\label{classVIMPOptimizerFactorized_adc2c5623dc053080f6713598c3b80eb0}} 
+int {\bfseries num\+\_\+samples} = 50000
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a009adb3cb32cd717d1120837065a2324}\label{classVIMPOptimizerFactorized_a009adb3cb32cd717d1120837065a2324}} 
+Vector\+Xd {\bfseries mu\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a9d0f15b1fc29cf9e33af07654d7045a9}\label{classVIMPOptimizerFactorized_a9d0f15b1fc29cf9e33af07654d7045a9}} 
+Vector\+Xd {\bfseries d\+\_\+mu}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a40b6dee2a3552a6f2ae6845df6597227}\label{classVIMPOptimizerFactorized_a40b6dee2a3552a6f2ae6845df6597227}} 
+Matrix\+Xd {\bfseries precision\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_aa31fe645cd935d5d04ae5f3f0ba8f069}\label{classVIMPOptimizerFactorized_aa31fe645cd935d5d04ae5f3f0ba8f069}} 
+Matrix\+Xd {\bfseries d\+\_\+precision}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a1bf771e043cb2650034cc6a77c5d29c1}\label{classVIMPOptimizerFactorized_a1bf771e043cb2650034cc6a77c5d29c1}} 
+Matrix\+Xd {\bfseries covariance\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_ae87d702dea7c474f657d74ebddbc32a2}\label{classVIMPOptimizerFactorized_ae87d702dea7c474f657d74ebddbc32a2}} 
+Vector\+Xd {\bfseries Vdmu}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a54517ca34cd374e91628345b9e0e5602}\label{classVIMPOptimizerFactorized_a54517ca34cd374e91628345b9e0e5602}} 
+Matrix\+Xd {\bfseries Vddmu}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a3b9aefe340a84eb6032d8cd5422b3f33}\label{classVIMPOptimizerFactorized_a3b9aefe340a84eb6032d8cd5422b3f33}} 
+double {\bfseries step\+\_\+size\+\_\+mu} = 0.\+9
+\begin{DoxyCompactList}\small\item\em step sizes \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_aa99f3cefce2f8a1d4579cf5c5c424a61}\label{classVIMPOptimizerFactorized_aa99f3cefce2f8a1d4579cf5c5c424a61}} 
+double {\bfseries step\+\_\+size\+\_\+\+Sigma} = 0.\+9
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_ae7915337f25e4f6d26e9e45005edb4b6}\label{classVIMPOptimizerFactorized_ae7915337f25e4f6d26e9e45005edb4b6}} 
+\mbox{\hyperlink{structGaussianSampler_1_1normal__random__variable}{normal\+\_\+random\+\_\+variable}} {\bfseries sampler\+\_\+}
+\begin{DoxyCompactList}\small\item\em sampler \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a5efcada5449e754ac8f62a317735b606}\label{classVIMPOptimizerFactorized_a5efcada5449e754ac8f62a317735b606}} 
+Function {\bfseries cost\+\_\+function\+\_\+}
+\begin{DoxyCompactList}\small\item\em cost functional. Input\+: samples vector; Output\+: cost \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a7dbcea7af29ba3dda393cb5bea9f92b9}\label{classVIMPOptimizerFactorized_a7dbcea7af29ba3dda393cb5bea9f92b9}} 
+cost\+Class {\bfseries cost\+\_\+class\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_ad1a30199d7a7c6a9ab7f98827e0b98a4}\label{classVIMPOptimizerFactorized_ad1a30199d7a7c6a9ab7f98827e0b98a4}} 
+std\+::function$<$ Matrix\+Xd(const Vector\+Xd \&)$>$ {\bfseries func\+\_\+phi\+\_\+}
+\item 
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a6805b7bc88946901eb857bdef5a43326}\label{classVIMPOptimizerFactorized_a6805b7bc88946901eb857bdef5a43326}} 
+\mbox{\hyperlink{classGaussHermite}{Gauss\+Hermite}}$<$ std\+::function$<$ Matrix\+Xd(const Vector\+Xd \&)$>$ $>$ {\bfseries gauss\+\_\+hermite\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Function, typename cost\+Class, typename... Args$>$\newline
+class VIMPOptimizer\+Factorized$<$ Function, cost\+Class, Args $>$}
+Decription\+: The marginal optimizer using vanilla Mnte Carlo sampling to calculate the expectations. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a21a6d4e1220635abe7c7d2882e42cf66}\label{classVIMPOptimizerFactorized_a21a6d4e1220635abe7c7d2882e42cf66}} 
+\index{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}!VIMPOptimizerFactorized@{VIMPOptimizerFactorized}}
+\index{VIMPOptimizerFactorized@{VIMPOptimizerFactorized}!VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}}
+\doxysubsubsection{\texorpdfstring{VIMPOptimizerFactorized()}{VIMPOptimizerFactorized()}}
+{\footnotesize\ttfamily template$<$typename Function , typename cost\+Class , typename... Args$>$ \\
+\mbox{\hyperlink{classVIMPOptimizerFactorized}{VIMPOptimizer\+Factorized}}$<$ Function, cost\+Class, Args $>$\mbox{\hyperlink{classVIMPOptimizerFactorized}{\+::\+VIMPOptimizer\+Factorized}} (\begin{DoxyParamCaption}\item[{const int \&}]{dimension,  }\item[{Function}]{\+\_\+function,  }\item[{const cost\+Class \&}]{\+\_\+cost\+\_\+class }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & The dimension of the state \\
+\hline
+{\em \+\_\+function} & Template function class which calculate the cost \\
+\hline
+{\em \+\_\+cost\+\_\+class} & The class which provides the source of cost, e.\+g., collision factor for collision cost. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_a2fcd53afbdb97128741d1beef1d5303c}\label{classVIMPOptimizerFactorized_a2fcd53afbdb97128741d1beef1d5303c}} 
+\index{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}!calculate\_partial\_V@{calculate\_partial\_V}}
+\index{calculate\_partial\_V@{calculate\_partial\_V}!VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}}
+\doxysubsubsection{\texorpdfstring{calculate\_partial\_V()}{calculate\_partial\_V()}}
+{\footnotesize\ttfamily template$<$typename Function , typename cost\+Class , typename... Args$>$ \\
+void \mbox{\hyperlink{classVIMPOptimizerFactorized}{VIMPOptimizer\+Factorized}}$<$ Function, cost\+Class, Args $>$\+::calculate\+\_\+partial\+\_\+V (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Integrate for Vdmu\+\_\+
+
+Integrate for phi(x)\mbox{\Hypertarget{classVIMPOptimizerFactorized_afd9c0cf4d421ece2a1d433ec0c8c5d36}\label{classVIMPOptimizerFactorized_afd9c0cf4d421ece2a1d433ec0c8c5d36}} 
+\index{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}!cost\_function@{cost\_function}}
+\index{cost\_function@{cost\_function}!VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}}
+\doxysubsubsection{\texorpdfstring{cost\_function()}{cost\_function()}}
+{\footnotesize\ttfamily template$<$typename Function , typename cost\+Class , typename... Args$>$ \\
+auto \mbox{\hyperlink{classVIMPOptimizerFactorized}{VIMPOptimizer\+Factorized}}$<$ Function, cost\+Class, Args $>$\+::cost\+\_\+function (\begin{DoxyParamCaption}\item[{Args...}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+The evaluation of the cost function 
+\begin{DoxyParams}{Parameters}
+{\em args} & parameter inputs for the cost calculation \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classVIMPOptimizerFactorized_adfb10284880da6d8c49eead2bf35d7c7}\label{classVIMPOptimizerFactorized_adfb10284880da6d8c49eead2bf35d7c7}} 
+\index{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}!step@{step}}
+\index{step@{step}!VIMPOptimizerFactorized$<$ Function, costClass, Args $>$@{VIMPOptimizerFactorized$<$ Function, costClass, Args $>$}}
+\doxysubsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily template$<$typename Function , typename cost\+Class , typename... Args$>$ \\
+bool \mbox{\hyperlink{classVIMPOptimizerFactorized}{VIMPOptimizer\+Factorized}}$<$ Function, cost\+Class, Args $>$\+::step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+without backtracking
+
+backtracking
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{OptimizerFactorized_8h}{Optimizer\+Factorized.\+h}}\end{DoxyCompactItemize}

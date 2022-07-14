@@ -1,0 +1,38 @@
+\hypertarget{OptimizerFactorizedPriorCollisionGH_8h_source}{}\doxysection{Optimizer\+Factorized\+Prior\+Collision\+GH.\+h}
+\label{OptimizerFactorizedPriorCollisionGH_8h_source}\index{include/OptimizerFactorizedPriorCollisionGH.h@{include/OptimizerFactorizedPriorCollisionGH.h}}
+\mbox{\hyperlink{OptimizerFactorizedPriorCollisionGH_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{keyword}{using namespace }MPVI;}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{OptimizerFactorizedGH_8h}{OptimizerFactorizedGH.h}}"{}}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{comment}{// IOFormat CleanFmt(4, 0, "{}, "{}, "{}\(\backslash\)n"{});}}
+\DoxyCodeLine{17 \textcolor{keyword}{namespace }MPVI\{}
+\DoxyCodeLine{18     \textcolor{keyword}{template} <\textcolor{keyword}{typename} Function, \textcolor{keyword}{typename} PriorClass, \textcolor{keyword}{typename} CollisionClass, \textcolor{keyword}{typename}... Args>}
+\DoxyCodeLine{23     \textcolor{keyword}{class }\mbox{\hyperlink{classMPVI_1_1OptimizerFactorizedPriorColGH}{OptimizerFactorizedPriorColGH}}: \textcolor{keyword}{public} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{VIMPOptimizerFactorizedGaussHermite}}<Function, Args ...>\{}
+\DoxyCodeLine{24     \textcolor{keyword}{public}:}
+\DoxyCodeLine{25         \mbox{\hyperlink{classMPVI_1_1OptimizerFactorizedPriorColGH}{OptimizerFactorizedPriorColGH}}(\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& dimension, }
+\DoxyCodeLine{26                                         Function \_function, }
+\DoxyCodeLine{27                                         PriorClass \_prior, }
+\DoxyCodeLine{28                                         CollisionClass \_collision):}
+\DoxyCodeLine{29                 prior\_\{\_prior\},}
+\DoxyCodeLine{30                 collision\_\{\_collision\}}
+\DoxyCodeLine{31         \{}
+\DoxyCodeLine{32             \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{VIMPOptimizerFactorizedGaussHermite}}(dimension, \_function);}
+\DoxyCodeLine{33         \}}
+\DoxyCodeLine{34     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{37         \textcolor{keyword}{auto} \mbox{\hyperlink{classMPVI_1_1OptimizerFactorizedPriorColGH_ad0bb25a9319da32a184b98d159538919}{cost\_function}}(Args... args)\{}
+\DoxyCodeLine{38             \textcolor{keywordflow}{return} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a5fe13a6326e954897f0fc4dfdfb4451b}{cost\_function\_}}(args..., prior\_, collision\_);}
+\DoxyCodeLine{39         \}}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41     \textcolor{keyword}{private}:}
+\DoxyCodeLine{42         PriorClass prior\_;}
+\DoxyCodeLine{43         CollisionClass collision\_;}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{45     \};}
+\DoxyCodeLine{46 \}}
+\DoxyCodeLine{47 }
+
+\end{DoxyCode}

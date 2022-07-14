@@ -1,0 +1,65 @@
+\hypertarget{SparseMatrixHelper_8h_source}{}\doxysection{Sparse\+Matrix\+Helper.\+h}
+\label{SparseMatrixHelper_8h_source}\index{include/SparseMatrixHelper.h@{include/SparseMatrixHelper.h}}
+\mbox{\hyperlink{SparseMatrixHelper_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#ifndef C\_DRAFT\_SPARSEMATRIXHELPER\_H}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#define C\_DRAFT\_SPARSEMATRIXHELPER\_H}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//C\_DRAFT\_SPARSEMATRIXHELPER\_H}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <eigen3/Eigen/Sparse>}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include <eigen3/Eigen/SparseCore>}}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{keyword}{using namespace }Eigen;}
+\DoxyCodeLine{20 \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{21 \textcolor{keyword}{typedef} Triplet<double> T;}
+\DoxyCodeLine{22 \textcolor{keyword}{typedef} SparseMatrix<double> \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}};}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{keyword}{namespace }Sparsehelper\{}
+\DoxyCodeLine{25     \textcolor{keyword}{struct }\mbox{\hyperlink{structSparsehelper_1_1tridiagonalizer}{tridiagonalizer}}\{}
+\DoxyCodeLine{26         \mbox{\hyperlink{structSparsehelper_1_1tridiagonalizer}{tridiagonalizer}}(\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& n): size(n)\{\}}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28         \textcolor{keyword}{const} \textcolor{keywordtype}{int} size;}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30         \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}\& operator()(\textcolor{keyword}{const} \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}\& input)\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{31             \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}* output;}
+\DoxyCodeLine{32             output = \textcolor{keyword}{new} \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}(size, size);}
+\DoxyCodeLine{33             \textcolor{keyword}{const} \textcolor{keywordtype}{int} nnz = 3*size-\/2;}
+\DoxyCodeLine{34             output-\/>reserve(nnz);}
+\DoxyCodeLine{35             vector<T> triplets;}
+\DoxyCodeLine{36             triplets.reserve(nnz);}
+\DoxyCodeLine{37             triplets.emplace\_back(0, 0, input.coeff(0, 0));}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=1; i<size; i++)}
+\DoxyCodeLine{40             \{}
+\DoxyCodeLine{41                 triplets.emplace\_back(i-\/1, i, input.coeff(i-\/1, i));}
+\DoxyCodeLine{42                 triplets.emplace\_back(i, i-\/1, input.coeff(i, i-\/1));}
+\DoxyCodeLine{43                 triplets.emplace\_back(i, i, input.coeff(i, i));}
+\DoxyCodeLine{44             \}}
+\DoxyCodeLine{45             output-\/>setFromTriplets(triplets.begin(), triplets.end());}
+\DoxyCodeLine{46             \textcolor{keywordflow}{return} *output;}
+\DoxyCodeLine{47         \}}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49         \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}\& operator()(\textcolor{keyword}{const} Eigen::MatrixXd\& input)\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{50             \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}* output;}
+\DoxyCodeLine{51             output = \textcolor{keyword}{new} \mbox{\hyperlink{SparseInverseMatrix_8h_a576290261f623f98671e02129f30cd80}{SpMatrix}}(size, size);}
+\DoxyCodeLine{52             \textcolor{keyword}{const} \textcolor{keywordtype}{int} nnz = 3*size-\/2;}
+\DoxyCodeLine{53             output-\/>reserve(nnz);}
+\DoxyCodeLine{54             vector<T> triplets;}
+\DoxyCodeLine{55             triplets.reserve(nnz);}
+\DoxyCodeLine{56             triplets.emplace\_back(0, 0, input(0, 0));}
+\DoxyCodeLine{57 }
+\DoxyCodeLine{58             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=1; i<size; i++)}
+\DoxyCodeLine{59             \{}
+\DoxyCodeLine{60                 triplets.emplace\_back(i-\/1, i, input(i-\/1, i));}
+\DoxyCodeLine{61                 triplets.emplace\_back(i, i-\/1, input(i, i-\/1));}
+\DoxyCodeLine{62                 triplets.emplace\_back(i, i, input(i, i));}
+\DoxyCodeLine{63             \}}
+\DoxyCodeLine{64             output-\/>setFromTriplets(triplets.begin(), triplets.end());}
+\DoxyCodeLine{65             \textcolor{keywordflow}{return} *output;}
+\DoxyCodeLine{66         \}}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{68     \};}
+\DoxyCodeLine{69 \}}
+
+\end{DoxyCode}

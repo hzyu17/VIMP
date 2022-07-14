@@ -1,0 +1,182 @@
+\hypertarget{Optimizer_8h_source}{}\doxysection{Optimizer.\+h}
+\label{Optimizer_8h_source}\index{include/Optimizer.h@{include/Optimizer.h}}
+\mbox{\hyperlink{Optimizer_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#ifndef MPVI\_OPTIMIZER\_H}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#define MPVI\_OPTIMIZER\_H}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//MPVI\_OPTIMIZER\_H}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include <gtsam/base/Matrix.h>}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#include <random>}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#include <utility>}}
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{SparseInverseMatrix_8h}{SparseInverseMatrix.h}}"{}}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{OptimizerFactorized_8h}{OptimizerFactorized.h}}"{}}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#include <boost/scoped\_ptr.hpp>}}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25 \textcolor{keyword}{using namespace }GaussianSampler;}
+\DoxyCodeLine{26 \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{27 \textcolor{keyword}{using namespace }SparseInverse;}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 \textcolor{keyword}{namespace }MPVI\{}
+\DoxyCodeLine{30 \textcolor{keyword}{typedef} Triplet<double> T;}
+\DoxyCodeLine{31 \textcolor{comment}{// template function and classes to calculate the costs}}
+\DoxyCodeLine{32 \textcolor{keyword}{template} <\textcolor{keyword}{typename} Function, \textcolor{keyword}{typename} costClass, \textcolor{keyword}{typename}... Args>}
+\DoxyCodeLine{33 \textcolor{keyword}{class }\mbox{\hyperlink{classMPVI_1_1VIMPOptimizer}{VIMPOptimizer}}\{}
+\DoxyCodeLine{34     \textcolor{keyword}{using }FactorizedOptimizer = VIMPOptimizerFactorized<Function, costClass, Args...>;}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{36 \textcolor{keyword}{public}:}
+\DoxyCodeLine{37     \mbox{\hyperlink{classMPVI_1_1VIMPOptimizer_aff16f016a81b95659b63dcc4a866b34f}{VIMPOptimizer}}(\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& dimension, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& sub\_dim, \textcolor{keyword}{const} vector<Function>\& \_vec\_function,}
+\DoxyCodeLine{38                                    \textcolor{keyword}{const} vector<costClass>\& \_vec\_cost\_class, \textcolor{keyword}{const} vector<MatrixXd>\& \_vec\_Pks):}
+\DoxyCodeLine{39                                    dim\{dimension\},}
+\DoxyCodeLine{40                                    sub\_dim\{sub\_dim\},}
+\DoxyCodeLine{41                                    num\_sub\_vars\{\_vec\_Pks.size()\},}
+\DoxyCodeLine{42                                    vec\_cost\_function\_\{\_vec\_function\},}
+\DoxyCodeLine{43                                    vec\_cost\_class\_\{\_vec\_cost\_class\},}
+\DoxyCodeLine{44                                    vec\_Pks\_\{\_vec\_Pks\},}
+\DoxyCodeLine{45                                    mu\_\{VectorXd::Zero(dimension)\},}
+\DoxyCodeLine{46                                    d\_mu\_\{VectorXd::Zero(dimension)\},}
+\DoxyCodeLine{47                                    precision\_\{MatrixXd::Identity(dim, dim) * 5.0\},}
+\DoxyCodeLine{48 \textcolor{comment}{//                                   precision\_\{MatrixXd::Identity(dim, dim)\},}}
+\DoxyCodeLine{49                                    d\_precision\_(MatrixXd::Identity(dim, dim)),}
+\DoxyCodeLine{50                                    Vdmu\_\{VectorXd::Zero(dimension)\},}
+\DoxyCodeLine{51                                    Vddmu\_(MatrixXd::Identity(dim, dim)),}
+\DoxyCodeLine{52                                    inverser\_\{MatrixXd::Identity(dim, dim)\}\{}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{55         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=0; i<num\_sub\_vars; i++)\{}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{57             FactorizedOptimizer optimizer\_k\{sub\_dim, vec\_cost\_function\_[i], vec\_cost\_class\_[i]\};}
+\DoxyCodeLine{58             vec\_factor\_optimizers\_.emplace\_back(optimizer\_k);}
+\DoxyCodeLine{59         \}}
+\DoxyCodeLine{60     \}}
+\DoxyCodeLine{61 \textcolor{keyword}{protected}:}
+\DoxyCodeLine{62     \textcolor{comment}{// optimization variables}}
+\DoxyCodeLine{63     \textcolor{keywordtype}{int} dim, sub\_dim, num\_sub\_vars;}
+\DoxyCodeLine{64 }
+\DoxyCodeLine{65     VectorXd mu\_, Vdmu\_, d\_mu\_;}
+\DoxyCodeLine{66     MatrixXd precision\_, Vddmu\_, d\_precision\_;}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{68     \textcolor{comment}{// sampler}}
+\DoxyCodeLine{69     vector<FactorizedOptimizer> vec\_factor\_optimizers\_;}
+\DoxyCodeLine{70 }
+\DoxyCodeLine{71     \textcolor{comment}{// cost functional. Input: samples vector; Output: cost}}
+\DoxyCodeLine{72     \textcolor{keyword}{const} vector<Function> vec\_cost\_function\_;}
+\DoxyCodeLine{73     vector<costClass> vec\_cost\_class\_;}
+\DoxyCodeLine{74     \textcolor{keyword}{const} vector<MatrixXd> vec\_Pks\_;}
+\DoxyCodeLine{75 }
+\DoxyCodeLine{76     \textcolor{comment}{// Sparse matrix inverse helper}}
+\DoxyCodeLine{77 \textcolor{comment}{//    sparse\_inverser inverser\_;}}
+\DoxyCodeLine{78     \mbox{\hyperlink{structSparseInverse_1_1dense__inverser}{dense\_inverser}} inverser\_;}
+\DoxyCodeLine{79     \textcolor{keywordtype}{double} step\_size\_precision = 0.9;}
+\DoxyCodeLine{80     \textcolor{keywordtype}{double} step\_size\_mu = 0.9;}
+\DoxyCodeLine{81 }
+\DoxyCodeLine{82 \textcolor{keyword}{public}:}
+\DoxyCodeLine{83 }
+\DoxyCodeLine{84     \textcolor{keywordtype}{void} step()\{}
+\DoxyCodeLine{85         cout << \textcolor{stringliteral}{"{}mu\_ "{}} << endl << mu\_ << endl;}
+\DoxyCodeLine{86 }
+\DoxyCodeLine{87         Vdmu\_.setZero();}
+\DoxyCodeLine{88         Vddmu\_.setZero();}
+\DoxyCodeLine{89         d\_mu\_.setZero();}
+\DoxyCodeLine{90         d\_precision\_.setZero();}
+\DoxyCodeLine{91 }
+\DoxyCodeLine{92         MatrixXd Sigma\{inverser\_.\mbox{\hyperlink{structSparseInverse_1_1dense__inverser_a58b2afee2028386c8410837a0c11db85}{inverse}}(precision\_)\};}
+\DoxyCodeLine{93 }
+\DoxyCodeLine{94         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} k=0; k<num\_sub\_vars; k++)\{}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{96             \textcolor{keyword}{const} MatrixXd\& Pk = vec\_Pks\_[k];}
+\DoxyCodeLine{97 }
+\DoxyCodeLine{98             \textcolor{keyword}{auto} \&optimizer\_k = vec\_factor\_optimizers\_[k];}
+\DoxyCodeLine{99 }
+\DoxyCodeLine{100             optimizer\_k.updateSamplerMean(VectorXd\{Pk * mu\_\});}
+\DoxyCodeLine{101 }
+\DoxyCodeLine{102             optimizer\_k.updateSamplerCovarianceMatrix(MatrixXd\{Pk * Sigma * Pk.transpose()\});}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104             optimizer\_k.update\_mu(VectorXd\{Pk*mu\_\});}
+\DoxyCodeLine{105             optimizer\_k.update\_precision(MatrixXd\{(Pk * Sigma * Pk.transpose()).inverse()\});}
+\DoxyCodeLine{106 }
+\DoxyCodeLine{107             optimizer\_k.calculate\_partial\_V();}
+\DoxyCodeLine{108 }
+\DoxyCodeLine{109             Vdmu\_ = Vdmu\_ + Pk.transpose() * optimizer\_k.get\_Vdmu();}
+\DoxyCodeLine{110             Vddmu\_ = Vddmu\_ + Pk.transpose().eval() * optimizer\_k.get\_Vddmu() * Pk;}
+\DoxyCodeLine{111 }
+\DoxyCodeLine{112         \}}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114         d\_precision\_ = -\/precision\_ + Vddmu\_;}
+\DoxyCodeLine{115 }
+\DoxyCodeLine{116         precision\_ = precision\_ + step\_size\_precision*d\_precision\_;}
+\DoxyCodeLine{117 }
+\DoxyCodeLine{118         d\_mu\_ = precision\_.colPivHouseholderQr().solve(-\/Vdmu\_);}
+\DoxyCodeLine{119 }
+\DoxyCodeLine{120 }
+\DoxyCodeLine{121         mu\_ = mu\_ + step\_size\_mu * d\_mu\_;}
+\DoxyCodeLine{122 }
+\DoxyCodeLine{123     \}}
+\DoxyCodeLine{124 }
+\DoxyCodeLine{125     \textcolor{keywordtype}{void} step\_closed\_form()\{}
+\DoxyCodeLine{126 }
+\DoxyCodeLine{127         Vdmu\_.setZero();}
+\DoxyCodeLine{128         Vddmu\_.setZero();}
+\DoxyCodeLine{129         d\_mu\_.setZero();}
+\DoxyCodeLine{130         d\_precision\_.setZero();}
+\DoxyCodeLine{131 }
+\DoxyCodeLine{132         MatrixXd Sigma\{inverser\_.\mbox{\hyperlink{structSparseInverse_1_1dense__inverser_a58b2afee2028386c8410837a0c11db85}{inverse}}(precision\_)\};}
+\DoxyCodeLine{133 }
+\DoxyCodeLine{134         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} k=0; k<num\_sub\_vars; k++)\{}
+\DoxyCodeLine{135 }
+\DoxyCodeLine{136             \textcolor{keyword}{const} MatrixXd\& Pk = vec\_Pks\_[k];}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{138             \textcolor{keyword}{auto} \&optimizer\_k = vec\_factor\_optimizers\_[k];}
+\DoxyCodeLine{139             optimizer\_k.updateSamplerMean(VectorXd\{Pk * mu\_\});}
+\DoxyCodeLine{140             optimizer\_k.updateSamplerCovarianceMatrix(MatrixXd\{Pk * Sigma * Pk.transpose()\});}
+\DoxyCodeLine{141 }
+\DoxyCodeLine{142             optimizer\_k.update\_mu(VectorXd\{Pk*mu\_\});}
+\DoxyCodeLine{143             optimizer\_k.update\_precision(MatrixXd\{(Pk * Sigma * Pk.transpose()).inverse()\});}
+\DoxyCodeLine{144 }
+\DoxyCodeLine{145             \textcolor{comment}{// closed form verification for a Gaussian posterior}}
+\DoxyCodeLine{146             \textcolor{keyword}{auto} \&cost\_class\_k = vec\_cost\_class\_[k];}
+\DoxyCodeLine{147             optimizer\_k.calculate\_exact\_partial\_V(cost\_class\_k.get\_mean(), cost\_class\_k.get\_covariance());}
+\DoxyCodeLine{148 }
+\DoxyCodeLine{149             Vdmu\_ = Vdmu\_ + Pk.transpose() * optimizer\_k.get\_Vdmu();}
+\DoxyCodeLine{150             Vddmu\_ = Vddmu\_ + Pk.transpose().eval() * optimizer\_k.get\_Vddmu() * Pk;}
+\DoxyCodeLine{151         \}}
+\DoxyCodeLine{152 }
+\DoxyCodeLine{153         d\_precision\_ = -\/precision\_ + Vddmu\_;}
+\DoxyCodeLine{154 }
+\DoxyCodeLine{155         precision\_ = precision\_ + step\_size\_precision*d\_precision\_;}
+\DoxyCodeLine{156 }
+\DoxyCodeLine{157         d\_mu\_ = precision\_.colPivHouseholderQr().solve(-\/Vdmu\_);}
+\DoxyCodeLine{158         mu\_ = mu\_ + step\_size\_mu * d\_mu\_;}
+\DoxyCodeLine{159 }
+\DoxyCodeLine{160         cout << \textcolor{stringliteral}{"{}mu\_ "{}} << endl << mu\_ << endl;}
+\DoxyCodeLine{161         cout << \textcolor{stringliteral}{"{}new precision "{}} << endl << precision\_ << endl;}
+\DoxyCodeLine{162 }
+\DoxyCodeLine{163     \}}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165     gtsam::Vector get\_mean()\{}
+\DoxyCodeLine{166         \textcolor{keywordflow}{return} mu\_;}
+\DoxyCodeLine{167     \}}
+\DoxyCodeLine{168 }
+\DoxyCodeLine{169     gtsam::Matrix get\_precision()\{}
+\DoxyCodeLine{170         \textcolor{keywordflow}{return} precision\_;}
+\DoxyCodeLine{171     \}}
+\DoxyCodeLine{172 }
+\DoxyCodeLine{173     gtsam::Matrix get\_covariance()\{}
+\DoxyCodeLine{174         \textcolor{keywordflow}{return} inverser\_.\mbox{\hyperlink{structSparseInverse_1_1dense__inverser_a58b2afee2028386c8410837a0c11db85}{inverse}}();}
+\DoxyCodeLine{175     \}}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177     \textcolor{keywordtype}{void} set\_step\_size(\textcolor{keywordtype}{double} ss\_mean, \textcolor{keywordtype}{double} ss\_precision)\{}
+\DoxyCodeLine{178         step\_size\_mu = ss\_mean;}
+\DoxyCodeLine{179         step\_size\_precision = ss\_precision;}
+\DoxyCodeLine{180     \}}
+\DoxyCodeLine{181 }
+\DoxyCodeLine{182     \textcolor{keywordtype}{void} set\_mu(\textcolor{keyword}{const} VectorXd\& mean)\{}
+\DoxyCodeLine{183         mu\_ = mean;}
+\DoxyCodeLine{184     \}}
+\DoxyCodeLine{185 }
+\DoxyCodeLine{186 \};}
+\DoxyCodeLine{187 \}}
+
+\end{DoxyCode}

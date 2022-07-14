@@ -1,0 +1,51 @@
+\hypertarget{OptimizerFactorizedPriorCollisionPointRobot_8h}{}\doxysection{include/\+Optimizer\+Factorized\+Prior\+Collision\+Point\+Robot.h File Reference}
+\label{OptimizerFactorizedPriorCollisionPointRobot_8h}\index{include/OptimizerFactorizedPriorCollisionPointRobot.h@{include/OptimizerFactorizedPriorCollisionPointRobot.h}}
+{\ttfamily \#include $<$gpmp2/obstacle/\+Obstacle\+Planar\+SDFFactor\+Point\+Robot.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}Gaussian\+Prior\+Linear\+Get\+Qc.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Gaussian\+Prior\+Unary\+Translation.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}../include/\+Optimizer\+Factorized\+Prior\+Collision\+GH.\+h\char`\"{}}\newline
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{OptimizerFactorizedPriorCollisionPointRobot_8h_a29e66997efe15135d564d01d1ff34ae4}\label{OptimizerFactorizedPriorCollisionPointRobot_8h_a29e66997efe15135d564d01d1ff34ae4}} 
+using {\bfseries Unary\+Factor\+Translation2D} = \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation}}$<$ gtsam\+::\+Vector2 $>$
+\item 
+\mbox{\Hypertarget{OptimizerFactorizedPriorCollisionPointRobot_8h_ac1f6ca662078945fe5beb22f447e6efc}\label{OptimizerFactorizedPriorCollisionPointRobot_8h_ac1f6ca662078945fe5beb22f447e6efc}} 
+typedef \mbox{\hyperlink{classMPVI_1_1OptimizerFactorizedPriorColGH}{Optimizer\+Factorized\+Prior\+Col\+GH}}$<$ std\+::function$<$ double(const gtsam\+::\+Vector \&, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&, const Obstacle\+Planar\+SDFFactor\+Point\+Robot \&)$>$, const gtsam\+::\+Vector \&, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&, const Obstacle\+Planar\+SDFFactor\+Point\+Robot \& $>$ {\bfseries Optimizer\+Factor\+Prior\+Col\+Point\+Robot\+GH}
+\begin{DoxyCompactList}\small\item\em The instantiation of the template defined in the calss Optimizer\+Factorized\+Prior\+Col\+GH. The. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{OptimizerFactorizedPriorCollisionPointRobot_8h_a990cb3115ea7b136c25ac2c0ba23384e}{error\+Wrapper\+Single\+Prior}} (const gtsam\+::\+Vector \&theta, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&prior\+\_\+factor, const Obstacle\+Planar\+SDFFactor\+Point\+Robot \&obstacle\+\_\+factor)
+\begin{DoxyCompactList}\small\item\em Function calculating two cost factors\+: prior and the collision factor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Hongzhe Yu (\href{mailto:hyu419@gatech.edu}{\texttt{ hyu419@gatech.\+edu}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2022-\/04-\/29
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2022 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{OptimizerFactorizedPriorCollisionPointRobot_8h_a990cb3115ea7b136c25ac2c0ba23384e}\label{OptimizerFactorizedPriorCollisionPointRobot_8h_a990cb3115ea7b136c25ac2c0ba23384e}} 
+\index{OptimizerFactorizedPriorCollisionPointRobot.h@{OptimizerFactorizedPriorCollisionPointRobot.h}!errorWrapperSinglePrior@{errorWrapperSinglePrior}}
+\index{errorWrapperSinglePrior@{errorWrapperSinglePrior}!OptimizerFactorizedPriorCollisionPointRobot.h@{OptimizerFactorizedPriorCollisionPointRobot.h}}
+\doxysubsubsection{\texorpdfstring{errorWrapperSinglePrior()}{errorWrapperSinglePrior()}}
+{\footnotesize\ttfamily double error\+Wrapper\+Single\+Prior (\begin{DoxyParamCaption}\item[{const gtsam\+::\+Vector \&}]{theta,  }\item[{const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&}]{prior\+\_\+factor,  }\item[{const Obstacle\+Planar\+SDFFactor\+Point\+Robot \&}]{obstacle\+\_\+factor }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function calculating two cost factors\+: prior and the collision factor. 
+
+Prior factor
+
+Obstacle factor

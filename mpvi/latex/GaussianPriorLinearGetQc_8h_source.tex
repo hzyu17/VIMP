@@ -1,0 +1,42 @@
+\hypertarget{GaussianPriorLinearGetQc_8h_source}{}\doxysection{Gaussian\+Prior\+Linear\+Get\+Qc.\+h}
+\label{GaussianPriorLinearGetQc_8h_source}\index{include/GaussianPriorLinearGetQc.h@{include/GaussianPriorLinearGetQc.h}}
+\mbox{\hyperlink{GaussianPriorLinearGetQc_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <gpmp2/gp/GaussianProcessPriorLinear.h>}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{keyword}{using namespace }gtsam;}
+\DoxyCodeLine{15 \textcolor{keyword}{using namespace }gpmp2;}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{keyword}{namespace }MPVI\{}
+\DoxyCodeLine{18     \textcolor{keyword}{class }\mbox{\hyperlink{classMPVI_1_1GaussianPriorLinearGetQc}{GaussianPriorLinearGetQc}}: \textcolor{keyword}{public} GaussianProcessPriorLinear\{}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20     \textcolor{keyword}{public}:}
+\DoxyCodeLine{21         \mbox{\hyperlink{classMPVI_1_1GaussianPriorLinearGetQc}{GaussianPriorLinearGetQc}}(gtsam::Key poseKey1, }
+\DoxyCodeLine{22                                  gtsam::Key velKey1, }
+\DoxyCodeLine{23                                  gtsam::Key poseKey2, }
+\DoxyCodeLine{24                                  gtsam::Key velKey2,}
+\DoxyCodeLine{25                                  \textcolor{keywordtype}{double} delta\_t,}
+\DoxyCodeLine{26                                  \textcolor{keyword}{const} gtsam::SharedNoiseModel Qc\_model):}
+\DoxyCodeLine{27                             delta\_t\_\{delta\_t\},}
+\DoxyCodeLine{28                             Qc\_\{getQc(Qc\_model)\}}
+\DoxyCodeLine{29         \{}
+\DoxyCodeLine{30             GaussianProcessPriorLinear( poseKey1, velKey1, poseKey2, velKey2, delta\_t, Qc\_model);}
+\DoxyCodeLine{31             cout << \textcolor{stringliteral}{"{}Qc"{}} << endl << get\_Qc() <<endl;}
+\DoxyCodeLine{32         \}}
+\DoxyCodeLine{33     \textcolor{keyword}{public}:}
+\DoxyCodeLine{34         \textcolor{keywordtype}{double} get\_delta\_t()\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{35             \textcolor{keywordflow}{return} delta\_t\_;}
+\DoxyCodeLine{36         \}}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{38         Eigen::MatrixXd get\_Qc()\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{39             \textcolor{keywordflow}{return} Qc\_;}
+\DoxyCodeLine{40         \}}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42     \textcolor{keyword}{private}:}
+\DoxyCodeLine{43         \textcolor{keywordtype}{double} delta\_t\_;}
+\DoxyCodeLine{44         Eigen::MatrixXd Qc\_;}
+\DoxyCodeLine{45     \};}
+\DoxyCodeLine{46 \}}
+
+\end{DoxyCode}

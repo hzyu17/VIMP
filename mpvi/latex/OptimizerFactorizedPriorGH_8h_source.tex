@@ -1,0 +1,32 @@
+\hypertarget{OptimizerFactorizedPriorGH_8h_source}{}\doxysection{Optimizer\+Factorized\+Prior\+GH.\+h}
+\label{OptimizerFactorizedPriorGH_8h_source}\index{include/OptimizerFactorizedPriorGH.h@{include/OptimizerFactorizedPriorGH.h}}
+\mbox{\hyperlink{OptimizerFactorizedPriorGH_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{keyword}{using namespace }MPVI;}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{OptimizerFactorizedGH_8h}{OptimizerFactorizedGH.h}}"{}}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{keyword}{namespace }MPVI\{}
+\DoxyCodeLine{17     \textcolor{keyword}{template} <\textcolor{keyword}{typename} Function, \textcolor{keyword}{typename} PriorClass, \textcolor{keyword}{typename}... Args>}
+\DoxyCodeLine{21     \textcolor{keyword}{class }\mbox{\hyperlink{classMPVI_1_1OptimizerFactorizedPriorGH}{OptimizerFactorizedPriorGH}}: \textcolor{keyword}{protected} \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{VIMPOptimizerFactorizedGaussHermite}}<Function, Args...>\{}
+\DoxyCodeLine{22     \textcolor{keyword}{public}:}
+\DoxyCodeLine{23         \mbox{\hyperlink{classMPVI_1_1OptimizerFactorizedPriorColGH}{OptimizerFactorizedPriorColGH}}(\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& dimension, Function \_function, PriorClass \_prior):}
+\DoxyCodeLine{24                 prior\_\{\_prior\}}
+\DoxyCodeLine{25         \{}
+\DoxyCodeLine{26             \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{VIMPOptimizerFactorizedGaussHermite}}(dimension, \_function);}
+\DoxyCodeLine{27         \}}
+\DoxyCodeLine{28     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{31         \textcolor{keyword}{auto} \mbox{\hyperlink{classMPVI_1_1OptimizerFactorizedPriorGH_a82041b59386ebde6b676b8315a0662d5}{cost\_function}}(Args... args)\{}
+\DoxyCodeLine{32             \textcolor{keywordflow}{return} cost\_function\_(args..., prior\_);}
+\DoxyCodeLine{33         \}}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35     \textcolor{keyword}{private}:}
+\DoxyCodeLine{36         PriorClass prior\_;}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{38     \};}
+\DoxyCodeLine{39 \}}
+\DoxyCodeLine{40 }
+
+\end{DoxyCode}

@@ -1,0 +1,48 @@
+\hypertarget{OptimizerFactorizedPriorPointRobot_8h}{}\doxysection{include/\+Optimizer\+Factorized\+Prior\+Point\+Robot.h File Reference}
+\label{OptimizerFactorizedPriorPointRobot_8h}\index{include/OptimizerFactorizedPriorPointRobot.h@{include/OptimizerFactorizedPriorPointRobot.h}}
+{\ttfamily \#include \char`\"{}Gaussian\+Prior\+Linear\+Get\+Qc.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Gaussian\+Prior\+Unary\+Translation.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}../include/\+Optimizer\+Factorized\+GH.\+h\char`\"{}}\newline
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{OptimizerFactorizedPriorPointRobot_8h_a29e66997efe15135d564d01d1ff34ae4}\label{OptimizerFactorizedPriorPointRobot_8h_a29e66997efe15135d564d01d1ff34ae4}} 
+using {\bfseries Unary\+Factor\+Translation2D} = \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation}}$<$ gtsam\+::\+Vector2 $>$
+\item 
+\mbox{\Hypertarget{OptimizerFactorizedPriorPointRobot_8h_a3deb0cdf3702f9d1251c17cf74d84d01}\label{OptimizerFactorizedPriorPointRobot_8h_a3deb0cdf3702f9d1251c17cf74d84d01}} 
+typedef \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{VIMPOptimizer\+Factorized\+Gauss\+Hermite}}$<$ std\+::function$<$ double(const gtsam\+::\+Vector \&, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&)$>$, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&, const gtsam\+::\+Vector \& $>$ {\bfseries Optimizer\+Factor\+Prior\+Point\+Robot\+GH}
+\begin{DoxyCompactList}\small\item\em The instantiation of the template defined in the calss Optimizer\+Factorized\+Prior\+Col\+GH. The. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{OptimizerFactorizedPriorPointRobot_8h_aa85249edbd2fe3d13aad8421925d980f}{error\+Wrapper\+Single\+Prior}} (const gtsam\+::\+Vector \&theta, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&prior\+\_\+factor)
+\begin{DoxyCompactList}\small\item\em Function calculating two cost factors\+: prior and the collision factor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Hongzhe Yu (\href{mailto:hyu419@gatech.edu}{\texttt{ hyu419@gatech.\+edu}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2022-\/04-\/29
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2022 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{OptimizerFactorizedPriorPointRobot_8h_aa85249edbd2fe3d13aad8421925d980f}\label{OptimizerFactorizedPriorPointRobot_8h_aa85249edbd2fe3d13aad8421925d980f}} 
+\index{OptimizerFactorizedPriorPointRobot.h@{OptimizerFactorizedPriorPointRobot.h}!errorWrapperSinglePrior@{errorWrapperSinglePrior}}
+\index{errorWrapperSinglePrior@{errorWrapperSinglePrior}!OptimizerFactorizedPriorPointRobot.h@{OptimizerFactorizedPriorPointRobot.h}}
+\doxysubsubsection{\texorpdfstring{errorWrapperSinglePrior()}{errorWrapperSinglePrior()}}
+{\footnotesize\ttfamily double error\+Wrapper\+Single\+Prior (\begin{DoxyParamCaption}\item[{const gtsam\+::\+Vector \&}]{theta,  }\item[{const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&}]{prior\+\_\+factor }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function calculating two cost factors\+: prior and the collision factor. 
+
+Prior factor
