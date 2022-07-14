@@ -134,46 +134,32 @@ namespace MPVI{
 
             updateGH();
 
-            cout << "temp GH1" << endl;
-
             /** Integrate for Vdmu_ **/
-            std::function<MatrixXd(const VectorXd&)> func_Vmu_ = [this](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * cost_function_(x, cost_class_)};};
+            std::function<MatrixXd(const VectorXd&)> func_Vmu_ = [this](const VectorXd& x){return (x-VectorXd{mu_}) * cost_function_(x, CostClass{cost_class_});};
 
             // cout << "temp GH" << endl << temp << endl;
 
             gauss_hermite_.update_integrand(func_Vmu_);
-            cout << "temp GH2" << endl;
             Vdmu_ = gauss_hermite_.Integrate();
-            cout << "temp GH3" << endl;
             Vdmu_ = precision_ * Vdmu_;
 
             /** Integrate for phi(x) **/
-            std::function<MatrixXd(const VectorXd&)> func_phi_ = [this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};};
-            cout << "temp GH4" << endl;
+            std::function<MatrixXd(const VectorXd&)> func_phi_ = [this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, CostClass{cost_class_}))};};
             gauss_hermite_.update_integrand(func_phi_);
-            cout << "temp GH5" << endl;
             double avg_phi = gauss_hermite_.Integrate()(0, 0);
-            cout << "temp GH6" << endl;
 
             /** Integrate for Vddmu_ **/
-            std::function<MatrixXd(const VectorXd&)> func_Vmumu_ = [this](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * (x-VectorXd{mu_}).transpose().eval() * cost_function_(x, cost_class_)};};
-            cout << "temp GH7" << endl;
+            std::function<MatrixXd(const VectorXd&)> func_Vmumu_ = [this](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * (x-VectorXd{mu_}).transpose().eval() * cost_function_(x, CostClass{cost_class_})};};
             gauss_hermite_.update_integrand(func_Vmumu_);
-            cout << "temp GH8" << endl;
             Vddmu_ = gauss_hermite_.Integrate();
 
-            cout << "temp GH9" << endl;
             Vddmu_.triangularView<Upper>() = (precision_ * Vddmu_ * precision_).triangularView<Upper>();
-            cout << "temp GH10" << endl;
             Vddmu_.triangularView<StrictlyLower>() = Vddmu_.triangularView<StrictlyUpper>().transpose();
-            cout << "temp GH11" << endl;
 
             // gtsam::Matrix tmp{precision_ * avg_phi};
 
             Vddmu_.triangularView<Upper>() = (Vddmu_ - precision_ * avg_phi).triangularView<Upper>();
-            cout << "temp GH12" << endl;
             Vddmu_.triangularView<StrictlyLower>() = Vddmu_.triangularView<StrictlyUpper>().transpose();
-            cout << "temp GH13" << endl;
         }
 
         /// Gaussian posterior: closed-form expression

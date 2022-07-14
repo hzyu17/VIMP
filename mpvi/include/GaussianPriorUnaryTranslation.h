@@ -15,20 +15,19 @@
 
 using namespace gtsam;
 using namespace gpmp2;
-using namespace Eigen;
 using namespace MPVI;
 
 template <class T>
 /// A derived class of NoiseModelFactor1 in gtsam, used for the prior err probability for translation. 
 class UnaryFactorTranslation: public NoiseModelFactor1<T> {
 public:
-/// @param Key The key for the factor
-/// @param conf The state variable
-/// @param model The Gaussian noise model
-    UnaryFactorTranslation(Key key, const T& conf, const gtsam::SharedNoiseModel model):
+    /// @param Key The key for the factor
+    /// @param conf The state variable
+    /// @param model The Gaussian noise model
+    UnaryFactorTranslation(Key key, const T& conf, const SharedNoiseModel model):
             NoiseModelFactor1<T>(model, key), conf_(conf), K_(getQc(model)) {}
 
-    VectorXd evaluateError(const T& q, boost::optional<gtsam::Matrix &> H=boost::none) const
+    VectorXd evaluateError(const T& q, boost::optional<Eigen::MatrixXd &> H=boost::none) const
     {
         cout << "evaluateError inside" << endl << VectorXd{q-conf_} << endl;
         return VectorXd{q-conf_};
@@ -41,7 +40,7 @@ public:
     }
 
 private:
-    T conf_; ///< X and Y measurements
+    T conf_; 
     Eigen::MatrixXd K_;
 };
 

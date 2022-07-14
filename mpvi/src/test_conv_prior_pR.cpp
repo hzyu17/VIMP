@@ -34,9 +34,6 @@ int main(){
     const int dim_theta = 2 * dim_conf;
     const int ndim = dim_theta * (N+1);
 
-    // double delta_t = total_time / num_support_states;
-    // double obs_eps = 0.2, obs_sigma = 1.0;
-
     /// Robot model
     PointRobot pR(ndof, nlinks);
     double r = 0.5;
@@ -97,7 +94,7 @@ int main(){
     }
 
     /// The joint optimizer
-    OptimizerPriorPointRobot optimizer{vec_Pks, vec_factor_opts};
+    VIMPOptimizerGH<OptimizerFactorPriorPRGH> optimizer{vec_Pks, vec_factor_opts};
 
     /// Update steps
     const int num_iter = 5;

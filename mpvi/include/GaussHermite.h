@@ -83,6 +83,8 @@ public:
         MatrixXd sig{lltP.matrixL()};
 
         VectorXd pt_0 = VectorXd::Zero(dim_);
+        MatrixXd{f_(pt_0)};
+        
         MatrixXd res{MatrixXd::Zero(f_(pt_0).rows(), f_(pt_0).cols())};
 
         cout << "res" << endl << res << endl;

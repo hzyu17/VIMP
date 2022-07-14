@@ -31,24 +31,19 @@ double errorWrapperPrior(const VectorXd& theta, const UnaryFactorTranslation2D& 
     gtsam::Vector2 position;
     position = theta.segment<2>(0);
 
-    VectorXd vec_prior_err{prior_factor.evaluateError(position)};
+    VectorXd vec_prior_err = prior_factor.evaluateError(position);
 
     MatrixXd K{prior_factor.get_Qc()};
     /// TODO: verify the sign is + or - here
-    return -vec_prior_err.transpose() * K.inverse() * vec_prior_err;
+    return vec_prior_err.transpose() * K.inverse() * vec_prior_err;
 
 }
 
-/// Renaming of the prior cost class.
-using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
-
 /// Definition of the factorized optimizer.
-typedef VIMPOptimizerFactorizedGaussHermite<std::function<double(const VectorXd&, 
-                                                            const UnaryFactorTranslation2D&)>,
-        const UnaryFactorTranslation2D&,
-        const VectorXd&>
-        OptimizerFactorPriorPRGH;
+using OptimizerFactorPriorPRGH = VIMPOptimizerFactorizedGaussHermite<std::function<double(const VectorXd&, const UnaryFactorTranslation2D&)>,
+                                                                    const UnaryFactorTranslation2D&,
+                                                                    const VectorXd&>;
 
-/// Definition of the joint optimizer.
-typedef VIMPOptimizerGH<OptimizerFactorPriorPRGH> OptimizerPriorPointRobot;
+// /// Definition of the joint optimizer.
+// typedef VIMPOptimizerGH<OptimizerFactorPriorPRGH> OptimizerPriorPointRobot;
 

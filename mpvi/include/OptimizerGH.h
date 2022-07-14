@@ -34,8 +34,8 @@ public:
     /// @param _vec_function Vector of cost functions for each marginal distribution
     /// @param _vec_Pks Vector of matrices for the transition from joint variables to marginal variables 
     VIMPOptimizerGH(const vector<MatrixXd>& _vec_Pks, const vector<std::shared_ptr<FactorizedOptimizer>>& _vec_fact_optimizers):
-                                   dim{_vec_Pks[0].cols()},
-                                   sub_dim{_vec_Pks[0].rows()},
+                                   dim{static_cast<int>(_vec_Pks[0].cols())},
+                                   sub_dim{static_cast<int>(_vec_Pks[0].rows())},
                                    num_sub_vars{static_cast<int>(_vec_Pks.size())},
                                    vec_Pks_{std::move(_vec_Pks)},
                                    vec_factor_optimizers_{std::move(_vec_fact_optimizers)},
