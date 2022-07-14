@@ -77,41 +77,41 @@ namespace MPVI{
     public:
 
         /// update the GH approximator
-        void updateGH(){
+        inline void updateGH(){
             gauss_hermite_.update_mean(VectorXd{mu_});
             gauss_hermite_.update_P(MatrixXd{covariance_});
         }
 
         /// Update the cost function
-        void updateGHfunc(const std::function<MatrixXd(const VectorXd&)>& func){
+        inline void updateGHfunc(const std::function<MatrixXd(const VectorXd&)>& func){
             gauss_hermite_.update_integrand(func);
         }
 
         /// Update the step size
-        void set_step_size(double ss_mean, double ss_precision){
+        inline void set_step_size(double ss_mean, double ss_precision){
             step_size_mu = ss_mean;
             step_size_Sigma = ss_precision;
         }
 
         /// Update the parameters: mean, covariance, and precision matrix
-        void update_mu(const VectorXd& new_mu){
+        inline void update_mu(const VectorXd& new_mu){
             mu_ = new_mu;
         }
 
-        void update_precision(const MatrixXd& new_precision){
+        inline void update_precision(const MatrixXd& new_precision){
             precision_ = new_precision;
         }
 
-        void update_covariance(){
+        inline void update_covariance(){
             covariance_ = precision_.inverse();
         }
 
         /// Update the mean and variance in the Gauss-Hermite approximator
-        void update_GH_mean(){
+        inline void update_GH_mean(){
             gauss_hermite_.update_mean(mu_);
         }
 
-        void update_GH_covariance(){
+        inline void update_GH_covariance(){
             gauss_hermite_.update_P(covariance_);
         }
         
@@ -193,11 +193,11 @@ namespace MPVI{
 
             }
 
-        MatrixXd get_Vddmu(){
+        inline MatrixXd get_Vddmu() const{
             return Vddmu_;
         }
 
-        VectorXd get_Vdmu(){
+        inline VectorXd get_Vdmu() const{
             return Vdmu_;
         }
 
@@ -222,15 +222,15 @@ namespace MPVI{
 
         }
 
-        VectorXd get_mean(){
+        inline VectorXd get_mean() const{
             return mu_;
         }
 
-        MatrixXd get_precision(){
+        inline MatrixXd get_precision() const{
             return precision_;
         }
 
-        MatrixXd get_covariance(){
+        inline MatrixXd get_covariance() const{
             return precision_.inverse();
         }
 
