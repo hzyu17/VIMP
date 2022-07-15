@@ -62,7 +62,8 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "sparse": "cpp",
-        "sparsecore": "cpp"
+        "sparsecore": "cpp",
+        "dense": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

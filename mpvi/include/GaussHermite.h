@@ -1,8 +1,13 @@
 /**
- * Class to calculate the approximated integrations using Gauss-Hermite quadrature
- * Author: Hongzhe Yu
- * Date: 05/11/2022
- * */
+ * @file GaussHermite.h
+ * @author Hongzhe Yu (hyu419@gatech.edu)
+ * @brief Class to calculate the approximated integrations using Gauss-Hermite quadrature
+ * @version 0.1
+ * @date 2022-05-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 
 #include <eigen3/Eigen/Dense>
 #include <iostream>
@@ -11,7 +16,7 @@ using namespace Eigen;
 using namespace std;
 
 namespace{
-    template <typename Function, typename... Args>
+    template <typename Function>
 class GaussHermite{
 public:
     GaussHermite(const int& p, const int& dim, const VectorXd& mean, const MatrixXd& P, const Function& func):
@@ -26,7 +31,7 @@ public:
     /**
      * Sigmapoints as the root of Hermite polynomials.
      * */
-    inline void getSigmaPts(){
+    void getSigmaPts(){
         VectorXd a{VectorXd::Ones(p_-1)};
         VectorXd c{VectorXd::LinSpaced(p_-1, 1, p_-1)};
         VectorXd c_over_a = (c.array() / a.array()).matrix();
@@ -42,7 +47,7 @@ public:
     /**
      * Define the Hermite polynomial of degree deg, evaluate at x.
      * */
-    inline double HermitePolynomial(const int& deg, const double& x){
+    double HermitePolynomial(const int& deg, const double& x){
         if (deg == 0) return 1;
         if (deg == 1) return x;
         else{
@@ -61,7 +66,7 @@ public:
     /**
      * Compute the weights in the Gauss-Hermite cubature method.
      * */
-    inline VectorXd getWeights(){
+    VectorXd getWeights(){
         getSigmaPts();
         VectorXd W(p_);
         int cnt = 0;
@@ -83,21 +88,16 @@ public:
         MatrixXd sig{lltP.matrixL()};
 
         VectorXd pt_0 = VectorXd::Zero(dim_);
-        MatrixXd{f_(pt_0)};
         
         MatrixXd res{MatrixXd::Zero(f_(pt_0).rows(), f_(pt_0).cols())};
-
-        cout << "res" << endl << res << endl;
         
         if (dim_ == 1){
             for (int i=0; i<p_; i++){
                 res += W_(i)*f_(sig*sigmapts_(i) + mean_);
             }
-            cout << "res" << endl << res << endl;
         }
 
         else if (dim_ == 2) {
-                    cout << "res" << endl << res << endl;
             for (int i = 0; i < p_; i++) {
                 for (int j = 0; j < p_; j++) {
                     VectorXd pt_ij = VectorXd::Zero(dim_);
@@ -105,9 +105,9 @@ public:
 
                     VectorXd pt_ij_t = sig * pt_ij + mean_;
                     res += W_(i) * W_(j) * f_(pt_ij_t);
+
                 }
             }
-            cout << "res" << endl << res << endl;
         }
         else if (dim_ == 3){
             for (int i=0; i<p_; i++){
@@ -121,8 +121,22 @@ public:
                     }
                 }
             }
-            cout << "res" << endl << res << endl;
         }
+        // else if (dim_ == 4){
+        //     for (int i=0; i<p_; i++){
+        //         for(int j=0; j<p_; j++){
+        //             for(int k=0; k<p_; k++){
+        //                 for (int l=0; l<p_; l++){
+        //                     VectorXd pt_ijkl(4);
+        //                     pt_ijkl << sigmapts_(i), sigmapts_(j), sigmapts_(k), sigmapts_(l);
+        //                     VectorXd pt_ijkl_t = sig * pt_ijkl + mean_;
+        //                     res += W_(i) * W_(j) * W_(k) * W_(l) * f_(pt_ijkl_t);
+        //                 }
+        //             }
+        //         }
+        //     }
+
+        // }
         
         return res;
     }
@@ -138,7 +152,7 @@ public:
         P_ = P;
     }
 
-    inline void set_p(int p){
+    inline void set_p(const int& p){
         p_ = p;
     }
 
@@ -146,7 +160,7 @@ public:
         f_ = fun;
     }
 
-    inline void update_dimension(const int dim){
+    inline void update_dimension(const int& dim){
         dim_ = dim;
     }
 

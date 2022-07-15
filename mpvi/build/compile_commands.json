@@ -48,5 +48,10 @@
   "directory": "/home/hongzhe/git/MPVI/mpvi/build",
   "command": "/usr/bin/g++ -I/usr/include/python3.6m -I/usr/include/eigen3  -std=c++11 -Wall -g -g -fno-inline -DEIGEN_INITIALIZE_MATRICES_BY_NAN -std=gnu++1z -o CMakeFiles/test_prior_pR.dir/src/test_conv_prior_pR.cpp.o -c /home/hongzhe/git/MPVI/mpvi/src/test_conv_prior_pR.cpp",
   "file": "/home/hongzhe/git/MPVI/mpvi/src/test_conv_prior_pR.cpp"
+},
+{
+  "directory": "/home/hongzhe/git/MPVI/mpvi/build",
+  "command": "/usr/bin/g++ -I/usr/include/python3.6m -I/usr/include/eigen3  -std=c++11 -Wall -g -g -fno-inline -DEIGEN_INITIALIZE_MATRICES_BY_NAN -std=gnu++1z -o CMakeFiles/test_unary_factror.dir/src/test_unary_factror.cpp.o -c /home/hongzhe/git/MPVI/mpvi/src/test_unary_factror.cpp",
+  "file": "/home/hongzhe/git/MPVI/mpvi/src/test_unary_factror.cpp"
 }
 ]

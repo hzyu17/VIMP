@@ -85,6 +85,10 @@ target_link_libraries(test_prior_collision_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRAR
 add_executable(test_prior_pR src/test_conv_prior_pR.cpp)
 target_link_libraries(test_prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
+add_executable(test_unary_factror src/test_unary_factror.cpp)
+target_link_libraries(test_unary_factror ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+
+
 # python wrapper
 # option(MPVI_BUILD_PYTHON "whether build python toolbox, need shared lib" OFF)
 

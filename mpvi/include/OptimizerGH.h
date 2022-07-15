@@ -34,9 +34,9 @@ public:
     /// @param _vec_function Vector of cost functions for each marginal distribution
     /// @param _vec_Pks Vector of matrices for the transition from joint variables to marginal variables 
     VIMPOptimizerGH(const vector<MatrixXd>& _vec_Pks, const vector<std::shared_ptr<FactorizedOptimizer>>& _vec_fact_optimizers):
-                                   dim{static_cast<int>(_vec_Pks[0].cols())},
-                                   sub_dim{static_cast<int>(_vec_Pks[0].rows())},
-                                   num_sub_vars{static_cast<int>(_vec_Pks.size())},
+                                   dim{_vec_Pks[0].cols()},
+                                   sub_dim{_vec_Pks[0].rows()},
+                                   num_sub_vars{_vec_Pks.size()},
                                    vec_Pks_{std::move(_vec_Pks)},
                                    vec_factor_optimizers_{std::move(_vec_fact_optimizers)},
                                    mu_{VectorXd::Zero(dim)},
@@ -46,7 +46,7 @@ public:
                                    Vddmu_(MatrixXd::Identity(dim, dim)),
                                    d_precision_(MatrixXd::Identity(dim, dim)),
                                    inverser_{MatrixXd::Identity(dim, dim)}{}
-protected:
+private:
     /// optimization variables
     int dim, sub_dim, num_sub_vars;
 
@@ -71,10 +71,11 @@ protected:
     double step_size_mu = 0.9;
 
 public:
-    /// Function which computes one step of update.
+    /**
+     * @brief Function which computes one step of update.
+     * 
+     */
     void step(){
-        cout << "mu_ " << endl << mu_ << endl;
-
         Vdmu_.setZero();
         Vddmu_.setZero();
         d_mu_.setZero();
@@ -84,39 +85,22 @@ public:
 
         for (int k=0; k<num_sub_vars; k++){
 
-            const MatrixXd& Pk = vec_Pks_[k];
+            MatrixXd Pk = vec_Pks_[k];
 
-            std::shared_ptr<FactorizedOptimizer> optimizer_k = vec_factor_optimizers_[k];
+            vec_factor_optimizers_[k]->update_mu(VectorXd{Pk*mu_});
+            vec_factor_optimizers_[k]->update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
 
-            optimizer_k->update_mu(VectorXd{Pk*mu_});
-            optimizer_k->update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
+            vec_factor_optimizers_[k]->calculate_partial_V();
 
-            cout << "Pk" << endl << Pk << endl;
-
-            optimizer_k->calculate_partial_V();
-
-            cout << "mu_ " << endl << mu_ << endl;
-
-            Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k->get_Vdmu();
-
-            cout << "mu_ " << endl << mu_ << endl;
-            Vddmu_ = Vddmu_ + Pk.transpose().eval() * optimizer_k->get_Vddmu() * Pk;
-
-            cout << "mu_ " << endl << mu_ << endl;
+            Vdmu_ = Vdmu_ + Pk.transpose() * vec_factor_optimizers_[k]->get_Vdmu();
+            Vddmu_ = Vddmu_ + Pk.transpose().eval() * vec_factor_optimizers_[k]->get_Vddmu() * Pk;
 
         }
 
-        cout << "Vddmu_" << Vddmu_ << endl;
-        cout << "Vdmu_" << Vdmu_ << endl;
-
-        cout << "precision " << endl << precision_ << endl;
-
         d_precision_ = -precision_ + Vddmu_;
-
         precision_ = precision_ + step_size_precision*d_precision_;
 
-        d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
-
+        d_mu_ = -precision_.colPivHouseholderQr().solve(Vdmu_);
         mu_ = mu_ + step_size_mu * d_mu_;
 
         cout << "mu_ " << endl << mu_ << endl;
@@ -124,7 +108,10 @@ public:
         
     }
 
-    /// Verifier function which computes one step update in the Gaussian cost case, which has the closed form solution.
+    /**
+     * @brief Verifier function which computes one step update in the Gaussian cost case, 
+     * which has the closed form solution.
+     */
     void step_closed_form(){
 
         Vdmu_.setZero();
@@ -164,31 +151,31 @@ public:
     }
 
     /// returns the mean
-    gtsam::Vector get_mean(){
+    inline VectorXd get_mean() const{
         return mu_;
     }
 
     /// returns the precision matrix
-    gtsam::Matrix get_precision(){
+    inline MatrixXd get_precision() const{
         return precision_;
     }
 
     /// returns the covariance matrix
-    gtsam::Matrix get_covariance(){
+    inline MatrixXd get_covariance() const{
         return inverser_.inverse();
     }
 
     /// update the step size of the iterations.
     /// @param ss_mean new step size for the mean update
     /// @param ss_precision new step size for the precision matrix update
-    void set_step_size(double ss_mean, double ss_precision){
+    inline void set_step_size(double ss_mean, double ss_precision){
         step_size_mu = ss_mean;
         step_size_precision = ss_precision;
     }
 
     /// manually assign a mean value
     /// @param mean new mean
-    void set_mu(const VectorXd& mean){
+    inline void set_mu(const VectorXd& mean){
         mu_ = mean;
     }
 

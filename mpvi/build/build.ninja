@@ -394,6 +394,39 @@ build test_prior_pR: CXX_EXECUTABLE_LINKER__test_prior_pR_Debug CMakeFiles/test_
   TARGET_FILE = test_prior_pR
   TARGET_PDB = test_prior_pR.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target test_unary_factror
+
+
+#############################################
+# Order-only phony target for test_unary_factror
+
+build cmake_object_order_depends_target_test_unary_factror: phony || CMakeFiles/test_unary_factror.dir
+
+build CMakeFiles/test_unary_factror.dir/src/test_unary_factror.cpp.o: CXX_COMPILER__test_unary_factror_Debug /home/hongzhe/git/MPVI/mpvi/src/test_unary_factror.cpp || cmake_object_order_depends_target_test_unary_factror
+  DEP_FILE = CMakeFiles/test_unary_factror.dir/src/test_unary_factror.cpp.o.d
+  FLAGS = -std=c++11 -Wall -g -g -fno-inline -DEIGEN_INITIALIZE_MATRICES_BY_NAN -std=gnu++1z
+  INCLUDES = -I/usr/include/python3.6m -I/usr/include/eigen3
+  OBJECT_DIR = CMakeFiles/test_unary_factror.dir
+  OBJECT_FILE_DIR = CMakeFiles/test_unary_factror.dir/src
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_unary_factror
+
+
+#############################################
+# Link the executable test_unary_factror
+
+build test_unary_factror: CXX_EXECUTABLE_LINKER__test_unary_factror_Debug CMakeFiles/test_unary_factror.dir/src/test_unary_factror.cpp.o | /usr/local/lib/libgpmp2Debug.so.0.3.0 /usr/local/lib/libgtsam.so.4.0.0 /usr/lib/x86_64-linux-gnu/libboost_system.so /usr/lib/x86_64-linux-gnu/libboost_filesystem.so /usr/lib/x86_64-linux-gnu/libboost_thread.so /usr/lib/x86_64-linux-gnu/libboost_date_time.so /usr/lib/x86_64-linux-gnu/libboost_timer.so /usr/lib/x86_64-linux-gnu/libboost_chrono.so /usr/local/lib/libmetis.so /usr/lib/x86_64-linux-gnu/libboost_serialization.so
+  FLAGS = -std=c++11 -Wall -g -g -fno-inline -DEIGEN_INITIALIZE_MATRICES_BY_NAN
+  LINK_LIBRARIES = -Wl,-rpath,/usr/local/lib  /usr/local/lib/libgpmp2Debug.so.0.3.0  /usr/local/lib/libgtsam.so.4.0.0  /usr/lib/x86_64-linux-gnu/libboost_system.so  /usr/lib/x86_64-linux-gnu/libboost_filesystem.so  /usr/lib/x86_64-linux-gnu/libboost_thread.so  /usr/lib/x86_64-linux-gnu/libboost_date_time.so  /usr/lib/x86_64-linux-gnu/libboost_timer.so  /usr/lib/x86_64-linux-gnu/libboost_chrono.so  /usr/local/lib/libmetis.so  -lm  /usr/lib/x86_64-linux-gnu/libboost_serialization.so
+  OBJECT_DIR = CMakeFiles/test_unary_factror.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = test_unary_factror
+  TARGET_PDB = test_unary_factror.dbg
+
 
 #############################################
 # Utility command for doc_doxygen
@@ -461,7 +494,7 @@ build CMakeFiles/doc_doxygen | ${cmake_ninja_workdir}CMakeFiles/doc_doxygen: CUS
 #############################################
 # Folder: /home/hongzhe/git/MPVI/mpvi/build
 
-build all: phony main vimp test_conv test_conv_factor_GH test_conv_factor test_sparse_inverse test_GH test_conv_Gaussian_GH test_prior_collision_pR test_prior_pR doc_doxygen
+build all: phony main vimp test_conv test_conv_factor_GH test_conv_factor test_sparse_inverse test_GH test_conv_Gaussian_GH test_prior_collision_pR test_prior_pR test_unary_factror doc_doxygen
 
 # =============================================================================
 # Built-in targets

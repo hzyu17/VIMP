@@ -12,6 +12,7 @@
 /home/hongzhe/git/MPVI/mpvi/build/CMakeFiles/test_conv_Gaussian_GH.dir
 /home/hongzhe/git/MPVI/mpvi/build/CMakeFiles/test_prior_collision_pR.dir
 /home/hongzhe/git/MPVI/mpvi/build/CMakeFiles/test_prior_pR.dir
+/home/hongzhe/git/MPVI/mpvi/build/CMakeFiles/test_unary_factror.dir
 /home/hongzhe/git/MPVI/mpvi/build/CMakeFiles/doc_doxygen.dir
 /home/hongzhe/git/MPVI/mpvi/build/CMakeFiles/test.dir
 /home/hongzhe/git/MPVI/mpvi/build/CMakeFiles/edit_cache.dir

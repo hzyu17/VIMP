@@ -15,7 +15,8 @@
 
 using namespace gtsam;
 using namespace gpmp2;
-using namespace MPVI;
+using namespace Eigen;
+// using namespace MPVI;
 
 template <class T>
 /// A derived class of NoiseModelFactor1 in gtsam, used for the prior err probability for translation. 
@@ -27,20 +28,18 @@ public:
     UnaryFactorTranslation(Key key, const T& conf, const SharedNoiseModel model):
             NoiseModelFactor1<T>(model, key), conf_(conf), K_(getQc(model)) {}
 
-    VectorXd evaluateError(const T& q, boost::optional<Eigen::MatrixXd &> H=boost::none) const
+    VectorXd evaluateError(const T& q, boost::optional<MatrixXd &> H=boost::none) const
     {
-        cout << "evaluateError inside" << endl << VectorXd{q-conf_} << endl;
         return VectorXd{q-conf_};
     }
 
     /// Returns the covariance matrix of the noise model.
-    Eigen::MatrixXd get_Qc() const{
-        cout << "get_Qc" << endl;
+    MatrixXd get_Qc() const{
         return K_;
     }
 
 private:
     T conf_; 
-    Eigen::MatrixXd K_;
+    MatrixXd K_;
 };
 

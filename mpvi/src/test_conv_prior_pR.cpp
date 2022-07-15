@@ -68,8 +68,8 @@ int main(){
 
         cout << "conf" << endl << conf << endl;
         /// Pk matrices
-        MatrixXd Pk{MatrixXd::Zero(dim_theta, ndim)};
-        Pk.block<dim_theta, dim_theta>(0, i * dim_theta) = MatrixXd::Identity(dim_theta, dim_theta);
+        MatrixXd Pk{MatrixXd::Zero(dim_conf, ndim)};
+        Pk.block<dim_conf, dim_conf>(0, i * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
         /// Pk.block<dim_conf, dim_conf>(dim_conf, (i + 1) * dim_conf) = MatrixXd::Identity(dim_conf, dim_conf);
         
         cout << "Pk" << endl << Pk << endl;
@@ -80,15 +80,9 @@ int main(){
         /// unary factor
         UnaryFactorTranslation2D prior_k{symbol('x', i), gtsam::Vector2{conf.segment<dim_conf>(0)}, K_0};
         cout << prior_k.get_Qc() << endl;
-        prior_k.printKeys();
 
         /// Factored optimizer
-        VectorXd test_vec = (VectorXd(4) << 1.0, 1.0, 0.0, 0.0).finished();
-        double temp {errorWrapperPrior(test_vec, prior_k)};
-        cout << "temp" << endl << temp << endl;
-
-        /// try with unique pointer
-        std::shared_ptr<OptimizerFactorPriorPRGH> pOptimizer(new OptimizerFactorPriorPRGH{dim_theta, errorWrapperPrior, prior_k});
+        std::shared_ptr<OptimizerFactorPriorPRGH> pOptimizer(new OptimizerFactorPriorPRGH{dim_conf, errorWrapperPrior, prior_k});
         vec_factor_opts.emplace_back(pOptimizer);
 
     }

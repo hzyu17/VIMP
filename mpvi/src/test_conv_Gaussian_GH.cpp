@@ -18,8 +18,6 @@
 #include <iostream>
 #include <random>
 
-// IOFormat CleanFmt(4, 0, ", ", "\n");
-
 using namespace gtsam;
 using namespace std;
 using namespace GaussianSampler;

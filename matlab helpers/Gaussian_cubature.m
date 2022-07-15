@@ -21,7 +21,7 @@ prob = exp(-(x-mean_t)'*precision_t*(x-mean_t)/2.0) / sqrt((2*pi)^n * det(cov_t)
 gx = -log(prob);
 % gx = sum(x.^2);
 
-Integral = GaussianHermiteN(n, gx, p, [0.773339; 0.73762], inv(PP))
+Integral = GaussianHermiteN(n, gx, p, [0.773339; 0.73762], inv(precision_t))
 
 %% draft
 getWeight(10)

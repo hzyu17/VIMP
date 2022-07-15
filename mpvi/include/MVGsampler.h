@@ -208,8 +208,6 @@ namespace GaussianSampler {
         /// The log probability for a given value x
         double log_prob(Eigen::VectorXd x) const{
             return log(Gaussian_distribution::probability(x));
-//            return -((x-mean_).transpose()*precision_*(x-mean_))(0)/2.0 -
-//                    dimension_ / 2.0 * log(2*PI_) - log(Covariance_.determinant()) / 2.0;
         }
 
         /// Returns the precision matrix.

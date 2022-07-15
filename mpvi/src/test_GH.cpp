@@ -35,13 +35,13 @@ int main(){
     std::function<MatrixXd(const VectorXd&)>gx_2d_new = [&](const VectorXd& x){return MatrixXd{x};};
     gausshermite.update_integrand(gx_2d_new);
     MatrixXd integral2{gausshermite.Integrate()};
-    cout << "integrate " << endl << integral2 << endl;
+    cout << "integrate 2 " << endl << integral2 << endl;
 
     std::function<MatrixXd(const VectorXd&)>gx_3d_new = [&](const VectorXd& x){return MatrixXd{x* x.transpose().eval()};};
     gausshermite.update_integrand(gx_3d_new);
     VectorXd weights = gausshermite.getWeights();
-    cout << weights << endl;
+    // cout << weights << endl;
     MatrixXd integral3{gausshermite.Integrate()};
-    cout << "integrate " << endl << integral3 << endl;
+    cout << "integrate 3 " << endl << integral3 << endl;
     return 0;
 }

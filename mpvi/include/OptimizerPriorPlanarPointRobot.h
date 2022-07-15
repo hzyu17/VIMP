@@ -10,7 +10,7 @@
  */
 
 #include "../include/OptimizerGH.h"
-// #include "GaussianPriorUnaryTranslation.h"
+#include "../include/GaussianPriorUnaryTranslation.h"
 #include "../include/OptimizerFactorizedGH.h"
 
 using namespace MPVI;
@@ -41,9 +41,6 @@ double errorWrapperPrior(const VectorXd& theta, const UnaryFactorTranslation2D& 
 
 /// Definition of the factorized optimizer.
 using OptimizerFactorPriorPRGH = VIMPOptimizerFactorizedGaussHermite<std::function<double(const VectorXd&, const UnaryFactorTranslation2D&)>,
-                                                                    const UnaryFactorTranslation2D&,
-                                                                    const VectorXd&>;
-
-// /// Definition of the joint optimizer.
-// typedef VIMPOptimizerGH<OptimizerFactorPriorPRGH> OptimizerPriorPointRobot;
+                                                                    UnaryFactorTranslation2D,
+                                                                    VectorXd>;
 
