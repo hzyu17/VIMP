@@ -61,11 +61,8 @@ target_link_libraries(vimp ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRAR
 add_executable(test_conv src/test_conv.cpp)
 target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
-# add_executable(test_point_robot src/test_motion_planning_point_robot.cpp)
-# target_link_libraries(test_point_robot ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
-
-add_executable(test_conv_factor_GH src/test_conv_factorized_GH.cpp)
-target_link_libraries(test_conv_factor_GH ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+add_executable(test_conv_factor_Gaussian_GH src/test_conv_factorized_GH.cpp)
+target_link_libraries(test_conv_factor_Gaussian_GH ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 add_executable(test_conv_factor src/test_conv_factorized.cpp)
 target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
@@ -79,14 +76,11 @@ target_link_libraries(test_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 add_executable(test_conv_Gaussian_GH src/test_conv_Gaussian_GH.cpp)
 target_link_libraries(test_conv_Gaussian_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
-add_executable(test_prior_collision_pR src/test_prior_collision_one_factor_point_robot.cpp)
-target_link_libraries(test_prior_collision_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+add_executable(test_prior_col_pR src/test_conv_prior_col_pR.cpp)
+target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(test_prior_pR src/test_conv_prior_pR.cpp)
 target_link_libraries(test_prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
-
-add_executable(test_unary_factror src/test_unary_factror.cpp)
-target_link_libraries(test_unary_factror ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 
 # python wrapper

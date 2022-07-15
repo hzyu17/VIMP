@@ -83,7 +83,7 @@ public:
         for (int k=0; k<_nsub_vars; k++){
 
             _vec_factor_optimizers[k]->update_mu(VectorXd{_mu});
-            _vec_factor_optimizers[k]->update_precision(MatrixXd{Sigma});
+            _vec_factor_optimizers[k]->update_precision_from_joint_covariance(MatrixXd{Sigma});
             _vec_factor_optimizers[k]->calculate_partial_V();
 
             _Vdmu = _Vdmu + _vec_factor_optimizers[k]->get_joint_Vdmu();
@@ -123,7 +123,7 @@ public:
             // optimizer_k->updateSamplerCovarianceMatrix(MatrixXd{Sigma});
 
             optimizer_k->update_mu(VectorXd{_mu});
-            optimizer_k->update_precision(MatrixXd{Sigma});
+            optimizer_k->update_precision_from_joint_covariance(MatrixXd{Sigma});
 
             optimizer_k->calculate_exact_partial_V();
 

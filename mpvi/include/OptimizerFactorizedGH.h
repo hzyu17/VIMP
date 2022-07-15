@@ -112,7 +112,7 @@ namespace MPVI{
          * 
          * @param joint_covariance 
          */
-        inline void update_precision(const MatrixXd& joint_covariance){
+        inline void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){
             _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();
         }
 

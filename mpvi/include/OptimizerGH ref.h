@@ -32,12 +32,10 @@ public:
     /// @param dimension State dimension
     /// @param sub_dim dimension of the marginal variables
     /// @param _vec_function Vector of cost functions for each marginal distribution
-    /// @param _vec_Pks Vector of matrices for the transition from joint variables to marginal variables 
-    VIMPOptimizerGH(const vector<MatrixXd>& _vec_Pks, const vector<FactorizedOptimizer>& _vec_fact_optimizers):
-                                   dim{_vec_Pks[0].cols()},
-                                   sub_dim{_vec_Pks[0].rows()},
-                                   num_sub_vars{static_cast<int>(_vec_Pks.size())},
-                                   vec_Pks_{_vec_Pks},
+    VIMPOptimizerGH(const vector<FactorizedOptimizer>& _vec_fact_optimizers):
+                                   dim{_vec_fact_optimizers[0].Pk().cols()},
+                                   sub_dim{_vec_fact_optimizers[0].Pk().rows()},
+                                   num_sub_vars{static_cast<int>(_vec_fact_optimizers.size())},
                                    vec_factor_optimizers_{_vec_fact_optimizers},
                                    mu_{VectorXd::Zero(dim)},
                                    Vdmu_{VectorXd::Zero(dim)},
@@ -49,9 +47,6 @@ public:
 protected:
     /// optimization variables
     int dim, sub_dim, num_sub_vars;
-
-    ///@param vec_Pks_ Vector of all transformation matrix from joint variables to marginal variables
-    const vector<MatrixXd> vec_Pks_;
 
     /// @param vec_factor_optimizers_ Vector of marginal optimizers
     vector<FactorizedOptimizer> vec_factor_optimizers_;
@@ -84,30 +79,20 @@ public:
 
         for (int k=0; k<num_sub_vars; k++){
 
-            const MatrixXd& Pk = vec_Pks_[k];
-
             FactorizedOptimizer& optimizer_k = vec_factor_optimizers_[k];
 
-            optimizer_k.update_mu(VectorXd{Pk*mu_});
-            optimizer_k.update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
+            optimizer_k.update_mu(VectorXd{mu_});
+            optimizer_k.update_precision_from_joint_covariance(MatrixXd{Sigma});
             optimizer_k.calculate_partial_V();
 
-            Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();
-            Vddmu_ = Vddmu_ + Pk.transpose().eval() * optimizer_k.get_Vddmu() * Pk;
+            Vdmu_ = Vdmu_ + optimizer_k.get_joint_Vdmu();
+            Vddmu_ = Vddmu_ + optimizer_k.get_joint_Vddmu();
 
         }
 
-        cout << "Vddmu_" << Vddmu_ << endl;
-        cout << "Vdmu_" << Vdmu_ << endl;
-
-        cout << "precision " << endl << precision_ << endl;
-
         d_precision_ = -precision_ + Vddmu_;
-
         precision_ = precision_ + step_size_precision*d_precision_;
-
         d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
-
         mu_ = mu_ + step_size_mu * d_mu_;
 
         cout << "mu_ " << endl << mu_ << endl;
@@ -127,19 +112,15 @@ public:
 
         for (int k=0; k<num_sub_vars; k++){
 
-            const MatrixXd& Pk = vec_Pks_[k];
-
             FactorizedOptimizer& optimizer_k = vec_factor_optimizers_[k];
-            optimizer_k.updateSamplerMean(VectorXd{Pk * mu_});
-            optimizer_k.updateSamplerCovarianceMatrix(MatrixXd{Pk * Sigma * Pk.transpose()});
+            
+            optimizer_k.update_mu(VectorXd{mu_});
+            optimizer_k.update_precision_from_joint_covariance(MatrixXd{Sigma});
+            optimizer_k.calculate_exact_partial_V();
 
-            optimizer_k.update_mu(VectorXd{Pk*mu_});
-            optimizer_k.update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
-
-            optimizer_k.calculate_partial_V();
-
-            Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();
-            Vddmu_ = Vddmu_ + Pk.transpose().eval() * optimizer_k.get_Vddmu() * Pk;
+            Vdmu_ = Vdmu_ + optimizer_k.get_joint_Vdmu();
+            Vddmu_ = Vddmu_ + optimizer_k.get_joint_Vddmu();
+            
         }
 
         d_precision_ = -precision_ + Vddmu_;
