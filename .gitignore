@@ -5,4 +5,4 @@ mpvi/latex/*
 mpvi/html/*
 mpvi/doxygen/*
 mpvi/build/*
-
+mpvi/.vscode/*
