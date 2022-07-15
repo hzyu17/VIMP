@@ -1,7 +1,8 @@
 /**
- * @file OptimizerFactorizedPriorCollisionPointRobot.h
+ * @file OptimizerFactorizedPriorCollPR.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief 
+ * @brief Define the optimizer for planar point robot with prior and obstacle,
+ *  without Gaussian interpolations.
  * @version 0.1
  * @date 2022-04-29
  * 
@@ -9,7 +10,6 @@
  * 
  */
 
-/// Define the optimizer for planar point robot with one prior and obstacle, and without interpolations.
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 #include "GaussianPriorLinearGetQc.h"
 #include "GaussianPriorUnaryTranslation.h"
@@ -22,7 +22,7 @@ using namespace Eigen;
 using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
 
 /// Function calculating two cost factors: prior and the collision factor. 
-inline double errorWrapperSinglePrior(const gtsam::Vector& theta, const UnaryFactorTranslation2D& prior_factor,
+double errorWrapperSinglePrior(const gtsam::Vector& theta, const UnaryFactorTranslation2D& prior_factor,
                                       const ObstaclePlanarSDFFactorPointRobot& obstacle_factor) {
 
     /**

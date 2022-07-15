@@ -38,7 +38,7 @@ int main(){
 
     /// optimizer 
     VIMPOptimizerFactorizedGaussHermite<std::function<double(const gtsam::Vector&, const Gaussian_distribution&)>,
-                                           Gaussian_distribution, gtsam::Vector> optimizer(ndim, target_cost, target_distr);
+                                           Gaussian_distribution, gtsam::Vector> optimizer(ndim, target_cost, target_distr, MatrixXd::Identity(ndim, ndim));
 
     /// inverser
     using namespace SparseInverse;

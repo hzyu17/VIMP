@@ -1,7 +1,7 @@
 /**
  * @file OptimizerGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief 
+ * @brief The joint optimizer class using Gauss-Hermite quadrature. 
  * @version 0.1
  * @date 2022-03-07
  * 
@@ -24,51 +24,48 @@ typedef Triplet<double> T;
 namespace MPVI{
     template <typename FactorizedOptimizer>
 
-/// Description: The joint optimizer class using Gauss-Hermite quadrature. 
-/// 
-/// Detailed description: Joint optimizer, all the factorized optimizers use the same cost functional.
+
 class VIMPOptimizerGH{
 public:
     /// @param dimension State dimension
-    /// @param sub_dim dimension of the marginal variables
+    /// @param _sub_dim dimension of the marginal variables
     /// @param _vec_function Vector of cost functions for each marginal distribution
-    /// @param _vec_Pks Vector of matrices for the transition from joint variables to marginal variables 
-    VIMPOptimizerGH(const vector<MatrixXd>& _vec_Pks, const vector<std::shared_ptr<FactorizedOptimizer>>& _vec_fact_optimizers):
-                                   dim{_vec_Pks[0].cols()},
-                                   sub_dim{_vec_Pks[0].rows()},
-                                   num_sub_vars{_vec_Pks.size()},
-                                   vec_Pks_{std::move(_vec_Pks)},
-                                   vec_factor_optimizers_{std::move(_vec_fact_optimizers)},
-                                   mu_{VectorXd::Zero(dim)},
-                                   Vdmu_{VectorXd::Zero(dim)},
-                                   d_mu_{VectorXd::Zero(dim)},
-                                   precision_{MatrixXd::Identity(dim, dim) * 5.0},
-                                   Vddmu_(MatrixXd::Identity(dim, dim)),
-                                   d_precision_(MatrixXd::Identity(dim, dim)),
-                                   inverser_{MatrixXd::Identity(dim, dim)}{}
-private:
+    VIMPOptimizerGH(const vector<std::shared_ptr<FactorizedOptimizer>>& _vec_fact_optimizers):
+                                   _dim{_vec_fact_optimizers[0]->Pk().cols()},
+                                   _sub_dim{_vec_fact_optimizers[0]->Pk().rows()},
+                                   _nsub_vars{_vec_fact_optimizers.size()},
+                                //    vec_Pks_{std::move(_vec_Pks)},
+                                   _vec_factor_optimizers{std::move(_vec_fact_optimizers)},
+                                   _mu{VectorXd::Zero(_dim)},
+                                   _Vdmu{VectorXd::Zero(_dim)},
+                                   _dmu{VectorXd::Zero(_dim)},
+                                   _precision{MatrixXd::Identity(_dim, _dim) * 5.0},
+                                   _Vddmu(MatrixXd::Identity(_dim, _dim)),
+                                   _dprecision(MatrixXd::Identity(_dim, _dim)),
+                                   _inverser{MatrixXd::Identity(_dim, _dim)}{}
+protected:
     /// optimization variables
-    int dim, sub_dim, num_sub_vars;
+    int _dim, _sub_dim, _nsub_vars;
 
     ///@param vec_Pks_ Vector of all transformation matrix from joint variables to marginal variables
-    const vector<MatrixXd> vec_Pks_;
+    // const vector<MatrixXd> vec_Pks_;
 
-    /// @param vec_factor_optimizers_ Vector of marginal optimizers
-    vector<std::shared_ptr<FactorizedOptimizer>> vec_factor_optimizers_;
+    /// @param _vec_factor_optimizers Vector of marginal optimizers
+    vector<std::shared_ptr<FactorizedOptimizer>> _vec_factor_optimizers;
 
-    /// @param mu_ mean vector
-    /// @param d_mu_ incremental mean in update steps
-    /// @param precision_ precision matrix
-    /// @param d_precision_ incremental precision matrix in update steps
-    VectorXd mu_, Vdmu_, d_mu_;
-    MatrixXd precision_, Vddmu_, d_precision_;
+    /// @param _mu mean
+    /// @param _dmu incremental mean
+    /// @param _precision precision matrix
+    /// @param _dprecision incremental precision matrix 
+    VectorXd _mu, _Vdmu, _dmu;
+    MatrixXd _precision, _Vddmu, _dprecision;
 
     /// Sparse matrix inverse helper, which utilizes the exact sparse pattern to do the matrix inversion
-    dense_inverser inverser_;
+    dense_inverser _inverser;
 
     /// step sizes by default
     double step_size_precision = 0.9;
-    double step_size_mu = 0.9;
+    double _step_size_mu = 0.9;
 
 public:
     /**
@@ -76,35 +73,33 @@ public:
      * 
      */
     void step(){
-        Vdmu_.setZero();
-        Vddmu_.setZero();
-        d_mu_.setZero();
-        d_precision_.setZero();
+        _Vdmu.setZero();
+        _Vddmu.setZero();
+        _dmu.setZero();
+        _dprecision.setZero();
 
-        MatrixXd Sigma{inverser_.inverse(precision_)};
+        MatrixXd Sigma{_inverser.inverse(_precision)};
 
-        for (int k=0; k<num_sub_vars; k++){
+        for (int k=0; k<_nsub_vars; k++){
 
-            MatrixXd Pk = vec_Pks_[k];
+            _vec_factor_optimizers[k]->update_mu(VectorXd{_mu});
+            _vec_factor_optimizers[k]->update_precision(MatrixXd{Sigma});
+            _vec_factor_optimizers[k]->calculate_partial_V();
 
-            vec_factor_optimizers_[k]->update_mu(VectorXd{Pk*mu_});
-            vec_factor_optimizers_[k]->update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
-
-            vec_factor_optimizers_[k]->calculate_partial_V();
-
-            Vdmu_ = Vdmu_ + Pk.transpose() * vec_factor_optimizers_[k]->get_Vdmu();
-            Vddmu_ = Vddmu_ + Pk.transpose().eval() * vec_factor_optimizers_[k]->get_Vddmu() * Pk;
+            _Vdmu = _Vdmu + _vec_factor_optimizers[k]->get_joint_Vdmu();
+            _Vddmu = _Vddmu + _vec_factor_optimizers[k]->get_joint_Vddmu();
 
         }
 
-        d_precision_ = -precision_ + Vddmu_;
-        precision_ = precision_ + step_size_precision*d_precision_;
+        _dprecision = -_precision + _Vddmu;
+        _precision = _precision + step_size_precision*_dprecision;
 
-        d_mu_ = -precision_.colPivHouseholderQr().solve(Vdmu_);
-        mu_ = mu_ + step_size_mu * d_mu_;
+        _dmu = -_precision.colPivHouseholderQr().solve(_Vdmu);
+        _mu = _mu + _step_size_mu * _dmu;
 
-        cout << "mu_ " << endl << mu_ << endl;
-        cout << "new precision " << endl << precision_ << endl;
+        cout << "_mu " << endl << _mu << endl;
+        MatrixXd covariance = get_covariance();
+        cout << "new covariance " << endl << covariance << endl;
         
     }
 
@@ -114,69 +109,68 @@ public:
      */
     void step_closed_form(){
 
-        Vdmu_.setZero();
-        Vddmu_.setZero();
-        d_mu_.setZero();
-        d_precision_.setZero();
+        _Vdmu.setZero();
+        _Vddmu.setZero();
+        _dmu.setZero();
+        _dprecision.setZero();
 
-        MatrixXd Sigma{inverser_.inverse(precision_)};
+        MatrixXd Sigma{_inverser.inverse(_precision)};
 
-        for (int k=0; k<num_sub_vars; k++){
+        for (int k=0; k<_nsub_vars; k++){
 
-            const MatrixXd& Pk = vec_Pks_[k];
+            std::shared_ptr<FactorizedOptimizer> optimizer_k = _vec_factor_optimizers[k];
+            // optimizer_k->updateSamplerMean(VectorXd{_mu});
+            // optimizer_k->updateSamplerCovarianceMatrix(MatrixXd{Sigma});
 
-            std::shared_ptr<FactorizedOptimizer> optimizer_k = vec_factor_optimizers_[k];
-            optimizer_k->updateSamplerMean(VectorXd{Pk * mu_});
-            optimizer_k->updateSamplerCovarianceMatrix(MatrixXd{Pk * Sigma * Pk.transpose()});
+            optimizer_k->update_mu(VectorXd{_mu});
+            optimizer_k->update_precision(MatrixXd{Sigma});
 
-            optimizer_k->update_mu(VectorXd{Pk*mu_});
-            optimizer_k->update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
+            optimizer_k->calculate_exact_partial_V();
 
-            optimizer_k->calculate_partial_V();
-
-            Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k->get_Vdmu();
-            Vddmu_ = Vddmu_ + Pk.transpose().eval() * optimizer_k->get_Vddmu() * Pk;
+            _Vdmu = _Vdmu + optimizer_k->get_joint_Vdmu();
+            _Vddmu = _Vddmu + optimizer_k->get_joint_Vddmu();
         }
 
-        d_precision_ = -precision_ + Vddmu_;
+        _dprecision = -_precision + _Vddmu;
 
-        precision_ = precision_ + step_size_precision*d_precision_;
+        _precision = _precision + step_size_precision*_dprecision;
 
-        d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
-        mu_ = mu_ + step_size_mu * d_mu_;
+        _dmu = _precision.colPivHouseholderQr().solve(-_Vdmu);
+        _mu = _mu + _step_size_mu * _dmu;
 
-        cout << "mu_ " << endl << mu_ << endl;
-        cout << "new precision " << endl << precision_ << endl;
+        cout << "_mu " << endl << _mu << endl;
+        MatrixXd covariance = get_covariance();
+        cout << "new covariance " << endl << covariance << endl;
 
     }
 
     /// returns the mean
     inline VectorXd get_mean() const{
-        return mu_;
+        return _mu;
     }
 
     /// returns the precision matrix
     inline MatrixXd get_precision() const{
-        return precision_;
+        return _precision;
     }
 
     /// returns the covariance matrix
-    inline MatrixXd get_covariance() const{
-        return inverser_.inverse();
+    inline MatrixXd get_covariance(){
+        return _inverser.inverse();
     }
 
     /// update the step size of the iterations.
     /// @param ss_mean new step size for the mean update
     /// @param ss_precision new step size for the precision matrix update
     inline void set_step_size(double ss_mean, double ss_precision){
-        step_size_mu = ss_mean;
+        _step_size_mu = ss_mean;
         step_size_precision = ss_precision;
     }
 
     /// manually assign a mean value
     /// @param mean new mean
     inline void set_mu(const VectorXd& mean){
-        mu_ = mean;
+        _mu = mean;
     }
 
 };

@@ -1,7 +1,7 @@
 /**
  * @file OptimizerFactorizedGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief 
+ * @brief The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations.
  * @version 0.1
  * @date 2022-03-07
  * 
@@ -27,12 +27,11 @@ IOFormat CleanFmt(4, 0, ", ", "\n");
 
 namespace MPVI{
     template <typename Function, typename CostClass, typename... Args>
-    /// Decription: The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations
     class VIMPOptimizerFactorizedGaussHermite{
     public:
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
-        VIMPOptimizerFactorizedGaussHermite(const int& dimension, const Function& function_, const CostClass& cost_class_):
+        VIMPOptimizerFactorizedGaussHermite(const int& dimension, const Function& function_, const CostClass& cost_class_, const MatrixXd& Pk_):
                 _dim{dimension},
                 _cost_function{std::move(function_)},
                 _mu{VectorXd::Zero(_dim)},
@@ -46,9 +45,10 @@ namespace MPVI{
                 _func_phi{[this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, _cost_function(x, _cost_class))};}},
                 _func_Vmu{[this](const VectorXd& x){return (x-_mu) * _cost_function(x, _cost_class);}},
                 _func_Vmumu{[this](const VectorXd& x){return MatrixXd{(x-_mu) * (x-_mu).transpose().eval() * _cost_function(x, _cost_class)};}},
-                _gauss_hermite{10, _dim, _mu, _covariance, _func_phi}
+                _gauss_hermite{10, _dim, _mu, _covariance, _func_phi},
+                _Pk{Pk_}
                 {}
-    private:
+    protected:
         /// dimension
         int _dim;
 
@@ -79,6 +79,9 @@ namespace MPVI{
         /// G-H quadrature class
         GaussHermite<GHFunction> _gauss_hermite;
 
+        /// Mapping matrix to the joint distribution
+        MatrixXd _Pk;
+
     public:
 
         /// update the GH approximator
@@ -100,11 +103,17 @@ namespace MPVI{
 
         /// Update the parameters: mean, covariance, and precision matrix
         inline void update_mu(const VectorXd& new_mu){
-            _mu = new_mu;
+            _mu = _Pk * new_mu;
         }
 
-        inline void update_precision(const MatrixXd& new_precision){
-            _precision = new_precision;
+        /**
+         * @brief Update the marginal precision matrix using joint COVARIANCE matrix and 
+         * mapping matrix Pk.
+         * 
+         * @param joint_covariance 
+         */
+        inline void update_precision(const MatrixXd& joint_covariance){
+            _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();
         }
 
         inline void update_covariance(){
@@ -190,12 +199,25 @@ namespace MPVI{
 
         }
 
-        inline MatrixXd get_Vddmu(){
+        inline MatrixXd get_Vddmu() const {
             return _Vddmu;
         }
 
-        inline VectorXd get_Vdmu(){
+        inline VectorXd get_Vdmu() const {
             return _Vdmu;
+        }
+
+        /// return the joint incremental mean after the mapping Pk from marginals.
+        inline VectorXd get_joint_Vdmu() const {
+            return _Pk.transpose() * _Vdmu;
+        }
+
+        inline MatrixXd get_joint_Vddmu() const {
+            return _Pk.transpose().eval() * _Vddmu * _Pk;
+        }
+
+        inline MatrixXd Pk() const {
+            return _Pk;
         }
 
         /**

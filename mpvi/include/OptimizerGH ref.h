@@ -92,14 +92,8 @@ public:
             optimizer_k.update_precision(MatrixXd{(Pk * Sigma * Pk.transpose()).inverse()});
             optimizer_k.calculate_partial_V();
 
-            cout << "mu_ " << endl << mu_ << endl;
-
             Vdmu_ = Vdmu_ + Pk.transpose() * optimizer_k.get_Vdmu();
-
-            cout << "mu_ " << endl << mu_ << endl;
             Vddmu_ = Vddmu_ + Pk.transpose().eval() * optimizer_k.get_Vddmu() * Pk;
-
-            cout << "mu_ " << endl << mu_ << endl;
 
         }
 

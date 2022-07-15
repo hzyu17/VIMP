@@ -1,40 +1,53 @@
 /**
- * @file test_conv_prior_pR.cpp
+ * @file test_conv_prior_col_pR.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief 
+ * @brief Test the convergence of the algorithm with prior + collision cost only on supported states, 
+ * for a planar robot.
  * @version 0.1
- * @date 2022-07-12
+ * @date 2022-07-15
  * 
  * @copyright Copyright (c) 2022
  * 
  */
 
-/// Description: Test the convergence of the algorithm with only a prior cost, for a planar robot.
-
-#include "../include/OptimizerPriorPlanarPR.h"
+#include "../include/OptimizerFactorizedTwoFactorsGH.h"
 #include <gtsam/inference/Symbol.h>
-// #include "../include/matplotlibcpp.h"
-#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
+
 
 /**
- * @brief -log(p(x,z)) for prior factor 
+ * @brief -log(p(x,z)) for prior and collision factors 
  * 
  * @param theta the input vector
  * @param prior_factor the prior class
+ * @param obstacle_factor the collision class
  * @return double 
  */
-double errorWrapperPrior(const VectorXd& theta, const UnaryFactorTranslation2D& prior_factor) {
+double errorWrapperPriorCol(const gtsam::Vector& theta, const UnaryFactorTranslation2D& prior_factor,
+                                      const ObstaclePlanarSDFFactorPointRobot& collision_factor) {
 
+    /**
+     * Prior factor
+     * */
     gtsam::Vector2 position;
     position = theta.segment<2>(0);
-
     VectorXd vec_prior_err = prior_factor.evaluateError(position);
+    MatrixXd K = prior_factor.get_Qc();
+    double prior_err = vec_prior_err.transpose() * K.inverse() * vec_prior_err;
 
-    MatrixXd K{prior_factor.get_Qc()};
-    /// TODO: verify the sign is + or - here
-    return vec_prior_err.transpose() * K.inverse() * vec_prior_err;
+    /**
+     * Obstacle factor
+     * */
+    VectorXd vec_err = collision_factor.evaluateError(theta);
 
+    MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
+    double sig_obs = 1.0;
+    precision_obs = precision_obs / sig_obs;
+
+    double collision_cost = vec_err.transpose() * precision_obs * vec_err;
+
+    return prior_err + collision_cost;
 }
+
 
 using namespace gtsam;
 using namespace std;
@@ -43,10 +56,31 @@ using namespace Eigen;
 using namespace MPVI;
 
 int main(){
+    /// map and sdf
+    gtsam::Matrix map_ground_truth = (gtsam::Matrix(7, 7) <<
+                                                          0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
+            0, 0, 1, 1, 1, 0, 0,
+            0, 0, 1, 1, 1, 0, 0,
+            0, 0, 1, 1, 1, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0).finished();
+    gtsam::Matrix field = (gtsam::Matrix(7, 7) <<
+            2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284,
+            2.2361, 1.4142, 1.0000, 1.0000, 1.0000, 1.4142, 2.2361,
+            2.0000, 1.0000, -1.0000, -1.0000, -1.0000, 1.0000, 2.0000,
+            2.0000, 1.0000, -1.0000, -2.0000, -1.0000, 1.0000, 2.0000,
+            2.0000, 1.0000, -1.0000, -1.0000, -1.0000, 1.0000, 2.0000,
+            2.2361, 1.4142, 1.0000, 1.0000, 1.0000, 1.4142, 2.2361,
+            2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284).finished();
+    // layout of SDF: Bottom-left is (0,0), length is +/- 1 per point.
+    Point2 origin(0, 0);
+    double cell_size = 1.0;
+
+    PlanarSDF sdf = PlanarSDF(origin, cell_size, field);
+
     /// 2D point robot
-    // double total_time = 10.0;
     int n_total_states = 3, N = n_total_states - 1;
-    // int num_interp = 2;
 
     /// parameters
     const int ndof = 2, nlinks = 1;

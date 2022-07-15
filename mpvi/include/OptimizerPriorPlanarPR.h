@@ -22,24 +22,10 @@ using namespace Eigen;
 /// Function calculating two cost factors: prior and the collision factor. 
 using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
 
-/// phi(x)
-double errorWrapperPrior(const VectorXd& theta, const UnaryFactorTranslation2D& prior_factor) {
-
-    /**
-     * Prior factor
-     * */
-    gtsam::Vector2 position;
-    position = theta.segment<2>(0);
-
-    VectorXd vec_prior_err = prior_factor.evaluateError(position);
-
-    MatrixXd K{prior_factor.get_Qc()};
-    /// TODO: verify the sign is + or - here
-    return vec_prior_err.transpose() * K.inverse() * vec_prior_err;
-
-}
-
-/// Definition of the factorized optimizer.
+/**
+ * @brief Declaration of the factorized optimizer.
+ * 
+ */
 using OptimizerFactorPriorPRGH = VIMPOptimizerFactorizedGaussHermite<std::function<double(const VectorXd&, const UnaryFactorTranslation2D&)>,
                                                                     UnaryFactorTranslation2D,
                                                                     VectorXd>;
