@@ -9,12 +9,11 @@
  * 
  */
 
-#include <gtsam/base/Matrix.h>
-#include <iostream>
 #include <random>
 #include <utility>
 #include "SparseInverseMatrix.h"
 #include <boost/scoped_ptr.hpp>
+#include "../include/helpers/result_recorder.h"
 
 //using namespace GaussianSampler;
 using namespace std;
@@ -22,19 +21,17 @@ using namespace SparseInverse;
 typedef Triplet<double> T;
 
 namespace MPVI{
-    template <typename FactorizedOptimizer>
 
-
+template <typename FactorizedOptimizer>
 class VIMPOptimizerGH{
 public:
-    /// @param dimension State dimension
-    /// @param _sub_dim dimension of the marginal variables
-    /// @param _vec_function Vector of cost functions for each marginal distribution
-    VIMPOptimizerGH(const vector<std::shared_ptr<FactorizedOptimizer>>& _vec_fact_optimizers):
+    /// @param _vec_fact_optimizers vector of marginal optimizers
+    /// @param niters number of iterations
+    VIMPOptimizerGH(const vector<std::shared_ptr<FactorizedOptimizer>>& _vec_fact_optimizers, int niters=10):
                                    _dim{_vec_fact_optimizers[0]->Pk().cols()},
+                                   _niters{niters},
                                    _sub_dim{_vec_fact_optimizers[0]->Pk().rows()},
                                    _nsub_vars{_vec_fact_optimizers.size()},
-                                //    vec_Pks_{std::move(_vec_Pks)},
                                    _vec_factor_optimizers{std::move(_vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
                                    _Vdmu{VectorXd::Zero(_dim)},
@@ -42,10 +39,11 @@ public:
                                    _precision{MatrixXd::Identity(_dim, _dim) * 5.0},
                                    _Vddmu(MatrixXd::Identity(_dim, _dim)),
                                    _dprecision(MatrixXd::Identity(_dim, _dim)),
-                                   _inverser{MatrixXd::Identity(_dim, _dim)}{}
+                                   _inverser{MatrixXd::Identity(_dim, _dim)},
+                                   _res_recorder{_niters, _dim}{}
 protected:
     /// optimization variables
-    int _dim, _sub_dim, _nsub_vars;
+    int _dim, _niters, _sub_dim, _nsub_vars;
 
     ///@param vec_Pks_ Vector of all transformation matrix from joint variables to marginal variables
     // const vector<MatrixXd> vec_Pks_;
@@ -62,6 +60,9 @@ protected:
 
     /// Sparse matrix inverse helper, which utilizes the exact sparse pattern to do the matrix inversion
     dense_inverser _inverser;
+
+    /// Data and result storage
+    MPVIResults _res_recorder;
 
     /// step sizes by default
     double step_size_precision = 0.9;
@@ -97,9 +98,9 @@ public:
         _dmu = -_precision.colPivHouseholderQr().solve(_Vdmu);
         _mu = _mu + _step_size_mu * _dmu;
 
-        cout << "_mu " << endl << _mu << endl;
-        MatrixXd covariance = get_covariance();
-        cout << "new covariance " << endl << covariance << endl;
+        // cout << "_mu " << endl << _mu << endl;
+        // MatrixXd covariance = get_covariance();
+        // cout << "new covariance " << endl << covariance << endl;
         
     }
 
@@ -138,9 +139,9 @@ public:
         _dmu = _precision.colPivHouseholderQr().solve(-_Vdmu);
         _mu = _mu + _step_size_mu * _dmu;
 
-        cout << "_mu " << endl << _mu << endl;
-        MatrixXd covariance = get_covariance();
-        cout << "new covariance " << endl << covariance << endl;
+        // cout << "_mu " << endl << _mu << endl;
+        // MatrixXd covariance = get_covariance();
+        // cout << "new covariance " << endl << covariance << endl;
 
     }
 
@@ -172,6 +173,83 @@ public:
     inline void set_mu(const VectorXd& mean){
         _mu = mean;
     }
+
+    /**
+     * @brief Number of iterations
+     * 
+     * @param niters
+     */
+    void set_niterations(int niters){
+        _niters = niters;
+        _res_recorder.reinitialize_data();
+    }
+
+    /**
+     * @brief The optimizing process.
+     * 
+     */
+    void optimize(){
+        double step_size = 0.9;
+        for (int i = 0; i < _niters; i++) {
+            step_size = step_size / pow((i + 1), 1 / 3);
+            set_step_size(step_size, step_size);
+
+            /// Collect the results
+            VectorXd mean_iter{get_mean()};
+            MatrixXd cov_iter{get_covariance()};
+
+            cout << "iteration: " << i << endl;
+            _res_recorder.update_data(mean_iter, cov_iter);
+            step();
+        }
+
+        vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
+        /// print some datas 
+        print_series_results(iters);
+
+        // string file_mean{};
+        // string file_cov{};
+        save_data("mean.csv", "cov.csv");
+    } 
+
+    /**
+     * @brief save process data into csv files.
+     * 
+     * @param file_mean filename for mean
+     * @param file_cov filename for cov
+     */
+    void save_data(const string& file_mean, const string& file_cov){
+        _res_recorder.save_data(file_mean, file_cov);
+    }
+
+    /**
+     * @brief print a given iteration data mean and covariance.
+     * 
+     * @param i_iter 
+     */
+    void print_result(const int& i_iter){
+        _res_recorder.print_data(i_iter);
+    }
+
+    /**
+     * @brief print out a given number of iterations results
+     * 
+     * @param iters a list of iterations to be printed
+     */
+    void print_series_results(const vector<int>& iters){
+
+        std::for_each(iters.begin(), iters.end(), [this](int i) { 
+            cout << "--- result at iteration " << i << "---" << endl;
+            print_result(i);
+            }
+        );
+
+        // for(int i = iters.begin(), ){
+        //     cout << "--- result at iteration " << i << "---" << endl;
+        //     print_result(i);
+        // }
+    }
+    
 
 };
 

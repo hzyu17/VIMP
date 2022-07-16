@@ -12,7 +12,7 @@
 
 #include "../include/OptimizerPriorColPlanarPR.h"
 #include <gtsam/inference/Symbol.h>
-#include "../include/plotPlanarResults.h"
+#include "../include/helpers/data_io.h"
 
 
 /**
@@ -23,13 +23,13 @@
  * @param obstacle_factor the collision class
  * @return double 
  */
-double errorWrapperPriorCol(const gtsam::Vector& theta, const UnaryFactorTranslation2D& prior_factor,
+double errorWrapperPriorCol(const VectorXd& theta, const UnaryFactorTranslation2D& prior_factor,
                                       const ObstaclePlanarSDFFactorPointRobot& collision_factor) {
 
     /**
      * Prior factor
      * */
-    gtsam::Vector2 position;
+    Vector2d position;
     position = theta.segment<2>(0);
     VectorXd vec_prior_err = prior_factor.evaluateError(position);
     MatrixXd K = prior_factor.get_Qc();
@@ -50,15 +50,17 @@ double errorWrapperPriorCol(const gtsam::Vector& theta, const UnaryFactorTransla
 }
 
 
-using namespace gtsam;
 using namespace std;
 using namespace gpmp2;
 using namespace Eigen;
 using namespace MPVI;
 
 int main(){
+    MatrixIO matrix_io{};
+    string filename_map{"map_ground_truth.csv"};
+    string filename_sdf{"map_sdf.csv"};
     /// map and sdf
-    gtsam::Matrix map_ground_truth = (gtsam::Matrix(7, 7) <<
+    MatrixXd map_ground_truth = (MatrixXd(7, 7) <<
                                                           0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0,
             0, 0, 1, 1, 1, 0, 0,
@@ -66,7 +68,7 @@ int main(){
             0, 0, 1, 1, 1, 0, 0,
             0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0).finished();
-    gtsam::Matrix field = (gtsam::Matrix(7, 7) <<
+    MatrixXd field = (MatrixXd(7, 7) <<
             2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284,
             2.2361, 1.4142, 1.0000, 1.0000, 1.0000, 1.4142, 2.2361,
             2.0000, 1.0000, -1.0000, -1.0000, -1.0000, 1.0000, 2.0000,
@@ -74,6 +76,9 @@ int main(){
             2.0000, 1.0000, -1.0000, -1.0000, -1.0000, 1.0000, 2.0000,
             2.2361, 1.4142, 1.0000, 1.0000, 1.0000, 1.4142, 2.2361,
             2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284).finished();
+
+    matrix_io.saveData(filename_map, map_ground_truth);
+    matrix_io.saveData(filename_sdf, field);
     // layout of SDF: Bottom-left is (0,0), length is +/- 1 per point.
     Point2 origin(0, 0);
     double cell_size = 1.0;
@@ -129,11 +134,11 @@ int main(){
         cout << "Pk" << endl << Pk << endl;
 
         /// prior cost
-        UnaryFactorTranslation2D prior_k{symbol('x', i), gtsam::Vector2{conf.segment<dim_conf>(0)}, K_0};
+        UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{conf.segment<dim_conf>(0)}, K_0};
         cout << prior_k.get_Qc() << endl;
 
         // collision cost
-        ObstaclePlanarSDFFactorPointRobot collision_k{symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
+        ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
 
         /// Factored optimizer
         std::shared_ptr<OptFactPriColPRGH> pOptimizer(new OptFactPriColPRGH{dim_conf, errorWrapperPriorCol, prior_k, collision_k, Pk});
@@ -145,22 +150,12 @@ int main(){
     VIMPOptimizerGH<OptFactPriColPRGH> optimizer{vec_factor_opts};
 
     /// Update steps
-    const int num_iter = 10;
-    double step_size = 0.9;
+    int num_iter = 10;
 
     MatrixXd results{MatrixXd::Zero(num_iter, ndim)};
 
-    for (int i = 0; i < num_iter; i++) {
-        step_size = step_size / pow((i + 1), 1 / 3);
-        optimizer.set_step_size(step_size, step_size);
-        VectorXd mean_iter{optimizer.get_mean()};
-        cout << "==== iteration " << i << " ====" << endl;
-        results.row(i) = mean_iter.transpose();
-        optimizer.step();
-    }
-
-    plot_result(results, N, dim_theta);
-
+    optimizer.set_niterations(num_iter);
+    optimizer.optimize();
 
     return 0;
 }

@@ -74,10 +74,13 @@ add_executable(test_conv_Gaussian_GH src/test_conv_Gaussian_GH.cpp)
 target_link_libraries(test_conv_Gaussian_GH ${EIGEN3_LIBRARIES})
 
 add_executable(test_prior_col_pR src/test_conv_prior_col_pR.cpp)
-target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${PYTHON_INCLUDE_DIRS})
+target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${PYTHON_LIBRARIES})
 
 add_executable(test_prior_pR src/test_conv_prior_pR.cpp)
 target_link_libraries(test_prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+
+add_executable(test_data_io include/helpers/test_data_io.cpp)
+target_link_libraries(test_conv_Gaussian_GH ${EIGEN3_LIBRARIES})
 
 
 # python wrapper

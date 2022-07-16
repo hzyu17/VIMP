@@ -138,10 +138,6 @@ namespace MPVI{
             /// Integrate for _Vdmu 
             _gauss_hermite.update_integrand(_func_Vmu);
 
-            MatrixXd res = _gauss_hermite.Integrate();
-
-            cout << "res" << endl << res << endl;
-
             _Vdmu = _gauss_hermite.Integrate();
             _Vdmu = _precision * _Vdmu;
 

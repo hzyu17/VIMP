@@ -67,18 +67,9 @@ void test_coupled(){
     const int num_iter = 10;
     double step_size = 0.9;
 
-    for (int i=0; i<num_iter; i++) {
-        step_size = step_size / pow((i + 1), 1 / 3);
-        optimizer.set_step_size(step_size, step_size);
-
-        cout << "==== iteration " << i << " ====" << endl
-             << "mean " << endl << optimizer.get_mean().format(CleanFmt) << endl
-             << "precision matrix " << endl << optimizer.get_precision().format(CleanFmt) << endl;
-
-        // get the derivatives from samples
-         optimizer.step();
-
-    }
+    optimizer.set_niterations(num_iter);
+    optimizer.optimize();
+    
 }
 
 int main(){
