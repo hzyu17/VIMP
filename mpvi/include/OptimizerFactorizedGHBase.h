@@ -26,7 +26,7 @@ using namespace Eigen;
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
 namespace MPVI{
-    template <typename Function, typename CostClass>
+    template <typename Function>
     class VIMPOptimizerFactorizedBase{
     public:
         ///@param dimension The dimension of the state
@@ -135,19 +135,16 @@ namespace MPVI{
             updateGH();
 
             /// Integrate for _Vdmu 
-            // std::function<MatrixXd(const VectorXd&)> _func_Vmu = [this](const VectorXd& x){return (x-_mu) * _cost_function(x, CostClass{_cost_class});};
             _gauss_hermite.update_integrand(_func_Vmu);
 
             _Vdmu = _gauss_hermite.Integrate();
             _Vdmu = _precision * _Vdmu;
 
             /// Integrate for phi(x)
-            // std::function<MatrixXd(const VectorXd&)> _func_phi = [this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, _cost_function(x, CostClass{_cost_class}))};};
             _gauss_hermite.update_integrand(_func_phi);
             double avg_phi = _gauss_hermite.Integrate()(0, 0);
 
             /// Integrate for partial V^2 / ddmu_ 
-            // std::function<MatrixXd(const VectorXd&)> _func_Vmumu = [this](const VectorXd& x){return MatrixXd{(x-_mu) * (x-_mu).transpose().eval() * _cost_function(x, CostClass{_cost_class})};};
             _gauss_hermite.update_integrand(_func_Vmumu);
             _Vddmu = _gauss_hermite.Integrate();
 

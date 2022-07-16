@@ -1,7 +1,7 @@
 /**
  * @file OptimizerFactorizedGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations.
+ * @brief The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations. Cost function takes one cost class.
  * @version 0.1
  * @date 2022-03-07
  * 
@@ -18,14 +18,14 @@ using namespace Eigen;
 
 namespace MPVI{
     template <typename Function, typename CostClass>
-    class VIMPOptimizerFactorizedGaussHermite: public VIMPOptimizerFactorizedBase<Function, CostClass>{
-        using OptBase = VIMPOptimizerFactorizedBase<Function, CostClass>;
+    class VIMPOptimizerFactorizedGaussHermite: public VIMPOptimizerFactorizedBase<Function>{
+        using OptBase = VIMPOptimizerFactorizedBase<Function>;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
     public:
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
         VIMPOptimizerFactorizedGaussHermite(const int& dimension, const Function& function_, const CostClass& cost_class_, const MatrixXd& Pk_):
-                VIMPOptimizerFactorizedBase<Function, CostClass>(dimension, function_, Pk_),
+                OptBase(dimension, function_, Pk_),
                 _cost_function{std::move(function_)},
                 _cost_class{std::move(cost_class_)}
                 {
@@ -35,7 +35,7 @@ namespace MPVI{
                     OptBase::_func_Vmumu = [this](const VectorXd& x){return MatrixXd{(x-OptBase::_mu) * (x-OptBase::_mu).transpose().eval() * _cost_function(x, _cost_class)};};
                     OptBase::_gauss_hermite = GaussHermite<GHFunction>{10, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
                 }
-    public:
+    private:
 
         /// Class of cost sources
         CostClass _cost_class;

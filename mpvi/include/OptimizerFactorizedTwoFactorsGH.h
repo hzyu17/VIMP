@@ -1,7 +1,7 @@
 /**
  * @file OptimizerFactorizedTwoFactorsGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Optimizer with two cost classes. Inheritance from the one cost class optimizer class.
+ * @brief Optimizer. cost function takes two cost classes.
  * @version 0.1
  * @date 2022-07-15
  * 
@@ -9,13 +9,14 @@
  * 
  */
 
-#include "../include/OptimizerFactorizedGH.h"
+#include "../include/OptimizerFactorizedGHBase.h"
 
 namespace MPVI{
     template <typename Function, typename CostClass, typename CostClass1>
     /// Decription: The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations
-    class VIMPOptimizerFactorizedTwoClassGH: public VIMPOptimizerFactorizedGaussHermite<Function, CostClass>{
-    using Base = VIMPOptimizerFactorizedGaussHermite<Function, CostClass>;
+    class VIMPOptimizerFactorizedTwoClassGH: public VIMPOptimizerFactorizedBase<Function>{
+    using Base = VIMPOptimizerFactorizedBase<Function>;
+    using GHFunction = std::function<MatrixXd(const VectorXd&)>;
     public:
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
@@ -26,25 +27,23 @@ namespace MPVI{
                                           const CostClass& cost_class_,
                                           const CostClass1& cost_class1_,
                                           const MatrixXd& Pk_):
-                Base(dimension, function_, cost_class_, Pk_),
+                Base(dimension, function_, Pk_),
+                _cost_class{cost_class_},
                 _cost_class1{cost_class1_},
-                _func_phi{[this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, Base::_cost_function(x, Base::_cost_class, _cost_class1))};}},
-                _func_Vmu{[this](const VectorXd& x){return (x-Base::_mu) * Base::_cost_function(x, Base::_cost_class, _cost_class1);}},
-                _func_Vmumu{[this](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * Base::_cost_function(x, Base::_cost_class, _cost_class1)};}},
-                _gauss_hermite{10, Base::_dim, Base::_mu, Base::_covariance, _func_phi}
-                {}
-    protected:
+                _cost_function{function_}{
+                Base::_func_phi = [this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, _cost_function(x, _cost_class, _cost_class1))};};
+                Base::_func_Vmu = [this](const VectorXd& x){return (x-Base::_mu) * _cost_function(x, _cost_class, _cost_class1);};
+                Base::_func_Vmumu = [this](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * _cost_function(x, _cost_class, _cost_class1)};};
+                Base::_gauss_hermite = GaussHermite<GHFunction>{10, Base::_dim, Base::_mu, Base::_covariance, Base::_func_phi};
+                }
+                
+    private:
         
         /// Class of cost sources
+        CostClass _cost_class;
         CostClass1 _cost_class1;
 
-        /// Intermediate functions for Gauss-Hermite quadratures
-        using GHFunction = std::function<MatrixXd(const VectorXd&)>;
-        GHFunction _func_phi;
-        GHFunction _func_Vmu;
-        GHFunction _func_Vmumu;
-
-        /// G-H quadrature class
-        GaussHermite<GHFunction> _gauss_hermite;
+        /// cost function
+        Function _cost_function;
     };
 }
