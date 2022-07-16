@@ -10,7 +10,7 @@
  * 
  */
 
-#include "../include/OptimizerFactorizedTwoFactorsGH.h"
+#include "../include/OptimizerPriorColPlanarPR.h"
 #include <gtsam/inference/Symbol.h>
 
 
@@ -78,6 +78,8 @@ int main(){
     double cell_size = 1.0;
 
     PlanarSDF sdf = PlanarSDF(origin, cell_size, field);
+    double cost_sigma = 1.0;
+    double epsilon = 0.3;
 
     /// 2D point robot
     int n_total_states = 3, N = n_total_states - 1;
@@ -111,11 +113,8 @@ int main(){
     cout << "Qc" << endl << getQc(Qc_model) << endl;
     SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
 
-    /// Vector of Pks
-    vector<MatrixXd> vec_Pks;
-
     /// Vector of factored optimizers
-    vector<std::shared_ptr<OptimizerFactorPriorPRGH>> vec_factor_opts;
+    vector<std::shared_ptr<OptFactPriColPRGH>> vec_factor_opts;
 
     for (int i = 0; i < n_total_states; i++) {
         VectorXd conf{start_conf + double(i) * (goal_conf - start_conf) / N};
@@ -127,20 +126,22 @@ int main(){
         /// Pk.block<dim_conf, dim_conf>(dim_conf, (i + 1) * dim_conf) = MatrixXd::Identity(dim_conf, dim_conf);
         
         cout << "Pk" << endl << Pk << endl;
-        vec_Pks.emplace_back(Pk);
 
-        /// unary factor
+        /// prior cost
         UnaryFactorTranslation2D prior_k{symbol('x', i), gtsam::Vector2{conf.segment<dim_conf>(0)}, K_0};
         cout << prior_k.get_Qc() << endl;
 
+        // collision cost
+        ObstaclePlanarSDFFactorPointRobot collision_k{symbol('x', i), pR, sdf, cost_sigma, epsilon};
+
         /// Factored optimizer
-        std::shared_ptr<OptimizerFactorPriorPRGH> pOptimizer(new OptimizerFactorPriorPRGH{dim_conf, errorWrapperPrior, prior_k});
+        std::shared_ptr<OptFactPriColPRGH> pOptimizer(new OptFactPriColPRGH{dim_conf, errorWrapperPriorCol, prior_k, collision_k, Pk});
         vec_factor_opts.emplace_back(pOptimizer);
 
     }
 
     /// The joint optimizer
-    VIMPOptimizerGH<OptimizerFactorPriorPRGH> optimizer{vec_Pks, vec_factor_opts};
+    VIMPOptimizerGH<OptFactPriColPRGH> optimizer{vec_factor_opts};
 
     /// Update steps
     const int num_iter = 10;

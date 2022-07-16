@@ -30,7 +30,7 @@ inline double cost_function(const VectorXd& sample, const Gaussian_distribution&
     return -target_distr.log_prob(sample);
 }
 
-using FactorizedOptimizer = VIMPOptimizerFactorizedGaussHermite<std::function<double(const VectorXd&, const Gaussian_distribution&)>, Gaussian_distribution, gtsam::Vector>;
+using FactorizedOptimizer = VIMPOptimizerFactorizedGaussHermite<std::function<double(const VectorXd&, const Gaussian_distribution&)>, Gaussian_distribution>;
 
 void test_coupled(){
     const int ndim = 15;

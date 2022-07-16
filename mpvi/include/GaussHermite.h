@@ -19,6 +19,20 @@ namespace{
     template <typename Function>
 class GaussHermite{
 public:
+    /**
+     * @brief Default constructor.
+     * 
+     */
+    GaussHermite(){}
+    /**
+     * @brief Construct a new Gauss Hermite object
+     * 
+     * @param p degree of GH polynomial
+     * @param dim dimension of the integrand
+     * @param mean mean 
+     * @param P covariance matrix
+     * @param func the integrand function
+     */
     GaussHermite(const int& p, const int& dim, const VectorXd& mean, const MatrixXd& P, const Function& func):
         p_{p},
         dim_{dim},

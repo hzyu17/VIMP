@@ -27,6 +27,5 @@ using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
  * 
  */
 using OptimizerFactorPriorPRGH = VIMPOptimizerFactorizedGaussHermite<std::function<double(const VectorXd&, const UnaryFactorTranslation2D&)>,
-                                                                    UnaryFactorTranslation2D,
-                                                                    VectorXd>;
+                                                                    UnaryFactorTranslation2D>;
 

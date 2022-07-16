@@ -9,17 +9,19 @@
  * 
  */
 
+#include "../include/OptimizerGH.h"
 #include "../include/OptimizerFactorizedTwoFactorsGH.h"
+#include "../include/GaussianPriorUnaryTranslation.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-#include "../include/Optimizer.h"
 
+using namespace MPVI;
+
+using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
 
 /**
  * @brief Declaration of the factorized optimizer.
  * 
  */
-using PriorClass = UnaryFactorTranslation2D;
-using CollisionClass = ObstaclePlanarSDFFactorPointRobot;
-using FunctionPriorCol = std::function<double(const VectorXd&, const PriorClass&, const CollisionClass&)>;
+using FunctionPriorCol = std::function<double(const VectorXd&, const UnaryFactorTranslation2D&, const ObstaclePlanarSDFFactorPointRobot&)>;
 
-using OptFactPriColPRGH = VIMPOptimizerFactorizedTwoClassGH<FunctionPriorCol, PriorClass, CollisionClass, VectorXd>;
+using OptFactPriColPRGH = VIMPOptimizerFactorizedTwoClassGH<FunctionPriorCol, UnaryFactorTranslation2D, ObstaclePlanarSDFFactorPointRobot>;

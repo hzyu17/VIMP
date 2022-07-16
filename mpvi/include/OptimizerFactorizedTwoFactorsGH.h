@@ -12,10 +12,10 @@
 #include "../include/OptimizerFactorizedGH.h"
 
 namespace MPVI{
-    template <typename Function, typename CostClass, typename CostClass1, typename... Args>
-    using Base = VIMPOptimizerFactorizedGaussHermite<Function, CostClass>;
+    template <typename Function, typename CostClass, typename CostClass1>
     /// Decription: The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations
-    class VIMPOptimizerFactorizedTwoClassGH: public Base{
+    class VIMPOptimizerFactorizedTwoClassGH: public VIMPOptimizerFactorizedGaussHermite<Function, CostClass>{
+    using Base = VIMPOptimizerFactorizedGaussHermite<Function, CostClass>;
     public:
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
@@ -24,12 +24,13 @@ namespace MPVI{
         VIMPOptimizerFactorizedTwoClassGH(const int& dimension, 
                                           const Function& function_, 
                                           const CostClass& cost_class_,
-                                          const CostClass1& cost_class1_):
-                Base(dimension, function_, cost_class_),
+                                          const CostClass1& cost_class1_,
+                                          const MatrixXd& Pk_):
+                Base(dimension, function_, cost_class_, Pk_),
                 _cost_class1{cost_class1_},
-                _func_phi{[this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, _cost_function(x, Base::_cost_class, _cost_class1))};}},
-                _func_Vmu{[this](const VectorXd& x){return (x-Base::_mu) * _cost_function(x, Base::_cost_class, _cost_class1);}},
-                _func_Vmumu{[this](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * _cost_function(x, Base::_cost_class, _cost_class1)};}},
+                _func_phi{[this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, Base::_cost_function(x, Base::_cost_class, _cost_class1))};}},
+                _func_Vmu{[this](const VectorXd& x){return (x-Base::_mu) * Base::_cost_function(x, Base::_cost_class, _cost_class1);}},
+                _func_Vmumu{[this](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * Base::_cost_function(x, Base::_cost_class, _cost_class1)};}},
                 _gauss_hermite{10, Base::_dim, Base::_mu, Base::_covariance, _func_phi}
                 {}
     protected:

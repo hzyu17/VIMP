@@ -77,9 +77,6 @@ int main(){
     cout << "Qc" << endl << getQc(Qc_model) << endl;
     SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
 
-    /// Vector of Pks
-    vector<MatrixXd> vec_Pks;
-
     /// Vector of factored optimizers
     vector<std::shared_ptr<OptimizerFactorPriorPRGH>> vec_factor_opts;
 
@@ -90,23 +87,21 @@ int main(){
         /// Pk matrices
         MatrixXd Pk{MatrixXd::Zero(dim_conf, ndim)};
         Pk.block<dim_conf, dim_conf>(0, i * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
-        /// Pk.block<dim_conf, dim_conf>(dim_conf, (i + 1) * dim_conf) = MatrixXd::Identity(dim_conf, dim_conf);
         
         cout << "Pk" << endl << Pk << endl;
-        vec_Pks.emplace_back(Pk);
 
         /// unary factor
         UnaryFactorTranslation2D prior_k{symbol('x', i), gtsam::Vector2{conf.segment<dim_conf>(0)}, K_0};
         cout << prior_k.get_Qc() << endl;
 
         /// Factored optimizer
-        std::shared_ptr<OptimizerFactorPriorPRGH> pOptimizer(new OptimizerFactorPriorPRGH{dim_conf, errorWrapperPrior, prior_k});
+        std::shared_ptr<OptimizerFactorPriorPRGH> pOptimizer(new OptimizerFactorPriorPRGH{dim_conf, errorWrapperPrior, prior_k, Pk});
         vec_factor_opts.emplace_back(pOptimizer);
 
     }
 
     /// The joint optimizer
-    VIMPOptimizerGH<OptimizerFactorPriorPRGH> optimizer{vec_Pks, vec_factor_opts};
+    VIMPOptimizerGH<OptimizerFactorPriorPRGH> optimizer{vec_factor_opts};
 
     /// Update steps
     const int num_iter = 10;
