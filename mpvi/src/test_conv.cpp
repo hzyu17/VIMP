@@ -1,15 +1,13 @@
 /**
  * @file test_conv.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief 
+ * @brief Test the convergence of algorithm using a known Gaussian posterior.
  * @version 0.1
  * @date 2022-03-06
  * 
  * @copyright Copyright (c) 2022
  * 
  */
-
-/// Description: Test the convergence of algorithm using a known Gaussian posterior.
 
 #include "../include/Optimizer.h"
 #include <gtsam/base/Matrix.h>

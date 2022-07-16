@@ -31,31 +31,17 @@ namespace MPVI{
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
         VIMPOptimizerFactorizedBase(const int& dimension, const MatrixXd& Pk_):
+                _dim{dimension},
+                _mu{VectorXd::Zero(_dim)},
                 _dmu{VectorXd::Zero(_dim)},
                 _precision{MatrixXd::Identity(_dim, _dim)},
                 _dprecision{MatrixXd::Zero(_dim, _dim)},
                 _Vdmu{VectorXd::Zero(_dim)},
                 _Vddmu{MatrixXd::Zero(_dim, _dim)},
                 _Pk{Pk_},
-                _dim{dimension},
-                _mu{VectorXd::Zero(_dim)},
                 _covariance{_precision.inverse()}
                 {}
-    private:
-        /// optimization variables
-        VectorXd _dmu;
-        MatrixXd _precision, _dprecision;
-
-        /// intermediate variables in optimization steps
-        VectorXd _Vdmu;
-        MatrixXd _Vddmu;
-
-        /// step sizes
-        double _step_size_mu = 0.9;
-        double _step_size_Sigma = 0.9;
-
-        /// Mapping matrix to the joint distribution
-        MatrixXd _Pk;
+    
     
     /// Public members for the inherited classes access
     public:
@@ -76,6 +62,21 @@ namespace MPVI{
         /// G-H quadrature class
         GaussHermite<GHFunction> _gauss_hermite = GaussHermite<GHFunction>();
 
+    private:
+        /// optimization variables
+        VectorXd _dmu;
+        MatrixXd _precision, _dprecision;
+
+        /// intermediate variables in optimization steps
+        VectorXd _Vdmu;
+        MatrixXd _Vddmu;
+
+        /// step sizes
+        double _step_size_mu = 0.9;
+        double _step_size_Sigma = 0.9;
+
+        /// Mapping matrix to the joint distribution
+        MatrixXd _Pk;
 
     /// public functions
     public:
@@ -136,6 +137,10 @@ namespace MPVI{
 
             /// Integrate for _Vdmu 
             _gauss_hermite.update_integrand(_func_Vmu);
+
+            MatrixXd res = _gauss_hermite.Integrate();
+
+            cout << "res" << endl << res << endl;
 
             _Vdmu = _gauss_hermite.Integrate();
             _Vdmu = _precision * _Vdmu;

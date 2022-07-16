@@ -55,14 +55,11 @@ set(GPMP2_LIBRARIES gpmp2)
 add_executable(main src/main.cpp)
 target_link_libraries(main ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES})
 
-add_executable(vimp src/VariationalInferenceMP.cpp)
-target_link_libraries(vimp ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
 add_executable(test_conv src/test_conv.cpp)
 target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 add_executable(test_conv_factor_Gaussian_GH src/test_conv_factorized_GH.cpp)
-target_link_libraries(test_conv_factor_Gaussian_GH ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+target_link_libraries(test_conv_factor_Gaussian_GH ${EIGEN3_LIBRARIES})
 
 add_executable(test_conv_factor src/test_conv_factorized.cpp)
 target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
@@ -74,7 +71,7 @@ add_executable(test_GH src/test_GH.cpp)
 target_link_libraries(test_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 add_executable(test_conv_Gaussian_GH src/test_conv_Gaussian_GH.cpp)
-target_link_libraries(test_conv_Gaussian_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+target_link_libraries(test_conv_Gaussian_GH ${EIGEN3_LIBRARIES})
 
 add_executable(test_prior_col_pR src/test_conv_prior_col_pR.cpp)
 target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${PYTHON_INCLUDE_DIRS})

@@ -14,11 +14,9 @@
 
 #include "../include/OptimizerGH.h"
 #include "../include/OptimizerFactorizedGH.h"
-#include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
 
-using namespace gtsam;
 using namespace std;
 using namespace GaussianSampler;
 using namespace MPVI;
@@ -36,11 +34,11 @@ void test_coupled(){
     const int ndim = 15;
 
     // construct block matrices Sigma_k, P_k, and factored cost functions
-    // vector<std::function<MatrixXd(const gtsam::Vector&, const Gaussian_distribution&)>> vec_cost_func;
+    // vector<std::function<MatrixXd(const VectorXd&, const Gaussian_distribution&)>> vec_cost_func;
     // vector<Gaussian_distribution> vec_cost_class;
     vector<std::shared_ptr<FactorizedOptimizer>> vec_factorized_opt;
 
-    // vector<gtsam::Matrix> vec_Pks;
+    // vector<MatrixXd> vec_Pks;
     for (int i=0; i<ndim-1; i++){
         // Pks
         MatrixXd Pk{MatrixXd::Zero(2, ndim)};
@@ -49,12 +47,12 @@ void test_coupled(){
         // vec_Pks.emplace_back(Pk);
 
         // known target posteria Gaussian
-        gtsam::Vector mean_t(2);
-        gtsam::Matrix precision_t(2, 2);
-        precision_t = gtsam::Matrix::Identity(2, 2);
+        VectorXd mean_t(2);
+        MatrixXd precision_t(2, 2);
+        precision_t = MatrixXd::Identity(2, 2);
         precision_t(0, 1) = -0.74;
         precision_t(1, 0) = -0.74;
-        mean_t = gtsam::Vector::Ones(2);
+        mean_t = VectorXd::Ones(2);
 
         Gaussian_distribution target_distr(mean_t, precision_t.inverse());
 

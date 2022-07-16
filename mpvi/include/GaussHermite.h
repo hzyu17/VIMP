@@ -21,7 +21,6 @@ class GaussHermite{
 public:
     /**
      * @brief Default constructor.
-     * 
      */
     GaussHermite(){}
     /**
@@ -43,8 +42,9 @@ public:
         sigmapts_{VectorXd::Zero(p_)}{}
 
     /**
-     * Sigmapoints as the root of Hermite polynomials.
-     * */
+     * @brief Get the Sigma Pts
+     * 
+     */
     void getSigmaPts(){
         VectorXd a{VectorXd::Ones(p_-1)};
         VectorXd c{VectorXd::LinSpaced(p_-1, 1, p_-1)};
@@ -59,8 +59,12 @@ public:
     }
 
     /**
-     * Define the Hermite polynomial of degree deg, evaluate at x.
-     * */
+     * @brief Define the Hermite polynomial of degree deg, evaluate at x.
+     * 
+     * @param deg the degree to evaluate
+     * @param x input
+     * @return double function value
+     */
     double HermitePolynomial(const int& deg, const double& x){
         if (deg == 0) return 1;
         if (deg == 1) return x;
@@ -78,8 +82,10 @@ public:
     }
 
     /**
-     * Compute the weights in the Gauss-Hermite cubature method.
-     * */
+     * @brief Compute the weights in the Gauss-Hermite cubature method.
+     * 
+     * @return VectorXd Weights
+     */
     VectorXd getWeights(){
         getSigmaPts();
         VectorXd W(p_);
@@ -93,8 +99,10 @@ public:
     }
 
     /**
-     * Compute the approximated integration using Gauss-Hermite.
-     * */
+     * @brief Compute the approximated integration using Gauss-Hermite.
+     * 
+     * @return MatrixXd 
+     */
     MatrixXd Integrate(){
 
         getWeights();
