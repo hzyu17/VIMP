@@ -26,21 +26,21 @@ using namespace Eigen;
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
 namespace MPVI{
-    template <typename Function>
     class VIMPOptimizerFactorizedBase{
     public:
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
-        VIMPOptimizerFactorizedBase(const int& dimension, const Function& function_, const MatrixXd& Pk_):
-                _dim{dimension},
-                _mu{VectorXd::Zero(_dim)},
+        VIMPOptimizerFactorizedBase(const int& dimension, const MatrixXd& Pk_):
                 _dmu{VectorXd::Zero(_dim)},
                 _precision{MatrixXd::Identity(_dim, _dim)},
                 _dprecision{MatrixXd::Zero(_dim, _dim)},
-                _covariance{_precision.inverse()},
                 _Vdmu{VectorXd::Zero(_dim)},
                 _Vddmu{MatrixXd::Zero(_dim, _dim)},
-                _Pk{Pk_}{}
+                _Pk{Pk_},
+                _dim{dimension},
+                _mu{VectorXd::Zero(_dim)},
+                _covariance{_precision.inverse()}
+                {}
     private:
         /// optimization variables
         VectorXd _dmu;
@@ -209,7 +209,6 @@ namespace MPVI{
 
         /**
          * @brief One step in the optimization.
-         * 
          * @return true: success.
          */
         bool step(){

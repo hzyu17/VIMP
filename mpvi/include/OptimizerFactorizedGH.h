@@ -18,30 +18,22 @@ using namespace Eigen;
 
 namespace MPVI{
     template <typename Function, typename CostClass>
-    class VIMPOptimizerFactorizedGaussHermite: public VIMPOptimizerFactorizedBase<Function>{
-        using OptBase = VIMPOptimizerFactorizedBase<Function>;
+    class VIMPOptimizerFactorizedGaussHermite: public VIMPOptimizerFactorizedBase{
+
+        using OptBase = VIMPOptimizerFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
+        
     public:
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
         VIMPOptimizerFactorizedGaussHermite(const int& dimension, const Function& function_, const CostClass& cost_class_, const MatrixXd& Pk_):
-                OptBase(dimension, function_, Pk_),
-                _cost_function{std::move(function_)},
-                _cost_class{std::move(cost_class_)}
+                OptBase(dimension, Pk_)
                 {
                     /// Override of the base classes.
-                    OptBase::_func_phi = [this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, _cost_function(x, _cost_class))};};
-                    OptBase::_func_Vmu = [this](const VectorXd& x){return (x-OptBase::_mu) * _cost_function(x, _cost_class);};
-                    OptBase::_func_Vmumu = [this](const VectorXd& x){return MatrixXd{(x-OptBase::_mu) * (x-OptBase::_mu).transpose().eval() * _cost_function(x, _cost_class)};};
+                    OptBase::_func_phi = [this, function_, cost_class_](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function_(x, cost_class_))};};
+                    OptBase::_func_Vmu = [this, function_, cost_class_](const VectorXd& x){return (x-OptBase::_mu) * function_(x, cost_class_);};
+                    OptBase::_func_Vmumu = [this, function_, cost_class_](const VectorXd& x){return MatrixXd{(x-OptBase::_mu) * (x-OptBase::_mu).transpose().eval() * function_(x, cost_class_)};};
                     OptBase::_gauss_hermite = GaussHermite<GHFunction>{10, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
                 }
-    private:
-
-        /// Class of cost sources
-        CostClass _cost_class;
-
-        /// cost function
-        Function _cost_function;
-
     };
 }

@@ -14,8 +14,8 @@
 namespace MPVI{
     template <typename Function, typename CostClass, typename CostClass1>
     /// Decription: The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations
-    class VIMPOptimizerFactorizedTwoClassGH: public VIMPOptimizerFactorizedBase<Function>{
-    using Base = VIMPOptimizerFactorizedBase<Function>;
+    class VIMPOptimizerFactorizedTwoClassGH: public VIMPOptimizerFactorizedBase{
+    using Base = VIMPOptimizerFactorizedBase;
     using GHFunction = std::function<MatrixXd(const VectorXd&)>;
     public:
         ///@param dimension The dimension of the state
@@ -27,23 +27,11 @@ namespace MPVI{
                                           const CostClass& cost_class_,
                                           const CostClass1& cost_class1_,
                                           const MatrixXd& Pk_):
-                Base(dimension, function_, Pk_),
-                _cost_class{cost_class_},
-                _cost_class1{cost_class1_},
-                _cost_function{function_}{
-                Base::_func_phi = [this](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, _cost_function(x, _cost_class, _cost_class1))};};
-                Base::_func_Vmu = [this](const VectorXd& x){return (x-Base::_mu) * _cost_function(x, _cost_class, _cost_class1);};
-                Base::_func_Vmumu = [this](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * _cost_function(x, _cost_class, _cost_class1)};};
+                Base(dimension, Pk_){
+                Base::_func_phi = [this, function_, cost_class_, cost_class1_](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function_(x, cost_class_, cost_class1_))};};
+                Base::_func_Vmu = [this, function_, cost_class_, cost_class1_](const VectorXd& x){return (x-Base::_mu) * function_(x, cost_class_, cost_class1_);};
+                Base::_func_Vmumu = [this, function_, cost_class_, cost_class1_](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function_(x, cost_class_, cost_class1_)};};
                 Base::_gauss_hermite = GaussHermite<GHFunction>{10, Base::_dim, Base::_mu, Base::_covariance, Base::_func_phi};
                 }
-                
-    private:
-        
-        /// Class of cost sources
-        CostClass _cost_class;
-        CostClass1 _cost_class1;
-
-        /// cost function
-        Function _cost_function;
     };
 }

@@ -26,8 +26,9 @@ using namespace MPVI;
 
 /**
 * Plot the iteration results
-* input: results: (num_iteration, num_states)
-* output: figure
+* @param results: data in shape (num_iteration, num_states)
+* @param N : number of states
+* @param dim_theta dimension of the configuration
 **/
 void plot_result(const MatrixXd &results, int N, int dim_theta) {
     // plotting in the 2D case

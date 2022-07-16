@@ -12,6 +12,7 @@
 
 #include "../include/OptimizerPriorColPlanarPR.h"
 #include <gtsam/inference/Symbol.h>
+#include "../include/plotPlanarResults.h"
 
 
 /**
@@ -132,7 +133,7 @@ int main(){
         cout << prior_k.get_Qc() << endl;
 
         // collision cost
-        ObstaclePlanarSDFFactorPointRobot collision_k{symbol('x', i), pR, sdf, cost_sigma, epsilon};
+        ObstaclePlanarSDFFactorPointRobot collision_k{symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
 
         /// Factored optimizer
         std::shared_ptr<OptFactPriColPRGH> pOptimizer(new OptFactPriColPRGH{dim_conf, errorWrapperPriorCol, prior_k, collision_k, Pk});
@@ -157,6 +158,8 @@ int main(){
         results.row(i) = mean_iter.transpose();
         optimizer.step();
     }
+
+    plot_result(results, N, dim_theta);
 
 
     return 0;
