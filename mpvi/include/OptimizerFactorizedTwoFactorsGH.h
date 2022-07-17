@@ -11,7 +11,7 @@
 
 #include "../include/OptimizerFactorizedGHBase.h"
 
-namespace MPVI{
+namespace VIMP{
     template <typename Function, typename CostClass, typename CostClass1>
     /// Decription: The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations
     class VIMPOptimizerFactorizedTwoClassGH: public VIMPOptimizerFactorizedBase{

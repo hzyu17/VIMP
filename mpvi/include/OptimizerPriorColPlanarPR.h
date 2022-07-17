@@ -14,7 +14,7 @@
 #include "../include/GaussianPriorUnaryTranslation.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
-using namespace MPVI;
+using namespace VIMP;
 
 using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
 

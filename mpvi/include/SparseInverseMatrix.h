@@ -10,10 +10,10 @@
  */
 
 
-#ifndef MPVI_SPARSEINVERSEMATRIX_H
-#define MPVI_SPARSEINVERSEMATRIX_H
+#ifndef VIMP_SPARSEINVERSEMATRIX_H
+#define VIMP_SPARSEINVERSEMATRIX_H
 
-#endif /// MPVI_SPARSEINVERSEMATRIX_H
+#endif /// VIMP_SPARSEINVERSEMATRIX_H
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/SparseCore>

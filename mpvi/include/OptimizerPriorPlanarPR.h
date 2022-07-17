@@ -13,7 +13,7 @@
 #include "../include/GaussianPriorUnaryTranslation.h"
 #include "../include/OptimizerFactorizedGH.h"
 
-using namespace MPVI;
+using namespace VIMP;
 using namespace gpmp2;
 using namespace Eigen;
 

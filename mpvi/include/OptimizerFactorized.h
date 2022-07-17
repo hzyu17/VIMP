@@ -9,10 +9,10 @@
  * 
  */
 
-#ifndef MPVI_OPTIMIZER_H
-#define MPVI_OPTIMIZER_H
+#ifndef VIMP_OPTIMIZER_H
+#define VIMP_OPTIMIZER_H
 
-#endif //MPVI_OPTIMIZER_H
+#endif //VIMP_OPTIMIZER_H
 
 #include "SparseMatrixHelper.h"
 #include "MVGsampler.h"

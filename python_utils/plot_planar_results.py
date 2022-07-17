@@ -75,7 +75,7 @@ def plot_gaussian(mean, cov, c=".95", axis=None):
     rng = np.random.RandomState(0)
     x, y = rng.multivariate_normal(mean, cov, n).T
     # sns.scatterplot(x=x, y=y, s=4, color=c, alpha=0.5, ax=axis)
-    sns.histplot(x=x, y=y, bins=40, pthresh=.1, cmap="mako", alpha=0.2, ax=axis)
+    sns.histplot(x=x, y=y, bins=60, pthresh=.1, cmap="mako", alpha=0.2, ax=axis)
     # sns.kdeplot(x=x, y=y, levels=5, color="k", linewidths=1, fill=True, ax=axis)
 
     axis.scatter(mean[0], mean[1], s=30, c='red')

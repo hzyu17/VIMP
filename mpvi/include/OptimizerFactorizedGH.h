@@ -16,13 +16,13 @@ using namespace GaussianSampler;
 using namespace std;
 using namespace Eigen;
 
-namespace MPVI{
+namespace VIMP{
     template <typename Function, typename CostClass>
     class VIMPOptimizerFactorizedGaussHermite: public VIMPOptimizerFactorizedBase{
 
         using OptBase = VIMPOptimizerFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
-        
+
     public:
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost

@@ -53,7 +53,7 @@ double errorWrapperPriorCol(const VectorXd& theta, const UnaryFactorTranslation2
 using namespace std;
 using namespace gpmp2;
 using namespace Eigen;
-using namespace MPVI;
+using namespace VIMP;
 
 int main(){
     /// map and sdf
@@ -82,14 +82,14 @@ int main(){
     matrix_io.saveData(filename_sdf, field);
     // layout of SDF: Bottom-left is (0,0), length is +/- 1 per point.
     Point2 origin(0, 0);
-    double cell_size = 1.0;
+    double cell_size = 1.5;
 
     PlanarSDF sdf = PlanarSDF(origin, cell_size, field);
     double cost_sigma = 1.0;
     double epsilon = 1.0;
 
     /// 2D point robot
-    int n_total_states = 3, N = n_total_states - 1;
+    int n_total_states = 5, N = n_total_states - 1;
 
     /// parameters
     const int ndof = 2, nlinks = 1;
@@ -117,7 +117,7 @@ int main(){
     /// 2. the prior + collision factors for supported states.
     
     /// Noise model
-    SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
+    SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 0.5);
 
     /// Vector of factored optimizers
     vector<std::shared_ptr<OptFactPriColPRGH>> vec_factor_opts;
@@ -135,7 +135,6 @@ int main(){
         
         /// prior cost
         UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment<dim_conf>(0)}, K_0};
-        cout << prior_k.get_Qc() << endl;
 
         // collision cost
         ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
@@ -153,7 +152,7 @@ int main(){
     optimizer.set_mu(joint_init_theta);
 
     /// Update n iterations and data file names
-    int num_iter = 20;
+    int num_iter = 30;
     optimizer.set_niterations(num_iter);
     optimizer.update_file_names("data/2d_pR/mean.csv", "data/2d_pR/cov.csv");
 

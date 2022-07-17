@@ -25,7 +25,7 @@ using namespace Eigen;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
-namespace MPVI{
+namespace VIMP{
     class VIMPOptimizerFactorizedBase{
     public:
         ///@param dimension The dimension of the state

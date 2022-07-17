@@ -21,7 +21,7 @@ using namespace std;
 using namespace SparseInverse;
 typedef Triplet<double> T;
 
-namespace MPVI{
+namespace VIMP{
     template <typename FactorizedOptimizer>
 
 /// Description: The joint optimizer class using Gauss-Hermite quadrature. 

@@ -20,7 +20,7 @@ using namespace std;
 using namespace SparseInverse;
 typedef Triplet<double> T;
 
-namespace MPVI{
+namespace VIMP{
 
 template <typename FactorizedOptimizer>
 class VIMPOptimizerGH{
@@ -62,7 +62,7 @@ protected:
     dense_inverser _inverser;
 
     /// Data and result storage
-    MPVIResults _res_recorder;
+    VIMPResults _res_recorder;
 
     /// step sizes by default
     double step_size_precision = 0.9;

@@ -11,8 +11,8 @@
 
 #include "repeated_includes.h"
 
-namespace MPVI{
-    struct MPVIResults{
+namespace VIMP{
+    struct VIMPResults{
         MatrixXd _res_mean;
         vector<MatrixXd> _vec_res_covariances;
         int _niters, _nstates;
@@ -27,7 +27,7 @@ namespace MPVI{
          * @param niters number of iterations
          * @param nstates number of states
          */
-        MPVIResults(int niters, int nstates){
+        VIMPResults(int niters, int nstates){
             _niters = niters;
             _nstates = nstates;
             _file_mean = "mean.csv";
