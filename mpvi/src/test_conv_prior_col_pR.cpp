@@ -124,7 +124,7 @@ int main(){
     vector<std::shared_ptr<OptFactPriColPRGH>> vec_factor_opts;
 
     /// initial values
-    VectorXd joint_init_theta{ndim} = VectorXd::Zero(ndim);
+    VectorXd joint_init_theta{VectorXd::Zero(ndim)};
 
     for (int i = 0; i < n_total_states; i++) {
         VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
