@@ -171,6 +171,7 @@ public:
     /// manually assign a mean value
     /// @param mean new mean
     inline void set_mu(const VectorXd& mean){
+        assert(mean.size() == _mu.size());
         _mu = mean;
     }
 
@@ -181,7 +182,7 @@ public:
      */
     void set_niterations(int niters){
         _niters = niters;
-        _res_recorder.reinitialize_data();
+        _res_recorder.update_niters(niters);
     }
 
     /**

@@ -93,7 +93,8 @@ int main(){
     /// parameters
     const int ndof = 2, nlinks = 1;
     const int dim_conf = ndof * nlinks;
-    const int dim_theta = 2 * dim_conf;
+    const int dim_theta = 2 * dim_conf; // theta = [conf, vel_conf]
+    /// dimension of the joint optimization problem
     const int ndim = dim_theta * n_total_states;
 
     /// Robot model
@@ -104,11 +105,11 @@ int main(){
     PointRobotModel pRModel(pR, body_spheres);
 
     /// start and goal
-    double start_x = 1.0, start_y = 0.0, goal_x = 5.5, goal_y = 0.0;
-    VectorXd start_conf(dim_theta);
-    start_conf << start_x, start_y, 0, 0;
-    VectorXd goal_conf(dim_theta);
-    goal_conf << goal_x, goal_y, 0, 0;
+    double start_x = 1.0, start_y = 2.0, goal_x = 5.5, goal_y = 2.0;
+    VectorXd start_theta(dim_theta);
+    start_theta << start_x, start_y, 0, 0;
+    VectorXd goal_theta(dim_theta);
+    goal_theta << goal_x, goal_y, 0, 0;
 
     /// factored optimizers: containing 2 types: 
     /// 1. the single factor of priors for start and goal states;
@@ -122,10 +123,15 @@ int main(){
     /// Vector of factored optimizers
     vector<std::shared_ptr<OptFactPriColPRGH>> vec_factor_opts;
 
-    for (int i = 0; i < n_total_states; i++) {
-        VectorXd conf{start_conf + double(i) * (goal_conf - start_conf) / N};
+    /// initial values
+    VectorXd joint_init_theta{ndim} = VectorXd::Zero(ndim);
 
-        cout << "conf" << endl << conf << endl;
+    for (int i = 0; i < n_total_states; i++) {
+        VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
+        joint_init_theta.segment<dim_theta>(i*dim_theta) = std::move(theta);
+        cout << "theta" << endl << theta << endl;
+        cout << "joint_init_theta" << endl << joint_init_theta << endl;
+
         /// Pk matrices
         MatrixXd Pk{MatrixXd::Zero(dim_conf, ndim)};
         Pk.block<dim_conf, dim_conf>(0, i * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
@@ -134,7 +140,7 @@ int main(){
         cout << "Pk" << endl << Pk << endl;
 
         /// prior cost
-        UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{conf.segment<dim_conf>(0)}, K_0};
+        UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment<dim_conf>(0)}, K_0};
         cout << prior_k.get_Qc() << endl;
 
         // collision cost
@@ -148,6 +154,9 @@ int main(){
 
     /// The joint optimizer
     VIMPOptimizerGH<OptFactPriColPRGH> optimizer{vec_factor_opts};
+
+    /// Set initial value to the linear interpolation
+    optimizer.set_mu(joint_init_theta);
 
     /// Update steps
     int num_iter = 10;
