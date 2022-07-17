@@ -18,6 +18,9 @@ namespace MPVI{
         int _niters, _nstates;
         int _cur_iter=0;
 
+        std::string _file_mean;
+        std::string _file_cov;
+
         /**
          * @brief Constructor
          * 
@@ -27,6 +30,8 @@ namespace MPVI{
         MPVIResults(int niters, int nstates){
             _niters = niters;
             _nstates = nstates;
+            _file_mean = "mean.csv";
+            _file_cov = "cov.csv";
             reinitialize_data();
         }
 
@@ -34,7 +39,7 @@ namespace MPVI{
          * @brief reinitialize data sizes.
          * 
          */
-        void reinitialize_data(){
+        inline void reinitialize_data(){
             _res_mean = std::move(MatrixXd::Zero(_niters, _nstates));
             _vec_res_covariances.resize(_niters);
             _cur_iter = 0;
@@ -45,7 +50,7 @@ namespace MPVI{
          * 
          * @param niters 
          */
-        void update_niters(int niters){
+        inline void update_niters(int niters){
             _niters = niters;
             reinitialize_data();
         }
@@ -72,30 +77,37 @@ namespace MPVI{
          * 
          * @param i_iter 
          */
-        void print_data(int i_iter){
+        inline void print_data(int i_iter){
             assert(i_iter < _niters);
             cout << "mean: " << endl << _res_mean.row(i_iter) << endl << endl;
-
             cout << "covariance: " << endl << _vec_res_covariances[i_iter] << endl;
 
         }
 
         /**
-         * @brief save res means and covariances to csv file
+         * @brief update filenames
          * 
          * @param file_mean filename for the means
          * @param file_cov filename for the covariances
          */
-        void save_data(const string& file_mean, const string& file_cov){
+        inline void update_file_names(const string& file_mean, const string& file_cov){
+            _file_mean = file_mean;
+            _file_cov = file_cov;
+        }
+
+        /**
+         * @brief save res means and covariances to csv file
+         */
+        void save_data(){
             /// save mean
-            ofstream file(file_mean);
+            ofstream file(_file_mean);
             if (file.is_open()){
                 file << _res_mean.format(CSVFormat);
                 file.close();
             }
 
             /// save covariances
-            ofstream f_cov(file_cov);
+            ofstream f_cov(_file_cov);
             if (f_cov.is_open()){
                 for (MatrixXd& i_cov:_vec_res_covariances){
                     f_cov << i_cov.format(CSVFormat) << "\n";

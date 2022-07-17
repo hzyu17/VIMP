@@ -15,7 +15,7 @@ using namespace gtsam;
 using namespace gpmp2;
 
 namespace MPVI{
-    class GaussianPriorLinearGetQc: public GaussianProcessPriorLinear{
+    class GaussianPriorLinearGetQc: public gpmp2::GaussianProcessPriorLinear{
 
     public:
         GaussianPriorLinearGetQc(gtsam::Key poseKey1, 
@@ -27,15 +27,15 @@ namespace MPVI{
                             delta_t_{delta_t},
                             Qc_{getQc(Qc_model)}
         {
-            GaussianProcessPriorLinear( poseKey1, velKey1, poseKey2, velKey2, delta_t, Qc_model);
+            gpmp2::GaussianProcessPriorLinear( poseKey1, velKey1, poseKey2, velKey2, delta_t, Qc_model);
             cout << "Qc" << endl << get_Qc() <<endl;
         }
     public:
-        double get_delta_t() const{
+        inline double get_delta_t() const{
             return delta_t_;
         }
 
-        Eigen::MatrixXd get_Qc() const{
+        inline Eigen::MatrixXd get_Qc() const{
             return Qc_;
         }
 

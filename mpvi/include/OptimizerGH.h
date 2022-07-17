@@ -87,8 +87,8 @@ public:
             _vec_factor_optimizers[k]->update_precision_from_joint_covariance(MatrixXd{Sigma});
             _vec_factor_optimizers[k]->calculate_partial_V();
 
-            _Vdmu = _Vdmu + _vec_factor_optimizers[k]->get_joint_Vdmu();
-            _Vddmu = _Vddmu + _vec_factor_optimizers[k]->get_joint_Vddmu();
+            _Vdmu = _Vdmu + _vec_factor_optimizers[k]->joint_Vdmu();
+            _Vddmu = _Vddmu + _vec_factor_optimizers[k]->joint_Vddmu();
 
         }
 
@@ -98,10 +98,6 @@ public:
         _dmu = -_precision.colPivHouseholderQr().solve(_Vdmu);
         _mu = _mu + _step_size_mu * _dmu;
 
-        // cout << "_mu " << endl << _mu << endl;
-        // MatrixXd covariance = get_covariance();
-        // cout << "new covariance " << endl << covariance << endl;
-        
     }
 
     /**
@@ -128,8 +124,8 @@ public:
 
             optimizer_k->calculate_exact_partial_V();
 
-            _Vdmu = _Vdmu + optimizer_k->get_joint_Vdmu();
-            _Vddmu = _Vddmu + optimizer_k->get_joint_Vddmu();
+            _Vdmu = _Vdmu + optimizer_k->joint_Vdmu();
+            _Vddmu = _Vddmu + optimizer_k->joint_Vddmu();
         }
 
         _dprecision = -_precision + _Vddmu;
@@ -139,24 +135,20 @@ public:
         _dmu = _precision.colPivHouseholderQr().solve(-_Vdmu);
         _mu = _mu + _step_size_mu * _dmu;
 
-        // cout << "_mu " << endl << _mu << endl;
-        // MatrixXd covariance = get_covariance();
-        // cout << "new covariance " << endl << covariance << endl;
-
     }
 
     /// returns the mean
-    inline VectorXd get_mean() const{
+    inline VectorXd mean() const{
         return _mu;
     }
 
     /// returns the precision matrix
-    inline MatrixXd get_precision() const{
+    inline MatrixXd precision() const{
         return _precision;
     }
 
     /// returns the covariance matrix
-    inline MatrixXd get_covariance(){
+    inline MatrixXd covariance(){
         return _inverser.inverse();
     }
 
@@ -180,7 +172,7 @@ public:
      * 
      * @param niters
      */
-    void set_niterations(int niters){
+    inline void set_niterations(int niters){
         _niters = niters;
         _res_recorder.update_niters(niters);
     }
@@ -196,39 +188,44 @@ public:
             set_step_size(step_size, step_size);
 
             /// Collect the results
-            VectorXd mean_iter{get_mean()};
-            MatrixXd cov_iter{get_covariance()};
+            VectorXd mean_iter{mean()};
+            MatrixXd cov_iter{covariance()};
 
             cout << "iteration: " << i << endl;
             _res_recorder.update_data(mean_iter, cov_iter);
             step();
         }
 
+        /// print 5 iteration datas 
         vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
-        /// print some datas 
         print_series_results(iters);
 
-        // string file_mean{};
-        // string file_cov{};
-        save_data("mean.csv", "cov.csv");
+        save_data();
     } 
 
     /**
-     * @brief save process data into csv files.
+     * @brief update filenames
      * 
-     * @param file_mean filename for mean
-     * @param file_cov filename for cov
+     * @param file_mean filename for the means
+     * @param file_cov filename for the covariances
      */
-    void save_data(const string& file_mean, const string& file_cov){
-        _res_recorder.save_data(file_mean, file_cov);
+    inline void update_file_names(const string& file_mean, const string& file_cov){
+            _res_recorder.update_file_names(file_mean, file_cov);
+        }
+
+    /**
+     * @brief save process data into csv files.
+     */
+    inline void save_data(){
+        _res_recorder.save_data();
     }
 
     /**
      * @brief print a given iteration data mean and covariance.
      * 
-     * @param i_iter 
+     * @param i_iter index of data
      */
-    void print_result(const int& i_iter){
+    inline void print_result(const int& i_iter){
         _res_recorder.print_data(i_iter);
     }
 
@@ -237,7 +234,7 @@ public:
      * 
      * @param iters a list of iterations to be printed
      */
-    void print_series_results(const vector<int>& iters){
+    inline void print_series_results(const vector<int>& iters){
 
         std::for_each(iters.begin(), iters.end(), [this](int i) { 
             cout << "--- result at iteration " << i << "---" << endl;
@@ -245,10 +242,6 @@ public:
             }
         );
 
-        // for(int i = iters.begin(), ){
-        //     cout << "--- result at iteration " << i << "---" << endl;
-        //     print_result(i);
-        // }
     }
     
 

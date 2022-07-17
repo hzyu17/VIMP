@@ -24,7 +24,7 @@
  * @return double 
  */
 double errorWrapperPriorCol(const VectorXd& theta, const UnaryFactorTranslation2D& prior_factor,
-                                      const ObstaclePlanarSDFFactorPointRobot& collision_factor) {
+                                      const gpmp2::ObstaclePlanarSDFFactorPointRobot& collision_factor) {
 
     /**
      * Prior factor
@@ -56,9 +56,6 @@ using namespace Eigen;
 using namespace MPVI;
 
 int main(){
-    MatrixIO matrix_io{};
-    string filename_map{"map_ground_truth.csv"};
-    string filename_sdf{"map_sdf.csv"};
     /// map and sdf
     MatrixXd map_ground_truth = (MatrixXd(7, 7) <<
             0, 0, 0, 0, 0, 0, 0,
@@ -77,6 +74,10 @@ int main(){
             2.2361, 1.4142, 1.0000, 1.0000, 1.0000, 1.4142, 2.2361,
             2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284).finished();
 
+    MatrixIO matrix_io{};
+    string filename_map{"data/2d_pR/map_ground_truth.csv"};
+    string filename_sdf{"data/2d_pR/map_sdf.csv"};
+
     matrix_io.saveData(filename_map, map_ground_truth);
     matrix_io.saveData(filename_sdf, field);
     // layout of SDF: Bottom-left is (0,0), length is +/- 1 per point.
@@ -85,7 +86,7 @@ int main(){
 
     PlanarSDF sdf = PlanarSDF(origin, cell_size, field);
     double cost_sigma = 1.0;
-    double epsilon = 0.3;
+    double epsilon = 1.0;
 
     /// 2D point robot
     int n_total_states = 3, N = n_total_states - 1;
@@ -99,7 +100,7 @@ int main(){
 
     /// Robot model
     PointRobot pR(ndof, nlinks);
-    double r = 0.5;
+    double r = 1.5;
     BodySphereVector body_spheres;
     body_spheres.push_back(BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
     PointRobotModel pRModel(pR, body_spheres);
@@ -115,9 +116,7 @@ int main(){
     /// 1. the single factor of priors for start and goal states;
     /// 2. the prior + collision factors for supported states.
     
-    /// Noise models
-    SharedNoiseModel Qc_model = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
-    cout << "Qc" << endl << getQc(Qc_model) << endl;
+    /// Noise model
     SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
 
     /// Vector of factored optimizers
@@ -129,16 +128,11 @@ int main(){
     for (int i = 0; i < n_total_states; i++) {
         VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
         joint_init_theta.segment<dim_theta>(i*dim_theta) = std::move(theta);
-        cout << "theta" << endl << theta << endl;
-        cout << "joint_init_theta" << endl << joint_init_theta << endl;
 
         /// Pk matrices
         MatrixXd Pk{MatrixXd::Zero(dim_conf, ndim)};
         Pk.block<dim_conf, dim_conf>(0, i * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
-        /// Pk.block<dim_conf, dim_conf>(dim_conf, (i + 1) * dim_conf) = MatrixXd::Identity(dim_conf, dim_conf);
         
-        cout << "Pk" << endl << Pk << endl;
-
         /// prior cost
         UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment<dim_conf>(0)}, K_0};
         cout << prior_k.get_Qc() << endl;
@@ -158,12 +152,11 @@ int main(){
     /// Set initial value to the linear interpolation
     optimizer.set_mu(joint_init_theta);
 
-    /// Update steps
-    int num_iter = 10;
-
-    MatrixXd results{MatrixXd::Zero(num_iter, ndim)};
-
+    /// Update n iterations and data file names
+    int num_iter = 20;
     optimizer.set_niterations(num_iter);
+    optimizer.update_file_names("data/2d_pR/mean.csv", "data/2d_pR/cov.csv");
+
     optimizer.optimize();
 
     return 0;

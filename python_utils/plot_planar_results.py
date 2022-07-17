@@ -24,7 +24,7 @@ def read_2d_positions(f_res_mean, f_res_cov, dim_conf, n_sample_iters=5):
     #% @n_sample_iters number of iterations to collect
     #% e.g., [[mean1, mean2, mean3]_0, ..., [mean1, mean2, mean3]_n_sample_iters]
 
-    #% Returns vectors of 2d means and 2d marginal covariance matrices.
+    #% Returns vectors of 2d means and 2d marginal covariance, and the indexes.
 
     means = np.genfromtxt(f_res_mean, delimiter=',')
     covs = np.genfromtxt(f_res_cov, delimiter=',')
@@ -37,6 +37,7 @@ def read_2d_positions(f_res_mean, f_res_cov, dim_conf, n_sample_iters=5):
     # vector of 2d means and covariances
     vec_means_2d = []
     vec_covs_2d = []    
+    vec_index = []
 
     for i_step in range(n_sample_iters):
         i = i_step * step_size
@@ -53,7 +54,9 @@ def read_2d_positions(f_res_mean, f_res_cov, dim_conf, n_sample_iters=5):
         vec_means_2d.append(i_vec_means_2d)
         vec_covs_2d.append(i_vec_covs_2d)
 
-    return vec_means_2d, vec_covs_2d
+        vec_index.append(i)
+
+    return vec_means_2d, vec_covs_2d, vec_index
 
 
 def plot_gaussian(mean, cov, c=".95", axis=None):
@@ -66,7 +69,7 @@ def plot_gaussian(mean, cov, c=".95", axis=None):
     # %   @axis     plt Axes
 
     if axis is None:
-        axis = plt.subplots(figsize=(40, 40))
+        axis = plt.subplots(figsize=(20, 20))
     # Simulate data from a bivariate Gaussian
     n = 1000
     rng = np.random.RandomState(0)
@@ -75,7 +78,9 @@ def plot_gaussian(mean, cov, c=".95", axis=None):
     sns.histplot(x=x, y=y, bins=40, pthresh=.1, cmap="mako", alpha=0.2, ax=axis)
     # sns.kdeplot(x=x, y=y, levels=5, color="k", linewidths=1, fill=True, ax=axis)
 
-    axis.scatter(mean[0], mean[1], s=20, c='red')
+    axis.scatter(mean[0], mean[1], s=30, c='red')
+
+    return axis
 
 
 def plotSignedDistanceField2D(
@@ -138,23 +143,25 @@ def plotResult2DSdf(sdf_file, means_file, covs_file, dim_conf = 4, niter_viz = 3
     sdf = read_sdf(sdf_file)
 
     # Read the means and covariances result data
-    vec_means_2d, vec_covs_2d = read_2d_positions(means_file, covs_file, dim_conf, niter_viz)
+    vec_means_2d, vec_covs_2d, vec_index = read_2d_positions(means_file, covs_file, dim_conf, niter_viz)
 
     ## Plotting
     niters = len(vec_means_2d)
     cnt = 1;
     # for each iteration
-    f, ax1 = plt.subplots(1, niter_viz, figsize=(100, 100))
+    f, ax1 = plt.subplots(1, niter_viz, figsize=(40, 6))
     for i_iter_mean, i_iter_cov in zip(vec_means_2d, vec_covs_2d):
         f, ax1[cnt-1] = plotSignedDistanceField2D(f, ax1[cnt-1], sdf, 0, 0, 1)
 
         # for each state
         for j_mean, j_cov in zip(i_iter_mean, i_iter_cov):
-            plot_gaussian(j_mean, j_cov, c=str(0.95/niters*cnt), axis=ax1[cnt-1])
+            ax1[cnt-1] = plot_gaussian(j_mean, j_cov, c=str(0.95/niters*cnt), axis=ax1[cnt-1])
         
         ax1[cnt-1].set_xlim(-2, 8)
-        ax1[cnt-1].set_ylim(-2, 8)
-        
+        ax1[cnt-1].set_ylim(-2.5, 7.5, auto=False)
+        ttl = 'iteration ' + str(vec_index[cnt-1])
+        ax1[cnt-1].set_title(ttl) 
+
         cnt += 1
 
     plt.show()
@@ -163,11 +170,11 @@ def plotResult2DSdf(sdf_file, means_file, covs_file, dim_conf = 4, niter_viz = 3
 
 if __name__ == '__main__':
     # read sdf
-    sdf_file = '../mpvi/data/map_ground_truth.csv'
+    sdf_file = '../mpvi/data/2d_pR/map_ground_truth.csv'
   
     # result data files
-    means_file = '../mpvi/data/mean.csv'
-    covs_file = '../mpvi/data/cov.csv'
+    means_file = '../mpvi/data/2d_pR/mean.csv'
+    covs_file = '../mpvi/data/2d_pR/cov.csv'
 
     # configuration variable dimension
     dim_conf = 4 # point robot

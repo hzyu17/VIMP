@@ -9,37 +9,34 @@
  * 
  */
 
-#include <gtsam/geometry/Pose2.h>
 #include <gtsam/slam/PoseTranslationPrior.h>
 #include <gpmp2/gp/GPutils.h>
 
-using namespace gtsam;
-using namespace gpmp2;
-using namespace Eigen;
-// using namespace MPVI;
-
+namespace MPVI{
 template <class T>
 /// A derived class of NoiseModelFactor1 in gtsam, used for the prior err probability for translation. 
-class UnaryFactorTranslation: public NoiseModelFactor1<T> {
+class UnaryFactorTranslation: public gtsam::NoiseModelFactor1<T> {
 public:
     /// @param Key The key for the factor
     /// @param conf The state variable
     /// @param model The Gaussian noise model
-    UnaryFactorTranslation(Key key, const T& conf, const SharedNoiseModel model):
-            NoiseModelFactor1<T>(model, key), conf_(conf), K_(getQc(model)) {}
+    UnaryFactorTranslation(gtsam::Key key, const T& conf, const gtsam::SharedNoiseModel model):
+            gtsam::NoiseModelFactor1<T>(model, key), conf_(conf), K_(gpmp2::getQc(model)) {}
 
-    VectorXd evaluateError(const T& q, boost::optional<MatrixXd &> H=boost::none) const
+    Eigen::VectorXd evaluateError(const T& q, boost::optional<Eigen::MatrixXd &> H=boost::none) const
     {
-        return VectorXd{q-conf_};
+        return Eigen::VectorXd{q-conf_};
     }
 
     /// Returns the covariance matrix of the noise model.
-    MatrixXd get_Qc() const{
+    Eigen::MatrixXd get_Qc() const{
         return K_;
     }
 
 private:
     T conf_; 
-    MatrixXd K_;
+    Eigen::MatrixXd K_;
 };
+
+}
 

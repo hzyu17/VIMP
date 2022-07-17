@@ -22,6 +22,6 @@ using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
  * @brief Declaration of the factorized optimizer.
  * 
  */
-using FunctionPriorCol = std::function<double(const VectorXd&, const UnaryFactorTranslation2D&, const ObstaclePlanarSDFFactorPointRobot&)>;
+using FunctionPriorCol = std::function<double(const VectorXd&, const UnaryFactorTranslation2D&, const gpmp2::ObstaclePlanarSDFFactorPointRobot&)>;
 
-using OptFactPriColPRGH = VIMPOptimizerFactorizedTwoClassGH<FunctionPriorCol, UnaryFactorTranslation2D, ObstaclePlanarSDFFactorPointRobot>;
+using OptFactPriColPRGH = VIMPOptimizerFactorizedTwoClassGH<FunctionPriorCol, UnaryFactorTranslation2D, gpmp2::ObstaclePlanarSDFFactorPointRobot>;

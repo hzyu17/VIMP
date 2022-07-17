@@ -1,7 +1,7 @@
 /**
  * @file SparseInverseMatrix.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief 
+ * @brief Algorithm to calculate the inverse of a sparse matrix
  * @version 0.1
  * @date 2022-03-13
  * 
@@ -9,7 +9,6 @@
  * 
  */
 
-/// Algorithm to calculate the inverse of a sparse matrix
 
 #ifndef MPVI_SPARSEINVERSEMATRIX_H
 #define MPVI_SPARSEINVERSEMATRIX_H

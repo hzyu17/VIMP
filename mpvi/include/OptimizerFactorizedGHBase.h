@@ -86,23 +86,39 @@ namespace MPVI{
             _gauss_hermite.update_P(MatrixXd{_covariance});
         }
 
-        /// Update the mean and variance in the Gauss-Hermite approximator
-        void update_GH_mean(){
-            _gauss_hermite.update_mean(_mu);
-        }
+        // /**
+        //  * @brief Update the mean in the Gauss-Hermite approximator internally
+        //  * 
+        //  */
+        // void update_GH_mean(){
+        //     _gauss_hermite.update_mean(_mu);
+        // }
 
-        void update_GH_covariance(){
-            _gauss_hermite.update_P(_covariance);
-        }
+        // /**
+        //  * @brief Update the variance in the Gauss-Hermite approximator internally
+        //  * 
+        //  */
+        // void update_GH_covariance(){
+        //     _gauss_hermite.update_P(_covariance);
+        // }
 
-        /// Update the step size
+        /**
+         * @brief Update the step size
+         * 
+         * @param ss_mean step size for updating mean
+         * @param ss_precision step size for updating covariance
+         */
         void set_step_size(double ss_mean, double ss_precision){
             _step_size_mu = ss_mean;
             _step_size_Sigma = ss_precision;
         }
 
-        /// Update the parameters: mean, covariance, and precision matrix
-        void update_mu(const VectorXd& new_mu){
+        /**
+         * @brief Update mean, covariance, and precision matrix
+         * 
+         * @param new_mu a given mean
+         */
+        inline void update_mu(const VectorXd& new_mu){
             _mu = _Pk * new_mu;
         }
 
@@ -110,12 +126,15 @@ namespace MPVI{
          * @brief Update the marginal precision matrix using joint COVARIANCE matrix and 
          * mapping matrix Pk.
          * 
-         * @param joint_covariance 
+         * @param joint_covariance a given joint covariance matrix
          */
         void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){
             _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();
         }
 
+        /**
+         * @brief Update covariance matrix by inverting precision matrix.
+         */
         void update_covariance(){
             _covariance = _precision.inverse();
         }
@@ -156,7 +175,14 @@ namespace MPVI{
             _Vddmu.triangularView<StrictlyLower>() = _Vddmu.triangularView<StrictlyUpper>().transpose();
         }
 
-        /// Gaussian posterior: closed-form expression
+
+        /**
+         * @brief Main function calculating phi * (partial V) / (partial mu), and 
+         * phi * (partial V^2) / (partial mu * partial mu^T) for Gaussian posterior: closed-form expression
+         * 
+         * @param mu_t target mean vector
+         * @param covariance_t target covariance matrix
+         */
         void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t){
             _Vdmu.setZero();
             _Vddmu.setZero();
@@ -187,23 +213,48 @@ namespace MPVI{
 
         }
 
-        inline MatrixXd get_Vddmu() const {
+
+        /**
+         * @brief Get the marginal intermediate variable (partial V^2 / par mu / par mu)
+         * 
+         * @return MatrixXd (par V^2 / par mu / par mu)
+         */
+        inline MatrixXd Vddmu() const {
             return _Vddmu;
         }
 
-        inline VectorXd get_Vdmu() const {
+        /**
+         * @brief Get the marginal intermediate variable partial V / dmu
+         * 
+         * @return VectorXd (par V / par mu)
+         */
+        inline VectorXd Vdmu() const {
             return _Vdmu;
         }
 
-        /// return the joint incremental mean after the mapping Pk from marginals.
-        inline VectorXd get_joint_Vdmu() const {
+        /**
+         * @brief Get the joint intermediate variable (partial V / partial mu).
+         * 
+         * @return VectorXd Pk.T * (par V / par mu)
+         */
+        inline VectorXd joint_Vdmu() const {
             return _Pk.transpose() * _Vdmu;
         }
 
-        inline MatrixXd get_joint_Vddmu() const {
+        /**
+         * @brief Get the joint intermediate variable Vddmu
+         * 
+         * @return MatrixXd Pk.T * V^2 / dmu /dmu * Pk
+         */
+        inline MatrixXd joint_Vddmu() const {
             return _Pk.transpose().eval() * _Vddmu * _Pk;
         }
 
+        /**
+         * @brief Get the mapping matrix Pk
+         * 
+         * @return MatrixXd Pk
+         */
         inline MatrixXd Pk() const {
             return _Pk;
         }
@@ -213,11 +264,10 @@ namespace MPVI{
          * @return true: success.
          */
         bool step(){
-            // Zero grad
+
+            /// Zero grad
             _dmu.setZero();
             _dprecision.setZero();
-
-            // test_GH_functions();
 
             calculate_partial_V();
         //    calculate_exact_partial_V(_cost_class.get_mean(), _cost_class.get_covariance());
@@ -226,24 +276,37 @@ namespace MPVI{
 
             /// without backtracking
             _precision = _precision + _step_size_Sigma * _dprecision;
-
             _dmu = _precision.colPivHouseholderQr().solve(-_Vdmu);
-
             _mu = _mu + _step_size_mu * _dmu;
 
             return true;
 
         }
 
-        inline VectorXd get_mean() const{
+        /**
+         * @brief Get the mean 
+         * 
+         * @return VectorXd 
+         */
+        inline VectorXd mean() const{
             return _mu;
         }
 
-        inline MatrixXd get_precision() const{
+        /**
+         * @brief Get the precision matrix
+         * 
+         * @return MatrixXd 
+         */
+        inline MatrixXd precision() const{
             return _precision;
         }
 
-        inline MatrixXd get_covariance() const{
+        /**
+         * @brief Get the covariance matrix
+         * 
+         * @return MatrixXd 
+         */
+        inline MatrixXd covariance() const{
             return _precision.inverse();
         }
 
