@@ -61,7 +61,7 @@ int main(){
     string filename_sdf{"map_sdf.csv"};
     /// map and sdf
     MatrixXd map_ground_truth = (MatrixXd(7, 7) <<
-                                                          0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0,
             0, 0, 1, 1, 1, 0, 0,
             0, 0, 1, 1, 1, 0, 0,

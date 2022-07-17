@@ -98,7 +98,7 @@ namespace MPVI{
             ofstream f_cov(file_cov);
             if (f_cov.is_open()){
                 for (MatrixXd& i_cov:_vec_res_covariances){
-                    f_cov << i_cov.format(CSVFormat);
+                    f_cov << i_cov.format(CSVFormat) << "\n";
                 }
 
                 f_cov.close();
