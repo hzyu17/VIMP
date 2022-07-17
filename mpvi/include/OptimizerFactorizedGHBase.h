@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedGH.h
+ * @file OptimizerFactorizedGHBase.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The base class for marginal optimizer.
  * @version 0.1
@@ -11,12 +11,10 @@
 
 #include "SparseMatrixHelper.h"
 #include "MVGsampler.h"
-#include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
 #include <utility>
-#include "GaussHermite.h"
-#include "MVGsampler.h"
+#include "GaussHermite-impl.h"
 
 
 using namespace GaussianSampler;
@@ -25,11 +23,21 @@ using namespace Eigen;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
-namespace VIMP{
+namespace vimp{
     class VIMPOptimizerFactorizedBase{
     public:
-        ///@param dimension The dimension of the state
-        ///@param function_ Template function class which calculate the cost
+        
+        /**
+         * @brief Default Constructor
+         */
+        VIMPOptimizerFactorizedBase(){}
+
+        /**
+         * @brief Construct a new VIMPOptimizerFactorizedBase object
+         * 
+         * @param dimension The dimension of the state
+         * @param Pk_ Mapping matrix from marginal to joint
+         */
         VIMPOptimizerFactorizedBase(const int& dimension, const MatrixXd& Pk_):
                 _dim{dimension},
                 _mu{VectorXd::Zero(_dim)},
@@ -83,24 +91,7 @@ namespace VIMP{
         /// update the GH approximator
         void updateGH(){
             _gauss_hermite.update_mean(VectorXd{_mu});
-            _gauss_hermite.update_P(MatrixXd{_covariance});
-        }
-
-        // /**
-        //  * @brief Update the mean in the Gauss-Hermite approximator internally
-        //  * 
-        //  */
-        // void update_GH_mean(){
-        //     _gauss_hermite.update_mean(_mu);
-        // }
-
-        // /**
-        //  * @brief Update the variance in the Gauss-Hermite approximator internally
-        //  * 
-        //  */
-        // void update_GH_covariance(){
-        //     _gauss_hermite.update_P(_covariance);
-        // }
+            _gauss_hermite.update_P(MatrixXd{_covariance}); }
 
         /**
          * @brief Update the step size
@@ -108,19 +99,16 @@ namespace VIMP{
          * @param ss_mean step size for updating mean
          * @param ss_precision step size for updating covariance
          */
-        void set_step_size(double ss_mean, double ss_precision){
+        inline void set_step_size(double ss_mean, double ss_precision){
             _step_size_mu = ss_mean;
-            _step_size_Sigma = ss_precision;
-        }
+            _step_size_Sigma = ss_precision; }
 
         /**
          * @brief Update mean, covariance, and precision matrix
          * 
          * @param new_mu a given mean
          */
-        inline void update_mu(const VectorXd& new_mu){
-            _mu = _Pk * new_mu;
-        }
+        inline void update_mu(const VectorXd& new_mu){ _mu = _Pk * new_mu; }
 
         /**
          * @brief Update the marginal precision matrix using joint COVARIANCE matrix and 
@@ -128,16 +116,12 @@ namespace VIMP{
          * 
          * @param joint_covariance a given joint covariance matrix
          */
-        void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){
-            _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();
-        }
+        inline void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){ _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();}
 
         /**
          * @brief Update covariance matrix by inverting precision matrix.
          */
-        void update_covariance(){
-            _covariance = _precision.inverse();
-        }
+        inline void update_covariance(){ _covariance = _precision.inverse();}
         
         /**
          * @brief Main function calculating phi * (partial V) / (partial mu), and 
@@ -145,35 +129,7 @@ namespace VIMP{
          * 
          * @return * void 
          */
-        void calculate_partial_V(){
-            
-            _Vdmu.setZero();
-            _Vddmu.setZero();
-
-            // GH approximation
-            update_covariance();
-            updateGH();
-
-            /// Integrate for _Vdmu 
-            _gauss_hermite.update_integrand(_func_Vmu);
-
-            _Vdmu = _gauss_hermite.Integrate();
-            _Vdmu = _precision * _Vdmu;
-
-            /// Integrate for phi(x)
-            _gauss_hermite.update_integrand(_func_phi);
-            double avg_phi = _gauss_hermite.Integrate()(0, 0);
-
-            /// Integrate for partial V^2 / ddmu_ 
-            _gauss_hermite.update_integrand(_func_Vmumu);
-            _Vddmu = _gauss_hermite.Integrate();
-
-            _Vddmu.triangularView<Upper>() = (_precision * _Vddmu * _precision).triangularView<Upper>();
-            _Vddmu.triangularView<StrictlyLower>() = _Vddmu.triangularView<StrictlyUpper>().transpose();
-
-            _Vddmu.triangularView<Upper>() = (_Vddmu - _precision * avg_phi).triangularView<Upper>();
-            _Vddmu.triangularView<StrictlyLower>() = _Vddmu.triangularView<StrictlyUpper>().transpose();
-        }
+        void calculate_partial_V();
 
 
         /**
@@ -183,132 +139,68 @@ namespace VIMP{
          * @param mu_t target mean vector
          * @param covariance_t target covariance matrix
          */
-        void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t){
-            _Vdmu.setZero();
-            _Vddmu.setZero();
-            update_covariance();
-
-            // helper vectors
-            VectorXd eps{_mu - mu_t};
-            MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
-            MatrixXd precision_t{covariance_t.inverse()};
-
-            // partial V / partial mu
-            _Vdmu = precision_t * eps;
-
-            // partial V^2 / partial mu*mu^T
-            // update tmp matrix
-            for (int i=0; i<_dim; i++){
-                for (int j=0; j<_dim; j++) {
-                    for (int k=0; k<_dim; k++){
-                        for (int l=0; l<_dim; l++){
-                            tmp(i, j) += (_covariance(i, j)*_covariance(k, l) + _covariance(i,k)*_covariance(j,l) + _covariance(i,l)*_covariance(j,k))*precision_t(k,l);
-                        }
-                    }
-                }
-            }
-
-            _Vddmu = _precision * tmp * _precision - _precision * (precision_t*_covariance).trace();
-            _Vddmu = _Vddmu / 2;
-
-        }
-
-
+        void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t);
         /**
          * @brief Get the marginal intermediate variable (partial V^2 / par mu / par mu)
          * 
          * @return MatrixXd (par V^2 / par mu / par mu)
          */
-        inline MatrixXd Vddmu() const {
-            return _Vddmu;
-        }
+        inline MatrixXd Vddmu() const { return _Vddmu; }
 
         /**
          * @brief Get the marginal intermediate variable partial V / dmu
          * 
          * @return VectorXd (par V / par mu)
          */
-        inline VectorXd Vdmu() const {
-            return _Vdmu;
-        }
+        inline VectorXd Vdmu() const { return _Vdmu; }
 
         /**
          * @brief Get the joint intermediate variable (partial V / partial mu).
          * 
          * @return VectorXd Pk.T * (par V / par mu)
          */
-        inline VectorXd joint_Vdmu() const {
-            return _Pk.transpose() * _Vdmu;
-        }
+        inline VectorXd joint_Vdmu() const { return _Pk.transpose() * _Vdmu;}
 
         /**
          * @brief Get the joint intermediate variable Vddmu
          * 
          * @return MatrixXd Pk.T * V^2 / dmu /dmu * Pk
          */
-        inline MatrixXd joint_Vddmu() const {
-            return _Pk.transpose().eval() * _Vddmu * _Pk;
-        }
+        inline MatrixXd joint_Vddmu() const { return _Pk.transpose().eval() * _Vddmu * _Pk;}
 
         /**
          * @brief Get the mapping matrix Pk
          * 
          * @return MatrixXd Pk
          */
-        inline MatrixXd Pk() const {
-            return _Pk;
-        }
+        inline MatrixXd Pk() const { return _Pk; }
 
         /**
          * @brief One step in the optimization.
          * @return true: success.
          */
-        bool step(){
-
-            /// Zero grad
-            _dmu.setZero();
-            _dprecision.setZero();
-
-            calculate_partial_V();
-        //    calculate_exact_partial_V(_cost_class.get_mean(), _cost_class.get_covariance());
-
-            _dprecision = -_precision + _Vddmu;
-
-            /// without backtracking
-            _precision = _precision + _step_size_Sigma * _dprecision;
-            _dmu = _precision.colPivHouseholderQr().solve(-_Vdmu);
-            _mu = _mu + _step_size_mu * _dmu;
-
-            return true;
-
-        }
+        bool step();
 
         /**
          * @brief Get the mean 
          * 
          * @return VectorXd 
          */
-        inline VectorXd mean() const{
-            return _mu;
-        }
+        inline VectorXd mean() const{ return _mu; }
 
         /**
          * @brief Get the precision matrix
          * 
          * @return MatrixXd 
          */
-        inline MatrixXd precision() const{
-            return _precision;
-        }
+        inline MatrixXd precision() const{ return _precision; }
 
         /**
          * @brief Get the covariance matrix
          * 
          * @return MatrixXd 
          */
-        inline MatrixXd covariance() const{
-            return _precision.inverse();
-        }
+        inline MatrixXd covariance() const{ return _precision.inverse();}
 
     };
 }

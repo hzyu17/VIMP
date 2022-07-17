@@ -21,7 +21,7 @@ using namespace std;
 using namespace gpmp2;
 using namespace Eigen;
 namespace plt = matplotlibcpp;
-using namespace VIMP;
+using namespace vimp;
 
 
 /**

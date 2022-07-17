@@ -12,14 +12,14 @@
 
 /// Test the convergence of algorithm using a known Gaussian posterior.
 
-#include "../include/OptimizerGH.h"
+#include "../include/OptimizerGH-impl.h"
 #include "../include/OptimizerFactorizedGH.h"
 #include <iostream>
 #include <random>
 
 using namespace std;
 using namespace GaussianSampler;
-using namespace VIMP;
+using namespace vimp;
 
 typedef SparseMatrix<double> SpMatrix;
 typedef Triplet<double> T;

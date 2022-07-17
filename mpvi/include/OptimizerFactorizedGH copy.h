@@ -25,7 +25,7 @@ using namespace Eigen;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
-namespace VIMP{
+namespace vimp{
     template <typename Function, typename CostClass>
     class VIMPOptimizerFactorizedGaussHermite{
     public:

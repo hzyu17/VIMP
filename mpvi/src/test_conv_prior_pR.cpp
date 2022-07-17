@@ -13,7 +13,6 @@
 
 #include "../include/OptimizerPriorPlanarPR.h"
 #include <gtsam/inference/Symbol.h>
-// #include "../include/matplotlibcpp.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
 /**
@@ -40,7 +39,7 @@ using namespace gtsam;
 using namespace std;
 using namespace gpmp2;
 using namespace Eigen;
-using namespace MPVI;
+using namespace vimp;
 
 int main(){
     /// 2D point robot
@@ -73,8 +72,6 @@ int main(){
     /// 2. the prior + collision factors for supported states.
     
     /// Noise models
-    SharedNoiseModel Qc_model = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
-    cout << "Qc" << endl << getQc(Qc_model) << endl;
     SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
 
     /// Vector of factored optimizers
@@ -83,13 +80,10 @@ int main(){
     for (int i = 0; i < n_total_states; i++) {
         VectorXd conf{start_conf + double(i) * (goal_conf - start_conf) / N};
 
-        cout << "conf" << endl << conf << endl;
         /// Pk matrices
         MatrixXd Pk{MatrixXd::Zero(dim_conf, ndim)};
         Pk.block<dim_conf, dim_conf>(0, i * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
         
-        cout << "Pk" << endl << Pk << endl;
-
         /// unary factor
         UnaryFactorTranslation2D prior_k{symbol('x', i), gtsam::Vector2{conf.segment<dim_conf>(0)}, K_0};
         cout << prior_k.get_Qc() << endl;
@@ -103,21 +97,11 @@ int main(){
     /// The joint optimizer
     VIMPOptimizerGH<OptimizerFactorPriorPRGH> optimizer{vec_factor_opts};
 
-    /// Update steps
-    const int num_iter = 10;
-    double step_size = 0.9;
+    /// Update n iterations and data file names
+    int num_iter = 30;
+    optimizer.set_niterations(num_iter);
 
-    MatrixXd results{MatrixXd::Zero(num_iter, ndim)};
-
-    for (int i = 0; i < num_iter; i++) {
-        step_size = step_size / pow((i + 1), 1 / 3);
-        optimizer.set_step_size(step_size, step_size);
-        VectorXd mean_iter{optimizer.get_mean()};
-        cout << "==== iteration " << i << " ====" << endl;
-        results.row(i) = mean_iter.transpose();
-        optimizer.step();
-    }
-
+    optimizer.optimize();
 
     return 0;
 }

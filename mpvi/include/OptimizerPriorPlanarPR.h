@@ -9,11 +9,11 @@
  * 
  */
 
-#include "../include/OptimizerGH.h"
+#include "../include/OptimizerGH-impl.h"
 #include "../include/GaussianPriorUnaryTranslation.h"
 #include "../include/OptimizerFactorizedGH.h"
 
-using namespace VIMP;
+using namespace vimp;
 using namespace gpmp2;
 using namespace Eigen;
 

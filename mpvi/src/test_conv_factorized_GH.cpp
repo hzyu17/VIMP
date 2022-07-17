@@ -11,7 +11,7 @@
 
 using namespace GaussianSampler;
 using namespace std;
-using namespace VIMP;
+using namespace vimp;
 
 typedef SparseMatrix<double> SpMatrix;
 typedef Triplet<double> T;

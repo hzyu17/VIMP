@@ -9,12 +9,12 @@
  * 
  */
 
-#include "../include/OptimizerGH.h"
+#include "../include/OptimizerGH-impl.h"
 #include "../include/OptimizerFactorizedTwoFactorsGH.h"
 #include "../include/GaussianPriorUnaryTranslation.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
-using namespace VIMP;
+using namespace vimp;
 
 using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
 

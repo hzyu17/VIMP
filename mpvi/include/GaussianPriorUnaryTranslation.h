@@ -12,7 +12,7 @@
 #include <gtsam/slam/PoseTranslationPrior.h>
 #include <gpmp2/gp/GPutils.h>
 
-namespace VIMP{
+namespace vimp{
 template <class T>
 /// A derived class of NoiseModelFactor1 in gtsam, used for the prior err probability for translation. 
 class UnaryFactorTranslation: public gtsam::NoiseModelFactor1<T> {

@@ -14,7 +14,7 @@
 using namespace gtsam;
 using namespace gpmp2;
 
-namespace VIMP{
+namespace vimp{
     class GaussianPriorLinearGetQc: public gpmp2::GaussianProcessPriorLinear{
 
     public:

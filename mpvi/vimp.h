@@ -31,6 +31,6 @@ virtual class gtsam::NonlinearFactorGraph;
 virtual class gtsam::NoiseModelFactor : gtsam::NonlinearFactor;
 //virtual class gtsam::NoiseModelFactor;
 
-namespace VIMP {
-    
-}
+// namespace VIMP {
+//     #include ""
+// }

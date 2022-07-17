@@ -23,7 +23,7 @@
 using namespace gtsam;
 using namespace std;
 using namespace GaussianSampler;
-using namespace VIMP;
+using namespace vimp;
 
 typedef SparseMatrix<double> SpMatrix;
 typedef Triplet<double> T;

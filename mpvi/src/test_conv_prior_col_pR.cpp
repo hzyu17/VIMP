@@ -53,7 +53,7 @@ double errorWrapperPriorCol(const VectorXd& theta, const UnaryFactorTranslation2
 using namespace std;
 using namespace gpmp2;
 using namespace Eigen;
-using namespace VIMP;
+using namespace vimp;
 
 int main(){
     /// map and sdf

@@ -9,14 +9,14 @@
  * 
  */
 
-#include "../include/OptimizerFactorizedGHBase.h"
+#include "../include/OptimizerFactorizedGHBase-impl.h"
 
 
 using namespace GaussianSampler;
 using namespace std;
 using namespace Eigen;
 
-namespace VIMP{
+namespace vimp{
     template <typename Function, typename CostClass>
     class VIMPOptimizerFactorizedGaussHermite: public VIMPOptimizerFactorizedBase{
 

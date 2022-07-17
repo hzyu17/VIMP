@@ -11,7 +11,7 @@
 
 #include "repeated_includes.h"
 
-namespace VIMP{
+namespace vimp{
     struct VIMPResults{
         MatrixXd _res_mean;
         vector<MatrixXd> _vec_res_covariances;

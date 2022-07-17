@@ -26,7 +26,7 @@ using namespace GaussianSampler;
 using namespace std;
 using namespace SparseInverse;
 
-namespace VIMP{
+namespace vimp{
 typedef Triplet<double> T;
 // template function and classes to calculate the costs
 template <typename Function, typename costClass, typename... Args>
