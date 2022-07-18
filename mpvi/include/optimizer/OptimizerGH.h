@@ -9,11 +9,12 @@
  * 
  */
 
-#include <random>
+#pragma once
+
 #include <utility>
+#include <memory>
 #include "SparseInverseMatrix.h"
-#include <boost/scoped_ptr.hpp>
-#include "../include/helpers/result_recorder.h"
+#include "../helpers/result_recorder.h"
 
 //using namespace GaussianSampler;
 using namespace std;
@@ -49,9 +50,6 @@ public:
 protected:
     /// optimization variables
     int _dim, _niters, _sub_dim, _nsub_vars;
-
-    ///@param vec_Pks_ Vector of all transformation matrix from joint variables to marginal variables
-    // const vector<MatrixXd> vec_Pks_;
 
     /// @param _vec_factor_optimizers Vector of marginal optimizers
     vector<std::shared_ptr<FactorizedOptimizer>> _vec_factor_optimizers;
@@ -170,3 +168,5 @@ public:
 };
 
 }
+
+// #include "OptimizerGH-impl.h"

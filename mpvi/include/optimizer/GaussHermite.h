@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <boost/math/special_functions/factorials.hpp>
@@ -27,20 +29,25 @@ public:
     /**
      * @brief Constructor
      * 
-     * @param p degree of GH polynomial
+     * @param deg degree of GH polynomial
      * @param dim dimension of the integrand
      * @param mean mean 
      * @param P covariance matrix
      * @param func the integrand function
      */
-    GaussHermite(const int& p, const int& dim, const VectorXd& mean, const MatrixXd& P, const Function& func):
-        _p{p},
-        _dim{dim},
-        _mean{mean},
-        _P{P},
-        _f{func},
-        _W{VectorXd::Zero(_p)},
-        _sigmapts{VectorXd::Zero(_p)}{}
+    GaussHermite(
+        const int& deg, 
+        const int& dim, 
+        const VectorXd& mean, 
+        const MatrixXd& P, 
+        const Function& func):
+            _deg{deg},
+            _dim{dim},
+            _mean{mean},
+            _P{P},
+            _f{func},
+            _W{VectorXd::Zero(_deg)},
+            _sigmapts{VectorXd::Zero(_deg)}{}
 
 
     /**
@@ -77,14 +84,14 @@ public:
 
     inline void update_P(const MatrixXd& P){ _P = P; }
 
-    inline void set_polynomial_deg(const int& p){ _p = p; }
+    inline void set_polynomial_deg(const int& p){ _deg = p; }
 
     inline void update_integrand(const Function& fun){ _f = fun; }
 
     inline void update_dimension(const int& dim){ _dim = dim; }
 
 private:
-    int _p;
+    int _deg;
     int _dim;
     VectorXd _mean;
     MatrixXd _P;
@@ -94,3 +101,5 @@ private:
 };
 
 }
+
+// #include "GaussHermite-impl.h"

@@ -1,7 +1,7 @@
 /**
  * @file test_conv_prior_pR.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief 
+ * @brief Test the convergence of the algorithm with only a prior cost, for a planar robot.
  * @version 0.1
  * @date 2022-07-12
  * 
@@ -9,9 +9,8 @@
  * 
  */
 
-/// Description: Test the convergence of the algorithm with only a prior cost, for a planar robot.
 
-#include "../include/OptimizerPriorPlanarPR.h"
+#include "../include/instances/PriorPlanarPR.h"
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 

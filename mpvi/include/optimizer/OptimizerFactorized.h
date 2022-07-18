@@ -20,7 +20,7 @@
 #include <iostream>
 #include <random>
 #include <utility>
-#include "GaussHermite.h"
+#include "GaussHermite-impl.h"
 
 using namespace GaussianSampler;
 using namespace std;

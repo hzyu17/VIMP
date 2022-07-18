@@ -14,17 +14,14 @@
 
 #endif //VIMP_OPTIMIZER_H
 
-#include <gtsam/base/Matrix.h>
-#include <iostream>
-#include <random>
-#include <utility>
-#include "SparseInverseMatrix.h"
+
 #include "OptimizerFactorized.h"
 #include <boost/scoped_ptr.hpp>
 
 using namespace GaussianSampler;
 using namespace std;
 using namespace SparseInverse;
+using namespace Eigen;
 
 namespace vimp{
 typedef Triplet<double> T;
@@ -162,15 +159,15 @@ public:
 
     }
 
-    gtsam::Vector get_mean(){
+    VectorXd get_mean(){
         return mu_;
     }
 
-    gtsam::Matrix get_precision(){
+    MatrixXd get_precision(){
         return precision_;
     }
 
-    gtsam::Matrix get_covariance(){
+    MatrixXd get_covariance(){
         return inverser_.inverse();
     }
 

@@ -79,24 +79,27 @@ target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} $
 add_executable(test_prior_pR src/test_conv_prior_pR.cpp)
 target_link_libraries(test_prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
+add_executable(test_prior_gp_inter_pR src/test_prior_gp_inter_pR.cpp)
+target_link_libraries(test_prior_gp_inter_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
-# python wrapper
-option(VIMP_BUILD_PYTHON "whether build python toolbox, need shared lib" OFF)
 
-if(VIMP_BUILD_PYTHON)
-   include_directories(${GTSAM_DIR}/cython)
-   include_directories(/usr/local/cython)
-   include(GtsamCythonWrap)
-   include_directories(${GTSAM_EIGENCY_INSTALL_PATH})
+# # python wrapper
+# option(VIMP_BUILD_PYTHON "whether build python toolbox, need shared lib" OFF)
 
-   wrap_and_install_library_cython("vimp.h"
-           "from gtsam.gtsam cimport *" # extra import of gtsam/gtsam.pxd Cython header
-           "${CMAKE_INSTALL_PREFIX}/cython" # install path
-           vimp  # library to link with
-           "gtsam"  # dependencies which need to be built before wrapping
-           )
-   add_definitions(-DBOOST_OPTIONAL_ALLOW_BINDING_TO_RVALUES -DBOOST_OPTIONAL_CONFIG_ALLOW_BINDING_TO_RVALUES)
-endif()
+# if(VIMP_BUILD_PYTHON)
+#    include_directories(${GTSAM_DIR}/cython)
+#    include_directories(/usr/local/cython)
+#    include(GtsamCythonWrap)
+#    include_directories(${GTSAM_EIGENCY_INSTALL_PATH})
+
+#    wrap_and_install_library_cython("vimp.h"
+#            "from gtsam.gtsam cimport *" # extra import of gtsam/gtsam.pxd Cython header
+#            "${CMAKE_INSTALL_PREFIX}/cython" # install path
+#            vimp  # library to link with
+#            "gtsam"  # dependencies which need to be built before wrapping
+#            )
+#    add_definitions(-DBOOST_OPTIONAL_ALLOW_BINDING_TO_RVALUES -DBOOST_OPTIONAL_CONFIG_ALLOW_BINDING_TO_RVALUES)
+# endif()
 
 
 # Doxygen

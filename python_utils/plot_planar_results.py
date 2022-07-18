@@ -78,7 +78,7 @@ def plot_gaussian(mean, cov, c=".95", axis=None):
     sns.histplot(x=x, y=y, bins=60, pthresh=.1, cmap="mako", alpha=0.2, ax=axis)
     # sns.kdeplot(x=x, y=y, levels=5, color="k", linewidths=1, fill=True, ax=axis)
 
-    axis.scatter(mean[0], mean[1], s=30, c='red')
+    axis.scatter(mean[0], mean[1], s=20, c='red')
 
     return axis
 

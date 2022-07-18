@@ -4,11 +4,11 @@
 
 // Test the factorized optimizer convergence
 
-#include "../include/OptimizerFactorized.h"
+#include "../include/optimizer/OptimizerFactorized.h"
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
-#include "../include/SparseInverseMatrix.h"
+#include "../include/optimizer/SparseInverseMatrix.h"
 
 using namespace gtsam;
 using namespace std;

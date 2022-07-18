@@ -4,7 +4,7 @@
  * Date: 05/11/22
  * */
 
-#include "../include/OptimizerFactorizedGH.h"
+#include "../include/optimizer/OptimizerFactorizedGH.h"
 #include <iostream>
 #include <random>
 #include "../include/SparseInverseMatrix.h"
@@ -37,7 +37,7 @@ int main(){
     using Function = std::function<double(const VectorXd&, const Gaussian_distribution&)>;
     using Optimizer = VIMPOptimizerFactorizedGaussHermite<Function, Gaussian_distribution>;
     /// optimizer 
-    std::shared_ptr<Optimizer> p_optimizer(new Optimizer{ndim, phi, gaussian, MatrixXd{MatrixXd::Identity(ndim, ndim)}});
+    Optimizer::shared_ptr p_optimizer(new Optimizer{ndim, phi, gaussian, MatrixXd{MatrixXd::Identity(ndim, ndim)}});
 
     int n_iter = 10;
     double step_size = 0.9;
@@ -45,8 +45,8 @@ int main(){
 
     /// Main iteration code block
     cout << "=== start iteration ===" << endl;
-    VectorXd l_mean = p_optimizer->get_mean();
-    MatrixXd l_precision = p_optimizer->get_precision();
+    VectorXd l_mean = p_optimizer->mean();
+    MatrixXd l_precision = p_optimizer->precision();
 
     for (int i=0; i<n_iter; i++){
         step_size = step_size / pow((i+1), 1/3);
@@ -55,8 +55,8 @@ int main(){
         bool decrease = p_optimizer->step();
 
         cout << "==== iteration " << i << " ====" << endl
-             << "mean " << endl << p_optimizer->get_mean().format(CleanFmt) << endl
-             << "precision matrix " << endl <<p_optimizer->get_precision().format(CleanFmt) << endl;
+             << "mean " << endl << p_optimizer->mean().format(CleanFmt) << endl
+             << "precision matrix " << endl <<p_optimizer->precision().format(CleanFmt) << endl;
 
         if (not decrease){
             cout << "end of iteration " << endl;
@@ -64,9 +64,9 @@ int main(){
         }
 
     }
-    l_precision = p_optimizer->get_precision();
-    l_mean = p_optimizer->get_mean();
+    l_precision = p_optimizer->precision();
+    l_mean = p_optimizer->mean();
     cout << "==== result ====" << endl
-         << "mean " << endl << p_optimizer->get_mean().format(CleanFmt) << endl
-         << "precision matrix " << endl << p_optimizer->get_precision().format(CleanFmt) << endl;
+         << "mean " << endl << p_optimizer->mean().format(CleanFmt) << endl
+         << "precision matrix " << endl << p_optimizer->precision().format(CleanFmt) << endl;
 };

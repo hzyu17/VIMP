@@ -9,8 +9,8 @@
  * 
  */
 
-#include "../include/OptimizerFactorizedGHBase-impl.h"
-
+#include "OptimizerFactorizedGHBase-impl.h"
+#include <memory>
 
 using namespace GaussianSampler;
 using namespace std;
@@ -35,5 +35,10 @@ namespace vimp{
                     OptBase::_func_Vmumu = [this, function_, cost_class_](const VectorXd& x){return MatrixXd{(x-OptBase::_mu) * (x-OptBase::_mu).transpose().eval() * function_(x, cost_class_)};};
                     OptBase::_gauss_hermite = GaussHermite<GHFunction>{10, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
                 }
+    public:
+        typedef std::shared_ptr<VIMPOptimizerFactorizedGaussHermite> shared_ptr;
+
     };
+
+    
 }

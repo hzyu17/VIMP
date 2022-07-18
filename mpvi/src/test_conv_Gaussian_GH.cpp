@@ -12,8 +12,8 @@
 
 /// Test the convergence of algorithm using a known Gaussian posterior.
 
-#include "../include/OptimizerGH-impl.h"
-#include "../include/OptimizerFactorizedGH.h"
+#include "../include/optimizer/OptimizerGH-impl.h"
+#include "../include/optimizer/OptimizerFactorizedGH.h"
 #include <iostream>
 #include <random>
 
@@ -36,7 +36,7 @@ void test_coupled(){
     // construct block matrices Sigma_k, P_k, and factored cost functions
     // vector<std::function<MatrixXd(const VectorXd&, const Gaussian_distribution&)>> vec_cost_func;
     // vector<Gaussian_distribution> vec_cost_class;
-    vector<std::shared_ptr<FactorizedOptimizer>> vec_factorized_opt;
+    vector<FactorizedOptimizer::shared_ptr> vec_factorized_opt;
 
     // vector<MatrixXd> vec_Pks;
     for (int i=0; i<ndim-1; i++){
@@ -44,7 +44,6 @@ void test_coupled(){
         MatrixXd Pk{MatrixXd::Zero(2, ndim)};
         Pk(0, i) = 1;
         Pk(1, i+1) = 1;
-        // vec_Pks.emplace_back(Pk);
 
         // known target posteria Gaussian
         VectorXd mean_t(2);
@@ -57,7 +56,7 @@ void test_coupled(){
         Gaussian_distribution target_distr(mean_t, precision_t.inverse());
 
         /// try with unique pointer
-        std::shared_ptr<FactorizedOptimizer> pFactOptimizer(new FactorizedOptimizer{2, cost_function, target_distr, Pk});
+        FactorizedOptimizer::shared_ptr pFactOptimizer(new FactorizedOptimizer{2, cost_function, target_distr, Pk});
         vec_factorized_opt.emplace_back(pFactOptimizer);
 
     }
@@ -65,10 +64,12 @@ void test_coupled(){
     VIMPOptimizerGH<FactorizedOptimizer> optimizer(vec_factorized_opt);
 
     const int num_iter = 10;
-    double step_size = 0.9;
 
     optimizer.set_niterations(num_iter);
     optimizer.optimize();
+
+    cout << "mean " << endl << optimizer.mean() << endl;
+    cout << "joint precision matrix " << endl << optimizer.precision() << endl;
     
 }
 

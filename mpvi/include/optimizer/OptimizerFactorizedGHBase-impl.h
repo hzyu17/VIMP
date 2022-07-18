@@ -1,3 +1,10 @@
+/**
+ * @brief OptimizerFactorizedGHBase-impl.h
+ * 
+ * Author: Hongzhe Yu
+ * 
+ */
+
 #include "OptimizerFactorizedGHBase.h"
 
 namespace vimp{
@@ -61,11 +68,11 @@ namespace vimp{
 
         // partial V^2 / partial mu*mu^T
         // update tmp matrix
-        for (int i=0; i<this->_dim; i++){
-            for (int j=0; j<this->_dim; j++) {
-                for (int k=0; k<this->_dim; k++){
-                    for (int l=0; l<this->_dim; l++){
-                        tmp(i, j) += (this->_covariance(i, j)*this->_covariance(k, l) + this->_covariance(i,k)*this->_covariance(j,l) + this->_covariance(i,l)*this->_covariance(j,k))*precision_t(k,l);
+        for (int i=0; i<(this->_dim); i++){
+            for (int j=0; j<(this->_dim); j++) {
+                for (int k=0; k<(this->_dim); k++){
+                    for (int l=0; l<(this->_dim); l++){
+                        tmp(i, j) += (this->_covariance(i, j) * (this->_covariance(k, l)) + this->_covariance(i,k) * (this->_covariance(j,l)) + this->_covariance(i,l)*this->_covariance(j,k))*precision_t(k,l);
                     }
                 }
             }
@@ -83,18 +90,18 @@ namespace vimp{
     bool VIMPOptimizerFactorizedBase::step(){
 
         /// Zero grad
-        this->_dmu.setZero();
-        this->_dprecision.setZero();
+        VectorXd dmu{VectorXd::Zero(this->_dim)};
+        MatrixXd dprecision{MatrixXd::Zero(this->_dim, this->_dim)};
 
         calculate_partial_V();
     //    calculate_exact_partial_V(_cost_class.get_mean(), _cost_class.get_covariance());
 
-        this->_dprecision = -this->_precision + this->_Vddmu;
+        dprecision = -this->_precision + this->_Vddmu;
 
         /// without backtracking
-        this->_precision = this->_precision + this->_step_size_Sigma * this->_dprecision;
-        this->_dmu = this->_precision.colPivHouseholderQr().solve(-this->_Vdmu);
-        this->_mu = this->_mu + this->_step_size_mu * this->_dmu;
+        this->_precision = this->_precision + this->_step_size_Sigma * dprecision;
+        dmu = this->_precision.colPivHouseholderQr().solve(-this->_Vdmu);
+        this->_mu = this->_mu + this->_step_size_mu * dmu;
 
         return true;
 

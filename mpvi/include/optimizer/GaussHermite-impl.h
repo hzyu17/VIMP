@@ -1,7 +1,7 @@
 /**
- * @file GaussHermite.h
+ * @file GaussHermite-impl.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Class to calculate the approximated integrations using Gauss-Hermite quadrature
+ * @brief Calculate the approximated integrations using Gauss-Hermite quadrature
  * @version 0.1
  * @date 2022-05-11
  * 
@@ -14,11 +14,11 @@
 namespace vimp{
     template <typename Function>
     void GaussHermite<Function>::computeSigmaPts(){
-        VectorXd a{VectorXd::Ones(this->_p-1)};
-        VectorXd c{VectorXd::LinSpaced(this->_p-1, 1, this->_p-1)};
+        VectorXd a{VectorXd::Ones(this->_deg-1)};
+        VectorXd c{VectorXd::LinSpaced(this->_deg-1, 1, this->_deg-1)};
         VectorXd c_over_a = (c.array() / a.array()).matrix();
-        MatrixXd L{MatrixXd::Zero(this->_p, this->_p)};
-        for (int i=0; i<this->_p-1; i++){
+        MatrixXd L{MatrixXd::Zero(this->_deg, this->_deg)};
+        for (int i=0; i<this->_deg-1; i++){
             L(i+1, i) = c_over_a(i);
             L(i, i+1) = a(i);
         }
@@ -46,10 +46,10 @@ namespace vimp{
     template <typename Function>
     void GaussHermite<Function>::computeWeights(){
         this->computeSigmaPts();
-        VectorXd W(this->_p);
+        VectorXd W(this->_deg);
         int cnt = 0;
         for (double i_pt : this->_sigmapts){
-            W(cnt) = boost::math::factorial<double>(this->_p) / this->_p / this->_p / HermitePolynomial(this->_p-1, i_pt) / HermitePolynomial(this->_p-1, i_pt);
+            W(cnt) = boost::math::factorial<double>(this->_deg) / this->_deg / this->_deg / HermitePolynomial(this->_deg-1, i_pt) / HermitePolynomial(this->_deg-1, i_pt);
             cnt += 1;
         }
         this->_W = W;
@@ -67,14 +67,14 @@ namespace vimp{
         MatrixXd res{MatrixXd::Zero(this->_f(pt_0).rows(), this->_f(pt_0).cols())};
         
         if (this->_dim == 1){
-            for (int i=0; i<this->_p; i++){
+            for (int i=0; i<this->_deg; i++){
                 res += this->_W(i)*this->_f(sig*this->_sigmapts(i) + this->_mean);
             }
         }
 
         else if (this->_dim == 2) {
-            for (int i = 0; i < this->_p; i++) {
-                for (int j = 0; j < this->_p; j++) {
+            for (int i = 0; i < this->_deg; i++) {
+                for (int j = 0; j < this->_deg; j++) {
                     VectorXd pt_ij = VectorXd::Zero(2);
                     pt_ij << this->_sigmapts(i), this->_sigmapts(j);
 
@@ -85,9 +85,9 @@ namespace vimp{
             }
         }
         else if (this->_dim == 3){
-            for (int i=0; i<this->_p; i++){
-                for(int j=0; j<this->_p; j++){
-                    for(int k=0; k<this->_p; k++){
+            for (int i=0; i<this->_deg; i++){
+                for(int j=0; j<this->_deg; j++){
+                    for(int k=0; k<this->_deg; k++){
                         VectorXd pt_ijk = VectorXd::Zero(3);
                         pt_ijk << this->_sigmapts(i), this->_sigmapts(j), this->_sigmapts(k);
 
@@ -98,10 +98,10 @@ namespace vimp{
             }
         }
         else if (this->_dim == 4){
-            for (int i=0; i<this->_p; i++){
-                for(int j=0; j<this->_p; j++){
-                    for(int k=0; k<this->_p; k++){
-                        for (int l=0; l<this->_p; l++){
+            for (int i=0; i<this->_deg; i++){
+                for(int j=0; j<this->_deg; j++){
+                    for(int k=0; k<this->_deg; k++){
+                        for (int l=0; l<this->_deg; l++){
                             VectorXd pt_ijkl = VectorXd::Zero(4);
                             pt_ijkl << this->_sigmapts(i), this->_sigmapts(j), this->_sigmapts(k), this->_sigmapts(l);
                             VectorXd pt_ijkl_t = sig * pt_ijkl + this->_mean;

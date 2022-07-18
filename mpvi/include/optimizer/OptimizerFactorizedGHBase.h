@@ -9,15 +9,16 @@
  * 
  */
 
+#pragma once
+
 #include "SparseMatrixHelper.h"
-#include "MVGsampler.h"
 #include <iostream>
 #include <random>
 #include <utility>
 #include "GaussHermite-impl.h"
 
 
-using namespace GaussianSampler;
+// using namespace GaussianSampler;
 using namespace std;
 using namespace Eigen;
 
@@ -41,13 +42,12 @@ namespace vimp{
         VIMPOptimizerFactorizedBase(const int& dimension, const MatrixXd& Pk_):
                 _dim{dimension},
                 _mu{VectorXd::Zero(_dim)},
-                _dmu{VectorXd::Zero(_dim)},
+                _covariance{_precision.inverse()},
                 _precision{MatrixXd::Identity(_dim, _dim)},
                 _dprecision{MatrixXd::Zero(_dim, _dim)},
                 _Vdmu{VectorXd::Zero(_dim)},
                 _Vddmu{MatrixXd::Zero(_dim, _dim)},
-                _Pk{Pk_},
-                _covariance{_precision.inverse()}
+                _Pk{Pk_}
                 {}
     
     
@@ -72,7 +72,6 @@ namespace vimp{
 
     private:
         /// optimization variables
-        VectorXd _dmu;
         MatrixXd _precision, _dprecision;
 
         /// intermediate variables in optimization steps
@@ -116,7 +115,8 @@ namespace vimp{
          * 
          * @param joint_covariance a given joint covariance matrix
          */
-        inline void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){ _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();}
+        inline void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){ 
+            _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();}
 
         /**
          * @brief Update covariance matrix by inverting precision matrix.
@@ -140,12 +140,15 @@ namespace vimp{
          * @param covariance_t target covariance matrix
          */
         void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t);
+
+
         /**
          * @brief Get the marginal intermediate variable (partial V^2 / par mu / par mu)
          * 
          * @return MatrixXd (par V^2 / par mu / par mu)
          */
         inline MatrixXd Vddmu() const { return _Vddmu; }
+
 
         /**
          * @brief Get the marginal intermediate variable partial V / dmu
@@ -154,12 +157,14 @@ namespace vimp{
          */
         inline VectorXd Vdmu() const { return _Vdmu; }
 
+
         /**
          * @brief Get the joint intermediate variable (partial V / partial mu).
          * 
          * @return VectorXd Pk.T * (par V / par mu)
          */
         inline VectorXd joint_Vdmu() const { return _Pk.transpose() * _Vdmu;}
+
 
         /**
          * @brief Get the joint intermediate variable Vddmu
@@ -168,6 +173,7 @@ namespace vimp{
          */
         inline MatrixXd joint_Vddmu() const { return _Pk.transpose().eval() * _Vddmu * _Pk;}
 
+
         /**
          * @brief Get the mapping matrix Pk
          * 
@@ -175,11 +181,13 @@ namespace vimp{
          */
         inline MatrixXd Pk() const { return _Pk; }
 
+
         /**
          * @brief One step in the optimization.
          * @return true: success.
          */
         bool step();
+
 
         /**
          * @brief Get the mean 
@@ -188,12 +196,14 @@ namespace vimp{
          */
         inline VectorXd mean() const{ return _mu; }
 
+
         /**
          * @brief Get the precision matrix
          * 
          * @return MatrixXd 
          */
         inline MatrixXd precision() const{ return _precision; }
+
 
         /**
          * @brief Get the covariance matrix
@@ -204,3 +214,5 @@ namespace vimp{
 
     };
 }
+
+// #include "OptimizerFactorizedGHBase-impl.h"

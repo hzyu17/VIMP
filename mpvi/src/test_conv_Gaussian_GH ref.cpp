@@ -12,8 +12,8 @@
 
 /// Test the convergence of algorithm using a known Gaussian posterior.
 
-#include "../include/OptimizerGH.h"
-#include "../include/OptimizerFactorizedGH.h"
+#include "../include/optimizer/OptimizerGH.h"
+#include "../include/optimizer/OptimizerFactorizedGH.h"
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>

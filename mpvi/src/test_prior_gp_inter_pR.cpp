@@ -1,18 +1,19 @@
 /**
- * @file test_conv_prior_col_pR.cpp
+ * @file test_prior_gp_inter_pR.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Test the convergence of the algorithm with prior + collision cost only on supported states, 
- * for a planar robot.
+ * @brief Test prior + collision cost only on supported states, 
+ * for a planar robot and GP linear interpolations.
  * @version 0.1
- * @date 2022-07-15
+ * @date 2022-07-18
  * 
  * @copyright Copyright (c) 2022
  * 
  */
 
-#include "../include/instances/PriorColPlanarPR.h"
+#include "../include/OptimizerPriorColGPLinearPlanarPR.h"
 #include <gtsam/inference/Symbol.h>
 #include "../include/helpers/data_io.h"
+#include <gpmp2/gp/GPutils.h>
 
 using namespace std;
 using namespace gpmp2;
@@ -23,32 +24,49 @@ using namespace vimp;
 /**
  * @brief -log(p(x,z)) for prior and collision factors 
  * 
- * @param pose input pose
+ * @param joint_theta the input joint confs and vels
  * @param prior_factor the prior class
  * @param obstacle_factor the collision class
  * @return double 
  */
-double errorWrapperPriorCol(const VectorXd& pose, const UnaryFactorTranslation2D& prior_factor,
-                            const ObstaclePlanarSDFFactorPR& collision_factor) {
+double errorWrapperPriorColGPLinaer(const VectorXd& joint_theta, 
+                                    const GaussianProcessPriorLinear& prior_factor,
+                                    const ObstacleFactorGPInterLinPR& collision_factor) {
 
+    /**
+     * @brief Robot dimensions
+     * 
+     */
+    
+    int tmp = theta.size() / 4;
+    const int dim_conf = tmp;
+
+    // int dim_conf = collision_factor.robot_.dof() * collision_factor.robot_.nr_links();
+    /// TODO: try to write a class which can return the robot model in the obstacle class.
+
+    VectorXd pose1 = joint_theta.segment<dim_conf>(0);
+    VectorXd vel1 = joint_theta.segment<dim_conf>(dim_conf);
+    VectorXd pose2 = joint_theta.segment<dim_conf>(2*dim_conf);
+    VectorXd vel2 = joint_theta.segment<dim_conf>(3*dim_conf);
+    
     /**
      * Prior factor
      * */
-
-    VectorXd vec_prior_err = prior_factor.evaluateError(pose);
-    MatrixXd Qc = prior_factor.get_Qc();
-    double prior_err = vec_prior_err.transpose() * Qc.inverse() * vec_prior_err;
+    VectorXd vec_prior_err = prior_factor.evaluateError(pose1, vel1, pose2, vel2);
+    MatrixXd Qc = gpmp2::getQc(prior_factor.get_noiseModel());
+    MatrixXd invQ = gpmp2::calcQ_inv(Qc);
+    double prior_err = vec_prior_err.transpose() * invQ * vec_prior_err;
 
     /**
      * Obstacle factor
      * */
-    VectorXd vec_err = collision_factor.evaluateError(pose);
+    VectorXd vec_col_err = collision_factor.evaluateError(pose1, vel1, pose2, vel2);
 
-    // MatrixXd precision_obs;
+    // MatrixXd precision_obs
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     precision_obs = precision_obs / collision_factor.get_noiseModel()->sigmas()[0];
 
-    double collision_cost = vec_err.transpose() * precision_obs * vec_err;
+    double collision_cost = vec_col_err.transpose() * precision_obs * vec_col_err;
 
     return prior_err + collision_cost;
 }
@@ -73,8 +91,8 @@ int main(){
             2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284).finished();
 
     MatrixIO matrix_io{};
-    string filename_map{"data/2d_pR/map_ground_truth.csv"};
-    string filename_sdf{"data/2d_pR/map_sdf.csv"};
+    string filename_map{"data/2d_gpinter_pR/map_ground_truth.csv"};
+    string filename_sdf{"data/2d_gpinter_pR/map_sdf.csv"};
 
     matrix_io.saveData(filename_map, map_ground_truth);
     matrix_io.saveData(filename_sdf, field);
@@ -104,26 +122,26 @@ int main(){
     PointRobotModel pRModel(pR, body_spheres);
 
     /// start and goal
-    double start_x = 1.0, start_y = 1.5, goal_x = 5.5, goal_y = 3.5;
+    double start_x = 1.0, start_y = 1.5, goal_x = 5.5, goal_y = 5.5;
     VectorXd start_theta(dim_theta);
     start_theta << start_x, start_y, 0, 0;
     VectorXd goal_theta(dim_theta);
     goal_theta << goal_x, goal_y, 0, 0;
-
-    /// factored optimizers: containing 2 types: 
-    /// 1. the single factor of priors for start and goal states;
-    /// 2. the prior + collision factors for supported states.
     
     /// Noise model
+    SharedNoiseModel Qc_model = noiseModel::Isotropic::Sigma(dim_conf, 0.5);
     SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 0.5);
 
     /// Vector of factored optimizers
-    vector<std::shared_ptr<OptFactPriColPlanarPRGH>> vec_factor_opts;
+    vector<std::shared_ptr<OptFactPriColGHGPInterLinPR>> vec_factor_opts;
 
     /// initial values
     VectorXd joint_init_theta{VectorXd::Zero(ndim)};
 
-    for (int i = 0; i < n_total_states; i++) {
+    double delta_t = 1.0;
+    double ninterp = 5;
+
+    for (int i = 0; i < n_total_states-1; i++) {
         VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
         joint_init_theta.segment<dim_theta>(i*dim_theta) = std::move(theta);
 
@@ -132,19 +150,35 @@ int main(){
         Pk.block<dim_conf, dim_conf>(0, i * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
         
         /// prior
-        UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment<dim_conf>(0)}, K_0};
+        GaussianProcessPriorLinear prior_k{gtsam::symbol('x', i), gtsam::symbol('v', i),
+                                           gtsam::symbol('x', i+1), gtsam::symbol('v', i+1), 
+                                           delta_t,
+                                           Qc_model};
 
-        // collision
-        ObstaclePlanarSDFFactorPR collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
+        for (int j=0; j<ninterp; j++){
+            double tau = delta_t / ninterp * double(j);
+            // collision
+            ObstacleFactorGPInterLinPR collision_k{gtsam::symbol('x', i), gtsam::symbol('v', i),
+                                                gtsam::symbol('x', i+1), gtsam::symbol('v', i+1), 
+                                                pRModel, 
+                                                sdf, 
+                                                cost_sigma, 
+                                                epsilon,
+                                                Qc_model,
+                                                delta_t,
+                                                tau};
+        }
+
+        
 
         /// Factored optimizer
-        std::shared_ptr<OptFactPriColPlanarPRGH> pOptimizer(new OptFactPriColPlanarPRGH{dim_conf, errorWrapperPriorCol, prior_k, collision_k, Pk});
+        std::shared_ptr<OptFactPriColGHGPInterLinPR> pOptimizer(new OptFactPriColGHGPInterLinPR{dim_conf, errorWrapperPriorColGPLinaer, prior_k, collision_k, Pk});
         vec_factor_opts.emplace_back(pOptimizer);
 
     }
 
     /// The joint optimizer
-    VIMPOptimizerGH<OptFactPriColPlanarPRGH> optimizer{vec_factor_opts};
+    VIMPOptimizerGH<OptFactPriColGHGPInterLinPR> optimizer{vec_factor_opts};
 
     /// Set initial value to the linear interpolation
     optimizer.set_mu(joint_init_theta);
@@ -152,7 +186,7 @@ int main(){
     /// Update n iterations and data file names
     int num_iter = 20;
     optimizer.set_niterations(num_iter);
-    optimizer.update_file_names("data/2d_pR/mean.csv", "data/2d_pR/cov.csv");
+    optimizer.update_file_names("data/2d_gpinter_pR/mean.csv", "data/2d_gpinter_pR/cov.csv");
 
     optimizer.optimize();
 
