@@ -20,7 +20,6 @@
 
 using namespace GaussianSampler;
 using namespace std;
-using namespace SparseInverse;
 using namespace Eigen;
 
 namespace vimp{

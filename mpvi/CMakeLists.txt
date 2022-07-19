@@ -8,6 +8,7 @@ find_package(Eigen3 REQUIRED)
 find_package(gpmp2 REQUIRED)
 find_package(GTSAM REQUIRED)
 
+include_directories(include)
 
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
@@ -83,6 +84,7 @@ add_executable(test_conv_prior_col_pR_gp_inter src/test_conv_prior_col_pR_gp_int
 target_link_libraries(test_conv_prior_col_pR_gp_inter ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 
+
 # # python wrapper
 # option(VIMP_BUILD_PYTHON "whether build python toolbox, need shared lib" OFF)
 
@@ -102,7 +104,27 @@ target_link_libraries(test_conv_prior_col_pR_gp_inter ${GTSAM_LIBRARIES} ${EIGEN
 # endif()
 
 
-# Doxygen
+# -------------------------------------------- Google tests
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG release-1.12.1
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+
+#% Tests ---------------------------------------------------------
+add_executable(test_inverser test/test_inverser.cpp)
+target_link_libraries(test_inverser ${EIGEN3_LIBRARIES} GTest::gtest_main)
+
+add_executable(test_optimizer test/test_optimizer.cpp)
+target_link_libraries(test_optimizer ${EIGEN3_LIBRARIES} GTest::gtest_main)
+
+
+# -------------------------------------------- Doxygen for documentations
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
     # set input and output files

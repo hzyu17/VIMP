@@ -150,7 +150,7 @@ int main(){
     optimizer.set_mu(joint_init_theta);
 
     /// Update n iterations and data file names
-    int num_iter = 20;
+    int num_iter = 5;
     optimizer.set_niterations(num_iter);
     optimizer.update_file_names("data/2d_pR/mean.csv", "data/2d_pR/cov.csv");
 

@@ -19,7 +19,6 @@
 
 //using namespace GaussianSampler;
 using namespace std;
-using namespace SparseInverse;
 typedef Triplet<double> T;
 
 namespace vimp{
@@ -117,7 +116,7 @@ public:
     inline MatrixXd precision() const{ return _precision; }
 
     /// returns the covariance matrix
-    inline MatrixXd covariance(){ return _inverser.inverse(); }
+    inline MatrixXd covariance(){ return _inverser.inverse(_precision); }
 
     /**
      * @brief Purturb the mean by a random vector.
@@ -153,7 +152,7 @@ public:
         _mu = mean; }
 
     /// assign a precision matrix
-    /// @param mean new mean
+    /// @param new_precision new precision
     inline void set_precision(const MatrixXd& new_precision){
         assert(new_precision.size() == _precision.size());
         _precision = new_precision;}

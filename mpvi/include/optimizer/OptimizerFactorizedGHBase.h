@@ -116,22 +116,30 @@ namespace vimp{
          * 
          * @param new_mu a given mean
          */
-        inline void update_mu(const VectorXd& new_mu){ _mu = new_mu; }
+        inline void update_mu(const VectorXd& new_mu){ assert(_mu.size() == new_mu.size()); _mu = new_mu; }
 
+        /**
+         * @brief Update the marginal mean using JOINT mean and 
+         * mapping matrix Pk.
+         * 
+         * @param joint_mean 
+         */
+        inline void update_mu_from_joint_mean(const MatrixXd& joint_mean){ 
+            _mu = _Pk * joint_mean;}
 
         /**
          * @brief Update precision matrix
          * 
          * @param new_mu a given precision matrix
          */
-        inline void update_precision(const MatrixXd& new_precision){ _precision = new_precision; }
+        inline void update_precision(const MatrixXd& new_precision){ assert(_precision.size() == new_precision.size()); _precision = new_precision; }
 
 
         /**
          * @brief Update the marginal precision matrix using joint COVARIANCE matrix and 
          * mapping matrix Pk.
          * 
-         * @param joint_covariance a given joint covariance matrix
+         * @param joint_covariance a given JOINT covariance matrix
          */
         inline void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){ 
             _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();}

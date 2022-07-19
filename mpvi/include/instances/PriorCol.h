@@ -10,8 +10,8 @@
  * 
  */
 
-#include "../optimizer/OptimizerGH-impl.h"
-#include "../optimizer/OptimizerFactorizedTwoFactorsGH.h"
+#include "optimizer/OptimizerGH-impl.h"
+#include "optimizer/OptimizerFactorizedTwoFactorsGH.h"
 #include "GaussianPriorUnaryTranslation.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 

@@ -24,7 +24,7 @@ typedef Eigen::SparseMatrix<double> SpMatrix;
 using namespace Eigen;
 using namespace std;
 
-namespace SparseInverse{
+namespace vimp{
     struct sparse_inverser{
         sparse_inverser(const SpMatrix& _input_sparse):
         K(_input_sparse.cols()){
@@ -88,9 +88,10 @@ namespace SparseInverse{
     };
 
     struct dense_inverser{
-        dense_inverser(const MatrixXd& _input_dense):K_(_input_dense.cols()){
+        dense_inverser(const MatrixXd& _input_dense):
+        K_(_input_dense.cols()),
+        input_dense_{_input_dense}{
             inverse_.resize(K_, K_);
-            input_dense_ = _input_dense;
             LLT<MatrixXd, Eigen::Lower> choleskyLDLT = _input_dense.llt();
             L_ = choleskyLDLT.matrixL();
 
@@ -99,9 +100,16 @@ namespace SparseInverse{
             L_ = L_ * inv_sqrt_D_;
         }
 
-        Eigen::MatrixXd inverse(){
+        /**
+         * @brief Inverse with given input
+         * 
+         * @param input matrix want to inverse.
+         * @return Eigen::MatrixXd 
+         */
+        Eigen::MatrixXd inverse(const MatrixXd& input_matrix){
+            assert(input_matrix.cols() == L_.cols());
 
-            LLT<MatrixXd, Eigen::Lower> choleskyLDLT = input_dense_.llt();
+            LLT<MatrixXd, Eigen::Lower> choleskyLDLT = input_matrix.llt();
 
             L_ = choleskyLDLT.matrixL();
 
@@ -126,12 +134,25 @@ namespace SparseInverse{
             return inverse_;
         }
 
-        Eigen::MatrixXd inverse(const MatrixXd& input_matrix){
-            assert(input_matrix.cols() == L_.cols());
-            input_dense_ = input_matrix;
-            return inverse();
+        /**
+         * @brief Default inverser
+         * 
+         * @return Eigen::MatrixXd 
+         */
+        Eigen::MatrixXd inverse(){
+            return inverse(input_dense_);
         }
 
+        /**
+         * @brief update the default matrix.
+         * 
+         * @param new_matrix input
+         */
+        inline void update_matrix(const MatrixXd& new_matrix){
+            input_dense_ = new_matrix;
+        }
+
+    private:
         MatrixXd inverse_;
         MatrixXd L_;
         MatrixXd D_;
