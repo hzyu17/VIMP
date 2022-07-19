@@ -16,6 +16,8 @@
 #include <random>
 #include <utility>
 #include "GaussHermite-impl.h"
+#include <assert.h>
+#include <random>
 
 
 // using namespace GaussianSampler;
@@ -42,7 +44,7 @@ namespace vimp{
         VIMPOptimizerFactorizedBase(const int& dimension, const MatrixXd& Pk_):
                 _dim{dimension},
                 _mu{VectorXd::Zero(_dim)},
-                _covariance{_precision.inverse()},
+                _covariance{MatrixXd::Identity(_dim, _dim)},
                 _precision{MatrixXd::Identity(_dim, _dim)},
                 _dprecision{MatrixXd::Zero(_dim, _dim)},
                 _Vdmu{VectorXd::Zero(_dim)},
@@ -89,8 +91,14 @@ namespace vimp{
     public:
         /// update the GH approximator
         void updateGH(){
-            _gauss_hermite.update_mean(VectorXd{_mu});
-            _gauss_hermite.update_P(MatrixXd{_covariance}); }
+            _gauss_hermite.update_mean(mean());
+            _gauss_hermite.update_P(covariance()); }
+
+        /// update the GH approximator
+        void updateGH(const VectorXd& x, const MatrixXd& P){
+            _gauss_hermite.update_mean(x);
+            _gauss_hermite.update_P(P); }
+
 
         /**
          * @brief Update the step size
@@ -102,12 +110,22 @@ namespace vimp{
             _step_size_mu = ss_mean;
             _step_size_Sigma = ss_precision; }
 
+
         /**
          * @brief Update mean, covariance, and precision matrix
          * 
          * @param new_mu a given mean
          */
-        inline void update_mu(const VectorXd& new_mu){ _mu = _Pk * new_mu; }
+        inline void update_mu(const VectorXd& new_mu){ _mu = new_mu; }
+
+
+        /**
+         * @brief Update precision matrix
+         * 
+         * @param new_mu a given precision matrix
+         */
+        inline void update_precision(const MatrixXd& new_precision){ _precision = new_precision; }
+
 
         /**
          * @brief Update the marginal precision matrix using joint COVARIANCE matrix and 
@@ -118,11 +136,13 @@ namespace vimp{
         inline void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){ 
             _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse();}
 
+
         /**
          * @brief Update covariance matrix by inverting precision matrix.
          */
         inline void update_covariance(){ _covariance = _precision.inverse();}
         
+
         /**
          * @brief Main function calculating phi * (partial V) / (partial mu), and 
          * phi * (partial V^2) / (partial mu * partial mu^T)
@@ -140,6 +160,30 @@ namespace vimp{
          * @param covariance_t target covariance matrix
          */
         void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t);
+
+
+        /**
+         * @brief One step in the optimization.
+         * @return true: success.
+         */
+        bool step();
+
+        
+        /**
+         * @brief Compute the cost function. V(x) = E_q(\phi(x))
+         * 
+         * @param x the state to compute cost on.
+         * @return cost value 
+         */
+        double cost_value(const VectorXd& x, const MatrixXd& Cov);
+
+
+        /**
+         * @brief Compute the cost function. V(x) = E_q(\phi(x)) using the current values.
+         * 
+         * @return cost value 
+         */
+        double cost_value();
 
 
         /**
@@ -163,7 +207,7 @@ namespace vimp{
          * 
          * @return VectorXd Pk.T * (par V / par mu)
          */
-        inline VectorXd joint_Vdmu() const { return _Pk.transpose() * _Vdmu;}
+        inline VectorXd joint_Vdmu() const { return _Pk.transpose() * _Vdmu; }
 
 
         /**
@@ -171,7 +215,7 @@ namespace vimp{
          * 
          * @return MatrixXd Pk.T * V^2 / dmu /dmu * Pk
          */
-        inline MatrixXd joint_Vddmu() const { return _Pk.transpose().eval() * _Vddmu * _Pk;}
+        inline MatrixXd joint_Vddmu() const { return _Pk.transpose().eval() * _Vddmu * _Pk; }
 
 
         /**
@@ -180,13 +224,6 @@ namespace vimp{
          * @return MatrixXd Pk
          */
         inline MatrixXd Pk() const { return _Pk; }
-
-
-        /**
-         * @brief One step in the optimization.
-         * @return true: success.
-         */
-        bool step();
 
 
         /**
@@ -211,6 +248,7 @@ namespace vimp{
          * @return MatrixXd 
          */
         inline MatrixXd covariance() const{ return _precision.inverse();}
+
 
     };
 }

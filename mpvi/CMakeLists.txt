@@ -79,8 +79,8 @@ target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} $
 add_executable(test_prior_pR src/test_conv_prior_pR.cpp)
 target_link_libraries(test_prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
-add_executable(test_prior_gp_inter_pR src/test_prior_gp_inter_pR.cpp)
-target_link_libraries(test_prior_gp_inter_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+add_executable(test_conv_prior_col_pR_gp_inter src/test_conv_prior_col_pR_gp_inter.cpp)
+target_link_libraries(test_conv_prior_col_pR_gp_inter ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 
 # # python wrapper

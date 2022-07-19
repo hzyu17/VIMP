@@ -18,13 +18,30 @@
 using namespace Eigen;
 
 namespace vimp{
+
+    class GPInterLinearExtend:public gpmp2::GaussianProcessPriorLinear{
+        public: 
+            GPInterLinearExtend(gtsam::Key poseKey1, gtsam::Key velKey1,
+                                gtsam::Key poseKey2, gtsam::Key velKey2,
+                                double delta_t, const gtsam::SharedNoiseModel Qc_model):
+                                inv_Qc_{gpmp2::calcQ_inv(Qc_model, delta_t)},
+                gpmp2::GaussianProcessPriorLinear(poseKey1, velKey1, poseKey2, velKey2, delta_t, Qc_model)
+            {}
+            MatrixXd inv_Qc(){
+                return inv_Qc_;
+            }
+
+        private:
+            MatrixXd inv_Qc_;
+    };
+
     template<class ROBOT, class GPINTER>
-    using FunctionPriorColGPInter = std::function<double(const VectorXd&, const gpmp2::GaussianProcessPriorLinear&, 
+    using FunctionPriorColGPInter = std::function<double(const VectorXd&, GPInterLinearExtend&, 
                                      const gpmp2::ObstacleSDFFactorGP<ROBOT, GPINTER>&)>;
 
     template<class ROBOT, class GPINTER>
     using OptFactPriColGHGPInter = VIMPOptimizerFactorizedTwoClassGH<FunctionPriorColGPInter<ROBOT, GPINTER>, 
-                                                                gpmp2::GaussianProcessPriorLinear, 
+                                                                GPInterLinearExtend, 
                                                                 gpmp2::ObstacleSDFFactorGP<ROBOT, GPINTER>>;
 
 }

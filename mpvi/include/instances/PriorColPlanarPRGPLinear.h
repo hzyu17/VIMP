@@ -1,5 +1,5 @@
 /**
- * @file PriorColGPLinearPlanarPR.h
+ * @file PriorColPlanarPRGPLinear.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Joint optimizer for planar point robot with GP interpolated 
  * prior and collision factors.
@@ -13,6 +13,7 @@
 #include "PriorColGPInter.h"
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gpmp2/gp/GaussianProcessInterpolatorLinear.h>
+
 
 namespace vimp{
 

@@ -28,13 +28,13 @@ using namespace vimp;
  * @param obstacle_factor the collision class
  * @return double 
  */
-double errorWrapperPriorCol(const VectorXd& pose, const UnaryFactorTranslation2D& prior_factor,
+double errorWrapperPriorCol(const VectorXd& pose, 
+                            const UnaryFactorTranslation2D& prior_factor,
                             const ObstaclePlanarSDFFactorPR& collision_factor) {
 
     /**
      * Prior factor
      * */
-
     VectorXd vec_prior_err = prior_factor.evaluateError(pose);
     MatrixXd Qc = prior_factor.get_Qc();
     double prior_err = vec_prior_err.transpose() * Qc.inverse() * vec_prior_err;
@@ -87,7 +87,7 @@ int main(){
     double epsilon = 1.0;
 
     /// 2D point robot
-    int n_total_states = 3, N = n_total_states - 1;
+    int n_total_states = 20, N = n_total_states - 1;
 
     /// parameters
     const int ndof = 2, nlinks = 1;
@@ -104,7 +104,7 @@ int main(){
     PointRobotModel pRModel(pR, body_spheres);
 
     /// start and goal
-    double start_x = 1.0, start_y = 1.5, goal_x = 5.5, goal_y = 3.5;
+    double start_x = 1.0, start_y = 1.5, goal_x = 5.5, goal_y = 4.5;
     VectorXd start_theta(dim_theta);
     start_theta << start_x, start_y, 0, 0;
     VectorXd goal_theta(dim_theta);

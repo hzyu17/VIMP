@@ -1,5 +1,5 @@
 /**
- * @file test_prior_gp_inter_pR.cpp
+ * @file test_conv_prior_col_pR_gp_inter.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Test prior + collision cost only on supported states, 
  * for a planar robot and GP linear interpolations.
@@ -10,7 +10,7 @@
  * 
  */
 
-#include "../include/OptimizerPriorColGPLinearPlanarPR.h"
+#include "../include/instances/PriorColPlanarPRGPLinear.h"
 #include <gtsam/inference/Symbol.h>
 #include "../include/helpers/data_io.h"
 #include <gpmp2/gp/GPutils.h>
@@ -30,7 +30,7 @@ using namespace vimp;
  * @return double 
  */
 double errorWrapperPriorColGPLinaer(const VectorXd& joint_theta, 
-                                    const GaussianProcessPriorLinear& prior_factor,
+                                    const GPInterLinearExtend& prior_factor,
                                     const ObstacleFactorGPInterLinPR& collision_factor) {
 
     /**
@@ -38,23 +38,23 @@ double errorWrapperPriorColGPLinaer(const VectorXd& joint_theta,
      * 
      */
     
-    int tmp = theta.size() / 4;
+    int tmp = prior_factor.dim();
     const int dim_conf = tmp;
 
     // int dim_conf = collision_factor.robot_.dof() * collision_factor.robot_.nr_links();
     /// TODO: try to write a class which can return the robot model in the obstacle class.
 
-    VectorXd pose1 = joint_theta.segment<dim_conf>(0);
-    VectorXd vel1 = joint_theta.segment<dim_conf>(dim_conf);
-    VectorXd pose2 = joint_theta.segment<dim_conf>(2*dim_conf);
-    VectorXd vel2 = joint_theta.segment<dim_conf>(3*dim_conf);
+    VectorXd pose1 = joint_theta.segment(0, dim_conf);
+    VectorXd vel1 = joint_theta.segment(dim_conf, dim_conf);
+    VectorXd pose2 = joint_theta.segment(2*dim_conf, dim_conf);
+    VectorXd vel2 = joint_theta.segment(3*dim_conf, dim_conf);
     
     /**
      * Prior factor
      * */
     VectorXd vec_prior_err = prior_factor.evaluateError(pose1, vel1, pose2, vel2);
     MatrixXd Qc = gpmp2::getQc(prior_factor.get_noiseModel());
-    MatrixXd invQ = gpmp2::calcQ_inv(Qc);
+    MatrixXd invQ = prior_factor.inv_Qc();
     double prior_err = vec_prior_err.transpose() * invQ * vec_prior_err;
 
     /**
@@ -146,9 +146,11 @@ int main(){
         joint_init_theta.segment<dim_theta>(i*dim_theta) = std::move(theta);
 
         /// Pk matrices
-        MatrixXd Pk{MatrixXd::Zero(dim_conf, ndim)};
-        Pk.block<dim_conf, dim_conf>(0, i * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
+        MatrixXd Pk{MatrixXd::Zero(2 * dim_theta, ndim)};
+        Pk.block<2*dim_theta, 2*dim_theta>(0, 2*i * dim_theta) = MatrixXd::Identity(2*dim_theta, 2*dim_theta);
         
+        cout << "Pk" << endl << Pk;
+
         /// prior
         GaussianProcessPriorLinear prior_k{gtsam::symbol('x', i), gtsam::symbol('v', i),
                                            gtsam::symbol('x', i+1), gtsam::symbol('v', i+1), 
@@ -167,13 +169,14 @@ int main(){
                                                 Qc_model,
                                                 delta_t,
                                                 tau};
+            /// Factored optimizer
+            std::shared_ptr<OptFactPriColGHGPInterLinPR> pOptimizer(new OptFactPriColGHGPInterLinPR{dim_conf, errorWrapperPriorColGPLinaer, prior_k, collision_k, Pk});
+            vec_factor_opts.emplace_back(pOptimizer);
         }
 
         
 
-        /// Factored optimizer
-        std::shared_ptr<OptFactPriColGHGPInterLinPR> pOptimizer(new OptFactPriColGHGPInterLinPR{dim_conf, errorWrapperPriorColGPLinaer, prior_k, collision_k, Pk});
-        vec_factor_opts.emplace_back(pOptimizer);
+        
 
     }
 

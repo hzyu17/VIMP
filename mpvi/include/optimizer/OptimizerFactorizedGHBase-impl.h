@@ -21,8 +21,8 @@ namespace vimp{
         this->_Vddmu.setZero();
 
         // GH approximation
-        update_covariance();
-        updateGH();
+        this->update_covariance();
+        this->updateGH();
 
         /// Integrate for this->_Vdmu 
         this->_gauss_hermite.update_integrand(_func_Vmu);
@@ -105,6 +105,29 @@ namespace vimp{
 
         return true;
 
+    }
+
+    /**
+     * @brief Compute the cost function. V(x) = E_q(\phi(x))
+     */
+    double VIMPOptimizerFactorizedBase::cost_value(const VectorXd& x, const MatrixXd& Cov) {
+        assert(this->_dim == x.size());
+        assert(this->_dim == Cov.rows());
+        assert(this->_dim == Cov.cols());
+
+        updateGH(x, Cov);
+        this->_gauss_hermite.update_integrand(this->_func_phi);
+
+        return this->_gauss_hermite.Integrate()(0, 0);
+    }
+
+    /**
+     * @brief Compute the cost function. V(x) = E_q(\phi(x)) using the current values.
+     */
+    double VIMPOptimizerFactorizedBase::cost_value() {
+        this->updateGH();
+        this->_gauss_hermite.update_integrand(this->_func_phi);
+        return this->_gauss_hermite.Integrate()(0, 0);
     }
 
 }

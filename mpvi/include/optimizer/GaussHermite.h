@@ -80,15 +80,21 @@ public:
     /**
      * Update member variables
      * */
-    inline void update_mean(const VectorXd& mean){ _mean = mean; }
+    inline void update_mean(const VectorXd& mean){ assert(_mean.size()== mean.size()); _mean = mean; }
 
-    inline void update_P(const MatrixXd& P){ _P = P; }
+    inline void update_P(const MatrixXd& P){ assert(_P.size()==P.size()); _P = P; }
 
     inline void set_polynomial_deg(const int& p){ _deg = p; }
 
     inline void update_integrand(const Function& fun){ _f = fun; }
 
     inline void update_dimension(const int& dim){ _dim = dim; }
+
+    inline VectorXd mean() const{ return _mean; }
+
+    inline MatrixXd cov() const{ return _P; }
+
+    inline MatrixXd f(const VectorXd& x){return _f(x);}
 
 private:
     int _deg;

@@ -95,7 +95,6 @@ public:
             auto &optimizer_k = vec_factor_optimizers_[k];
 
             optimizer_k.updateSamplerMean(VectorXd{Pk * mu_});
-
             optimizer_k.updateSamplerCovarianceMatrix(MatrixXd{Pk * Sigma * Pk.transpose()});
 
             optimizer_k.update_mu(VectorXd{Pk*mu_});

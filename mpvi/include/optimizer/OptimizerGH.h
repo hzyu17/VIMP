@@ -15,6 +15,7 @@
 #include <memory>
 #include "SparseInverseMatrix.h"
 #include "../helpers/result_recorder.h"
+#include <assert.h>
 
 //using namespace GaussianSampler;
 using namespace std;
@@ -37,12 +38,12 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    VIMPOptimizerGH(const vector<std::shared_ptr<FactorizedOptimizer>>& _vec_fact_optimizers, int niters=10):
-                                   _dim{_vec_fact_optimizers[0]->Pk().cols()},
+    VIMPOptimizerGH(const vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int niters=10):
+                                   _dim{vec_fact_optimizers[0]->Pk().cols()},
                                    _niters{niters},
-                                   _sub_dim{_vec_fact_optimizers[0]->Pk().rows()},
-                                   _nsub_vars{_vec_fact_optimizers.size()},
-                                   _vec_factor_optimizers{std::move(_vec_fact_optimizers)},
+                                   _sub_dim{vec_fact_optimizers[0]->Pk().rows()},
+                                   _nsub_vars{vec_fact_optimizers.size()},
+                                   _vec_factor_optimizers{std::move(vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
                                    _precision{MatrixXd::Identity(_dim, _dim) * 5.0},
                                    _inverser{MatrixXd::Identity(_dim, _dim)},
@@ -90,6 +91,22 @@ public:
      */
     void optimize();
 
+    /**
+     * @brief Compute the total cost function value given a state.
+     * 
+     * @param x input vector.
+     * @param P input Covariance
+     * @return cost value.
+     */
+    double cost_value(const VectorXd& x, const MatrixXd& P);
+
+    /**
+     * @brief Compute the total cost function value given a state, using current values.
+     * 
+     * @return cost value.
+     */
+    double cost_value();
+
 
 /// **************************************************************
 /// Internal data IO
@@ -101,6 +118,26 @@ public:
 
     /// returns the covariance matrix
     inline MatrixXd covariance(){ return _inverser.inverse(); }
+
+    /**
+     * @brief Purturb the mean by a random vector.
+     * 
+     * @param scale 
+     * @return purturbed mean vector
+     */
+    inline VectorXd purturb_mean(double scale=0.1) const{
+        return VectorXd{_mu + VectorXd::Random(_dim) * scale};
+    }
+
+    /**
+     * @brief Purturb the precision by a random matrix.
+     * 
+     * @param scale 
+     * @return purturbed precision matrix
+     */
+    inline MatrixXd purturb_precision(double scale=0.1) const{
+        return MatrixXd{_precision + MatrixXd::Random(_dim, _dim) * scale};
+    }   
 
     /// update the step sizes
     /// @param ss_mean new step size for the mean update
@@ -114,6 +151,12 @@ public:
     inline void set_mu(const VectorXd& mean){
         assert(mean.size() == _mu.size());
         _mu = mean; }
+
+    /// assign a precision matrix
+    /// @param mean new mean
+    inline void set_precision(const MatrixXd& new_precision){
+        assert(new_precision.size() == _precision.size());
+        _precision = new_precision;}
 
     /**
      * @brief set number of iterations
@@ -163,10 +206,12 @@ public:
         );
 
     }
+
+    inline int dim() const{
+        return _dim;
+    }
     
 
 };
 
 }
-
-// #include "OptimizerGH-impl.h"
