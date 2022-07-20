@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC  -std=c++11 -Wall -g -g -fno-inline -DEIGEN_INITIALIZE_MATRICES_BY_NAN  -shared -Wl,-soname,libFactorizedOptimizerGaussHermiteDebug.so -o libFactorizedOptimizerGaussHermiteDebug.so  
