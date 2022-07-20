@@ -1,8 +1,8 @@
 .idea/*
 build/*
 .vscode/*
-mpvi/latex/*
-mpvi/html/*
-mpvi/doxygen/*
-mpvi/build/*
-mpvi/.vscode/*
+vimp/latex/*
+vimp/html/*
+vimp/doxygen/*
+vimp/build/*
+vimp/.vscode/*
