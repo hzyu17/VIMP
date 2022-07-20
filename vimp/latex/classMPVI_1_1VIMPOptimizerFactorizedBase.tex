@@ -1,0 +1,192 @@
+\hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase}{}\doxysection{MPVI\+::VIMPOptimizer\+Factorized\+Base Class Reference}
+\label{classMPVI_1_1VIMPOptimizerFactorizedBase}\index{MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}}
+Inheritance diagram for MPVI\+::VIMPOptimizer\+Factorized\+Base\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.159420cm]{classMPVI_1_1VIMPOptimizerFactorizedBase}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}} = std\+::function$<$ Matrix\+Xd(const Vector\+Xd \&)$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_aca23d8f72ca0466cb8ad0e4e1897ea33}{VIMPOptimizer\+Factorized\+Base}} (const int \&dimension, const Matrix\+Xd \&Pk\+\_\+)
+\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a4025c3ba9e14d9f6b5e7711d7bf77749}{update\+GH}} ()
+\begin{DoxyCompactList}\small\item\em public functions \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_ad298e102cba03a1733e6b41b9468cc5e}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_ad298e102cba03a1733e6b41b9468cc5e}} 
+void {\bfseries update\+\_\+\+GH\+\_\+mean} ()
+\begin{DoxyCompactList}\small\item\em Update the mean and variance in the Gauss-\/\+Hermite approximator. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_ac716cb956d1f5ea9619332b53cc8217d}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_ac716cb956d1f5ea9619332b53cc8217d}} 
+void {\bfseries update\+\_\+\+GH\+\_\+covariance} ()
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_ac2e0453c06eedfd98f372b6ad20ac5f6}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_ac2e0453c06eedfd98f372b6ad20ac5f6}} 
+void {\bfseries set\+\_\+step\+\_\+size} (double ss\+\_\+mean, double ss\+\_\+precision)
+\begin{DoxyCompactList}\small\item\em Update the step size. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a7f868ba166350f1f62dcf6331f2fe32f}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a7f868ba166350f1f62dcf6331f2fe32f}} 
+void {\bfseries update\+\_\+mu} (const Vector\+Xd \&new\+\_\+mu)
+\begin{DoxyCompactList}\small\item\em Update the parameters\+: mean, covariance, and precision matrix. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_aa4fc6ae402c48ddd24a670a3a59323c5}{update\+\_\+precision\+\_\+from\+\_\+joint\+\_\+covariance}} (const Matrix\+Xd \&joint\+\_\+covariance)
+\begin{DoxyCompactList}\small\item\em Update the marginal precision matrix using joint COVARIANCE matrix and mapping matrix Pk. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a0998a60d5911bccd33ff4d32e87f7e7a}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a0998a60d5911bccd33ff4d32e87f7e7a}} 
+void {\bfseries update\+\_\+covariance} ()
+\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a3cce57b00dda4cc28a64d24eee3a7eb4}{calculate\+\_\+partial\+\_\+V}} ()
+\begin{DoxyCompactList}\small\item\em Main function calculating phi $\ast$ (partial V) / (partial mu), and phi $\ast$ (partial V$^\wedge$2) / (partial mu $\ast$ partial mu$^\wedge$T) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a9abbf8608f53bfd71239f14687765cc0}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a9abbf8608f53bfd71239f14687765cc0}} 
+void {\bfseries calculate\+\_\+exact\+\_\+partial\+\_\+V} (Vector\+Xd mu\+\_\+t, Matrix\+Xd covariance\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Gaussian posterior\+: closed-\/form expression. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_ad3062883c8144cc4fd80e9dce0043336}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_ad3062883c8144cc4fd80e9dce0043336}} 
+Matrix\+Xd {\bfseries get\+\_\+\+Vddmu} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a38fc519d7b5d56588119f84e83c4c1c8}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a38fc519d7b5d56588119f84e83c4c1c8}} 
+Vector\+Xd {\bfseries get\+\_\+\+Vdmu} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_ab041e2a4425814a9b4fb6b174d9700d2}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_ab041e2a4425814a9b4fb6b174d9700d2}} 
+Vector\+Xd {\bfseries get\+\_\+joint\+\_\+\+Vdmu} () const
+\begin{DoxyCompactList}\small\item\em return the joint incremental mean after the mapping Pk from marginals. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a9095aac8a7bc0ab90c05468cc8b2546c}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a9095aac8a7bc0ab90c05468cc8b2546c}} 
+Matrix\+Xd {\bfseries get\+\_\+joint\+\_\+\+Vddmu} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a946df740ed5e21e057743e3cdce6e9d5}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a946df740ed5e21e057743e3cdce6e9d5}} 
+Matrix\+Xd {\bfseries Pk} () const
+\item 
+bool \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_afa506c869ed3e75e17e862af38d2aa59}{step}} ()
+\begin{DoxyCompactList}\small\item\em One step in the optimization. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_af8a24b5349a851ff0a53ddd600f13bdd}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_af8a24b5349a851ff0a53ddd600f13bdd}} 
+Vector\+Xd {\bfseries get\+\_\+mean} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a63d0a9d5eccaf8404a10bf7fbb74eef1}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a63d0a9d5eccaf8404a10bf7fbb74eef1}} 
+Matrix\+Xd {\bfseries get\+\_\+precision} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a01d1837b3adb0cf3be05e9e959e2668a}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a01d1837b3adb0cf3be05e9e959e2668a}} 
+Matrix\+Xd {\bfseries get\+\_\+covariance} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_ae21435b4aa8837fca1c6ee15a9221144}{\+\_\+dim}}
+\begin{DoxyCompactList}\small\item\em Public members for the inherited classes access. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a6b46df775505167e315b45e427c6d525}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a6b46df775505167e315b45e427c6d525}} 
+Vector\+Xd {\bfseries \+\_\+mu}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a2fc5fb087b56572dc7e5d3ef27dfeb01}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a2fc5fb087b56572dc7e5d3ef27dfeb01}} 
+Matrix\+Xd {\bfseries \+\_\+covariance}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a2b5bc8e926c50ee16298c6a944d7b7cb}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a2b5bc8e926c50ee16298c6a944d7b7cb}} 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}} {\bfseries \+\_\+func\+\_\+phi} = \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}}()
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a0346fda191fab82d2355865a0f48174b}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a0346fda191fab82d2355865a0f48174b}} 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}} {\bfseries \+\_\+func\+\_\+\+Vmu} = \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}}()
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a25f2b1304662fb6d69a3ff585dc71368}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a25f2b1304662fb6d69a3ff585dc71368}} 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}} {\bfseries \+\_\+func\+\_\+\+Vmumu} = \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}}()
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a99963d9d5683f79acb4fbebcd5324cca}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a99963d9d5683f79acb4fbebcd5324cca}} 
+Gauss\+Hermite$<$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}} $>$ {\bfseries \+\_\+gauss\+\_\+hermite} = Gauss\+Hermite$<$\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{GHFunction}}$>$()
+\begin{DoxyCompactList}\small\item\em G-\/H quadrature class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}} 
+\index{MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}!GHFunction@{GHFunction}}
+\index{GHFunction@{GHFunction}!MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}}
+\doxysubsubsection{\texorpdfstring{GHFunction}{GHFunction}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase_a02ddf24d2469cb0a46a79906c14eff99}{MPVI\+::\+VIMPOptimizer\+Factorized\+Base\+::\+GHFunction}} =  std\+::function$<$Matrix\+Xd(const Vector\+Xd\&)$>$}
+
+Intermediate functions for Gauss-\/\+Hermite quadratures, default definition, needed to be overrided by the derived classes. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_aca23d8f72ca0466cb8ad0e4e1897ea33}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_aca23d8f72ca0466cb8ad0e4e1897ea33}} 
+\index{MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}!VIMPOptimizerFactorizedBase@{VIMPOptimizerFactorizedBase}}
+\index{VIMPOptimizerFactorizedBase@{VIMPOptimizerFactorizedBase}!MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}}
+\doxysubsubsection{\texorpdfstring{VIMPOptimizerFactorizedBase()}{VIMPOptimizerFactorizedBase()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedBase}{MPVI\+::\+VIMPOptimizer\+Factorized\+Base\+::\+VIMPOptimizer\+Factorized\+Base}} (\begin{DoxyParamCaption}\item[{const int \&}]{dimension,  }\item[{const Matrix\+Xd \&}]{Pk\+\_\+ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & The dimension of the state \\
+\hline
+{\em function\+\_\+} & Template function class which calculate the cost \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a3cce57b00dda4cc28a64d24eee3a7eb4}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a3cce57b00dda4cc28a64d24eee3a7eb4}} 
+\index{MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}!calculate\_partial\_V@{calculate\_partial\_V}}
+\index{calculate\_partial\_V@{calculate\_partial\_V}!MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}}
+\doxysubsubsection{\texorpdfstring{calculate\_partial\_V()}{calculate\_partial\_V()}}
+{\footnotesize\ttfamily void MPVI\+::\+VIMPOptimizer\+Factorized\+Base\+::calculate\+\_\+partial\+\_\+V (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Main function calculating phi $\ast$ (partial V) / (partial mu), and phi $\ast$ (partial V$^\wedge$2) / (partial mu $\ast$ partial mu$^\wedge$T) 
+
+\begin{DoxyReturn}{Returns}
+$\ast$ void 
+\end{DoxyReturn}
+Integrate for \+\_\+\+Vdmu
+
+Integrate for phi(x)
+
+Integrate for partial V$^\wedge$2 / ddmu\+\_\+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_afa506c869ed3e75e17e862af38d2aa59}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_afa506c869ed3e75e17e862af38d2aa59}} 
+\index{MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}!step@{step}}
+\index{step@{step}!MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}}
+\doxysubsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily bool MPVI\+::\+VIMPOptimizer\+Factorized\+Base\+::step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+One step in the optimization. 
+
+\begin{DoxyReturn}{Returns}
+true\+: success. 
+\end{DoxyReturn}
+without backtracking\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_aa4fc6ae402c48ddd24a670a3a59323c5}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_aa4fc6ae402c48ddd24a670a3a59323c5}} 
+\index{MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}!update\_precision\_from\_joint\_covariance@{update\_precision\_from\_joint\_covariance}}
+\index{update\_precision\_from\_joint\_covariance@{update\_precision\_from\_joint\_covariance}!MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}}
+\doxysubsubsection{\texorpdfstring{update\_precision\_from\_joint\_covariance()}{update\_precision\_from\_joint\_covariance()}}
+{\footnotesize\ttfamily void MPVI\+::\+VIMPOptimizer\+Factorized\+Base\+::update\+\_\+precision\+\_\+from\+\_\+joint\+\_\+covariance (\begin{DoxyParamCaption}\item[{const Matrix\+Xd \&}]{joint\+\_\+covariance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Update the marginal precision matrix using joint COVARIANCE matrix and mapping matrix Pk. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em joint\+\_\+covariance} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_a4025c3ba9e14d9f6b5e7711d7bf77749}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_a4025c3ba9e14d9f6b5e7711d7bf77749}} 
+\index{MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}!updateGH@{updateGH}}
+\index{updateGH@{updateGH}!MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}}
+\doxysubsubsection{\texorpdfstring{updateGH()}{updateGH()}}
+{\footnotesize\ttfamily void MPVI\+::\+VIMPOptimizer\+Factorized\+Base\+::update\+GH (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+public functions 
+
+update the GH approximator 
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedBase_ae21435b4aa8837fca1c6ee15a9221144}\label{classMPVI_1_1VIMPOptimizerFactorizedBase_ae21435b4aa8837fca1c6ee15a9221144}} 
+\index{MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}!\_dim@{\_dim}}
+\index{\_dim@{\_dim}!MPVI::VIMPOptimizerFactorizedBase@{MPVI::VIMPOptimizerFactorizedBase}}
+\doxysubsubsection{\texorpdfstring{\_dim}{\_dim}}
+{\footnotesize\ttfamily int MPVI\+::\+VIMPOptimizer\+Factorized\+Base\+::\+\_\+dim}
+
+
+
+Public members for the inherited classes access. 
+
+dimension 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/Optimizer\+Factorized\+GHBase.\+h\end{DoxyCompactItemize}

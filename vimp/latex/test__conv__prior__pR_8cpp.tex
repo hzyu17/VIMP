@@ -1,0 +1,85 @@
+\hypertarget{test__conv__prior__pR_8cpp}{}\doxysection{src/test\+\_\+conv\+\_\+prior\+\_\+pR.cpp File Reference}
+\label{test__conv__prior__pR_8cpp}\index{src/test\_conv\_prior\_pR.cpp@{src/test\_conv\_prior\_pR.cpp}}
+{\ttfamily \#include \char`\"{}../include/\+Optimizer\+Prior\+Planar\+PR.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$gtsam/inference/\+Symbol.\+h$>$}\newline
+{\ttfamily \#include $<$gpmp2/obstacle/\+Obstacle\+Planar\+SDFFactor\+Point\+Robot.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{test__conv__prior__pR_8cpp_a22e22d8af8fbb60ec8f2534436b16cb6}{error\+Wrapper\+Prior}} (const Vector\+Xd \&theta, const \mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&prior\+\_\+factor)
+\begin{DoxyCompactList}\small\item\em Description\+: Test the convergence of the algorithm with only a prior cost, for a planar robot. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{test__conv__prior__pR_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Hongzhe Yu (\href{mailto:hyu419@gatech.edu}{\texttt{ hyu419@gatech.\+edu}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2022-\/07-\/12
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2022 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{test__conv__prior__pR_8cpp_a22e22d8af8fbb60ec8f2534436b16cb6}\label{test__conv__prior__pR_8cpp_a22e22d8af8fbb60ec8f2534436b16cb6}} 
+\index{test\_conv\_prior\_pR.cpp@{test\_conv\_prior\_pR.cpp}!errorWrapperPrior@{errorWrapperPrior}}
+\index{errorWrapperPrior@{errorWrapperPrior}!test\_conv\_prior\_pR.cpp@{test\_conv\_prior\_pR.cpp}}
+\doxysubsubsection{\texorpdfstring{errorWrapperPrior()}{errorWrapperPrior()}}
+{\footnotesize\ttfamily double error\+Wrapper\+Prior (\begin{DoxyParamCaption}\item[{const Vector\+Xd \&}]{theta,  }\item[{const \mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&}]{prior\+\_\+factor }\end{DoxyParamCaption})}
+
+
+
+Description\+: Test the convergence of the algorithm with only a prior cost, for a planar robot. 
+
+-\/log(p(x,z)) for prior factor
+
+
+\begin{DoxyParams}{Parameters}
+{\em theta} & the input vector \\
+\hline
+{\em prior\+\_\+factor} & the prior class \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+double 
+\end{DoxyReturn}
+TODO\+: verify the sign is + or -\/ here\mbox{\Hypertarget{test__conv__prior__pR_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{test__conv__prior__pR_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{test\_conv\_prior\_pR.cpp@{test\_conv\_prior\_pR.cpp}!main@{main}}
+\index{main@{main}!test\_conv\_prior\_pR.cpp@{test\_conv\_prior\_pR.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+2D point robot
+
+parameters
+
+Robot model
+
+start and goal
+
+factored optimizers\+: containing 2 types\+:
+\begin{DoxyEnumerate}
+\item the single factor of priors for start and goal states;
+\item the prior + collision factors for supported states.
+\end{DoxyEnumerate}
+
+Noise models
+
+Vector of factored optimizers
+
+Pk matrices
+
+unary factor
+
+Factored optimizer
+
+The joint optimizer
+
+Update steps

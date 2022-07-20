@@ -1,0 +1,234 @@
+\hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{}\doxysection{MPVI\+::VIMPOptimizer\+Factorized\+Gauss\+Hermite\texorpdfstring{$<$}{<} Function, Cost\+Class \texorpdfstring{$>$}{>} Class Template Reference}
+\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}\index{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}}
+Inheritance diagram for MPVI\+::VIMPOptimizer\+Factorized\+Gauss\+Hermite\texorpdfstring{$<$}{<} Function, Cost\+Class \texorpdfstring{$>$}{>}\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a339f68af8865e7b69634ede2b2a95b9b}{VIMPOptimizer\+Factorized\+Gauss\+Hermite}} (const int \&dimension, const Function \&function\+\_\+, const Cost\+Class \&cost\+\_\+class\+\_\+, const Matrix\+Xd \&Pk\+\_\+)
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a6760a6a4d758c3b999006cf12c3e7507}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a6760a6a4d758c3b999006cf12c3e7507}} 
+void {\bfseries update\+GH} ()
+\begin{DoxyCompactList}\small\item\em update the GH approximator \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a8d72bac40a85cf3027c892cc3cc52422}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a8d72bac40a85cf3027c892cc3cc52422}} 
+void {\bfseries update\+GHfunc} (const \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aa48c862663ad9d7666dfa1a15af8a55f}{GHFunction}} \&func)
+\begin{DoxyCompactList}\small\item\em Update the cost function. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a7445ed6e0b1e6c271d789ec6b9ced4ef}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a7445ed6e0b1e6c271d789ec6b9ced4ef}} 
+void {\bfseries set\+\_\+step\+\_\+size} (double ss\+\_\+mean, double ss\+\_\+precision)
+\begin{DoxyCompactList}\small\item\em Update the step size. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a07e6408fe33c2b6c9c1a0ec01a9beaa4}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a07e6408fe33c2b6c9c1a0ec01a9beaa4}} 
+void {\bfseries update\+\_\+mu} (const Vector\+Xd \&new\+\_\+mu)
+\begin{DoxyCompactList}\small\item\em Update the parameters\+: mean, covariance, and precision matrix. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a19900938e43cc05e41dc84a545aa1d8c}{update\+\_\+precision\+\_\+from\+\_\+joint\+\_\+covariance}} (const Matrix\+Xd \&joint\+\_\+covariance)
+\begin{DoxyCompactList}\small\item\em Update the marginal precision matrix using joint COVARIANCE matrix and mapping matrix Pk. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a9f8e901068ddd7f1d29d1b73c7a46a38}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a9f8e901068ddd7f1d29d1b73c7a46a38}} 
+void {\bfseries update\+\_\+covariance} ()
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_af086aa09bde98cdf928a610d61897dbf}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_af086aa09bde98cdf928a610d61897dbf}} 
+void {\bfseries update\+\_\+\+GH\+\_\+mean} ()
+\begin{DoxyCompactList}\small\item\em Update the mean and variance in the Gauss-\/\+Hermite approximator. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a21055330738ba221fc883a316d597ed4}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a21055330738ba221fc883a316d597ed4}} 
+void {\bfseries update\+\_\+\+GH\+\_\+covariance} ()
+\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a75704fb30075b1454da0332e57dcec91}{calculate\+\_\+partial\+\_\+V}} ()
+\begin{DoxyCompactList}\small\item\em Main function calculating phi $\ast$ (partial V) / (partial mu), and phi $\ast$ (partial V$^\wedge$2) / (partial mu $\ast$ partial mu$^\wedge$T) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_af847e3c7db526c00ae8345856c13b25a}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_af847e3c7db526c00ae8345856c13b25a}} 
+void {\bfseries calculate\+\_\+exact\+\_\+partial\+\_\+V} (Vector\+Xd mu\+\_\+t, Matrix\+Xd covariance\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Gaussian posterior\+: closed-\/form expression. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a27a692847c569651413341da7a353033}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a27a692847c569651413341da7a353033}} 
+Matrix\+Xd {\bfseries get\+\_\+\+Vddmu} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a6c8b72f9879bbf5ee7dc76713bc09b5c}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a6c8b72f9879bbf5ee7dc76713bc09b5c}} 
+Vector\+Xd {\bfseries get\+\_\+\+Vdmu} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a2392d3aa63e7998e289ac82e389bb48e}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a2392d3aa63e7998e289ac82e389bb48e}} 
+Vector\+Xd {\bfseries get\+\_\+joint\+\_\+\+Vdmu} () const
+\begin{DoxyCompactList}\small\item\em return the joint incremental mean after the mapping Pk from marginals. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a36e31db77cafce8c52c0e32a4a02fbfb}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a36e31db77cafce8c52c0e32a4a02fbfb}} 
+Matrix\+Xd {\bfseries get\+\_\+joint\+\_\+\+Vddmu} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ae3740f592a876cb8acfaa5f59454a732}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ae3740f592a876cb8acfaa5f59454a732}} 
+Matrix\+Xd {\bfseries Pk} () const
+\item 
+bool \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a61df46a10111aa504d08c07aeadcc5b4}{step}} ()
+\begin{DoxyCompactList}\small\item\em One step in the optimization. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ac01166268e808b2b276a7c83c4c0e8bd}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ac01166268e808b2b276a7c83c4c0e8bd}} 
+Vector\+Xd {\bfseries get\+\_\+mean} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aaa13003acdddb4ed2a3d2595af68c8ec}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aaa13003acdddb4ed2a3d2595af68c8ec}} 
+Matrix\+Xd {\bfseries get\+\_\+precision} () const
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a1e0f71a7feca5f0f20ecfc2bd753ff39}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a1e0f71a7feca5f0f20ecfc2bd753ff39}} 
+Matrix\+Xd {\bfseries get\+\_\+covariance} () const
+\item 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a339f68af8865e7b69634ede2b2a95b9b}{VIMPOptimizer\+Factorized\+Gauss\+Hermite}} (const int \&dimension, const Function \&function\+\_\+, const Cost\+Class \&cost\+\_\+class\+\_\+, const Matrix\+Xd \&Pk\+\_\+)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ae2a71c7b5a1182a32b1eff169735e707}{\+\_\+dim}}
+\begin{DoxyCompactList}\small\item\em Public members for the inherited classes access. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ad3c1be402ccff1479c5136bc5dbc26bb}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ad3c1be402ccff1479c5136bc5dbc26bb}} 
+Vector\+Xd {\bfseries \+\_\+mu}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a87d26a9ee356ebfb3e707a8eefb1001a}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a87d26a9ee356ebfb3e707a8eefb1001a}} 
+Matrix\+Xd {\bfseries \+\_\+covariance}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_adab56daad2a6924f4fe8c19ac38cf652}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_adab56daad2a6924f4fe8c19ac38cf652}} 
+Cost\+Class {\bfseries \+\_\+cost\+\_\+class}
+\begin{DoxyCompactList}\small\item\em Class of cost sources. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ab505fa40a2578109ad8e94ac35dba941}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ab505fa40a2578109ad8e94ac35dba941}} 
+Function {\bfseries \+\_\+cost\+\_\+function}
+\begin{DoxyCompactList}\small\item\em cost function \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aa48c862663ad9d7666dfa1a15af8a55f}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aa48c862663ad9d7666dfa1a15af8a55f}} 
+using {\bfseries GHFunction} = std\+::function$<$ Matrix\+Xd(const Vector\+Xd \&)$>$
+\begin{DoxyCompactList}\small\item\em Intermediate functions for Gauss-\/\+Hermite quadratures. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a776ee65109b929522012e386dd74a669}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a776ee65109b929522012e386dd74a669}} 
+Vector\+Xd {\bfseries \+\_\+dmu}
+\begin{DoxyCompactList}\small\item\em optimization variables \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ac5e6daf812b3f4803c284da31b01f1c2}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ac5e6daf812b3f4803c284da31b01f1c2}} 
+Matrix\+Xd {\bfseries \+\_\+precision}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a5e8364f1ac702b6a1eb63c013f03e96d}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a5e8364f1ac702b6a1eb63c013f03e96d}} 
+Matrix\+Xd {\bfseries \+\_\+dprecision}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a442e871c9182f3490d655049d86a9777}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a442e871c9182f3490d655049d86a9777}} 
+Vector\+Xd {\bfseries \+\_\+\+Vdmu}
+\begin{DoxyCompactList}\small\item\em intermediate variables in optimization steps \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ac938618707aebd9a7f4f6e8f9787f557}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ac938618707aebd9a7f4f6e8f9787f557}} 
+Matrix\+Xd {\bfseries \+\_\+\+Vddmu}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ae8d93b7f49fac2681ad5d5babf5455ad}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ae8d93b7f49fac2681ad5d5babf5455ad}} 
+double {\bfseries \+\_\+step\+\_\+size\+\_\+mu} = 0.\+9
+\begin{DoxyCompactList}\small\item\em step sizes \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a73c1bb1ddd3449f10b0999937d24226d}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a73c1bb1ddd3449f10b0999937d24226d}} 
+double {\bfseries \+\_\+step\+\_\+size\+\_\+\+Sigma} = 0.\+9
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ab8d587ae3bfa4761c383e75d67a12a9a}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ab8d587ae3bfa4761c383e75d67a12a9a}} 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aa48c862663ad9d7666dfa1a15af8a55f}{GHFunction}} {\bfseries \+\_\+func\+\_\+phi}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a932c6be456b49ac26b9eeed0b86eaa1e}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a932c6be456b49ac26b9eeed0b86eaa1e}} 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aa48c862663ad9d7666dfa1a15af8a55f}{GHFunction}} {\bfseries \+\_\+func\+\_\+\+Vmu}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ad64a1037d3fc7e55582cd8b467ffc334}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ad64a1037d3fc7e55582cd8b467ffc334}} 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aa48c862663ad9d7666dfa1a15af8a55f}{GHFunction}} {\bfseries \+\_\+func\+\_\+\+Vmumu}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ab3e4ce3348523595df6a0409c10eb202}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ab3e4ce3348523595df6a0409c10eb202}} 
+Gauss\+Hermite$<$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_aa48c862663ad9d7666dfa1a15af8a55f}{GHFunction}} $>$ {\bfseries \+\_\+gauss\+\_\+hermite}
+\begin{DoxyCompactList}\small\item\em G-\/H quadrature class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a56b4a83f5a15d505b53b354497a8a3fc}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a56b4a83f5a15d505b53b354497a8a3fc}} 
+Matrix\+Xd {\bfseries \+\_\+\+Pk}
+\begin{DoxyCompactList}\small\item\em Mapping matrix to the joint distribution. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a339f68af8865e7b69634ede2b2a95b9b}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a339f68af8865e7b69634ede2b2a95b9b}} 
+\index{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}!VIMPOptimizerFactorizedGaussHermite@{VIMPOptimizerFactorizedGaussHermite}}
+\index{VIMPOptimizerFactorizedGaussHermite@{VIMPOptimizerFactorizedGaussHermite}!MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}}
+\doxysubsubsection{\texorpdfstring{VIMPOptimizerFactorizedGaussHermite()}{VIMPOptimizerFactorizedGaussHermite()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Function , typename Cost\+Class $>$ \\
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{MPVI\+::\+VIMPOptimizer\+Factorized\+Gauss\+Hermite}}$<$ Function, Cost\+Class $>$\+::\+VIMPOptimizer\+Factorized\+Gauss\+Hermite (\begin{DoxyParamCaption}\item[{const int \&}]{dimension,  }\item[{const Function \&}]{function\+\_\+,  }\item[{const Cost\+Class \&}]{cost\+\_\+class\+\_\+,  }\item[{const Matrix\+Xd \&}]{Pk\+\_\+ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & The dimension of the state \\
+\hline
+{\em function\+\_\+} & Template function class which calculate the cost \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a339f68af8865e7b69634ede2b2a95b9b}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a339f68af8865e7b69634ede2b2a95b9b}} 
+\index{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}!VIMPOptimizerFactorizedGaussHermite@{VIMPOptimizerFactorizedGaussHermite}}
+\index{VIMPOptimizerFactorizedGaussHermite@{VIMPOptimizerFactorizedGaussHermite}!MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}}
+\doxysubsubsection{\texorpdfstring{VIMPOptimizerFactorizedGaussHermite()}{VIMPOptimizerFactorizedGaussHermite()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Function , typename Cost\+Class $>$ \\
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{MPVI\+::\+VIMPOptimizer\+Factorized\+Gauss\+Hermite}}$<$ Function, Cost\+Class $>$\+::\+VIMPOptimizer\+Factorized\+Gauss\+Hermite (\begin{DoxyParamCaption}\item[{const int \&}]{dimension,  }\item[{const Function \&}]{function\+\_\+,  }\item[{const Cost\+Class \&}]{cost\+\_\+class\+\_\+,  }\item[{const Matrix\+Xd \&}]{Pk\+\_\+ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & The dimension of the state \\
+\hline
+{\em function\+\_\+} & Template function class which calculate the cost \\
+\hline
+\end{DoxyParams}
+Override of the base classes.
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a75704fb30075b1454da0332e57dcec91}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a75704fb30075b1454da0332e57dcec91}} 
+\index{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}!calculate\_partial\_V@{calculate\_partial\_V}}
+\index{calculate\_partial\_V@{calculate\_partial\_V}!MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}}
+\doxysubsubsection{\texorpdfstring{calculate\_partial\_V()}{calculate\_partial\_V()}}
+{\footnotesize\ttfamily template$<$typename Function , typename Cost\+Class $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{MPVI\+::\+VIMPOptimizer\+Factorized\+Gauss\+Hermite}}$<$ Function, Cost\+Class $>$\+::calculate\+\_\+partial\+\_\+V (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Main function calculating phi $\ast$ (partial V) / (partial mu), and phi $\ast$ (partial V$^\wedge$2) / (partial mu $\ast$ partial mu$^\wedge$T) 
+
+\begin{DoxyReturn}{Returns}
+$\ast$ void 
+\end{DoxyReturn}
+Integrate for \+\_\+\+Vdmu
+
+Integrate for phi(x)
+
+Integrate for partial V$^\wedge$2 / ddmu\+\_\+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a61df46a10111aa504d08c07aeadcc5b4}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a61df46a10111aa504d08c07aeadcc5b4}} 
+\index{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}!step@{step}}
+\index{step@{step}!MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}}
+\doxysubsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily template$<$typename Function , typename Cost\+Class $>$ \\
+bool \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{MPVI\+::\+VIMPOptimizer\+Factorized\+Gauss\+Hermite}}$<$ Function, Cost\+Class $>$\+::step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+One step in the optimization. 
+
+\begin{DoxyReturn}{Returns}
+true\+: success. 
+\end{DoxyReturn}
+without backtracking\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a19900938e43cc05e41dc84a545aa1d8c}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_a19900938e43cc05e41dc84a545aa1d8c}} 
+\index{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}!update\_precision\_from\_joint\_covariance@{update\_precision\_from\_joint\_covariance}}
+\index{update\_precision\_from\_joint\_covariance@{update\_precision\_from\_joint\_covariance}!MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}}
+\doxysubsubsection{\texorpdfstring{update\_precision\_from\_joint\_covariance()}{update\_precision\_from\_joint\_covariance()}}
+{\footnotesize\ttfamily template$<$typename Function , typename Cost\+Class $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{MPVI\+::\+VIMPOptimizer\+Factorized\+Gauss\+Hermite}}$<$ Function, Cost\+Class $>$\+::update\+\_\+precision\+\_\+from\+\_\+joint\+\_\+covariance (\begin{DoxyParamCaption}\item[{const Matrix\+Xd \&}]{joint\+\_\+covariance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Update the marginal precision matrix using joint COVARIANCE matrix and mapping matrix Pk. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em joint\+\_\+covariance} & \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ae2a71c7b5a1182a32b1eff169735e707}\label{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite_ae2a71c7b5a1182a32b1eff169735e707}} 
+\index{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}!\_dim@{\_dim}}
+\index{\_dim@{\_dim}!MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$@{MPVI::VIMPOptimizerFactorizedGaussHermite$<$ Function, CostClass $>$}}
+\doxysubsubsection{\texorpdfstring{\_dim}{\_dim}}
+{\footnotesize\ttfamily template$<$typename Function , typename Cost\+Class $>$ \\
+int \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerFactorizedGaussHermite}{MPVI\+::\+VIMPOptimizer\+Factorized\+Gauss\+Hermite}}$<$ Function, Cost\+Class $>$\+::\+\_\+dim}
+
+
+
+Public members for the inherited classes access. 
+
+dimension 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/Optimizer\+Factorized\+GH copy.\+h\item 
+include/\mbox{\hyperlink{OptimizerFactorizedGH_8h}{Optimizer\+Factorized\+GH.\+h}}\end{DoxyCompactItemize}

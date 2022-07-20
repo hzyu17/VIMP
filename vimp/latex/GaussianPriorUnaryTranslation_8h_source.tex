@@ -1,0 +1,33 @@
+\hypertarget{GaussianPriorUnaryTranslation_8h_source}{}\doxysection{Gaussian\+Prior\+Unary\+Translation.\+h}
+\label{GaussianPriorUnaryTranslation_8h_source}\index{include/GaussianPriorUnaryTranslation.h@{include/GaussianPriorUnaryTranslation.h}}
+\mbox{\hyperlink{GaussianPriorUnaryTranslation_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <gtsam/slam/PoseTranslationPrior.h>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <gpmp2/gp/GPutils.h>}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{keyword}{namespace }VIMP\{}
+\DoxyCodeLine{16 \textcolor{keyword}{template} <\textcolor{keyword}{class} T>}
+\DoxyCodeLine{18 \textcolor{keyword}{class }\mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation}{UnaryFactorTranslation}}: \textcolor{keyword}{public} gtsam::NoiseModelFactor1<T> \{}
+\DoxyCodeLine{19 \textcolor{keyword}{public}:}
+\DoxyCodeLine{23     \mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation_af0036110a6c834e390bc4f4e490e5f9a}{UnaryFactorTranslation}}(gtsam::Key key, \textcolor{keyword}{const} T\& conf, \textcolor{keyword}{const} gtsam::SharedNoiseModel model):}
+\DoxyCodeLine{24             gtsam::NoiseModelFactor1<T>(model, key), conf\_(conf), K\_(gpmp2::getQc(model)) \{\}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26     Eigen::VectorXd evaluateError(\textcolor{keyword}{const} T\& q, boost::optional<Eigen::MatrixXd \&> H=boost::none)\textcolor{keyword}{ const}}
+\DoxyCodeLine{27 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{28         \textcolor{keywordflow}{return} Eigen::VectorXd\{q-\/conf\_\};}
+\DoxyCodeLine{29     \}}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{32     Eigen::MatrixXd \mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation_a75f224f21345e6ceb59f9e46496ce876}{get\_Qc}}()\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{33         \textcolor{keywordflow}{return} K\_;}
+\DoxyCodeLine{34     \}}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{36 \textcolor{keyword}{private}:}
+\DoxyCodeLine{37     T conf\_; }
+\DoxyCodeLine{38     Eigen::MatrixXd K\_;}
+\DoxyCodeLine{39 \};}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41 \}}
+\DoxyCodeLine{42 }
+
+\end{DoxyCode}

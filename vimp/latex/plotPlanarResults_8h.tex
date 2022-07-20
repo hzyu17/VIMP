@@ -1,0 +1,53 @@
+\hypertarget{plotPlanarResults_8h}{}\doxysection{include/helpers/plot\+Planar\+Results.h File Reference}
+\label{plotPlanarResults_8h}\index{include/helpers/plotPlanarResults.h@{include/helpers/plotPlanarResults.h}}
+
+
+Plotting helper.  
+
+
+{\ttfamily \#include \char`\"{}matplotlibcpp.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{plotPlanarResults_8h_a5e4e419b1ae8413d81b14c099df89074}{plot\+\_\+result}} (const Matrix\+Xd \&results, int nstates, int dim\+\_\+theta)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Plotting helper. 
+
+\begin{DoxyAuthor}{Author}
+Hongzhe Yu (\href{mailto:hyu419@gatech.edu}{\texttt{ hyu419@gatech.\+edu}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2022-\/07-\/16
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2022 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{plotPlanarResults_8h_a5e4e419b1ae8413d81b14c099df89074}\label{plotPlanarResults_8h_a5e4e419b1ae8413d81b14c099df89074}} 
+\index{plotPlanarResults.h@{plotPlanarResults.h}!plot\_result@{plot\_result}}
+\index{plot\_result@{plot\_result}!plotPlanarResults.h@{plotPlanarResults.h}}
+\doxysubsubsection{\texorpdfstring{plot\_result()}{plot\_result()}}
+{\footnotesize\ttfamily void plot\+\_\+result (\begin{DoxyParamCaption}\item[{const Matrix\+Xd \&}]{results,  }\item[{int}]{nstates,  }\item[{int}]{dim\+\_\+theta }\end{DoxyParamCaption})}
+
+Plot the iteration results 
+\begin{DoxyParams}{Parameters}
+{\em results} & (num\+\_\+iteration, num\+\_\+states) \\
+\hline
+{\em nstates} & the total number of states \\
+\hline
+{\em dim\+\_\+theta} & dimension of the configuration variable output\+: figure \\
+\hline
+\end{DoxyParams}
+plotting in the 2D case
+
+single point for one iteration
+
+x coord and y coord

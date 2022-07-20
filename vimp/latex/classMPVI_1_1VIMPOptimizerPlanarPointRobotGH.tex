@@ -1,0 +1,238 @@
+\hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{}\doxysection{MPVI\+::VIMPOptimizer\+Planar\+Point\+Robot\+GH\texorpdfstring{$<$}{<} Function\+Prior, Function\+Prior\+Col \texorpdfstring{$>$}{>} Class Template Reference}
+\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+
+
+{\ttfamily \#include $<$Optimizer\+Planar\+Point\+Robot\+GH.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a8e3a83085f79d3e591366535139e53da}{VIMPOptimizer\+Planar\+Point\+Robot\+GH}} (const int \&dimension, const int \&sub\+\_\+dim, const vector$<$ Function\+Prior $>$ \&\+\_\+vec\+\_\+func\+\_\+priors, const vector$<$ \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \&\+\_\+vec\+\_\+func\+\_\+prior\+\_\+cols, const vector$<$ Matrix\+Xd $>$ \&\+\_\+vec\+\_\+\+Pks\+\_\+prior, const vector$<$ Matrix\+Xd $>$ \&\+\_\+vec\+\_\+\+Pks\+\_\+prior\+\_\+col)
+\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a69e461bd667a1517e2b647e95f72c74c}{step}} ()
+\begin{DoxyCompactList}\small\item\em Function which computes one step of update. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a94120f59d1f9e07a71d95ca3441cca6d}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a94120f59d1f9e07a71d95ca3441cca6d}} 
+gtsam\+::\+Vector {\bfseries get\+\_\+mean} ()
+\begin{DoxyCompactList}\small\item\em returns the mean \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a4dced91f661825ac9c44aff2b485cf76}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a4dced91f661825ac9c44aff2b485cf76}} 
+gtsam\+::\+Matrix {\bfseries get\+\_\+precision} ()
+\begin{DoxyCompactList}\small\item\em returns the precision matrix \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_afc2e86d58259f073e2006342d9d48b20}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_afc2e86d58259f073e2006342d9d48b20}} 
+gtsam\+::\+Matrix {\bfseries get\+\_\+covariance} ()
+\begin{DoxyCompactList}\small\item\em returns the covariance matrix \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a480dd41aa57d244d136f526ea9f7988a}{set\+\_\+step\+\_\+size}} (double ss\+\_\+mean, double ss\+\_\+precision)
+\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a75d76dab012389932c98c4704a2e08e4}{set\+\_\+mu}} (const Vector\+Xd \&mean)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a5d7ce71ca0bca3a0379a17bd83c07248}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a5d7ce71ca0bca3a0379a17bd83c07248}} 
+int {\bfseries dim}
+\begin{DoxyCompactList}\small\item\em optimization variables \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a380eee24d28cf3ea378a2e41b42cafd6}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a380eee24d28cf3ea378a2e41b42cafd6}} 
+int {\bfseries sub\+\_\+dim}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a01438b629d38df2660ed3a96402ec6f7}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a01438b629d38df2660ed3a96402ec6f7}} 
+int {\bfseries num\+\_\+sub\+\_\+vars}
+\item 
+Vector\+Xd \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a11d2d9cf7dbbe3daacce0e5a0cf768de}{mu\+\_\+}}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_aadd5f5e7a2fe988d95e6751c654b591c}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_aadd5f5e7a2fe988d95e6751c654b591c}} 
+Vector\+Xd {\bfseries Vdmu\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_abeae4213c3a49ce620846fc5eb6545bc}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_abeae4213c3a49ce620846fc5eb6545bc}} 
+Vector\+Xd {\bfseries d\+\_\+mu\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a3f316e3db49c3623d60114e99e2e0e3b}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a3f316e3db49c3623d60114e99e2e0e3b}} 
+Matrix\+Xd {\bfseries precision\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a4f43b4b8f88303b4f2c7872b2696f737}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a4f43b4b8f88303b4f2c7872b2696f737}} 
+Matrix\+Xd {\bfseries Vddmu\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a6354b0a18e6252d6c90ceb8ac235b0b8}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a6354b0a18e6252d6c90ceb8ac235b0b8}} 
+Matrix\+Xd {\bfseries d\+\_\+precision\+\_\+}
+\item 
+vector$<$ \mbox{\hyperlink{OptimizerFactorizedPriorPointRobot_8h_a3deb0cdf3702f9d1251c17cf74d84d01}{Optimizer\+Factor\+Prior\+Point\+Robot\+GH}} $>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a9fb35e83cb63477018198a1bf8cb22c9}{vec\+\_\+factor\+\_\+optimizers\+\_\+prior\+\_\+}}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a9ef1524dd2655d9c47322652936b0107}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a9ef1524dd2655d9c47322652936b0107}} 
+vector$<$ \mbox{\hyperlink{OptimizerFactorizedPriorCollPR_8h_ac1f6ca662078945fe5beb22f447e6efc}{Optimizer\+Factor\+Prior\+Col\+Point\+Robot\+GH}} $>$ {\bfseries vec\+\_\+factor\+\_\+optimizers\+\_\+prior\+\_\+col\+\_\+}
+\item 
+const vector$<$ \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a61b940598a22d1be0b842c1b82403cfc}{vec\+\_\+cost\+\_\+func\+\_\+prior\+\_\+col\+\_\+}}
+\item 
+const vector$<$ Function\+Prior $>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a09f5cd99a94a7891ed84dc9347da9b3e}{vec\+\_\+cost\+\_\+func\+\_\+prior\+\_\+}}
+\item 
+const vector$<$ Matrix\+Xd $>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_aad80d07b21d0bcbd61a151cbaa73bbd5}{vec\+Pks\+\_\+prior\+\_\+}}
+\item 
+const vector$<$ Matrix\+Xd $>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_acc483448967514e5c9d52bd803fc2f63}{vec\+Pks\+\_\+prior\+\_\+col\+\_\+}}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a484ab2b796e2a206f0220c190037c289}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a484ab2b796e2a206f0220c190037c289}} 
+\mbox{\hyperlink{structSparseInverse_1_1dense__inverser}{dense\+\_\+inverser}} {\bfseries inverser\+\_\+}
+\begin{DoxyCompactList}\small\item\em Sparse matrix inverse helper, which utilizes the exact sparse pattern to do the matrix inversion. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a8f72357c041dc0fdbe29fe3e2f08c49c}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a8f72357c041dc0fdbe29fe3e2f08c49c}} 
+double {\bfseries step\+\_\+size\+\_\+precision} = 0.\+9
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_ad4e6d42a567bfd954376065ec3ed7691}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_ad4e6d42a567bfd954376065ec3ed7691}} 
+double {\bfseries step\+\_\+size\+\_\+mu} = 0.\+9
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Function\+Prior, typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}}$>$\newline
+class MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH$<$ Function\+Prior, Function\+Prior\+Col $>$}
+Description\+: The joint optimizer class using Gauss-\/\+Hermite quadrature.
+
+Detailed description\+: Joint optimizer, all the factorized optimizers use the same cost functional. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a8e3a83085f79d3e591366535139e53da}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a8e3a83085f79d3e591366535139e53da}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!VIMPOptimizerPlanarPointRobotGH@{VIMPOptimizerPlanarPointRobotGH}}
+\index{VIMPOptimizerPlanarPointRobotGH@{VIMPOptimizerPlanarPointRobotGH}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{VIMPOptimizerPlanarPointRobotGH()}{VIMPOptimizerPlanarPointRobotGH()}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}} (\begin{DoxyParamCaption}\item[{const int \&}]{dimension,  }\item[{const int \&}]{sub\+\_\+dim,  }\item[{const vector$<$ Function\+Prior $>$ \&}]{\+\_\+vec\+\_\+func\+\_\+priors,  }\item[{const vector$<$ \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \&}]{\+\_\+vec\+\_\+func\+\_\+prior\+\_\+cols,  }\item[{const vector$<$ Matrix\+Xd $>$ \&}]{\+\_\+vec\+\_\+\+Pks\+\_\+prior,  }\item[{const vector$<$ Matrix\+Xd $>$ \&}]{\+\_\+vec\+\_\+\+Pks\+\_\+prior\+\_\+col }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & State dimension \\
+\hline
+{\em sub\+\_\+dim} & dimension of the marginal variables \\
+\hline
+{\em \+\_\+vec\+\_\+func\+\_\+priors} & Vector of factorized cost functions for prior cost \\
+\hline
+{\em \+\_\+vec\+\_\+func\+\_\+prior\+\_\+cols} & Vector of factorized cost functions for prior + collision cost \\
+\hline
+{\em \+\_\+vec\+\_\+\+Pks\+\_\+prior} & Vector of matrices mapping from joint variables to marginal variables for prior factors \\
+\hline
+{\em \+\_\+vec\+\_\+\+Pks\+\_\+prior\+\_\+col} & Vector of matrices mapping from joint variables to marginal variables for prior+collision factors ~\newline
+ \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a75d76dab012389932c98c4704a2e08e4}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a75d76dab012389932c98c4704a2e08e4}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!set\_mu@{set\_mu}}
+\index{set\_mu@{set\_mu}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{set\_mu()}{set\_mu()}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::set\+\_\+mu (\begin{DoxyParamCaption}\item[{const Vector\+Xd \&}]{mean }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+manually assign a mean value 
+\begin{DoxyParams}{Parameters}
+{\em mean} & new mean \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a480dd41aa57d244d136f526ea9f7988a}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a480dd41aa57d244d136f526ea9f7988a}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!set\_step\_size@{set\_step\_size}}
+\index{set\_step\_size@{set\_step\_size}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{set\_step\_size()}{set\_step\_size()}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::set\+\_\+step\+\_\+size (\begin{DoxyParamCaption}\item[{double}]{ss\+\_\+mean,  }\item[{double}]{ss\+\_\+precision }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+update the step size of the iterations. 
+\begin{DoxyParams}{Parameters}
+{\em ss\+\_\+mean} & new step size for the mean update \\
+\hline
+{\em ss\+\_\+precision} & new step size for the precision matrix update \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a69e461bd667a1517e2b647e95f72c74c}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a69e461bd667a1517e2b647e95f72c74c}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!step@{step}}
+\index{step@{step}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function which computes one step of update. 
+
+update for the prior factor
+
+update for the prior + collision factor
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a11d2d9cf7dbbe3daacce0e5a0cf768de}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a11d2d9cf7dbbe3daacce0e5a0cf768de}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!mu\_@{mu\_}}
+\index{mu\_@{mu\_}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{mu\_}{mu\_}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+Vector\+Xd \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::mu\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em mu\+\_\+} & mean vector \\
+\hline
+{\em d\+\_\+mu\+\_\+} & incremental mean in update steps \\
+\hline
+{\em precision\+\_\+} & precision matrix \\
+\hline
+{\em d\+\_\+precision\+\_\+} & incremental precision matrix in update steps \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a09f5cd99a94a7891ed84dc9347da9b3e}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a09f5cd99a94a7891ed84dc9347da9b3e}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!vec\_cost\_func\_prior\_@{vec\_cost\_func\_prior\_}}
+\index{vec\_cost\_func\_prior\_@{vec\_cost\_func\_prior\_}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{vec\_cost\_func\_prior\_}{vec\_cost\_func\_prior\_}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+const vector$<$Function\+Prior$>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::vec\+\_\+cost\+\_\+func\+\_\+prior\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec\+\_\+cost\+\_\+function\+\_\+} & Vector of the marginal cost functions for priors \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a61b940598a22d1be0b842c1b82403cfc}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a61b940598a22d1be0b842c1b82403cfc}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!vec\_cost\_func\_prior\_col\_@{vec\_cost\_func\_prior\_col\_}}
+\index{vec\_cost\_func\_prior\_col\_@{vec\_cost\_func\_prior\_col\_}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{vec\_cost\_func\_prior\_col\_}{vec\_cost\_func\_prior\_col\_}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+const vector$<$\mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}}$>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::vec\+\_\+cost\+\_\+func\+\_\+prior\+\_\+col\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec\+\_\+cost\+\_\+function\+\_\+} & Vector of the marginal cost functions for prior and collisions \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a9fb35e83cb63477018198a1bf8cb22c9}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_a9fb35e83cb63477018198a1bf8cb22c9}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!vec\_factor\_optimizers\_prior\_@{vec\_factor\_optimizers\_prior\_}}
+\index{vec\_factor\_optimizers\_prior\_@{vec\_factor\_optimizers\_prior\_}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{vec\_factor\_optimizers\_prior\_}{vec\_factor\_optimizers\_prior\_}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+vector$<$\mbox{\hyperlink{OptimizerFactorizedPriorPointRobot_8h_a3deb0cdf3702f9d1251c17cf74d84d01}{Optimizer\+Factor\+Prior\+Point\+Robot\+GH}}$>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::vec\+\_\+factor\+\_\+optimizers\+\_\+prior\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em vector} & of marginal optimizers \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_aad80d07b21d0bcbd61a151cbaa73bbd5}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_aad80d07b21d0bcbd61a151cbaa73bbd5}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!vecPks\_prior\_@{vecPks\_prior\_}}
+\index{vecPks\_prior\_@{vecPks\_prior\_}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{vecPks\_prior\_}{vecPks\_prior\_}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+const vector$<$Matrix\+Xd$>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::vec\+Pks\+\_\+prior\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec\+Pks\+\_\+prior\+\_\+} & Vector of all mapping matrix from joint variables to marginal variables, for the prior factor optimizer \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_acc483448967514e5c9d52bd803fc2f63}\label{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH_acc483448967514e5c9d52bd803fc2f63}} 
+\index{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}!vecPks\_prior\_col\_@{vecPks\_prior\_col\_}}
+\index{vecPks\_prior\_col\_@{vecPks\_prior\_col\_}!MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$@{MPVI::VIMPOptimizerPlanarPointRobotGH$<$ FunctionPrior, FunctionPriorCol $>$}}
+\doxysubsubsection{\texorpdfstring{vecPks\_prior\_col\_}{vecPks\_prior\_col\_}}
+{\footnotesize\ttfamily template$<$typename Function\+Prior , typename \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$ \\
+const vector$<$Matrix\+Xd$>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerPlanarPointRobotGH}{MPVI\+::\+VIMPOptimizer\+Planar\+Point\+Robot\+GH}}$<$ Function\+Prior, \mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a0b8ad2bd9d564bcd7f1ebccca2b2c76d}{Function\+Prior\+Col}} $>$\+::vec\+Pks\+\_\+prior\+\_\+col\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec\+Pks\+\_\+prior\+\_\+col\+\_\+} & Vector of all mapping matrix from joint variables to marginal variables, for the prior + collision factor optimizer \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{OptimizerPlanarPointRobotGH_8h}{Optimizer\+Planar\+Point\+Robot\+GH.\+h}}\end{DoxyCompactItemize}

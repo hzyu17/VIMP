@@ -1,0 +1,387 @@
+\hypertarget{classMPVI_1_1VIMPOptimizerGH}{}\doxysection{MPVI\+::VIMPOptimizer\+GH\texorpdfstring{$<$}{<} Factorized\+Optimizer \texorpdfstring{$>$}{>} Class Template Reference}
+\label{classMPVI_1_1VIMPOptimizerGH}\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+
+
+{\ttfamily \#include $<$Optimizer\+GH ref.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_aee9526170a2d8130ab20c16dbc06455d}{VIMPOptimizer\+GH}} (const vector$<$ Factorized\+Optimizer $>$ \&\+\_\+vec\+\_\+fact\+\_\+optimizers)
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a319b807e484d78f67cdb18b97405f60d}\label{classMPVI_1_1VIMPOptimizerGH_a319b807e484d78f67cdb18b97405f60d}} 
+void {\bfseries step} ()
+\begin{DoxyCompactList}\small\item\em Function which computes one step of update. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a8486fb0fb530f9baf792a11ec074ba62}\label{classMPVI_1_1VIMPOptimizerGH_a8486fb0fb530f9baf792a11ec074ba62}} 
+void {\bfseries step\+\_\+closed\+\_\+form} ()
+\begin{DoxyCompactList}\small\item\em Verifier function which computes one step update in the Gaussian cost case, which has the closed form solution. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a4176459176afcf3fbecceb3b1ea3a7b7}\label{classMPVI_1_1VIMPOptimizerGH_a4176459176afcf3fbecceb3b1ea3a7b7}} 
+gtsam\+::\+Vector {\bfseries get\+\_\+mean} ()
+\begin{DoxyCompactList}\small\item\em returns the mean \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a31a3f385fb06f0c1452baececd5b99d8}\label{classMPVI_1_1VIMPOptimizerGH_a31a3f385fb06f0c1452baececd5b99d8}} 
+gtsam\+::\+Matrix {\bfseries get\+\_\+precision} ()
+\begin{DoxyCompactList}\small\item\em returns the precision matrix \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_aa020bd59c0b0114d5ec9f1b39bbe5b5d}\label{classMPVI_1_1VIMPOptimizerGH_aa020bd59c0b0114d5ec9f1b39bbe5b5d}} 
+gtsam\+::\+Matrix {\bfseries get\+\_\+covariance} ()
+\begin{DoxyCompactList}\small\item\em returns the covariance matrix \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_ab641cece736b1f33e662264dfa890150}{set\+\_\+step\+\_\+size}} (double ss\+\_\+mean, double ss\+\_\+precision)
+\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a34194c39b78ce3c1ac5c9fb5d0d91fe0}{set\+\_\+mu}} (const Vector\+Xd \&mean)
+\item 
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a39ff22ddb2e0502abf57472bec0255c8}{VIMPOptimizer\+GH}} (const vector$<$ std\+::shared\+\_\+ptr$<$ Factorized\+Optimizer $>$ $>$ \&\+\_\+vec\+\_\+fact\+\_\+optimizers, int niters=10)
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a319b807e484d78f67cdb18b97405f60d}\label{classMPVI_1_1VIMPOptimizerGH_a319b807e484d78f67cdb18b97405f60d}} 
+void {\bfseries step} ()
+\begin{DoxyCompactList}\small\item\em Function which computes one step of update. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a8486fb0fb530f9baf792a11ec074ba62}\label{classMPVI_1_1VIMPOptimizerGH_a8486fb0fb530f9baf792a11ec074ba62}} 
+void {\bfseries step\+\_\+closed\+\_\+form} ()
+\begin{DoxyCompactList}\small\item\em Verifier function which computes one step update in the Gaussian cost case, which has the closed form solution. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_acff2c2727e736aec0c06011dfc00ba02}\label{classMPVI_1_1VIMPOptimizerGH_acff2c2727e736aec0c06011dfc00ba02}} 
+Vector\+Xd {\bfseries get\+\_\+mean} () const
+\begin{DoxyCompactList}\small\item\em returns the mean \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a848adf92e9c65d59b7b1867d049209bb}\label{classMPVI_1_1VIMPOptimizerGH_a848adf92e9c65d59b7b1867d049209bb}} 
+Matrix\+Xd {\bfseries get\+\_\+precision} () const
+\begin{DoxyCompactList}\small\item\em returns the precision matrix \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a77f330126f739a0a8d040964740c8c62}\label{classMPVI_1_1VIMPOptimizerGH_a77f330126f739a0a8d040964740c8c62}} 
+Matrix\+Xd {\bfseries get\+\_\+covariance} ()
+\begin{DoxyCompactList}\small\item\em returns the covariance matrix \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_ab641cece736b1f33e662264dfa890150}{set\+\_\+step\+\_\+size}} (double ss\+\_\+mean, double ss\+\_\+precision)
+\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a34194c39b78ce3c1ac5c9fb5d0d91fe0}{set\+\_\+mu}} (const Vector\+Xd \&mean)
+\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a3fc725e7081a8c8e7530b282dbd84d5d}{set\+\_\+niterations}} (int niters)
+\begin{DoxyCompactList}\small\item\em Number of iterations. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_ac9f61bda73a22cef1592e3c30ac1414e}{optimize}} ()
+\begin{DoxyCompactList}\small\item\em The optimizing process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a2fe6c8cb11bf9ee4bde2b4aa69d5a1a8}{save\+\_\+data}} (const string \&file\+\_\+mean, const string \&file\+\_\+cov)
+\begin{DoxyCompactList}\small\item\em save process data into csv files. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a2b8a088d5350fb2b2f377ddd2ceaffbe}{print\+\_\+result}} (const int \&i\+\_\+iter)
+\begin{DoxyCompactList}\small\item\em print a given iteration data mean and covariance. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_ae54818b60e1219cb8d4e5406695b2fa0}{print\+\_\+series\+\_\+results}} (const vector$<$ int $>$ iters)
+\begin{DoxyCompactList}\small\item\em print out a given number of iterations results \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_aaa4b2cb14718f4fd59da8d6fad55f9b9}\label{classMPVI_1_1VIMPOptimizerGH_aaa4b2cb14718f4fd59da8d6fad55f9b9}} 
+int {\bfseries dim}
+\begin{DoxyCompactList}\small\item\em optimization variables \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a4678b6b97234b7d00810f922843c740e}\label{classMPVI_1_1VIMPOptimizerGH_a4678b6b97234b7d00810f922843c740e}} 
+int {\bfseries sub\+\_\+dim}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ab9ddca3fdb43708a70712cb8afdadc06}\label{classMPVI_1_1VIMPOptimizerGH_ab9ddca3fdb43708a70712cb8afdadc06}} 
+int {\bfseries num\+\_\+sub\+\_\+vars}
+\item 
+vector$<$ Factorized\+Optimizer $>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a2dcc7d1265a12df19ccc6424ca5a637a}{vec\+\_\+factor\+\_\+optimizers\+\_\+}}
+\item 
+Vector\+Xd \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a1df9530638cb1fa038045ea9ecb7325a}{mu\+\_\+}}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ad6fb82ebeb41cd258905890684b0a740}\label{classMPVI_1_1VIMPOptimizerGH_ad6fb82ebeb41cd258905890684b0a740}} 
+Vector\+Xd {\bfseries Vdmu\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a6de0780f0c6fe0f4514182b94c4491cc}\label{classMPVI_1_1VIMPOptimizerGH_a6de0780f0c6fe0f4514182b94c4491cc}} 
+Vector\+Xd {\bfseries d\+\_\+mu\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_adc398f3c66712dc8c8cd517f74cfed12}\label{classMPVI_1_1VIMPOptimizerGH_adc398f3c66712dc8c8cd517f74cfed12}} 
+Matrix\+Xd {\bfseries precision\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a8559e94227b8bc5c496cc72e290de7d0}\label{classMPVI_1_1VIMPOptimizerGH_a8559e94227b8bc5c496cc72e290de7d0}} 
+Matrix\+Xd {\bfseries Vddmu\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ab3862891ced2ba75d10fcb0af5d2db0d}\label{classMPVI_1_1VIMPOptimizerGH_ab3862891ced2ba75d10fcb0af5d2db0d}} 
+Matrix\+Xd {\bfseries d\+\_\+precision\+\_\+}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a67178cf4f86c2fd14b462a54f949421c}\label{classMPVI_1_1VIMPOptimizerGH_a67178cf4f86c2fd14b462a54f949421c}} 
+\mbox{\hyperlink{structSparseInverse_1_1dense__inverser}{dense\+\_\+inverser}} {\bfseries inverser\+\_\+}
+\begin{DoxyCompactList}\small\item\em Sparse matrix inverse helper, which utilizes the exact sparse pattern to do the matrix inversion. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_aeda71c489d8e8141237869a65379b5de}\label{classMPVI_1_1VIMPOptimizerGH_aeda71c489d8e8141237869a65379b5de}} 
+double {\bfseries step\+\_\+size\+\_\+precision} = 0.\+9
+\begin{DoxyCompactList}\small\item\em step sizes by default \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a4ab03b8ea1ed6e8adff13404aaa9acc7}\label{classMPVI_1_1VIMPOptimizerGH_a4ab03b8ea1ed6e8adff13404aaa9acc7}} 
+double {\bfseries step\+\_\+size\+\_\+mu} = 0.\+9
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a125894a972440e09c1cc4cb0ef4cb392}\label{classMPVI_1_1VIMPOptimizerGH_a125894a972440e09c1cc4cb0ef4cb392}} 
+int {\bfseries \+\_\+dim}
+\begin{DoxyCompactList}\small\item\em optimization variables \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a9103707877f22fcecc2d6c1e57230ac1}\label{classMPVI_1_1VIMPOptimizerGH_a9103707877f22fcecc2d6c1e57230ac1}} 
+int {\bfseries \+\_\+niters}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a948dbb0e726faa4f3068a64ad7aae891}\label{classMPVI_1_1VIMPOptimizerGH_a948dbb0e726faa4f3068a64ad7aae891}} 
+int {\bfseries \+\_\+sub\+\_\+dim}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a7d5bb3dfc586727abcd8ce9b5f3777a0}\label{classMPVI_1_1VIMPOptimizerGH_a7d5bb3dfc586727abcd8ce9b5f3777a0}} 
+int {\bfseries \+\_\+nsub\+\_\+vars}
+\item 
+vector$<$ std\+::shared\+\_\+ptr$<$ Factorized\+Optimizer $>$ $>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_aebefb36715d83569251aebddabb86e19}{\+\_\+vec\+\_\+factor\+\_\+optimizers}}
+\item 
+Vector\+Xd \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH_a806d4d76d199acfecca9600678e31663}{\+\_\+mu}}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ae797fb1cc7fe2a1503b02d3fd756cc36}\label{classMPVI_1_1VIMPOptimizerGH_ae797fb1cc7fe2a1503b02d3fd756cc36}} 
+Vector\+Xd {\bfseries \+\_\+\+Vdmu}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a727d7f7239ab1dc32a5b126c4ba6b70f}\label{classMPVI_1_1VIMPOptimizerGH_a727d7f7239ab1dc32a5b126c4ba6b70f}} 
+Vector\+Xd {\bfseries \+\_\+dmu}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a6bc69db32b393d303c0b8910267e63f7}\label{classMPVI_1_1VIMPOptimizerGH_a6bc69db32b393d303c0b8910267e63f7}} 
+Matrix\+Xd {\bfseries \+\_\+precision}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a1dbc36f576fcfb576e62ba2ec2348f39}\label{classMPVI_1_1VIMPOptimizerGH_a1dbc36f576fcfb576e62ba2ec2348f39}} 
+Matrix\+Xd {\bfseries \+\_\+\+Vddmu}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a244abeac3d1d310c233a273a32648923}\label{classMPVI_1_1VIMPOptimizerGH_a244abeac3d1d310c233a273a32648923}} 
+Matrix\+Xd {\bfseries \+\_\+dprecision}
+\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ad82551366acd2e395abdf111f66c59da}\label{classMPVI_1_1VIMPOptimizerGH_ad82551366acd2e395abdf111f66c59da}} 
+\mbox{\hyperlink{structSparseInverse_1_1dense__inverser}{dense\+\_\+inverser}} {\bfseries \+\_\+inverser}
+\begin{DoxyCompactList}\small\item\em Sparse matrix inverse helper, which utilizes the exact sparse pattern to do the matrix inversion. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ae1d040f9d26174b648961ced23dac692}\label{classMPVI_1_1VIMPOptimizerGH_ae1d040f9d26174b648961ced23dac692}} 
+\mbox{\hyperlink{structMPVI_1_1MPVIResults}{MPVIResults}} {\bfseries \+\_\+res\+\_\+recorder}
+\begin{DoxyCompactList}\small\item\em Data and result storage. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_afc35f9c23dc3d6ca6990367b975721aa}\label{classMPVI_1_1VIMPOptimizerGH_afc35f9c23dc3d6ca6990367b975721aa}} 
+double {\bfseries \+\_\+step\+\_\+size\+\_\+mu} = 0.\+9
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Factorized\+Optimizer$>$\newline
+class MPVI\+::\+VIMPOptimizer\+GH$<$ Factorized\+Optimizer $>$}
+Description\+: The joint optimizer class using Gauss-\/\+Hermite quadrature.
+
+Detailed description\+: Joint optimizer, all the factorized optimizers use the same cost functional. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_aee9526170a2d8130ab20c16dbc06455d}\label{classMPVI_1_1VIMPOptimizerGH_aee9526170a2d8130ab20c16dbc06455d}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!VIMPOptimizerGH@{VIMPOptimizerGH}}
+\index{VIMPOptimizerGH@{VIMPOptimizerGH}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{VIMPOptimizerGH()}{VIMPOptimizerGH()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::\+VIMPOptimizer\+GH (\begin{DoxyParamCaption}\item[{const vector$<$ Factorized\+Optimizer $>$ \&}]{\+\_\+vec\+\_\+fact\+\_\+optimizers }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & State dimension \\
+\hline
+{\em sub\+\_\+dim} & dimension of the marginal variables \\
+\hline
+{\em \+\_\+vec\+\_\+function} & Vector of cost functions for each marginal distribution \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a39ff22ddb2e0502abf57472bec0255c8}\label{classMPVI_1_1VIMPOptimizerGH_a39ff22ddb2e0502abf57472bec0255c8}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!VIMPOptimizerGH@{VIMPOptimizerGH}}
+\index{VIMPOptimizerGH@{VIMPOptimizerGH}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{VIMPOptimizerGH()}{VIMPOptimizerGH()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+\mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::\+VIMPOptimizer\+GH (\begin{DoxyParamCaption}\item[{const vector$<$ std\+::shared\+\_\+ptr$<$ Factorized\+Optimizer $>$ $>$ \&}]{\+\_\+vec\+\_\+fact\+\_\+optimizers,  }\item[{int}]{niters = {\ttfamily 10} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+vec\+\_\+fact\+\_\+optimizers} & vector of marginal optimizers \\
+\hline
+{\em niters} & number of iterations \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ac9f61bda73a22cef1592e3c30ac1414e}\label{classMPVI_1_1VIMPOptimizerGH_ac9f61bda73a22cef1592e3c30ac1414e}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!optimize@{optimize}}
+\index{optimize@{optimize}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{optimize()}{optimize()}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::optimize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The optimizing process. 
+
+Collect the results
+
+print some datas\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a2b8a088d5350fb2b2f377ddd2ceaffbe}\label{classMPVI_1_1VIMPOptimizerGH_a2b8a088d5350fb2b2f377ddd2ceaffbe}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!print\_result@{print\_result}}
+\index{print\_result@{print\_result}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{print\_result()}{print\_result()}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::print\+\_\+result (\begin{DoxyParamCaption}\item[{const int \&}]{i\+\_\+iter }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+print a given iteration data mean and covariance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i\+\_\+iter} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ae54818b60e1219cb8d4e5406695b2fa0}\label{classMPVI_1_1VIMPOptimizerGH_ae54818b60e1219cb8d4e5406695b2fa0}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!print\_series\_results@{print\_series\_results}}
+\index{print\_series\_results@{print\_series\_results}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{print\_series\_results()}{print\_series\_results()}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::print\+\_\+series\+\_\+results (\begin{DoxyParamCaption}\item[{const vector$<$ int $>$}]{iters }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+print out a given number of iterations results 
+
+
+\begin{DoxyParams}{Parameters}
+{\em iters} & a list of iterations to be printed \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a2fe6c8cb11bf9ee4bde2b4aa69d5a1a8}\label{classMPVI_1_1VIMPOptimizerGH_a2fe6c8cb11bf9ee4bde2b4aa69d5a1a8}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!save\_data@{save\_data}}
+\index{save\_data@{save\_data}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{save\_data()}{save\_data()}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::save\+\_\+data (\begin{DoxyParamCaption}\item[{const string \&}]{file\+\_\+mean,  }\item[{const string \&}]{file\+\_\+cov }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+save process data into csv files. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+\_\+mean} & filename for mean \\
+\hline
+{\em file\+\_\+cov} & filename for cov \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a34194c39b78ce3c1ac5c9fb5d0d91fe0}\label{classMPVI_1_1VIMPOptimizerGH_a34194c39b78ce3c1ac5c9fb5d0d91fe0}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!set\_mu@{set\_mu}}
+\index{set\_mu@{set\_mu}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{set\_mu()}{set\_mu()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::set\+\_\+mu (\begin{DoxyParamCaption}\item[{const Vector\+Xd \&}]{mean }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+manually assign a mean value 
+\begin{DoxyParams}{Parameters}
+{\em mean} & new mean \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a34194c39b78ce3c1ac5c9fb5d0d91fe0}\label{classMPVI_1_1VIMPOptimizerGH_a34194c39b78ce3c1ac5c9fb5d0d91fe0}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!set\_mu@{set\_mu}}
+\index{set\_mu@{set\_mu}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{set\_mu()}{set\_mu()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::set\+\_\+mu (\begin{DoxyParamCaption}\item[{const Vector\+Xd \&}]{mean }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+manually assign a mean value 
+\begin{DoxyParams}{Parameters}
+{\em mean} & new mean \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a3fc725e7081a8c8e7530b282dbd84d5d}\label{classMPVI_1_1VIMPOptimizerGH_a3fc725e7081a8c8e7530b282dbd84d5d}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!set\_niterations@{set\_niterations}}
+\index{set\_niterations@{set\_niterations}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{set\_niterations()}{set\_niterations()}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::set\+\_\+niterations (\begin{DoxyParamCaption}\item[{int}]{niters }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Number of iterations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em niters} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ab641cece736b1f33e662264dfa890150}\label{classMPVI_1_1VIMPOptimizerGH_ab641cece736b1f33e662264dfa890150}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!set\_step\_size@{set\_step\_size}}
+\index{set\_step\_size@{set\_step\_size}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{set\_step\_size()}{set\_step\_size()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::set\+\_\+step\+\_\+size (\begin{DoxyParamCaption}\item[{double}]{ss\+\_\+mean,  }\item[{double}]{ss\+\_\+precision }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+update the step size of the iterations. 
+\begin{DoxyParams}{Parameters}
+{\em ss\+\_\+mean} & new step size for the mean update \\
+\hline
+{\em ss\+\_\+precision} & new step size for the precision matrix update \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_ab641cece736b1f33e662264dfa890150}\label{classMPVI_1_1VIMPOptimizerGH_ab641cece736b1f33e662264dfa890150}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!set\_step\_size@{set\_step\_size}}
+\index{set\_step\_size@{set\_step\_size}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{set\_step\_size()}{set\_step\_size()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+void \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::set\+\_\+step\+\_\+size (\begin{DoxyParamCaption}\item[{double}]{ss\+\_\+mean,  }\item[{double}]{ss\+\_\+precision }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+update the step size of the iterations. 
+\begin{DoxyParams}{Parameters}
+{\em ss\+\_\+mean} & new step size for the mean update \\
+\hline
+{\em ss\+\_\+precision} & new step size for the precision matrix update \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a806d4d76d199acfecca9600678e31663}\label{classMPVI_1_1VIMPOptimizerGH_a806d4d76d199acfecca9600678e31663}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!\_mu@{\_mu}}
+\index{\_mu@{\_mu}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{\_mu}{\_mu}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+Vector\+Xd \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::\+\_\+mu\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+mu} & mean \\
+\hline
+{\em \+\_\+dmu} & incremental mean \\
+\hline
+{\em \+\_\+precision} & precision matrix \\
+\hline
+{\em \+\_\+dprecision} & incremental precision matrix ~\newline
+ \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_aebefb36715d83569251aebddabb86e19}\label{classMPVI_1_1VIMPOptimizerGH_aebefb36715d83569251aebddabb86e19}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!\_vec\_factor\_optimizers@{\_vec\_factor\_optimizers}}
+\index{\_vec\_factor\_optimizers@{\_vec\_factor\_optimizers}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{\_vec\_factor\_optimizers}{\_vec\_factor\_optimizers}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+vector$<$std\+::shared\+\_\+ptr$<$Factorized\+Optimizer$>$ $>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::\+\_\+vec\+\_\+factor\+\_\+optimizers\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec\+\_\+\+Pks\+\_\+} & Vector of all transformation matrix from joint variables to marginal variables\\
+\hline
+{\em \+\_\+vec\+\_\+factor\+\_\+optimizers} & Vector of marginal optimizers \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a1df9530638cb1fa038045ea9ecb7325a}\label{classMPVI_1_1VIMPOptimizerGH_a1df9530638cb1fa038045ea9ecb7325a}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!mu\_@{mu\_}}
+\index{mu\_@{mu\_}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{mu\_}{mu\_}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+Vector\+Xd \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::mu\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em mu\+\_\+} & mean vector \\
+\hline
+{\em d\+\_\+mu\+\_\+} & incremental mean in update steps \\
+\hline
+{\em precision\+\_\+} & precision matrix \\
+\hline
+{\em d\+\_\+precision\+\_\+} & incremental precision matrix in update steps \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMPVI_1_1VIMPOptimizerGH_a2dcc7d1265a12df19ccc6424ca5a637a}\label{classMPVI_1_1VIMPOptimizerGH_a2dcc7d1265a12df19ccc6424ca5a637a}} 
+\index{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}!vec\_factor\_optimizers\_@{vec\_factor\_optimizers\_}}
+\index{vec\_factor\_optimizers\_@{vec\_factor\_optimizers\_}!MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$@{MPVI::VIMPOptimizerGH$<$ FactorizedOptimizer $>$}}
+\doxysubsubsection{\texorpdfstring{vec\_factor\_optimizers\_}{vec\_factor\_optimizers\_}}
+{\footnotesize\ttfamily template$<$typename Factorized\+Optimizer $>$ \\
+vector$<$Factorized\+Optimizer$>$ \mbox{\hyperlink{classMPVI_1_1VIMPOptimizerGH}{MPVI\+::\+VIMPOptimizer\+GH}}$<$ Factorized\+Optimizer $>$\+::vec\+\_\+factor\+\_\+optimizers\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec\+\_\+factor\+\_\+optimizers\+\_\+} & Vector of marginal optimizers \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/Optimizer\+GH ref.\+h\item 
+include/\mbox{\hyperlink{OptimizerGH_8h}{Optimizer\+GH.\+h}}\end{DoxyCompactItemize}

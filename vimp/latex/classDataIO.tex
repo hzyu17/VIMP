@@ -1,0 +1,37 @@
+\hypertarget{classDataIO}{}\doxysection{Data\+IO Class Reference}
+\label{classDataIO}\index{DataIO@{DataIO}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classDataIO_ae853940e0c1ca40e75461280e980fb0c}\label{classDataIO_ae853940e0c1ca40e75461280e980fb0c}} 
+void {\bfseries save\+Data} (const string \&file\+Name, const Matrix\+Xd \&matrix)
+\item 
+void \mbox{\hyperlink{classDataIO_adea313915bdeb6543ae251f6ff881efd}{save\+\_\+result\+\_\+covariance}} (const string \&filename, const vector$<$ Matrix\+Xd $>$ \&res\+\_\+cov)
+\begin{DoxyCompactList}\small\item\em Save the resulted mean vectors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classDataIO_adea313915bdeb6543ae251f6ff881efd}\label{classDataIO_adea313915bdeb6543ae251f6ff881efd}} 
+\index{DataIO@{DataIO}!save\_result\_covariance@{save\_result\_covariance}}
+\index{save\_result\_covariance@{save\_result\_covariance}!DataIO@{DataIO}}
+\doxysubsubsection{\texorpdfstring{save\_result\_covariance()}{save\_result\_covariance()}}
+{\footnotesize\ttfamily void Data\+IO\+::save\+\_\+result\+\_\+covariance (\begin{DoxyParamCaption}\item[{const string \&}]{filename,  }\item[{const vector$<$ Matrix\+Xd $>$ \&}]{res\+\_\+cov }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Save the resulted mean vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & \\
+\hline
+{\em res\+\_\+cov} & vector of matrices, each is of shape (nstates, nstates) \\
+\hline
+{\em freq} & saving frequency \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/helpers/\mbox{\hyperlink{data__io_8h}{data\+\_\+io.\+h}}\end{DoxyCompactItemize}

@@ -1,0 +1,57 @@
+\hypertarget{classUnaryFactorTranslation}{}\doxysection{Unary\+Factor\+Translation\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\label{classUnaryFactorTranslation}\index{UnaryFactorTranslation$<$ T $>$@{UnaryFactorTranslation$<$ T $>$}}
+
+
+A derived class of Noise\+Model\+Factor1 in gtsam, used for the prior err probability for translation.  
+
+
+
+
+{\ttfamily \#include $<$Gaussian\+Prior\+Unary\+Translation.\+h$>$}
+
+Inheritance diagram for Unary\+Factor\+Translation\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classUnaryFactorTranslation}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classUnaryFactorTranslation_a1dcba887594d041b774aee2f68853673}{Unary\+Factor\+Translation}} (Key key, const T \&conf, const Shared\+Noise\+Model model)
+\item 
+\mbox{\Hypertarget{classUnaryFactorTranslation_aa6d809a1ff4e067743d8f556d8d7232a}\label{classUnaryFactorTranslation_aa6d809a1ff4e067743d8f556d8d7232a}} 
+Vector\+Xd {\bfseries evaluate\+Error} (const T \&q, boost\+::optional$<$ Matrix\+Xd \& $>$ H=boost\+::none) const
+\item 
+\mbox{\Hypertarget{classUnaryFactorTranslation_a86886081ec2cc7af0eca3b6b40f9312a}\label{classUnaryFactorTranslation_a86886081ec2cc7af0eca3b6b40f9312a}} 
+Matrix\+Xd {\bfseries get\+\_\+\+Qc} () const
+\begin{DoxyCompactList}\small\item\em Returns the covariance matrix of the noise model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$class T$>$\newline
+class Unary\+Factor\+Translation$<$ T $>$}
+A derived class of Noise\+Model\+Factor1 in gtsam, used for the prior err probability for translation. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classUnaryFactorTranslation_a1dcba887594d041b774aee2f68853673}\label{classUnaryFactorTranslation_a1dcba887594d041b774aee2f68853673}} 
+\index{UnaryFactorTranslation$<$ T $>$@{UnaryFactorTranslation$<$ T $>$}!UnaryFactorTranslation@{UnaryFactorTranslation}}
+\index{UnaryFactorTranslation@{UnaryFactorTranslation}!UnaryFactorTranslation$<$ T $>$@{UnaryFactorTranslation$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{UnaryFactorTranslation()}{UnaryFactorTranslation()}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+\mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation}}$<$ T $>$\mbox{\hyperlink{classUnaryFactorTranslation}{\+::\+Unary\+Factor\+Translation}} (\begin{DoxyParamCaption}\item[{Key}]{key,  }\item[{const T \&}]{conf,  }\item[{const Shared\+Noise\+Model}]{model }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em Key} & The key for the factor \\
+\hline
+{\em conf} & The state variable \\
+\hline
+{\em model} & The Gaussian noise model \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{GaussianPriorUnaryTranslation_8h}{Gaussian\+Prior\+Unary\+Translation.\+h}}\end{DoxyCompactItemize}

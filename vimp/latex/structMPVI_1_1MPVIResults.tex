@@ -1,0 +1,130 @@
+\hypertarget{structMPVI_1_1MPVIResults}{}\doxysection{MPVI\+::MPVIResults Struct Reference}
+\label{structMPVI_1_1MPVIResults}\index{MPVI::MPVIResults@{MPVI::MPVIResults}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structMPVI_1_1MPVIResults_a8d041557c55594184cfab2ae39747f05}{MPVIResults}} (int niters, int nstates)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_a6a88bbf9217c488397ae4fb4e0992a4d}\label{structMPVI_1_1MPVIResults_a6a88bbf9217c488397ae4fb4e0992a4d}} 
+void {\bfseries reinitialize\+\_\+data} ()
+\begin{DoxyCompactList}\small\item\em reinitialize data sizes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{structMPVI_1_1MPVIResults_ae53ef74ecd29e505d84a0171b781fec5}{update\+\_\+niters}} (int niters)
+\begin{DoxyCompactList}\small\item\em set a new number of iterations \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{structMPVI_1_1MPVIResults_ab99b95aa765d2f38891c1e5ce29fc30c}{update\+\_\+data}} (const Vector\+Xd \&new\+\_\+mean, const Matrix\+Xd \&new\+\_\+cov)
+\begin{DoxyCompactList}\small\item\em update the content of data \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{structMPVI_1_1MPVIResults_a2e56ea5b45ddf33d3ff0c2388eea311b}{print\+\_\+data}} (int i\+\_\+iter)
+\begin{DoxyCompactList}\small\item\em print the ith iteration data. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{structMPVI_1_1MPVIResults_adc82e9a3427d99e38e84595dad50abea}{save\+\_\+data}} (const string \&file\+\_\+mean, const string \&file\+\_\+cov)
+\begin{DoxyCompactList}\small\item\em save res means and covariances to csv file \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_a8dd83fc388ab2a317de76587e8fc7f1b}\label{structMPVI_1_1MPVIResults_a8dd83fc388ab2a317de76587e8fc7f1b}} 
+Matrix\+Xd {\bfseries \+\_\+res\+\_\+mean}
+\item 
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_a0461ef3e75e3af7c953c5755bbed3749}\label{structMPVI_1_1MPVIResults_a0461ef3e75e3af7c953c5755bbed3749}} 
+vector$<$ Matrix\+Xd $>$ {\bfseries \+\_\+vec\+\_\+res\+\_\+covariances}
+\item 
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_a8cc2a01f9237524c4791828110a01b73}\label{structMPVI_1_1MPVIResults_a8cc2a01f9237524c4791828110a01b73}} 
+int {\bfseries \+\_\+niters}
+\item 
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_a73b2735710edc0ba56ad182ad2d9a14e}\label{structMPVI_1_1MPVIResults_a73b2735710edc0ba56ad182ad2d9a14e}} 
+int {\bfseries \+\_\+nstates}
+\item 
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_a377a45cecf83249a8f4c9223425529ea}\label{structMPVI_1_1MPVIResults_a377a45cecf83249a8f4c9223425529ea}} 
+int {\bfseries \+\_\+cur\+\_\+iter} =0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_a8d041557c55594184cfab2ae39747f05}\label{structMPVI_1_1MPVIResults_a8d041557c55594184cfab2ae39747f05}} 
+\index{MPVI::MPVIResults@{MPVI::MPVIResults}!MPVIResults@{MPVIResults}}
+\index{MPVIResults@{MPVIResults}!MPVI::MPVIResults@{MPVI::MPVIResults}}
+\doxysubsubsection{\texorpdfstring{MPVIResults()}{MPVIResults()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structMPVI_1_1MPVIResults}{MPVI\+::\+MPVIResults\+::\+MPVIResults}} (\begin{DoxyParamCaption}\item[{int}]{niters,  }\item[{int}]{nstates }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em niters} & number of iterations \\
+\hline
+{\em nstates} & number of states \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_a2e56ea5b45ddf33d3ff0c2388eea311b}\label{structMPVI_1_1MPVIResults_a2e56ea5b45ddf33d3ff0c2388eea311b}} 
+\index{MPVI::MPVIResults@{MPVI::MPVIResults}!print\_data@{print\_data}}
+\index{print\_data@{print\_data}!MPVI::MPVIResults@{MPVI::MPVIResults}}
+\doxysubsubsection{\texorpdfstring{print\_data()}{print\_data()}}
+{\footnotesize\ttfamily void MPVI\+::\+MPVIResults\+::print\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{i\+\_\+iter }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+print the ith iteration data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i\+\_\+iter} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_adc82e9a3427d99e38e84595dad50abea}\label{structMPVI_1_1MPVIResults_adc82e9a3427d99e38e84595dad50abea}} 
+\index{MPVI::MPVIResults@{MPVI::MPVIResults}!save\_data@{save\_data}}
+\index{save\_data@{save\_data}!MPVI::MPVIResults@{MPVI::MPVIResults}}
+\doxysubsubsection{\texorpdfstring{save\_data()}{save\_data()}}
+{\footnotesize\ttfamily void MPVI\+::\+MPVIResults\+::save\+\_\+data (\begin{DoxyParamCaption}\item[{const string \&}]{file\+\_\+mean,  }\item[{const string \&}]{file\+\_\+cov }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+save res means and covariances to csv file 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+\_\+mean} & filename for the means \\
+\hline
+{\em file\+\_\+cov} & filename for the covariances \\
+\hline
+\end{DoxyParams}
+save mean
+
+save covariances\mbox{\Hypertarget{structMPVI_1_1MPVIResults_ab99b95aa765d2f38891c1e5ce29fc30c}\label{structMPVI_1_1MPVIResults_ab99b95aa765d2f38891c1e5ce29fc30c}} 
+\index{MPVI::MPVIResults@{MPVI::MPVIResults}!update\_data@{update\_data}}
+\index{update\_data@{update\_data}!MPVI::MPVIResults@{MPVI::MPVIResults}}
+\doxysubsubsection{\texorpdfstring{update\_data()}{update\_data()}}
+{\footnotesize\ttfamily void MPVI\+::\+MPVIResults\+::update\+\_\+data (\begin{DoxyParamCaption}\item[{const Vector\+Xd \&}]{new\+\_\+mean,  }\item[{const Matrix\+Xd \&}]{new\+\_\+cov }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+update the content of data 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+\_\+mean} & the new coming mean vector \\
+\hline
+{\em new\+\_\+cov} & the new coming covariance matrix \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structMPVI_1_1MPVIResults_ae53ef74ecd29e505d84a0171b781fec5}\label{structMPVI_1_1MPVIResults_ae53ef74ecd29e505d84a0171b781fec5}} 
+\index{MPVI::MPVIResults@{MPVI::MPVIResults}!update\_niters@{update\_niters}}
+\index{update\_niters@{update\_niters}!MPVI::MPVIResults@{MPVI::MPVIResults}}
+\doxysubsubsection{\texorpdfstring{update\_niters()}{update\_niters()}}
+{\footnotesize\ttfamily void MPVI\+::\+MPVIResults\+::update\+\_\+niters (\begin{DoxyParamCaption}\item[{int}]{niters }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+set a new number of iterations 
+
+
+\begin{DoxyParams}{Parameters}
+{\em niters} & \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/helpers/\mbox{\hyperlink{result__recorder_8h}{result\+\_\+recorder.\+h}}\end{DoxyCompactItemize}

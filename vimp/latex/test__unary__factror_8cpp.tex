@@ -1,0 +1,73 @@
+\hypertarget{test__unary__factror_8cpp}{}\doxysection{src/test\+\_\+unary\+\_\+factror.cpp File Reference}
+\label{test__unary__factror_8cpp}\index{src/test\_unary\_factror.cpp@{src/test\_unary\_factror.cpp}}
+
+
+Test the different behaviors of the class inherited from gtsam\+::\+Noise\+Model.  
+
+
+{\ttfamily \#include \char`\"{}../include/\+Gaussian\+Prior\+Unary\+Translation.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$gtsam/inference/\+Symbol.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classB}{B}}
+\item 
+class \mbox{\hyperlink{classA}{A}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{test__unary__factror_8cpp_a29e66997efe15135d564d01d1ff34ae4}\label{test__unary__factror_8cpp_a29e66997efe15135d564d01d1ff34ae4}} 
+using {\bfseries Unary\+Factor\+Translation2D} = \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation}}$<$ gtsam\+::\+Vector2 $>$
+\item 
+\mbox{\Hypertarget{test__unary__factror_8cpp_aea9dcd302d111bd1520d6729f6d6ba7b}\label{test__unary__factror_8cpp_aea9dcd302d111bd1520d6729f6d6ba7b}} 
+using {\bfseries Function1} = std\+::function$<$ double(const Vector\+Xd \&, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&)$>$
+\item 
+\mbox{\Hypertarget{test__unary__factror_8cpp_a7b40ec3f72a14c50c14cc29febdd70ea}\label{test__unary__factror_8cpp_a7b40ec3f72a14c50c14cc29febdd70ea}} 
+using {\bfseries Function2} = std\+::function$<$ Matrix\+Xd(const Vector\+Xd \&)$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{test__unary__factror_8cpp_a22e22d8af8fbb60ec8f2534436b16cb6}{error\+Wrapper\+Prior}} (const Vector\+Xd \&theta, const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&prior\+\_\+factor)
+\begin{DoxyCompactList}\small\item\em phi(x) = -\/log(p(x,z)) \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{test__unary__factror_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Test the different behaviors of the class inherited from gtsam\+::\+Noise\+Model. 
+
+\begin{DoxyAuthor}{Author}
+Hongzhe Yu (\href{mailto:hyu419@gatech.edu}{\texttt{ hyu419@gatech.\+edu}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2022-\/07-\/15
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2022 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{test__unary__factror_8cpp_a22e22d8af8fbb60ec8f2534436b16cb6}\label{test__unary__factror_8cpp_a22e22d8af8fbb60ec8f2534436b16cb6}} 
+\index{test\_unary\_factror.cpp@{test\_unary\_factror.cpp}!errorWrapperPrior@{errorWrapperPrior}}
+\index{errorWrapperPrior@{errorWrapperPrior}!test\_unary\_factror.cpp@{test\_unary\_factror.cpp}}
+\doxysubsubsection{\texorpdfstring{errorWrapperPrior()}{errorWrapperPrior()}}
+{\footnotesize\ttfamily double error\+Wrapper\+Prior (\begin{DoxyParamCaption}\item[{const Vector\+Xd \&}]{theta,  }\item[{const \mbox{\hyperlink{classUnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&}]{prior\+\_\+factor }\end{DoxyParamCaption})}
+
+
+
+phi(x) = -\/log(p(x,z)) 
+
+Prior factor\mbox{\Hypertarget{test__unary__factror_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{test__unary__factror_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{test\_unary\_factror.cpp@{test\_unary\_factror.cpp}!main@{main}}
+\index{main@{main}!test\_unary\_factror.cpp@{test\_unary\_factror.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Noise model definition

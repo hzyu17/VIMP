@@ -1,0 +1,22 @@
+\hypertarget{repeated__includes_8h_source}{}\doxysection{repeated\+\_\+includes.\+h}
+\label{repeated__includes_8h_source}\index{include/helpers/repeated\_includes.h@{include/helpers/repeated\_includes.h}}
+\mbox{\hyperlink{repeated__includes_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#ifndef REPEATED\_INCLUDES}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#define REPEATED\_INCLUDES}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <Eigen/Dense>}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include <fstream>}}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{21 \textcolor{keyword}{using namespace }Eigen;}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 \textcolor{comment}{//https://eigen.tuxfamily.org/dox/structEigen\_1\_1IOFormat.html}}
+\DoxyCodeLine{24 IOFormat CSVFormat(FullPrecision, DontAlignCols, \textcolor{stringliteral}{"{}, "{}}, \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* REPEATED\_INCLUDES */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

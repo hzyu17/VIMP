@@ -1,0 +1,102 @@
+\hypertarget{test__conv__prior__col__pR_8cpp}{}\doxysection{src/test\+\_\+conv\+\_\+prior\+\_\+col\+\_\+pR.cpp File Reference}
+\label{test__conv__prior__col__pR_8cpp}\index{src/test\_conv\_prior\_col\_pR.cpp@{src/test\_conv\_prior\_col\_pR.cpp}}
+
+
+Test the convergence of the algorithm with prior + collision cost only on supported states, for a planar robot.  
+
+
+{\ttfamily \#include \char`\"{}../include/\+Optimizer\+Prior\+Col\+Planar\+PR.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$gtsam/inference/\+Symbol.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}../include/helpers/data\+\_\+io.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{test__conv__prior__col__pR_8cpp_ab5a9a2c0c02926e1c26d51d5eb32335c}{error\+Wrapper\+Prior\+Col}} (const Vector\+Xd \&theta, const \mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&prior\+\_\+factor, const gpmp2\+::\+Obstacle\+Planar\+SDFFactor\+Point\+Robot \&collision\+\_\+factor)
+\begin{DoxyCompactList}\small\item\em -\/log(p(x,z)) for prior and collision factors \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{test__conv__prior__col__pR_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Test the convergence of the algorithm with prior + collision cost only on supported states, for a planar robot. 
+
+\begin{DoxyAuthor}{Author}
+Hongzhe Yu (\href{mailto:hyu419@gatech.edu}{\texttt{ hyu419@gatech.\+edu}}) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2022-\/07-\/15
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2022 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{test__conv__prior__col__pR_8cpp_ab5a9a2c0c02926e1c26d51d5eb32335c}\label{test__conv__prior__col__pR_8cpp_ab5a9a2c0c02926e1c26d51d5eb32335c}} 
+\index{test\_conv\_prior\_col\_pR.cpp@{test\_conv\_prior\_col\_pR.cpp}!errorWrapperPriorCol@{errorWrapperPriorCol}}
+\index{errorWrapperPriorCol@{errorWrapperPriorCol}!test\_conv\_prior\_col\_pR.cpp@{test\_conv\_prior\_col\_pR.cpp}}
+\doxysubsubsection{\texorpdfstring{errorWrapperPriorCol()}{errorWrapperPriorCol()}}
+{\footnotesize\ttfamily double error\+Wrapper\+Prior\+Col (\begin{DoxyParamCaption}\item[{const Vector\+Xd \&}]{theta,  }\item[{const \mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation}{Unary\+Factor\+Translation2D}} \&}]{prior\+\_\+factor,  }\item[{const gpmp2\+::\+Obstacle\+Planar\+SDFFactor\+Point\+Robot \&}]{collision\+\_\+factor }\end{DoxyParamCaption})}
+
+
+
+-\/log(p(x,z)) for prior and collision factors 
+
+
+\begin{DoxyParams}{Parameters}
+{\em theta} & the input vector \\
+\hline
+{\em prior\+\_\+factor} & the prior class \\
+\hline
+{\em obstacle\+\_\+factor} & the collision class \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+double 
+\end{DoxyReturn}
+Prior factor
+
+Obstacle factor\mbox{\Hypertarget{test__conv__prior__col__pR_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{test__conv__prior__col__pR_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+\index{test\_conv\_prior\_col\_pR.cpp@{test\_conv\_prior\_col\_pR.cpp}!main@{main}}
+\index{main@{main}!test\_conv\_prior\_col\_pR.cpp@{test\_conv\_prior\_col\_pR.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+map and sdf
+
+2D point robot
+
+parameters
+
+dimension of the joint optimization problem
+
+Robot model
+
+start and goal
+
+factored optimizers\+: containing 2 types\+:
+\begin{DoxyEnumerate}
+\item the single factor of priors for start and goal states;
+\item the prior + collision factors for supported states.
+\end{DoxyEnumerate}
+
+Noise model
+
+Vector of factored optimizers
+
+initial values
+
+Pk matrices
+
+prior cost
+
+Factored optimizer
+
+The joint optimizer
+
+Set initial value to the linear interpolation
+
+Update n iterations and data file names

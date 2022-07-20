@@ -1,0 +1,19 @@
+\hypertarget{OptimizerPriorColPlanarPR_8h_source}{}\doxysection{Optimizer\+Prior\+Col\+Planar\+PR.\+h}
+\label{OptimizerPriorColPlanarPR_8h_source}\index{include/OptimizerPriorColPlanarPR.h@{include/OptimizerPriorColPlanarPR.h}}
+\mbox{\hyperlink{OptimizerPriorColPlanarPR_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}../include/OptimizerGH.h"{}}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include "{}../include/OptimizerFactorizedTwoFactorsGH.h"{}}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include "{}../include/GaussianPriorUnaryTranslation.h"{}}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{keyword}{using namespace }VIMP;}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{keyword}{using }\mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation}{UnaryFactorTranslation2D}} = \mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation}{UnaryFactorTranslation<gtsam::Vector2>}};}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{25 \textcolor{keyword}{using }\mbox{\hyperlink{OptimizerPriorColPlanarPR_8h_a9f832bc3162dafe18b4292f385ecfe93}{FunctionPriorCol}} = std::function<double(\textcolor{keyword}{const} VectorXd\&, \textcolor{keyword}{const} \mbox{\hyperlink{classVIMP_1_1UnaryFactorTranslation}{UnaryFactorTranslation2D}}\&, \textcolor{keyword}{const} gpmp2::ObstaclePlanarSDFFactorPointRobot\&)>;}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27 \textcolor{keyword}{using }\mbox{\hyperlink{classVIMP_1_1VIMPOptimizerFactorizedTwoClassGH}{OptFactPriColPRGH}} = \mbox{\hyperlink{classVIMP_1_1VIMPOptimizerFactorizedTwoClassGH}{VIMPOptimizerFactorizedTwoClassGH<FunctionPriorCol, UnaryFactorTranslation2D, gpmp2::ObstaclePlanarSDFFactorPointRobot>}};}
+
+\end{DoxyCode}

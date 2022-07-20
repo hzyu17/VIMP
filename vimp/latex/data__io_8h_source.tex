@@ -1,0 +1,24 @@
+\hypertarget{data__io_8h_source}{}\doxysection{data\+\_\+io.\+h}
+\label{data__io_8h_source}\index{include/helpers/data\_io.h@{include/helpers/data\_io.h}}
+\mbox{\hyperlink{data__io_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{repeated__includes_8h}{repeated\_includes.h}}"{}}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{keyword}{class }\mbox{\hyperlink{classMatrixIO}{MatrixIO}}\{}
+\DoxyCodeLine{15     \textcolor{keyword}{public}:}
+\DoxyCodeLine{16         }
+\DoxyCodeLine{17         \mbox{\hyperlink{classMatrixIO}{MatrixIO}}()\{\}}
+\DoxyCodeLine{18         }
+\DoxyCodeLine{19         \textcolor{keywordtype}{void} saveData(\textcolor{keyword}{const} \textcolor{keywordtype}{string}\& fileName, \textcolor{keyword}{const} MatrixXd\& matrix)\{}
+\DoxyCodeLine{20             }
+\DoxyCodeLine{21             ofstream file(fileName);}
+\DoxyCodeLine{22             \textcolor{keywordflow}{if} (file.is\_open())\{}
+\DoxyCodeLine{23                 file << matrix.format(CSVFormat);}
+\DoxyCodeLine{24                 file.close();}
+\DoxyCodeLine{25             \}}
+\DoxyCodeLine{26         \}}
+\DoxyCodeLine{27         }
+\DoxyCodeLine{28 \};}
+
+\end{DoxyCode}

@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['save_5fdata_0',['save_data',['../classVIMP_1_1VIMPOptimizerGH.html#a51df08ffe662b2d3ea228bcc7eab364f',1,'VIMP::VIMPOptimizerGH::save_data()'],['../structVIMP_1_1VIMPResults.html#a8670861c4173c19e905146404363378a',1,'VIMP::VIMPResults::save_data()']]],
+  ['select_5fnpy_5ftype_1',['select_npy_type',['../structmatplotlibcpp_1_1detail_1_1select__npy__type.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20bool_20_3e_2',['select_npy_type&lt; bool &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01bool_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20double_20_3e_3',['select_npy_type&lt; double &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01double_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20float_20_3e_4',['select_npy_type&lt; float &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01float_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20int16_5ft_20_3e_5',['select_npy_type&lt; int16_t &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01int16__t_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20int32_5ft_20_3e_6',['select_npy_type&lt; int32_t &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01int32__t_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20int64_5ft_20_3e_7',['select_npy_type&lt; int64_t &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01int64__t_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20int8_5ft_20_3e_8',['select_npy_type&lt; int8_t &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01int8__t_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20long_20long_20_3e_9',['select_npy_type&lt; long long &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01long_01long_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20uint16_5ft_20_3e_10',['select_npy_type&lt; uint16_t &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01uint16__t_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20uint32_5ft_20_3e_11',['select_npy_type&lt; uint32_t &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01uint32__t_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20uint64_5ft_20_3e_12',['select_npy_type&lt; uint64_t &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01uint64__t_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20uint8_5ft_20_3e_13',['select_npy_type&lt; uint8_t &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01uint8__t_01_4.html',1,'matplotlibcpp::detail']]],
+  ['select_5fnpy_5ftype_3c_20unsigned_20long_20long_20_3e_14',['select_npy_type&lt; unsigned long long &gt;',['../structmatplotlibcpp_1_1detail_1_1select__npy__type_3_01unsigned_01long_01long_01_4.html',1,'matplotlibcpp::detail']]],
+  ['set_5fmu_15',['set_mu',['../classVIMP_1_1VIMPOptimizerGH.html#aa84fa8f5a7cb83847d79910889303665',1,'VIMP::VIMPOptimizerGH::set_mu(const VectorXd &amp;mean)'],['../classVIMP_1_1VIMPOptimizerGH.html#aa84fa8f5a7cb83847d79910889303665',1,'VIMP::VIMPOptimizerGH::set_mu(const VectorXd &amp;mean)']]],
+  ['set_5fniterations_16',['set_niterations',['../classVIMP_1_1VIMPOptimizerGH.html#a930eff934638f0c0b245d1b18ddf7e11',1,'VIMP::VIMPOptimizerGH']]],
+  ['set_5fstep_5fsize_17',['set_step_size',['../classVIMP_1_1VIMPOptimizerFactorizedGaussHermite.html#adc1016d2b5e98c82b98a2bb2484fc7cd',1,'VIMP::VIMPOptimizerFactorizedGaussHermite::set_step_size()'],['../classVIMP_1_1VIMPOptimizerFactorizedBase.html#abeb74b8fac3487199df7cf28620c724d',1,'VIMP::VIMPOptimizerFactorizedBase::set_step_size()'],['../classVIMP_1_1VIMPOptimizerGH.html#a458fbc726e93214bafa55e635cecc4cd',1,'VIMP::VIMPOptimizerGH::set_step_size(double ss_mean, double ss_precision)'],['../classVIMP_1_1VIMPOptimizerGH.html#a458fbc726e93214bafa55e635cecc4cd',1,'VIMP::VIMPOptimizerGH::set_step_size(double ss_mean, double ss_precision)']]],
+  ['sparse_5finverser_18',['sparse_inverser',['../structSparseInverse_1_1sparse__inverser.html',1,'SparseInverse']]],
+  ['sparseinversematrix_2eh_19',['SparseInverseMatrix.h',['../SparseInverseMatrix_8h.html',1,'']]],
+  ['sparsematrixhelper_2eh_20',['SparseMatrixHelper.h',['../SparseMatrixHelper_8h.html',1,'']]],
+  ['spmatrix_21',['SpMatrix',['../SparseInverseMatrix_8h.html#a576290261f623f98671e02129f30cd80',1,'SparseInverseMatrix.h']]],
+  ['step_22',['step',['../classVIMP_1_1VIMPOptimizerFactorizedGaussHermite.html#a191a7b545089b2fb39a1e6fb4bf4af1c',1,'VIMP::VIMPOptimizerFactorizedGaussHermite::step()'],['../classVIMP_1_1VIMPOptimizerFactorizedBase.html#af25393228bb5c8f18c29f02ad2093ed1',1,'VIMP::VIMPOptimizerFactorizedBase::step()'],['../classVIMP_1_1VIMPOptimizerGH.html#a7badcf160909f8dd6e61ff4c6e86646e',1,'VIMP::VIMPOptimizerGH::step()'],['../classVIMP_1_1VIMPOptimizerGH.html#a7badcf160909f8dd6e61ff4c6e86646e',1,'VIMP::VIMPOptimizerGH::step()']]],
+  ['step_5fclosed_5fform_23',['step_closed_form',['../classVIMP_1_1VIMPOptimizerGH.html#a7951b481303c2d1ece9bd39dd0bb1d68',1,'VIMP::VIMPOptimizerGH::step_closed_form()'],['../classVIMP_1_1VIMPOptimizerGH.html#a7951b481303c2d1ece9bd39dd0bb1d68',1,'VIMP::VIMPOptimizerGH::step_closed_form()']]],
+  ['step_5fsize_5fprecision_24',['step_size_precision',['../classVIMP_1_1VIMPOptimizerGH.html#a0b9379cfc87f1b75c9799fb9e21bdbde',1,'VIMP::VIMPOptimizerGH']]]
+];
