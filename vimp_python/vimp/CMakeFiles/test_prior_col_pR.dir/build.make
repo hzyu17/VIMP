@@ -93,7 +93,6 @@ test_prior_col_pR_EXTERNAL_OBJECTS =
 vimp/test_prior_col_pR: vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o
 vimp/test_prior_col_pR: vimp/CMakeFiles/test_prior_col_pR.dir/build.make
 vimp/test_prior_col_pR: /usr/local/lib/libgtsam.so.4.0.0
-vimp/test_prior_col_pR: /usr/lib/x86_64-linux-gnu/libpython3.6m.so
 vimp/test_prior_col_pR: /usr/lib/x86_64-linux-gnu/libboost_serialization.so
 vimp/test_prior_col_pR: /usr/lib/x86_64-linux-gnu/libboost_system.so
 vimp/test_prior_col_pR: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so

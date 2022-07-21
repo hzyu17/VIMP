@@ -92,7 +92,6 @@ test_conv_EXTERNAL_OBJECTS =
 
 vimp/test_conv: vimp/CMakeFiles/test_conv.dir/src/test_conv.cpp.o
 vimp/test_conv: vimp/CMakeFiles/test_conv.dir/build.make
-vimp/test_conv: /usr/lib/x86_64-linux-gnu/libpython3.6m.so
 vimp/test_conv: /usr/local/lib/libgtsam.so.4.0.0
 vimp/test_conv: /usr/lib/x86_64-linux-gnu/libboost_serialization.so
 vimp/test_conv: /usr/lib/x86_64-linux-gnu/libboost_system.so

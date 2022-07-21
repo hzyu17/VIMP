@@ -14,7 +14,6 @@
 
 namespace vimp{
     using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
-    using ObstaclePlanarSDFFactorPR = gpmp2::ObstaclePlanarSDFFactor<gpmp2::PointRobotModel>;
     using OptFactPriColPlanarPRGH = OptFactPriColGH<gtsam::Vector2, gpmp2::PointRobotModel>;
 }
 

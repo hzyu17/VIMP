@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/hongzhe/git/VIMP -I/usr/include/eigen3 -I/home/hongzhe/git/VIMP/vimp/include -I/usr/include/python3.6m
+CXX_INCLUDES = -I/home/hongzhe/git/VIMP -I/home/hongzhe/git/VIMP/vimp_python -I/usr/include/eigen3 -I/home/hongzhe/git/VIMP/vimp/include
 
 CXX_FLAGS =  -w -std=c++11 -Wall -O3 -DNDEBUG    -O3 -DNDEBUG -std=gnu++14
 

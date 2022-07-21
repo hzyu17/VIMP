@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "libvimp.pdb"
   "libvimp.so"
+  "libvimp.so.SOVERSION"
 )
 
 # Per-language clean rules from dependency scanning.

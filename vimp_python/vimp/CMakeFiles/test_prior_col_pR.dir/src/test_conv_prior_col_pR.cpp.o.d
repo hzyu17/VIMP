@@ -1148,48 +1148,11 @@ vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o: \
  /usr/include/boost/math/special_functions/erf.hpp \
  /usr/include/boost/math/special_functions/detail/erf_inv.hpp \
  /home/hongzhe/git/VIMP/vimp/instances/GaussianPriorUnaryTranslation.h \
- /usr/local/include/gtsam/slam/PoseTranslationPrior.h \
- /usr/local/include/gtsam/geometry/concepts.h \
- /usr/local/include/gtsam/base/Matrix.h \
- /usr/local/include/gtsam/base/OptionalJacobian.h \
- /usr/local/include/gtsam/config.h /usr/include/boost/optional.hpp \
- /usr/include/boost/optional/optional.hpp \
- /usr/include/boost/core/explicit_operator_bool.hpp \
- /usr/include/boost/optional/bad_optional_access.hpp \
- /usr/include/boost/type_traits/alignment_of.hpp \
- /usr/include/boost/type_traits/has_nothrow_constructor.hpp \
- /usr/include/boost/type_traits/type_with_alignment.hpp \
- /usr/include/boost/type_traits/decay.hpp \
- /usr/include/boost/type_traits/remove_bounds.hpp \
- /usr/include/boost/type_traits/remove_extent.hpp \
- /usr/include/boost/type_traits/is_nothrow_move_assignable.hpp \
- /usr/include/boost/type_traits/has_trivial_move_assign.hpp \
- /usr/include/boost/type_traits/is_assignable.hpp \
- /usr/include/boost/type_traits/has_nothrow_assign.hpp \
- /usr/include/boost/type_traits/is_nothrow_move_constructible.hpp \
- /usr/include/boost/move/utility.hpp \
- /usr/include/boost/move/detail/config_begin.hpp \
- /usr/include/boost/move/detail/workaround.hpp \
- /usr/include/boost/move/utility_core.hpp \
- /usr/include/boost/move/core.hpp \
- /usr/include/boost/move/detail/config_end.hpp \
- /usr/include/boost/move/detail/meta_utils.hpp \
- /usr/include/boost/move/detail/meta_utils_core.hpp \
- /usr/include/boost/move/traits.hpp \
- /usr/include/boost/move/detail/type_traits.hpp \
- /usr/include/boost/none.hpp /usr/include/boost/none_t.hpp \
- /usr/include/boost/utility/compare_pointees.hpp \
- /usr/include/boost/optional/optional_fwd.hpp \
- /usr/include/boost/optional/detail/optional_config.hpp \
- /usr/include/boost/optional/detail/optional_factory_support.hpp \
- /usr/include/boost/optional/detail/optional_aligned_storage.hpp \
- /usr/include/boost/optional/detail/optional_reference_spec.hpp \
- /usr/include/boost/optional/detail/optional_relops.hpp \
- /usr/include/boost/optional/detail/optional_swap.hpp \
- /usr/local/include/gtsam/base/Vector.h \
- /usr/local/include/gtsam/global_includes.h \
- /usr/local/include/gtsam/base/types.h \
- /usr/local/include/gtsam/dllexport.h /usr/include/eigen3/Eigen/Core \
+ /usr/local/include/gtsam/inference/Symbol.h \
+ /usr/local/include/gtsam/inference/Key.h \
+ /usr/local/include/gtsam/base/FastList.h \
+ /usr/local/include/gtsam/base/FastDefaultAllocator.h \
+ /usr/local/include/gtsam/config.h \
  /usr/include/boost/serialization/nvp.hpp \
  /usr/include/boost/serialization/level.hpp \
  /usr/include/boost/serialization/level_enum.hpp \
@@ -1204,31 +1167,41 @@ vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o: \
  /usr/include/boost/serialization/force_include.hpp \
  /usr/include/boost/serialization/void_cast_fwd.hpp \
  /usr/include/boost/serialization/wrapper.hpp \
- /usr/include/boost/serialization/array.hpp \
- /usr/include/boost/serialization/array_wrapper.hpp \
- /usr/include/boost/serialization/collection_size_type.hpp \
+ /usr/include/boost/serialization/list.hpp \
+ /usr/include/boost/serialization/collections_save_imp.hpp \
+ /usr/include/boost/serialization/serialization.hpp \
  /usr/include/boost/serialization/strong_typedef.hpp \
  /usr/include/boost/operators.hpp \
+ /usr/include/boost/type_traits/has_nothrow_assign.hpp \
+ /usr/include/boost/type_traits/is_assignable.hpp \
+ /usr/include/boost/type_traits/has_nothrow_constructor.hpp \
  /usr/include/boost/type_traits/has_nothrow_copy.hpp \
  /usr/include/boost/type_traits/is_copy_constructible.hpp \
+ /usr/include/boost/serialization/version.hpp \
+ /usr/include/boost/serialization/collection_size_type.hpp \
  /usr/include/boost/serialization/split_free.hpp \
- /usr/include/boost/serialization/serialization.hpp \
  /usr/include/boost/serialization/is_bitwise_serializable.hpp \
- /usr/include/boost/serialization/array_optimization.hpp \
- /usr/include/eigen3/Eigen/Cholesky /usr/include/eigen3/Eigen/LU \
- /usr/include/boost/format.hpp \
- /usr/include/boost/format/detail/compat_workarounds.hpp \
- /usr/include/boost/format/detail/config_macros.hpp \
- /usr/include/boost/format/detail/workarounds_gcc-2_95.hpp \
- /usr/include/boost/format/detail/workarounds_stlport.hpp \
- /usr/include/boost/format/format_fwd.hpp \
- /usr/include/boost/format/internals_fwd.hpp \
- /usr/include/boost/format/internals.hpp \
- /usr/include/boost/format/alt_sstream.hpp \
- /usr/include/boost/shared_ptr.hpp \
+ /usr/include/boost/serialization/item_version_type.hpp \
+ /usr/include/boost/serialization/collections_load_imp.hpp \
+ /usr/include/boost/archive/detail/basic_iarchive.hpp \
+ /usr/include/boost/scoped_ptr.hpp \
+ /usr/include/boost/smart_ptr/scoped_ptr.hpp \
+ /usr/include/boost/checked_delete.hpp \
+ /usr/include/boost/smart_ptr/detail/sp_nullptr_t.hpp \
+ /usr/include/boost/smart_ptr/detail/sp_disable_deprecated.hpp \
+ /usr/include/boost/smart_ptr/detail/sp_noexcept.hpp \
+ /usr/include/boost/smart_ptr/detail/operator_bool.hpp \
+ /usr/include/boost/archive/basic_archive.hpp \
+ /usr/include/boost/archive/detail/auto_link_archive.hpp \
+ /usr/include/boost/archive/detail/decl.hpp \
+ /usr/include/boost/config/auto_link.hpp \
+ /usr/include/boost/archive/detail/abi_prefix.hpp \
+ /usr/include/boost/config/abi_prefix.hpp \
+ /usr/include/boost/archive/detail/abi_suffix.hpp \
+ /usr/include/boost/config/abi_suffix.hpp \
+ /usr/include/boost/archive/detail/helper_collection.hpp \
  /usr/include/boost/smart_ptr/shared_ptr.hpp \
  /usr/include/boost/config/no_tr1/memory.hpp \
- /usr/include/boost/checked_delete.hpp \
  /usr/include/boost/smart_ptr/detail/shared_count.hpp \
  /usr/include/boost/smart_ptr/bad_weak_ptr.hpp \
  /usr/include/boost/smart_ptr/detail/sp_counted_base.hpp \
@@ -1239,28 +1212,49 @@ vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o: \
  /usr/include/boost/core/demangle.hpp /usr/include/c++/7/cxxabi.h \
  /usr/include/x86_64-linux-gnu/c++/7/bits/cxxabi_tweaks.h \
  /usr/include/boost/smart_ptr/detail/sp_counted_impl.hpp \
- /usr/include/boost/smart_ptr/detail/sp_disable_deprecated.hpp \
  /usr/include/boost/smart_ptr/detail/sp_convertible.hpp \
- /usr/include/boost/smart_ptr/detail/sp_nullptr_t.hpp \
- /usr/include/boost/smart_ptr/detail/sp_noexcept.hpp \
  /usr/include/boost/smart_ptr/detail/spinlock_pool.hpp \
  /usr/include/boost/smart_ptr/detail/spinlock.hpp \
  /usr/include/boost/smart_ptr/detail/spinlock_std_atomic.hpp \
  /usr/include/boost/smart_ptr/detail/yield_k.hpp \
- /usr/include/boost/smart_ptr/detail/operator_bool.hpp \
  /usr/include/boost/smart_ptr/detail/local_sp_deleter.hpp \
  /usr/include/boost/smart_ptr/detail/local_counted_base.hpp \
- /usr/include/boost/format/alt_sstream_impl.hpp \
- /usr/include/boost/format/format_class.hpp \
- /usr/include/boost/format/exceptions.hpp \
- /usr/include/boost/format/format_implementation.hpp \
- /usr/include/boost/format/group.hpp \
- /usr/include/boost/format/feed_args.hpp \
- /usr/include/boost/format/detail/msvc_disambiguater.hpp \
- /usr/include/boost/format/parsing.hpp \
- /usr/include/boost/format/free_funcs.hpp \
- /usr/include/boost/format/detail/unset_macros.hpp \
- /usr/include/boost/function.hpp \
+ /usr/include/boost/smart_ptr/make_shared.hpp \
+ /usr/include/boost/smart_ptr/make_shared_object.hpp \
+ /usr/include/boost/move/core.hpp \
+ /usr/include/boost/move/detail/config_begin.hpp \
+ /usr/include/boost/move/detail/workaround.hpp \
+ /usr/include/boost/move/detail/config_end.hpp \
+ /usr/include/boost/move/utility_core.hpp \
+ /usr/include/boost/move/detail/meta_utils.hpp \
+ /usr/include/boost/move/detail/meta_utils_core.hpp \
+ /usr/include/boost/smart_ptr/detail/sp_forward.hpp \
+ /usr/include/boost/type_traits/type_with_alignment.hpp \
+ /usr/include/boost/type_traits/alignment_of.hpp \
+ /usr/include/boost/smart_ptr/make_shared_array.hpp \
+ /usr/include/boost/smart_ptr/allocate_shared_array.hpp \
+ /usr/include/boost/type_traits/has_trivial_assign.hpp \
+ /usr/include/boost/type_traits/has_trivial_constructor.hpp \
+ /usr/include/boost/type_traits/has_trivial_destructor.hpp \
+ /usr/include/boost/serialization/detail/stack_constructor.hpp \
+ /usr/include/boost/aligned_storage.hpp \
+ /usr/include/boost/type_traits/aligned_storage.hpp \
+ /usr/include/boost/serialization/detail/is_default_constructible.hpp \
+ /usr/include/boost/serialization/collection_traits.hpp \
+ /usr/local/include/gtsam/base/FastMap.h \
+ /usr/include/boost/serialization/map.hpp \
+ /usr/include/boost/serialization/utility.hpp \
+ /usr/local/include/gtsam/base/FastSet.h \
+ /usr/include/boost/serialization/set.hpp /usr/include/c++/7/set \
+ /usr/include/c++/7/bits/stl_set.h /usr/include/c++/7/bits/stl_multiset.h \
+ /usr/local/include/gtsam/base/Testable.h \
+ /usr/include/boost/shared_ptr.hpp \
+ /usr/local/include/gtsam/base/FastVector.h \
+ /usr/include/boost/serialization/vector.hpp \
+ /usr/include/boost/serialization/array_wrapper.hpp \
+ /usr/include/boost/serialization/array_optimization.hpp \
+ /usr/local/include/gtsam/base/types.h \
+ /usr/local/include/gtsam/dllexport.h /usr/include/boost/function.hpp \
  /usr/include/boost/preprocessor/iterate.hpp \
  /usr/include/boost/preprocessor/iteration/iterate.hpp \
  /usr/include/boost/preprocessor/slot/slot.hpp \
@@ -1272,7 +1266,6 @@ vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o: \
  /usr/include/boost/type_index/stl_type_index.hpp \
  /usr/include/boost/type_index/type_index_facade.hpp \
  /usr/include/boost/type_traits/has_trivial_copy.hpp \
- /usr/include/boost/type_traits/has_trivial_destructor.hpp \
  /usr/include/boost/type_traits/composite_traits.hpp \
  /usr/include/boost/type_traits/is_union.hpp /usr/include/boost/ref.hpp \
  /usr/include/boost/core/ref.hpp /usr/include/boost/function_equal.hpp \
@@ -1293,6 +1286,54 @@ vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o: \
  /usr/include/boost/function/function_template.hpp \
  /usr/include/boost/detail/no_exceptions_support.hpp \
  /usr/include/boost/core/no_exceptions_support.hpp \
+ /usr/local/include/gtsam/slam/PoseTranslationPrior.h \
+ /usr/local/include/gtsam/geometry/concepts.h \
+ /usr/local/include/gtsam/base/Matrix.h \
+ /usr/local/include/gtsam/base/OptionalJacobian.h \
+ /usr/include/boost/optional.hpp /usr/include/boost/optional/optional.hpp \
+ /usr/include/boost/core/explicit_operator_bool.hpp \
+ /usr/include/boost/optional/bad_optional_access.hpp \
+ /usr/include/boost/type_traits/decay.hpp \
+ /usr/include/boost/type_traits/remove_bounds.hpp \
+ /usr/include/boost/type_traits/remove_extent.hpp \
+ /usr/include/boost/type_traits/is_nothrow_move_assignable.hpp \
+ /usr/include/boost/type_traits/has_trivial_move_assign.hpp \
+ /usr/include/boost/type_traits/is_nothrow_move_constructible.hpp \
+ /usr/include/boost/move/utility.hpp /usr/include/boost/move/traits.hpp \
+ /usr/include/boost/move/detail/type_traits.hpp \
+ /usr/include/boost/none.hpp /usr/include/boost/none_t.hpp \
+ /usr/include/boost/utility/compare_pointees.hpp \
+ /usr/include/boost/optional/optional_fwd.hpp \
+ /usr/include/boost/optional/detail/optional_config.hpp \
+ /usr/include/boost/optional/detail/optional_factory_support.hpp \
+ /usr/include/boost/optional/detail/optional_aligned_storage.hpp \
+ /usr/include/boost/optional/detail/optional_reference_spec.hpp \
+ /usr/include/boost/optional/detail/optional_relops.hpp \
+ /usr/include/boost/optional/detail/optional_swap.hpp \
+ /usr/local/include/gtsam/base/Vector.h \
+ /usr/local/include/gtsam/global_includes.h \
+ /usr/include/eigen3/Eigen/Core \
+ /usr/include/boost/serialization/array.hpp \
+ /usr/include/eigen3/Eigen/Cholesky /usr/include/eigen3/Eigen/LU \
+ /usr/include/boost/format.hpp \
+ /usr/include/boost/format/detail/compat_workarounds.hpp \
+ /usr/include/boost/format/detail/config_macros.hpp \
+ /usr/include/boost/format/detail/workarounds_gcc-2_95.hpp \
+ /usr/include/boost/format/detail/workarounds_stlport.hpp \
+ /usr/include/boost/format/format_fwd.hpp \
+ /usr/include/boost/format/internals_fwd.hpp \
+ /usr/include/boost/format/internals.hpp \
+ /usr/include/boost/format/alt_sstream.hpp \
+ /usr/include/boost/format/alt_sstream_impl.hpp \
+ /usr/include/boost/format/format_class.hpp \
+ /usr/include/boost/format/exceptions.hpp \
+ /usr/include/boost/format/format_implementation.hpp \
+ /usr/include/boost/format/group.hpp \
+ /usr/include/boost/format/feed_args.hpp \
+ /usr/include/boost/format/detail/msvc_disambiguater.hpp \
+ /usr/include/boost/format/parsing.hpp \
+ /usr/include/boost/format/free_funcs.hpp \
+ /usr/include/boost/format/detail/unset_macros.hpp \
  /usr/include/boost/tuple/tuple.hpp \
  /usr/include/boost/tuple/detail/tuple_basic.hpp \
  /usr/include/boost/type_traits/cv_traits.hpp \
@@ -1303,19 +1344,11 @@ vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o: \
  /usr/local/include/gtsam/nonlinear/Values.h \
  /usr/local/include/gtsam/base/GenericValue.h \
  /usr/local/include/gtsam/base/Manifold.h \
- /usr/local/include/gtsam/base/Testable.h \
  /usr/include/boost/concept/requires.hpp \
  /usr/include/boost/preprocessor/seq/for_each.hpp \
  /usr/local/include/gtsam/base/Value.h \
  /usr/include/boost/serialization/assume_abstract.hpp \
  /usr/include/boost/make_shared.hpp \
- /usr/include/boost/smart_ptr/make_shared.hpp \
- /usr/include/boost/smart_ptr/make_shared_object.hpp \
- /usr/include/boost/smart_ptr/detail/sp_forward.hpp \
- /usr/include/boost/smart_ptr/make_shared_array.hpp \
- /usr/include/boost/smart_ptr/allocate_shared_array.hpp \
- /usr/include/boost/type_traits/has_trivial_assign.hpp \
- /usr/include/boost/type_traits/has_trivial_constructor.hpp \
  /usr/include/boost/pool/pool_alloc.hpp \
  /usr/include/boost/pool/poolfwd.hpp \
  /usr/include/boost/pool/detail/mutex.hpp /usr/include/c++/7/mutex \
@@ -1327,42 +1360,9 @@ vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o: \
  /usr/include/boost/integer/common_factor_ct.hpp \
  /usr/include/boost/pool/simple_segregated_storage.hpp \
  /usr/include/boost/pool/detail/guard.hpp \
- /usr/include/boost/type_traits/aligned_storage.hpp \
  /usr/local/include/gtsam/base/VectorSpace.h \
  /usr/local/include/gtsam/base/Lie.h \
  /usr/local/include/gtsam/base/Group.h \
- /usr/local/include/gtsam/inference/Key.h \
- /usr/local/include/gtsam/base/FastList.h \
- /usr/local/include/gtsam/base/FastDefaultAllocator.h \
- /usr/include/boost/serialization/list.hpp \
- /usr/include/boost/serialization/collections_save_imp.hpp \
- /usr/include/boost/serialization/version.hpp \
- /usr/include/boost/serialization/item_version_type.hpp \
- /usr/include/boost/serialization/collections_load_imp.hpp \
- /usr/include/boost/archive/detail/basic_iarchive.hpp \
- /usr/include/boost/scoped_ptr.hpp \
- /usr/include/boost/smart_ptr/scoped_ptr.hpp \
- /usr/include/boost/archive/basic_archive.hpp \
- /usr/include/boost/archive/detail/auto_link_archive.hpp \
- /usr/include/boost/archive/detail/decl.hpp \
- /usr/include/boost/config/auto_link.hpp \
- /usr/include/boost/archive/detail/abi_prefix.hpp \
- /usr/include/boost/config/abi_prefix.hpp \
- /usr/include/boost/archive/detail/abi_suffix.hpp \
- /usr/include/boost/config/abi_suffix.hpp \
- /usr/include/boost/archive/detail/helper_collection.hpp \
- /usr/include/boost/serialization/detail/stack_constructor.hpp \
- /usr/include/boost/aligned_storage.hpp \
- /usr/include/boost/serialization/detail/is_default_constructible.hpp \
- /usr/include/boost/serialization/collection_traits.hpp \
- /usr/local/include/gtsam/base/FastMap.h \
- /usr/include/boost/serialization/map.hpp \
- /usr/include/boost/serialization/utility.hpp \
- /usr/local/include/gtsam/base/FastSet.h \
- /usr/include/boost/serialization/set.hpp /usr/include/c++/7/set \
- /usr/include/c++/7/bits/stl_set.h /usr/include/c++/7/bits/stl_multiset.h \
- /usr/local/include/gtsam/base/FastVector.h \
- /usr/include/boost/serialization/vector.hpp \
  /usr/include/boost/iterator/transform_iterator.hpp \
  /usr/include/boost/utility/result_of.hpp \
  /usr/include/boost/preprocessor/repetition/enum_shifted_params.hpp \
@@ -1516,5 +1516,5 @@ vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o: \
  /usr/local/include/gpmp2/kinematics/ForwardKinematics-inl.h \
  /usr/local/include/gpmp2/kinematics/RobotModel.h \
  /usr/local/include/gpmp2/kinematics/RobotModel-inl.h \
- /usr/local/include/gtsam/inference/Symbol.h \
+ /usr/local/include/gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h \
  /home/hongzhe/git/VIMP/vimp/helpers/data_io.h

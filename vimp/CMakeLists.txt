@@ -6,6 +6,9 @@ set(vimp_subdirs
 
 set(vimp_srcs)
 
+# files want to be excluded
+set(excluded_sources "helpers/matplotlibcpp.h" "helpers/plotPlanarResults.h")
+
 # Library sources
 foreach(subdir ${vimp_subdirs})
   file(GLOB subdir_srcs "${subdir}/*.cpp" "${subdir}/*.h")
@@ -20,23 +23,17 @@ foreach(subdir ${vimp_subdirs})
   add_subdirectory(${subdir})
 endforeach(subdir)
 
-find_package(PythonLibs REQUIRED
-              Eigen3 REQUIRED
-              gpmp2 REQUIRED
-              GTSAM REQUIRED)
+# find_package( PythonLibs REQUIRED)
 
 include_directories(include)
 
-include_directories(${PYTHON_INCLUDE_DIRS})
+# include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${GPMP2_INCLUDE_DIRS})
 include_directories(${GTSAM_INCLUDE_DIRS})
-set(GTSAM_LIBRARIES gtsam)
-
-set(GPMP2_LIBRARIES gpmp2)
 
 # build shared lib
-if(GPMP2_BUILD_STATIC_LIBRARY)
+if(VIMP_BUILD_STATIC_LIBRARY)
   # static
   message(STATUS "Build static library")
   add_library(${PROJECT_NAME} STATIC ${vimp_srcs})
@@ -78,13 +75,13 @@ endif()
 # target_link_libraries(main ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(test_conv src/test_conv.cpp)
-target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+target_link_libraries(test_conv  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 add_executable(test_conv_factor_Gaussian_GH src/test_conv_factorized_GH.cpp)
 target_link_libraries(test_conv_factor_Gaussian_GH ${EIGEN3_LIBRARIES})
 
 add_executable(test_conv_factor src/test_conv_factorized.cpp)
-target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+target_link_libraries(test_conv_factor  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 add_executable(test_sparse_inverse src/test_sparse_inverse.cpp)
 target_link_libraries(test_sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
@@ -96,7 +93,7 @@ add_executable(test_conv_Gaussian_GH src/test_conv_Gaussian_GH.cpp)
 target_link_libraries(test_conv_Gaussian_GH ${EIGEN3_LIBRARIES})
 
 add_executable(test_prior_col_pR src/test_conv_prior_col_pR.cpp)
-target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${PYTHON_LIBRARIES})
+target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(test_prior_pR src/test_conv_prior_pR.cpp)
 target_link_libraries(test_prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
@@ -125,7 +122,7 @@ target_link_libraries(test_prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPM
 # target_link_libraries(test_optimizer ${EIGEN3_LIBRARIES} GTest::gtest_main)
 
 
-# -------------------------------------------- Doxygen for documentations
+# # -------------------------------------------- Doxygen for documentations
 # find_package(Doxygen)
 # if (DOXYGEN_FOUND)
 #     # set input and output files

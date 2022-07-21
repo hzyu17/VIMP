@@ -9,6 +9,7 @@
  * 
  */
 
+#include <gtsam/inference/Symbol.h>
 #include <gtsam/slam/PoseTranslationPrior.h>
 #include <gpmp2/gp/GPutils.h>
 
@@ -17,6 +18,11 @@ template <class T>
 /// A derived class of NoiseModelFactor1 in gtsam, used for the prior err probability for translation. 
 class UnaryFactorTranslation: public gtsam::NoiseModelFactor1<T> {
 public:
+
+    /// Defaut constructor
+    UnaryFactorTranslation(){};
+
+    /// Constructor
     /// @param Key The key for the factor
     /// @param conf The state variable
     /// @param model The Gaussian noise model

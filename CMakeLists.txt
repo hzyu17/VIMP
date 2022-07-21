@@ -46,11 +46,18 @@ find_package(Boost COMPONENTS serialization REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR})
 
+
+# GPMP2
+find_package( Eigen3 REQUIRED
+              gpmp2 REQUIRED)
+
+set(GPMP2_LIBRARIES gpmp2)
+
 # Generate and install config and dllexport files
-#configure_file("vimp/config.h.in" "vimp/config.h")
-# list(APPEND vimp_srcs "${PROJECT_BINARY_DIR}/vimp/config.h")
-# include_directories(BEFORE ${PROJECT_BINARY_DIR}) # So we can include generated config header files
-# install(FILES "${PROJECT_BINARY_DIR}/vimp/config.h" DESTINATION include/vimp)
+configure_file("vimp/config.h.in" "vimp/config.h")
+list(APPEND vimp_srcs "${PROJECT_BINARY_DIR}/vimp/config.h")
+include_directories(BEFORE ${PROJECT_BINARY_DIR}) # So we can include generated config header files
+install(FILES "${PROJECT_BINARY_DIR}/vimp/config.h" DESTINATION include/vimp)
 
 # include current source folder, at the very beginning
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})

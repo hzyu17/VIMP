@@ -1,12 +1,12 @@
 // Test the Multi-variate Gaussian sampling
 
 #include <iostream>
-#include <vimp/helpers/matplotlibcpp.h>
+// #include <vimp/helpers/matplotlibcpp.h>
 #include <vimp/helpers/MVGsampler.h>
 #include <vimp/helpers/SparseMatrixHelper.h>
 #include <gtsam/base/Matrix.h>
 
-namespace plt = matplotlibcpp;
+// namespace plt = matplotlibcpp;
 using namespace Eigen;
 using namespace std;
 using namespace Sparsehelper;

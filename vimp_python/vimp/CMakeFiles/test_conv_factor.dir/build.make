@@ -92,7 +92,6 @@ test_conv_factor_EXTERNAL_OBJECTS =
 
 vimp/test_conv_factor: vimp/CMakeFiles/test_conv_factor.dir/src/test_conv_factorized.cpp.o
 vimp/test_conv_factor: vimp/CMakeFiles/test_conv_factor.dir/build.make
-vimp/test_conv_factor: /usr/lib/x86_64-linux-gnu/libpython3.6m.so
 vimp/test_conv_factor: /usr/local/lib/libgtsam.so.4.0.0
 vimp/test_conv_factor: /usr/lib/x86_64-linux-gnu/libboost_serialization.so
 vimp/test_conv_factor: /usr/lib/x86_64-linux-gnu/libboost_system.so

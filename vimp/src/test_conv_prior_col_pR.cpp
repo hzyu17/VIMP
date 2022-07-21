@@ -11,6 +11,7 @@
  */
 
 #include <vimp/instances/PriorColPlanarPR.h>
+#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 #include <gtsam/inference/Symbol.h>
 #include <vimp/helpers/data_io.h>
 
@@ -30,7 +31,7 @@ using namespace vimp;
  */
 double errorWrapperPriorCol(const VectorXd& pose, 
                             const UnaryFactorTranslation2D& prior_factor,
-                            const ObstaclePlanarSDFFactorPR& collision_factor) {
+                            const ObstaclePlanarSDFFactorPointRobot& collision_factor) {
 
     /**
      * Prior factor
@@ -135,7 +136,7 @@ int main(){
         UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment<dim_conf>(0)}, K_0};
 
         // collision
-        ObstaclePlanarSDFFactorPR collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
+        ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
 
         /// Factored optimizer
         std::shared_ptr<OptFactPriColPlanarPRGH> pOptimizer{new OptFactPriColPlanarPRGH{dim_conf, errorWrapperPriorCol, prior_k, collision_k, Pk}};

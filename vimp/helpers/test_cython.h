@@ -10,22 +10,29 @@
  */
 
 #include <gtsam/base/Vector.h>
+#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
 
 namespace vimp{
     class CythonTest{
         public:
             CythonTest(){};
-            CythonTest(const gtsam::Vector& vec):_vec{vec}{};
+            CythonTest(const gtsam::Vector& vec, const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact):_vec{vec}, _obs{obs_fact}{};
 
             // copy constructors
-            CythonTest(const CythonTest& other):_vec{other._vec}{};
+            // CythonTest(const CythonTest& other):_vec{other._vec}, _obs{other._obs}{};
 
             gtsam::Vector _vec;
             
-            gtsam::Vector vec(){
+            gpmp2::ObstaclePlanarSDFFactorPointRobot _obs;
+            
+            gtsam::Vector vec() const{
                 return _vec;
             }
+
+            // gpmp2::ObstaclePlanarSDFFactorPointRobot obs() const {
+            //     return _obs;
+            // }
 
     };
 }

@@ -50,8 +50,6 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     "/home/hongzhe/git/VIMP/vimp/helpers/SparseInverseMatrix.h"
     "/home/hongzhe/git/VIMP/vimp/helpers/SparseMatrixHelper.h"
     "/home/hongzhe/git/VIMP/vimp/helpers/data_io.h"
-    "/home/hongzhe/git/VIMP/vimp/helpers/matplotlibcpp.h"
-    "/home/hongzhe/git/VIMP/vimp/helpers/plotPlanarResults.h"
     "/home/hongzhe/git/VIMP/vimp/helpers/repeated_includes.h"
     "/home/hongzhe/git/VIMP/vimp/helpers/result_recorder.h"
     "/home/hongzhe/git/VIMP/vimp/helpers/test_cython.h"

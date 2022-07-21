@@ -18,6 +18,10 @@ namespace vimp{
     using Base = VIMPOptimizerFactorizedBase;
     using GHFunction = std::function<MatrixXd(const VectorXd&)>;
     public:
+        /// Default constructor
+        VIMPOptimizerFactorizedTwoClassGH(){};
+
+        /// Constructor
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
         ///@param cost_class_ CostClass
