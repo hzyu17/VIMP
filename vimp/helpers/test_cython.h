@@ -17,14 +17,15 @@ namespace vimp{
     class CythonTest{
         public:
             CythonTest(){};
-            CythonTest(const gtsam::Vector& vec, const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact):_vec{vec}, _obs{obs_fact}{};
+            CythonTest(const gtsam::Vector& vec, const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact):_vec{vec}, 
+            _func{[obs_fact](const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact){return 0;}}{};
 
             // copy constructors
             // CythonTest(const CythonTest& other):_vec{other._vec}, _obs{other._obs}{};
 
             gtsam::Vector _vec;
             
-            gpmp2::ObstaclePlanarSDFFactorPointRobot _obs;
+            std::function<int(const gpmp2::ObstaclePlanarSDFFactorPointRobot&)> _func;
             
             gtsam::Vector vec() const{
                 return _vec;

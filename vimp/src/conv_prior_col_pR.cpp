@@ -10,10 +10,9 @@
  * 
  */
 
-#include <vimp/instances/PriorColPlanarPR.h>
+#include "../instances/PriorColPlanarPointRobot.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-#include <gtsam/inference/Symbol.h>
-#include <vimp/helpers/data_io.h>
+#include "../instances/PlanarPointRobotSDFExample.h"
 
 using namespace std;
 using namespace gpmp2;
@@ -55,54 +54,21 @@ double errorWrapperPriorCol(const VectorXd& pose,
 }
 
 int main(){
-    /// map and sdf
-    MatrixXd map_ground_truth = (MatrixXd(7, 7) <<
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 1, 1, 1, 0, 0,
-            0, 0, 1, 1, 1, 0, 0,
-            0, 0, 1, 1, 1, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0).finished();
-    MatrixXd field = (MatrixXd(7, 7) <<
-            2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284,
-            2.2361, 1.4142, 1.0000, 1.0000, 1.0000, 1.4142, 2.2361,
-            2.0000, 1.0000, -1.0000, -1.0000, -1.0000, 1.0000, 2.0000,
-            2.0000, 1.0000, -1.0000, -2.0000, -1.0000, 1.0000, 2.0000,
-            2.0000, 1.0000, -1.0000, -1.0000, -1.0000, 1.0000, 2.0000,
-            2.2361, 1.4142, 1.0000, 1.0000, 1.0000, 1.4142, 2.2361,
-            2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284).finished();
-
-    MatrixIO matrix_io{};
-    string filename_map{"data/2d_pR/map_ground_truth.csv"};
-    string filename_sdf{"data/2d_pR/map_sdf.csv"};
-
-    matrix_io.saveData(filename_map, map_ground_truth);
-    matrix_io.saveData(filename_sdf, field);
-    // layout of SDF: Bottom-left is (0,0), length is +/- 1 per point.
-    Point2 origin(0, 0);
-    double cell_size = 1.0;
-
-    PlanarSDF sdf = PlanarSDF(origin, cell_size, field);
-    double cost_sigma = 1.0;
-    double epsilon = 1.0;
-
-    /// 2D point robot
-    int n_total_states = 20, N = n_total_states - 1;
+    // An example pr and sdf
+    PlanarPointRobotSDFExample planar_pr_sdf;
+    PointRobotModel pRModel = std::move(planar_pr_sdf.pRmodel());
+    PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
 
     /// parameters
-    const int ndof = 2, nlinks = 1;
+    int n_total_states = 20, N = n_total_states - 1;
+    const int ndof = planar_pr_sdf.ndof(), nlinks = planar_pr_sdf.nlinks();
     const int dim_conf = ndof * nlinks;
     const int dim_theta = 2 * dim_conf; // theta = [conf, vel_conf]
     /// dimension of the joint optimization problem
     const int ndim = dim_theta * n_total_states;
 
-    /// Robot model
-    PointRobot pR(ndof, nlinks);
-    double r = 1.0;
-    BodySphereVector body_spheres;
-    body_spheres.push_back(BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
-    PointRobotModel pRModel(pR, body_spheres);
+    /// Obs factor
+    double cost_sigma = 1.0, epsilon = 1.0;
 
     /// start and goal
     double start_x = 1.0, start_y = 1.5, goal_x = 5.5, goal_y = 4.5;
@@ -126,14 +92,14 @@ int main(){
 
     for (int i = 0; i < n_total_states; i++) {
         VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
-        joint_init_theta.segment<dim_theta>(i*dim_theta) = std::move(theta);
+        joint_init_theta.segment(i*dim_theta, dim_theta) = std::move(theta);
 
         /// Pk matrices
         MatrixXd Pk{MatrixXd::Zero(dim_conf, ndim)};
-        Pk.block<dim_conf, dim_conf>(0, i * dim_theta) = MatrixXd::Identity(dim_conf, dim_conf);
+        Pk.block(0, i * dim_theta, dim_conf, dim_conf) = std::move(MatrixXd::Identity(dim_conf, dim_conf));
         
         /// prior
-        UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment<dim_conf>(0)}, K_0};
+        UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment(0, dim_conf)}, K_0};
 
         // collision
         ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};

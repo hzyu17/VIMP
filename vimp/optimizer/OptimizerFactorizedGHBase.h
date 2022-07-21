@@ -19,7 +19,7 @@
 #include <random>
 
 #include <vimp/helpers/SparseMatrixHelper.h>
-#include <vimp/helpers/GaussHermite-impl.h>
+#include "../helpers/GaussHermite-impl.h"
 
 
 using namespace std;
@@ -92,8 +92,9 @@ namespace vimp{
     public:
         /// update the GH approximator
         void updateGH(){
-            _gauss_hermite.update_mean(mean());
-            _gauss_hermite.update_P(covariance()); }
+            _gauss_hermite.update_mean(_mu);
+            update_covariance();
+            _gauss_hermite.update_P(_covariance); }
 
         /// update the GH approximator
         void updateGH(const VectorXd& x, const MatrixXd& P){
@@ -119,14 +120,6 @@ namespace vimp{
          */
         inline void update_mu(const VectorXd& new_mu){ assert(_mu.size() == new_mu.size()); _mu = new_mu; }
 
-        /**
-         * @brief Update the marginal mean using JOINT mean and 
-         * mapping matrix Pk.
-         * 
-         * @param joint_mean 
-         */
-        inline void update_mu_from_joint_mean(const VectorXd& joint_mean){ 
-            _mu = _Pk * joint_mean;}
 
         /**
          * @brief Update precision matrix
@@ -137,14 +130,24 @@ namespace vimp{
 
 
         /**
+         * @brief Update the marginal mean using JOINT mean and 
+         * mapping matrix Pk.
+         * 
+         * @param joint_mean 
+         */
+        inline void update_mu_from_joint_mean(const VectorXd& joint_mean){ 
+            _mu = _Pk * joint_mean;}
+            
+
+        /**
          * @brief Update the marginal precision matrix using joint COVARIANCE matrix and 
          * mapping matrix Pk.
          * 
          * @param joint_covariance a given JOINT covariance matrix
          */
         inline void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){ 
-            _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse(); update_covariance();}
-
+            _covariance = _Pk * joint_covariance * _Pk.transpose();
+            _precision = _covariance.inverse();}
 
         /**
          * @brief Update covariance matrix by inverting precision matrix.

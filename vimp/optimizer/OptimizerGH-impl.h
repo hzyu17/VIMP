@@ -11,9 +11,8 @@ namespace vimp{
 
         double cost = this->cost_value();
         cout << "cost before " << this->cost_value() << endl;
-
         cout << "cost before 1 " << this->cost_value(this->_mu, this->covariance()) << endl;
-
+        
         assert(this->cost_value() == this->cost_value(this->_mu, this->covariance()));
 
         /// purturb a little and see the cost
