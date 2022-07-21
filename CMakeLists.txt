@@ -9,11 +9,16 @@ if(NOT DEFINED CMAKE_MACOSX_RPATH)
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
+# version indicator
+set(VIMP_VERSION_MAJOR 0)
+set(VIMP_VERSION_MINOR 0)
+set(VIMP_VERSION_PATCH 1)
+set(vimp_VERSION_STRING "${VIMP_VERSION_MAJOR}.${VIMP_VERSION_MINOR}.${VIMP_VERSION_PATCH}")
 
 # option: whether turn on Matlab toolbox
 option(VIMP_BUILD_STATIC_LIBRARY "whether build static library" OFF)
 option(VIMP_BUILD_MATLAB_TOOLBOX "whether build matlab toolbox, need shared lib" OFF)
-option(VIMP_BUILD_PYTHON_TOOLBOX "whether build python toolbox, need shared lib" OFF)
+option(VIMP_BUILD_PYTHON_TOOLBOX "whether build python toolbox, need shared lib" ON)
 
 if(VIMP_BUILD_STATIC_LIBRARY AND VIMP_BUILD_MATLAB_TOOLBOX)
     message(FATAL_ERROR "matlab toolbox needs shared lib")
@@ -51,7 +56,7 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Process source subdirs
-add_subdirectory(mpvi)
+add_subdirectory(vimp)
 
 # Wrapping to MATLAB
 if(VIMP_BUILD_MATLAB_TOOLBOX)
@@ -65,6 +70,7 @@ endif()
 
 # Wrapping to Python
 if(VIMP_BUILD_PYTHON_TOOLBOX)
+    message(STATUS "VIMP_BUILD_PYTHON_TOOLBOX")
     include_directories(${GTSAM_DIR}/cython)
     include_directories(/usr/local/cython)
     include(GtsamCythonWrap)

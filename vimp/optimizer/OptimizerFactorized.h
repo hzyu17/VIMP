@@ -14,21 +14,20 @@
 
 #endif //VIMP_OPTIMIZER_H
 
-#include "SparseMatrixHelper.h"
-#include "MVGsampler.h"
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
 #include <utility>
-#include "GaussHermite-impl.h"
+#include <vimp/helpers/SparseMatrixHelper.h>
+#include <vimp/helpers/MVGsampler.h>
+#include <vimp/helpers/GaussHermite-impl.h>
 
-using namespace GaussianSampler;
 using namespace std;
 using namespace Eigen;
 
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
-namespace{
+namespace vimp{
     template <typename Function, typename costClass, typename... Args>
 /// Decription: The marginal optimizer using vanilla Mnte Carlo sampling to calculate the expectations
 class VIMPOptimizerFactorized{

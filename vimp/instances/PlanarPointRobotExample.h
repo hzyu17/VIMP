@@ -9,9 +9,9 @@
  * 
  */
 
-#include "instances/PriorColPlanarPR.h"
+#include <vimp/instances/PriorColPlanarPR.h>
 #include <gtsam/inference/Symbol.h>
-#include "helpers/data_io.h"
+#include <vimp/helpers/data_io.h>
 
 using namespace std;
 using namespace gpmp2;

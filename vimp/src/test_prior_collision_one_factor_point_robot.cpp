@@ -11,10 +11,10 @@
 
 /// Description: Use a known top map to test the prior and collision factor on the support states, without interpolations.
 #include <gtsam/inference/Symbol.h>
-#include "../include/matplotlibcpp.h"
-#include "../include/OptimizerFactorizedPriorCollisionPointRobot.h"
-#include "../include/OptimizerFactorizedPriorGH.h"
-#include "../include/OptimizerPlanarPointRobotGH.h"
+#include <vimp/helpers/matplotlibcpp.h>
+#include <vimp/optimizer/OptimizerFactorizedPriorCollisionPointRobot.h>
+#include <vimp/optimizer/OptimizerFactorizedPriorGH.h>
+#include <vimp/optimizer/OptimizerPlanarPointRobotGH.h>
 
 using namespace gtsam;
 using namespace std;

@@ -3,8 +3,8 @@
 //
 // Variational Inference for motion planning
 
-#include "../include/SparseMatrixHelper.h"
-#include "../include/MVGsampler.h"
+#include <vimp/helpers/SparseMatrixHelper.h>
+#include <vimp/helpers/MVGsampler.h>
 
 #include <gtsam/base/Matrix.h>
 #include <gtsam/base/numericalDerivative.h>
@@ -18,7 +18,6 @@
 using namespace gtsam;
 using namespace gpmp2;
 using namespace std;
-using namespace GaussianSampler;
 
 typedef SparseMatrix<double> SpMatrix;
 typedef Triplet<double> T;

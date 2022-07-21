@@ -4,11 +4,11 @@
 
 /// test the inverse of a sparse matrix
 
-#include "../include/SparseInverseMatrix.h"
+#include <vimp/helpers/SparseInverseMatrix.h>
 
 typedef Triplet<double> T;
 using namespace std;
-using namespace SparseInverse;
+using namespace vimp;
 
 int main(){
     int dimension = 6;

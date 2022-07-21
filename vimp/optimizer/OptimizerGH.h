@@ -13,11 +13,10 @@
 
 #include <utility>
 #include <memory>
-#include "SparseInverseMatrix.h"
-#include "../helpers/result_recorder.h"
+#include <vimp/helpers/SparseInverseMatrix.h>
+#include <vimp/helpers/result_recorder.h>
 #include <assert.h>
 
-//using namespace GaussianSampler;
 using namespace std;
 typedef Triplet<double> T;
 

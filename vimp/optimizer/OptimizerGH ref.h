@@ -13,10 +13,9 @@
 #include <iostream>
 #include <random>
 #include <utility>
-#include "SparseInverseMatrix.h"
+#include <vimp/helpers/SparseInverseMatrix.h?
 #include <boost/scoped_ptr.hpp>
 
-//using namespace GaussianSampler;
 using namespace std;
 using namespace SparseInverse;
 typedef Triplet<double> T;

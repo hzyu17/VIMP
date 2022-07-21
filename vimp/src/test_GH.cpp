@@ -10,7 +10,11 @@
  */
 
 /// Description: use known integrations to test the Gausse-Hermite approximated integrations.
-#include "../include/GaussHermite.h"
+#include <vimp/helpers/GaussHermite.h>
+#include <functional>
+
+using namespace Eigen;
+using namespace vimp;
 
 MatrixXd gx_1d(const VectorXd& x){
     return MatrixXd{MatrixXd::Constant(1, 1, x.norm()*x.norm())};
@@ -39,8 +43,7 @@ int main(){
 
     std::function<MatrixXd(const VectorXd&)>gx_3d_new = [&](const VectorXd& x){return MatrixXd{x* x.transpose().eval()};};
     gausshermite.update_integrand(gx_3d_new);
-    VectorXd weights = gausshermite.getWeights();
-    // cout << weights << endl;
+    gausshermite.computeWeights();
     MatrixXd integral3{gausshermite.Integrate()};
     cout << "integrate 3 " << endl << integral3 << endl;
     return 0;

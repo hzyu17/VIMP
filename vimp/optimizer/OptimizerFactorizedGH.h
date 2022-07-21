@@ -12,7 +12,6 @@
 #include "OptimizerFactorizedGHBase-impl.h"
 #include <memory>
 
-using namespace GaussianSampler;
 using namespace std;
 using namespace Eigen;
 

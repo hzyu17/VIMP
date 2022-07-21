@@ -10,7 +10,7 @@
  */
 
 
-#include "../include/instances/PriorPlanarPR.h"
+#include <vimp/instances/PriorPlanarPR.h>
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 

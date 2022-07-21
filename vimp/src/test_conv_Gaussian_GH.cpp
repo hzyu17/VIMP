@@ -12,19 +12,16 @@
 
 /// Test the convergence of algorithm using a known Gaussian posterior.
 
-#include "../include/optimizer/OptimizerGH-impl.h"
-#include "../include/optimizer/OptimizerFactorizedGH.h"
+#include <vimp/optimizer/OptimizerGH-impl.h>
+#include <vimp/optimizer/OptimizerFactorizedGH.h>
+#include <vimp/helpers/MVGsampler.h>
 #include <iostream>
 #include <random>
 
 using namespace std;
-using namespace GaussianSampler;
 using namespace vimp;
 
-typedef SparseMatrix<double> SpMatrix;
-typedef Triplet<double> T;
-
-inline double cost_function(const VectorXd& sample, const Gaussian_distribution& target_distr){
+inline double cost_function(const VectorXd& sample, const vimp::Gaussian_distribution& target_distr){
     return -target_distr.log_prob(sample);
 }
 

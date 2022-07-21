@@ -1,15 +1,14 @@
 // Test the Multi-variate Gaussian sampling
 
 #include <iostream>
-#include "../include/matplotlibcpp.h"
-#include "../include/MVGsampler.h"
-#include "../include/SparseMatrixHelper.h"
+#include <vimp/helpers/matplotlibcpp.h>
+#include <vimp/helpers/MVGsampler.h>
+#include <vimp/helpers/SparseMatrixHelper.h>
 #include <gtsam/base/Matrix.h>
 
 namespace plt = matplotlibcpp;
 using namespace Eigen;
 using namespace std;
-using namespace GaussianSampler;
 using namespace Sparsehelper;
 typedef SparseMatrix<double> SpM;
 typedef Triplet<double> T;
@@ -211,6 +210,6 @@ int main() {
     std::cout << "Hello, World!" << std::endl;
 //    test_Gaussian_samplers();
 //    test_tridiag_trunc();
-    test_impirical_expectation();
+    // test_impirical_expectation();
     return 0;
 }

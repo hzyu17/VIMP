@@ -4,19 +4,19 @@
  * Date: 05/11/22
  * */
 
-#include "../include/optimizer/OptimizerFactorizedGH.h"
 #include <iostream>
 #include <random>
-#include "../include/SparseInverseMatrix.h"
+#include <vimp/helpers/SparseInverseMatrix.h>
+#include <vimp/helpers/MVGsampler.h>
+#include <vimp/optimizer/OptimizerFactorizedGH.h>
 
-using namespace GaussianSampler;
 using namespace std;
 using namespace vimp;
 
 typedef SparseMatrix<double> SpMatrix;
 typedef Triplet<double> T;
 
-inline double phi(const VectorXd& sample, const Gaussian_distribution& gaussian){
+inline double phi(const VectorXd& sample, const vimp::Gaussian_distribution& gaussian){
     
     return -gaussian.log_prob(sample);
 }

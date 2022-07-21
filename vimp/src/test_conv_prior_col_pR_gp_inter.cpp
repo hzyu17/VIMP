@@ -10,10 +10,11 @@
  * 
  */
 
-#include "../include/instances/PriorColPlanarPRGPLinear.h"
+
 #include <gtsam/inference/Symbol.h>
-#include "../include/helpers/data_io.h"
 #include <gpmp2/gp/GPutils.h>
+#include <vimp/helpers/data_io.h>
+#include <vimp/instances/PriorColPlanarPRGPLinear.h>
 
 using namespace std;
 using namespace gpmp2;
@@ -173,10 +174,6 @@ int main(){
             std::shared_ptr<OptFactPriColGHGPInterLinPR> pOptimizer(new OptFactPriColGHGPInterLinPR{dim_conf, errorWrapperPriorColGPLinaer, prior_k, collision_k, Pk});
             vec_factor_opts.emplace_back(pOptimizer);
         }
-
-        
-
-        
 
     }
 

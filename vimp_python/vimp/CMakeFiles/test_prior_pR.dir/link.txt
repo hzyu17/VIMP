@@ -1,0 +1,1 @@
+/usr/bin/c++  -w -std=c++11 -Wall -O3 -DNDEBUG    -O3 -DNDEBUG -rdynamic CMakeFiles/test_prior_pR.dir/src/test_conv_prior_pR.cpp.o -o test_prior_pR  -Wl,-rpath,/usr/local/lib /usr/local/lib/libgtsam.so.4.0.0 -lgpmp2 -lboost_serialization -lboost_system -lboost_filesystem -lboost_thread -lboost_date_time -lboost_timer -lboost_chrono /usr/local/lib/libmetis.so -lm 

@@ -9,7 +9,7 @@
  * 
  */
 
-#include "SparseInverseMatrix.h"
+#include <vimp/helpers/SparseInverseMatrix.h>
 #include <gtest/gtest.h>
 
 using namespace Eigen;

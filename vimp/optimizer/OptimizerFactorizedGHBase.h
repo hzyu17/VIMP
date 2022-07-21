@@ -11,16 +11,17 @@
 
 #pragma once
 
-#include "SparseMatrixHelper.h"
+
 #include <iostream>
 #include <random>
 #include <utility>
-#include "GaussHermite-impl.h"
 #include <assert.h>
 #include <random>
 
+#include <vimp/helpers/SparseMatrixHelper.h>
+#include <vimp/helpers/GaussHermite-impl.h>
 
-// using namespace GaussianSampler;
+
 using namespace std;
 using namespace Eigen;
 

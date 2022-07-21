@@ -11,12 +11,13 @@
 
 #include "repeated_includes.h"
 
-class MatrixIO{
+namespace vimp{
+    class MatrixIO{
     public:
         
         MatrixIO(){}
         
-        void saveData(const string& fileName, const MatrixXd& matrix){
+        void saveData(const string& fileName, const gtsam::Matrix& matrix){
             
             ofstream file(fileName);
             if (file.is_open()){
@@ -25,4 +26,7 @@ class MatrixIO{
             }
         }
         
-};
+    };
+
+}
+

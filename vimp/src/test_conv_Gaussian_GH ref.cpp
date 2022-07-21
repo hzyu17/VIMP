@@ -12,8 +12,8 @@
 
 /// Test the convergence of algorithm using a known Gaussian posterior.
 
-#include "../include/optimizer/OptimizerGH.h"
-#include "../include/optimizer/OptimizerFactorizedGH.h"
+#include <vimp/optimizer/OptimizerGH.h>
+#include <vimp/optimizer/OptimizerFactorizedGH.h>
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
@@ -22,7 +22,6 @@
 
 using namespace gtsam;
 using namespace std;
-using namespace GaussianSampler;
 using namespace vimp;
 
 typedef SparseMatrix<double> SpMatrix;

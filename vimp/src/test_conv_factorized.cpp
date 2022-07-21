@@ -4,15 +4,17 @@
 
 // Test the factorized optimizer convergence
 
-#include "../include/optimizer/OptimizerFactorized.h"
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
-#include "../include/optimizer/SparseInverseMatrix.h"
+
+#include <vimp/helpers/SparseInverseMatrix.h>
+#include <vimp/optimizer/OptimizerFactorized.h>
+
 
 using namespace gtsam;
 using namespace std;
-using namespace GaussianSampler;
+using namespace vimp;
 
 typedef SparseMatrix<double> SpMatrix;
 typedef Triplet<double> T;
@@ -45,7 +47,6 @@ int main(){
                                            Gaussian_distribution, gtsam::Vector> optimizer(ndim, target_cost, target_distr);
 
     // inverser
-    using namespace SparseInverse;
     dense_inverser inverser_(MatrixXd::Identity(ndim, ndim));
 
     int n_iter = 30;

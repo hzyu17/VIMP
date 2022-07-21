@@ -9,14 +9,13 @@
  * 
  */
 
-#include "../include/Optimizer.h"
+#include <vimp/optimizer/Optimizer.h>
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>
 
 using namespace gtsam;
 using namespace std;
-using namespace GaussianSampler;
 using namespace vimp;
 
 typedef SparseMatrix<double> SpMatrix;

@@ -14,11 +14,10 @@
 
 #endif //VIMP_OPTIMIZER_H
 
-
-#include "OptimizerFactorized.h"
+#include <vimp/helpers/SparseInverseMatrix.h>
+#include <vimp/optimizer/OptimizerFactorized.h>
 #include <boost/scoped_ptr.hpp>
 
-using namespace GaussianSampler;
 using namespace std;
 using namespace Eigen;
 
@@ -71,7 +70,7 @@ protected:
 
     // Sparse matrix inverse helper
 //    sparse_inverser inverser_;
-    dense_inverser inverser_;
+    vimp::dense_inverser inverser_;
     double step_size_precision = 0.9;
     double step_size_mu = 0.9;
 

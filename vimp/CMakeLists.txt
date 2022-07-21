@@ -1,8 +1,3 @@
-# remember to add -I/usr/include/python2.7 -lpython2.7 in the cmake options when building
-cmake_minimum_required(VERSION 3.16)
-project(VIMP CXX C)
-set(CMAKE_CXX_STANDARD 17)
-
 set(vimp_subdirs 
     optimizer
     helpers 
@@ -18,7 +13,7 @@ foreach(subdir ${vimp_subdirs})
 
   file(GLOB subdir_test_files "${subdir}/tests/*")
   
-  list(APPEND gpmp2_srcs ${subdir_srcs})
+  list(APPEND vimp_srcs ${subdir_srcs})
   message(STATUS "Building Module: ${subdir}")
 
   # local and tests
@@ -44,8 +39,9 @@ set(GPMP2_LIBRARIES gpmp2)
 if(GPMP2_BUILD_STATIC_LIBRARY)
   # static
   message(STATUS "Build static library")
-  add_library(${PROJECT_NAME} STATIC ${gpmp2_srcs})
-  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${GTSAM_LIBRARIES})
+  add_library(${PROJECT_NAME} STATIC ${vimp_srcs})
+  set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
   set_target_properties(vimp PROPERTIES
       OUTPUT_NAME         vimp
       CLEAN_DIRECT_OUTPUT 1
@@ -61,7 +57,8 @@ else()
   # shared
   message(STATUS "Build shared library")
   add_library(${PROJECT_NAME} SHARED ${vimp_srcs})
-  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${GTSAM_LIBRARIES})
+  set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+  target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
   set_target_properties(vimp PROPERTIES
       OUTPUT_NAME         vimp
       CLEAN_DIRECT_OUTPUT 1
@@ -77,8 +74,8 @@ else()
 
 endif()
 
-add_executable(main src/main.cpp)
-target_link_libraries(main ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES})
+# add_executable(main src/main.cpp)
+# target_link_libraries(main ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(test_conv src/test_conv.cpp)
 target_link_libraries(test_conv ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
@@ -92,8 +89,8 @@ target_link_libraries(test_conv_factor ${PYTHON_LIBRARIES} ${GTSAM_LIBRARIES} ${
 add_executable(test_sparse_inverse src/test_sparse_inverse.cpp)
 target_link_libraries(test_sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
-add_executable(test_GH src/test_GH.cpp)
-target_link_libraries(test_GH ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+# add_executable(test_GH src/test_GH.cpp)
+# target_link_libraries(test_GH ${EIGEN3_LIBRARIES})
 
 add_executable(test_conv_Gaussian_GH src/test_conv_Gaussian_GH.cpp)
 target_link_libraries(test_conv_Gaussian_GH ${EIGEN3_LIBRARIES})
@@ -104,51 +101,51 @@ target_link_libraries(test_prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} $
 add_executable(test_prior_pR src/test_conv_prior_pR.cpp)
 target_link_libraries(test_prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
-add_executable(test_conv_prior_col_pR_gp_inter src/test_conv_prior_col_pR_gp_inter.cpp)
-target_link_libraries(test_conv_prior_col_pR_gp_inter ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+# add_executable(test_conv_prior_col_pR_gp_inter src/test_conv_prior_col_pR_gp_inter.cpp)
+# target_link_libraries(test_conv_prior_col_pR_gp_inter ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 
-# -------------------------------------------- Google tests
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG release-1.12.1
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+# # -------------------------------------------- Google tests
+# include(FetchContent)
+# FetchContent_Declare(
+#   googletest
+#   GIT_REPOSITORY https://github.com/google/googletest.git
+#   GIT_TAG release-1.12.1
+# )
+# # For Windows: Prevent overriding the parent project's compiler/linker settings
+# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# FetchContent_MakeAvailable(googletest)
 
 
-#% --------------------------------------------------------- Tests files 
-add_executable(test_inverser test/test_inverser.cpp)
-target_link_libraries(test_inverser ${EIGEN3_LIBRARIES} GTest::gtest_main)
+# #% --------------------------------------------------------- Tests files 
+# add_executable(test_inverser tests/test_inverser.cpp)
+# target_link_libraries(test_inverser ${EIGEN3_LIBRARIES} GTest::gtest_main)
 
-add_executable(test_optimizer test/test_optimizer.cpp)
-target_link_libraries(test_optimizer ${EIGEN3_LIBRARIES} GTest::gtest_main)
+# add_executable(test_optimizer tests/test_optimizer.cpp)
+# target_link_libraries(test_optimizer ${EIGEN3_LIBRARIES} GTest::gtest_main)
 
 
 # -------------------------------------------- Doxygen for documentations
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-    # set input and output files
-    set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
-    set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile)
+# find_package(Doxygen)
+# if (DOXYGEN_FOUND)
+#     # set input and output files
+#     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
+#     set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile)
 
-    # request to configure the file
-    configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-    message("Doxygen build started")
+#     # request to configure the file
+#     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+#     message("Doxygen build started")
 
-    # note the option ALL which allows to build the docs together with the application
-    add_custom_target( doc_doxygen ALL
-        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-        COMMAND firefox ${CMAKE_CURRENT_SOURCE_DIR}/html/index.html
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Generating API documentation with Doxygen"
-        VERBATIM )
+#     # note the option ALL which allows to build the docs together with the application
+#     add_custom_target( doc_doxygen ALL
+#         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+#         COMMAND firefox ${CMAKE_CURRENT_SOURCE_DIR}/html/index.html
+#         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+#         COMMENT "Generating API documentation with Doxygen"
+#         VERBATIM )
         
-else (DOXYGEN_FOUND)
-  message("Doxygen need to be installed to generate the doxygen documentation")
-endif (DOXYGEN_FOUND)
+# else (DOXYGEN_FOUND)
+#   message("Doxygen need to be installed to generate the doxygen documentation")
+# endif (DOXYGEN_FOUND)
 
 
