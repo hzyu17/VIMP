@@ -6,3 +6,4 @@ vimp/html/*
 vimp/doxygen/*
 vimp/build/*
 vimp/.vscode/*
+vimp_python/CMakeFiles/*
