@@ -87,4 +87,4 @@ endif()
 
 # Install config and export files
 GtsamMakeConfigFile(vimp)
-# export(TARGETS ${vimp_EXPORTED_TARGETS} FILE vimp-exports.cmake)
+export(TARGETS ${vimp_EXPORTED_TARGETS} FILE vimp-exports.cmake)

@@ -1,7 +1,7 @@
 import numpy as np
 from gtsam import *
 from gpmp2 import *
-# from vimp import *
+from vimp import *
 import matplotlib.pyplot as plt
 
 # GP
