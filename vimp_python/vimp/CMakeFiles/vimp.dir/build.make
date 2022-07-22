@@ -77,6 +77,7 @@ vimp_EXTERNAL_OBJECTS =
 
 vimp/libvimp.so.SOVERSION: vimp/CMakeFiles/vimp.dir/build.make
 vimp/libvimp.so.SOVERSION: /usr/lib/x86_64-linux-gnu/libboost_serialization.so
+vimp/libvimp.so.SOVERSION: /usr/local/lib/libgpmp2.so.0.3.0
 vimp/libvimp.so.SOVERSION: /usr/local/lib/libgtsam.so.4.0.0
 vimp/libvimp.so.SOVERSION: /usr/lib/x86_64-linux-gnu/libboost_serialization.so
 vimp/libvimp.so.SOVERSION: /usr/lib/x86_64-linux-gnu/libboost_system.so

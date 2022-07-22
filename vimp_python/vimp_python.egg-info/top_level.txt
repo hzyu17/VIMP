@@ -1,2 +1,3 @@
 gpmp2_python
+gpmp2_python_outer
 vimp_python

@@ -46,15 +46,22 @@ sdf = PlanarSDF(origin_point2, cell_size, field)
 cost_sigma = 0.5
 epsilon_dist = 4.0
 obs = ObstaclePlanarSDFFactorPointRobot(ord('x'), pR_model, sdf, cost_sigma, epsilon_dist)
+x = np.asarray([0.5, 0.5])
+print "evaluateErr", obs.evaluateError(x)
 
 # ------------------------------ namespace vimp
-# CythonTest
-cython_test = CythonTest(a, obs)
-print "cython test", cython_test.vec() 
-
 # UnaryFactorTranslation2D
 factor = UnaryFactorTranslation2D(ord('x'), a, Qc_model)
 Qc_get = factor.get_Qc()
 print "Qc_get"
 print Qc_get
+
+# CythonTest
+cython_test = CythonTest(a, factor)
+print "cython test", cython_test.vec() 
+x = np.asarray([[0.5, 0], [0, 0.5]])
+print "cython test f function", cython_test.f(x)
+
+# CythonTest2
+cytest_2 = CyTest2(pR_model) 
 

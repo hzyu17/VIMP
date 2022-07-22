@@ -11,29 +11,61 @@
 
 #include <gtsam/base/Vector.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
+#include <iostream>
+#include <boost/shared_ptr.hpp>
+// #include <vimp/instances/PriorColPlanarPointRobot.h>
+#include <gpmp2/kinematics/PointRobotModel.h>
 
 
 namespace vimp{
     class CythonTest{
         public:
             CythonTest(){};
-            CythonTest(const gtsam::Vector& vec, const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact):_vec{vec}, 
-            _func{[obs_fact](const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact){return 0;}}{};
-
-            // copy constructors
-            // CythonTest(const CythonTest& other):_vec{other._vec}, _obs{other._obs}{};
-
-            gtsam::Vector _vec;
+            CythonTest(const gtsam::Vector& vec, 
+                       const UnaryFactorTranslation2D& prior):_vec{vec}, _prior{prior},
+            _func{[this](const MatrixXd& x){return MatrixXd{x - _prior.get_Qc()};}}{};
             
-            std::function<int(const gpmp2::ObstaclePlanarSDFFactorPointRobot&)> _func;
+            gtsam::Vector _vec;
+            UnaryFactorTranslation2D _prior;
+            
+            std::function<MatrixXd(const MatrixXd& x)> _func;
             
             gtsam::Vector vec() const{
                 return _vec;
             }
 
-            // gpmp2::ObstaclePlanarSDFFactorPointRobot obs() const {
-            //     return _obs;
-            // }
+            MatrixXd f(const MatrixXd& x){
+                return _func(x);
+            }
+
+    };
+
+    // class CythonTest{
+    //     public:
+    //         CythonTest(){};
+            
+    //         CythonTest(const gtsam::Vector& vec, const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact):_vec{vec}, 
+    //         _func{[](const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact){return 0;}}{};
+            
+    //         gtsam::Vector _vec;
+            
+    //         std::function<int(const gpmp2::ObstaclePlanarSDFFactorPointRobot&)> _func;
+            
+    //         gtsam::Vector vec() const{
+    //             return _vec;
+    //         }
+
+
+    // };
+
+    class CyTest2{
+        public:
+            CyTest2(){};
+            CyTest2(const gpmp2::PointRobotModel& pR_model):_pR_model{boost::make_shared<gpmp2::PointRobotModel>(pR_model)}{}
+
+            boost::shared_ptr<gpmp2::PointRobotModel> _pR_model;
+
+            virtual ~CyTest2(){};
 
     };
 }

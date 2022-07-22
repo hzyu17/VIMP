@@ -186,270 +186,270 @@ vimp/fast:
 .PHONY : vimp/fast
 
 # Convenience name for target.
-vimp/CMakeFiles/test_conv.dir/rule:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/test_conv.dir/rule
-.PHONY : vimp/CMakeFiles/test_conv.dir/rule
+vimp/CMakeFiles/conv.dir/rule:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/conv.dir/rule
+.PHONY : vimp/CMakeFiles/conv.dir/rule
 
 # Convenience name for target.
-test_conv: vimp/CMakeFiles/test_conv.dir/rule
-.PHONY : test_conv
+conv: vimp/CMakeFiles/conv.dir/rule
+.PHONY : conv
 
 # fast build rule for target.
-test_conv/fast:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv.dir/build.make vimp/CMakeFiles/test_conv.dir/build
-.PHONY : test_conv/fast
+conv/fast:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv.dir/build.make vimp/CMakeFiles/conv.dir/build
+.PHONY : conv/fast
 
 # Convenience name for target.
-vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/rule:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/rule
-.PHONY : vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/rule
+vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/rule:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/rule
+.PHONY : vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/rule
 
 # Convenience name for target.
-test_conv_factor_Gaussian_GH: vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/rule
-.PHONY : test_conv_factor_Gaussian_GH
+conv_factor_Gaussian_GH: vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/rule
+.PHONY : conv_factor_Gaussian_GH
 
 # fast build rule for target.
-test_conv_factor_Gaussian_GH/fast:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/build.make vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/build
-.PHONY : test_conv_factor_Gaussian_GH/fast
+conv_factor_Gaussian_GH/fast:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/build.make vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/build
+.PHONY : conv_factor_Gaussian_GH/fast
 
 # Convenience name for target.
-vimp/CMakeFiles/test_conv_factor.dir/rule:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/test_conv_factor.dir/rule
-.PHONY : vimp/CMakeFiles/test_conv_factor.dir/rule
+vimp/CMakeFiles/conv_factor.dir/rule:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/conv_factor.dir/rule
+.PHONY : vimp/CMakeFiles/conv_factor.dir/rule
 
 # Convenience name for target.
-test_conv_factor: vimp/CMakeFiles/test_conv_factor.dir/rule
-.PHONY : test_conv_factor
+conv_factor: vimp/CMakeFiles/conv_factor.dir/rule
+.PHONY : conv_factor
 
 # fast build rule for target.
-test_conv_factor/fast:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_factor.dir/build.make vimp/CMakeFiles/test_conv_factor.dir/build
-.PHONY : test_conv_factor/fast
+conv_factor/fast:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_factor.dir/build.make vimp/CMakeFiles/conv_factor.dir/build
+.PHONY : conv_factor/fast
 
 # Convenience name for target.
-vimp/CMakeFiles/test_sparse_inverse.dir/rule:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/test_sparse_inverse.dir/rule
-.PHONY : vimp/CMakeFiles/test_sparse_inverse.dir/rule
+vimp/CMakeFiles/sparse_inverse.dir/rule:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/sparse_inverse.dir/rule
+.PHONY : vimp/CMakeFiles/sparse_inverse.dir/rule
 
 # Convenience name for target.
-test_sparse_inverse: vimp/CMakeFiles/test_sparse_inverse.dir/rule
-.PHONY : test_sparse_inverse
+sparse_inverse: vimp/CMakeFiles/sparse_inverse.dir/rule
+.PHONY : sparse_inverse
 
 # fast build rule for target.
-test_sparse_inverse/fast:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_sparse_inverse.dir/build.make vimp/CMakeFiles/test_sparse_inverse.dir/build
-.PHONY : test_sparse_inverse/fast
+sparse_inverse/fast:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/sparse_inverse.dir/build.make vimp/CMakeFiles/sparse_inverse.dir/build
+.PHONY : sparse_inverse/fast
 
 # Convenience name for target.
-vimp/CMakeFiles/test_conv_Gaussian_GH.dir/rule:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/test_conv_Gaussian_GH.dir/rule
-.PHONY : vimp/CMakeFiles/test_conv_Gaussian_GH.dir/rule
+vimp/CMakeFiles/conv_Gaussian_GH.dir/rule:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/conv_Gaussian_GH.dir/rule
+.PHONY : vimp/CMakeFiles/conv_Gaussian_GH.dir/rule
 
 # Convenience name for target.
-test_conv_Gaussian_GH: vimp/CMakeFiles/test_conv_Gaussian_GH.dir/rule
-.PHONY : test_conv_Gaussian_GH
+conv_Gaussian_GH: vimp/CMakeFiles/conv_Gaussian_GH.dir/rule
+.PHONY : conv_Gaussian_GH
 
 # fast build rule for target.
-test_conv_Gaussian_GH/fast:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_Gaussian_GH.dir/build.make vimp/CMakeFiles/test_conv_Gaussian_GH.dir/build
-.PHONY : test_conv_Gaussian_GH/fast
+conv_Gaussian_GH/fast:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_Gaussian_GH.dir/build.make vimp/CMakeFiles/conv_Gaussian_GH.dir/build
+.PHONY : conv_Gaussian_GH/fast
 
 # Convenience name for target.
-vimp/CMakeFiles/test_prior_col_pR.dir/rule:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/test_prior_col_pR.dir/rule
-.PHONY : vimp/CMakeFiles/test_prior_col_pR.dir/rule
+vimp/CMakeFiles/prior_col_pR.dir/rule:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/prior_col_pR.dir/rule
+.PHONY : vimp/CMakeFiles/prior_col_pR.dir/rule
 
 # Convenience name for target.
-test_prior_col_pR: vimp/CMakeFiles/test_prior_col_pR.dir/rule
-.PHONY : test_prior_col_pR
+prior_col_pR: vimp/CMakeFiles/prior_col_pR.dir/rule
+.PHONY : prior_col_pR
 
 # fast build rule for target.
-test_prior_col_pR/fast:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_prior_col_pR.dir/build.make vimp/CMakeFiles/test_prior_col_pR.dir/build
-.PHONY : test_prior_col_pR/fast
+prior_col_pR/fast:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/prior_col_pR.dir/build.make vimp/CMakeFiles/prior_col_pR.dir/build
+.PHONY : prior_col_pR/fast
 
 # Convenience name for target.
-vimp/CMakeFiles/test_prior_pR.dir/rule:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/test_prior_pR.dir/rule
-.PHONY : vimp/CMakeFiles/test_prior_pR.dir/rule
+vimp/CMakeFiles/prior_pR.dir/rule:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vimp/CMakeFiles/prior_pR.dir/rule
+.PHONY : vimp/CMakeFiles/prior_pR.dir/rule
 
 # Convenience name for target.
-test_prior_pR: vimp/CMakeFiles/test_prior_pR.dir/rule
-.PHONY : test_prior_pR
+prior_pR: vimp/CMakeFiles/prior_pR.dir/rule
+.PHONY : prior_pR
 
 # fast build rule for target.
-test_prior_pR/fast:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_prior_pR.dir/build.make vimp/CMakeFiles/test_prior_pR.dir/build
-.PHONY : test_prior_pR/fast
+prior_pR/fast:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/prior_pR.dir/build.make vimp/CMakeFiles/prior_pR.dir/build
+.PHONY : prior_pR/fast
 
-src/test_conv.o: src/test_conv.cpp.o
-.PHONY : src/test_conv.o
-
-# target to build an object file
-src/test_conv.cpp.o:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv.dir/build.make vimp/CMakeFiles/test_conv.dir/src/test_conv.cpp.o
-.PHONY : src/test_conv.cpp.o
-
-src/test_conv.i: src/test_conv.cpp.i
-.PHONY : src/test_conv.i
-
-# target to preprocess a source file
-src/test_conv.cpp.i:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv.dir/build.make vimp/CMakeFiles/test_conv.dir/src/test_conv.cpp.i
-.PHONY : src/test_conv.cpp.i
-
-src/test_conv.s: src/test_conv.cpp.s
-.PHONY : src/test_conv.s
-
-# target to generate assembly for a file
-src/test_conv.cpp.s:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv.dir/build.make vimp/CMakeFiles/test_conv.dir/src/test_conv.cpp.s
-.PHONY : src/test_conv.cpp.s
-
-src/test_conv_Gaussian_GH.o: src/test_conv_Gaussian_GH.cpp.o
-.PHONY : src/test_conv_Gaussian_GH.o
+src/conv.o: src/conv.cpp.o
+.PHONY : src/conv.o
 
 # target to build an object file
-src/test_conv_Gaussian_GH.cpp.o:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_Gaussian_GH.dir/build.make vimp/CMakeFiles/test_conv_Gaussian_GH.dir/src/test_conv_Gaussian_GH.cpp.o
-.PHONY : src/test_conv_Gaussian_GH.cpp.o
+src/conv.cpp.o:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv.dir/build.make vimp/CMakeFiles/conv.dir/src/conv.cpp.o
+.PHONY : src/conv.cpp.o
 
-src/test_conv_Gaussian_GH.i: src/test_conv_Gaussian_GH.cpp.i
-.PHONY : src/test_conv_Gaussian_GH.i
+src/conv.i: src/conv.cpp.i
+.PHONY : src/conv.i
 
 # target to preprocess a source file
-src/test_conv_Gaussian_GH.cpp.i:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_Gaussian_GH.dir/build.make vimp/CMakeFiles/test_conv_Gaussian_GH.dir/src/test_conv_Gaussian_GH.cpp.i
-.PHONY : src/test_conv_Gaussian_GH.cpp.i
+src/conv.cpp.i:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv.dir/build.make vimp/CMakeFiles/conv.dir/src/conv.cpp.i
+.PHONY : src/conv.cpp.i
 
-src/test_conv_Gaussian_GH.s: src/test_conv_Gaussian_GH.cpp.s
-.PHONY : src/test_conv_Gaussian_GH.s
+src/conv.s: src/conv.cpp.s
+.PHONY : src/conv.s
 
 # target to generate assembly for a file
-src/test_conv_Gaussian_GH.cpp.s:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_Gaussian_GH.dir/build.make vimp/CMakeFiles/test_conv_Gaussian_GH.dir/src/test_conv_Gaussian_GH.cpp.s
-.PHONY : src/test_conv_Gaussian_GH.cpp.s
+src/conv.cpp.s:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv.dir/build.make vimp/CMakeFiles/conv.dir/src/conv.cpp.s
+.PHONY : src/conv.cpp.s
 
-src/test_conv_factorized.o: src/test_conv_factorized.cpp.o
-.PHONY : src/test_conv_factorized.o
+src/conv_Gaussian_GH.o: src/conv_Gaussian_GH.cpp.o
+.PHONY : src/conv_Gaussian_GH.o
 
 # target to build an object file
-src/test_conv_factorized.cpp.o:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_factor.dir/build.make vimp/CMakeFiles/test_conv_factor.dir/src/test_conv_factorized.cpp.o
-.PHONY : src/test_conv_factorized.cpp.o
+src/conv_Gaussian_GH.cpp.o:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_Gaussian_GH.dir/build.make vimp/CMakeFiles/conv_Gaussian_GH.dir/src/conv_Gaussian_GH.cpp.o
+.PHONY : src/conv_Gaussian_GH.cpp.o
 
-src/test_conv_factorized.i: src/test_conv_factorized.cpp.i
-.PHONY : src/test_conv_factorized.i
+src/conv_Gaussian_GH.i: src/conv_Gaussian_GH.cpp.i
+.PHONY : src/conv_Gaussian_GH.i
 
 # target to preprocess a source file
-src/test_conv_factorized.cpp.i:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_factor.dir/build.make vimp/CMakeFiles/test_conv_factor.dir/src/test_conv_factorized.cpp.i
-.PHONY : src/test_conv_factorized.cpp.i
+src/conv_Gaussian_GH.cpp.i:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_Gaussian_GH.dir/build.make vimp/CMakeFiles/conv_Gaussian_GH.dir/src/conv_Gaussian_GH.cpp.i
+.PHONY : src/conv_Gaussian_GH.cpp.i
 
-src/test_conv_factorized.s: src/test_conv_factorized.cpp.s
-.PHONY : src/test_conv_factorized.s
+src/conv_Gaussian_GH.s: src/conv_Gaussian_GH.cpp.s
+.PHONY : src/conv_Gaussian_GH.s
 
 # target to generate assembly for a file
-src/test_conv_factorized.cpp.s:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_factor.dir/build.make vimp/CMakeFiles/test_conv_factor.dir/src/test_conv_factorized.cpp.s
-.PHONY : src/test_conv_factorized.cpp.s
+src/conv_Gaussian_GH.cpp.s:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_Gaussian_GH.dir/build.make vimp/CMakeFiles/conv_Gaussian_GH.dir/src/conv_Gaussian_GH.cpp.s
+.PHONY : src/conv_Gaussian_GH.cpp.s
 
-src/test_conv_factorized_GH.o: src/test_conv_factorized_GH.cpp.o
-.PHONY : src/test_conv_factorized_GH.o
+src/conv_factorized.o: src/conv_factorized.cpp.o
+.PHONY : src/conv_factorized.o
 
 # target to build an object file
-src/test_conv_factorized_GH.cpp.o:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/build.make vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/src/test_conv_factorized_GH.cpp.o
-.PHONY : src/test_conv_factorized_GH.cpp.o
+src/conv_factorized.cpp.o:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_factor.dir/build.make vimp/CMakeFiles/conv_factor.dir/src/conv_factorized.cpp.o
+.PHONY : src/conv_factorized.cpp.o
 
-src/test_conv_factorized_GH.i: src/test_conv_factorized_GH.cpp.i
-.PHONY : src/test_conv_factorized_GH.i
+src/conv_factorized.i: src/conv_factorized.cpp.i
+.PHONY : src/conv_factorized.i
 
 # target to preprocess a source file
-src/test_conv_factorized_GH.cpp.i:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/build.make vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/src/test_conv_factorized_GH.cpp.i
-.PHONY : src/test_conv_factorized_GH.cpp.i
+src/conv_factorized.cpp.i:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_factor.dir/build.make vimp/CMakeFiles/conv_factor.dir/src/conv_factorized.cpp.i
+.PHONY : src/conv_factorized.cpp.i
 
-src/test_conv_factorized_GH.s: src/test_conv_factorized_GH.cpp.s
-.PHONY : src/test_conv_factorized_GH.s
+src/conv_factorized.s: src/conv_factorized.cpp.s
+.PHONY : src/conv_factorized.s
 
 # target to generate assembly for a file
-src/test_conv_factorized_GH.cpp.s:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/build.make vimp/CMakeFiles/test_conv_factor_Gaussian_GH.dir/src/test_conv_factorized_GH.cpp.s
-.PHONY : src/test_conv_factorized_GH.cpp.s
+src/conv_factorized.cpp.s:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_factor.dir/build.make vimp/CMakeFiles/conv_factor.dir/src/conv_factorized.cpp.s
+.PHONY : src/conv_factorized.cpp.s
 
-src/test_conv_prior_col_pR.o: src/test_conv_prior_col_pR.cpp.o
-.PHONY : src/test_conv_prior_col_pR.o
+src/conv_factorized_GH.o: src/conv_factorized_GH.cpp.o
+.PHONY : src/conv_factorized_GH.o
 
 # target to build an object file
-src/test_conv_prior_col_pR.cpp.o:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_prior_col_pR.dir/build.make vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.o
-.PHONY : src/test_conv_prior_col_pR.cpp.o
+src/conv_factorized_GH.cpp.o:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/build.make vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/src/conv_factorized_GH.cpp.o
+.PHONY : src/conv_factorized_GH.cpp.o
 
-src/test_conv_prior_col_pR.i: src/test_conv_prior_col_pR.cpp.i
-.PHONY : src/test_conv_prior_col_pR.i
+src/conv_factorized_GH.i: src/conv_factorized_GH.cpp.i
+.PHONY : src/conv_factorized_GH.i
 
 # target to preprocess a source file
-src/test_conv_prior_col_pR.cpp.i:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_prior_col_pR.dir/build.make vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.i
-.PHONY : src/test_conv_prior_col_pR.cpp.i
+src/conv_factorized_GH.cpp.i:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/build.make vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/src/conv_factorized_GH.cpp.i
+.PHONY : src/conv_factorized_GH.cpp.i
 
-src/test_conv_prior_col_pR.s: src/test_conv_prior_col_pR.cpp.s
-.PHONY : src/test_conv_prior_col_pR.s
+src/conv_factorized_GH.s: src/conv_factorized_GH.cpp.s
+.PHONY : src/conv_factorized_GH.s
 
 # target to generate assembly for a file
-src/test_conv_prior_col_pR.cpp.s:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_prior_col_pR.dir/build.make vimp/CMakeFiles/test_prior_col_pR.dir/src/test_conv_prior_col_pR.cpp.s
-.PHONY : src/test_conv_prior_col_pR.cpp.s
+src/conv_factorized_GH.cpp.s:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/build.make vimp/CMakeFiles/conv_factor_Gaussian_GH.dir/src/conv_factorized_GH.cpp.s
+.PHONY : src/conv_factorized_GH.cpp.s
 
-src/test_conv_prior_pR.o: src/test_conv_prior_pR.cpp.o
-.PHONY : src/test_conv_prior_pR.o
+src/conv_prior_col_pR.o: src/conv_prior_col_pR.cpp.o
+.PHONY : src/conv_prior_col_pR.o
 
 # target to build an object file
-src/test_conv_prior_pR.cpp.o:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_prior_pR.dir/build.make vimp/CMakeFiles/test_prior_pR.dir/src/test_conv_prior_pR.cpp.o
-.PHONY : src/test_conv_prior_pR.cpp.o
+src/conv_prior_col_pR.cpp.o:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/prior_col_pR.dir/build.make vimp/CMakeFiles/prior_col_pR.dir/src/conv_prior_col_pR.cpp.o
+.PHONY : src/conv_prior_col_pR.cpp.o
 
-src/test_conv_prior_pR.i: src/test_conv_prior_pR.cpp.i
-.PHONY : src/test_conv_prior_pR.i
+src/conv_prior_col_pR.i: src/conv_prior_col_pR.cpp.i
+.PHONY : src/conv_prior_col_pR.i
 
 # target to preprocess a source file
-src/test_conv_prior_pR.cpp.i:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_prior_pR.dir/build.make vimp/CMakeFiles/test_prior_pR.dir/src/test_conv_prior_pR.cpp.i
-.PHONY : src/test_conv_prior_pR.cpp.i
+src/conv_prior_col_pR.cpp.i:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/prior_col_pR.dir/build.make vimp/CMakeFiles/prior_col_pR.dir/src/conv_prior_col_pR.cpp.i
+.PHONY : src/conv_prior_col_pR.cpp.i
 
-src/test_conv_prior_pR.s: src/test_conv_prior_pR.cpp.s
-.PHONY : src/test_conv_prior_pR.s
+src/conv_prior_col_pR.s: src/conv_prior_col_pR.cpp.s
+.PHONY : src/conv_prior_col_pR.s
 
 # target to generate assembly for a file
-src/test_conv_prior_pR.cpp.s:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_prior_pR.dir/build.make vimp/CMakeFiles/test_prior_pR.dir/src/test_conv_prior_pR.cpp.s
-.PHONY : src/test_conv_prior_pR.cpp.s
+src/conv_prior_col_pR.cpp.s:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/prior_col_pR.dir/build.make vimp/CMakeFiles/prior_col_pR.dir/src/conv_prior_col_pR.cpp.s
+.PHONY : src/conv_prior_col_pR.cpp.s
 
-src/test_sparse_inverse.o: src/test_sparse_inverse.cpp.o
-.PHONY : src/test_sparse_inverse.o
+src/conv_prior_pR.o: src/conv_prior_pR.cpp.o
+.PHONY : src/conv_prior_pR.o
 
 # target to build an object file
-src/test_sparse_inverse.cpp.o:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_sparse_inverse.dir/build.make vimp/CMakeFiles/test_sparse_inverse.dir/src/test_sparse_inverse.cpp.o
-.PHONY : src/test_sparse_inverse.cpp.o
+src/conv_prior_pR.cpp.o:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/prior_pR.dir/build.make vimp/CMakeFiles/prior_pR.dir/src/conv_prior_pR.cpp.o
+.PHONY : src/conv_prior_pR.cpp.o
 
-src/test_sparse_inverse.i: src/test_sparse_inverse.cpp.i
-.PHONY : src/test_sparse_inverse.i
+src/conv_prior_pR.i: src/conv_prior_pR.cpp.i
+.PHONY : src/conv_prior_pR.i
 
 # target to preprocess a source file
-src/test_sparse_inverse.cpp.i:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_sparse_inverse.dir/build.make vimp/CMakeFiles/test_sparse_inverse.dir/src/test_sparse_inverse.cpp.i
-.PHONY : src/test_sparse_inverse.cpp.i
+src/conv_prior_pR.cpp.i:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/prior_pR.dir/build.make vimp/CMakeFiles/prior_pR.dir/src/conv_prior_pR.cpp.i
+.PHONY : src/conv_prior_pR.cpp.i
 
-src/test_sparse_inverse.s: src/test_sparse_inverse.cpp.s
-.PHONY : src/test_sparse_inverse.s
+src/conv_prior_pR.s: src/conv_prior_pR.cpp.s
+.PHONY : src/conv_prior_pR.s
 
 # target to generate assembly for a file
-src/test_sparse_inverse.cpp.s:
-	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/test_sparse_inverse.dir/build.make vimp/CMakeFiles/test_sparse_inverse.dir/src/test_sparse_inverse.cpp.s
-.PHONY : src/test_sparse_inverse.cpp.s
+src/conv_prior_pR.cpp.s:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/prior_pR.dir/build.make vimp/CMakeFiles/prior_pR.dir/src/conv_prior_pR.cpp.s
+.PHONY : src/conv_prior_pR.cpp.s
+
+src/sparse_inverse.o: src/sparse_inverse.cpp.o
+.PHONY : src/sparse_inverse.o
+
+# target to build an object file
+src/sparse_inverse.cpp.o:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/sparse_inverse.dir/build.make vimp/CMakeFiles/sparse_inverse.dir/src/sparse_inverse.cpp.o
+.PHONY : src/sparse_inverse.cpp.o
+
+src/sparse_inverse.i: src/sparse_inverse.cpp.i
+.PHONY : src/sparse_inverse.i
+
+# target to preprocess a source file
+src/sparse_inverse.cpp.i:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/sparse_inverse.dir/build.make vimp/CMakeFiles/sparse_inverse.dir/src/sparse_inverse.cpp.i
+.PHONY : src/sparse_inverse.cpp.i
+
+src/sparse_inverse.s: src/sparse_inverse.cpp.s
+.PHONY : src/sparse_inverse.s
+
+# target to generate assembly for a file
+src/sparse_inverse.cpp.s:
+	cd /home/hongzhe/git/VIMP/vimp_python && $(MAKE) $(MAKESILENT) -f vimp/CMakeFiles/sparse_inverse.dir/build.make vimp/CMakeFiles/sparse_inverse.dir/src/sparse_inverse.cpp.s
+.PHONY : src/sparse_inverse.cpp.s
 
 # Help Target
 help:
@@ -464,35 +464,35 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... test_conv"
-	@echo "... test_conv_Gaussian_GH"
-	@echo "... test_conv_factor"
-	@echo "... test_conv_factor_Gaussian_GH"
-	@echo "... test_prior_col_pR"
-	@echo "... test_prior_pR"
-	@echo "... test_sparse_inverse"
+	@echo "... conv"
+	@echo "... conv_Gaussian_GH"
+	@echo "... conv_factor"
+	@echo "... conv_factor_Gaussian_GH"
+	@echo "... prior_col_pR"
+	@echo "... prior_pR"
+	@echo "... sparse_inverse"
 	@echo "... vimp"
-	@echo "... src/test_conv.o"
-	@echo "... src/test_conv.i"
-	@echo "... src/test_conv.s"
-	@echo "... src/test_conv_Gaussian_GH.o"
-	@echo "... src/test_conv_Gaussian_GH.i"
-	@echo "... src/test_conv_Gaussian_GH.s"
-	@echo "... src/test_conv_factorized.o"
-	@echo "... src/test_conv_factorized.i"
-	@echo "... src/test_conv_factorized.s"
-	@echo "... src/test_conv_factorized_GH.o"
-	@echo "... src/test_conv_factorized_GH.i"
-	@echo "... src/test_conv_factorized_GH.s"
-	@echo "... src/test_conv_prior_col_pR.o"
-	@echo "... src/test_conv_prior_col_pR.i"
-	@echo "... src/test_conv_prior_col_pR.s"
-	@echo "... src/test_conv_prior_pR.o"
-	@echo "... src/test_conv_prior_pR.i"
-	@echo "... src/test_conv_prior_pR.s"
-	@echo "... src/test_sparse_inverse.o"
-	@echo "... src/test_sparse_inverse.i"
-	@echo "... src/test_sparse_inverse.s"
+	@echo "... src/conv.o"
+	@echo "... src/conv.i"
+	@echo "... src/conv.s"
+	@echo "... src/conv_Gaussian_GH.o"
+	@echo "... src/conv_Gaussian_GH.i"
+	@echo "... src/conv_Gaussian_GH.s"
+	@echo "... src/conv_factorized.o"
+	@echo "... src/conv_factorized.i"
+	@echo "... src/conv_factorized.s"
+	@echo "... src/conv_factorized_GH.o"
+	@echo "... src/conv_factorized_GH.i"
+	@echo "... src/conv_factorized_GH.s"
+	@echo "... src/conv_prior_col_pR.o"
+	@echo "... src/conv_prior_col_pR.i"
+	@echo "... src/conv_prior_col_pR.s"
+	@echo "... src/conv_prior_pR.o"
+	@echo "... src/conv_prior_pR.i"
+	@echo "... src/conv_prior_pR.s"
+	@echo "... src/sparse_inverse.o"
+	@echo "... src/sparse_inverse.i"
+	@echo "... src/sparse_inverse.s"
 .PHONY : help
 
 

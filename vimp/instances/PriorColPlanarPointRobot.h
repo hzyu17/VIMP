@@ -9,11 +9,14 @@
  * 
  */
 
+// #pragma once
+
 #include "PriorCol.h"
 #include <gpmp2/kinematics/PointRobotModel.h>
 
+
 namespace vimp{
-    using UnaryFactorTranslation2D = UnaryFactorTranslation<gtsam::Vector2>;
-    using OptFactPriColPlanarPRGH = OptFactPriColGH<gtsam::Vector2, gpmp2::PointRobotModel>;
+    typedef UnaryFactorTranslation<gtsam::Vector2> UnaryFactorTranslation2D;
+    typedef OptFactPriColGH<gtsam::Vector2, gpmp2::PointRobotModel> OptFactPriColPlanarPRGH;
 }
 

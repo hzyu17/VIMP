@@ -46,12 +46,14 @@ find_package(Boost COMPONENTS serialization REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR})
 
-
+#Eigen
+# find_package(Eigen3 REQUIRED)
+# message(STATUS "Eigen3 DIR: ${EIGEN3_DIR}")
 # GPMP2
-find_package( Eigen3 REQUIRED
-              gpmp2 REQUIRED)
-
+find_package(gpmp2 REQUIRED)
+message(STATUS "gpmp2 DIR: ${gpmp2_DIR}")
 set(GPMP2_LIBRARIES gpmp2)
+include_directories(${gpmp2_INCLUDE_DIR})
 
 # Generate and install config and dllexport files
 configure_file("vimp/config.h.in" "vimp/config.h")
@@ -75,19 +77,30 @@ if(VIMP_BUILD_MATLAB_TOOLBOX)
     add_subdirectory(matlab)
 endif()
 
+
 # Wrapping to Python
 if(VIMP_BUILD_PYTHON_TOOLBOX)
     message(STATUS "VIMP_BUILD_PYTHON_TOOLBOX")
+    message(STATUS "GTSAM DIR: ${GTSAM_DIR}")
+    message(STATUS "gpmp2 DIR: ${gpmp2_DIR}")
+    message(STATUS "GTSAM_INCLUDE_DIR: ${GTSAM_INCLUDE_DIR}")
+    message(STATUS "gpmp2_INCLUDE_DIR: ${gpmp2_INCLUDE_DIR}")
     include_directories(${GTSAM_DIR}/cython)
+    include_directories(${gpmp2_DIR}/cython)
     include_directories(/usr/local/cython)
     include(GtsamCythonWrap)
     include_directories(${GTSAM_EIGENCY_INSTALL_PATH})
 
+    get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+    foreach(dir ${dirs})
+        message(STATUS "dir='${dir}'")
+    endforeach()
+
     wrap_and_install_library_cython("vimp.h"
-            "from gtsam.gtsam cimport *" # extra import of gtsam/gtsam.pxd Cython header
-            "${CMAKE_INSTALL_PREFIX}/cython" # install path
+            "from gtsam.gtsam cimport *; from gpmp2.gpmp2 cimport *" # extra import of gtsam/gtsam.pxd Cython header
+            "${CMAKE_INSTALL_PREFIX}/cython/vimp" # install path
             vimp  # library to link with
-            "gtsam"  # dependencies which need to be built before wrapping
+            "gtsam;gpmp2"  # dependencies which need to be built before wrapping
             )
     add_definitions(-DBOOST_OPTIONAL_ALLOW_BINDING_TO_RVALUES -DBOOST_OPTIONAL_CONFIG_ALLOW_BINDING_TO_RVALUES)
 endif()

@@ -10,15 +10,14 @@
  * 
  */
 
-#include "../instances/PriorColPlanarPointRobot.h"
+#include <vimp/instances/PriorColPlanarPointRobot.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-#include "../instances/PlanarPointRobotSDFExample.h"
+#include <vimp/instances/PlanarPointRobotSDFExample.h>
 
 using namespace std;
 using namespace gpmp2;
 using namespace Eigen;
 using namespace vimp;
-
 
 /**
  * @brief -log(p(x,z)) for prior and collision factors 
@@ -55,9 +54,9 @@ double errorWrapperPriorCol(const VectorXd& pose,
 
 int main(){
     // An example pr and sdf
-    PlanarPointRobotSDFExample planar_pr_sdf;
-    PointRobotModel pRModel = std::move(planar_pr_sdf.pRmodel());
-    PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
+    vimp::PlanarPointRobotSDFExample planar_pr_sdf;
+    gpmp2::PointRobotModel pRModel = std::move(planar_pr_sdf.pRmodel());
+    gpmp2::PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
 
     /// parameters
     int n_total_states = 20, N = n_total_states - 1;

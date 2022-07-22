@@ -45,11 +45,11 @@ endif()
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/vimp/instances" TYPE FILE FILES
     "/home/hongzhe/git/VIMP/vimp/instances/GaussianPriorUnaryTranslation.h"
-    "/home/hongzhe/git/VIMP/vimp/instances/PlanarPointRobotExample.h"
+    "/home/hongzhe/git/VIMP/vimp/instances/PlanarPointRobotSDFExample.h"
     "/home/hongzhe/git/VIMP/vimp/instances/PriorCol.h"
     "/home/hongzhe/git/VIMP/vimp/instances/PriorColGPInter.h"
-    "/home/hongzhe/git/VIMP/vimp/instances/PriorColPlanarPR.h"
     "/home/hongzhe/git/VIMP/vimp/instances/PriorColPlanarPRGPLinear.h"
+    "/home/hongzhe/git/VIMP/vimp/instances/PriorColPlanarPointRobot.h"
     "/home/hongzhe/git/VIMP/vimp/instances/PriorPlanarPR.h"
     )
 endif()
