@@ -1,4 +1,7 @@
+from ast import Lambda
+from tokenize import Double
 import numpy as np
+from numpy import asarray
 from gtsam import *
 from gpmp2 import *
 from vimp import *
@@ -64,4 +67,31 @@ print "cython test f function", cython_test.f(x)
 
 # CythonTest2
 cytest_2 = CyTest2(pR_model) 
+
+# Test a functional input
+mean = np.asarray([1, 1])
+cov = np.asarray([[1, 0], [0, 1]])
+
+class Func:
+    def __init__(self):
+        pass
+
+    def __call__(self, b):
+        return b * b.T
+
+class FuncDoubleDouble:
+    def __init__(self):
+        pass
+
+    def __call__(self, a):
+        return a
+
+func = Func()
+print "func()", func(np.asarray([2, 2]).reshape((2, 1)))
+
+fdd = lambda x : x
+print "fdd", fdd(1)
+func_dd_obj = FunctionDoubleDouble(fdd)
+
+# gauss_hermite = GaussHermiteInstance(10, 2, mean, cov, func)
 

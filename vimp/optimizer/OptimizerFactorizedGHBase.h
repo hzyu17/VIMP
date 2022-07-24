@@ -19,7 +19,7 @@
 #include <random>
 
 #include <vimp/helpers/SparseMatrixHelper.h>
-#include "../helpers/GaussHermite-impl.h"
+#include <vimp/helpers/GaussHermite.h>
 
 
 using namespace std;
@@ -288,4 +288,4 @@ namespace vimp{
     };
 
 }
-// #include "OptimizerFactorizedGHBase-impl.h"
+#include <vimp/optimizer/OptimizerFactorizedGHBase-impl.h>

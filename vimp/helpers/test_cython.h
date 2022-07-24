@@ -10,11 +10,13 @@
  */
 
 #include <gtsam/base/Vector.h>
-#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
+// #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 #include <iostream>
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 // #include <vimp/instances/PriorColPlanarPointRobot.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
+#include <boost/function.hpp>
 
 
 namespace vimp{
@@ -67,5 +69,19 @@ namespace vimp{
 
             virtual ~CyTest2(){};
 
+    };
+
+    typedef boost::function<double(const double&)> FunctionDoubleDouble;
+
+    class CyTest3{
+        public:
+            CyTest3(){};
+            CyTest3(const FunctionDoubleDouble& f):_f{boost::make_shared<FunctionDoubleDouble>(f)}{}
+
+            boost::shared_ptr<FunctionDoubleDouble> _f;
+
+            double f(const double& x){
+                return (*_f)(x);
+            }
     };
 }

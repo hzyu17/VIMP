@@ -10,9 +10,9 @@
  * 
  */
 
-#include "../optimizer/OptimizerGH-impl.h"
-#include "../optimizer/OptimizerFactorizedTwoFactorsGH.h"
-#include "GaussianPriorUnaryTranslation.h"
+#include <vimp/optimizer/OptimizerGH.h>
+#include <vimp/optimizer/OptimizerFactorizedTwoFactorsGH.h>
+#include <vimp/instances/GaussianPriorUnaryTranslation.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 
 

@@ -22,78 +22,18 @@
 // class gtsam::Point2;
 // class gtsam::Pose2;
 
-// class gtsam::GaussianFactorGraph;
-// class gtsam::Values;
-// virtual class gtsam::noiseModel::Base;
-// virtual class gtsam::NonlinearFactor;
-// virtual class gtsam::NonlinearFactorGraph;
-// virtual class gtsam::NoiseModelFactor : gtsam::NonlinearFactor;
+class gtsam::GaussianFactorGraph;
+class gtsam::Values;
+virtual class gtsam::noiseModel::Base;
+virtual class gtsam::NonlinearFactor;
+virtual class gtsam::NonlinearFactorGraph;
+virtual class gtsam::NoiseModelFactor : gtsam::NonlinearFactor;
 
+// gpmp2 deceleration
 class gpmp2::PointRobotModel;
-// virtual class gpmp2::ObstaclePlanarSDFFactorPointRobot;
+// virtual class ObstaclePlanarSDFFactorPointRobot : gtsam::NoiseModelFactor;
+class gpmp2::PlanarSDF;
 
-
-// namespace gpmp2{
-
-// // Abstract Point Robot class
-// #include <gpmp2/kinematics/PointRobot.h>
-
-// class PointRobot {
-//   PointRobot(size_t dof, size_t nr_links);
-//   // full forward kinematics
-//   Matrix forwardKinematicsPose(Vector jp) const;
-//   Matrix forwardKinematicsPosition(Vector jp) const;
-//   Matrix forwardKinematicsVel(Vector jp, Vector jv) const;
-//   // accesses
-//   size_t dof() const;
-//   size_t nr_links() const;
-// };
-
-// // BodySphere class
-// #include <gpmp2/kinematics/RobotModel.h>
-
-// class BodySphere {
-//   BodySphere(size_t id, double r, const gtsam::Point3& c);
-// };
-
-// class BodySphereVector {
-//   BodySphereVector();
-//   void push_back(const gpmp2::BodySphere& sphere);
-// };
-
-// // Point Robot Model class
-// #include <gpmp2/kinematics/PointRobotModel.h>
-
-// class PointRobotModel {
-//   PointRobotModel(const gpmp2::PointRobot& pR, const gpmp2::BodySphereVector& spheres);
-//   // solve sphere center position in world frame
-//   Matrix sphereCentersMat(Vector conf) const;
-//   // accesses
-//   size_t dof() const;
-//   gpmp2::PointRobot fk_model() const;
-//   size_t nr_body_spheres() const;
-//   double sphere_radius(size_t i) const;
-// };
-
-// // planar obstacle avoid factor for Point Robot
-// #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-
-// virtual class ObstaclePlanarSDFFactorPointRobot : gtsam::NoiseModelFactor {
-//   ObstaclePlanarSDFFactorPointRobot(
-//       size_t posekey, const gpmp2::PointRobotModel& pR,
-//       const gpmp2::PlanarSDF& sdf, double cost_sigma, double epsilon);
-//   Vector evaluateError(Vector pose) const;
-// };
-
-// //  signed distance field class
-// #include <gpmp2/obstacle/PlanarSDF.h>
-// class PlanarSDF {
-//   PlanarSDF(const gtsam::Point2& origin, double cell_size, const Matrix& data);
-//   // access
-//   double getSignedDistance(const gtsam::Point2& point) const;
-//   void print(string s) const;
-// };
-// }
 
 namespace vimp{
 
@@ -119,10 +59,37 @@ class CythonTest{
     // gpmp2::ObstaclePlanarSDFFactorPointRobot obs() const;
 };
 
+class FunctionDoubleDouble{
+    FunctionDoubleDouble();
+};
+
 virtual class CyTest2{
     CyTest2();
     CyTest2(const gpmp2::PointRobotModel& pR_model);
     
+};
+
+class CyTest3{
+    CyTest3();
+    CyTest3(const vimp::FunctionDoubleDouble& f);
+    
+    double f(const double& x);
+};
+
+#include <vimp/instances/GaussHermiteInstance.h>
+
+class FunctionMatrixVector{
+
+    FunctionMatrixVector();
+};
+
+class GaussHermiteInstance{
+    GaussHermiteInstance();
+    GaussHermiteInstance(const int& deg, const int& dim, const Vector& mean, const Matrix& P, const vimp::FunctionMatrixVector& func);
+
+    void update_integrand(const vimp::FunctionMatrixVector& fun);
+    Matrix f(const Vector& x);
+    Matrix Integrate();
 };
 
 // #include <vimp/instances/PriorColPlanarPR.h>

@@ -1,7 +1,8 @@
 /**
  * @file OptimizerFactorizedGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations. Cost function takes one cost class.
+ * @brief The marginal optimizer class expecting two functions, one is the cost function, f1(x, cost1); 
+ * the other is the function for GH expectation, f2(x).
  * @version 0.1
  * @date 2022-03-07
  * 
@@ -9,7 +10,7 @@
  * 
  */
 
-#include "OptimizerFactorizedGHBase-impl.h"
+#include <vimp/optimizer/OptimizerFactorizedGHBase.h>
 #include <memory>
 
 using namespace std;

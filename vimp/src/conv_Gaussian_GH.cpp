@@ -12,7 +12,7 @@
 
 /// Test the convergence of algorithm using a known Gaussian posterior.
 
-#include <vimp/optimizer/OptimizerGH-impl.h>
+#include <vimp/optimizer/OptimizerGH.h>
 #include <vimp/optimizer/OptimizerFactorizedGH.h>
 #include <vimp/helpers/MVGsampler.h>
 #include <iostream>

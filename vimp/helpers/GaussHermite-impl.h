@@ -9,21 +9,23 @@
  * 
  */
 
-#include "GaussHermite.h"
+// #include "GaussHermite.h"
+using namespace Eigen;
+
 
 namespace vimp{
     template <typename Function>
     void GaussHermite<Function>::computeSigmaPts(){
-        VectorXd a{VectorXd::Ones(this->_deg-1)};
-        VectorXd c{VectorXd::LinSpaced(this->_deg-1, 1, this->_deg-1)};
+        VectorXd a{VectorXd::Ones(_deg-1)};
+        VectorXd c{VectorXd::LinSpaced(_deg-1, 1, _deg-1)};
         VectorXd c_over_a = (c.array() / a.array()).matrix();
-        MatrixXd L{MatrixXd::Zero(this->_deg, this->_deg)};
-        for (int i=0; i<this->_deg-1; i++){
+        MatrixXd L{MatrixXd::Zero(_deg, _deg)};
+        for (int i=0; i<_deg-1; i++){
             L(i+1, i) = c_over_a(i);
             L(i, i+1) = a(i);
         }
 
-        this->_sigmapts = L.eigenvalues().real();
+        _sigmapts = L.eigenvalues().real();
     }
 
     template <typename Function>
@@ -45,67 +47,67 @@ namespace vimp{
 
     template <typename Function>
     void GaussHermite<Function>::computeWeights(){
-        this->computeSigmaPts();
-        VectorXd W(this->_deg);
+        computeSigmaPts();
+        VectorXd W(_deg);
         int cnt = 0;
-        for (double i_pt : this->_sigmapts){
-            W(cnt) = boost::math::factorial<double>(this->_deg) / this->_deg / this->_deg / HermitePolynomial(this->_deg-1, i_pt) / HermitePolynomial(this->_deg-1, i_pt);
+        for (double i_pt : _sigmapts){
+            W(cnt) = boost::math::factorial<double>(_deg) / _deg / _deg / HermitePolynomial(_deg-1, i_pt) / HermitePolynomial(_deg-1, i_pt);
             cnt += 1;
         }
-        this->_W = W;
+        _W = W;
     }
 
     template <typename Function>
     MatrixXd GaussHermite<Function>::Integrate(){
 
-        this->computeWeights();
-        LLT<MatrixXd> lltP(this->_P);
+        computeWeights();
+        LLT<MatrixXd> lltP(_P);
         MatrixXd sig{lltP.matrixL()};
 
-        VectorXd pt_0 = VectorXd::Zero(this->_dim);
+        VectorXd pt_0 = VectorXd::Zero(_dim);
         
-        MatrixXd res{MatrixXd::Zero(this->_f(pt_0).rows(), this->_f(pt_0).cols())};
+        MatrixXd res{MatrixXd::Zero((*_f)(pt_0).rows(), (*_f)(pt_0).cols())};
         
-        if (this->_dim == 1){
-            for (int i=0; i<this->_deg; i++){
-                res += this->_W(i)*this->_f(sig*this->_sigmapts(i) + this->_mean);
+        if (_dim == 1){
+            for (int i=0; i<_deg; i++){
+                res += _W(i)*(*_f)(sig*_sigmapts(i) + _mean);
             }
         }
 
-        else if (this->_dim == 2) {
-            for (int i = 0; i < this->_deg; i++) {
-                for (int j = 0; j < this->_deg; j++) {
+        else if (_dim == 2) {
+            for (int i = 0; i < _deg; i++) {
+                for (int j = 0; j < _deg; j++) {
                     VectorXd pt_ij = VectorXd::Zero(2);
-                    pt_ij << this->_sigmapts(i), this->_sigmapts(j);
+                    pt_ij << _sigmapts(i), _sigmapts(j);
 
-                    VectorXd pt_ij_t = sig * pt_ij + this->_mean;
-                    res += this->_W(i) * this->_W(j) * this->_f(pt_ij_t);
+                    VectorXd pt_ij_t = sig * pt_ij + _mean;
+                    res += _W(i) * _W(j) * (*_f)(pt_ij_t);
 
                 }
             }
         }
-        else if (this->_dim == 3){
-            for (int i=0; i<this->_deg; i++){
-                for(int j=0; j<this->_deg; j++){
-                    for(int k=0; k<this->_deg; k++){
+        else if (_dim == 3){
+            for (int i=0; i<_deg; i++){
+                for(int j=0; j<_deg; j++){
+                    for(int k=0; k<_deg; k++){
                         VectorXd pt_ijk = VectorXd::Zero(3);
-                        pt_ijk << this->_sigmapts(i), this->_sigmapts(j), this->_sigmapts(k);
+                        pt_ijk << _sigmapts(i), _sigmapts(j), _sigmapts(k);
 
-                        VectorXd pt_ijk_t = sig * pt_ijk + this->_mean;
-                        res += this->_W(i) * this->_W(j) * this->_W(k) * this->_f(pt_ijk_t);
+                        VectorXd pt_ijk_t = sig * pt_ijk + _mean;
+                        res += _W(i) * _W(j) * _W(k) * (*_f)(pt_ijk_t);
                     }
                 }
             }
         }
-        else if (this->_dim == 4){
-            for (int i=0; i<this->_deg; i++){
-                for(int j=0; j<this->_deg; j++){
-                    for(int k=0; k<this->_deg; k++){
-                        for (int l=0; l<this->_deg; l++){
+        else if (_dim == 4){
+            for (int i=0; i<_deg; i++){
+                for(int j=0; j<_deg; j++){
+                    for(int k=0; k<_deg; k++){
+                        for (int l=0; l<_deg; l++){
                             VectorXd pt_ijkl = VectorXd::Zero(4);
-                            pt_ijkl << this->_sigmapts(i), this->_sigmapts(j), this->_sigmapts(k), this->_sigmapts(l);
-                            VectorXd pt_ijkl_t = sig * pt_ijkl + this->_mean;
-                            res += this->_W(i) * this->_W(j) * this->_W(k) * this->_W(l) * this->_f(pt_ijkl_t);
+                            pt_ijkl << _sigmapts(i), _sigmapts(j), _sigmapts(k), _sigmapts(l);
+                            VectorXd pt_ijkl_t = sig * pt_ijkl + _mean;
+                            res += _W(i) * _W(j) * _W(k) * _W(l) * (*_f)(pt_ijkl_t);
                         }
                     }
                 }

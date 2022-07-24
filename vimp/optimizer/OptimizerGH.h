@@ -18,7 +18,6 @@
 #include <assert.h>
 
 using namespace std;
-typedef Triplet<double> T;
 
 namespace vimp{
 
@@ -213,3 +212,5 @@ public:
 };
 
 }
+
+#include <vimp/optimizer/OptimizerGH-impl.h>

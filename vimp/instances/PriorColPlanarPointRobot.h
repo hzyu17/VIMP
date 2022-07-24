@@ -11,7 +11,7 @@
 
 // #pragma once
 
-#include "PriorCol.h"
+#include <vimp/instances/PriorCol.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
 
 
