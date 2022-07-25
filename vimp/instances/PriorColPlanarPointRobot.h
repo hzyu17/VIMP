@@ -13,10 +13,15 @@
 
 #include <vimp/instances/PriorCol.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
+#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
+using namespace Eigen;
 
 namespace vimp{
     typedef UnaryFactorTranslation<gtsam::Vector2> UnaryFactorTranslation2D;
     typedef OptFactPriColGH<gtsam::Vector2, gpmp2::PointRobotModel> OptFactPriColPlanarPRGH;
-}
+
+    typedef OptFactPriColGHInstance<gtsam::Vector2, gpmp2::PointRobotModel> OptFactPriColGHInstancePointRobot;
+    typedef VIMPOptimizerGH<OptFactPriColGHInstancePointRobot> VIMPOptimizerPriColPR;
+}   
 

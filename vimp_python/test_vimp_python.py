@@ -54,13 +54,13 @@ print "evaluateErr", obs.evaluateError(x)
 
 # ------------------------------ namespace vimp
 # UnaryFactorTranslation2D
-factor = UnaryFactorTranslation2D(ord('x'), a, Qc_model)
-Qc_get = factor.get_Qc()
+prior = UnaryFactorTranslation2D(ord('x'), a, Qc_model)
+Qc_get = prior.get_Qc()
 print "Qc_get"
 print Qc_get
 
 # CythonTest
-cython_test = CythonTest(a, factor)
+cython_test = CythonTest(a, prior)
 print "cython test", cython_test.vec() 
 x = np.asarray([[0.5, 0], [0, 0.5]])
 print "cython test f function", cython_test.f(x)
@@ -89,9 +89,12 @@ class FuncDoubleDouble:
 func = Func()
 print "func()", func(np.asarray([2, 2]).reshape((2, 1)))
 
-fdd = lambda x : x
-print "fdd", fdd(1)
-func_dd_obj = FunctionDoubleDouble(fdd)
+
+# OptFactPriColGHInstancePointRobot
+Pk = np.asarray([[1, 0, 0, 0], [0, 1, 0, 0]])
+opt_fact = OptFactPriColGHInstancePointRobot(2, prior, obs, Pk)
+
+opt_fact.
 
 # gauss_hermite = GaussHermiteInstance(10, 2, mean, cov, func)
 

@@ -1,17 +1,15 @@
 /**
- * @file test_conv_prior_col_pR.cpp
+ * @file test_conv_prior_col_pR_cython.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Test the convergence of the algorithm with prior + collision cost only on supported states, 
- * for a planar robot.
+ * @brief Wrapping the functional input in C++ for cython connections with python code.
  * @version 0.1
- * @date 2022-07-15
+ * @date 2022-07-23
  * 
  * @copyright Copyright (c) 2022
  * 
  */
 
 #include <vimp/instances/PriorColPlanarPointRobot.h>
-// #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 #include <vimp/instances/PlanarPointRobotSDFExample.h>
 
 using namespace std;
@@ -19,38 +17,6 @@ using namespace gpmp2;
 using namespace Eigen;
 using namespace vimp;
 
-/**
- * @brief -log(p(x,z)) for prior and collision factors 
- * 
- * @param pose input pose
- * @param prior_factor the prior class
- * @param obstacle_factor the collision class
- * @return double 
- */
-double errorWrapperPriorCol(const VectorXd& pose, 
-                            const UnaryFactorTranslation2D& prior_factor,
-                            const ObstaclePlanarSDFFactorPointRobot& collision_factor) {
-
-    /**
-     * Prior factor
-     * */
-    VectorXd vec_prior_err = prior_factor.evaluateError(pose);
-    MatrixXd Qc = prior_factor.get_Qc();
-    double prior_err = vec_prior_err.transpose() * Qc.inverse() * vec_prior_err;
-
-    /**
-     * Obstacle factor
-     * */
-    VectorXd vec_err = collision_factor.evaluateError(pose);
-
-    // MatrixXd precision_obs;
-    MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
-    precision_obs = precision_obs / collision_factor.get_noiseModel()->sigmas()[0];
-
-    double collision_cost = vec_err.transpose() * precision_obs * vec_err;
-
-    return prior_err + collision_cost;
-}
 
 int main(){
     // An example pr and sdf
@@ -84,7 +50,7 @@ int main(){
     SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 0.5);
 
     /// Vector of factored optimizers
-    vector<std::shared_ptr<OptFactPriColPlanarPRGH>> vec_factor_opts;
+    vector<std::shared_ptr<OptFactPriColGHInstancePointRobot>> vec_factor_opts;
 
     /// initial values
     VectorXd joint_init_theta{VectorXd::Zero(ndim)};
@@ -101,16 +67,16 @@ int main(){
         UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment(0, dim_conf)}, K_0};
 
         // collision
-        ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
+        gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
 
         /// Factored optimizer
-        std::shared_ptr<OptFactPriColPlanarPRGH> pOptimizer{new OptFactPriColPlanarPRGH{dim_conf, errorWrapperPriorCol, prior_k, collision_k, Pk}};
+        std::shared_ptr<OptFactPriColGHInstancePointRobot> pOptimizer{new OptFactPriColGHInstancePointRobot{dim_conf, prior_k, collision_k, Pk}};
         vec_factor_opts.emplace_back(pOptimizer);
 
     }
 
     /// The joint optimizer
-    VIMPOptimizerGH<OptFactPriColPlanarPRGH> optimizer{vec_factor_opts};
+    VIMPOptimizerGH<OptFactPriColGHInstancePointRobot> optimizer{vec_factor_opts};
 
     /// Set initial value to the linear interpolation
     optimizer.set_mu(joint_init_theta);

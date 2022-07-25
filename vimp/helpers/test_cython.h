@@ -60,7 +60,11 @@ namespace vimp{
 
     // };
 
-    class CyTest2{
+    /**
+     * @brief Test the use of gpmp2 class.
+     * 
+     */
+    class CyTest2{  
         public:
             CyTest2(){};
             CyTest2(const gpmp2::PointRobotModel& pR_model):_pR_model{boost::make_shared<gpmp2::PointRobotModel>(pR_model)}{}
@@ -71,6 +75,10 @@ namespace vimp{
 
     };
 
+    /**
+     * @brief Test the functional, and make_shared
+     * 
+     */
     typedef boost::function<double(const double&)> FunctionDoubleDouble;
 
     class CyTest3{
@@ -82,6 +90,25 @@ namespace vimp{
 
             double f(const double& x){
                 return (*_f)(x);
+            }
+    };
+
+
+    /**
+     * @brief Test the std::vector
+     * 
+     */
+    class CyTest4{
+        public:
+            CyTest4(){};
+            CyTest4(const std::vector<double>& vec_d):_vd{vec_d}{}
+
+            std::vector<double> _vd;
+
+            void print_vec(){
+                for (auto & i_d : _vd){
+                    std::cout << i_d << std::endl;
+                }
             }
     };
 }

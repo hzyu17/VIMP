@@ -65,8 +65,14 @@ namespace vimp{
         MatrixXd sig{lltP.matrixL()};
 
         VectorXd pt_0 = VectorXd::Zero(_dim);
+
+        try{
+            MatrixXd res{MatrixXd::Zero((*_f)(pt_0).rows(), (*_f)(pt_0).cols())};
+        }
+        catch (int n){
+            cout << "exception " << endl;
+        }
         
-        MatrixXd res{MatrixXd::Zero((*_f)(pt_0).rows(), (*_f)(pt_0).cols())};
         
         if (_dim == 1){
             for (int i=0; i<_deg; i++){

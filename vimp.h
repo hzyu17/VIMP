@@ -21,6 +21,7 @@
 // class gtsam::Pose3;
 // class gtsam::Point2;
 // class gtsam::Pose2;
+class gtsam::Vector2;
 
 class gtsam::GaussianFactorGraph;
 class gtsam::Values;
@@ -31,7 +32,7 @@ virtual class gtsam::NoiseModelFactor : gtsam::NonlinearFactor;
 
 // gpmp2 deceleration
 class gpmp2::PointRobotModel;
-// virtual class ObstaclePlanarSDFFactorPointRobot : gtsam::NoiseModelFactor;
+virtual class ObstaclePlanarSDFFactorPointRobot : gtsam::NoiseModelFactor;
 class gpmp2::PlanarSDF;
 
 
@@ -76,21 +77,46 @@ class CyTest3{
     double f(const double& x);
 };
 
-#include <vimp/instances/GaussHermiteInstance.h>
+class CyTest4{
+    CyTest4();
+    CyTest4(const std::vector<double>& vec_d);
 
-class FunctionMatrixVector{
-
-    FunctionMatrixVector();
+    void print_vec();
 };
 
-class GaussHermiteInstance{
-    GaussHermiteInstance();
-    GaussHermiteInstance(const int& deg, const int& dim, const Vector& mean, const Matrix& P, const vimp::FunctionMatrixVector& func);
 
-    void update_integrand(const vimp::FunctionMatrixVector& fun);
-    Matrix f(const Vector& x);
-    Matrix Integrate();
-};
+// #include <vimp/instances/PriorColPlanarPointRobot.h>
+
+// class OptFactPriColGHInstancePointRobot{
+//     OptFactPriColGHInstancePointRobot();
+//     OptFactPriColGHInstancePointRobot(const int& dimension, 
+//                                       const vimp::UnaryFactorTranslation2D& prior,
+//                                       const gpmp2::ObstaclePlanarSDFFactorPointRobot& collision,
+//                                       const Matrix& Pk);
+// };
+
+// class VIMPOptimizerPriColPR{
+//     VIMPOptimizerPriColPR();
+//     VIMPOptimizerPriColPR(const vector<std::shared_ptr<OptFactPriColGHInstancePointRobot>>& vec_fact_optimizers, int niters);
+
+//     void optimize();
+// };
+
+// #include <vimp/instances/GaussHermiteInstance.h>
+
+// class FunctionMatrixVector{
+
+//     FunctionMatrixVector();
+// };
+
+// class GaussHermiteInstance{
+//     GaussHermiteInstance();
+//     GaussHermiteInstance(const int& deg, const int& dim, const Vector& mean, const Matrix& P, const vimp::FunctionMatrixVector& func);
+
+//     void update_integrand(const vimp::FunctionMatrixVector& fun);
+//     Matrix f(const Vector& x);
+//     Matrix Integrate();
+// };
 
 // #include <vimp/instances/PriorColPlanarPR.h>
 // class OptFactPriColPlanarPRGH{
