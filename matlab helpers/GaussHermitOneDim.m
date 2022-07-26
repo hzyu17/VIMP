@@ -21,10 +21,10 @@ func = gx*gaussian_x;
 func_hd = matlabFunction(func);
 
 % ground truth
-integral_true = integral(func_hd, -inf, inf)
+integral_true = integral(func_hd, -inf, -1e-5) + integral(func_hd, 1e-5, inf)
 
 % approximation
 pts = sig.*roots + m;
-integral_GH = sum(W.*double(subs(gx, pts)));
+integral_GH = sum(W.*double(subs(gx, pts)))
 
 end

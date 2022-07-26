@@ -9,7 +9,7 @@
  * 
  */
 
-#include <vimp/helpers/SparseInverseMatrix.h>
+#include "../helpers/SparseInverseMatrix.h"
 #include <gtest/gtest.h>
 
 using namespace Eigen;
@@ -33,5 +33,15 @@ TEST(TEST_INVERSER, basic_inverses){
 
     inverser1.update_matrix(rand);
     ASSERT_EQ((inverser1.inverse() - rand.inverse()).norm(), 0);
+    
+}
+
+TEST(TEST_INVERSER, logdet){
+    MatrixXd m{MatrixXd::Random(4, 4)};
+    dense_inverser inverser2{m};
+    ASSERT_LE(inverser2.logdetD() - log(m.determinant()), 1e-10);  
+    m = m*1.5;
+    ASSERT_LE(inverser2.logdetD(m) - log(m.determinant()), 1e-10);  
+
 }
 

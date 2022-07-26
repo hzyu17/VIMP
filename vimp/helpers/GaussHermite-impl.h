@@ -66,17 +66,11 @@ namespace vimp{
 
         VectorXd pt_0 = VectorXd::Zero(_dim);
 
-        try{
-            MatrixXd res{MatrixXd::Zero((*_f)(pt_0).rows(), (*_f)(pt_0).cols())};
-        }
-        catch (int n){
-            cout << "exception " << endl;
-        }
-        
+        MatrixXd res{MatrixXd::Zero(_f(pt_0).rows(), _f(pt_0).cols())};        
         
         if (_dim == 1){
             for (int i=0; i<_deg; i++){
-                res += _W(i)*(*_f)(sig*_sigmapts(i) + _mean);
+                res += _W(i)*_f(sig*_sigmapts(i) + _mean);
             }
         }
 
@@ -87,7 +81,7 @@ namespace vimp{
                     pt_ij << _sigmapts(i), _sigmapts(j);
 
                     VectorXd pt_ij_t = sig * pt_ij + _mean;
-                    res += _W(i) * _W(j) * (*_f)(pt_ij_t);
+                    res += _W(i) * _W(j) * _f(pt_ij_t);
 
                 }
             }
@@ -100,7 +94,7 @@ namespace vimp{
                         pt_ijk << _sigmapts(i), _sigmapts(j), _sigmapts(k);
 
                         VectorXd pt_ijk_t = sig * pt_ijk + _mean;
-                        res += _W(i) * _W(j) * _W(k) * (*_f)(pt_ijk_t);
+                        res += _W(i) * _W(j) * _W(k) * _f(pt_ijk_t);
                     }
                 }
             }
@@ -113,7 +107,7 @@ namespace vimp{
                             VectorXd pt_ijkl = VectorXd::Zero(4);
                             pt_ijkl << _sigmapts(i), _sigmapts(j), _sigmapts(k), _sigmapts(l);
                             VectorXd pt_ijkl_t = sig * pt_ijkl + _mean;
-                            res += _W(i) * _W(j) * _W(k) * _W(l) * (*_f)(pt_ijkl_t);
+                            res += _W(i) * _W(j) * _W(k) * _W(l) * _f(pt_ijkl_t);
                         }
                     }
                 }

@@ -7,7 +7,6 @@
 
 using namespace Eigen;
 namespace vimp{
-        
     /**
      * @brief Main function calculating phi * (partial V) / (partial mu), and 
      * phi * (partial V^2) / (partial mu * partial mu^T)
@@ -15,33 +14,65 @@ namespace vimp{
      * @return * void 
      */
     void VIMPOptimizerFactorizedBase::calculate_partial_V(){
-        
-        _Vdmu.setZero();
-        _Vddmu.setZero();
 
-        // GH approximation
-        update_covariance();
+        cout << "================= inside calculate_partial_V =================" << endl;
+
+        cout << " --- mu --- " << endl << _mu.transpose() << endl;
+        cout << " --- precision --- " << endl << _precision << endl;
+        cout << " --- covariance --- " << endl << _covariance << endl;
+        
+        // _Vdmu.setZero();
+        // _Vddmu.setZero();
+
+        // use local variables
+
+        // // GH approximation
+        // update_covariance();
+        // update the mu and sigma inside the gauss-hermite integrator
         updateGH();
 
-        /// Integrate for _Vdmu 
+        cout << "--- mean in GH --- " << endl << _gauss_hermite.mean().transpose() << endl;
+        cout << "--- covariance in GH --- " << endl << _gauss_hermite.cov() << endl; 
+
+        assert((_gauss_hermite.mean()-_mu).norm() < 1e-10);
+        assert((_gauss_hermite.cov()-_covariance).norm() < 1e-10);
+
+        /// Integrate for E_q{_Vdmu} 
+        VectorXd Vdmu{VectorXd::Zero(_dim)};
         _gauss_hermite.update_integrand(_func_Vmu);
+        Vdmu = _gauss_hermite.Integrate();
 
-        _Vdmu = _gauss_hermite.Integrate();
-        _Vdmu = _precision * _Vdmu;
+        cout << "--- Vdmu ---" << endl << Vdmu.transpose() << endl;
 
-        /// Integrate for phi(x)
+        cout << "--- _precision * Vdmu ---" << endl << (_precision * Vdmu).transpose() << endl;
+
+        Vdmu = _precision * Vdmu;
+
+        cout << "--- new Vdmu --- " << endl << Vdmu << endl;
+
+        /// Integrate for E_q{phi(x)}
         _gauss_hermite.update_integrand(_func_phi);
-        double avg_phi = _gauss_hermite.Integrate()(0, 0);
+        double E_phi = _gauss_hermite.Integrate()(0, 0);
 
+        cout << "--- E_phi --- " << endl << E_phi << endl;
+        
         /// Integrate for partial V^2 / ddmu_ 
         _gauss_hermite.update_integrand(_func_Vmumu);
-        _Vddmu = _gauss_hermite.Integrate();
+        MatrixXd E_xxphi{_gauss_hermite.Integrate()};
 
-        _Vddmu.triangularView<Upper>() = (_precision * _Vddmu * _precision).triangularView<Upper>();
-        _Vddmu.triangularView<StrictlyLower>() = _Vddmu.triangularView<StrictlyUpper>().transpose();
+        cout << "--- Vddmu = E_{q_k}{(x_k - mu_k)(x_k - mu_k)^T * phi(x_k)} ---" << endl <<
+        E_xxphi << endl;
 
-        _Vddmu.triangularView<Upper>() = (_Vddmu - _precision * avg_phi).triangularView<Upper>();
-        _Vddmu.triangularView<StrictlyLower>() = _Vddmu.triangularView<StrictlyUpper>().transpose();
+        MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
+        Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
+        Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+
+        // Vddmu.triangularView<Upper>() = (Vddmu - _precision * E_phi).triangularView<Upper>();
+        // Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+
+        // update member variables
+        _Vdmu = Vdmu;
+        _Vddmu = Vddmu;
     }
 
 
@@ -55,7 +86,7 @@ namespace vimp{
     void VIMPOptimizerFactorizedBase::calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t){
         _Vdmu.setZero();
         _Vddmu.setZero();
-        update_covariance();
+        // update_covariance();
 
         // helper vectors
         VectorXd eps{_mu - mu_t};
@@ -116,7 +147,6 @@ namespace vimp{
 
         updateGH(x, Cov);
         _gauss_hermite.update_integrand(_func_phi);
-
         return _gauss_hermite.Integrate()(0, 0);
     }
 

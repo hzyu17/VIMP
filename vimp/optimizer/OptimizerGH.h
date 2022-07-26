@@ -13,8 +13,8 @@
 
 #include <utility>
 #include <memory>
-#include <vimp/helpers/SparseInverseMatrix.h>
-#include <vimp/helpers/result_recorder.h>
+#include "../helpers/SparseInverseMatrix.h"
+#include "../helpers/result_recorder.h"
 #include <assert.h>
 
 using namespace std;
@@ -42,8 +42,9 @@ public:
                                    _nsub_vars{vec_fact_optimizers.size()},
                                    _vec_factor_optimizers{std::move(vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
-                                   _precision{MatrixXd::Identity(_dim, _dim) * 5.0},
-                                   _inverser{MatrixXd::Identity(_dim, _dim)},
+                                   _precision{MatrixXd::Identity(_dim, _dim)},
+                                   _inverser{_precision},
+                                   _covariance{MatrixXd::Identity(_dim, _dim)},
                                    _res_recorder{_niters, _dim}{}
 protected:
     /// optimization variables
@@ -56,9 +57,11 @@ protected:
     /// @param _dmu incremental mean
     VectorXd _mu;
     MatrixXd _precision;
-
+    
     /// Sparse matrix inverse helper, which utilizes the exact sparse pattern to do the matrix inversion
     dense_inverser _inverser;
+
+    MatrixXd _covariance;
 
     /// Data and result storage
     VIMPResults _res_recorder;
@@ -147,13 +150,22 @@ public:
     /// @param mean new mean
     inline void set_mu(const VectorXd& mean){
         assert(mean.size() == _mu.size());
-        _mu = mean; }
+        _mu = mean; 
+        for (auto & opt_fact : _vec_factor_optimizers){
+            opt_fact->update_mu_from_joint_mean(_mu);
+        }
+    }
 
     /// assign a precision matrix
     /// @param new_precision new precision
     inline void set_precision(const MatrixXd& new_precision){
         assert(new_precision.size() == _precision.size());
-        _precision = new_precision;}
+        _precision = new_precision;
+        _covariance = _inverser.inverse(_precision);
+        for (auto & opt_fact : _vec_factor_optimizers){
+            opt_fact->update_precision_from_joint_covariance(_covariance);
+        }
+    }
 
     /**
      * @brief set number of iterations
@@ -163,6 +175,14 @@ public:
     inline void set_niterations(int niters){
         _niters = niters;
         _res_recorder.update_niters(niters); }
+
+    /**
+     * @brief Set initial values 
+     */
+    inline void set_initial_values(const VectorXd& init_mean, const MatrixXd& init_precision){
+        set_mu(init_mean);
+        set_precision(init_precision);
+    }
 
     
 /// **************************************************************
@@ -207,10 +227,18 @@ public:
     inline int dim() const{
         return _dim;
     }
+
+    vector<double> E_Phis(){
+        vector<double> res;
+        for (auto & p_opt: _vec_factor_optimizers){
+            res.emplace_back(p_opt->E_Phi());
+        }
+        return res;
+    }
     
 
 };
 
 }
 
-#include <vimp/optimizer/OptimizerGH-impl.h>
+#include "../optimizer/OptimizerGH-impl.h"

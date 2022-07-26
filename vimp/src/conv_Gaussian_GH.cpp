@@ -12,9 +12,9 @@
 
 /// Test the convergence of algorithm using a known Gaussian posterior.
 
-#include <vimp/optimizer/OptimizerGH.h>
-#include <vimp/optimizer/OptimizerFactorizedGH.h>
-#include <vimp/helpers/MVGsampler.h>
+#include "../optimizer/OptimizerGH.h"
+#include "../optimizer/OptimizerFactorizedGH.h"
+#include "../helpers/MVGsampler.h"
 #include <iostream>
 #include <random>
 
@@ -28,7 +28,7 @@ inline double cost_function(const VectorXd& sample, const vimp::Gaussian_distrib
 using FactorizedOptimizer = VIMPOptimizerFactorizedGaussHermite<std::function<double(const VectorXd&, const Gaussian_distribution&)>, Gaussian_distribution>;
 
 void test_coupled(){
-    const int ndim = 15;
+    const int ndim = 4;
 
     // construct block matrices Sigma_k, P_k, and factored cost functions
     // vector<std::function<MatrixXd(const VectorXd&, const Gaussian_distribution&)>> vec_cost_func;
@@ -46,8 +46,8 @@ void test_coupled(){
         VectorXd mean_t(2);
         MatrixXd precision_t(2, 2);
         precision_t = MatrixXd::Identity(2, 2);
-        precision_t(0, 1) = -0.74;
-        precision_t(1, 0) = -0.74;
+        precision_t(0, 1) = 0.25;
+        precision_t(1, 0) = 0.25;
         mean_t = VectorXd::Ones(2);
 
         Gaussian_distribution target_distr(mean_t, precision_t.inverse());
@@ -60,9 +60,15 @@ void test_coupled(){
 
     VIMPOptimizerGH<FactorizedOptimizer> optimizer(vec_factorized_opt);
 
-    const int num_iter = 10;
+    const int num_iter = 20;
 
     optimizer.set_niterations(num_iter);
+
+    // initial values
+    VectorXd init_mean{VectorXd::Zero(ndim)};
+    MatrixXd init_precision{MatrixXd::Identity(ndim, ndim)};
+    optimizer.set_initial_values(init_mean, init_precision);
+    optimizer.set_step_size(0.6, 0.6);
     optimizer.optimize();
 
     cout << "mean " << endl << optimizer.mean() << endl;

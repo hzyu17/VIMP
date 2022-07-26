@@ -15,6 +15,7 @@ namespace vimp{
     struct VIMPResults{
         MatrixXd _res_mean;
         vector<MatrixXd> _vec_res_covariances;
+        vector<MatrixXd> _vec_res_precisions;
         int _niters, _nstates;
         int _cur_iter=0;
 
@@ -42,6 +43,7 @@ namespace vimp{
         inline void reinitialize_data(){
             _res_mean = std::move(MatrixXd::Zero(_niters, _nstates));
             _vec_res_covariances.resize(_niters);
+            _vec_res_precisions.resize(_niters);
             _cur_iter = 0;
         }
 
@@ -60,11 +62,13 @@ namespace vimp{
          * 
          * @param new_mean the new coming mean vector
          * @param new_cov the new coming covariance matrix
+         * @param new_precision the new coming precision matrix
          */
-        void update_data(const VectorXd& new_mean, const MatrixXd& new_cov){
+        void update_data(const VectorXd& new_mean, const MatrixXd& new_cov, const MatrixXd& new_precision){
             if (_cur_iter < _niters){
                 _res_mean.row(_cur_iter) = std::move(new_mean.transpose());
                 _vec_res_covariances[_cur_iter] = std::move(new_cov);
+                _vec_res_precisions[_cur_iter] = std::move(new_precision);
                 _cur_iter += 1;
             }
             else{
@@ -80,7 +84,7 @@ namespace vimp{
         inline void print_data(int i_iter){
             assert(i_iter < _niters);
             cout << "mean: " << endl << _res_mean.row(i_iter) << endl << endl;
-            cout << "covariance: " << endl << _vec_res_covariances[i_iter] << endl;
+            cout << "precision: " << endl << _vec_res_precisions[i_iter] << endl;
 
         }
 
