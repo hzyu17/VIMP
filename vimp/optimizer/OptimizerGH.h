@@ -193,8 +193,10 @@ public:
      * @param file_mean filename for the means
      * @param file_cov filename for the covariances
      */
-    inline void update_file_names(const string& file_mean, const string& file_cov){
-        _res_recorder.update_file_names(file_mean, file_cov);}
+    inline void update_file_names(const string& file_mean, 
+                                  const string& file_cov, 
+                                  const string& file_cost){
+        _res_recorder.update_file_names(file_mean, file_cov, file_cost);}
 
     /**
      * @brief save process data into csv files.
@@ -226,8 +228,13 @@ public:
 
     inline int dim() const{
         return _dim;
-    }
+    }   
 
+    /**
+     * @brief calculate and return the E_q{phi(x)} s for each factorized entity.
+     * 
+     * @return vector<double> 
+     */
     vector<double> E_Phis(){
         vector<double> res;
         for (auto & p_opt: _vec_factor_optimizers){
@@ -235,10 +242,45 @@ public:
         }
         return res;
     }
+
+
+    /**************************** ONLY FOR 1D CASE ***********************/
+    /**
+     * @brief Draw a heat map for cost function in 1d case
+     * @return MatrixXd heatmap of size (nmesh, nmesh)
+     */
+    MatrixXd cost_map(const double& x_start, 
+                      const double& x_end, const double& y_start, 
+                      const double& y_end, const int& nmesh){
+        double res_x = (x_end - x_start) / nmesh;
+        double res_y = (y_end - y_start) / nmesh;
+        MatrixXd Z = MatrixXd::Zero(nmesh, nmesh);
+
+        for (int i=0; i<nmesh; i++){
+            VectorXd mean{VectorXd::Constant(1, x_start + i*res_x)};
+            for (int j=0; j<nmesh; j++){
+                MatrixXd cov{MatrixXd::Constant(1, 1, 1/(y_start + j*res_y))};
+                Z(j, i) = cost_value(mean, cov); /// the order of the matrix in cpp and in matlab
+            }
+        }
+        cout << "Z(0,0) " << endl << Z(0,0) << endl;
+        cout << "Z(1,0) " << endl << Z(1,0) << endl;
+        cout << "Z(1,1) " << endl << Z(1,1) << endl;
+        return Z;
+    }
+
+    /**
+     * @brief save the cost map
+     */
+    void save_costmap(){
+        MatrixXd cost_m = cost_map(18, 25, 0.05, 1, 40);
+        ofstream file("costmap.csv");
+        if (file.is_open()){
+            file << cost_m.format(CSVFormat);
+            file.close();}
+    }
     
-
-};
-
-}
+    }; //class
+} //namespace vimp
 
 #include "../optimizer/OptimizerGH-impl.h"

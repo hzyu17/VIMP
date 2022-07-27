@@ -65,12 +65,12 @@ namespace vimp{
         MatrixXd sig{lltP.matrixL()};
 
         VectorXd pt_0 = VectorXd::Zero(_dim);
-
-        MatrixXd res{MatrixXd::Zero(_f(pt_0).rows(), _f(pt_0).cols())};        
-        
-        if (_dim == 1){
+        MatrixXd res{MatrixXd::Zero(_f(pt_0).rows(), _f(pt_0).cols())}; 
+        if (_dim == 1){            
             for (int i=0; i<_deg; i++){
-                res += _W(i)*_f(sig*_sigmapts(i) + _mean);
+                VectorXd pt(_dim);
+                pt = sig * _sigmapts(i) + _mean;
+                res += _W(i) * _f(pt);
             }
         }
 

@@ -1,7 +1,7 @@
 /**
  * @file conv_1d_example.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Recover the 1d estimation case in the paper.
+ * @brief Recover the results of 1d estimation example in the paper.
  * @version 0.1
  * @date 2022-07-25
  * 
@@ -22,9 +22,9 @@ double cost_function(const VectorXd& vec_x){
     double sig_p_sq = 9;
 
     // y should be sampled. for single trial just give it a value.
-    double y = mu_p - 0.1;
+    double y = f*b/mu_p - 1;
 
-    return (x - mu_p)*(x -  mu_p) / sig_p_sq / 2 + (y - f*b/x)*(y - f*b/x) / sig_r_sq / 2; 
+    return (x - mu_p)*(x - mu_p) / sig_p_sq / 2 + (y - f*b/x)*(y - f*b/x) / sig_r_sq / 2; 
 
 }
 
@@ -36,8 +36,6 @@ int main(){
     
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
 
-    cout << "Pk" << endl << Pk << endl;
-
     std::vector<std::shared_ptr<OptFact>> vec_opt_fact;
 
     std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, cost_function, Pk)};
@@ -47,8 +45,9 @@ int main(){
 
     vec_opt_fact.emplace_back(p_opt_fac);
 
-    VIMPOptimizerGH<OptFact> opt{vec_opt_fact, 20};
-    opt.set_step_size(0.5, 1.5);
+    VIMPOptimizerGH<OptFact> opt{vec_opt_fact, 5};
+
+    opt.save_costmap();
     opt.set_initial_values(init_mu, init_prec);
     cout << "opt.mu " << endl << opt.mean() << endl;
     opt.optimize();

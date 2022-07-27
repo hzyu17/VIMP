@@ -262,7 +262,9 @@ namespace vimp{
          * 
          * @return MatrixXd 
          */
-        inline MatrixXd precision() const{ return _precision; }
+        inline MatrixXd precision() const{ 
+            assert((_precision - _covariance.inverse()).norm()==0); 
+            return _precision; }
 
 
         /**
@@ -318,6 +320,10 @@ namespace vimp{
         inline MatrixXd E_xMuxMuTPhi(){
             _gauss_hermite.update_integrand(_func_Vmumu);
             return _gauss_hermite.Integrate();
+        }
+
+        void set_GH_points(int p){
+            _gauss_hermite.set_polynomial_deg(p);
         }
     };
 

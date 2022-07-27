@@ -1,5 +1,9 @@
 clc
 %% Verification code for one dimensional case
+% generating the ground truth for the tests in vimp c++ code.
+% Author: Hongzhe Yu
+% Date: 07/26/2022
+
 mu_p = 20;
 sig_p_sq = 9;
 f = 400;
@@ -31,15 +35,26 @@ xmumuT_phi_func = matlabFunction(xmumuT_phi);
 
 
 %% function values
+feval(phi_func, mu_p)
+feval(xmu_phi_func, mu_p)
+feval(xmumuT_phi_func, mu_p)
 
+%% ===== Gauss Hermite =====
+% Weights
+p = 10;
+[roots, W] = getWeight(p)
 
-%% Gauss Hermite
+%% Integrations
 p = 6;
 mu = mu_p;
-P = 9;
+P = 9; %covariance, =sig^2
 disp('E_Phi')
 Int1 = GaussHermitOneDim(phi, p, mu, P);
 disp('E_xmu_phi')
 Int2 = GaussHermitOneDim(xmu_phi, p, mu, P);
 disp('E_xmumuT_phi')
 Int3 = GaussHermitOneDim(xmumuT_phi, p, mu, P);
+
+%% Cost
+% cost value should be E_{phi(x)} + ln(det(sig^{-2}))/2
+cost_value =  GaussHermitOneDim(phi, p, mu, P) + log(1/P)/2;

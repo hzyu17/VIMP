@@ -67,6 +67,8 @@ namespace vimp{
         Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
         Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
 
+        cout << "--- Vddmu ---" << endl << Vddmu << endl;
+
         // Vddmu.triangularView<Upper>() = (Vddmu - _precision * E_phi).triangularView<Upper>();
         // Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
 

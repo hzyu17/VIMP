@@ -12,6 +12,7 @@
 
 #include "../optimizer/OptimizerFactorizedGHBase.h"
 #include <memory>
+#include "../helpers/repeated_includes.h"
 
 using namespace std;
 using namespace Eigen;
@@ -35,6 +36,7 @@ namespace vimp{
                     OptBase::_func_Vmumu = [this, function](const VectorXd& x){return MatrixXd{(x-OptBase::_mu) * (x-OptBase::_mu).transpose().eval() * function(x)};};
                     OptBase::_gauss_hermite = GaussHermite<GHFunction>{10, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
                 }
+
     public:
         typedef std::shared_ptr<VIMPOptimizerFactorizedSimpleGH> shared_ptr;
 
