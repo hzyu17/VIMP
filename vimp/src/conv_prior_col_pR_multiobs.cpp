@@ -1,18 +1,16 @@
 /**
- * @file test_conv_prior_col_pR.cpp
+ * @file conv_prior_col_pR_multiobs.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Test the convergence of the algorithm with prior + collision cost only on supported states, 
- * for a planar robot.
+ * @brief Test of algorithm in multi obstacle environment.
  * @version 0.1
- * @date 2022-07-15
+ * @date 2022-07-27
  * 
  * @copyright Copyright (c) 2022
  * 
  */
 
 #include "../instances/PriorColPlanarPointRobot.h"
-// #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-#include "../instances/PlanarPointRobotSDFExample.h"
+#include "../instances/PlanarPointRobotSDFMultiObsExample.h"
 
 using namespace std;
 using namespace gpmp2;
@@ -57,12 +55,12 @@ double errorWrapperPriorCol(const VectorXd& pose,
 
 int main(){
     // An example pr and sdf
-    vimp::PlanarPointRobotSDFExample planar_pr_sdf;
+    vimp::PlanarPointRobotSDFMultiObsExample planar_pr_sdf;
     gpmp2::PointRobotModel pRModel = std::move(planar_pr_sdf.pRmodel());
     gpmp2::PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
 
     /// parameters
-    int n_total_states = 5, N = n_total_states - 1;
+    int n_total_states = 20, N = n_total_states - 1;
     const int ndof = planar_pr_sdf.ndof(), nlinks = planar_pr_sdf.nlinks();
     const int dim_conf = ndof * nlinks;
     const int dim_theta = 2 * dim_conf; // theta = [conf, vel_conf]
@@ -70,10 +68,10 @@ int main(){
     const int ndim = dim_theta * n_total_states;
 
     /// Obs factor
-    double cost_sigma = 1.0, epsilon = 1.5;
+    double cost_sigma = 0.5, epsilon = 4.0;
 
     /// start and goal
-    double start_x = 1.0, start_y = 1.5, goal_x = 5.5, goal_y = 3.5;
+    double start_x = 0, start_y = 0, goal_x = 17, goal_y = 14;
     VectorXd start_theta(dim_theta);
     start_theta << start_x, start_y, 0, 0;
     VectorXd goal_theta(dim_theta);
@@ -84,7 +82,7 @@ int main(){
     /// 2. the prior + collision factors for supported states.
     
     /// Noise model
-    SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 0.5);
+    SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
 
     /// Vector of factored optimizers
     vector<std::shared_ptr<OptFactPriColPlanarPRGH>> vec_factor_opts;
@@ -116,11 +114,11 @@ int main(){
     VIMPOptimizerGH<OptFactPriColPlanarPRGH> optimizer{vec_factor_opts};
 
     /// Set initial value to the linear interpolation
-    int num_iter = 100;
+    int num_iter = 30;
     optimizer.set_mu(joint_init_theta);
     optimizer.set_niterations(num_iter);
     optimizer.set_step_size_base(0.75);
-    optimizer.update_file_names("data/2d_pR/mean.csv", "data/2d_pR/cov.csv", "data/2d_pR/cost.csv");
+    optimizer.update_file_names("data/2d_pR/mean_multiobs.csv", "data/2d_pR/cov_multiobs.csv", "data/2d_pR/cost_multiobs.csv");
 
     optimizer.optimize();
 

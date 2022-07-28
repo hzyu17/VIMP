@@ -80,6 +80,5 @@ class PlanarPointRobotSDFExample{
             int ndof() const {return _ndof;}
             int nlinks() const {return _nlinks;}
         
-
 };
 }

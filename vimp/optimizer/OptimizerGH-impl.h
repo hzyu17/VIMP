@@ -1,5 +1,6 @@
 using namespace Eigen;
 using namespace std;
+#include <stdexcept>
 
 namespace vimp{
 
@@ -89,6 +90,7 @@ namespace vimp{
 
             cout << "========= iter " << i << " ========= "<< endl;
             cout << "mean " << endl << mean() << endl;
+            cout << "cost " << endl << cost_iter << endl;
             // cout << "cov " << endl << covariance() << endl;
             // cout << "_precision " << endl << _precision << endl;
             // cout << "cost " << endl << cost_iter << endl;
@@ -119,12 +121,25 @@ namespace vimp{
 
             double new_cost = cost_value(new_mu, new_precision.inverse());
 
+            int cnt = 0;
+            const int MAX_ITER = 500;
             while (new_cost > cost_iter){
                 B += 1;
+                cnt += 1;
+                if (cnt > MAX_ITER){
+                    throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
+                }
                 double step_size = pow(_step_size_base, B);
                 new_precision = _precision + step_size * dprecision;
                 new_mu  = _mu + step_size * dmu;
                 new_cost = cost_value(new_mu, new_precision.inverse());
+                if (isinf(new_cost)){
+                    throw std::runtime_error(string("Infinit cost value encountered ..."));
+                }
+
+                if (isnanf(new_cost)){
+                    throw std::runtime_error(string("NaN cost value encountered ..."));
+                }
             }
 
             set_mu(new_mu);
@@ -191,7 +206,11 @@ namespace vimp{
             value += opt_k->cost_value(x_k, Cov_k);
         }
         MatrixXd Precision{_inverser.inverse(Cov)};
-        value += log(Precision.determinant()) / 2;
+        double logdetprec = log(Precision.determinant());
+        if (isinf(logdetprec)){
+            std::runtime_error(std::string("Infinity log determinant precision matrix ..."));
+        }
+        value += logdetprec / 2;
         return value;
     }
 
@@ -207,7 +226,11 @@ namespace vimp{
             value += opt_k->cost_value();
         }
         double prec_det = _precision.determinant();
-        value += log(_precision.determinant()) / 2;
+        double logdetprec = log(_precision.determinant());
+        if (isinf(logdetprec)){
+            std::runtime_error(std::string("Infinity log determinant precision matrix ..."));
+        }
+        value += logdetprec / 2;
         return value;
     } 
 

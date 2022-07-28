@@ -76,26 +76,29 @@ include_directories(${GTSAM_INCLUDE_DIRS})
 add_executable(conv src/conv.cpp)
 target_link_libraries(conv  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
-add_executable(conv_factor_Gaussian_GH src/conv_factorized_GH.cpp)
-target_link_libraries(conv_factor_Gaussian_GH ${EIGEN3_LIBRARIES})
+add_executable(factor_Gaussian_GH src/conv_factorized_GH.cpp)
+target_link_libraries(factor_Gaussian_GH ${EIGEN3_LIBRARIES})
 
-add_executable(conv_factor src/conv_factorized.cpp)
-target_link_libraries(conv_factor  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
+add_executable(factor src/conv_factorized.cpp)
+target_link_libraries(factor  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
 add_executable(sparse_inverse src/sparse_inverse.cpp)
 target_link_libraries(sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
-add_executable(conv_Gaussian_GH src/conv_Gaussian_GH.cpp)
-target_link_libraries(conv_Gaussian_GH ${EIGEN3_LIBRARIES})
+add_executable(Gaussian_GH src/conv_Gaussian_GH.cpp)
+target_link_libraries(Gaussian_GH ${EIGEN3_LIBRARIES})
 
 add_executable(prior_col_pR src/conv_prior_col_pR.cpp)
 target_link_libraries(prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
-add_executable(conv_prior_col_pR_cython src/conv_prior_col_pR_cython.cpp)
-target_link_libraries(conv_prior_col_pR_cython ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+add_executable(prior_col_pR_cython src/conv_prior_col_pR_cython.cpp)
+target_link_libraries(prior_col_pR_cython ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(prior_pR src/conv_prior_pR.cpp)
 target_link_libraries(prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+
+add_executable(prior_pR_multiobs src/conv_prior_col_pR_multiobs.cpp)
+target_link_libraries(prior_pR_multiobs ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(conv_1d src/conv_1d_example.cpp)
 target_link_libraries(conv_1d ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
@@ -137,6 +140,9 @@ target_link_libraries(test_gaussian ${EIGEN3_LIBRARIES} GTest::gtest_main)
 
 add_executable(test_optimizer_functionals tests/test_optimizer_functionals.cpp)
 target_link_libraries(test_optimizer_functionals ${EIGEN3_LIBRARIES} GTest::gtest_main)
+
+add_executable(test_read_sdf tests/test_read_sdf.cpp)
+target_link_libraries(test_read_sdf ${EIGEN3_LIBRARIES} GTest::gtest_main)
 
 # -------------------------------------------- Doxygen for documentations
 find_package(Doxygen)

@@ -1,16 +1,20 @@
-%% Plot the result of planar point robot with a simple sdf;
-% Author: Hongzhe Yu
-% Date: 07/27/22
-
-clear all
-close all
-clc
+% sdf_multi_obs = csvread("../vimp/data/2d_pR/map_multiobs.csv");
+% field_multi_obs = csvread("../vimp/data/2d_pR/field_multiobs.csv");
+% 
+% [nmesh_y, nmesh_x] = size(sdf_multi_obs);
+% x_mesh = linspace(0, nmesh_x, nmesh_x);
+% y_mesh = linspace(0, nmesh_y, nmesh_y);
+% [X,Y] = meshgrid(x_mesh, y_mesh);
+% figure
+% contourf(X,Y,sdf_multi_obs, 1)
+% figure
+% contourf(X,Y,field_multi_obs, 20)
 
 %% ******************* Read datas ******************
-means = csvread("../vimp/data/2d_pR/mean.csv");
-covs = csvread("../vimp/data/2d_pR/cov.csv");
-costs = csvread("../vimp/data/2d_pR/cost.csv");
-sdfmap = csvread("../vimp/data/2d_pR/map_ground_truth.csv");
+means = csvread("../vimp/data/2d_pR/mean_multiobs.csv");
+covs = csvread("../vimp/data/2d_pR/cov_multiobs.csv");
+costs = csvread("../vimp/data/2d_pR/cost_multiobs.csv");
+sdfmap = csvread("../vimp/data/2d_pR/map_multiobs.csv");
 addpath("error_ellipse");
 
 [niters, ttl_dim] = size(means)
