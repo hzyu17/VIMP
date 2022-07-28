@@ -31,9 +31,6 @@ namespace vimp{
         // update the mu and sigma inside the gauss-hermite integrator
         updateGH();
 
-        cout << "--- mean in GH --- " << endl << _gauss_hermite.mean().transpose() << endl;
-        cout << "--- covariance in GH --- " << endl << _gauss_hermite.cov() << endl; 
-
         assert((_gauss_hermite.mean()-_mu).norm() < 1e-10);
         assert((_gauss_hermite.cov()-_covariance).norm() < 1e-10);
 

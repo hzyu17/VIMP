@@ -10,9 +10,9 @@
  * 
  */
 
-#include <vimp/instances/PriorColPlanarPointRobot.h>
+#include "../instances/PriorColPlanarPointRobot.h"
 // #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-#include <vimp/instances/PlanarPointRobotSDFExample.h>
+#include "../instances/PlanarPointRobotSDFExample.h"
 
 using namespace std;
 using namespace gpmp2;
@@ -59,7 +59,7 @@ int main(){
     gpmp2::PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
 
     /// parameters
-    int n_total_states = 20, N = n_total_states - 1;
+    int n_total_states = 5, N = n_total_states - 1;
     const int ndof = planar_pr_sdf.ndof(), nlinks = planar_pr_sdf.nlinks();
     const int dim_conf = ndof * nlinks;
     const int dim_theta = 2 * dim_conf; // theta = [conf, vel_conf]
@@ -67,7 +67,7 @@ int main(){
     const int ndim = dim_theta * n_total_states;
 
     /// Obs factor
-    double cost_sigma = 1.0, epsilon = 1.0;
+    double cost_sigma = 0.5, epsilon = 2.5;
 
     /// start and goal
     double start_x = 1.0, start_y = 1.5, goal_x = 5.5, goal_y = 4.5;
@@ -113,12 +113,11 @@ int main(){
     VIMPOptimizerGH<OptFactPriColPlanarPRGH> optimizer{vec_factor_opts};
 
     /// Set initial value to the linear interpolation
+    int num_iter = 20;
     optimizer.set_mu(joint_init_theta);
-
-    /// Update n iterations and data file names
-    int num_iter = 5;
     optimizer.set_niterations(num_iter);
-    optimizer.update_file_names("data/2d_pR/mean.csv", "data/2d_pR/cov.csv");
+    optimizer.set_step_size_base(0.5);
+    optimizer.update_file_names("data/2d_pR/mean.csv", "data/2d_pR/cov.csv", "data/2d_pR/cost.csv");
 
     optimizer.optimize();
 

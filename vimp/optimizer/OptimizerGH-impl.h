@@ -89,9 +89,9 @@ namespace vimp{
 
             cout << "========= iter " << i << " ========= "<< endl;
             cout << "mean " << endl << mean() << endl;
-            cout << "cov " << endl << covariance() << endl;
-            cout << "_precision " << endl << _precision << endl;
-            cout << "cost " << endl << cost_iter << endl;
+            // cout << "cov " << endl << covariance() << endl;
+            // cout << "_precision " << endl << _precision << endl;
+            // cout << "cost " << endl << cost_iter << endl;
 
             this->_res_recorder.update_data(mean_iter, cov_iter, precision_iter, cost_iter);
 
@@ -109,17 +109,19 @@ namespace vimp{
             VectorXd dmu = Vddmu.colPivHouseholderQr().solve(-Vdmu);
 
             // backtracking
-            double step_size_base = 0.75;
             int B = 1;
 
-            MatrixXd new_precision = _precision + step_size_base * dprecision;
-            VectorXd new_mu  = _mu + step_size_base * dmu;
+            cout << "--- dprecision ---" << endl << dprecision << endl;
+            cout << "--- dmu ---" << endl << dmu << endl;
+
+            MatrixXd new_precision = _precision + _step_size_base * dprecision;
+            VectorXd new_mu  = _mu + _step_size_base * dmu;
 
             double new_cost = cost_value(new_mu, new_precision.inverse());
 
             while (new_cost > cost_iter){
                 B += 1;
-                double step_size = pow(step_size_base, B);
+                double step_size = pow(_step_size_base, B);
                 new_precision = _precision + step_size * dprecision;
                 new_mu  = _mu + step_size * dmu;
                 new_cost = cost_value(new_mu, new_precision.inverse());
@@ -132,7 +134,7 @@ namespace vimp{
 
         /// print 5 iteration datas 
         vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
-        print_series_results(iters);
+        // print_series_results(iters);
 
         save_data();
     } 

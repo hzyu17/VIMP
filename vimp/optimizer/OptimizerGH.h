@@ -69,6 +69,7 @@ protected:
     /// step sizes by default
     double _step_size_precision = 0.9;
     double _step_size_mu = 0.9;
+    double _step_size_base = 0.75;
 
 public:
 /// **************************************************************
@@ -145,6 +146,11 @@ public:
     inline void set_step_size(double ss_mean, double ss_precision){
         _step_size_mu = ss_mean;
         _step_size_precision = ss_precision; }
+
+    /// The base step size in backtracking
+    inline void set_step_size_base(double ss_base){
+        _step_size_base = ss_base;
+    }
 
     /// assign a mean 
     /// @param mean new mean
@@ -272,9 +278,9 @@ public:
     /**
      * @brief save the cost map
      */
-    void save_costmap(){
+    void save_costmap(string filename="costmap.csv"){
         MatrixXd cost_m = cost_map(18, 25, 0.05, 1, 40);
-        ofstream file("costmap.csv");
+        ofstream file(filename);
         if (file.is_open()){
             file << cost_m.format(CSVFormat);
             file.close();}

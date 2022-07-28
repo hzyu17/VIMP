@@ -9,7 +9,7 @@
  * 
  */
 
-#include <vimp/optimizer/OptimizerFactorizedGHBase.h>
+#include "OptimizerFactorizedGHBase.h"
 
 namespace vimp{
     template <typename Function, typename CostClass, typename CostClass1>

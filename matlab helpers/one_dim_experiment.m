@@ -1,4 +1,4 @@
-%% Recovering of the one dimensional case
+%% Recovering the one dimensional case
 % Author: Hongzhe Yu
 % Date: 07/26/2022
 
@@ -13,7 +13,7 @@ sig_p_sq = 9;
 f = 400;
 b = 0.1;
 sig_r_sq = 0.09;
-y = f*b/mu_p - 1;
+y = f*b/mu_p - 0.7;
 
 niters = 5;
 ss = 0.75;
@@ -35,9 +35,9 @@ for i_iter = 1:niters
     % *********************** current cost ************************ (85)
     disp(["===== iteration", num2str(i_iter-1), " ====="])
     mu
-    sig_sq = 1/prec
+    sig_sq = 1/prec;
     prec
-    cost = GaussHermitOneDim(phi, p, mu, 1/prec) + log(prec)/2
+    cost = GaussHermitOneDim(phi, p, mu, 1/prec) + log(prec)/2;
 
     mus = [mus, mu];
     precs = [precs, prec];
@@ -48,17 +48,18 @@ for i_iter = 1:niters
     xmumuT_phi = (x-mu)*(x-mu).*phi;
        
     % ************************* calculate (10) **************************
-    disp("--- Vdmu ---")
-    GaussHermitOneDim(xmu_phi, p, mu, 1/prec)
-    disp("--- _precision * Vdmu ---")
-    prec * GaussHermitOneDim(xmu_phi, p, mu, 1/prec)
+%     disp("--- Vdmu ---")
+%     GaussHermitOneDim(xmu_phi, p, mu, 1/prec)
+%     disp("--- _precision * Vdmu ---")
+%     prec * GaussHermitOneDim(xmu_phi, p, mu, 1/prec)
 
-    disp("--- Vddmu = E_{q_k}{(x_k - mu_k)(x_k - mu_k)^T * phi(x_k)} ---")
-    GaussHermitOneDim(xmumuT_phi, p, mu, 1/prec) 
+%     disp("--- Vddmu = E_{q_k}{(x_k - mu_k)(x_k - mu_k)^T * phi(x_k)} ---")
+%     GaussHermitOneDim(xmumuT_phi, p, mu, 1/prec) 
 
     Vdmu = prec * GaussHermitOneDim(xmu_phi, p, mu, 1/prec);
-    disp("--- Vddmu ---")
-    Vddmu = prec * GaussHermitOneDim(xmumuT_phi, p, mu, 1/prec) * prec -  prec * GaussHermitOneDim(phi, p, mu, 1/prec)
+%     disp("--- Vddmu ---")
+%     prec * GaussHermitOneDim(xmumuT_phi, p, mu, 1/prec) * prec -  prec * GaussHermitOneDim(phi, p, mu, 1/prec)
+    Vddmu = prec * GaussHermitOneDim(xmumuT_phi, p, mu, 1/prec) * prec -  prec * GaussHermitOneDim(phi, p, mu, 1/prec);
     
     % ************************ (14) (15) *******************************
     d_prec = Vddmu - prec;
@@ -97,7 +98,7 @@ end
 disp("---- plotting ----")
 
 % ====== reading the cost map data, generated from cpp =======
-cpp_costmap = csvread("../vimp/build/costmap.csv");
+cpp_costmap = csvread("../vimp/data/1d/costmap.csv");
 nmesh = 40;
 x_mesh = linspace(18, 25, nmesh);
 y_mesh = linspace(0.05,1,nmesh);
@@ -119,9 +120,9 @@ xlabel("mu")
 ylabel("sig^{-2}")
 
 % ======================= cpp iterations =======================
-cpp_means  = csvread("../vimp/build/mean.csv");
-cpp_covs = csvread("../vimp/build/cov.csv");
-cpp_costs = csvread("../vimp/build/cost.csv");
+cpp_means  = csvread("../vimp/data/1d/mean.csv");
+cpp_covs = csvread("../vimp/data/1d/cov.csv");
+cpp_costs = csvread("../vimp/data/1d/cost.csv");
 cpp_precs = 1./cpp_covs;
 subplot(2,2,2)
 title("iterations cpp")
