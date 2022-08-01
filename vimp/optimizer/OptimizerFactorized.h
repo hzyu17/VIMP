@@ -20,7 +20,7 @@
 #include <utility>
 #include <vimp/helpers/SparseMatrixHelper.h>
 #include <vimp/helpers/MVGsampler.h>
-#include <vimp/helpers/GaussHermite-impl.h>
+#include <vimp/helpers/GaussHermite.h>
 
 using namespace std;
 using namespace Eigen;

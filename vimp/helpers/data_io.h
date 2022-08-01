@@ -9,23 +9,55 @@
  * 
  */
 
+#pragma once
+
 #include "repeated_includes.h"
+#include <vector>
+using namespace Eigen;
 
 namespace vimp{
     class MatrixIO{
     public:
         
         MatrixIO(){}
-        
-        void saveData(const string& fileName, const gtsam::Matrix& matrix){
-            
+
+        template <typename T>
+        void saveData(const string& fileName, const T& matrix){
+            cout << "Saving data to: " << fileName << endl;
             ofstream file(fileName);
             if (file.is_open()){
                 file << matrix.format(CSVFormat);
                 file.close();
             }
         }
-        
+
+        /**
+         * @brief read a sdf map from csv file, which can be the output of some gpmp2 functions.
+         * 
+         * @param filename 
+         * @return MatrixXd 
+         */
+        /// https://stackoverflow.com/questions/34247057/how-to-read-csv-file-and-assign-to-eigen-matrix
+        MatrixXd load_csv (const std::string & path) {
+            std::ifstream indata;
+            indata.open(path);
+            if (indata.peek() == std::ifstream::traits_type::eof()){
+                throw std::runtime_error(std::string("File dose not exist ..."));
+            }
+            std::string line;
+            std::vector<double> values;
+            uint rows = 0;
+            while (std::getline(indata, line)) {
+                std::stringstream lineStream(line);
+                std::string cell;
+                while (std::getline(lineStream, cell, ',')) {
+                    values.push_back(std::stod(cell));
+                }
+                ++rows;
+            }
+            return Eigen::Map<MatrixXd>(values.data(), rows, values.size()/rows);
+        }
+
     };
 
 }

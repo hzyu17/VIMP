@@ -170,11 +170,11 @@ def plotResult2DSdf(sdf_file, means_file, covs_file, dim_conf = 4, niter_viz = 3
 
 if __name__ == '__main__':
     # read sdf
-    sdf_file = '../mpvi/data/2d_pR/map_ground_truth.csv'
+    sdf_file = '../vimp/data/2d_pR/map_ground_truth.csv'
   
     # result data files
-    means_file = '../mpvi/data/2d_pR/mean.csv'
-    covs_file = '../mpvi/data/2d_pR/cov.csv'
+    means_file = '../vimp/data/2d_pR/mean.csv'
+    covs_file = '../vimp/data/2d_pR/cov.csv'
 
     # configuration variable dimension
     dim_conf = 4 # point robot

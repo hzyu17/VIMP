@@ -88,6 +88,7 @@ namespace vimp{
     };
 
     struct dense_inverser{
+        dense_inverser(){}
         dense_inverser(const MatrixXd& _input_dense):
         K_(_input_dense.cols()),
         input_dense_{_input_dense}{
@@ -107,7 +108,14 @@ namespace vimp{
          * @return Eigen::MatrixXd 
          */
         Eigen::MatrixXd inverse(const MatrixXd& input_matrix){
+
             assert(input_matrix.cols() == L_.cols());
+
+            /// 1 dimensional case
+            if (L_.cols()==1){
+                assert(input_matrix(0,0) != 0);
+                return MatrixXd{MatrixXd::Constant(1, 1, 1 / input_matrix(0,0))};
+            }
 
             LLT<MatrixXd, Eigen::Lower> choleskyLDLT = input_matrix.llt();
 
@@ -133,6 +141,37 @@ namespace vimp{
             }
             return inverse_;
         }
+
+        // /**
+        //  * @brief log det function
+        //  * 
+        //  * @param input_matrix 
+        //  * @return double 
+        //  */
+        // double logdetD(const MatrixXd& input_matrix){
+        //     assert(input_matrix.cols() == L_.cols());
+
+        //     /// 1 dimensional case
+        //     if (L_.cols()==1){
+        //         return input_matrix(0,0);
+        //     }
+
+        //     LLT<MatrixXd, Eigen::Lower> choleskyLDLT = input_matrix.llt();
+
+        //     L_ = choleskyLDLT.matrixL();
+
+        //     D_ = L_.diagonal().array().square().matrix().asDiagonal();
+        //     cout << "D_ " << D_ << endl;
+        //     assert((L_*D_*L_.transpose().eval() - input_matrix).norm() == 0);
+        //     cout << "D_.determinant() " << D_.determinant() << endl;
+        //     return log(D_.determinant());
+
+        // }
+
+        // double logdetD(){
+        //     return logdetD(input_dense_);
+        // }
+
 
         /**
          * @brief Default inverser

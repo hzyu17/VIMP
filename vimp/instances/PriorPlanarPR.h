@@ -9,7 +9,7 @@
  * 
  */
 
-#include <vimp/optimizer/OptimizerGH-impl.h>
+#include <vimp/optimizer/OptimizerGH.h>
 #include <vimp/instances/GaussianPriorUnaryTranslation.h>
 #include <vimp/optimizer/OptimizerFactorizedGH.h>
 

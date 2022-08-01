@@ -14,6 +14,8 @@
 #include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <boost/math/special_functions/factorials.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 using namespace Eigen;
 using namespace std;
 
@@ -30,7 +32,7 @@ public:
      * @brief Constructor
      * 
      * @param deg degree of GH polynomial
-     * @param dim dimension of the integrand
+     * @param dim dimension of the integrand input
      * @param mean mean 
      * @param P covariance matrix
      * @param func the integrand function
@@ -49,6 +51,18 @@ public:
             _W{VectorXd::Zero(_deg)},
             _sigmapts{VectorXd::Zero(_deg)}{}
 
+    /**
+     * @brief A helper function to compute all possible permutations given a dimension and a degree.
+     *  for computing the integration using sigmapoints and weights. Returns all vector of length dimension,
+     *  collected from the number degree. It is a permutation with replacement.
+     * @param dimension 
+     * @return std::vector<double>
+     */
+    void permute_replacing(const std::vector<int>& vec, 
+                            const int& dimension, 
+                            std::vector<int>& res, 
+                            int index, 
+                            std::vector<std::vector<int>>& v_res);
 
     /**
      * @brief Compute the Sigma Pts
@@ -84,7 +98,7 @@ public:
 
     inline void update_P(const MatrixXd& P){ assert(_P.size()==P.size()); _P = P; }
 
-    inline void set_polynomial_deg(const int& p){ _deg = p; }
+    inline void set_polynomial_deg(const int& deg){ _deg = deg; }
 
     inline void update_integrand(const Function& fun){ _f = fun; }
 
@@ -95,6 +109,10 @@ public:
     inline MatrixXd cov() const{ return _P; }
 
     inline MatrixXd f(const VectorXd& x){return _f(x);}
+
+    inline VectorXd weights() { computeWeights(); return _W;}
+
+    inline VectorXd sigmapts() { computeSigmaPts(); return _sigmapts;}
 
 private:
     int _deg;
@@ -108,4 +126,4 @@ private:
 
 }
 
-// #include "GaussHermite-impl.h"
+#include "../helpers/GaussHermite-impl.h"

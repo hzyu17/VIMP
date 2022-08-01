@@ -18,8 +18,8 @@
 #include <assert.h>
 #include <random>
 
-#include <vimp/helpers/SparseMatrixHelper.h>
-#include <vimp/helpers/GaussHermite-impl.h>
+#include "../helpers/SparseMatrixHelper.h"
+#include "../helpers/GaussHermite.h"
 
 
 using namespace std;
@@ -92,8 +92,8 @@ namespace vimp{
     public:
         /// update the GH approximator
         void updateGH(){
-            _gauss_hermite.update_mean(mean());
-            _gauss_hermite.update_P(covariance()); }
+            _gauss_hermite.update_mean(_mu);
+            _gauss_hermite.update_P(_covariance); }
 
         /// update the GH approximator
         void updateGH(const VectorXd& x, const MatrixXd& P){
@@ -113,11 +113,27 @@ namespace vimp{
 
 
         /**
-         * @brief Update mean, covariance, and precision matrix
+         * @brief Update mean
          * 
          * @param new_mu a given mean
          */
-        inline void update_mu(const VectorXd& new_mu){ assert(_mu.size() == new_mu.size()); _mu = new_mu; }
+        inline void update_mu(const VectorXd& new_mu){ 
+            assert(_mu.size() == new_mu.size()); 
+            _mu = new_mu; }
+
+
+        /**
+         * @brief Update covariance matrix
+         * 
+         * @param new_mu a given mean
+         */
+        inline void update_covariance(const MatrixXd& new_cov){ 
+            // cout << "_covariance " << endl << _covariance << endl;
+            assert(_covariance.cols() == new_cov.cols()); 
+            assert(_covariance.rows() == new_cov.rows()); 
+            _covariance = new_cov; 
+            _precision = _covariance.inverse();}
+
 
         /**
          * @brief Update the marginal mean using JOINT mean and 
@@ -127,14 +143,7 @@ namespace vimp{
          */
         inline void update_mu_from_joint_mean(const VectorXd& joint_mean){ 
             _mu = _Pk * joint_mean;}
-
-        /**
-         * @brief Update precision matrix
-         * 
-         * @param new_mu a given precision matrix
-         */
-        inline void update_precision(const MatrixXd& new_precision){ assert(_precision.size() == new_precision.size()); _precision = new_precision; }
-
+            
 
         /**
          * @brief Update the marginal precision matrix using joint COVARIANCE matrix and 
@@ -143,14 +152,9 @@ namespace vimp{
          * @param joint_covariance a given JOINT covariance matrix
          */
         inline void update_precision_from_joint_covariance(const MatrixXd& joint_covariance){ 
-            _precision = (_Pk * joint_covariance * _Pk.transpose()).inverse(); update_covariance();}
+            _covariance = _Pk * joint_covariance * _Pk.transpose().eval();
+            _precision = _covariance.inverse();}
 
-
-        /**
-         * @brief Update covariance matrix by inverting precision matrix.
-         */
-        inline void update_covariance(){ _covariance = _precision.inverse();}
-        
 
         /**
          * @brief Main function calculating phi * (partial V) / (partial mu), and 
@@ -248,31 +252,9 @@ namespace vimp{
          * 
          * @return MatrixXd 
          */
-        inline MatrixXd precision() const{ return _precision; }
-
-
-        /**
-         * @brief Get the joint mean 
-         * 
-         * @return VectorXd 
-         */
-        inline VectorXd joint_mean() const{ return _Pk.transpose() * _mu; }
-
-
-        /**
-         * @brief Get the joint precision matrix
-         * 
-         * @return MatrixXd 
-         */
-        inline MatrixXd joint_precision() const{ return _Pk.transpose() * _precision * _Pk; }
-
-
-        /**
-         * @brief Get the joint covariance matrix
-         * 
-         * @return MatrixXd 
-         */
-        inline MatrixXd joint_covariance() const{ return _Pk.transpose() * covariance() * _Pk; }
+        inline MatrixXd precision() const{ 
+            assert((_precision - _covariance.inverse()).norm()==0); 
+            return _precision; }
 
 
         /**
@@ -280,9 +262,60 @@ namespace vimp{
          * 
          * @return MatrixXd 
          */
-        inline MatrixXd covariance() const{ return _precision.inverse();}
+        inline MatrixXd covariance() const{ return _covariance;}
 
+        /********************************************************/
+        /// Function interfaces
+
+        /**
+         * @brief returns the Phi(x) 
+         * 
+         */
+        inline MatrixXd Phi(const VectorXd& x) const{
+            return _func_phi(x);
+        }
+
+        /**
+         * @brief returns the (x-mu)*Phi(x) 
+         * 
+         */
+        inline MatrixXd xMuPhi(const VectorXd& x) const{
+            return _func_Vmu(x);
+        }
+
+        /**
+         * @brief returns the (x-mu)*Phi(x) 
+         * 
+         */
+        inline MatrixXd xMuxMuTPhi(const VectorXd& x) const{
+            return _func_Vmumu(x);
+        }
+
+        /**
+         * @brief returns the E_q{phi(x)} = E_q{-log(p(x,z))}
+         * 
+         * @param x 
+         * @return MatrixXd 
+         */
+        inline double E_Phi() {
+            _gauss_hermite.update_integrand(_func_phi);
+            return _gauss_hermite.Integrate()(0, 0);
+        }
+
+        inline MatrixXd E_xMuPhi(){
+            _gauss_hermite.update_integrand(_func_Vmu);
+            return _gauss_hermite.Integrate();
+        }
+
+        inline MatrixXd E_xMuxMuTPhi(){
+            _gauss_hermite.update_integrand(_func_Vmumu);
+            return _gauss_hermite.Integrate();
+        }
+
+        void set_GH_points(int p){
+            _gauss_hermite.set_polynomial_deg(p);
+        }
     };
 
 }
-// #include "OptimizerFactorizedGHBase-impl.h"
+#include "../optimizer/OptimizerFactorizedGHBase-impl.h"

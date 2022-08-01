@@ -1,0 +1,15 @@
+%% inverser for a given sparse matrix.
+clc
+clear all
+m  = csvread("../vimp/tests/precision.csv");
+sp_m = sparse(m);
+
+[L, D, P] = ldl(sp_m);
+
+% verify 
+norm(L*D*L' - P'*sp_m*P, 'fro')
+norm(P'*P-eye(size(sp_m, 1)), 'fro')
+norm(P*L*D*L'*P'-sp_m, 'fro')
+
+% inverse 
+inv_m = sparse(size(sp_m, 1), size(sp_m, 2), zeros(siez))

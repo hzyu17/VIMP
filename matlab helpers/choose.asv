@@ -1,0 +1,26 @@
+%% calculate the permutation for sigmapoints
+% author: Hongzhe Yu 
+% date: 08/01/22
+% https://www.geeksforgeeks.org/print-all-permutations-with-repetition-of-characters/
+
+% permute list with replacement. 
+% I.E., [1,2,3], k=2 -> {[1,1], [1,2]}
+function orders = choose(list, k)
+    if (length(list) == 1)
+        orders = {list};
+    else
+        orders = {};
+        prev_order = choose(list(1:end-1)); %list of lists
+        for i = 1:length(prev_order)
+            i_order = prev_order{i}; % each list
+            for j_pos = 0:length(i_order) % each position
+                if j_pos == 0 % single out the 0 case for matlab
+                    new_order = [list(end), i_order(1:end)];
+                else
+                    new_order = [i_order(1:j_pos), list(end), i_order(j_pos+1:end)];
+                end
+                orders = {orders{1:end}, new_order};
+            end
+        end
+    end
+end

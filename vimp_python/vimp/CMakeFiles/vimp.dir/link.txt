@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC  -w -std=c++11 -Wall -O3 -DNDEBUG    -O3 -DNDEBUG -shared -Wl,-soname,libvimp.so.SOVERSION -o libvimp.so.SOVERSION  -Wl,-rpath,/usr/local/lib: -lboost_serialization /usr/local/lib/libgtsam.so.4.0.0 -lgpmp2 -lboost_serialization -lboost_system -lboost_filesystem -lboost_thread -lboost_date_time -lboost_timer -lboost_chrono /usr/local/lib/libmetis.so -lm 

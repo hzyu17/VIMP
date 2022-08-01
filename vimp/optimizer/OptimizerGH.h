@@ -13,12 +13,12 @@
 
 #include <utility>
 #include <memory>
-#include <vimp/helpers/SparseInverseMatrix.h>
-#include <vimp/helpers/result_recorder.h>
 #include <assert.h>
+#include "../helpers/SparseInverseMatrix.h"
+#include "../helpers/result_recorder.h"
+#include "../helpers/data_io.h"
 
 using namespace std;
-typedef Triplet<double> T;
 
 namespace vimp{
 
@@ -36,15 +36,16 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    VIMPOptimizerGH(const vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int niters=10):
+    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int niters=10):
                                    _dim{vec_fact_optimizers[0]->Pk().cols()},
                                    _niters{niters},
                                    _sub_dim{vec_fact_optimizers[0]->Pk().rows()},
                                    _nsub_vars{vec_fact_optimizers.size()},
                                    _vec_factor_optimizers{std::move(vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
-                                   _precision{MatrixXd::Identity(_dim, _dim) * 5.0},
-                                   _inverser{MatrixXd::Identity(_dim, _dim)},
+                                   _precision{MatrixXd::Identity(_dim, _dim)},
+                                   _inverser{_precision},
+                                   _covariance{MatrixXd::Identity(_dim, _dim)},
                                    _res_recorder{_niters, _dim}{}
 protected:
     /// optimization variables
@@ -57,23 +58,26 @@ protected:
     /// @param _dmu incremental mean
     VectorXd _mu;
     MatrixXd _precision;
-
+    
     /// Sparse matrix inverse helper, which utilizes the exact sparse pattern to do the matrix inversion
     dense_inverser _inverser;
 
+    MatrixXd _covariance;
+
     /// Data and result storage
     VIMPResults _res_recorder;
+    MatrixIO _matrix_io;
 
     /// step sizes by default
     double _step_size_precision = 0.9;
     double _step_size_mu = 0.9;
+    double _step_size_base = 0.75;
 
 public:
 /// **************************************************************
 /// Optimizations related
     /**
      * @brief Function which computes one step of update.
-     * 
      */
     void step();
 
@@ -85,16 +89,11 @@ public:
 
     /**
      * @brief The optimizing process.
-     * 
      */
     void optimize();
 
     /**
-     * @brief Compute the total cost function value given a state.
-     * 
-     * @param x input vector.
-     * @param P input Covariance
-     * @return cost value.
+     * @brief Compute the total cost function value given a mean and covariace.
      */
     double cost_value(const VectorXd& x, const MatrixXd& P);
 
@@ -115,7 +114,7 @@ public:
     inline MatrixXd precision() const{ return _precision; }
 
     /// returns the covariance matrix
-    inline MatrixXd covariance(){ return _inverser.inverse(_precision); }
+    inline MatrixXd covariance(){ return _precision.inverse(); }
 
     /**
      * @brief Purturb the mean by a random vector.
@@ -144,38 +143,71 @@ public:
         _step_size_mu = ss_mean;
         _step_size_precision = ss_precision; }
 
+    /// The base step size in backtracking
+    inline void set_step_size_base(double ss_base){
+        _step_size_base = ss_base;
+    }
+
     /// assign a mean 
     /// @param mean new mean
     inline void set_mu(const VectorXd& mean){
         assert(mean.size() == _mu.size());
-        _mu = mean; }
+        _mu = mean; 
+        for (std::shared_ptr<FactorizedOptimizer> & opt_fact : _vec_factor_optimizers){
+            opt_fact->update_mu_from_joint_mean(_mu);
+        }
+    }
 
     /// assign a precision matrix
     /// @param new_precision new precision
     inline void set_precision(const MatrixXd& new_precision){
         assert(new_precision.size() == _precision.size());
-        _precision = new_precision;}
+        _precision = new_precision;
+        // _inverser.update_matrix(_precision);
+        _covariance = _precision.inverse();
+
+        for (auto & opt_fact : _vec_factor_optimizers){
+            opt_fact->update_precision_from_joint_covariance(_covariance);
+        }
+    }
 
     /**
      * @brief set number of iterations
-     * 
      * @param niters
      */
     inline void set_niterations(int niters){
         _niters = niters;
         _res_recorder.update_niters(niters); }
 
+    /**
+     * @brief Set initial values 
+     */
+    inline void set_initial_values(const VectorXd& init_mean, const MatrixXd& init_precision){
+        set_mu(init_mean);
+        set_precision(init_precision);
+    }
+
+    /**
+     * @brief Set the degree of polynomial in gauss hermite integrator
+     */
+    inline void set_GH_degree(const int deg){
+        for (auto & opt_fact : _vec_factor_optimizers){
+            opt_fact->set_GH_points(deg);
+        }
+    }
+
     
 /// **************************************************************
 /// Experiment data and result recordings
     /**
      * @brief update filenames
-     * 
      * @param file_mean filename for the means
      * @param file_cov filename for the covariances
      */
-    inline void update_file_names(const string& file_mean, const string& file_cov){
-        _res_recorder.update_file_names(file_mean, file_cov);}
+    inline void update_file_names(const string& file_mean, 
+                                  const string& file_cov, 
+                                  const string& file_cost){
+        _res_recorder.update_file_names(file_mean, file_cov, file_cost);}
 
     /**
      * @brief save process data into csv files.
@@ -183,9 +215,20 @@ public:
     inline void save_data(){
         _res_recorder.save_data();}
 
+
+    /**
+     * @brief save a matrix to a file. 
+     */
+    inline void save_matrix(const string& filename, const MatrixXd& m){
+        _matrix_io.saveData<MatrixXd>(filename, m);
+    }
+
+    inline void save_vector(const string& filename, const VectorXd& vec){
+        _matrix_io.saveData<VectorXd>(filename, vec);
+    }
+
     /**
      * @brief print a given iteration data mean and covariance.
-     * 
      * @param i_iter index of data
      */
     inline void print_result(const int& i_iter){
@@ -193,7 +236,6 @@ public:
 
     /**
      * @brief print out a given number of iterations results
-     * 
      * @param iters a list of iterations to be printed
      */
     inline void print_series_results(const vector<int>& iters) {
@@ -207,9 +249,82 @@ public:
 
     inline int dim() const{
         return _dim;
+    }   
+
+    /**
+     * @brief calculate and return the E_q{phi(x)} s for each factorized entity.
+     * @return vector<double> 
+     */
+    vector<double> E_Phis(){
+        vector<double> res;
+        for (auto & p_opt: _vec_factor_optimizers){
+            res.emplace_back(p_opt->E_Phi());
+        }
+        return res;
+    }
+
+    /**
+     * @brief calculate and return the E_q{(x-mu).*phi(x)} s for each factorized entity.
+     * @return vector<double> 
+     */
+    vector<MatrixXd> E_xMuPhis(){
+        vector<MatrixXd> res;
+        for (auto & p_opt: _vec_factor_optimizers){
+            res.emplace_back(p_opt->E_xMuPhi());
+        }
+        return res;
+    }
+
+    /**
+     * @brief calculate and return the E_q{(x-mu).*phi(x)} s for each factorized entity.
+     * @return vector<double> 
+     */
+    vector<MatrixXd> E_xMuxMuTPhis(){
+        vector<MatrixXd> res;
+        for (auto & p_opt: _vec_factor_optimizers){
+            res.emplace_back(p_opt->E_xMuxMuTPhi());
+        }
+        return res;
+    }
+
+
+    /**************************** ONLY FOR 1D CASE ***********************/
+    /**
+     * @brief Draw a heat map for cost function in 1d case
+     * @return MatrixXd heatmap of size (nmesh, nmesh)
+     */
+    MatrixXd cost_map(const double& x_start, 
+                      const double& x_end, const double& y_start, 
+                      const double& y_end, const int& nmesh){
+        double res_x = (x_end - x_start) / nmesh;
+        double res_y = (y_end - y_start) / nmesh;
+        MatrixXd Z = MatrixXd::Zero(nmesh, nmesh);
+
+        for (int i=0; i<nmesh; i++){
+            VectorXd mean{VectorXd::Constant(1, x_start + i*res_x)};
+            for (int j=0; j<nmesh; j++){
+                MatrixXd cov{MatrixXd::Constant(1, 1, 1/(y_start + j*res_y))};
+                Z(j, i) = cost_value(mean, cov); /// the order of the matrix in cpp and in matlab
+            }
+        }
+        cout << "Z(0,0) " << endl << Z(0,0) << endl;
+        cout << "Z(1,0) " << endl << Z(1,0) << endl;
+        cout << "Z(1,1) " << endl << Z(1,1) << endl;
+        return Z;
+    }
+
+    /**
+     * @brief save the cost map
+     */
+    void save_costmap(string filename="costmap.csv"){
+        MatrixXd cost_m = cost_map(18, 25, 0.05, 1, 40);
+        ofstream file(filename);
+        if (file.is_open()){
+            file << cost_m.format(CSVFormat);
+            file.close();}
     }
     
+    }; //class
+} //namespace vimp
 
-};
-
-}
+#include "../optimizer/OptimizerGH-impl.h"
