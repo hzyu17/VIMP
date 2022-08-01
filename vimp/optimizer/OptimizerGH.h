@@ -13,9 +13,10 @@
 
 #include <utility>
 #include <memory>
+#include <assert.h>
 #include "../helpers/SparseInverseMatrix.h"
 #include "../helpers/result_recorder.h"
-#include <assert.h>
+#include "../helpers/data_io.h"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    VIMPOptimizerGH(const vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int niters=10):
+    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int niters=10):
                                    _dim{vec_fact_optimizers[0]->Pk().cols()},
                                    _niters{niters},
                                    _sub_dim{vec_fact_optimizers[0]->Pk().rows()},
@@ -65,6 +66,7 @@ protected:
 
     /// Data and result storage
     VIMPResults _res_recorder;
+    MatrixIO _matrix_io;
 
     /// step sizes by default
     double _step_size_precision = 0.9;
@@ -76,7 +78,6 @@ public:
 /// Optimizations related
     /**
      * @brief Function which computes one step of update.
-     * 
      */
     void step();
 
@@ -88,16 +89,11 @@ public:
 
     /**
      * @brief The optimizing process.
-     * 
      */
     void optimize();
 
     /**
-     * @brief Compute the total cost function value given a state.
-     * 
-     * @param x input vector.
-     * @param P input Covariance
-     * @return cost value.
+     * @brief Compute the total cost function value given a mean and covariace.
      */
     double cost_value(const VectorXd& x, const MatrixXd& P);
 
@@ -118,7 +114,7 @@ public:
     inline MatrixXd precision() const{ return _precision; }
 
     /// returns the covariance matrix
-    inline MatrixXd covariance(){ return _inverser.inverse(_precision); }
+    inline MatrixXd covariance(){ return _precision.inverse(); }
 
     /**
      * @brief Purturb the mean by a random vector.
@@ -157,7 +153,7 @@ public:
     inline void set_mu(const VectorXd& mean){
         assert(mean.size() == _mu.size());
         _mu = mean; 
-        for (auto & opt_fact : _vec_factor_optimizers){
+        for (std::shared_ptr<FactorizedOptimizer> & opt_fact : _vec_factor_optimizers){
             opt_fact->update_mu_from_joint_mean(_mu);
         }
     }
@@ -167,7 +163,9 @@ public:
     inline void set_precision(const MatrixXd& new_precision){
         assert(new_precision.size() == _precision.size());
         _precision = new_precision;
-        _covariance = _inverser.inverse(_precision);
+        // _inverser.update_matrix(_precision);
+        _covariance = _precision.inverse();
+
         for (auto & opt_fact : _vec_factor_optimizers){
             opt_fact->update_precision_from_joint_covariance(_covariance);
         }
@@ -175,7 +173,6 @@ public:
 
     /**
      * @brief set number of iterations
-     * 
      * @param niters
      */
     inline void set_niterations(int niters){
@@ -190,12 +187,20 @@ public:
         set_precision(init_precision);
     }
 
+    /**
+     * @brief Set the degree of polynomial in gauss hermite integrator
+     */
+    inline void set_GH_degree(const int deg){
+        for (auto & opt_fact : _vec_factor_optimizers){
+            opt_fact->set_GH_points(deg);
+        }
+    }
+
     
 /// **************************************************************
 /// Experiment data and result recordings
     /**
      * @brief update filenames
-     * 
      * @param file_mean filename for the means
      * @param file_cov filename for the covariances
      */
@@ -210,9 +215,20 @@ public:
     inline void save_data(){
         _res_recorder.save_data();}
 
+
+    /**
+     * @brief save a matrix to a file. 
+     */
+    inline void save_matrix(const string& filename, const MatrixXd& m){
+        _matrix_io.saveData<MatrixXd>(filename, m);
+    }
+
+    inline void save_vector(const string& filename, const VectorXd& vec){
+        _matrix_io.saveData<VectorXd>(filename, vec);
+    }
+
     /**
      * @brief print a given iteration data mean and covariance.
-     * 
      * @param i_iter index of data
      */
     inline void print_result(const int& i_iter){
@@ -220,7 +236,6 @@ public:
 
     /**
      * @brief print out a given number of iterations results
-     * 
      * @param iters a list of iterations to be printed
      */
     inline void print_series_results(const vector<int>& iters) {
@@ -238,13 +253,36 @@ public:
 
     /**
      * @brief calculate and return the E_q{phi(x)} s for each factorized entity.
-     * 
      * @return vector<double> 
      */
     vector<double> E_Phis(){
         vector<double> res;
         for (auto & p_opt: _vec_factor_optimizers){
             res.emplace_back(p_opt->E_Phi());
+        }
+        return res;
+    }
+
+    /**
+     * @brief calculate and return the E_q{(x-mu).*phi(x)} s for each factorized entity.
+     * @return vector<double> 
+     */
+    vector<MatrixXd> E_xMuPhis(){
+        vector<MatrixXd> res;
+        for (auto & p_opt: _vec_factor_optimizers){
+            res.emplace_back(p_opt->E_xMuPhi());
+        }
+        return res;
+    }
+
+    /**
+     * @brief calculate and return the E_q{(x-mu).*phi(x)} s for each factorized entity.
+     * @return vector<double> 
+     */
+    vector<MatrixXd> E_xMuxMuTPhis(){
+        vector<MatrixXd> res;
+        for (auto & p_opt: _vec_factor_optimizers){
+            res.emplace_back(p_opt->E_xMuxMuTPhi());
         }
         return res;
     }

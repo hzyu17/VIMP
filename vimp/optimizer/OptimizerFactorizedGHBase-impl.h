@@ -146,7 +146,7 @@ namespace vimp{
         updateGH(x, Cov);
         _gauss_hermite.update_integrand(_func_phi);
         double E_Phi = _gauss_hermite.Integrate()(0, 0);
-        if (isinf(E_Phi)){
+        if (isinf(abs(E_Phi))){
             cout << "--- mu ---" << endl << mean() << endl;
             cout << "--- precision ---" << endl << _precision << endl;
             cout << "--- covariance ---" << endl << covariance() << endl;
@@ -162,7 +162,7 @@ namespace vimp{
         updateGH();
         _gauss_hermite.update_integrand(_func_phi);
         double E_Phi = _gauss_hermite.Integrate()(0, 0);
-        if (isinf(E_Phi)){
+        if (isinf(abs(E_Phi))){
             cout << "--- mu ---" << endl << mean() << endl;
             cout << "--- precision ---" << endl << _precision << endl;
             cout << "--- covariance ---" << endl << covariance() << endl;

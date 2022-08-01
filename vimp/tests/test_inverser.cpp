@@ -11,13 +11,14 @@
 
 #include "../helpers/SparseInverseMatrix.h"
 #include <gtest/gtest.h>
+#include "../helpers/data_io.h"
 
 using namespace Eigen;
 using namespace std;
 using namespace vimp;
 
 TEST(TEST_INVERSER, basic_inverses){
-    int dim = 5;
+    int dim = 15;
     MatrixXd eye = MatrixXd::Identity(dim, dim);
     dense_inverser inverser{eye};
     ASSERT_EQ((inverser.inverse(eye) - eye.inverse()).norm(), 0);
@@ -33,15 +34,26 @@ TEST(TEST_INVERSER, basic_inverses){
 
     inverser1.update_matrix(rand);
     ASSERT_EQ((inverser1.inverse() - rand.inverse()).norm(), 0);
+    ASSERT_EQ((inverser1.inverse(rand) - rand.inverse()).norm(), 0);
+
+    ASSERT_EQ((inverser1.inverse(inverser1.inverse(rand)) - rand).norm(), 0);
+    ASSERT_EQ((inverser1.inverse(inverser1.inverse()) - rand).norm(), 0);
     
 }
 
-TEST(TEST_INVERSER, logdet){
-    MatrixXd m{MatrixXd::Random(4, 4)};
-    dense_inverser inverser2{m};
-    ASSERT_LE(inverser2.logdetD() - log(m.determinant()), 1e-10);  
-    m = m*1.5;
-    ASSERT_LE(inverser2.logdetD(m) - log(m.determinant()), 1e-10);  
+/**
+ * @brief Test with a more complicate case encountered in the experiment.
+ */
+TEST(TEST_INVERSER, special_case){
+    MatrixIO matrix_io;
+    
+    MatrixXd precision = matrix_io.load_csv("precision.csv");
+    MatrixXd cov_expected = matrix_io.load_csv("cov_expected.csv");
 
+    dense_inverser inverser(precision);
+
+    ASSERT_LE((cov_expected - precision.inverse()).norm(), 1e-10);
+    cout << "cov_expected-inverser.inverse() " << endl << cov_expected-inverser.inverse() << endl;
+    ASSERT_EQ((cov_expected-inverser.inverse()).norm(), 0);
+    
 }
-

@@ -37,6 +37,7 @@ namespace vimp{
                     OptBase::_gauss_hermite = GaussHermite<GHFunction>{10, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
                 }
 
+        
     public:
         typedef std::shared_ptr<VIMPOptimizerFactorizedSimpleGH> shared_ptr;
 

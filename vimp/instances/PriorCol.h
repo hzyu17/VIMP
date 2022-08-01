@@ -13,24 +13,24 @@
 #include "../optimizer/OptimizerGH.h"
 #include "../optimizer/OptimizerFactorizedTwoFactorsGH.h"
 #include "GaussianPriorUnaryTranslation.h"
+// #include "../gp/fixed_prior.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 
 
 namespace vimp{
     /**
      * @brief Declaration of the factorized optimizer.
-     * 
      */
     template <typename T, typename ROBOT>
     using FunctionPriorCol = std::function<double(const VectorXd&, 
                                             const UnaryFactorTranslation<T>&, 
                                             const gpmp2::ObstaclePlanarSDFFactor<ROBOT>&)>;
 
+
     template <typename T, typename ROBOT>
     using OptFactPriColGH = VIMPOptimizerFactorizedTwoClassGH<FunctionPriorCol<T, ROBOT>, 
                                                                 UnaryFactorTranslation<T>, 
                                                                 gpmp2::ObstaclePlanarSDFFactor<ROBOT>>;
-
 
 
     template <typename T, typename ROBOT>

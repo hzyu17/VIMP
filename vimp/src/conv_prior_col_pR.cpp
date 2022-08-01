@@ -62,7 +62,7 @@ int main(){
     gpmp2::PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
 
     /// parameters
-    int n_total_states = 5, N = n_total_states - 1;
+    int n_total_states = 3, N = n_total_states - 1;
     const int ndof = planar_pr_sdf.ndof(), nlinks = planar_pr_sdf.nlinks();
     const int dim_conf = ndof * nlinks;
     const int dim_theta = 2 * dim_conf; // theta = [conf, vel_conf]

@@ -118,6 +118,8 @@ namespace vimp{
             if (file.is_open()){
                 file << _res_mean.format(CSVFormat);
                 file.close();
+            }else{
+                throw std::runtime_error(std::string("File dose not opened ..."));
             }
 
             /// save covariances
@@ -128,6 +130,8 @@ namespace vimp{
                 }
 
                 f_cov.close();
+            }else{
+                throw std::runtime_error(std::string("File dose not opened ..."));
             }
 
             /// save costs
@@ -137,6 +141,8 @@ namespace vimp{
                     f_cost << i_cost << "\n";
                 }
                 f_cost.close();
+            }else{
+                throw std::runtime_error(std::string("File dose not opened ..."));
             }
         }
             

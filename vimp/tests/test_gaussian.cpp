@@ -116,7 +116,7 @@ TEST(TestGaussian, KL_diver_joint_decoupled){
     cout << "precision_t " << endl << precision_t << endl;
     MatrixXd cov_t{precision_t.inverse()};
 
-    vector<double> v_EPhi = optimizer.E_Phi();
+    vector<double> v_EPhi = optimizer.E_Phis();
 
     for (double & E_Phi: v_EPhi){
 

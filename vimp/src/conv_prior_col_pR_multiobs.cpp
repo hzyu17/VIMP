@@ -9,7 +9,7 @@
  * 
  */
 
-#include "../instances/PriorColPlanarPointRobot.h"
+#include "../instances/PriorVelColPlanarPointRobot.h"
 #include "../instances/PlanarPointRobotSDFMultiObsExample.h"
 
 using namespace std;
@@ -26,20 +26,31 @@ using namespace vimp;
  * @return double 
  */
 double errorWrapperPriorCol(const VectorXd& pose, 
-                            const UnaryFactorTranslation2D& prior_factor,
+                            const UnaryFactorTranslation2D& prior_pos,
+                            const UnaryFactorTranslation2D& prior_vel,
                             const ObstaclePlanarSDFFactorPointRobot& collision_factor) {
+    
+    Vector2d position = pose.segment(0, 2);
+    Vector2d velocity = pose.segment(2, 2);
 
     /**
      * Prior factor
      * */
-    VectorXd vec_prior_err = prior_factor.evaluateError(pose);
-    MatrixXd Qc = prior_factor.get_Qc();
+    VectorXd vec_prior_err = prior_pos.evaluateError(position);
+    MatrixXd Qc = prior_pos.get_Qc();
     double prior_cost = vec_prior_err.transpose() * Qc.inverse() * vec_prior_err;
+
+    /**
+     * Prior factor for velocity
+     * */
+    VectorXd vec_vel_err = prior_vel.evaluateError(velocity);
+    MatrixXd Qc_v = prior_vel.get_Qc();
+    double prior_cost_vel = vec_vel_err.transpose() * Qc_v.inverse() * vec_vel_err;
 
     /**
      * Obstacle factor
      * */
-    VectorXd vec_err = collision_factor.evaluateError(pose);
+    VectorXd vec_err = collision_factor.evaluateError(position);
 
     // MatrixXd precision_obs;
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
@@ -47,11 +58,9 @@ double errorWrapperPriorCol(const VectorXd& pose,
 
     double collision_cost = vec_err.transpose() * precision_obs * vec_err;
 
-    // cout << "--- prior_cost ---" << endl << prior_cost << endl;
-    // cout << "--- collision_cost ---" << endl << collision_cost << endl;
-
-    return prior_cost + collision_cost;
+    return prior_cost + prior_cost_vel + collision_cost;
 }
+
 
 int main(){
     // An example pr and sdf
@@ -60,7 +69,7 @@ int main(){
     gpmp2::PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
 
     /// parameters
-    int n_total_states = 20, N = n_total_states - 1;
+    int n_total_states = 10, N = n_total_states - 1;
     const int ndof = planar_pr_sdf.ndof(), nlinks = planar_pr_sdf.nlinks();
     const int dim_conf = ndof * nlinks;
     const int dim_theta = 2 * dim_conf; // theta = [conf, vel_conf]
@@ -85,33 +94,38 @@ int main(){
     SharedNoiseModel K_0 = noiseModel::Isotropic::Sigma(dim_conf, 1.0);
 
     /// Vector of factored optimizers
-    vector<std::shared_ptr<OptFactPriColPlanarPRGH>> vec_factor_opts;
+    vector<std::shared_ptr<OptFactPriVelColPlanarPRGH>> vec_factor_opts;
 
     /// initial values
     VectorXd joint_init_theta{VectorXd::Zero(ndim)};
 
     for (int i = 0; i < n_total_states; i++) {
         VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
+        // initial vel: avg_vel
+        if (i>0 && i<n_total_states - 1){
+            theta.segment(2, 2) = VectorXd::Ones(2).cwiseProduct((goal_theta.segment(0, 2) - start_theta.segment(0, 2)) / n_total_states);
+        }
         joint_init_theta.segment(i*dim_theta, dim_theta) = std::move(theta);
 
         /// Pk matrices
-        MatrixXd Pk{MatrixXd::Zero(dim_conf, ndim)};
-        Pk.block(0, i * dim_theta, dim_conf, dim_conf) = std::move(MatrixXd::Identity(dim_conf, dim_conf));
+        MatrixXd Pk{MatrixXd::Zero(dim_theta, ndim)};
+        Pk.block(0, i * dim_theta, dim_theta, dim_theta) = std::move(MatrixXd::Identity(dim_theta, dim_theta));
         
         /// prior
         UnaryFactorTranslation2D prior_k{gtsam::symbol('x', i), Vector2d{theta.segment(0, dim_conf)}, K_0};
+        UnaryFactorTranslation2D prior_vk{gtsam::symbol('v', i), Vector2d{theta.segment(2, dim_conf)}, K_0};
 
         // collision
         ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
 
         /// Factored optimizer
-        std::shared_ptr<OptFactPriColPlanarPRGH> pOptimizer{new OptFactPriColPlanarPRGH{dim_conf, errorWrapperPriorCol, prior_k, collision_k, Pk}};
+        std::shared_ptr<OptFactPriVelColPlanarPRGH> pOptimizer{new OptFactPriVelColPlanarPRGH{dim_theta, errorWrapperPriorCol, prior_k, prior_vk, collision_k, Pk}};
         vec_factor_opts.emplace_back(pOptimizer);
 
     }
 
     /// The joint optimizer
-    VIMPOptimizerGH<OptFactPriColPlanarPRGH> optimizer{vec_factor_opts};
+    VIMPOptimizerGH<OptFactPriVelColPlanarPRGH> optimizer{vec_factor_opts};
 
     /// Set initial value to the linear interpolation
     int num_iter = 30;

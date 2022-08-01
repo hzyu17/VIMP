@@ -13,7 +13,7 @@ sig_p_sq = 9;
 f = 400;
 b = 0.1;
 sig_r_sq = 0.09;
-y = f*b/mu_p - 0.7;
+y = f*b/mu_p - 0.8;
 
 niters = 5;
 ss = 0.75;

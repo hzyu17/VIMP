@@ -49,13 +49,17 @@ title("SDF 2D Point Robot")
 % -------- plot the means -------- 
 colors = [255, 0, 0];
 
+cell_size = 0.1;
+origin_x = -20;
+origin_y = -10;
+
 for i_iter = 1: nsteps
     subplot(2, floor(nsteps/2), i_iter)
     hold on 
     % -------- plot the sdf mesh contour -------- 
     [nmesh_y, nmesh_x] = size(sdfmap);
-    x_mesh = linspace(0, nmesh_x, nmesh_x);
-    y_mesh = linspace(0, nmesh_x, nmesh_y);
+    x_mesh = linspace(origin_x, origin_x+nmesh_x*cell_size, nmesh_x);
+    y_mesh = linspace(origin_y, origin_y+nmesh_y*cell_size, nmesh_y);
     [X,Y] = meshgrid(x_mesh, y_mesh);
     contourf(X,Y,sdfmap, 1)
 

@@ -32,6 +32,34 @@ MatrixXd gx_3d(const VectorXd& x){
 }
 
 
+/**
+ * @brief Test the permute function helper with replacement.
+ */
+TEST(GaussHermite, permute){
+    int dim = 1;
+    VectorXd m = VectorXd::Ones(dim);
+    MatrixXd P = MatrixXd::Identity(dim, dim);
+
+    GaussHermite<std::function<MatrixXd(const VectorXd&)>> gausshermite(10, dim, m, P, gx_1d);
+
+    int expected_0[dim] = {3,2,1,0};
+    int expected_N[dim] = {0,1,2,3};
+    
+    int deg = 3;
+    std::vector<int> vec = {0,1,2};
+    std::vector<int> res = {0};
+    std::vector<std::vector<int>> v_res;
+
+    gausshermite.permute_replacing(vec, dim, res, 0, v_res);
+
+    for (std::vector<int>& i_res: v_res){
+        for (int& j:i_res){
+            cout << "--j--" << endl << j << endl;
+        }
+    }
+}
+
+
 TEST(GaussHermite, one_dim){
     int dim = 1;
     VectorXd m = VectorXd::Ones(dim);
@@ -81,4 +109,6 @@ TEST(GaussHermite, three_dim){
     ASSERT_LE((integral1 - integral_expected).norm(), 1e-10);
 
 }
+
+
 

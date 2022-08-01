@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include "repeated_includes.h"
 #include <vector>
 using namespace Eigen;
@@ -18,9 +20,10 @@ namespace vimp{
     public:
         
         MatrixIO(){}
-        
-        void saveData(const string& fileName, const MatrixXd& matrix){
-            
+
+        template <typename T>
+        void saveData(const string& fileName, const T& matrix){
+            cout << "Saving data to: " << fileName << endl;
             ofstream file(fileName);
             if (file.is_open()){
                 file << matrix.format(CSVFormat);

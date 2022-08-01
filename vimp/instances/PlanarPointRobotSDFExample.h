@@ -47,8 +47,8 @@ class PlanarPointRobotSDFExample{
         string filename_map{"data/2d_pR/map_ground_truth.csv"};
         string filename_sdf{"data/2d_pR/map_sdf.csv"};
 
-        _matrix_io.saveData(filename_map, map_ground_truth);
-        _matrix_io.saveData(filename_sdf, field);
+        _matrix_io.saveData<MatrixXd>(filename_map, map_ground_truth);
+        _matrix_io.saveData<MatrixXd>(filename_sdf, field);
 
         // layout of SDF: Bottom-left is (0,0), length is +/- 1 per point.
         Point2 origin(0, 0);

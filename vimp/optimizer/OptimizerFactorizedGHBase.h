@@ -135,16 +135,6 @@ namespace vimp{
             _precision = _covariance.inverse();}
 
 
-        // /**
-        //  * @brief Update precision matrix
-        //  * 
-        //  * @param new_mu a given precision matrix
-        //  */
-        // inline void update_precision(const MatrixXd& new_precision){ 
-        //     assert(_precision.size() == new_precision.size()); 
-        //     _precision = new_precision; }
-
-
         /**
          * @brief Update the marginal mean using JOINT mean and 
          * mapping matrix Pk.

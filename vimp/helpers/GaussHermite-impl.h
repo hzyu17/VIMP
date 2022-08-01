@@ -15,6 +15,30 @@ using namespace Eigen;
 
 namespace vimp{
     template <typename Function>
+    void GaussHermite<Function>::permute_replacing(
+                            const std::vector<int>& vec, 
+                            const int& dimension, 
+                            std::vector<int>& res, 
+                            int index, 
+                            std::vector<std::vector<int>>& v_res)
+    {
+        for (int i=0; i<vec.size(); i++){
+            res[index] = vec[i];
+
+            if (index == dimension-1){
+                v_res.emplace_back(res);
+                
+            }else{
+                // recursive
+                permute_replacing(vec, dimension, res, index+1, v_res);
+            }
+        }
+        return;
+
+    }
+
+
+    template <typename Function>
     void GaussHermite<Function>::computeSigmaPts(){
         VectorXd a{VectorXd::Ones(_deg-1)};
         VectorXd c{VectorXd::LinSpaced(_deg-1, 1, _deg-1)};
@@ -66,55 +90,29 @@ namespace vimp{
 
         VectorXd pt_0 = VectorXd::Zero(_dim);
         MatrixXd res{MatrixXd::Zero(_f(pt_0).rows(), _f(pt_0).cols())}; 
-        if (_dim == 1){            
-            for (int i=0; i<_deg; i++){
-                VectorXd pt(_dim);
-                pt = sig * _sigmapts(i) + _mean;
-                res += _W(i) * _f(pt);
-            }
+
+        /// Compute permutations
+        std::vector<int> range_deg;
+        for (int i=0; i<_deg; i++){
+            range_deg.emplace_back(i);
         }
+        std::vector<int> permutation(_dim);
+        std::vector<std::vector<int>> v_permutations;
 
-        else if (_dim == 2) {
-            for (int i = 0; i < _deg; i++) {
-                for (int j = 0; j < _deg; j++) {
-                    VectorXd pt_ij = VectorXd::Zero(2);
-                    pt_ij << _sigmapts(i), _sigmapts(j);
+        permute_replacing(range_deg, _dim, permutation, 0, v_permutations);
 
-                    VectorXd pt_ij_t = sig * pt_ij + _mean;
-                    res += _W(i) * _W(j) * _f(pt_ij_t);
-
-                }
+        for (std::vector<int>& i_v: v_permutations){
+            VectorXd pt_ij(_dim);
+            double weights = 1.0;
+            int cnt = 0;
+            for(int& j : i_v){
+                pt_ij(cnt) = _sigmapts(j);
+                weights = weights*_W(j);
+                cnt+=1;
             }
+            pt_ij = sig * pt_ij + _mean;
+            res += weights * _f(pt_ij);
         }
-        else if (_dim == 3){
-            for (int i=0; i<_deg; i++){
-                for(int j=0; j<_deg; j++){
-                    for(int k=0; k<_deg; k++){
-                        VectorXd pt_ijk = VectorXd::Zero(3);
-                        pt_ijk << _sigmapts(i), _sigmapts(j), _sigmapts(k);
-
-                        VectorXd pt_ijk_t = sig * pt_ijk + _mean;
-                        res += _W(i) * _W(j) * _W(k) * _f(pt_ijk_t);
-                    }
-                }
-            }
-        }
-        else if (_dim == 4){
-            for (int i=0; i<_deg; i++){
-                for(int j=0; j<_deg; j++){
-                    for(int k=0; k<_deg; k++){
-                        for (int l=0; l<_deg; l++){
-                            VectorXd pt_ijkl = VectorXd::Zero(4);
-                            pt_ijkl << _sigmapts(i), _sigmapts(j), _sigmapts(k), _sigmapts(l);
-                            VectorXd pt_ijkl_t = sig * pt_ijkl + _mean;
-                            res += _W(i) * _W(j) * _W(k) * _W(l) * _f(pt_ijkl_t);
-                        }
-                    }
-                }
-            }
-
-        }
-        
         return res;
     }
 

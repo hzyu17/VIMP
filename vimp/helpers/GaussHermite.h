@@ -52,6 +52,19 @@ public:
             _sigmapts{VectorXd::Zero(_deg)}{}
 
     /**
+     * @brief A helper function to compute all possible permutations given a dimension and a degree.
+     *  for computing the integration using sigmapoints and weights. Returns all vector of length dimension,
+     *  collected from the number degree. It is a permutation with replacement.
+     * @param dimension 
+     * @return std::vector<double>
+     */
+    void permute_replacing(const std::vector<int>& vec, 
+                            const int& dimension, 
+                            std::vector<int>& res, 
+                            int index, 
+                            std::vector<std::vector<int>>& v_res);
+
+    /**
      * @brief Compute the Sigma Pts
      */
     void computeSigmaPts();
