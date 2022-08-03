@@ -51,7 +51,7 @@ int main(){
     opt.save_costmap("data/1d/costmap.csv");
     opt.set_GH_degree(6);
     opt.set_initial_values(init_mu, init_prec);
-    opt.set_step_size_base(0.75);
+    opt.set_step_size_base(0.75, 0.75);
     cout << "opt.mu " << endl << opt.mean() << endl;
     opt.optimize();
     

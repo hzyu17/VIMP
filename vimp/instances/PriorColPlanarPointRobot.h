@@ -55,7 +55,7 @@ namespace vimp{
 
         double cost = vec_err.transpose().eval() * precision_obs * vec_err;
         
-        return cost;
+        return cost*600;
 
     }
 

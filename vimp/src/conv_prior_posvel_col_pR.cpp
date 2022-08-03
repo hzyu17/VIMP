@@ -107,16 +107,16 @@ int main(){
     VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts};
 
     /// Set initial value to the linear interpolation
-    int num_iter = 20;
+    int num_iter = 8;
     optimizer.set_mu(joint_init_theta);
     optimizer.set_GH_degree(4);
     optimizer.set_niterations(num_iter);
-    optimizer.set_step_size_base(0.15);
-    optimizer.update_file_names("data/2d_pR/mean.csv", 
-                                "data/2d_pR/cov.csv", 
-                                "data/2d_pR/precisoin.csv", 
-                                "data/2d_pR/cost.csv",
-                                "data/2d_pR/factor_costs.csv");
+    optimizer.set_step_size_base(0.55, 0.0001);
+    optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cov.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_pR/precisoin.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cost.csv",
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_pR/factor_costs.csv");
 
     optimizer.optimize();
 
