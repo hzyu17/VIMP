@@ -43,6 +43,7 @@ set(vimp_subdirs
     optimizer
     helpers 
     instances
+    robots
 )
 
 set(vimp_srcs)
@@ -79,9 +80,6 @@ target_link_libraries(factor_Gaussian_GH ${EIGEN3_LIBRARIES})
 add_executable(factor src/conv_factorized.cpp)
 target_link_libraries(factor  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
-add_executable(sparse_inverse src/sparse_inverse.cpp)
-target_link_libraries(sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
 add_executable(Gaussian_GH src/conv_Gaussian_GH.cpp)
 target_link_libraries(Gaussian_GH ${EIGEN3_LIBRARIES})
 
@@ -90,6 +88,9 @@ target_link_libraries(prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP
 
 add_executable(conv_prior_posvel_col_pR src/conv_prior_posvel_col_pR.cpp)
 target_link_libraries(conv_prior_posvel_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+
+add_executable(prior_pos_vel_col_Arm src/prior_pos_vel_col_Arm.cpp)
+target_link_libraries(prior_pos_vel_col_Arm ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(conv_1d src/conv_1d_example.cpp)
 target_link_libraries(conv_1d ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})

@@ -1,53 +1,54 @@
 /**
- * @file conv_prior_posvel_col_pR.cpp
+ * @file prior_pos_vel_col_Arm.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Test the convergence of the algorithm with prior (pos + vel) + collision cost 
- * only on supported states, for a planar robot.
+ * @brief Experiment for arm robot model
  * @version 0.1
- * @date 2022-07-28
+ * @date 2022-08-03
  * 
  * @copyright Copyright (c) 2022
  * 
  */
 
-#include "../instances/PriorColPlanarPointRobot.h"
-#include "../robots/PlanarPointRobotSDFMultiObsExample.h"
-
+#include "../instances/PriorColPlanarArm.h"
+#include "../robots/PlanarArmSDFExample.h"
+#include <gtsam/inference/Symbol.h>
 
 using namespace std;
 using namespace gpmp2;
 using namespace Eigen;
 using namespace vimp;
 
+
 int main(){
     // An example pr and sdf
-    vimp::PlanarPointRobotSDFMultiObsExample planar_pr_sdf;
-    gpmp2::PointRobotModel pRModel = std::move(planar_pr_sdf.pRmodel());
-    gpmp2::PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
+    vimp::PlanarArmSDFExample planar_arm_sdf;
+    gpmp2::ArmModel arm_model = std::move(planar_arm_sdf.arm_model());
+    gpmp2::PlanarSDF sdf = std::move(planar_arm_sdf.sdf());
 
-    /// parameters
-    int n_total_states = 10, N = n_total_states - 1;
-    const int ndof = planar_pr_sdf.ndof(), nlinks = planar_pr_sdf.nlinks();
+    /// parameters1
+    int n_total_states = 8, N = n_total_states - 1;
+    const int ndof = planar_arm_sdf.ndof(), nlinks = planar_arm_sdf.nlinks();
     const int dim_conf = ndof * nlinks;
     const int dim_theta = 2 * dim_conf; // theta = [conf, vel_conf]
     /// dimension of the joint optimization problem
     const int ndim = dim_theta * n_total_states;
 
     /// start and goal
-    double start_x = 0.0, start_y = 0.0, goal_x = 17.0, goal_y = 14.0;
+    const double PI = 3.1415926;
+    double start_x = 0.0, start_y = 0.0, goal_x = PI / 2, goal_y = 0;
     VectorXd start_theta(dim_theta);
     start_theta << start_x, start_y, 0, 0;
     VectorXd goal_theta(dim_theta);
     goal_theta << goal_x, goal_y, 0, 0;
 
     /// prior 
-    double total_time_sec = 1.5;
+    double total_time_sec = 1.0;
     double delta_t = total_time_sec / N;
 
     VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / total_time_sec};
 
     /// Obs factor
-    double cost_sigma = 2.5, epsilon = 4.0;
+    double cost_sigma = 1.8, epsilon = 1.0;
 
     /// Vector of base factored optimizers
     vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_factor_opts;
@@ -97,13 +98,13 @@ int main(){
             vec_factor_opts.emplace_back(p_lin_gp);
 
             // collision factor
-            gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
+            gpmp2::ObstaclePlanarSDFFactorArm collision_k{gtsam::symbol('x', i), arm_model, sdf, cost_sigma, epsilon};
 
             MatrixXd Pk_col{MatrixXd::Zero(dim_conf, ndim)};
             Pk_col.block(0, i * dim_theta, dim_conf, dim_conf) = std::move(MatrixXd::Identity(dim_conf, dim_conf));
 
             /// Factored optimizer
-            std::shared_ptr<OptPlanarSDFFactorPointRobot> p_obs{new OptPlanarSDFFactorPointRobot{dim_conf, cost_sdf_pR, collision_k, Pk_col}};
+            std::shared_ptr<OptPlanarSDFFactorArm> p_obs{new OptPlanarSDFFactorArm{dim_conf, cost_sdf_Arm, collision_k, Pk_col}};
             vec_factor_opts.emplace_back(p_obs);
         }
         
@@ -117,12 +118,12 @@ int main(){
     optimizer.set_mu(joint_init_theta);
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
-    optimizer.set_step_size_base(0.75, 0.001);
-    optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean.csv", 
-                                "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cov.csv", 
-                                "/home/hongzhe/git/VIMP/vimp/data/2d_pR/precisoin.csv", 
-                                "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cost.csv",
-                                "/home/hongzhe/git/VIMP/vimp/data/2d_pR/factor_costs.csv");
+    optimizer.set_step_size_base(0.35, 0.0001);
+    optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cov.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/precisoin.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cost.csv",
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/factor_costs.csv");
 
     optimizer.optimize();
 

@@ -118,3 +118,35 @@ ylim([0, 100])
 legend({"1","2","3","4","5","6"})
 
 
+%% Arm plotting
+clear all 
+clc
+import gtsam.*
+import gpmp2.*
+
+dataset = generate2Ddataset('OneObstacleDataset');
+rows = dataset.rows;
+cols = dataset.cols;
+cell_size = dataset.cell_size;
+origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
+
+% signed distance field
+field = signedDistanceField2D(dataset.map, cell_size);
+sdf = PlanarSDF(origin_point2, cell_size, field);
+
+% arm model
+arm = generateArm('SimpleTwoLinksArm');
+
+% start and end conf
+start_conf = [0, 0]';
+start_vel = [0, 0]';
+end_conf = [pi/2, 0]';
+end_vel = [0, 0]';
+
+% plot start / end configuration
+figure(1), hold on
+plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
+title('Layout')
+plotPlanarArm(arm.fk_model(), start_conf, 'b', 2);
+plotPlanarArm(arm.fk_model(), end_conf, 'r', 2);
+hold off
