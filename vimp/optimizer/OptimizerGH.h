@@ -95,14 +95,27 @@ public:
     /**
      * @brief Compute the total cost function value given a mean and covariace.
      */
-    double cost_value(const VectorXd& x, const MatrixXd& P);
+    double cost_value(const VectorXd& x, const MatrixXd& Cov) const;
 
     /**
      * @brief Compute the total cost function value given a state, using current values.
-     * 
      * @return cost value.
      */
-    double cost_value();
+    double cost_value() const;
+
+    /**
+     * @brief Compute the costs of all factors for a given mean and cov.
+     * @param x mean
+     * @param P covariance
+     * @return VectorXd collection of factor costs
+     */
+    VectorXd factor_costs(const VectorXd& x, const MatrixXd& Cov) const;
+
+    /**
+     * @brief Compute the costs of all factors, using current values.
+     * @return VectorXd collection of factor costs
+     */
+    VectorXd factor_costs() const;
 
 
 /// **************************************************************
@@ -118,23 +131,32 @@ public:
 
     /**
      * @brief Purturb the mean by a random vector.
-     * 
      * @param scale 
      * @return purturbed mean vector
      */
-    inline VectorXd purturb_mean(double scale=0.1) const{
+    inline VectorXd purturb_mean(double scale=0.01) const{
         return VectorXd{_mu + VectorXd::Random(_dim) * scale};
     }
 
     /**
      * @brief Purturb the precision by a random matrix.
-     * 
      * @param scale 
      * @return purturbed precision matrix
      */
-    inline MatrixXd purturb_precision(double scale=0.1) const{
+    inline MatrixXd purturb_precision(double scale=0.01) const{
         return MatrixXd{_precision + MatrixXd::Random(_dim, _dim) * scale};
     }   
+
+    /**
+     * @brief Purturb the variables and calculate the cost.
+     * @param scale 
+     * @return purturbed cost
+     */
+    inline double purturbed_cost(double scale=0.01) const{
+        VectorXd p_mean = purturb_mean(scale);
+        MatrixXd p_precision = purturb_precision(scale);
+        return cost_value(p_mean, p_precision.inverse());
+    }
 
     /// update the step sizes
     /// @param ss_mean new step size for the mean update
@@ -206,8 +228,11 @@ public:
      */
     inline void update_file_names(const string& file_mean, 
                                   const string& file_cov, 
-                                  const string& file_cost){
-        _res_recorder.update_file_names(file_mean, file_cov, file_cost);}
+                                  const string& file_precision, 
+                                  const string& file_cost,
+                                  const string& file_fac_costs){
+        _res_recorder.update_file_names(file_mean, file_cov, file_precision, file_cost, file_fac_costs);
+    }
 
     /**
      * @brief save process data into csv files.
@@ -250,6 +275,11 @@ public:
     inline int dim() const{
         return _dim;
     }   
+
+
+    inline int n_sub_factors() const{
+        return _nsub_vars;
+    }
 
     /**
      * @brief calculate and return the E_q{phi(x)} s for each factorized entity.

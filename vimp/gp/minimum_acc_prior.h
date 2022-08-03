@@ -59,10 +59,17 @@ namespace vimp{
                 return _Phi;
             }
 
-            inline double cost(const VectorXd& x1, const VectorXd& x2) const{
-                assert(x1.size() == x2.size());
-                assert(x1.size() == 2*_dim);
-                double cost = (_Phi*x1-x2).transpose()* invQ() * (_Phi*x1-x2);
+            /**
+             * @brief the cost function
+             * 
+             * @param theta1 [x1; v1]
+             * @param theta2 [x2; v2]
+             * @return double 
+             */
+            inline double cost(const VectorXd& theta1, const VectorXd& theta2) const{
+                assert(theta1.size() == theta2.size());
+                assert(theta1.size() == 2*_dim);
+                double cost = (_Phi*theta1-theta2).transpose()* invQ() * (_Phi*theta1-theta2);
                 return cost / 2;
             }
 

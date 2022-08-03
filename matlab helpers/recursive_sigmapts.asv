@@ -1,6 +1,0 @@
-vec_res = []
-l = [1,2,3];
-k = 3;
-res = zeros(1,k);
-v_res = ;
-[v_res,  res] = permute_with_replace(l, k, res, 1, v_res)

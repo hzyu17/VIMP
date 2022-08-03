@@ -18,7 +18,7 @@ using namespace std;
 using namespace vimp;
 
 TEST(TEST_INVERSER, basic_inverses){
-    int dim = 15;
+    int dim = 25;
     MatrixXd eye = MatrixXd::Identity(dim, dim);
     dense_inverser inverser{eye};
     ASSERT_EQ((inverser.inverse(eye) - eye.inverse()).norm(), 0);
@@ -53,7 +53,6 @@ TEST(TEST_INVERSER, special_case){
     dense_inverser inverser(precision);
 
     ASSERT_LE((cov_expected - precision.inverse()).norm(), 1e-10);
-    cout << "cov_expected-inverser.inverse() " << endl << cov_expected-inverser.inverse() << endl;
-    ASSERT_EQ((cov_expected-inverser.inverse()).norm(), 0);
+    ASSERT_LE((cov_expected - inverser.inverse()).norm(), 1e-10);
     
 }

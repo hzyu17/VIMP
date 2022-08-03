@@ -15,7 +15,6 @@
 #include "../instances/PlanarPointRobotSDFExample.h"
 #include "../optimizer/OptimizerGH.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-#include "../helpers/GaussHermite.h"
 
 #include <gtest/gtest.h>
 
@@ -37,7 +36,7 @@ namespace vimp{
                 Base::_func_phi = [this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));};
                 Base::_func_Vmu = [this, function, cost_class](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class);};
                 Base::_func_Vmumu = [this, function, cost_class](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class)};};
-                Base::_gauss_hermite = GaussHermite<GHFunction>{10, dimension, Base::_mu, Base::_covariance, Base::_func_phi};
+                Base::_gauss_hermite = GaussHermite<GHFunction>{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi};
             }
 
     };
@@ -153,23 +152,16 @@ TEST(TESTVectorOpt, integration){
     vec_opt.emplace_back(p_opt_lingp);
     
     VIMPOptimizerGH<VIMPOptimizerFactorizedBase> opt{vec_opt, 10};
-    opt.set_GH_degree(10);
+    opt.set_GH_degree(5);
     const double thres = 1e-10;    
 
     cout << "p_opt_fixedgp->EPhi " << endl << p_opt_fixedgp->E_Phi() << endl;
+    cout << "----------------" << endl;
     cout << "p_opt_lingp->EPhi " << endl << p_opt_lingp->E_Phi() << endl;
+    cout << "----------------" << endl;
 
     ASSERT_LE(abs(opt.E_Phis()[0] - p_opt_fixedgp->E_Phi()), thres);
     ASSERT_LE(abs(opt.E_Phis()[1] - p_opt_lingp->E_Phi()), thres);
-
-
-    cout << endl << opt.E_xMuPhis()[0] << endl << "----------------" << endl;
-
-    cout << endl << opt.E_xMuxMuTPhis()[0] << endl << "----------------" << endl;
-
-    cout << endl << opt.E_xMuPhis()[1] << endl << "----------------" << endl;
-
-    cout << endl << opt.E_xMuxMuTPhis()[1] << endl << "----------------" << endl;
 
     ASSERT_LE((opt.E_xMuPhis()[0] - p_opt_fixedgp->E_xMuPhi()).norm(), thres);
     ASSERT_LE((opt.E_xMuxMuTPhis()[0] - p_opt_fixedgp->E_xMuxMuTPhi()).norm(), thres);

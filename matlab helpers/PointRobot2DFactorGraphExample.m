@@ -4,7 +4,7 @@
 
 close all
 clear
-
+addpath('/usr/local/gtsam_toolbox')
 %% Load libraries
 import gtsam.*
 import gpmp2.*
