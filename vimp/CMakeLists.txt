@@ -69,8 +69,6 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${GPMP2_INCLUDE_DIRS})
 include_directories(${GTSAM_INCLUDE_DIRS})
 
-# add_executable(main src/main.cpp)
-# target_link_libraries(main ${PYTHON_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(conv src/conv.cpp)
 target_link_libraries(conv  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
@@ -90,17 +88,8 @@ target_link_libraries(Gaussian_GH ${EIGEN3_LIBRARIES})
 add_executable(prior_col_pR src/conv_prior_col_pR.cpp)
 target_link_libraries(prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
-add_executable(prior_col_pR_cython src/conv_prior_col_pR_cython.cpp)
-target_link_libraries(prior_col_pR_cython ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
-
 add_executable(conv_prior_posvel_col_pR src/conv_prior_posvel_col_pR.cpp)
 target_link_libraries(conv_prior_posvel_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
-
-add_executable(prior_pR src/conv_prior_pR.cpp)
-target_link_libraries(prior_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
-
-add_executable(prior_pR_multiobs src/conv_prior_col_pR_multiobs.cpp)
-target_link_libraries(prior_pR_multiobs ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(conv_1d src/conv_1d_example.cpp)
 target_link_libraries(conv_1d ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})

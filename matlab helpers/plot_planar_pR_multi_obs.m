@@ -67,7 +67,7 @@ for i_iter = 1: nsteps
     
 %     plotSignedDistanceField2D(field, origin_x, origin_y, cell_size);
     plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
-
+    grid on
     i_vec_means_2d = vec_means{i_iter};
     i_vec_covs_2d = vec_covs{i_iter};
     for j = 1:n_states

@@ -113,5 +113,20 @@ TEST(GPMP2_OBS, inegration){
     MatrixXd d_precision = precision * inte3 * precision - precision * inte1(0, 0) - precision;
     cout << "d_precision " << endl << d_precision << endl;
 
+    /// scale 3 times
+    gh.update_integrand([&](const VectorXd& x){
+        return MatrixXd::Constant(1,1,3.0*cost_obstacle(x, collision_k));});
+    MatrixXd inte1_scale = inte1 * 3.0;
+    ASSERT_LE((gh.Integrate() - inte1_scale).norm(), 1e-10);
+
+    gh.update_integrand([&](const VectorXd& x){
+        return MatrixXd{(x-mean)*3.0*cost_obstacle(x, collision_k)};});
+    MatrixXd inte2_scale = inte2 * 3.0;
+    ASSERT_LE((gh.Integrate() - inte2_scale).norm(), 1e-10);
+
+    gh.update_integrand([&](const VectorXd& x){
+        return MatrixXd{(x-mean)*(x-mean).transpose()*3.0*cost_obstacle(x, collision_k)};});
+    MatrixXd inte3_scale = inte3 * 3.0;
+    ASSERT_LE((gh.Integrate() - inte3_scale).norm(), 1e-10);
 
 }

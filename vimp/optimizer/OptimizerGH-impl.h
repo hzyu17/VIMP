@@ -100,7 +100,7 @@ namespace vimp{
             cout << "diff " << endl << abs(cost_iter - new_cost) << endl;
             assert(abs(cost_iter - new_cost) < 1e-5);
 
-            cout << "mean " << endl << mean().transpose() << endl;
+            // cout << "mean " << endl << mean().transpose() << endl;
             cout << "cost " << endl << cost_iter << endl;
 
             VectorXd fact_costs_iter = factor_costs();
@@ -120,12 +120,13 @@ namespace vimp{
             MatrixXd dprecision = -_precision + Vddmu;
             VectorXd dmu = Vddmu.colPivHouseholderQr().solve(-Vdmu);
 
-            cout << "dmu for the collided state " << endl << dmu(8) << ", " << dmu(9) << endl;
+            cout << "mean " << endl << _mu(24) << ", " << _mu(25) << endl;
+            cout << "dmu for the collided state " << endl << dmu(24) << ", " << dmu(25) << endl;
 
             // backtracking
             int B = 1;
-            MatrixXd new_precision = _precision + _step_size_base * dprecision;
-            VectorXd new_mu  = _mu + _step_size_base * dmu;
+            MatrixXd new_precision = _precision + _step_size_base_precision * dprecision;
+            VectorXd new_mu  = _mu + _step_size_base_mu * dmu;
             new_cost = cost_value(new_mu, new_precision.inverse());
             int cnt = 0;
             const int MAX_ITER = 100;
@@ -135,9 +136,11 @@ namespace vimp{
                 if (cnt > MAX_ITER){
                     throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
                 }
-                double step_size = pow(_step_size_base, B);
-                new_precision = _precision + step_size * dprecision;
-                new_mu  = _mu + step_size * dmu;
+                double step_size_mu = pow(_step_size_base_mu, B);
+                double step_size_precision = pow(_step_size_base_precision, B);
+
+                new_precision = _precision + step_size_precision * dprecision;
+                new_mu  = _mu + step_size_mu * dmu;
                 new_cost = cost_value(new_mu, new_precision.inverse());
                 
             }
@@ -156,14 +159,14 @@ namespace vimp{
         }
 
         /// see a purturbed cost
-        double scale = 0.0001;
+        double scale = 0.001;
         double p_cost = purturbed_cost(scale);
         cout << "=== final cost ===" << endl << new_cost << endl;
         cout << "=== purturbed cost " << scale << " ===" << endl << p_cost << endl;
 
         /// print 5 iteration datas 
         vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
-        print_series_results(iters);
+        // print_series_results(iters);
 
         save_data();
     } 

@@ -71,7 +71,8 @@ protected:
     /// step sizes by default
     double _step_size_precision = 0.9;
     double _step_size_mu = 0.9;
-    double _step_size_base = 0.75;
+    double _step_size_base_mu = 0.55;
+    double _step_size_base_precision = 0.05;
 
 public:
 /// **************************************************************
@@ -166,8 +167,9 @@ public:
         _step_size_precision = ss_precision; }
 
     /// The base step size in backtracking
-    inline void set_step_size_base(double ss_base){
-        _step_size_base = ss_base;
+    inline void set_step_size_base(double ss_base_mu, double ss_base_precision){
+        _step_size_base_mu = ss_base_mu;
+        _step_size_base_precision = ss_base_precision;
     }
 
     /// assign a mean 

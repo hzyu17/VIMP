@@ -47,11 +47,15 @@ int main(){
 
     VIMPOptimizerGH<OptFact> opt{vec_opt_fact, 5};
 
-    opt.update_file_names("data/1d/mean.csv", "data/1d/cov.csv", "data/1d/precision.csv", "data/1d/cost.csv");
+    opt.update_file_names("data/1d/mean.csv", 
+                            "data/1d/cov.csv", 
+                            "data/1d/precision.csv", 
+                            "data/1d/cost.csv", 
+                            "data/1d/fact_costs.csv");
     opt.save_costmap("data/1d/costmap.csv");
     opt.set_GH_degree(6);
     opt.set_initial_values(init_mu, init_prec);
-    opt.set_step_size_base(0.75);
+    opt.set_step_size_base(0.75, 0.75);
     cout << "opt.mu " << endl << opt.mean() << endl;
     opt.optimize();
     
