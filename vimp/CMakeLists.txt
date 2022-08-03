@@ -43,6 +43,7 @@ set(vimp_subdirs
     optimizer
     helpers 
     instances
+    robots
 )
 
 set(vimp_srcs)

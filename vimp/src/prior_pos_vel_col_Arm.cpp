@@ -10,7 +10,7 @@
  */
 
 #include "../instances/PriorColPlanarArm.h"
-#include "../instances/PlanarArmSDFExample.h"
+#include "../robots/PlanarArmSDFExample.h"
 #include <gtsam/inference/Symbol.h>
 
 using namespace std;
@@ -40,10 +40,6 @@ int main(){
     start_theta << start_x, start_y, 0, 0;
     VectorXd goal_theta(dim_theta);
     goal_theta << goal_x, goal_y, 0, 0;
-
-    /// factored optimizers: containing 2 types: 
-    /// 1. the single factor of priors for start and goal states;
-    /// 2. the prior + collision factors for supported states.
 
     /// prior 
     double total_time_sec = 1.0;

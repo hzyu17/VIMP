@@ -5,19 +5,25 @@ import gtsam.*
 import gpmp2.*
 
 %% create map and save
-% dataset = generate2Ddataset('OneObstacleDataset');
+% dataset = generate2Ddataset('TwoObstaclesDataset');
 % rows = dataset.rows;
 % cols = dataset.cols;
 % cell_size = dataset.cell_size;
 % origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
-% csvwrite( '../vimp/data/2d_Arm/map.csv', dataset.map);
+% 
+% % signed distance field
+% field = signedDistanceField2D(dataset.map, cell_size);
+% sdf = PlanarSDF(origin_point2, cell_size, field);
+% 
+% csvwrite( '../vimp/data/2d_Arm3/map.csv', dataset.map);
+% csvwrite( '../vimp/data/2d_Arm3/field.csv', field);
 
 %% ******************* Read datas ******************
-means = csvread("../vimp/data/2d_Arm/mean.csv");
-covs = csvread("../vimp/data/2d_Arm/cov.csv");
-precisions = csvread("../vimp/data/2d_Arm/precisoin.csv");
-costs = csvread("../vimp/data/2d_Arm/cost.csv");
-sdfmap = csvread("../vimp/data/2d_Arm/map.csv");
+means = csvread("../vimp/data/2d_Arm3/mean.csv");
+covs = csvread("../vimp/data/2d_Arm3/cov.csv");
+precisions = csvread("../vimp/data/2d_Arm3/precisoin.csv");
+costs = csvread("../vimp/data/2d_Arm3/cost.csv");
+sdfmap = csvread("../vimp/data/2d_Arm3/map.csv");
 addpath("error_ellipse");
 %%
 [niters, ttl_dim] = size(means);
