@@ -64,9 +64,7 @@ int main(){
         VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
 
         // initial velocity: must have initial velocity for the fitst state??
-        // if (i<n_total_states - 1){
-            theta.segment(dim_conf, dim_conf) = avg_vel;
-        // }
+        theta.segment(dim_conf, dim_conf) = avg_vel;
         joint_init_theta.segment(i*dim_theta, dim_theta) = std::move(theta);   
 
         // fixed start and goal priors
@@ -78,6 +76,18 @@ int main(){
 
             std::shared_ptr<FixedGpPrior> p_fix_gp{new FixedGpPrior{dim_theta, cost_fixed_gp, fixed_gp, Pk}};
             vec_factor_opts.emplace_back(p_fix_gp);
+
+            /// lin GP factor
+            if (i == n_total_states-1){
+                MatrixXd Pk_lingp{MatrixXd::Zero(2*dim_theta, ndim)};
+                Pk_lingp.block(0, (i-1) * dim_theta, 2*dim_theta, 2*dim_theta) = std::move(MatrixXd::Identity(2*dim_theta, 2*dim_theta));
+
+                MinimumAccGP lin_gp{MatrixXd::Identity(dim_conf, dim_conf), delta_t};
+
+                std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, cost_linear_gp, lin_gp, Pk_lingp}}; 
+                vec_factor_opts.emplace_back(p_lin_gp);
+
+            }
 
         }else{
             // support states: linear gp priors
@@ -107,11 +117,11 @@ int main(){
     VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts};
 
     /// Set initial value to the linear interpolation
-    int num_iter = 8;
+    int num_iter = 10;
     optimizer.set_mu(joint_init_theta);
-    optimizer.set_GH_degree(4);
+    optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
-    optimizer.set_step_size_base(0.55, 0.0001);
+    optimizer.set_step_size_base(0.75, 0.0001);
     optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cov.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_pR/precisoin.csv", 

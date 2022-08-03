@@ -166,7 +166,7 @@ namespace vimp{
 
         /// print 5 iteration datas 
         vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
-        print_series_results(iters);
+        // print_series_results(iters);
 
         save_data();
     } 
