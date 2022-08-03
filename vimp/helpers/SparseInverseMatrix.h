@@ -30,6 +30,9 @@ namespace vimp{
         K(_input_sparse.cols()){
             input_matrix_ = _input_sparse;
             inverse_.resize(K, K);
+            // Natural ordering is important here! Eigen Cholesky is up to a permutation.
+            // https://stackoverflow.com/questions/53225371/simplicialllt-returns-wrong-cholesky-factors
+    
             SimplicialLLT<SpMatrix, Eigen::Lower, Eigen::NaturalOrdering<int>> choleskyLLT{_input_sparse};
             L_ = choleskyLLT.matrixL();
             D_ = L_.diagonal().array().square().matrix().asDiagonal();

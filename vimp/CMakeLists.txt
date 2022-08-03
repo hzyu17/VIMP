@@ -79,9 +79,6 @@ target_link_libraries(factor_Gaussian_GH ${EIGEN3_LIBRARIES})
 add_executable(factor src/conv_factorized.cpp)
 target_link_libraries(factor  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 
-add_executable(sparse_inverse src/sparse_inverse.cpp)
-target_link_libraries(sparse_inverse ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
-
 add_executable(Gaussian_GH src/conv_Gaussian_GH.cpp)
 target_link_libraries(Gaussian_GH ${EIGEN3_LIBRARIES})
 
