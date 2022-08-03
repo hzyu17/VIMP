@@ -1,8 +1,8 @@
 /**
  * @file conv_prior_posvel_col_pR.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Test the convergence of the algorithm with prior (pos + vel) + collision cost only on supported states, 
- * for a planar robot.
+ * @brief Test the convergence of the algorithm with prior (pos + vel) + collision cost 
+ * only on supported states, for a planar robot.
  * @version 0.1
  * @date 2022-07-28
  * 
@@ -107,7 +107,7 @@ int main(){
             Pk_col.block(0, i * dim_theta, dim_conf, dim_conf) = std::move(MatrixXd::Identity(dim_conf, dim_conf));
 
             /// Factored optimizer
-            std::shared_ptr<PlanarPRColFactor> p_obs{new PlanarPRColFactor{dim_conf, cost_obstacle, collision_k, Pk_col}};
+            std::shared_ptr<OptPlanarSDFFactorPointRobot> p_obs{new OptPlanarSDFFactorPointRobot{dim_conf, cost_sdf_pR, collision_k, Pk_col}};
             vec_factor_opts.emplace_back(p_obs);
         }
         
@@ -121,7 +121,7 @@ int main(){
     optimizer.set_mu(joint_init_theta);
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
-    optimizer.set_step_size_base(0.75, 0.0001);
+    optimizer.set_step_size_base(0.75, 0.001);
     optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cov.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_pR/precisoin.csv", 
