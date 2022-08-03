@@ -88,6 +88,9 @@ target_link_libraries(prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP
 add_executable(conv_prior_posvel_col_pR src/conv_prior_posvel_col_pR.cpp)
 target_link_libraries(conv_prior_posvel_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
+add_executable(prior_pos_vel_col_Arm src/prior_pos_vel_col_Arm.cpp)
+target_link_libraries(prior_pos_vel_col_Arm ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+
 add_executable(conv_1d src/conv_1d_example.cpp)
 target_link_libraries(conv_1d ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 

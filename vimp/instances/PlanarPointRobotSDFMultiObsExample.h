@@ -1,7 +1,8 @@
 /**
  * @file PlanarPointRobotSDFMultiObsExample.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief An example experiment settings of a planar point robot in multi obstacle env.
+ * @brief An example experiment settings of a planar point robot in multi obstacle env. 
+ * Imported from the tested code in gpmp2.
  * @version 0.1
  * @date 2022-07-27
  * 
