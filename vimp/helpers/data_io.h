@@ -33,7 +33,7 @@ namespace vimp{
 
         /**
          * @brief read a sdf map from csv file, which can be the output of some gpmp2 functions.
-         * 
+         * modified from an online code piece.
          * @param filename 
          * @return MatrixXd 
          */
@@ -42,7 +42,7 @@ namespace vimp{
             std::ifstream indata;
             indata.open(path);
             if (indata.peek() == std::ifstream::traits_type::eof()){
-                throw std::runtime_error(std::string("File dose not exist ..."));
+                throw std::runtime_error(std::string("File dose not exist ...: ") + path);
             }
             std::string line;
             std::vector<double> values;
@@ -55,7 +55,7 @@ namespace vimp{
                 }
                 ++rows;
             }
-            return Eigen::Map<MatrixXd>(values.data(), rows, values.size()/rows);
+            return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(values.data(), rows, values.size()/rows);
         }
 
     };

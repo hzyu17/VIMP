@@ -32,3 +32,18 @@ TEST(SDFReader, read_csv){
     ASSERT_EQ((sdf - map_ground_truth).norm(), 0);
     
 }
+
+
+TEST(SDFReader, read_write){
+    MatrixIO m_io;
+    
+    int dim = 300;
+    MatrixXd m = MatrixXd::Random(dim, dim);
+    
+    m_io.saveData("tests/example.csv", m);
+
+    MatrixXd m_read = m_io.load_csv("tests/example.csv");
+
+    ASSERT_LE((m - m_read).norm(), 1e-10);
+}
+

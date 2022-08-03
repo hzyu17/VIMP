@@ -147,10 +147,14 @@ add_executable(test_read_sdf tests/test_read_sdf.cpp)
 target_link_libraries(test_read_sdf ${EIGEN3_LIBRARIES} GTest::gtest_main)
 
 add_executable(test_gp tests/test_gp.cpp)
-target_link_libraries(test_gp ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_gp ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
 
 add_executable(test_vec_opt tests/test_vector_of_opts.cpp)
 target_link_libraries(test_vec_opt ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+
+add_executable(test_gpmp2_obs tests/test_gpmp2_obs.cpp)
+target_link_libraries(test_gpmp2_obs ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+
 # -------------------------------------------- Doxygen for documentations
 find_package(Doxygen)
 if (DOXYGEN_FOUND)

@@ -45,7 +45,10 @@ namespace vimp{
             for (int k=K-2; k>=0; k--){
                 for (int j=K-1; j>=k; j--){
                     /// non-zero entries of L for the tri-diagonal precision matrix
-                    double value = -inverse_(j, k+1) * L_.coeff(k+1, k);
+                    double value = 0;
+                    for (int l=1; l<K-k-1; l++){
+                        value = value - inverse_(j, k+l) * L_.coeff(k+l, k);
+                    }
                     if (j==k){
                         value += 1.0 / D_.coeff(j, j);
                     }
@@ -131,7 +134,11 @@ namespace vimp{
             for (int k=K_-2; k>=0; k--){
                 for (int j=K_-1; j>=k; j--){
                     /// non-zero entries of L, tri-diagonal
-                    double value = -inverse_(j, k+1) * L_(k+1, k);
+                    double value = 0;
+                    for (int l = k+1; l < K_; l++){
+                        value = value - inverse_(j, l) * L_(l, k);
+                    }
+                    
                     if (j==k){
                         value += 1.0 / D_(j, j);
                     }

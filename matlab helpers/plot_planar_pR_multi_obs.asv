@@ -1,6 +1,3 @@
-clear all
-clc
-
 import gtsam.*
 import gpmp2.*
 
@@ -12,9 +9,9 @@ costs = csvread("../vimp/data/2d_pR/cost.csv");
 sdfmap = csvread("../vimp/data/2d_pR/map_multiobs.csv");
 addpath("error_ellipse");
 %%
-[niters, ttl_dim] = size(means);
+[niters, ttl_dim] = size(means)
 dim_theta = 4;
-nsteps = 8;
+nsteps = 6;
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 
@@ -65,8 +62,7 @@ for i_iter = 1: nsteps
 %     [X,Y] = meshgrid(x_mesh, y_mesh);
 %     contourf(X,Y,sdfmap, 1)
     
-%     plotSignedDistanceField2D(field, origin_x, origin_y, cell_size);
-    plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
+    plotSignedDistanceField2D(field, dataset.origin_x, dataset.origin_y, dataset.cell_size);
 
     i_vec_means_2d = vec_means{i_iter};
     i_vec_covs_2d = vec_covs{i_iter};
@@ -95,4 +91,4 @@ for i_iter = 1:size(factor_costs, 2)
     plot(factor_costs(1:end, i_iter), 'LineWidth', 2)
 end
 ylim([0, 100])
-legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
+legend({"1","2","3","4","5","6"})

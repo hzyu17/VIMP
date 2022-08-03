@@ -78,22 +78,34 @@ namespace vimp{
      */
     template <typename FactorizedOptimizer>
     void VIMPOptimizerGH<FactorizedOptimizer>::optimize(){
+        double new_cost = 0.0;
         
         for (int i_iter = 0; i_iter < _niters; i_iter++) {
-            
+            cout << "========= iter " << i_iter << " ========= "<< endl;
+
             /// Collect the results
             VectorXd mean_iter{mean()};
             MatrixXd cov_iter{covariance()};
             MatrixXd precision_iter{_precision};
             double cost_iter = cost_value();
 
-            assert(abs(cost_iter - cost_value(_mu, covariance())) < 1e-10);
+            /// save matrices for debugging ...
+            // save_vector("/home/hongzhe/git/VIMP/vimp/data/debug/mean_" + to_string(i_iter)+".csv", mean());
+            // // save_matrix("data/debug/j_Vddmu_"+to_string(i_iter)+".csv", Vddmu);
+            // save_matrix("/home/hongzhe/git/VIMP/vimp/data/debug/precision_" + to_string(i_iter)+".csv", _precision);
+            // save_matrix("/home/hongzhe/git/VIMP/vimp/data/debug/cov_" + to_string(i_iter)+".csv", covariance());
+            // save_matrix("/home/hongzhe/git/VIMP/vimp/data/debug/cost_" + to_string(i_iter)+".csv", MatrixXd::Constant(1,1,cost_iter));
 
-            cout << "========= iter " << i_iter << " ========= "<< endl;
+            new_cost = cost_value(_mu, covariance());
+            cout << "diff " << endl << abs(cost_iter - new_cost) << endl;
+            assert(abs(cost_iter - new_cost) < 1e-5);
+
             cout << "mean " << endl << mean().transpose() << endl;
             cout << "cost " << endl << cost_iter << endl;
 
-            this->_res_recorder.update_data(mean_iter, cov_iter, precision_iter, cost_iter);
+            VectorXd fact_costs_iter = factor_costs();
+
+            _res_recorder.update_data(mean_iter, cov_iter, precision_iter, cost_iter, fact_costs_iter);
 
             // one step
             VectorXd Vdmu{VectorXd::Zero(_dim)};
@@ -106,23 +118,15 @@ namespace vimp{
             }
 
             MatrixXd dprecision = -_precision + Vddmu;
-
             VectorXd dmu = Vddmu.colPivHouseholderQr().solve(-Vdmu);
 
-            save_vector("data/debug/dmu_"+to_string(i_iter)+".csv", dmu);
-            save_matrix("data/debug/j_Vddmu_"+to_string(i_iter)+".csv", Vddmu);
-            save_matrix("data/debug/dprecision_"+to_string(i_iter)+".csv", dprecision);
-            save_matrix("data/debug/precision_"+to_string(i_iter)+".csv", _precision);
-            save_matrix("data/debug/cov_"+to_string(i_iter)+".csv", covariance());
+            cout << "dmu for the collided state " << endl << dmu(8) << ", " << dmu(9) << endl;
 
             // backtracking
             int B = 1;
-
             MatrixXd new_precision = _precision + _step_size_base * dprecision;
             VectorXd new_mu  = _mu + _step_size_base * dmu;
-
-            double new_cost = cost_value(new_mu, new_precision.inverse());
-
+            new_cost = cost_value(new_mu, new_precision.inverse());
             int cnt = 0;
             const int MAX_ITER = 100;
             while (new_cost > cost_iter){
@@ -134,14 +138,28 @@ namespace vimp{
                 double step_size = pow(_step_size_base, B);
                 new_precision = _precision + step_size * dprecision;
                 new_mu  = _mu + step_size * dmu;
-                new_cost = cost_value(new_mu, covariance());
+                new_cost = cost_value(new_mu, new_precision.inverse());
                 
             }
 
+            /// update the variables
             set_mu(new_mu);
             set_precision(new_precision);
 
+            /// small cost decrease, stop iterations. 
+            double STOP_SIGN = 1e-5;
+            if (cost_iter - new_cost < STOP_SIGN){
+                cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
+                break;
+            }
+            
         }
+
+        /// see a purturbed cost
+        double scale = 0.0001;
+        double p_cost = purturbed_cost(scale);
+        cout << "=== final cost ===" << endl << new_cost << endl;
+        cout << "=== purturbed cost " << scale << " ===" << endl << p_cost << endl;
 
         /// print 5 iteration datas 
         vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
@@ -185,12 +203,43 @@ namespace vimp{
 
 
     /**
+     * @brief Compute the costs of all factors for a given mean and cov.
+     */
+    template <typename FactorizedOptimizer>
+    VectorXd VIMPOptimizerGH<FactorizedOptimizer>::factor_costs(const VectorXd& x, const MatrixXd& Cov) const{
+        VectorXd fac_costs{VectorXd::Zero(n_sub_factors())};
+        int cnt = 0;
+        for (auto& opt_k : _vec_factor_optimizers){
+            VectorXd x_k = opt_k->Pk() * x;
+            MatrixXd Cov_k = opt_k->Pk() * Cov * opt_k->Pk().transpose().eval();
+            fac_costs(cnt) = opt_k->cost_value(x_k, Cov_k);
+            cnt += 1;
+        }
+        return fac_costs;
+    }
+
+
+    /**
+     * @brief Compute the costs of all factors, using current values.
+     */
+    template <typename FactorizedOptimizer>
+    VectorXd VIMPOptimizerGH<FactorizedOptimizer>::factor_costs() const{
+        VectorXd fac_costs{VectorXd::Zero(n_sub_factors())};
+        int cnt = 0;
+        for (auto& opt_k : _vec_factor_optimizers){
+            fac_costs(cnt) = opt_k->cost_value();
+            cnt += 1;
+        }
+        return fac_costs;
+    }
+
+    /**
      * @brief Compute the total cost function value given a state.
      * 
      * @return cost value.
      */
     template <typename FactorizedOptimizer>
-    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value(const VectorXd& x, const MatrixXd& Cov){
+    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value(const VectorXd& x, const MatrixXd& Cov) const{
         assert(dim() == x.size());
         assert(dim() == Cov.rows());
         assert(dim() == Cov.cols());
@@ -217,7 +266,7 @@ namespace vimp{
      * @return cost value.
      */
     template <typename FactorizedOptimizer>
-    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value(){
+    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value() const{
         double value = 0.0;
         for (auto& opt_k : _vec_factor_optimizers){
             value += opt_k->cost_value();
