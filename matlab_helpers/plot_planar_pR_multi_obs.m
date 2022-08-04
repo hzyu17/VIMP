@@ -1,3 +1,6 @@
+clear all
+clc
+addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
@@ -9,9 +12,9 @@ costs = csvread("../vimp/data/2d_pR/cost.csv");
 sdfmap = csvread("../vimp/data/2d_pR/map_multiobs.csv");
 addpath("error_ellipse");
 %%
-[niters, ttl_dim] = size(means)
+[niters, ttl_dim] = size(means);
 dim_theta = 4;
-nsteps = 6;
+nsteps = 8;
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 
@@ -62,8 +65,9 @@ for i_iter = 1: nsteps
 %     [X,Y] = meshgrid(x_mesh, y_mesh);
 %     contourf(X,Y,sdfmap, 1)
     
-    plotSignedDistanceField2D(field, dataset.origin_x, dataset.origin_y, dataset.cell_size);
-
+%     plotSignedDistanceField2D(field, origin_x, origin_y, cell_size);
+    plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
+    grid on
     i_vec_means_2d = vec_means{i_iter};
     i_vec_covs_2d = vec_covs{i_iter};
     for j = 1:n_states
@@ -91,4 +95,50 @@ for i_iter = 1:size(factor_costs, 2)
     plot(factor_costs(1:end, i_iter), 'LineWidth', 2)
 end
 ylim([0, 100])
-legend({"1","2","3","4","5","6"})
+legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
+
+%% =============== plot cost for each factor ================
+
+fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
+prior_costs = [];
+for i = 1:n_states-1
+    prior_costs = [prior_costs, factor_costs(1:end, 1+(i-1)*2+1)];
+end
+obs_costs = [];
+for i = 1:n_states-2
+    obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
+end
+
+% subplot(1, 3, 1)
+% hold on
+% grid on
+% title('Fixed prior costs')
+% plot(fixed_prior_costs, 'LineWidth', 1.5)
+
+subplot(1, 3, 1)
+title('Prior costs')
+hold on
+grid on
+plot(prior_costs, 'LineWidth', 1, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), prior_costs, 45, 'filled')
+
+subplot(1, 3, 2)
+title('Collision costs')
+hold on
+grid on
+plot(obs_costs, 'LineWidth', 1, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), obs_costs, 45, 'filled')
+
+% --- entropy
+entropy_costs = [];
+n_dim = size(precisions, 2);
+for i = 1:niters
+    precision_i  = precisions((i-1)*n_dim+1: i*n_dim, 1:end);
+    entropy_costs = [entropy_costs, log(det(precision_i))/2];
+end
+subplot(1, 3, 3)
+title('Entropy costs')
+hold on
+grid on
+plot(entropy_costs, 'LineWidth', 1, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), entropy_costs, 45, 'filled')

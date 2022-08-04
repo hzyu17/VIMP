@@ -47,8 +47,12 @@ int main(){
 
     VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / total_time_sec};
 
+    // linear GP
+    MatrixXd Qc = MatrixXd::Identity(dim_conf, dim_conf);
+
     /// Obs factor
-    double cost_sigma = 1.8, epsilon = 1.0;
+    // double cost_sigma = 1.8, epsilon = 1.0;
+    double cost_sigma = 0.1, epsilon = 0.1;
 
     /// Vector of base factored optimizers
     vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_factor_opts;
@@ -66,7 +70,19 @@ int main(){
 
         // fixed start and goal priors
         if (i==0 || i==n_total_states-1){
-            /// position
+            /// lin GP factor for the N th state
+            if (i == n_total_states-1){
+                MatrixXd Pk_lingp{MatrixXd::Zero(2*dim_theta, ndim)};
+                Pk_lingp.block(0, (i-1) * dim_theta, 2*dim_theta, 2*dim_theta) = std::move(MatrixXd::Identity(2*dim_theta, 2*dim_theta));
+
+                MinimumAccGP lin_gp{Qc, delta_t};
+
+                std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, cost_linear_gp, lin_gp, Pk_lingp}}; 
+                vec_factor_opts.emplace_back(p_lin_gp);
+
+            }
+
+            /// Fixed GP
             FixedPriorGP fixed_gp{MatrixXd::Identity(dim_theta, dim_theta)*0.0001, MatrixXd{theta}};
             MatrixXd Pk{MatrixXd::Zero(dim_theta, ndim)};
             Pk.block(0, i * dim_theta, dim_theta, dim_theta) = std::move(MatrixXd::Identity(dim_theta, dim_theta));
@@ -74,24 +90,12 @@ int main(){
             std::shared_ptr<FixedGpPrior> p_fix_gp{new FixedGpPrior{dim_theta, cost_fixed_gp, fixed_gp, Pk}};
             vec_factor_opts.emplace_back(p_fix_gp);
 
-            /// lin GP factor
-            if (i == n_total_states-1){
-                MatrixXd Pk_lingp{MatrixXd::Zero(2*dim_theta, ndim)};
-                Pk_lingp.block(0, (i-1) * dim_theta, 2*dim_theta, 2*dim_theta) = std::move(MatrixXd::Identity(2*dim_theta, 2*dim_theta));
-
-                MinimumAccGP lin_gp{MatrixXd::Identity(dim_conf, dim_conf), delta_t};
-
-                std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, cost_linear_gp, lin_gp, Pk_lingp}}; 
-                vec_factor_opts.emplace_back(p_lin_gp);
-
-            }
-
         }else{
             // support states: linear gp priors
             MatrixXd Pk{MatrixXd::Zero(2*dim_theta, ndim)};
             Pk.block(0, (i-1) * dim_theta, 2*dim_theta, 2*dim_theta) = std::move(MatrixXd::Identity(2*dim_theta, 2*dim_theta));
 
-            MinimumAccGP lin_gp{MatrixXd::Identity(dim_conf, dim_conf), delta_t};
+            MinimumAccGP lin_gp{Qc, delta_t};
 
             // linear gp factor
             std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, cost_linear_gp, lin_gp, Pk}}; 
@@ -118,7 +122,8 @@ int main(){
     optimizer.set_mu(joint_init_theta);
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
-    optimizer.set_step_size_base(0.35, 0.0001);
+    // optimizer.set_step_size_base(0.35, 1e-4);
+    optimizer.set_step_size_base(0.25, 1e-4);
     optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cov.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/precisoin.csv", 

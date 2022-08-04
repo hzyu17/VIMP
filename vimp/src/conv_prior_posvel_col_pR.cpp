@@ -65,13 +65,6 @@ int main(){
 
         // fixed start and goal priors
         if (i==0 || i==n_total_states-1){
-            /// position
-            FixedPriorGP fixed_gp{MatrixXd::Identity(dim_theta, dim_theta)*0.0001, MatrixXd{theta}};
-            MatrixXd Pk{MatrixXd::Zero(dim_theta, ndim)};
-            Pk.block(0, i * dim_theta, dim_theta, dim_theta) = std::move(MatrixXd::Identity(dim_theta, dim_theta));
-
-            std::shared_ptr<FixedGpPrior> p_fix_gp{new FixedGpPrior{dim_theta, cost_fixed_gp, fixed_gp, Pk}};
-            vec_factor_opts.emplace_back(p_fix_gp);
 
             /// lin GP factor
             if (i == n_total_states-1){
@@ -84,6 +77,14 @@ int main(){
                 vec_factor_opts.emplace_back(p_lin_gp);
 
             }
+
+            /// Fixed gp factor
+            FixedPriorGP fixed_gp{MatrixXd::Identity(dim_theta, dim_theta)*0.0001, MatrixXd{theta}};
+            MatrixXd Pk{MatrixXd::Zero(dim_theta, ndim)};
+            Pk.block(0, i * dim_theta, dim_theta, dim_theta) = std::move(MatrixXd::Identity(dim_theta, dim_theta));
+
+            std::shared_ptr<FixedGpPrior> p_fix_gp{new FixedGpPrior{dim_theta, cost_fixed_gp, fixed_gp, Pk}};
+            vec_factor_opts.emplace_back(p_fix_gp);
 
         }else{
             // support states: linear gp priors
