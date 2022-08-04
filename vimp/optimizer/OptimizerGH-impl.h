@@ -153,6 +153,7 @@ namespace vimp{
             double STOP_SIGN = 1e-5;
             if (cost_iter - new_cost < STOP_SIGN){
                 cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
+                cout << "--- number of backtrackings ---" << endl << B << endl;
                 break;
             }
             

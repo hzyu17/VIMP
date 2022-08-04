@@ -39,7 +39,7 @@ class PlanarPointRobotSDFMultiObsExample{
 
             /// Robot model
             PointRobot pR(_ndof, _nlinks);
-            double r = 1.0;
+            double r = 1.5;
             BodySphereVector body_spheres;
             body_spheres.push_back(BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
             _pR_model = PointRobotModel(pR, body_spheres);

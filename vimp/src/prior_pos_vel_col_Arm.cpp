@@ -51,8 +51,7 @@ int main(){
     MatrixXd Qc = MatrixXd::Identity(dim_conf, dim_conf);
 
     /// Obs factor
-    // double cost_sigma = 1.8, epsilon = 1.0;
-    double cost_sigma = 0.1, epsilon = 0.1;
+    double cost_sigma = 0.05, epsilon = 0.1;
 
     /// Vector of base factored optimizers
     vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_factor_opts;
@@ -118,12 +117,11 @@ int main(){
     VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts};
 
     /// Set initial value to the linear interpolation
-    int num_iter = 10;
+    int num_iter = 20;
     optimizer.set_mu(joint_init_theta);
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
-    // optimizer.set_step_size_base(0.35, 1e-4);
-    optimizer.set_step_size_base(0.25, 1e-4);
+    optimizer.set_step_size_base(0.55, 1e-4);
     optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cov.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/precisoin.csv", 

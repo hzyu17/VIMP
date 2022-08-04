@@ -47,7 +47,7 @@ int main(){
     VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / total_time_sec};
 
     /// Obs factor
-    double cost_sigma = 2.5, epsilon = 4.0;
+    double cost_sigma = 1.0, epsilon = 2.0;
 
     /// Vector of base factored optimizers
     vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_factor_opts;
@@ -118,7 +118,7 @@ int main(){
     optimizer.set_mu(joint_init_theta);
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
-    optimizer.set_step_size_base(0.75, 0.001);
+    optimizer.set_step_size_base(0.55, 1e-4);
     optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cov.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_pR/precisoin.csv", 
