@@ -146,12 +146,7 @@ namespace vimp{
         updateGH(x, Cov);
         _gauss_hermite.update_integrand(_func_phi);
         double E_Phi = _gauss_hermite.Integrate()(0, 0);
-        if (isinf(abs(E_Phi))){
-            cout << "--- mu ---" << endl << mean() << endl;
-            cout << "--- precision ---" << endl << _precision << endl;
-            cout << "--- covariance ---" << endl << covariance() << endl;
-            throw std::runtime_error(string("Infinity expectations ..."));
-        }
+        
         return E_Phi;
     }
 
@@ -162,12 +157,7 @@ namespace vimp{
         updateGH();
         _gauss_hermite.update_integrand(_func_phi);
         double E_Phi = _gauss_hermite.Integrate()(0, 0);
-        if (isinf(abs(E_Phi))){
-            cout << "--- mu ---" << endl << mean() << endl;
-            cout << "--- precision ---" << endl << _precision << endl;
-            cout << "--- covariance ---" << endl << covariance() << endl;
-            throw std::runtime_error(string("Infinity expectations ..."));
-        }
+        
         return E_Phi;
     }
 

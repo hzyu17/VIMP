@@ -22,7 +22,7 @@ namespace vimp{
         MatrixIO(){}
 
         template <typename T>
-        void saveData(const string& fileName, const T& matrix){
+        void saveData(const string& fileName, const T& matrix) const{
             cout << "Saving data to: " << fileName << endl;
             ofstream file(fileName);
             if (file.is_open()){

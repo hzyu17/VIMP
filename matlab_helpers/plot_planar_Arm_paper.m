@@ -41,7 +41,7 @@ field = signedDistanceField2D(sdfmap, cell_size);
 % csvwrite("../vimp/data/2d_Arm/field.csv", field);
 sdf = PlanarSDF(origin_point2, cell_size, field);
 
-%% ==================  plot sdf and means and covs ================
+%% ==================  plot for paper experiment: using the gradual changing colors ================
 import gtsam.*
 import gpmp2.*
 % ----------------------- load the means and covs on the 2*2 level -----------------------
@@ -49,6 +49,7 @@ import gpmp2.*
 vec_means = cell(niters, 1);
 vec_covs = cell(niters, 1);
 vec_precisions = cell(niters, 1);
+
 
 for i_iter = 0: nsteps-1
         % each time step 
@@ -76,27 +77,50 @@ end_vel = [0, 0]';
 
 figure
 for i_iter = 1: nsteps
+    
     subplot(2, floor(nsteps/2), i_iter);
     
     i_vec_means_2d = vec_means{i_iter};
     i_vec_covs_2d = vec_covs{i_iter};
+    hold on 
+    plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
     for j = 1:n_states
-        hold on 
-        plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
+        % gradual changing colors
+        
+        alpha = (j / n_states)^(1.15);
+        color = [0, 0, 1, alpha];
         % means
-        plotPlanarArm(arm.fk_model(), i_vec_means_2d{j}', 'c', 2);
-        pause(0.2), hold off
+        plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 2);
+%         pause(0.2), hold off
         % covariance
 %         error_ellipse(i_vec_covs_2d{j}, i_vec_means_2d{j});
     end
-    hold on
-    plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
-    % means
-    plotPlanarArm(arm.fk_model(), i_vec_means_2d{j}', 'c', 2);
-    plotPlanarArm(arm.fk_model(), start_conf, 'b', 2);
-    plotPlanarArm(arm.fk_model(), end_conf, 'r', 2);
-    hold off
+%     hold on
+%     plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
+%     % means
+%     plotPlanarArm(arm.fk_model(), i_vec_means_2d{j}', 'c', 2);
+%     plotPlanarArm(arm.fk_model(), start_conf, 'b', 2);
+%     plotPlanarArm(arm.fk_model(), end_conf, 'r', 2);
+%     hold off
 end
+
+% final result
+
+figure
+i_vec_means_2d = vec_means{nsteps};
+i_vec_covs_2d = vec_covs{nsteps};
+hold on 
+plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
+for j = 1:n_states
+    % gradual changing colors
+    alpha = (j / n_states)^(1.15);
+    color = [0, 0, 1, alpha];
+    % means
+    plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 2);
+end
+plotPlanarArm(arm.fk_model(), start_conf, 'r', 2);
+plotPlanarArm(arm.fk_model(), end_conf, 'g', 2);
+hold off
 
 %% ================ plot the total costs ================
 figure 

@@ -10,7 +10,7 @@
  */
 
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-#include "../instances/PlanarPointRobotSDFMultiObsExample.h"
+#include "../robots/PlanarPointRobotSDFMultiObsExample.h"
 #include "../helpers/GaussHermite.h"
 #include "../helpers/data_io.h"
 #include <gtest/gtest.h>
@@ -60,7 +60,7 @@ VectorXd conf = (VectorXd(2) << 11.3321059864421, 9.16117246531728).finished();
 MatrixXd field = planar_pr_sdf.field();
 
 
-/// ============================  TEST ==============================
+/// ============================ TEST ==============================
 TEST(GPMP2_OBS, signed_dist){
     ASSERT_LE(abs(field(99, 100) - 5.635601043701172), 1e-10);
     ASSERT_LE(abs(field(299, 399) - 8.655633926391602), 1e-10);
@@ -81,7 +81,6 @@ TEST(GPMP2_OBS, inegration){
 
     int deg = 10;
     int dim = 2;
-    
 
     VectorXd mean{(VectorXd(2)<< 11.6236181383659, 10.0231357029832).finished()};
     MatrixXd cov{(MatrixXd(2,2)<<-1.19797500526647, 0.152222124094295, 

@@ -10,11 +10,22 @@ covs = csvread("../vimp/data/2d_pR/cov.csv");
 precisions = csvread("../vimp/data/2d_pR/precisoin.csv");
 costs = csvread("../vimp/data/2d_pR/cost.csv");
 sdfmap = csvread("../vimp/data/2d_pR/map_multiobs.csv");
+factor_costs = csvread("../vimp/data/2d_pR/factor_costs.csv");
 addpath("error_ellipse");
+
+% means = csvread("../vimp/data/checkpoints/2d_pR/mean.csv");
+% covs = csvread("../vimp/data/checkpoints/2d_pR/cov.csv");
+% precisions = csvread("../vimp/data/checkpoints/2d_pR/precisoin.csv");
+% costs = csvread("../vimp/data/checkpoints/2d_pR/cost.csv");
+% sdfmap = csvread("../vimp/data/checkpoints/2d_pR/map_multiobs.csv");
+% factor_costs = csvread("../vimp/data/checkpoints/2d_pR/factor_costs.csv");
+% addpath("error_ellipse");
+
 %%
 [niters, ttl_dim] = size(means);
 dim_theta = 4;
-nsteps = 8;
+niters = 12;
+nsteps = 12;
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 
@@ -72,7 +83,7 @@ for i_iter = 1: nsteps
     i_vec_covs_2d = vec_covs{i_iter};
     for j = 1:n_states
         % means
-        scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 40, 'r*');
+        scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 10, 'r', 'fill');
         % covariance
         error_ellipse(i_vec_covs_2d{j}, i_vec_means_2d{j});
     end
@@ -87,7 +98,7 @@ xlabel('iterations')
 ylabel('cost')
 
 % ================ plot the process factor costs ================
-factor_costs = csvread("../vimp/data/2d_pR/factor_costs.csv");
+
 figure
 hold on
 grid on
@@ -98,7 +109,6 @@ ylim([0, 100])
 legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
 
 %% =============== plot cost for each factor ================
-
 fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
 prior_costs = [];
 for i = 1:n_states-1
@@ -120,14 +130,14 @@ title('Prior costs')
 hold on
 grid on
 plot(prior_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), prior_costs, 45, 'filled')
+scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 45, 'filled')
 
 subplot(1, 3, 2)
 title('Collision costs')
 hold on
 grid on
 plot(obs_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), obs_costs, 45, 'filled')
+scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 45, 'filled')
 
 % --- entropy
 entropy_costs = [];
@@ -141,4 +151,15 @@ title('Entropy costs')
 hold on
 grid on
 plot(entropy_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), entropy_costs, 45, 'filled')
+scatter(linspace(1,niters, niters), entropy_costs(1:niters), 45, 'filled')
+
+%% statistics of purturbed cost
+purturb_stat= csvread("../vimp/data/2d_pR/purturbation_statistics.csv");
+final_cost = csvread("../vimp/data/2d_pR/final_cost.csv");
+final_cost = final_cost(1);
+diff_purturb_stat = purturb_stat - final_cost;
+
+figure
+hold on
+grid on
+plot(diff_purturb_stat, 'LineWidth', 1.5)

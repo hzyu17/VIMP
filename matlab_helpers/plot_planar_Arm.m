@@ -118,7 +118,6 @@ end
 legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
 
 %% =============== plot cost for each factor ================
-
 fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
 prior_costs = [];
 for i = 1:n_states-1

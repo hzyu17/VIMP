@@ -24,7 +24,8 @@ sig_sq = sig_p_sq;
 prec = 1/sig_sq;
 
 % *****************************  phi(x) ************************** (85)
-phi = (x-mu_p).^2./sig_p_sq./2 + (y - f*b./x).^2./sig_r_sq./2;
+T = 1;
+phi = T * ((x-mu_p).^2./sig_p_sq./2 + (y - f*b./x).^2./sig_r_sq./2);
 
 mus = [];
 precs = [];
@@ -33,7 +34,7 @@ costs = [];
 for i_iter = 1:niters
     
     % *********************** current cost ************************ (85)
-    disp(["===== iteration", num2str(i_iter-1), " ====="])
+    disp(['===== iteration', num2str(i_iter-1), ' ====='])
     mu
     sig_sq = 1/prec;
     prec
@@ -103,11 +104,11 @@ nmesh = 40;
 x_mesh = linspace(18, 25, nmesh);
 y_mesh = linspace(0.05,1,nmesh);
 [X,Y] = meshgrid(x_mesh, y_mesh);
-cpp_costmap(find(cpp_costmap>10))=0;
+% cpp_costmap(find(cpp_costmap>10))=0;
 
 % ========================= matlab iterations =========================
 subplot(2,2,1)
-title("iterations")
+title('iterations')
 hold on
 contourf(X,Y,cpp_costmap,40);
 grid on

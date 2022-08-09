@@ -45,7 +45,7 @@ public:
                                    _mu{VectorXd::Zero(_dim)},
                                    _precision{MatrixXd::Identity(_dim, _dim)},
                                    _inverser{_precision},
-                                   _covariance{MatrixXd::Identity(_dim, _dim)},
+                                   _covariance{_precision.inverse()},
                                    _res_recorder{_niters, _dim}{}
 protected:
     /// optimization variables
@@ -105,6 +105,12 @@ public:
     double cost_value() const;
 
     /**
+     * @brief given a state, compute the total cost function value without the entropy term, using current values.
+     * @return cost value.
+     */
+    double cost_value_no_entropy() const;
+
+    /**
      * @brief Compute the costs of all factors for a given mean and cov.
      * @param x mean
      * @param P covariance
@@ -145,7 +151,13 @@ public:
      * @return purturbed precision matrix
      */
     inline MatrixXd purturb_precision(double scale=0.01) const{
-        return MatrixXd{_precision + MatrixXd::Random(_dim, _dim) * scale};
+        MatrixXd purturbation = MatrixXd::Zero(_dim, _dim);
+        purturbation.triangularView<Upper>() = (scale * MatrixXd::Random(_dim, _dim)).triangularView<Upper>();
+        purturbation.triangularView<Lower>() = purturbation.triangularView<Upper>().transpose();
+        purturbation = MatrixXd::Identity(_dim, _dim) + purturbation;
+
+        // save_matrix("data/2d_pR/purturbed.csv", purturbation*_precision*purturbation);
+        return MatrixXd{purturbation*_precision*purturbation};
     }   
 
     /**
@@ -157,6 +169,22 @@ public:
         VectorXd p_mean = purturb_mean(scale);
         MatrixXd p_precision = purturb_precision(scale);
         return cost_value(p_mean, p_precision.inverse());
+    }
+
+
+    /**
+     * @brief Repeated purturbations and statistics.
+     * @param scale purturbation level
+     * @param n_experiments number of experiments
+     */
+    inline void purturbation_stat(double scale=0.01, int n_experiments=100) const{
+        VectorXd purturbed_costs(n_experiments);
+        for (int i=0; i<n_experiments; i++){
+            purturbed_costs(i) = purturbed_cost(scale);
+        }
+        cout << "----- Average purturbed cost -----" << endl << purturbed_costs.mean() << endl;
+        cout << "----- Min purturbed cost -----" << endl << purturbed_costs.minCoeff() << endl;
+        save_vector("data/2d_pR/purturbation_statistics.csv", purturbed_costs);
     }
 
     /// update the step sizes
@@ -246,11 +274,11 @@ public:
     /**
      * @brief save a matrix to a file. 
      */
-    inline void save_matrix(const string& filename, const MatrixXd& m){
+    inline void save_matrix(const string& filename, const MatrixXd& m) const{
         _matrix_io.saveData<MatrixXd>(filename, m);
     }
 
-    inline void save_vector(const string& filename, const VectorXd& vec){
+    inline void save_vector(const string& filename, const VectorXd& vec) const{
         _matrix_io.saveData<VectorXd>(filename, vec);
     }
 
@@ -355,7 +383,7 @@ public:
             file << cost_m.format(CSVFormat);
             file.close();}
     }
-    
+
     }; //class
 } //namespace vimp
 

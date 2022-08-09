@@ -29,7 +29,7 @@ function h=error_ellipse(varargin)
 default_properties = struct(...
   'C', [], ... % The covaraince matrix (required)
   'mu', [], ... % Center of ellipse (optional)
-  'conf', 0.5, ... % Percent confidence/100
+  'conf', 0.997, ... % Percent confidence/100
   'scale', 1, ... % Scale factor, e.g. 1e-3 to plot m as km
   'style', '', ...  % Plot style
   'clip', inf); % Clipping radius

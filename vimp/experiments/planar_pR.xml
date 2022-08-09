@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+    <field_file>data/2d_pR/field_multiobs.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.0</x>
+        <y>14.0</y>
+    </goal_pos>
+
+    <total_time>1.5</total_time>
+    
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.005 </cost_sigma>
+
+    <epsilon> 2 </epsilon>
+
+    <step_size> 0.15 </step_size>
+
+    <num_iter> 15 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+</parameters>
+
+<!--notes>
+    // T = 1: (0.45, 20), (0.75, 200), ()
+    // T = 2: (0.45, 20), (0.4, 10)
+    // T = 5: (0.3, 10), 
+    // T = 10, Qc = 0.8eye: (0.15, 10)
+    // T = 20, Qc = 0.8eye: 
+<notes-->

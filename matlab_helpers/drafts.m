@@ -1,35 +1,35 @@
 clear all
 clc
 
-%% draft for debugging
-precision  = csvread("../vimp/precision.csv");
-cov = csvread("../vimp/cov.csv");
+% %% draft for debugging
+% precision  = csvread("../vimp/precision.csv");
+% cov = csvread("../vimp/cov.csv");
+% 
+% 
+% %%
+% diff = inv(precision) - cov;
+% norm(diff);
+% 
+% true_cov = inv(precision);
+% writematrix(true_cov, "cov_expected.csv");
 
-
-%%
-diff = inv(precision) - cov;
-norm(diff);
-
-true_cov = inv(precision);
-writematrix(true_cov, "cov_expected.csv");
-
-%% matrices during the iterations
-
-for i = 0:6
-%     name = "../vimp/data/debug/Vddmu_"+num2str(i)+".csv";
-%     Vddmu = csvread(name)
-%     name = "../vimp/data/debug/j_Vddmu_"+num2str(i)+".csv"
-%     j_Vddmu = csvread(name)
-%     name = "../vimp/data/debug/dprecision_"+num2str(i)+".csv"
-%     dprecision =  csvread(name)
-    name = "../vimp/data/debug/dmu_"+num2str(i)+".csv";
-    dmu =  csvread(name);
-    name = "../vimp/data/debug/precision_"+num2str(i)+".csv";
-    precision =  csvread(name);
-    name = "../vimp/data/debug/cov_"+num2str(i)+".csv";
-    cov=  csvread(name);
-    aa = 1;
-end
+% %% matrices during the iterations
+% 
+% for i = 0:6
+% %     name = "../vimp/data/debug/Vddmu_"+num2str(i)+".csv";
+% %     Vddmu = csvread(name)
+% %     name = "../vimp/data/debug/j_Vddmu_"+num2str(i)+".csv"
+% %     j_Vddmu = csvread(name)
+% %     name = "../vimp/data/debug/dprecision_"+num2str(i)+".csv"
+% %     dprecision =  csvread(name)
+%     name = "../vimp/data/debug/dmu_"+num2str(i)+".csv";
+%     dmu =  csvread(name);
+%     name = "../vimp/data/debug/precision_"+num2str(i)+".csv";
+%     precision =  csvread(name);
+%     name = "../vimp/data/debug/cov_"+num2str(i)+".csv";
+%     cov=  csvread(name);
+%     aa = 1;
+% end
 
 %% test gpmp2 functions
 % Load libraries
@@ -91,7 +91,7 @@ x = [11.3321059864421, 9.16117246531728]';
 x_pt = Point2(11.3321059864421, 9.16117246531728);
 x1 = [0;0];
 signed_dist = sdf.getSignedDistance(x_pt);
-err = obs_factor.evaluateError(x);
+err = obs_factor.evaluateError(x)
 
 %% debug nan cost
 clear all
@@ -150,3 +150,32 @@ title('Layout')
 plotPlanarArm(arm.fk_model(), start_conf, 'b', 2);
 plotPlanarArm(arm.fk_model(), end_conf, 'r', 2);
 hold off
+
+
+%% see the psd of the d_precision and precision matrix
+precision_0_read = csvread("../vimp/data/debug/precision_0.csv");
+precision_1_read = csvread("../vimp/data/debug/precision_1.csv");
+dprecision_0_read = csvread("../vimp/data/debug/dprecision_0.csv");
+
+eigs_prec0 = eig(precision_0_read);
+eigs_dprec0 = eig(dprecision_0_read);
+eigs_prec1 = eig(precision_1_read);
+
+
+%% purturbation
+purturb_precision = csvread("../vimp/data/2d_pR/purturbed.csv");
+issymmetric(purturb_precision)
+norm(purturb_precision - purturb_precision', 'fro')
+eig_purturbation = eig(purturb_precision)
+
+
+%% statistics of purturbed cost
+purturb_stat= csvread("../vimp/data/2d_pR/purturbation_statistics.csv");
+final_cost = csvread("../vimp/data/2d_pR/final_cost.csv");
+final_cost = final_cost(1);
+diff_purturb_stat = purturb_stat - final_cost;
+
+figure
+hold on
+grid on
+plot(diff_purturb_stat)
