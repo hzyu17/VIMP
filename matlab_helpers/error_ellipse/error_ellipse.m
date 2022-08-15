@@ -31,7 +31,7 @@ default_properties = struct(...
   'mu', [], ... % Center of ellipse (optional)
   'conf', 0.997, ... % Percent confidence/100
   'scale', 1, ... % Scale factor, e.g. 1e-3 to plot m as km
-  'style', '', ...  % Plot style
+  'style', 'b-', ...  % Plot style
   'clip', inf); % Clipping radius
 
 if length(varargin) >= 1 & isnumeric(varargin{1})
@@ -133,7 +133,7 @@ elseif r==2 & c==2
   end
 
   [x,y,z] = getpoints(C,prop.clip);
-  h1=plot(scale*(x0+k*x),scale*(y0+k*y),prop.style);
+  h1=plot(scale*(x0+k*x),scale*(y0+k*y),prop.style, 'LineWidth', 1.5);
   set(h1,'zdata',z+1)
   if nargout
     h=h1;

@@ -1,31 +1,40 @@
 clear all
+close all
 clc
 addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
+
+%% read map
+% sdfmap = csvread("../vimp/data/2d_pR/map_multiobs.csv");
+sdfmap = csvread("../vimp/data/2d_pR/map_multiobs_entropy.csv");
 
 %% ******************* Read datas ******************
 means = csvread("../vimp/data/2d_pR/mean.csv");
 covs = csvread("../vimp/data/2d_pR/cov.csv");
 precisions = csvread("../vimp/data/2d_pR/precisoin.csv");
 costs = csvread("../vimp/data/2d_pR/cost.csv");
-sdfmap = csvread("../vimp/data/2d_pR/map_multiobs.csv");
+
 factor_costs = csvread("../vimp/data/2d_pR/factor_costs.csv");
+perturb_stat= csvread("../vimp/data/2d_pR/purturbation_statistics.csv");
+final_cost = csvread("../vimp/data/2d_pR/final_cost.csv");
 addpath("error_ellipse");
 
-% means = csvread("../vimp/data/checkpoints/2d_pR/mean.csv");
-% covs = csvread("../vimp/data/checkpoints/2d_pR/cov.csv");
-% precisions = csvread("../vimp/data/checkpoints/2d_pR/precisoin.csv");
-% costs = csvread("../vimp/data/checkpoints/2d_pR/cost.csv");
-% sdfmap = csvread("../vimp/data/checkpoints/2d_pR/map_multiobs.csv");
-% factor_costs = csvread("../vimp/data/checkpoints/2d_pR/factor_costs.csv");
+% means = csvread("../vimp/data/checkpoints/2d_pR_0.15/mean.csv");
+% covs = csvread("../vimp/data/checkpoints/2d_pR_0.15/cov.csv");
+% precisions = csvread("../vimp/data/checkpoints/2d_pR_0.15/precisoin.csv");
+% costs = csvread("../vimp/data/checkpoints/2d_pR_0.15/cost.csv");
+% sdfmap = csvread("../vimp/data/checkpoints/2d_pR_0.15/map_multiobs.csv");
+% factor_costs = csvread("../vimp/data/checkpoints/2d_pR_0.15/factor_costs.csv");
+% perturb_stat= csvread("../vimp/data/checkpoints/2d_pR_0.15/purturbation_statistics.csv");
+% final_cost = csvread("../vimp/data/checkpoints/2d_pR_0.15/final_cost.csv");
 % addpath("error_ellipse");
 
 %%
 [niters, ttl_dim] = size(means);
 dim_theta = 4;
-niters = 12;
-nsteps = 12;
+niters = 10;
+nsteps = 10;
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 
@@ -55,7 +64,6 @@ end
 
 %% plot sdf and means and covs
 figure
-title("SDF 2D Point Robot")
 % -------- plot the means -------- 
 colors = [255, 0, 0];
 
@@ -66,19 +74,14 @@ origin_point2 = Point2(origin_x, origin_y);
 field = signedDistanceField2D(sdfmap, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);
 
+tiledlayout(2, floor(nsteps/2), 'TileSpacing', 'tight', 'Padding', 'tight')
 for i_iter = 1: nsteps
-    subplot(2, floor(nsteps/2), i_iter)
+    nexttile
+    title(['Iteration ', num2str(i_iter*step_size)])
     hold on 
-%     % -------- plot the sdf mesh contour -------- 
-%     [nmesh_y, nmesh_x] = size(sdfmap);
-%     x_mesh = linspace(origin_x, origin_x+nmesh_x*cell_size, nmesh_x);
-%     y_mesh = linspace(origin_y, origin_y+nmesh_y*cell_size, nmesh_y);
-%     [X,Y] = meshgrid(x_mesh, y_mesh);
-%     contourf(X,Y,sdfmap, 1)
-    
+   
 %     plotSignedDistanceField2D(field, origin_x, origin_y, cell_size);
-    plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
-    grid on
+    plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
     i_vec_means_2d = vec_means{i_iter};
     i_vec_covs_2d = vec_covs{i_iter};
     for j = 1:n_states
@@ -89,24 +92,37 @@ for i_iter = 1: nsteps
     end
 end
 
-% ================ plot the total costs ================
-figure 
-grid on 
-hold on
-plot(costs, 'LineWidth', 2.2);
-xlabel('iterations')
-ylabel('cost')
-
-% ================ plot the process factor costs ================
-
+%% ================ plot the last iteration ================ 
 figure
-hold on
-grid on
-for i_iter = 1:size(factor_costs, 2)
-    plot(factor_costs(1:end, i_iter), 'LineWidth', 2)
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+nexttile
+title(['Iteration ', num2str(nsteps*step_size)])
+hold on 
+
+%     plotSignedDistanceField2D(field, origin_x, origin_y, cell_size);
+plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
+i_vec_means_2d = vec_means{nsteps};
+i_vec_covs_2d = vec_covs{nsteps};
+for j = 1:n_states
+    % means
+    scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 10, 'r', 'fill');
+    % covariance
+    error_ellipse(i_vec_covs_2d{j}, i_vec_means_2d{j});
 end
-ylim([0, 100])
-legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
+xlim([-15, 20])
+ylim([-15, 20])
+
+%% ================ plot the total costs ================
+figure
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none') 
+nexttile
+title('Total Loss')
+grid minor 
+hold on
+plot(costs, 'LineWidth', 2.0, 'LineStyle', '-.');
+scatter(linspace(1, length(costs), length(costs)), costs, 'fill')
+xlabel('Iterations','fontweight','bold')
+ylabel('V(q)','fontweight','bold')
 
 %% =============== plot cost for each factor ================
 fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
@@ -125,19 +141,26 @@ end
 % title('Fixed prior costs')
 % plot(fixed_prior_costs, 'LineWidth', 1.5)
 
-subplot(1, 3, 1)
-title('Prior costs')
-hold on
-grid on
-plot(prior_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 45, 'filled')
+figure
+tiledlayout(1, 3, 'TileSpacing', 'tight', 'Padding', 'tight') 
+nexttile
 
-subplot(1, 3, 2)
-title('Collision costs')
+title('Prior cost factors')
 hold on
-grid on
-plot(obs_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 45, 'filled')
+grid minor
+plot(prior_costs, 'LineWidth', 1.5, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 10, 'filled')
+xlabel('Iterations','fontweight','bold')
+ylabel('-log(p(x_k))','fontweight','bold')
+
+nexttile
+title('Collision cost factors')
+hold on
+grid minor
+plot(obs_costs, 'LineWidth', 1.5, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 10, 'filled')
+xlabel('Iterations','fontweight','bold')
+ylabel('-log(p(z|x_k))','fontweight','bold')
 
 % --- entropy
 entropy_costs = [];
@@ -146,20 +169,44 @@ for i = 1:niters
     precision_i  = precisions((i-1)*n_dim+1: i*n_dim, 1:end);
     entropy_costs = [entropy_costs, log(det(precision_i))/2];
 end
-subplot(1, 3, 3)
-title('Entropy costs')
-hold on
-grid on
-plot(entropy_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), entropy_costs(1:niters), 45, 'filled')
 
-%% statistics of purturbed cost
-purturb_stat= csvread("../vimp/data/2d_pR/purturbation_statistics.csv");
-final_cost = csvread("../vimp/data/2d_pR/final_cost.csv");
+nexttile
+title('Entropy cost factors')
+hold on
+grid minor
+plot(entropy_costs, 'LineWidth', 1.5, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), entropy_costs(1:niters), 10, 'filled')
+xlabel('Iterations', 'fontweight', 'bold')
+ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
+% ylabel('\log(\lvert\Sigma^{-1}\rvert))', 'Interpreter','latex','fontweight','bold')
+
+%% statistics of perturbed cost
 final_cost = final_cost(1);
-diff_purturb_stat = purturb_stat - final_cost;
+diff_purturb_stat = perturb_stat - final_cost;
+avg_diff_purturb = sum(diff_purturb_stat) / length(diff_purturb_stat);
 
 figure
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none') 
+nexttile
+title('Purturbed cost values')
 hold on
 grid on
-plot(diff_purturb_stat, 'LineWidth', 1.5)
+plot(diff_purturb_stat, 'c', 'LineWidth', 1.5,'LineStyle', '-.')
+plot(linspace(1, length(diff_purturb_stat), length(diff_purturb_stat)), avg_diff_purturb.*ones(length(diff_purturb_stat)), 'r-', 'LineWidth', 1.5)
+plot(linspace(0, length(diff_purturb_stat), length(diff_purturb_stat)), zeros(length(diff_purturb_stat)), 'k-', 'LineWidth', 1.5)
+scatter(linspace(1, length(diff_purturb_stat), length(diff_purturb_stat)), diff_purturb_stat, 'bo')
+legend({'Perturbed cost value', 'Average'})
+xlabel('Perturbation index', 'fontweight', 'bold')
+ylabel('\delta V', 'fontweight', 'bold')
+ylim([-0.01, max(diff_purturb_stat)*1.1])
+
+
+%%
+% field = csvread("../vimp/data/2d_pR/field_multiobs_entropy.csv");
+% 
+% cell_size = 0.1;
+% origin_x = -20;
+% origin_y = -10;
+% 
+% plotSignedDistanceField2D(field, origin_x, origin_y, cell_size);
+

@@ -97,8 +97,8 @@ namespace vimp{
             // save_matrix("/home/hongzhe/git/VIMP/vimp/data/debug/cost_" + to_string(i_iter)+".csv", MatrixXd::Constant(1,1,cost_iter));
             
             // cout << "covariance() - precision.inverse()" << endl << (_precision.inverse() - covariance()).norm() << endl;
-            new_cost = cost_value(_mu, covariance());
-            cout << "diff " << endl << abs(cost_iter - new_cost) << endl;
+            // new_cost = cost_value(_mu, covariance());
+            // cout << "diff " << endl << abs(cost_iter - new_cost) << endl;
             // assert(abs(cost_iter - new_cost) < 1e-5);
 
             // cout << "mean " << endl << mean().transpose() << endl;
@@ -190,20 +190,18 @@ namespace vimp{
             
         }
 
+        save_data();
+
         /// see a purturbed cost
         double scale = 0.001;
         cout << "=== final cost ===" << endl << std::setprecision(51)<< new_cost << endl;
         save_matrix("data/2d_pR/final_cost.csv", MatrixXd::Constant(1, 1, new_cost));
-        purturbation_stat(scale, 100);
-        // double p_cost = purturbed_cost(scale);
+        // purturbation_stat(scale, 100);
         
-        // cout << "=== purturbed cost " << scale << " ===" << endl << p_cost << endl;
-
         /// print 5 iteration datas 
         // vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
         // print_series_results(iters);
 
-        save_data();
     } 
 
 

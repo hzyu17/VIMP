@@ -39,7 +39,7 @@ elseif strcmp(dataset_str, 'MultiObstacleDataset')
     dataset.map = zeros(dataset.rows, dataset.cols);
     % obstacles
     dataset.map = add_obstacle(get_center(12,10,dataset), get_dim(5,7,dataset), dataset.map);
-    dataset.map = add_obstacle(get_center(-7,10,dataset), get_dim(10,7,dataset), dataset.map);
+    dataset.map = add_obstacle(get_center(-8,10,dataset), get_dim(9,7,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(0,-5,dataset), get_dim(10,5,dataset), dataset.map);
 
     

@@ -50,7 +50,6 @@ vec_means = cell(niters, 1);
 vec_covs = cell(niters, 1);
 vec_precisions = cell(niters, 1);
 
-
 for i_iter = 0: nsteps-1
         % each time step 
         i = i_iter * step_size;
@@ -76,10 +75,9 @@ end_conf = [pi/2, 0]';
 end_vel = [0, 0]';
 
 figure
+tiledlayout(2, floor(nsteps/2), 'TileSpacing', 'tight', 'Padding', 'tight')
 for i_iter = 1: nsteps
-    
-    subplot(2, floor(nsteps/2), i_iter);
-    
+    nexttile
     i_vec_means_2d = vec_means{i_iter};
     i_vec_covs_2d = vec_covs{i_iter};
     hold on 
@@ -104,13 +102,14 @@ for i_iter = 1: nsteps
 %     hold off
 end
 
-% final result
+%% ================= plot the final iteration ===================
 
 figure
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none') 
 i_vec_means_2d = vec_means{nsteps};
 i_vec_covs_2d = vec_covs{nsteps};
 hold on 
-plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
+plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
 for j = 1:n_states
     % gradual changing colors
     alpha = (j / n_states)^(1.15);
@@ -124,7 +123,8 @@ hold off
 
 %% ================ plot the total costs ================
 figure 
-grid on 
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight') 
+grid minor 
 hold on
 plot(costs, 'LineWidth', 2.2);
 title('total Loss')
@@ -132,14 +132,14 @@ xlabel('iterations')
 ylabel('cost')
 
 %% ================ plot the process factor costs ================
-figure
-title('Factor costs')
-hold on
-grid on
-for i_iter = 1:size(factor_costs, 2)
-    plot(factor_costs(1:end, i_iter), 'LineWidth', 2)
-end
-legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
+% figure
+% title('Factor costs')
+% hold on
+% grid on
+% for i_iter = 1:size(factor_costs, 2)
+%     plot(factor_costs(1:end, i_iter), 'LineWidth', 2)
+% end
+% legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
 
 %% =============== plot cost for each factor ================
 
@@ -153,25 +153,27 @@ for i = 1:n_states-2
     obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
 end
 
+figure
+tiledlayout(1, 3, 'TileSpacing', 'tight', 'Padding', 'tight') 
+nexttile
 % subplot(1, 3, 1)
-% hold on
-% grid on
-% title('Fixed prior costs')
-% plot(fixed_prior_costs, 'LineWidth', 1.5)
-figure;
-subplot(1, 3, 1)
-title('Prior costs')
+title('Prior cost factors')
 hold on
-grid on
-plot(prior_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), prior_costs, 45, 'filled')
+grid minor
+plot(prior_costs, 'LineWidth', 1.5, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 10, 'filled')
+xlabel('Iterations','fontweight','bold')
+ylabel('-log(p(x_k))','fontweight','bold')
 
-subplot(1, 3, 2)
-title('Collision costs')
+% subplot(1, 3, 2)
+nexttile
+title('Collision cost factors')
 hold on
-grid on
-plot(obs_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), obs_costs, 45, 'filled')
+grid minor
+plot(obs_costs, 'LineWidth', 1.5, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 10, 'filled')
+xlabel('Iterations','fontweight','bold')
+ylabel('-log(p(z|x_k))','fontweight','bold')
 
 % --- entropy
 entropy_costs = [];
@@ -180,12 +182,16 @@ for i = 1:niters
     precision_i  = precisions((i-1)*n_dim+1: i*n_dim, 1:end);
     entropy_costs = [entropy_costs, log(det(precision_i))/2];
 end
-subplot(1, 3, 3)
-title('Entropy costs')
+% subplot(1, 3, 3)
+nexttile
+title('Entropy cost factors')
 hold on
-grid on
-plot(entropy_costs, 'LineWidth', 1, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), entropy_costs, 45, 'filled')
+grid minor
+plot(entropy_costs, 'LineWidth', 1.5, 'LineStyle','-.')
+scatter(linspace(1,niters, niters), entropy_costs(1:niters), 10, 'filled')
+xlabel('Iterations', 'fontweight', 'bold')
+ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
+% ylabel('\log(\lvert\Sigma^{-1}\rvert))', 'Interpreter','latex','fontweight','bold')
 
 
 %% create map and save
