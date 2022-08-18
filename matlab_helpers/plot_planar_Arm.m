@@ -25,8 +25,8 @@ addpath("error_ellipse");
 % ----- parameters -----
 [niters, ttl_dim] = size(means);
 dim_theta = 4;
-% niters = 10;
-nsteps = 10;
+niters = 12;
+nsteps = 12;
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 %  ------- arm --------

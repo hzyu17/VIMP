@@ -179,3 +179,35 @@ figure
 hold on
 grid on
 plot(diff_purturb_stat)
+
+
+%% test surf the hinge loss
+clear all
+clc 
+addpath('/usr/local/gtsam_toolbox')
+import gtsam.*
+import gpmp2.*
+dataset = generate2Ddataset('MultiObstacleDataset');
+rows = dataset.rows;
+cols = dataset.cols;
+cell_size = dataset.cell_size;
+origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
+
+% signed distance field
+field = signedDistanceField2D(dataset.map, cell_size);
+sdf = PlanarSDF(origin_point2, cell_size, field);
+
+grid_rows = size(dataset.map, 1);
+grid_cols = size(dataset.map, 2);
+grid_corner_x = dataset.origin_x + (grid_cols-1)*cell_size;
+grid_corner_y = dataset.origin_y + (grid_rows-1)*cell_size;
+grid_X = dataset.origin_x : cell_size : grid_corner_x;
+grid_Y = dataset.origin_y : cell_size : grid_corner_y;
+
+writematrix(grid_X, "../vimp/data/sdf_grid_x.csv");
+writematrix(grid_Y, "../vimp/data/sdf_grid_y.csv");
+mesh_hingeloss = csvread("../vimp/data/mesh_hingeloss.csv");
+
+mesh_X = repmat(grid_X', 1, size(grid_Y,2));
+mesh_Y = repmat(grid_Y, size(grid_X,2), 1);
+mesh(mesh_X, mesh_Y, mesh_hingeloss)

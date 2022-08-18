@@ -6,8 +6,8 @@
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 
 
-// const char* config_file = "experiments/planar_pR.xml";
-const char* config_file = "experiments/planar_2link_arm.xml";
+const char* config_file = "/home/hongzhe/git/VIMP/vimp/experiments/planar_pR.xml";
+// const char* config_file = "experiments/planar_2link_arm.xml";
 
 /**
  * @brief Fixed cost with a covariance
@@ -62,6 +62,9 @@ double cost_obstacle_base(const VectorXd& pose,
     
     VectorXd vec_err = obs_factor.evaluateError(pose);
 
+    // cout << "pose " << endl << pose << endl;
+    // cout << "vec_err " << endl << vec_err << endl;
+
     // MatrixXd precision_obs;
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     precision_obs = precision_obs / obs_factor.get_noiseModel()->sigmas()[0];
@@ -78,4 +81,4 @@ std::function<double(const VectorXd&, const gpmp2::ObstaclePlanarSDFFactor<ROBOT
     rapidxml::xml_node<>* paramNode = doc_xml.first_node("parameters");
     double Temperature = atof(paramNode->first_node("temperature")->value());
     return cost_obstacle_base(x, obs_factor) / Temperature;
-    };
+};

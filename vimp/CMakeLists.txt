@@ -148,6 +148,9 @@ target_link_libraries(test_gpmp2_obs ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GT
 add_executable(test_pR_cost tests/test_pR_cost.cpp)
 target_link_libraries(test_pR_cost ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
 
+add_executable(test_mesh_hinge tests/test_mesh_hinge_loss.cpp)
+target_link_libraries(test_mesh_hinge ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+
 # -------------------------------------------- Doxygen for documentations
 find_package(Doxygen)
 if (DOXYGEN_FOUND)

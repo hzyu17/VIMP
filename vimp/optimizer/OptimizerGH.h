@@ -74,6 +74,9 @@ protected:
     double _step_size_base_mu = 0.55;
     double _step_size_base_precision = 0.05;
 
+    /// filename for the perturbed costs
+    std::string _file_perturbed_cost;
+
 public:
 /// **************************************************************
 /// Optimizations related
@@ -184,7 +187,8 @@ public:
         }
         cout << "----- Average purturbed cost -----" << endl << purturbed_costs.mean() << endl;
         cout << "----- Min purturbed cost -----" << endl << purturbed_costs.minCoeff() << endl;
-        save_vector("data/2d_pR/purturbation_statistics.csv", purturbed_costs);
+        // save_vector("data/2d_pR/purturbation_statistics.csv", purturbed_costs);
+        save_vector(_file_perturbed_cost, purturbed_costs);
     }
 
     /// update the step sizes
@@ -260,8 +264,10 @@ public:
                                   const string& file_cov, 
                                   const string& file_precision, 
                                   const string& file_cost,
-                                  const string& file_fac_costs){
+                                  const string& file_fac_costs,
+                                  const string& file_perturbed_costs){
         _res_recorder.update_file_names(file_mean, file_cov, file_precision, file_cost, file_fac_costs);
+        _file_perturbed_cost = file_perturbed_costs;
     }
 
     /**

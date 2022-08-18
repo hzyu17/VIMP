@@ -53,9 +53,9 @@ elseif strcmp(dataset_str, 'MultiObstacleEntropy')
     % map
     dataset.map = zeros(dataset.rows, dataset.cols);
     % obstacles
-    dataset.map = add_obstacle(get_center(9, 10, dataset), get_dim(9, 7, dataset), dataset.map);
-    dataset.map = add_obstacle(get_center(-5, 10, dataset), get_dim(12, 7, dataset), dataset.map);
-    dataset.map = add_obstacle(get_center(0, -5, dataset), get_dim(10, 5, dataset), dataset.map);
+    dataset.map = add_obstacle(get_center(12,10,dataset), get_dim(5,7,dataset), dataset.map);
+    dataset.map = add_obstacle(get_center(-2.5,10,dataset), get_dim(9,7,dataset), dataset.map);
+    dataset.map = add_obstacle(get_center(0,-5,dataset), get_dim(10,5,dataset), dataset.map);
     
 % no such dataset
 else

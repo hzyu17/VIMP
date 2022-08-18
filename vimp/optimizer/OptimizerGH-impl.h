@@ -194,9 +194,9 @@ namespace vimp{
 
         /// see a purturbed cost
         double scale = 0.001;
-        cout << "=== final cost ===" << endl << std::setprecision(51)<< new_cost << endl;
+        cout << "=== final cost ===" << endl << std::setprecision(20)<< new_cost << endl;
         save_matrix("data/2d_pR/final_cost.csv", MatrixXd::Constant(1, 1, new_cost));
-        // purturbation_stat(scale, 100);
+        purturbation_stat(scale, 100);
         
         /// print 5 iteration datas 
         // vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
