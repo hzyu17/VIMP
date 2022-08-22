@@ -138,7 +138,7 @@
 </parameters> -->
 
 <!-- with linear interpolated initializations and high temperature: go above the obstacles: ENTROPY MAP -->
-<!-- <parameters>
+<parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
     
     <start_pos>
@@ -171,7 +171,7 @@
 
     <replanning> 1 </replanning>
 
-</parameters> -->
+</parameters>
 
 <!-- with linear interpolated initializations and low temperature: go below the obstacles: ENTROPY MAP -->
 <!-- <parameters>
@@ -211,7 +211,7 @@
 
 
 <!-- =========== high temperature: go below the obstacles: ENTROPY MAP ===========-->
-<parameters>
+<!-- <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
     
     <start_pos>
@@ -234,7 +234,7 @@
 
     <epsilon> 0.5 </epsilon>
 
-    <step_size> 0.4 </step_size>
+    <step_size> 0.35 </step_size>
 
     <num_iter> 30 </num_iter>
 
@@ -244,7 +244,7 @@
 
     <replanning> 1 </replanning>
 
-</parameters>
+</parameters> -->
 
 <!--============================ entropy map less risky case ===================================-->
 

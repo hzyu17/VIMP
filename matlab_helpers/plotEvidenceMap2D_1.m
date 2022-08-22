@@ -7,7 +7,7 @@ function h = plotEvidenceMap2D(prob_grid, origin_x, origin_y, cell_size)
 %   @cell_size              cell size
 
 % map display setting
-colormap([0.3 0.3 0.3; 0.7 0.7 0.7; 1 1 1]);
+colormap([0.6 0.6 0.6; 0.7 0.7 0.7; 1 1 1]);
 
 % get X-Y coordinates
 grid_rows = size(prob_grid, 1);
@@ -27,7 +27,7 @@ ax.TickDir = 'none';
 axis equal
 % axis([origin_x-cell_size/2*1.2, grid_corner_x+cell_size/2*1.2, ...
 %           origin_y-cell_size/2*1.2, grid_corner_y+cell_size/2*1.2])
-axis([-15, 20, -10, 25])
+axis([-18, 18, -10, 25])
 
 
 end
