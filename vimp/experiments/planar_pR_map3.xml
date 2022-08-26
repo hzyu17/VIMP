@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =========================================== experiment narrow ============================================================= -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
+    
+    <start_pos>
+        <x>-5.0</x>
+        <y>-5.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>3.0</x>
+        <y>16.0</y>
+    </goal_pos>
+
+    <total_time>2.0</total_time>
+
+    <n_total_states>15</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.0055 </cost_sigma>
+
+    <epsilon> 0.6 </epsilon>
+
+    <step_size> 0.45 </step_size>
+
+    <num_iter> 10 </num_iter>
+
+    <init_precision_factor>20.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+    <replanning> 0 </replanning>
+    <replanning_starting> 9 </replanning_starting>
+
+</parameters> -->
+
+<!-- =========================================== experiment narrow ============================================================= -->
+<!-- go around the obstacles -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
+    
+    <start_pos>
+        <x>-5.0</x>
+        <y>-5.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>5.0</x>
+        <y>16.0</y>
+    </goal_pos>
+
+    <total_time>2.0</total_time>
+
+    <n_total_states>15</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.0055 </cost_sigma>
+
+    <epsilon> 0.6 </epsilon>
+
+    <step_size> 0.4 </step_size>
+
+    <num_iter> 30 </num_iter>
+
+    <init_precision_factor>20.0</init_precision_factor>
+
+    <temperature>100.0</temperature>
+
+    <replanning> 1 </replanning>
+    <replanning_starting> 7 </replanning_starting>
+
+</parameters> -->
+
+<!-- =========================================== experiment go around ============================================================= -->
+<!-- go between the obstacles -->
+<parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
+    
+    <start_pos>
+        <x>-5.0</x>
+        <y>-5.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>5.0</x>
+        <y>16.0</y>
+    </goal_pos>
+
+    <total_time>2.0</total_time>
+
+    <n_total_states>15</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.0055 </cost_sigma>
+
+    <epsilon> 0.6 </epsilon>
+
+    <step_size> 0.4 </step_size>
+
+    <num_iter> 30 </num_iter>
+
+    <init_precision_factor>20.0</init_precision_factor>
+
+    <temperature>100.0</temperature>
+
+    <replanning> 1 </replanning>
+    <replanning_starting> 0 </replanning_starting>
+
+</parameters>
+
+

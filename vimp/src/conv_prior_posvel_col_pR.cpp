@@ -23,7 +23,7 @@ using namespace vimp;
 int main(){
     
     /// reading XML configurations
-    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/experiments/planar_pR_map2.xml"); // Default template is char
+    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/experiments/planar_pR_map3.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     rapidxml::xml_node<>* paramNode = doc.first_node("parameters");
@@ -150,7 +150,7 @@ int main(){
     VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts};
 
     if (replanning == 1){
-        MatrixXd means = matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv");
+        MatrixXd means = matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_map3_circumvent_base.csv");
         // VectorXd good_init_vec = means.row(means.rows()-1);
         VectorXd good_init_vec = means.row(replan_start);
         /// Set initial value to the linear interpolation

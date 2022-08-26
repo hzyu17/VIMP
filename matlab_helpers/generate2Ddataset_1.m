@@ -88,6 +88,19 @@ elseif strcmp(dataset_str, 'MultiObstacleEntropy2')
     dataset.map = add_obstacle(get_center(1,0,dataset), get_dim(10,5,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(5,12,dataset), get_dim(7,8,dataset), dataset.map);
 
+elseif strcmp(dataset_str, 'MultiObstacleEntropy3')
+    % params
+    dataset.cols = 400; %x
+    dataset.rows = 300; %y
+    dataset.origin_x = -20;
+    dataset.origin_y = -10;
+    dataset.cell_size = 0.1;
+    % map
+    dataset.map = zeros(dataset.rows, dataset.cols);
+    % obstacles
+    dataset.map = add_obstacle(get_center(-4,5,dataset), get_dim(6,15,dataset), dataset.map);
+    dataset.map = add_obstacle(get_center(4,5,dataset), get_dim(6,15,dataset), dataset.map);
+
 % no such dataset
 else
     error('No such dataset exist');
