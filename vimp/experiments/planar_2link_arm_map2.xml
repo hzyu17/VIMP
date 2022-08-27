@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- <parameters>
-    <field_file>data/2d_Arm/field.csv</field_file>
+    <field_file>data/2d_Arm/field_two_obs.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -14,11 +14,11 @@
 
     <total_time> 1.5 </total_time>
 
-    <n_total_states> 10 </n_total_states>
+    <n_total_states> 15 </n_total_states>
 
     <coeff_Qc> 0.8 </coeff_Qc>
 
-    <cost_sigma> 0.0055 </cost_sigma>
+    <cost_sigma> 0.005 </cost_sigma>
 
     <epsilon> 0.45 </epsilon>
 
@@ -35,8 +35,11 @@
 
 </parameters> -->
 
+
+<!-- replanning -->
+
 <parameters>
-    <field_file>data/2d_Arm/field.csv</field_file>
+    <field_file>data/2d_Arm/field_two_obs.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -50,7 +53,7 @@
 
     <total_time> 1.5 </total_time>
 
-    <n_total_states> 10 </n_total_states>
+    <n_total_states> 15 </n_total_states>
 
     <coeff_Qc> 0.8 </coeff_Qc>
 
@@ -58,9 +61,9 @@
 
     <epsilon> 0.45 </epsilon>
 
-    <step_size> 0.45 </step_size>
+    <step_size> 0.25 </step_size>
 
-    <num_iter> 30 </num_iter>
+    <num_iter> 25 </num_iter>
 
     <init_precision_factor>10.0</init_precision_factor>
 

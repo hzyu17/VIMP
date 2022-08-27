@@ -1,31 +1,41 @@
 clear all
+close all
 clc
 
 %% ******************* Read datas ******************
 addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
+prefix = ["/home/hongzhe/git/VIMP/vimp/data/2d_Arm/"];
 
-means = csvread("../vimp/data/2d_Arm/mean.csv");
-covs = csvread("../vimp/data/2d_Arm/cov.csv");
-precisions = csvread("../vimp/data/2d_Arm/precisoin.csv");
-costs = csvread("../vimp/data/2d_Arm/cost.csv");
-sdfmap = csvread("../vimp/data/2d_Arm/map.csv");
-factor_costs = csvread("../vimp/data/2d_Arm/factor_costs.csv");
-addpath("error_ellipse");
-
-% means = csvread("../vimp/data/checkpoints/2d_Arm/mean.csv");
-% covs = csvread("../vimp/data/checkpoints/2d_Arm/cov.csv");
-% precisions = csvread("../vimp/data/checkpoints/2d_Arm/precisoin.csv");
-% costs = csvread("../vimp/data/checkpoints/2d_Arm/cost.csv");
-% sdfmap = csvread("../vimp/data/checkpoints/2d_Arm/map.csv");
-% factor_costs = csvread("../vimp/data/checkpoints/2d_Arm/factor_costs.csv");
+% means = csvread([prefix + "mean_base.csv"]);
+% covs = csvread([prefix + "cov_base.csv"]);
+% precisions = csvread([prefix + "precisoin_base.csv"]);
+% costs = csvread([prefix + "cost_base.csv"]);
+% sdfmap = csvread([prefix + "map_two_obs.csv"]);
+% factor_costs = csvread([prefix + "factor_costs_base.csv"]);
 % addpath("error_ellipse");
+
+means = csvread([prefix + "mean.csv"]);
+covs = csvread([prefix + "cov.csv"]);
+precisions = csvread([prefix + "precisoin.csv"]);
+costs = csvread([prefix + "cost.csv"]);
+sdfmap = csvread([prefix + "map_two_obs.csv"]);
+factor_costs = csvread([prefix + "factor_costs.csv"]);
+addpath("error_ellipse");
 
 % ----- parameters -----
 [niters, ttl_dim] = size(means);
 dim_theta = 4;
-nsteps = 10;
+% niters
+niters = length(costs);
+for i=niters:-1:1
+    if costs(i) ~= 0
+        niters=i;
+        break
+    end
+end
+nsteps = 6;
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 %  ------- arm --------
@@ -74,10 +84,19 @@ start_vel = [0, 0]';
 end_conf = [pi/2, 0]';
 end_vel = [0, 0]';
 
+x0 = 500;
+y0 = 500;
+width = 600;
+height = 350;
 figure
+set(gcf,'position',[x0,y0,width,height])
+
 tiledlayout(2, floor(nsteps/2), 'TileSpacing', 'tight', 'Padding', 'tight')
 for i_iter = 1: nsteps
     nexttile
+    title(['Iteration ', num2str(i_iter*step_size)])
+    hold on 
+
     i_vec_means_2d = vec_means{i_iter};
     i_vec_covs_2d = vec_covs{i_iter};
     hold on 
@@ -103,13 +122,17 @@ for i_iter = 1: nsteps
 end
 
 %% ================= plot the final iteration ===================
-
+x0 = 50;
+y0 = 50;
+width = 350;
+height = 350;
 figure
-tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none') 
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight') 
 i_vec_means_2d = vec_means{nsteps};
 i_vec_covs_2d = vec_covs{nsteps};
 hold on 
-plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
+plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
 for j = 1:n_states
     % gradual changing colors
     alpha = (j / n_states)^(1.15);
@@ -131,18 +154,7 @@ title('total Loss')
 xlabel('iterations')
 ylabel('cost')
 
-%% ================ plot the process factor costs ================
-% figure
-% title('Factor costs')
-% hold on
-% grid on
-% for i_iter = 1:size(factor_costs, 2)
-%     plot(factor_costs(1:end, i_iter), 'LineWidth', 2)
-% end
-% legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
-
-%% =============== plot cost for each factor ================
-
+%% =============== plot cost for each factor and the total cost ================
 fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
 prior_costs = [];
 for i = 1:n_states-1
@@ -153,25 +165,30 @@ for i = 1:n_states-2
     obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
 end
 
+x0 = 50;
+y0 = 50;
+width = 1000;
+height = 500;
 figure
-tiledlayout(1, 3, 'TileSpacing', 'tight', 'Padding', 'tight') 
+set(gcf,'position',[x0,y0,width,height])
+
+tiledlayout(2, 3, 'TileSpacing', 'tight', 'Padding', 'tight') 
 nexttile
-% subplot(1, 3, 1)
+
 title('Prior cost factors')
 hold on
-grid minor
-plot(prior_costs, 'LineWidth', 1.5, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 10, 'filled')
+grid on
+plot(prior_costs, 'LineWidth', 1.5)
+scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 30, 'filled')
 xlabel('Iterations','fontweight','bold')
 ylabel('-log(p(x_k))','fontweight','bold')
 
-% subplot(1, 3, 2)
 nexttile
 title('Collision cost factors')
 hold on
-grid minor
-plot(obs_costs, 'LineWidth', 1.5, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 10, 'filled')
+grid on
+plot(obs_costs, 'LineWidth', 1.5)
+scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 30, 'filled')
 xlabel('Iterations','fontweight','bold')
 ylabel('-log(p(z|x_k))','fontweight','bold')
 
@@ -182,17 +199,30 @@ for i = 1:niters
     precision_i  = precisions((i-1)*n_dim+1: i*n_dim, 1:end);
     entropy_costs = [entropy_costs, log(det(precision_i))/2];
 end
-% subplot(1, 3, 3)
+
 nexttile
 title('Entropy cost factors')
 hold on
-grid minor
-plot(entropy_costs, 'LineWidth', 1.5, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), entropy_costs(1:niters), 10, 'filled')
+grid on
+plot(entropy_costs, 'LineWidth', 1.5)
+scatter(linspace(1,niters, niters), entropy_costs(1:niters), 30, 'filled')
 xlabel('Iterations', 'fontweight', 'bold')
 ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
-% ylabel('\log(\lvert\Sigma^{-1}\rvert))', 'Interpreter','latex','fontweight','bold')
 
+% verify that the sum of the factored costs is the same as the total cost
+sum_fact_costs = sum(factor_costs(1:niters, 1:end), 2);
+diff = sum_fact_costs + entropy_costs' - costs(1:niters)
+
+% ================ plot the total costs ================
+nexttile([1 3])
+title('Total Loss')
+grid on 
+hold on
+plot(costs(1:niters), 'LineWidth', 2.0);
+scatter(linspace(1, niters, niters), costs(1:niters), 30, 'fill')
+xlabel('Iterations','fontweight','bold')
+ylabel('V(q)','fontweight','bold')
+hold off
 
 %% create map and save
 % dataset = generate2Ddataset('OneObstacleDataset');

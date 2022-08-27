@@ -20,12 +20,12 @@ namespace vimp{
 
     class PlanarArmSDFExample{
         public:
-            PlanarArmSDFExample(){
+            PlanarArmSDFExample(const string& field_file){
                 
-                _field = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/field.csv");
-
                 Point2 origin(-1, -1);
                 double cell_size = 0.01;
+
+                _field = _matrix_io.load_csv(field_file);
 
                 _sdf = PlanarSDF(origin, cell_size, _field);
 

@@ -5,42 +5,14 @@ addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
-%% choose the experiment and temperature to plot
-plot_temperture = "low";
-plot_experiment = "map1_above";
-% plot_experiment = "map1_below";
-% plot_experiment = "map2_exp1";
-% plot_experiment = "map2_exp2";
-% plot_experiment = "map2_exp3";
-% plot_experiment = "map2_exp4";
-% 
-% plot_experiment = "map_narrow_go_through";
-% plot_experiment = "map_narrow_go_around";
-
-
-if strcmp(plot_experiment, "map1_above")
-    sdfmap = csvread("../vimp/data/2d_pR/map_multiobs.csv");
-    if 
-    % --- low temperature ---
-    % means = csvread("../vimp/data/2d_pR/mean_base.csv");
-    % covs = csvread("../vimp/data/2d_pR/cov_base.csv");
-    % precisions = csvread("../vimp/data/2d_pR/precisoin_base.csv");
-    % costs = csvread("../vimp/data/2d_pR/cost_base.csv");
-    % 
-    % factor_costs = csvread("../vimp/data/2d_pR/factor_costs_base.csv");
-    % perturb_stat= csvread("../vimp/data/2d_pR/perturbation_statistics_base.csv");
-    % final_cost = csvread("../vimp/data/2d_pR/final_cost_base.csv");
-    % addpath("error_ellipse");
-end
-
 %% read map
-% sdfmap = csvread("../vimp/data/2d_pR/map_multiobs.csv");
-% sdfmap = csvread("../vimp/data/2d_pR/map_multiobs_entropy.csv");
-sdfmap = csvread("../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
-% sdfmap = csvread("../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
+% sdfmap = csvread("../../vimp/data/2d_pR/map_multiobs.csv");
+% sdfmap = csvread("../../vimp/data/2d_pR/map_multiobs_entropy.csv");
+sdfmap = csvread("../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
+% sdfmap = csvread("../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 
 %% an initilization specially for map3 narrow
-means = csvread("../vimp/data/2d_pR/mean_base.csv");
+means = csvread("../../vimp/data/2d_pR/mean_base.csv");
 mean = means(1, 1:end);
 positions = [-5, -5; 
                         0, -5; 
@@ -60,42 +32,49 @@ positions = [-5, -5;
 for i=1:15
     mean(1, (i-1)*4+1:(i-1)*4+2) = positions(i, 1:end);
 end
-csvwrite("../vimp/data/2d_pR/mean_map3_circumvent_base.csv", mean)
+csvwrite("../../vimp/data/2d_pR/mean_map3_circumvent_base.csv", mean)
 
 %%
 
 %% ******************* Read datas ******************
 % --- low temperature ---
-% means = csvread("../vimp/data/2d_pR/mean_base.csv");
-% covs = csvread("../vimp/data/2d_pR/cov_base.csv");
-% precisions = csvread("../vimp/data/2d_pR/precisoin_base.csv");
-% costs = csvread("../vimp/data/2d_pR/cost_base.csv");
-% 
-% factor_costs = csvread("../vimp/data/2d_pR/factor_costs_base.csv");
-% perturb_stat= csvread("../vimp/data/2d_pR/perturbation_statistics_base.csv");
-% final_cost = csvread("../vimp/data/2d_pR/final_cost_base.csv");
-% addpath("error_ellipse");
+means = csvread("../../vimp/data/2d_pR/mean_base.csv");
+covs = csvread("../../vimp/data/2d_pR/cov_base.csv");
+precisions = csvread("../../vimp/data/2d_pR/precisoin_base.csv");
+costs = csvread("../../vimp/data/2d_pR/cost_base.csv");
+
+factor_costs = csvread("../../vimp/data/2d_pR/factor_costs_base.csv");
+perturb_stat= csvread("../../vimp/data/2d_pR/perturbation_statistics_base.csv");
+final_cost = csvread("../../vimp/data/2d_pR/final_cost_base.csv");
+addpath("error_ellipse");
 
 % % --- high temperature ---
-means = csvread("../vimp/data/2d_pR/mean.csv"); 
-covs = csvread("../vimp/data/2d_pR/cov.csv");
-precisions = csvread("../vimp/data/2d_pR/precisoin.csv");
-costs = csvread("../vimp/data/2d_pR/cost.csv");
-
-factor_costs = csvread("../vimp/data/2d_pR/factor_costs.csv");
-perturb_stat= csvread("../vimp/data/2d_pR/perturbation_statistics.csv");
-final_cost = csvread("../vimp/data/2d_pR/final_cost.csv");
-addpath("error_ellipse");
+% means = csvread("../../vimp/data/2d_pR/mean.csv"); 
+% covs = csvread("../../vimp/data/2d_pR/cov.csv");
+% precisions = csvread("../../vimp/data/2d_pR/precisoin.csv");
+% costs = csvread("../../vimp/data/2d_pR/cost.csv");
+% 
+% factor_costs = csvread("../../vimp/data/2d_pR/factor_costs.csv");
+% perturb_stat= csvread("../../vimp/data/2d_pR/perturbation_statistics.csv");
+% final_cost = csvread("../../vimp/data/2d_pR/final_cost.csv");
+% addpath("error_ellipse");
 
 %%
 [niters, ttl_dim] = size(means);
 dim_theta = 4;
-niters = 29;
 nsteps = 6;
+% niters
+niters = length(costs);*/-
+for i=niters:-1:1
+    if costs(i) ~= 0
+        niters=i;
+        break
+    end
+end
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 
-mesh_hingeloss = csvread("../vimp/data/mesh_hingeloss.csv");
+mesh_hingeloss = csvread("../../vimp/data/mesh_hingeloss.csv");
 
 % plot the hinge loss
 cell_size = 0.1;
@@ -337,7 +316,7 @@ hold off
 
 
 %%
-% field = csvread("../vimp/data/2d_pR/field_multiobs_entropy.csv");
+% field = csvread("../../vimp/data/2d_pR/field_multiobs_entropy.csv");
 % 
 % cell_size = 0.1;
 % origin_x = -20;

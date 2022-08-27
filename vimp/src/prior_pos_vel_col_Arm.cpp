@@ -21,7 +21,7 @@ using namespace vimp;
 
 int main(){
     /// reading XML configurations
-    rapidxml::file<> xmlFile("experiments/planar_2link_arm.xml"); // Default template is char
+    rapidxml::file<> xmlFile("experiments/planar_2link_arm_map2.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     rapidxml::xml_node<>* paramNode = doc.first_node("parameters");
@@ -46,8 +46,13 @@ int main(){
 
     double init_precision_factor = atof(paramNode->first_node("init_precision_factor")->value());
 
+    int replanning = atoi(paramNode->first_node("replanning")->value());
+
+    int replanning_starting = atoi(paramNode->first_node("replanning_starting")->value());
+
     // An example pr and sdf
-    vimp::PlanarArmSDFExample planar_arm_sdf;
+    vimp::PlanarArmSDFExample planar_arm_sdf(field_file);
+
     gpmp2::ArmModel arm_model = std::move(planar_arm_sdf.arm_model());
     gpmp2::PlanarSDF sdf = std::move(planar_arm_sdf.sdf());
 
@@ -143,9 +148,20 @@ int main(){
     /// The joint optimizer
     VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts};
 
+    MatrixIO matrix_io;
     /// Set initial value to the linear interpolation
     // int num_iter = 20;
-    optimizer.set_mu(joint_init_theta);
+    if (replanning == 1){
+        MatrixXd means = matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean_base.csv");
+        // VectorXd good_init_vec = means.row(means.rows()-1);
+        VectorXd good_init_vec = means.row(replanning_starting);
+        /// Set initial value to the linear interpolation
+        optimizer.set_mu(good_init_vec);
+    }else{
+        optimizer.set_mu(joint_init_theta);
+    }
+
+    // optimizer.set_mu(joint_init_theta);
 
     MatrixXd init_precision{MatrixXd::Identity(ndim, ndim)*init_precision_factor};
     init_precision.block(0, 0, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*10000;
@@ -155,11 +171,22 @@ int main(){
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
     optimizer.set_step_size_base(step_size, step_size);
-    optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean.csv", 
+
+    if (replanning==0){
+        optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean_base.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cov_base.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/precisoin_base.csv", 
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cost_base.csv",
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/factor_costs_base.csv",
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/perturbation_statistics_base.csv");
+    }else{
+        optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cov.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/precisoin.csv", 
                                 "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cost.csv",
-                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/factor_costs.csv");
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/factor_costs.csv",
+                                "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/perturbation_statistics.csv");
+    }
 
     optimizer.optimize();
 
