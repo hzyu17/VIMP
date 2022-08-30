@@ -6,17 +6,17 @@ import gtsam.*
 import gpmp2.*
 
 %% choose the experiment and temperature to plot
-% plot_temperture = "low";
-plot_temperture = "high";
+plot_temperture = "low";
+% plot_temperture = "high";
 
-% plot_experiment = "map1_above";
+plot_experiment = "map1_above";
 % plot_experiment = "map1_below";
 % plot_experiment = "map2_exp1";
 % plot_experiment = "map2_exp2";
 % plot_experiment = "map2_exp3";
 % plot_experiment = "map2_exp4"; 
 % plot_experiment = "map_narrow_go_through";
-plot_experiment = "map_narrow_go_around";
+% plot_experiment = "map_narrow_go_around";
 
 prefix = "";
 if strcmp(plot_experiment, "map1_above")
@@ -156,8 +156,8 @@ end
 addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
-x0 = 50;
-y0 = 50;
+x0 = 500;
+y0 = 500;
 width = 600;
 height = 350;
 figure
@@ -227,6 +227,7 @@ prior_costs = [];
 for i = 1:n_states-1
     prior_costs = [prior_costs, factor_costs(1:end, 1+(i-1)*2+1)];
 end
+
 obs_costs = [];
 for i = 1:n_states-2
     obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
@@ -234,7 +235,7 @@ end
 
 x0 = 50;
 y0 = 50;
-width = 1000;
+width = 857.1429;
 height = 500;
 figure
 set(gcf,'position',[x0,y0,width,height])
@@ -245,19 +246,19 @@ nexttile
 title('Prior cost factors')
 hold on
 grid on
-plot(prior_costs, 'LineWidth', 1.5)
-scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 30, 'filled')
+plot(prior_costs, 'LineWidth', 4.5)
+scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 60, 'filled')
 xlabel('Iterations','fontweight','bold')
-ylabel('-log(p(x_k))','fontweight','bold')
+ylabel('-log(p(x_k))/T','fontweight','bold')
 
 nexttile
 title('Collision cost factors')
 hold on
 grid on
-plot(obs_costs, 'LineWidth', 1.5)
-scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 30, 'filled')
+plot(obs_costs, 'LineWidth', 4.5)
+scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 60, 'filled')
 xlabel('Iterations','fontweight','bold')
-ylabel('-log(p(z|x_k))','fontweight','bold')
+ylabel('-log(p(z|x_k))/T','fontweight','bold')
 
 % --- entropy
 entropy_costs = [];
@@ -271,25 +272,39 @@ nexttile
 title('Entropy cost factors')
 hold on
 grid on
-plot(entropy_costs, 'LineWidth', 1.5)
-scatter(linspace(1,niters, niters), entropy_costs(1:niters), 30, 'filled')
+plot(entropy_costs, 'LineWidth', 4.5)
+scatter(linspace(1,niters, niters), entropy_costs(1:niters), 60, 'filled')
 xlabel('Iterations', 'fontweight', 'bold')
 ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
 
 % verify that the sum of the factored costs is the same as the total cost
 sum_fact_costs = sum(factor_costs(1:niters, 1:end), 2);
-diff = sum_fact_costs + entropy_costs' - costs(1:niters)
+diff = sum_fact_costs + entropy_costs' - costs(1:niters);
 
 % ================ plot the total costs ================
 nexttile([1 3])
 title('Total Loss')
 grid on 
 hold on
-plot(costs(1:niters), 'LineWidth', 2.0);
-scatter(linspace(1, niters, niters), costs(1:niters), 30, 'fill')
+plot(costs(1:niters), 'LineWidth', 4.5);
+scatter(linspace(1, niters, niters), costs(1:niters), 60, 'fill')
 xlabel('Iterations','fontweight','bold')
 ylabel('V(q)','fontweight','bold')
 hold off
+
+
+%% ====== statistics of the cost distributions ======
+disp('========== final prior cost ==========')
+sum(prior_costs(niters,1:end))
+
+disp('========== final obs_costs cost ==========')
+sum(obs_costs(niters, 1:end))
+
+disp('========== final entropy cost ==========')
+entropy_costs(niters)
+
+disp('========== final total cost ==========')
+costs(niters)
 
 %% statistics of perturbed cost
 % final_cost = final_cost(1);

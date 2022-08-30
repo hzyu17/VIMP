@@ -8,21 +8,21 @@ import gtsam.*
 import gpmp2.*
 prefix = ["/home/hongzhe/git/VIMP/vimp/data/2d_Arm/"];
 
-% means = csvread([prefix + "mean_base.csv"]);
-% covs = csvread([prefix + "cov_base.csv"]);
-% precisions = csvread([prefix + "precisoin_base.csv"]);
-% costs = csvread([prefix + "cost_base.csv"]);
-% sdfmap = csvread([prefix + "map_two_obs.csv"]);
-% factor_costs = csvread([prefix + "factor_costs_base.csv"]);
-% addpath("error_ellipse");
-
-means = csvread([prefix + "mean.csv"]);
-covs = csvread([prefix + "cov.csv"]);
-precisions = csvread([prefix + "precisoin.csv"]);
-costs = csvread([prefix + "cost.csv"]);
+means = csvread([prefix + "mean_base.csv"]);
+covs = csvread([prefix + "cov_base.csv"]);
+precisions = csvread([prefix + "precisoin_base.csv"]);
+costs = csvread([prefix + "cost_base.csv"]);
 sdfmap = csvread([prefix + "map_two_obs.csv"]);
-factor_costs = csvread([prefix + "factor_costs.csv"]);
+factor_costs = csvread([prefix + "factor_costs_base.csv"]);
 addpath("error_ellipse");
+
+% means = csvread([prefix + "mean.csv"]);
+% covs = csvread([prefix + "cov.csv"]);
+% precisions = csvread([prefix + "precisoin.csv"]);
+% costs = csvread([prefix + "cost.csv"]);
+% sdfmap = csvread([prefix + "map_two_obs.csv"]);
+% factor_costs = csvread([prefix + "factor_costs.csv"]);
+% addpath("error_ellipse");
 
 % ----- parameters -----
 [niters, ttl_dim] = size(means);

@@ -36,16 +36,16 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int niters=10):
+    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_conf):
                                    _dim{vec_fact_optimizers[0]->Pk().cols()},
-                                   _niters{niters},
+                                   _niters{10},
                                    _sub_dim{vec_fact_optimizers[0]->Pk().rows()},
                                    _nsub_vars{vec_fact_optimizers.size()},
                                    _vec_factor_optimizers{std::move(vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
                                    _precision{MatrixXd::Identity(_dim, _dim)},
-                                   _inverser{_precision},
-                                   _covariance{_precision.inverse()},
+                                   _inverser{_precision, dim_conf},
+                                   _covariance{_inverser.inverse()},
                                    _res_recorder{_niters, _dim}{}
 protected:
     /// optimization variables
@@ -116,10 +116,10 @@ public:
     /**
      * @brief Compute the costs of all factors for a given mean and cov.
      * @param x mean
-     * @param P covariance
+     * @param Precision precision matrix
      * @return VectorXd collection of factor costs
      */
-    VectorXd factor_costs(const VectorXd& x, const MatrixXd& Cov) const;
+    VectorXd factor_costs(const VectorXd& x, const MatrixXd& Precision) const;
 
     /**
      * @brief Compute the costs of all factors, using current values.
@@ -137,7 +137,8 @@ public:
     inline MatrixXd precision() const{ return _precision; }
 
     /// returns the covariance matrix
-    inline MatrixXd covariance(){ return _precision.inverse(); }
+    // inline MatrixXd covariance(){ return _precision.inverse(); }
+    inline MatrixXd covariance(){ return _inverser.inverse(_precision); }
 
     /**
      * @brief Purturb the mean by a random vector.
@@ -171,7 +172,8 @@ public:
     inline double purturbed_cost(double scale=0.01) const{
         VectorXd p_mean = purturb_mean(scale);
         MatrixXd p_precision = purturb_precision(scale);
-        return cost_value(p_mean, p_precision.inverse());
+        // return cost_value(p_mean, p_precision.inverse());
+        return cost_value(p_mean, _inverser.inverse(p_precision));
     }
 
 
@@ -220,7 +222,9 @@ public:
         assert(new_precision.size() == _precision.size());
         _precision = new_precision;
         // _inverser.update_matrix(_precision);
-        _covariance = _precision.inverse();
+        // _covariance = _precision.inverse();
+
+        _covariance = _inverser.inverse(_precision);
 
         for (auto & opt_fact : _vec_factor_optimizers){
             opt_fact->update_precision_from_joint_covariance(_covariance);
@@ -370,7 +374,7 @@ public:
             VectorXd mean{VectorXd::Constant(1, x_start + i*res_x)};
             for (int j=0; j<nmesh; j++){
                 MatrixXd cov{MatrixXd::Constant(1, 1, 1/(y_start + j*res_y))};
-                Z(j, i) = cost_value(mean, cov); /// the order of the matrix in cpp and in matlab
+                Z(j, i) = cost_value(mean, cov.inverse()); /// the order of the matrix in cpp and in matlab
             }
         }
         cout << "Z(0,0) " << endl << Z(0,0) << endl;

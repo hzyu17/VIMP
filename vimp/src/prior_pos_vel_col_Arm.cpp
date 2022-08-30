@@ -21,7 +21,7 @@ using namespace vimp;
 
 int main(){
     /// reading XML configurations
-    rapidxml::file<> xmlFile("experiments/planar_2link_arm_map2.xml"); // Default template is char
+    rapidxml::file<> xmlFile("configs/planar_2link_arm_map2.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     rapidxml::xml_node<>* paramNode = doc.first_node("parameters");
@@ -146,7 +146,7 @@ int main(){
     }
 
     /// The joint optimizer
-    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts};
+    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts, dim_conf};
 
     MatrixIO matrix_io;
     /// Set initial value to the linear interpolation

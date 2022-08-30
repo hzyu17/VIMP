@@ -6,65 +6,63 @@ import gtsam.*
 import gpmp2.*
 
 %% read map
-% sdfmap = csvread("../../vimp/data/2d_pR/map_multiobs.csv");
-% sdfmap = csvread("../../vimp/data/2d_pR/map_multiobs_entropy.csv");
-sdfmap = csvread("../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
-% sdfmap = csvread("../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
+% sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs.csv");
+% sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy.csv");
+% sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
+sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 
 %% an initilization specially for map3 narrow
-means = csvread("../../vimp/data/2d_pR/mean_base.csv");
-mean = means(1, 1:end);
-positions = [-5, -5; 
-                        0, -5; 
-                        5, -5; 
-                        10, -5; 
-                        10, 0;
-                        10, 2;
-                        10, 3;
-                        10, 4;
-                        10, 5;
-                        10, 10;
-                        10, 12;
-                        10, 14;
-                        10, 15;
-                        8, 16;
-                        3, 16];
-for i=1:15
-    mean(1, (i-1)*4+1:(i-1)*4+2) = positions(i, 1:end);
-end
-csvwrite("../../vimp/data/2d_pR/mean_map3_circumvent_base.csv", mean)
-
-%%
+% means = csvread("../../../vimp/data/2d_pR/mean_base.csv");
+% mean = means(1, 1:end);
+% positions = [-5, -5; 
+%                         0, -5; 
+%                         5, -5; 
+%                         10, -5; 
+%                         10, 0;
+%                         10, 2;
+%                         10, 3;
+%                         10, 4;
+%                         10, 5;
+%                         10, 10;
+%                         10, 12;
+%                         10, 14;
+%                         10, 15;
+%                         8, 16;
+%                         3, 16];
+% for i=1:15
+%     mean(1, (i-1)*4+1:(i-1)*4+2) = positions(i, 1:end);
+% end
+% csvwrite("../../../vimp/data/2d_pR/mean_map3_circumvent_base.csv", mean)
 
 %% ******************* Read datas ******************
 % --- low temperature ---
-means = csvread("../../vimp/data/2d_pR/mean_base.csv");
-covs = csvread("../../vimp/data/2d_pR/cov_base.csv");
-precisions = csvread("../../vimp/data/2d_pR/precisoin_base.csv");
-costs = csvread("../../vimp/data/2d_pR/cost_base.csv");
-
-factor_costs = csvread("../../vimp/data/2d_pR/factor_costs_base.csv");
-perturb_stat= csvread("../../vimp/data/2d_pR/perturbation_statistics_base.csv");
-final_cost = csvread("../../vimp/data/2d_pR/final_cost_base.csv");
-addpath("error_ellipse");
+% means = csvread("../../../vimp/data/2d_pR/mean_base.csv");
+% covs = csvread("../../../vimp/data/2d_pR/cov_base.csv");
+% precisions = csvread("../../../vimp/data/2d_pR/precisoin_base.csv");
+% costs = csvread("../../../vimp/data/2d_pR/cost_base.csv");
+% 
+% factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs_base.csv");
+% perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics_base.csv");
+% final_cost = csvread("../../../vimp/data/2d_pR/final_cost_base.csv");
+% addpath("error_ellipse");
 
 % % --- high temperature ---
-% means = csvread("../../vimp/data/2d_pR/mean.csv"); 
-% covs = csvread("../../vimp/data/2d_pR/cov.csv");
-% precisions = csvread("../../vimp/data/2d_pR/precisoin.csv");
-% costs = csvread("../../vimp/data/2d_pR/cost.csv");
-% 
-% factor_costs = csvread("../../vimp/data/2d_pR/factor_costs.csv");
-% perturb_stat= csvread("../../vimp/data/2d_pR/perturbation_statistics.csv");
-% final_cost = csvread("../../vimp/data/2d_pR/final_cost.csv");
-% addpath("error_ellipse");
+means = csvread("../../../vimp/data/2d_pR/mean.csv"); 
+covs = csvread("../../../vimp/data/2d_pR/cov.csv");
+precisions = csvread("../../../vimp/data/2d_pR/precisoin.csv");
+costs = csvread("../../../vimp/data/2d_pR/cost.csv");
+
+factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs.csv");
+perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics.csv");
+final_cost = csvread("../../../vimp/data/2d_pR/final_cost.csv");
+addpath("error_ellipse");
 
 %%
 [niters, ttl_dim] = size(means);
 dim_theta = 4;
 nsteps = 6;
 % niters
-niters = length(costs);*/-
+niters = length(costs);
 for i=niters:-1:1
     if costs(i) ~= 0
         niters=i;
@@ -74,7 +72,7 @@ end
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 
-mesh_hingeloss = csvread("../../vimp/data/mesh_hingeloss.csv");
+mesh_hingeloss = csvread("../../../vimp/data/mesh_hingeloss.csv");
 
 % plot the hinge loss
 cell_size = 0.1;
@@ -275,6 +273,19 @@ xlabel('Iterations','fontweight','bold')
 ylabel('V(q)','fontweight','bold')
 hold off
 
+%% ====== statistics of the cost distributions ======
+disp('========== final prior cost ==========')
+sum(prior_costs(niters,1:end))
+
+disp('========== final obs_costs cost ==========')
+sum(obs_costs(niters, 1:end))
+
+disp('========== final entropy cost ==========')
+entropy_costs(niters)
+
+disp('========== final total cost ==========')
+costs(niters)
+
 %% statistics of perturbed cost
 % final_cost = final_cost(1);
 % diff_purturb_stat = perturb_stat - final_cost;
@@ -314,6 +325,47 @@ hold off
 % ylabel('\delta V', 'fontweight', 'bold')
 % ylim([-0.01, max(diff_purturb_stat)*1.1])
 
+
+%% ==== plot sampled covariance for the states ==== 
+x0 = 50;
+y0 = 50;
+width = 400;
+height = 350;
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+nexttile
+title(['Iteration ', num2str(nsteps*step_size)])
+hold on 
+i_vec_means_2d = vec_means{nsteps};
+i_vec_covs_2d = vec_covs{nsteps};
+
+plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
+
+n_samples = 100;
+for j = 1:3:n_states
+    % gradual changing colors
+%     alpha = (j / n_states)^(1.15);
+    color = [0, 0, 1, 0.9];
+    color_sample = [0.2, 0.2, 0.9, 0.07];
+    % mu j
+    mean_j = i_vec_means_2d{j}';
+    % cov j
+    cov_j = i_vec_covs_2d{j};
+    % sampling 
+    rng('default')  % For reproducibility
+    samples = mvnrnd(mean_j, cov_j, n_samples);
+    for k = 1: size(samples, 1)
+        k_sample = samples(k, 1:end)';
+        scatter(k_sample(1), k_sample(2), 10, 'red', 'fill');
+    end
+    
+    % plot mean
+    scatter(mean_j(1), mean_j(2), 40, 'k', 'fill');
+    
+end
+
+hold off
 
 %%
 % field = csvread("../../vimp/data/2d_pR/field_multiobs_entropy.csv");

@@ -8,7 +8,7 @@ import gpmp2.*
 %% read map
 sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
 
-v_niters = [18, 24];
+v_niters = [19, 29];
 v_nsteps = [6, 6];
 
 figure
@@ -39,21 +39,13 @@ for i = 1:2 % 4 experiments
 
     %%
     [niters, ttl_dim] = size(means);
-
-    dim_theta = 4;
+    dim_conf = 2;
+    dim_theta = 2*dim_conf;
     niters = v_niters(i);
     nsteps = v_nsteps(i);
     step_size = floor(niters / nsteps);
     n_states = floor(ttl_dim / dim_theta);
-
-    % final entropy cost
-    disp(['========== final entropy cost ', num2str(i),  '==========='])
-    n_dim = size(precisions, 2);
-    precision_i  = precisions((niters-1)*n_dim+1: niters*n_dim, 1:end);
-    entropy_cost = log(det(precision_i))/2
-
-    costs(niters)
-        
+    
     cell_size = 0.1;
     origin_x = -20;
     origin_y = -10;
@@ -85,15 +77,8 @@ for i = 1:2 % 4 experiments
     end
     
     %% ================ plot the last iteration ================ 
-%     figure
-%     tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-%     nexttile
-%     title(['Iteration ', num2str(nsteps*step_size)])
     hold on 
-    
-    %     plotSignedDistanceField2D(field, origin_x, origin_y, cell_size);
     plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
-    % mesh(mesh_X, mesh_Y, mesh_hingeloss, 'FaceAlpha', 0.5);
     i_vec_means_2d = vec_means{nsteps};
     i_vec_covs_2d = vec_covs{nsteps};
     for j = 1:n_states
@@ -104,4 +89,43 @@ for i = 1:2 % 4 experiments
     end
     % xlim([-15, 20])
     ylim([-10, 20])
+
+    %% ====== statistics of the cost distributions ======
+    % Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
+    % --- prior
+    prior_costs = [];
+    prior_costs = [prior_costs, factor_costs(1:end, 1)];
+    for i = 1:n_states-1
+        prior_costs = [prior_costs, factor_costs(1:end, 1+(i-1)*2+1)];
+    end
+    prior_costs = [prior_costs, factor_costs(1:end, end)];
+
+    
+    % --- collision
+    obs_costs = [];
+    for i = 1:n_states-2
+        obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
+    end
+    
+    % --- entropy
+    entropy_costs = [];
+    n_dim = size(precisions, 2);
+    
+    for ii = 1:niters
+        precision_i  = precisions((ii-1)*n_dim+1: ii*n_dim, 1:end);
+        entropy_costs = [entropy_costs, log(det(precision_i))/2];
+    end
+    
+    disp(['========== final prior cost ', num2str(i),  '==========='])
+    sum(prior_costs(niters,1:end))
+    
+    disp(['========== final obs cost ', num2str(i),  '==========='])
+    sum(obs_costs(niters, 1:end))
+    
+    disp(['========== final entropy cost ', num2str(i),  '==========='])
+    entropy_costs(niters)
+    
+    disp(['========== final total cost ', num2str(i),  '==========='])
+    costs(niters)
+
 end

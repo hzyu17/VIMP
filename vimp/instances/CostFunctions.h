@@ -6,9 +6,11 @@
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 
 
-// const char* config_file = "/home/hongzhe/git/VIMP/vimp/experiments/planar_pR_map3.xml";
-// const char* config_file = "/home/hongzhe/git/VIMP/vimp/experiments/planar_2link_arm.xml";
-const char* config_file = "/home/hongzhe/git/VIMP/vimp/experiments/planar_2link_arm_map2.xml";
+// const char* config_file = "/home/hongzhe/git/VIMP/vimp/configs/planar_pR_map2.xml";
+const char* config_file = "/home/hongzhe/git/VIMP/vimp/configs/planar_pR_map3.xml";
+// const char* config_file = "/home/hongzhe/git/VIMP/vimp/configs/planar_2link_arm.xml";
+// const char* config_file = "/home/hongzhe/git/VIMP/vimp/configs/planar_2link_arm_map2.xml";
+// const char* config_file = "/home/hongzhe/git/VIMP/vimp/configs/planar_3link_arm_map1.xml";
 
 /**
  * @brief Fixed cost with a covariance

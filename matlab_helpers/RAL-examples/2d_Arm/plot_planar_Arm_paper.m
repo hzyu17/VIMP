@@ -7,12 +7,22 @@ addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
-means = csvread("map1/mean.csv");
-covs = csvread("map1/cov.csv");
-precisions = csvread("map1/precisoin.csv");
-costs = csvread("map1/cost.csv");
-sdfmap = csvread("map1/map.csv");
-factor_costs = csvread("map1/factor_costs.csv");
+map = 2;
+
+prefix = "map1";
+switch map
+    case 1
+        prefix = "map1";
+    case 2
+        prefix = "map2";
+end
+
+means = csvread([prefix+"/mean.csv"]);
+covs = csvread([prefix+"/cov.csv"]);
+precisions = csvread([prefix+"/precisoin.csv"]);
+costs = csvread([prefix+"/cost.csv"]);
+sdfmap = csvread([prefix+"/map.csv"]);
+factor_costs = csvread([prefix+"/factor_costs.csv"]);
 addpath("../../error_ellipse");
 
 % means = csvread("../vimp/data/checkpoints/2d_Arm/mean.csv");
@@ -102,11 +112,10 @@ for i_iter = 1: nsteps
     plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
     for j = 1:n_states
         % gradual changing colors
-        
         alpha = (j / n_states)^(1.15);
         color = [0, 0, 1, alpha];
         % means
-        plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 2);
+        plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 2, true);
 %         pause(0.2), hold off
         % covariance
 %         error_ellipse(i_vec_covs_2d{j}, i_vec_means_2d{j});
@@ -140,7 +149,7 @@ for j = 1:n_states
     alpha = (j / n_states)^(1.15);
     color = [0, 0, 1, alpha];
     % means
-    plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 2);
+    plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 2, true);
 end
 plotPlanarArm(arm.fk_model(), start_conf, 'r', 2);
 plotPlanarArm(arm.fk_model(), end_conf, 'g', 2);
@@ -214,6 +223,47 @@ plot(costs(1:niters), 'LineWidth', 2.0);
 scatter(linspace(1, niters, niters), costs(1:niters), 30, 'fill')
 xlabel('Iterations','fontweight','bold')
 ylabel('V(q)','fontweight','bold')
+hold off
+
+%% ==== plot sampled covariance for the states ==== 
+x0 = 50;
+y0 = 50;
+width = 400;
+height = 350;
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+nexttile
+title(['Iteration ', num2str(nsteps*step_size)])
+hold on 
+i_vec_means_2d = vec_means{nsteps};
+i_vec_covs_2d = vec_covs{nsteps};
+hold on 
+plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+
+n_samples = 50;
+for j = 1:3:n_states
+    % gradual changing colors
+%     alpha = (j / n_states)^(1.15);
+    color = [0, 0, 1, 0.9];
+    color_sample = [0.0, 0.0, 0.7, 0.02];
+    % mu j
+    mean_j = i_vec_means_2d{j}';
+    % cov j
+    cov_j = i_vec_covs_2d{j}
+    % sampling 
+    rng('default')  % For reproducibility
+    samples = mvnrnd(mean_j, cov_j, n_samples);
+    plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 4, true);
+    for k = 1: size(samples, 1)
+        k_sample = samples(k, 1:end)';
+        plotPlanarArm1(arm.fk_model(), k_sample, color_sample, 3, false);
+    end
+    % means
+%     plotPlanarArm1(arm.fk_model(), , color, 2);
+end
+plotPlanarArm1(arm.fk_model(), start_conf, 'r', 3, true);
+plotPlanarArm1(arm.fk_model(), end_conf, 'g', 3, true);
 hold off
 
 %% create map and save

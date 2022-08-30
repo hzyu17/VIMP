@@ -25,7 +25,7 @@
 
     <step_size> 0.45 </step_size>
 
-    <num_iter> 10 </num_iter>
+    <num_iter> 20 </num_iter>
 
     <init_precision_factor>20.0</init_precision_factor>
 
@@ -37,7 +37,6 @@
 </parameters> -->
 
 <!-- =========================================== experiment narrow ============================================================= -->
-<!-- go around the obstacles -->
 <!-- <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
     
@@ -63,19 +62,18 @@
 
     <step_size> 0.4 </step_size>
 
-    <num_iter> 30 </num_iter>
+    <num_iter> 40 </num_iter>
 
     <init_precision_factor>20.0</init_precision_factor>
 
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <replanning_starting> 7 </replanning_starting>
+    <replanning_starting> 16 </replanning_starting>
 
 </parameters> -->
 
 <!-- =========================================== experiment go around ============================================================= -->
-<!-- go between the obstacles -->
 <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
     
@@ -111,5 +109,3 @@
     <replanning_starting> 0 </replanning_starting>
 
 </parameters>
-
-

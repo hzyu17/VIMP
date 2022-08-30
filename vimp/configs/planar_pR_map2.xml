@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- =========================================== experiment 1 ============================================================= -->
-<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <!-- <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
@@ -39,7 +38,7 @@
 
 
 <!-- Replanning high temperature: go above the obstacles: ENTROPY MAP -->
-<!-- <parameters>
+<parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
@@ -73,7 +72,7 @@
     <replanning> 1 </replanning>
     <replanning_starting> 5 </replanning_starting>
 
-</parameters> -->
+</parameters>
 
 <!-- =========================================== experiment 2 ============================================================= -->
 <!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
@@ -268,7 +267,7 @@
 
 
 <!-- Replanning high temperature: go above the obstacles: ENTROPY MAP -->
-<parameters>
+<!-- <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
@@ -302,4 +301,4 @@
     <replanning> 1 </replanning>
     <replanning_starting> 4 </replanning_starting>
 
-</parameters>
+</parameters> -->

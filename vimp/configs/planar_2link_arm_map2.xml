@@ -18,7 +18,7 @@
 
     <coeff_Qc> 0.8 </coeff_Qc>
 
-    <cost_sigma> 0.005 </cost_sigma>
+    <cost_sigma> 0.0055 </cost_sigma>
 
     <epsilon> 0.45 </epsilon>
 
@@ -61,15 +61,15 @@
 
     <epsilon> 0.45 </epsilon>
 
-    <step_size> 0.25 </step_size>
+    <step_size> 0.45 </step_size>
 
-    <num_iter> 25 </num_iter>
+    <num_iter> 30 </num_iter>
 
     <init_precision_factor>10.0</init_precision_factor>
 
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <replanning_starting> 2 </replanning_starting>
+    <replanning_starting> 5 </replanning_starting>
 
 </parameters>

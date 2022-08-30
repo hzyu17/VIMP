@@ -158,11 +158,15 @@ namespace vimp{
                 new_precision = _precision + step_size_precision * dprecision;
                 new_mu  = _mu + step_size_mu * dmu;
 
-                VectorXcd eigvals = new_precision.eigenvalues();
-                if (eigvals.real().minCoeff() > 0){
-                    new_cost = cost_value(new_mu, new_precision.inverse());
-                    if (new_cost < cost_iter){ break; }
-                }
+                // Checking the psd of Sigma^{-1}
+                // VectorXcd eigvals = new_precision.eigenvalues();
+                // if (eigvals.real().minCoeff() > 0){
+                //     new_cost = cost_value(new_mu, new_precision);
+                //     if (new_cost < cost_iter){ break; }
+                // }
+
+                new_cost = cost_value(new_mu, new_precision);
+                if (new_cost < cost_iter){ break; }
 
                 cnt += 1;
                 if (cnt > MAX_ITER){
@@ -215,7 +219,7 @@ namespace vimp{
         VectorXd Vdmu{VectorXd::Zero(_dim)};
         MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
 
-        MatrixXd Sigma{_precision.inverse()};
+        MatrixXd Sigma{_inverser.inverse(_precision)};
 
         for (int k=0; k<_nsub_vars; k++){
 
@@ -242,9 +246,10 @@ namespace vimp{
      * @brief Compute the costs of all factors for a given mean and cov.
      */
     template <typename FactorizedOptimizer>
-    VectorXd VIMPOptimizerGH<FactorizedOptimizer>::factor_costs(const VectorXd& x, const MatrixXd& Cov) const{
+    VectorXd VIMPOptimizerGH<FactorizedOptimizer>::factor_costs(const VectorXd& x, const MatrixXd& Precision) const{
         VectorXd fac_costs{VectorXd::Zero(n_sub_factors())};
         int cnt = 0;
+        MatrixXd Cov{_inverser.inverse(Precision)};
         for (auto& opt_k : _vec_factor_optimizers){
             VectorXd x_k = opt_k->Pk() * x;
             MatrixXd Cov_k = opt_k->Pk() * Cov * opt_k->Pk().transpose().eval();
@@ -275,10 +280,13 @@ namespace vimp{
      * @return cost value.
      */
     template <typename FactorizedOptimizer>
-    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value(const VectorXd& x, const MatrixXd& Cov) const{
+    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value(const VectorXd& x, const MatrixXd& Precision) const{
         assert(dim() == x.size());
-        assert(dim() == Cov.rows());
-        assert(dim() == Cov.cols());
+        assert(dim() == Precision.rows());
+        assert(dim() == Precision.cols());
+
+        MatrixXd Cov;
+        Cov = _inverser.inverse(Precision);
 
         double value = 0.0;
         for (auto& opt_k : _vec_factor_optimizers){
@@ -286,10 +294,10 @@ namespace vimp{
             MatrixXd Cov_k = opt_k->Pk() * Cov * opt_k->Pk().transpose().eval();
             value += opt_k->cost_value(x_k, Cov_k);
         }
-        MatrixXd Precision{Cov.inverse()};
+        // MatrixXd Precision{Cov.inverse()};
         double logdetprec = log(Precision.determinant());
         if (-9999.9 > logdetprec){
-            cout << "precision " << endl << Precision << endl;
+            // cout << "precision " << endl << Precision << endl;
             std::runtime_error(std::string("Infinity log determinant precision matrix ..."));
         }
         value += logdetprec / 2;

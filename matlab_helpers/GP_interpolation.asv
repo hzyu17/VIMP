@@ -1,0 +1,5 @@
+%% ====== GP interpolation ======
+w_Qc = 0.8;
+dim_conf = 2;
+Qc = eye(dim_conf) .* w_Qc;
+ttl_t = 
