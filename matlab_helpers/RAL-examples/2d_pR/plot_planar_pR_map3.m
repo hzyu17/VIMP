@@ -8,15 +8,23 @@ import gpmp2.*
 %% read map
 sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
 
-v_niters = [19, 29];
+v_niters = [21, 30];
 v_nsteps = [6, 6];
 
+x0 = 500;
+y0 = 500;
+width = 650;
+height = 300;
 figure
+set(gcf,'position',[x0,y0,width,height])
+
+tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'tight') 
 tiledlayout(1, 2, 'TileSpacing', 'None', 'Padding', 'None')
 for i = 1:2 % 4 experiments
     nexttile
     if i == 1
-        title('Go Through Plan')
+        t = title('Go Through Plan');
+        t.FontSize = 20;
         prefix = ["map_narrow/shortcut/"];
         means = csvread([prefix + "mean.csv"]);
         covs = csvread([prefix + "cov.csv"]);
@@ -26,7 +34,8 @@ for i = 1:2 % 4 experiments
          addpath("error_ellipse");
 
     else
-        title('Go Around Plan')
+        t = title('Go Around Plan');
+        t.FontSize = 20;
         prefix = ["map_narrow/circumvent/"];
         means = csvread([prefix + "mean.csv"]);
         covs = csvread([prefix + "cov.csv"]);
@@ -60,10 +69,10 @@ for i = 1:2 % 4 experiments
     
     for i_iter = 0: nsteps-1
             % each time step 
-            i = i_iter * step_size;
-            i_mean = means(i+1, 1:end);
-            i_cov = covs(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
-            i_prec = precisions(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
+            i_step = i_iter * step_size;
+            i_mean = means(i_step+1, 1:end);
+            i_cov = covs(i_step*ttl_dim+1 : (i_step+1)*ttl_dim, 1:ttl_dim);
+            i_prec = precisions(i_step*ttl_dim+1 : (i_step+1)*ttl_dim, 1:ttl_dim);
             i_vec_means_2d = cell(n_states, 1);
             i_vec_covs_2d = cell(n_states, 1);
             vec_precisions{i_iter+1} = i_prec;
@@ -95,16 +104,16 @@ for i = 1:2 % 4 experiments
     % --- prior
     prior_costs = [];
     prior_costs = [prior_costs, factor_costs(1:end, 1)];
-    for i = 1:n_states-1
-        prior_costs = [prior_costs, factor_costs(1:end, 1+(i-1)*2+1)];
+    for iii = 1:n_states-1
+        prior_costs = [prior_costs, factor_costs(1:end, 1+(iii-1)*2+1)];
     end
     prior_costs = [prior_costs, factor_costs(1:end, end)];
 
     
     % --- collision
     obs_costs = [];
-    for i = 1:n_states-2
-        obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
+    for iii = 1:n_states-2
+        obs_costs = [obs_costs, factor_costs(1:end, 1+(iii-1)*2+2)];
     end
     
     % --- entropy

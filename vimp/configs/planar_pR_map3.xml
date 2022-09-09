@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- =========================================== experiment narrow ============================================================= -->
+<!-- The experiment setting for the narrow gap environment in the paper. 
+     Two experiments are conducted, 
+     1. go through the gap: initialized linearly first using a low T, then replan in high T. 
+     2. go around the gap: using a go-around course plan in high T. -->
+
+<!-- =========================================== experiment 1 go through ============================================================= -->
 <!-- <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
     
     <start_pos>
-        <x>-5.0</x>
-        <y>-5.0</y>
+        <x>-3.0</x>
+        <y>-8.0</y>
     </start_pos>
 
     <goal_pos>
-        <x>3.0</x>
-        <y>16.0</y>
+        <x>5.0</x>
+        <y>17.0</y>
     </goal_pos>
 
-    <total_time>2.0</total_time>
+    <total_time>2.5</total_time>
 
     <n_total_states>15</n_total_states>
 
@@ -23,7 +28,7 @@
 
     <epsilon> 0.6 </epsilon>
 
-    <step_size> 0.45 </step_size>
+    <step_size> 0.4 </step_size>
 
     <num_iter> 20 </num_iter>
 
@@ -32,25 +37,26 @@
     <temperature>10.0</temperature>
 
     <replanning> 0 </replanning>
+    <mean_file>none</mean_file>
     <replanning_starting> 9 </replanning_starting>
 
 </parameters> -->
 
-<!-- =========================================== experiment narrow ============================================================= -->
-<!-- <parameters>
+<!-- =========================================== experiment 1 high T ============================================================= -->
+<parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
     
     <start_pos>
-        <x>-5.0</x>
-        <y>-5.0</y>
+        <x>-3.0</x>
+        <y>-8.0</y>
     </start_pos>
 
     <goal_pos>
         <x>5.0</x>
-        <y>16.0</y>
+        <y>17.0</y>
     </goal_pos>
 
-    <total_time>2.0</total_time>
+    <total_time>2.5</total_time>
 
     <n_total_states>15</n_total_states>
 
@@ -69,25 +75,26 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <replanning_starting> 16 </replanning_starting>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
+    <replanning_starting> 7 </replanning_starting>
 
-</parameters> -->
+</parameters>
 
-<!-- =========================================== experiment go around ============================================================= -->
-<parameters>
+<!-- =========================================== experiment go around high T ============================================================= -->
+<!-- <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
     
     <start_pos>
-        <x>-5.0</x>
-        <y>-5.0</y>
+        <x>-3.0</x>
+        <y>-8.0</y>
     </start_pos>
 
     <goal_pos>
         <x>5.0</x>
-        <y>16.0</y>
+        <y>17.0</y>
     </goal_pos>
 
-    <total_time>2.0</total_time>
+    <total_time>2.5</total_time>
 
     <n_total_states>15</n_total_states>
 
@@ -106,6 +113,8 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_map3_circumvent_base.csv</mean_file>
     <replanning_starting> 0 </replanning_starting>
+    
 
-</parameters>
+</parameters> -->

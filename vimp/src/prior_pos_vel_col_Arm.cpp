@@ -47,7 +47,7 @@ int main(){
     double init_precision_factor = atof(paramNode->first_node("init_precision_factor")->value());
 
     int replanning = atoi(paramNode->first_node("replanning")->value());
-
+    string replan_mean_file = static_cast<std::string>(paramNode->first_node("mean_file")->value());
     int replanning_starting = atoi(paramNode->first_node("replanning_starting")->value());
 
     // An example pr and sdf
@@ -152,7 +152,7 @@ int main(){
     /// Set initial value to the linear interpolation
     // int num_iter = 20;
     if (replanning == 1){
-        MatrixXd means = matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean_base.csv");
+        MatrixXd means = matrix_io.load_csv(replan_mean_file);
         // VectorXd good_init_vec = means.row(means.rows()-1);
         VectorXd good_init_vec = means.row(replanning_starting);
         /// Set initial value to the linear interpolation

@@ -46,10 +46,10 @@ int main(){
     double step_size = atof(paramNode->first_node("step_size")->value());
 
     int num_iter = atoi(paramNode->first_node("num_iter")->value());
-    int replanning = atoi(paramNode->first_node("replanning")->value());
-
     double init_precision_factor = atof(paramNode->first_node("init_precision_factor")->value());
-
+    
+    int replanning = atoi(paramNode->first_node("replanning")->value());
+    string replan_mean_file = static_cast<std::string>(paramNode->first_node("mean_file")->value());
     int replan_start = atoi(paramNode->first_node("replanning_starting")->value());
 
     MatrixIO matrix_io;
@@ -152,7 +152,7 @@ int main(){
     VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts, dim_conf};
 
     if (replanning == 1){
-        MatrixXd means = matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_map3_circumvent_base.csv");
+        MatrixXd means = matrix_io.load_csv(replan_mean_file);
         // MatrixXd means = matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv");
         // VectorXd good_init_vec = means.row(means.rows()-1);
         VectorXd good_init_vec = means.row(replan_start);

@@ -167,9 +167,9 @@ init_values = Values;
 
 %% ================== go around initialization for the proposed method ===================
 nexttile
-t = title('Go around initialization, GVI');
+t = title('GVI, r = 1.5');
 t.FontSize = 20;
-prefix = ["map_narrow/circumvent/"];
+prefix = ["map_narrow/shortcut/"];
 means = csvread([prefix + "mean.csv"]);
 covs = csvread([prefix + "cov.csv"]);
 precisions = csvread([prefix + "precisoin.csv"]);
@@ -309,7 +309,7 @@ result = optimizer.values();
 %% plot final values
 nexttile
 hold on
-t1 = title('Go around initialization, GPMP2');
+t1 = title('GPMP2, r = 0.5');
 t1.FontSize = 20;
 % plot world
 plotEvidenceMap2D_1(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);

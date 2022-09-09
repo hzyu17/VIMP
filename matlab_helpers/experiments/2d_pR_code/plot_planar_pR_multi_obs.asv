@@ -8,33 +8,31 @@ import gpmp2.*
 %% read map
 % sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs.csv");
 % sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy.csv");
-sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
-% sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
+% sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
+sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 
-%% an initilization specially for map3 narrow
-% means = csvread("../../vimp/data/2d_pR/mean_base.csv");
-% mean = means(1, 1:end);
-% positions = [-5, -5; 
-%                         0, -5; 
-%                         5, -5; 
-%                         10, -5; 
-%                         10, 0;
-%                         10, 2;
-%                         10, 3;
-%                         10, 4;
-%                         10, 5;
-%                         10, 10;
-%                         10, 12;
-%                         10, 14;
-%                         10, 15;
-%                         8, 16;
-%                         3, 16];
-% for i=1:15
-%     mean(1, (i-1)*4+1:(i-1)*4+2) = positions(i, 1:end);
-% end
-% csvwrite("../../vimp/data/2d_pR/mean_map3_circumvent_base.csv", mean)
-
-%%
+% an initilization specially for map3 narrow
+means = csvread("../../../vimp/data/2d_pR/mean_base.csv");
+mean = means(1, 1:end);
+positions = [-3, -7; 
+                        0, -5; 
+                        5, -5; 
+                        10, -5; 
+                        10, 0;
+                        10, 2;
+                        10, 3;
+                        10, 4;
+                        10, 5;
+                        10, 10;
+                        10, 12;
+                        10, 14;
+                        10, 15;
+                        8, 16;
+                        4, 17];
+for i=1:15
+    mean(1, (i-1)*4+1:(i-1)*4+2) = positions(i, 1:end);
+end
+csvwrite("../../../vimp/data/2d_pR/mean_map3_circumvent_base.csv", mean)
 
 %% ******************* Read datas ******************
 % --- low temperature ---
@@ -49,15 +47,15 @@ sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
 % addpath("error_ellipse");
 
 % % --- high temperature ---
-% means = csvread("../../../vimp/data/2d_pR/mean.csv"); 
-% covs = csvread("../../../vimp/data/2d_pR/cov.csv");
-% precisions = csvread("../../../vimp/data/2d_pR/precisoin.csv");
-% costs = csvread("../../../vimp/data/2d_pR/cost.csv");
-% 
-% factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs.csv");
-% perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics.csv");
-% final_cost = csvread("../../../vimp/data/2d_pR/final_cost.csv");
-% addpath("error_ellipse");
+means = csvread("../../../vimp/data/2d_pR/mean.csv"); 
+covs = csvread("../../../vimp/data/2d_pR/cov.csv");
+precisions = csvread("../../../vimp/data/2d_pR/precisoin.csv");
+costs = csvread("../../../vimp/data/2d_pR/cost.csv");
+
+factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs.csv");
+perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics.csv");
+final_cost = csvread("../../../vimp/data/2d_pR/final_cost.csv");
+addpath("error_ellipse");
 
 %%
 [niters, ttl_dim] = size(means);
@@ -274,6 +272,19 @@ scatter(linspace(1, niters, niters), costs(1:niters), 30, 'fill')
 xlabel('Iterations','fontweight','bold')
 ylabel('V(q)','fontweight','bold')
 hold off
+
+%% ====== statistics of the cost distributions ======
+disp('========== final prior cost ==========')
+sum(prior_costs(niters,1:end))
+
+disp('========== final obs_costs cost ==========')
+sum(obs_costs(niters, 1:end))
+
+disp('========== final entropy cost ==========')
+entropy_costs(niters)
+
+disp('========== final total cost ==========')
+costs(niters)
 
 %% statistics of perturbed cost
 % final_cost = final_cost(1);

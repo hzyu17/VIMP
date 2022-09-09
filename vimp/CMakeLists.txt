@@ -83,9 +83,6 @@ target_link_libraries(factor  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 add_executable(Gaussian_GH src/conv_Gaussian_GH.cpp)
 target_link_libraries(Gaussian_GH ${EIGEN3_LIBRARIES})
 
-add_executable(prior_col_pR src/conv_prior_col_pR.cpp)
-target_link_libraries(prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
-
 add_executable(conv_prior_posvel_col_pR src/conv_prior_posvel_col_pR.cpp)
 target_link_libraries(conv_prior_posvel_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 

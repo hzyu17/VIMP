@@ -11,10 +11,10 @@ import gpmp2.*
 % sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
 sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 
-%% an initilization specially for map3 narrow
+% an initilization specially for map3 narrow
 % means = csvread("../../../vimp/data/2d_pR/mean_base.csv");
 % mean = means(1, 1:end);
-% positions = [-5, -5; 
+% positions = [-3, -8; 
 %                         0, -5; 
 %                         5, -5; 
 %                         10, -5; 
@@ -28,7 +28,7 @@ sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 %                         10, 14;
 %                         10, 15;
 %                         8, 16;
-%                         3, 16];
+%                         5, 17];
 % for i=1:15
 %     mean(1, (i-1)*4+1:(i-1)*4+2) = positions(i, 1:end);
 % end
@@ -60,7 +60,7 @@ addpath("error_ellipse");
 %%
 [niters, ttl_dim] = size(means);
 dim_theta = 4;
-nsteps = 6;
+nsteps = 10;
 % niters
 niters = length(costs);
 for i=niters:-1:1

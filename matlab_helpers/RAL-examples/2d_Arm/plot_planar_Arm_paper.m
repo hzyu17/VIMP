@@ -103,7 +103,8 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(2, floor(nsteps/2), 'TileSpacing', 'tight', 'Padding', 'tight')
 for i_iter = 1: nsteps
     nexttile
-    title(['Iteration ', num2str(i_iter*step_size)])
+    t = title(['Iteration ', num2str(i_iter*step_size)]);
+    t.FontSize = 16;
     hold on 
 
     i_vec_means_2d = vec_means{i_iter};
@@ -127,6 +128,8 @@ for i_iter = 1: nsteps
 %     plotPlanarArm(arm.fk_model(), start_conf, 'b', 2);
 %     plotPlanarArm(arm.fk_model(), end_conf, 'r', 2);
 %     hold off
+xlim([-1 1.5])
+ylim([-0.5 1.5])
 end
 
 %% ================= plot the final iteration ===================
@@ -138,8 +141,8 @@ figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
-title(['Iteration ', num2str(nsteps*step_size)])
-hold on 
+t=title(['Iteration ', num2str(nsteps*step_size)]);
+t.FontSize = 16;
 i_vec_means_2d = vec_means{nsteps};
 i_vec_covs_2d = vec_covs{nsteps};
 hold on 
@@ -176,22 +179,28 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(2, 3, 'TileSpacing', 'tight', 'Padding', 'tight') 
 nexttile
 
-title('Prior cost factors')
+t = title('Factored Prior Costs');
+t.FontSize = 16;
 hold on
 grid on
 plot(prior_costs, 'LineWidth', 1.5)
 scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 30, 'filled')
-xlabel('Iterations','fontweight','bold')
-ylabel('-log(p(x_k))','fontweight','bold')
+xl = xlabel('Iterations','fontweight','bold');
+xl.FontSize = 16;
+yl = ylabel('-log(p(x_k))','fontweight','bold');
+yl.FontSize = 16;
 
 nexttile
-title('Collision cost factors')
+t = title('Factored Collision Costs');
+t.FontSize = 16;
 hold on
 grid on
 plot(obs_costs, 'LineWidth', 1.5)
 scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 30, 'filled')
-xlabel('Iterations','fontweight','bold')
-ylabel('-log(p(z|x_k))','fontweight','bold')
+xl = xlabel('Iterations','fontweight','bold');
+xl.FontSize = 16;
+yl = ylabel('-log(p(z|x_k))','fontweight','bold');
+yl.FontSize = 16;
 
 % --- entropy
 entropy_costs = [];
@@ -202,13 +211,16 @@ for i = 1:niters
 end
 
 nexttile
-title('Entropy cost factors')
+t = title('Entropy Cost');
+t.FontSize = 16;
 hold on
 grid on
 plot(entropy_costs, 'LineWidth', 1.5)
 scatter(linspace(1,niters, niters), entropy_costs(1:niters), 30, 'filled')
-xlabel('Iterations', 'fontweight', 'bold')
-ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
+xl = xlabel('Iterations', 'fontweight', 'bold');
+xl.FontSize = 16;
+yl = ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold');
+yl.FontSize = 16;
 
 % verify that the sum of the factored costs is the same as the total cost
 sum_fact_costs = sum(factor_costs(1:niters, 1:end), 2);
@@ -216,33 +228,39 @@ diff = sum_fact_costs + entropy_costs' - costs(1:niters)
 
 % ================ plot the total costs ================
 nexttile([1 3])
-title('Total Loss')
+t = title('Total Cost');
+t.FontSize = 16;
 grid on 
 hold on
 plot(costs(1:niters), 'LineWidth', 2.0);
 scatter(linspace(1, niters, niters), costs(1:niters), 30, 'fill')
-xlabel('Iterations','fontweight','bold')
-ylabel('V(q)','fontweight','bold')
+xl = xlabel('Iterations','fontweight','bold');
+xl.FontSize = 16;
+yl = ylabel('V(q)','fontweight','bold');
+yl.FontSize = 16;
 hold off
 
 %% ==== plot sampled covariance for the states ==== 
-x0 = 50;
-y0 = 50;
-width = 400;
+x0 = 500;
+y0 = 500;
+width = 600;
 height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
-nexttile
-title(['Iteration ', num2str(nsteps*step_size)])
-hold on 
-i_vec_means_2d = vec_means{nsteps};
-i_vec_covs_2d = vec_covs{nsteps};
-hold on 
-plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+
+tiledlayout(2, 3, 'TileSpacing', 'tight', 'Padding', 'tight')
 
 n_samples = 50;
 for j = 1:3:n_states
+    j
+    nexttile
+    t = title(['Support State ',num2str(j)]);
+    t.FontSize = 16;
+    hold on 
+    i_vec_means_2d = vec_means{nsteps};
+    i_vec_covs_2d = vec_covs{nsteps};
+    plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+
     % gradual changing colors
 %     alpha = (j / n_states)^(1.15);
     color = [0, 0, 1, 0.9];
@@ -250,7 +268,7 @@ for j = 1:3:n_states
     % mu j
     mean_j = i_vec_means_2d{j}';
     % cov j
-    cov_j = i_vec_covs_2d{j}
+    cov_j = i_vec_covs_2d{j};
     % sampling 
     rng('default')  % For reproducibility
     samples = mvnrnd(mean_j, cov_j, n_samples);
@@ -261,9 +279,45 @@ for j = 1:3:n_states
     end
     % means
 %     plotPlanarArm1(arm.fk_model(), , color, 2);
-end
 plotPlanarArm1(arm.fk_model(), start_conf, 'r', 3, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 3, true);
+xlim([-1 1.5])
+ylim([-0.5 1.5])
+end
+
+% final step
+j = 15;
+nexttile
+t = title(['Support State ',num2str(j)]);
+t.FontSize = 16;
+hold on 
+i_vec_means_2d = vec_means{nsteps};
+i_vec_covs_2d = vec_covs{nsteps};
+plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+
+% gradual changing colors
+%     alpha = (j / n_states)^(1.15);
+color = [0, 0, 1, 0.9];
+color_sample = [0.0, 0.0, 0.7, 0.02];
+% mu j
+mean_j = i_vec_means_2d{j}';
+% cov j
+cov_j = i_vec_covs_2d{j};
+% sampling 
+rng('default')  % For reproducibility
+samples = mvnrnd(mean_j, cov_j, n_samples);
+plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 4, true);
+for k = 1: size(samples, 1)
+    k_sample = samples(k, 1:end)';
+    plotPlanarArm1(arm.fk_model(), k_sample, color_sample, 3, false);
+end
+% means
+%     plotPlanarArm1(arm.fk_model(), , color, 2);
+plotPlanarArm1(arm.fk_model(), start_conf, 'r', 3, true);
+plotPlanarArm1(arm.fk_model(), end_conf, 'g', 3, true);
+xlim([-1 1.5])
+ylim([-0.5 1.5])
+
 hold off
 
 %% create map and save

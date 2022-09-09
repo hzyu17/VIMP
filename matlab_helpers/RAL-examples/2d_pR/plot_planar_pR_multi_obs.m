@@ -159,7 +159,7 @@ import gpmp2.*
 x0 = 500;
 y0 = 500;
 width = 600;
-height = 350;
+height = 380;
 figure
 set(gcf,'position',[x0,y0,width,height])
 % -------- plot the means -------- 
@@ -181,7 +181,8 @@ grid_Y = origin_y : cell_size : grid_corner_y;
 tiledlayout(2, floor(nsteps/2), 'TileSpacing', 'tight', 'Padding', 'none')
 for i_iter = 1: nsteps
     nexttile
-    title(['Iteration ', num2str(i_iter*step_size)])
+    t = title(['Iteration ', num2str(i_iter*step_size)]);
+    t.FontSize = 16;
     hold on 
    
     plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
@@ -206,7 +207,8 @@ figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
-title(['Iteration ', num2str(nsteps*step_size)])
+t = title(['Iteration ', num2str(nsteps*step_size)]);
+t.FontSize = 16;
 hold on 
 
 plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
@@ -235,30 +237,36 @@ end
 
 x0 = 50;
 y0 = 50;
-width = 857.1429;
-height = 500;
+width = 1000;
+height = 650;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
 tiledlayout(2, 3, 'TileSpacing', 'tight', 'Padding', 'tight') 
 nexttile
 
-title('Prior cost factors')
+t = title('Factored Prior Costs');
+t.FontSize = 16;
 hold on
 grid on
 plot(prior_costs, 'LineWidth', 4.5)
 scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 60, 'filled')
-xlabel('Iterations','fontweight','bold')
-ylabel('-log(p(x_k))/T','fontweight','bold')
+xl = xlabel('Iterations','fontweight','bold');
+xl.FontSize = 16;
+yl = ylabel('-log(p(x_k))/T','fontweight','bold');
+yl.FontSize = 16;
 
 nexttile
-title('Collision cost factors')
+t = title('Factored Collision Costs');
+t.FontSize = 16;
 hold on
 grid on
 plot(obs_costs, 'LineWidth', 4.5)
 scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 60, 'filled')
-xlabel('Iterations','fontweight','bold')
-ylabel('-log(p(z|x_k))/T','fontweight','bold')
+xl = xlabel('Iterations', 'fontweight', 'bold');
+xl.FontSize = 16;
+yl = ylabel('-log(p(z|x_k))/T','fontweight','bold');
+yl.FontSize = 16;
 
 % --- entropy
 entropy_costs = [];
@@ -269,13 +277,16 @@ for i = 1:niters
 end
 
 nexttile
-title('Entropy cost factors')
+t = title('Entropy Cost');
+t.FontSize = 16;
 hold on
 grid on
 plot(entropy_costs, 'LineWidth', 4.5)
 scatter(linspace(1,niters, niters), entropy_costs(1:niters), 60, 'filled')
-xlabel('Iterations', 'fontweight', 'bold')
-ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
+xl = xlabel('Iterations', 'fontweight', 'bold');
+xl.FontSize = 16;
+yl = ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold');
+yl.FontSize = 16;
 
 % verify that the sum of the factored costs is the same as the total cost
 sum_fact_costs = sum(factor_costs(1:niters, 1:end), 2);
@@ -283,25 +294,29 @@ diff = sum_fact_costs + entropy_costs' - costs(1:niters);
 
 % ================ plot the total costs ================
 nexttile([1 3])
-title('Total Loss')
+t = title('Total Cost');
+t.FontSize = 16;
+
 grid on 
 hold on
 plot(costs(1:niters), 'LineWidth', 4.5);
 scatter(linspace(1, niters, niters), costs(1:niters), 60, 'fill')
-xlabel('Iterations','fontweight','bold')
-ylabel('V(q)','fontweight','bold')
+xl = xlabel('Iterations','fontweight','bold');
+xl.FontSize = 16;
+yl = ylabel('V(q)','fontweight','bold');
+yl.FontSize = 16;
 hold off
 
 
 %% ====== statistics of the cost distributions ======
 disp('========== final prior cost ==========')
-sum(prior_costs(niters,1:end))
+final_prior_cost = sum(prior_costs(niters,1:end))
 
-disp('========== final obs_costs cost ==========')
-sum(obs_costs(niters, 1:end))
+disp('========== final obs cost ==========')
+final_obs_cost = sum(obs_costs(niters, 1:end))
 
 disp('========== final entropy cost ==========')
-entropy_costs(niters)
+final_entropy_cost = entropy_costs(niters)
 
 disp('========== final total cost ==========')
 costs(niters)

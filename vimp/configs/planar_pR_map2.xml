@@ -70,6 +70,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 5 </replanning_starting>
 
 </parameters>
@@ -146,6 +147,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 8 </replanning_starting>
 
 </parameters> -->
@@ -222,6 +224,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 8 </replanning_starting>
 
 </parameters> -->
@@ -299,6 +302,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 4 </replanning_starting>
 
 </parameters> -->

@@ -27,7 +27,7 @@ sdf = PlanarSDF(origin_point2, cell_size, field);
 
 
 %% settings
-total_time_sec = 2.0;
+total_time_sec = 2.5;
 total_time_step = 14;
 total_check_step = 50;
 delta_t = total_time_sec / total_time_step;
@@ -58,9 +58,9 @@ pose_fix = noiseModel.Isotropic.Sigma(2, 0.0001);
 vel_fix = noiseModel.Isotropic.Sigma(2, 0.0001);
 
 % start and end conf
-start_conf = [-5, -5]';
+start_conf = [-3, -8]';
 start_vel = [0, 0]';
-end_conf = [5, 16]';
+end_conf = [5, 17]';
 end_vel = [0, 0]';
 avg_vel = (end_conf / total_time_step) / delta_t;
 
@@ -75,7 +75,12 @@ pause_time = total_time_sec / total_time_step;
 % title('Layout')
 % hold off
 
-figure 
+x0 = 500;
+y0 = 500;
+width = 650;
+height = 300;
+figure
+set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'tight') 
 
 %% init optimization
@@ -150,7 +155,8 @@ result = optimizer.values();
 %% plot final values
 nexttile
 hold on
-title('Radius r = 1.5')
+t=title('Radius r = 1.5');
+t.FontSize = 20;
 % plot world
 plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
 for i=0:total_time_step
@@ -162,7 +168,7 @@ end
 
 %% =============================== smaller radius =============================== 
 %% settings
-total_time_sec = 2.0;
+total_time_sec = 2.5;
 total_time_step = 14;
 total_check_step = 50;
 delta_t = total_time_sec / total_time_step;
@@ -193,9 +199,9 @@ pose_fix = noiseModel.Isotropic.Sigma(2, 0.0001);
 vel_fix = noiseModel.Isotropic.Sigma(2, 0.0001);
 
 % start and end conf
-start_conf = [-5, -5]';
+start_conf = [-3, -8]';
 start_vel = [0, 0]';
-end_conf = [5, 16]';
+end_conf = [5, 17]';
 end_vel = [0, 0]';
 avg_vel = (end_conf / total_time_step) / delta_t;
 
@@ -300,7 +306,8 @@ result = optimizer.values();
 %% plot final values
 nexttile
 hold on
-title('Radius r = 0.5')
+t=title('Radius r = 0.5');
+t.FontSize = 20;
 % plot world
 plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
 for i=0:total_time_step
