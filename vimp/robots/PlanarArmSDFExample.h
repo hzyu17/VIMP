@@ -20,27 +20,38 @@ namespace vimp{
 
     class PlanarArmSDFExample{
         public:
-            PlanarArmSDFExample(){
+            PlanarArmSDFExample(const string& field_file){
                 
-                _field = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/field.csv");
-
                 Point2 origin(-1, -1);
                 double cell_size = 0.01;
+
+                _field = _matrix_io.load_csv(field_file);
 
                 _sdf = PlanarSDF(origin, cell_size, _field);
 
                 // 2 link simple example
-                Pose3 arm_base(Rot3(), Point3(0.05, 0.15, 0.05));
-                Vector2d a(0.1, 0.2), alpha(0, 0), d(0, 0);
+                Pose3 arm_base(Rot3(), Point3(0.0, 0.0, 0.0));
+                Vector2d a(0.5, 0.5), alpha(0, 0), d(0, 0);
                 Arm abs_arm(2, a, alpha, d, arm_base);
 
                 // body info, three spheres
                 BodySphereVector body_spheres;
-                const double r = 0.05;
-                body_spheres.push_back(BodySphere(0, r, Point3(-0.1, 0, 0)));
-                body_spheres.push_back(BodySphere(0, r, Point3(0, 0, 0)));
-                body_spheres.push_back(BodySphere(1, r, Point3(-0.1, 0, 0)));
-                body_spheres.push_back(BodySphere(1, r, Point3(0, 0, 0)));
+                const double r = 0.01;
+
+                body_spheres.push_back(BodySphere(0, r, Point3(-0.5,  0.0,  0.0)));
+                body_spheres.push_back(BodySphere(0, r, Point3(-0.4,  0.0,  0.0)));
+                body_spheres.push_back(BodySphere(0, r, Point3(-0.3,  0.0,  0.0)));
+                body_spheres.push_back(BodySphere(0, r, Point3(-0.2,  0.0,  0.0)));
+                body_spheres.push_back(BodySphere(0, r, Point3(-0.2,  0.0,  0.0)));
+                body_spheres.push_back(BodySphere(0, r, Point3(-0.1,  0.0,  0.0)));
+
+                body_spheres.push_back(BodySphere(1, r, Point3(-0.5, 0.0,  0.0)));
+                body_spheres.push_back(BodySphere(1, r, Point3(-0.4, 0.0,  0.0)));
+                body_spheres.push_back(BodySphere(1, r, Point3(-0.3, 0.0,  0.0)));
+                body_spheres.push_back(BodySphere(1, r, Point3(-0.2, 0.0,  0.0)));
+                body_spheres.push_back(BodySphere(1, r, Point3(-0.1, 0.0,  0.0)));
+                body_spheres.push_back(BodySphere(1, r, Point3( 0.0, 0.0,  0.0)));
+
                 _arm = ArmModel{abs_arm, body_spheres};
 
             }

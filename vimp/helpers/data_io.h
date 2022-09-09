@@ -22,7 +22,7 @@ namespace vimp{
         MatrixIO(){}
 
         template <typename T>
-        void saveData(const string& fileName, const T& matrix){
+        void saveData(const string& fileName, const T& matrix) const{
             cout << "Saving data to: " << fileName << endl;
             ofstream file(fileName);
             if (file.is_open()){
@@ -38,12 +38,14 @@ namespace vimp{
          * @return MatrixXd 
          */
         /// https://stackoverflow.com/questions/34247057/how-to-read-csv-file-and-assign-to-eigen-matrix
+
         MatrixXd load_csv (const std::string & path) {
             std::ifstream indata;
             indata.open(path);
             if (indata.peek() == std::ifstream::traits_type::eof()){
                 throw std::runtime_error(std::string("File dose not exist ...: ") + path);
             }
+            
             std::string line;
             std::vector<double> values;
             uint rows = 0;
@@ -53,8 +55,10 @@ namespace vimp{
                 while (std::getline(lineStream, cell, ',')) {
                     values.push_back(std::stod(cell));
                 }
-                ++rows;
+                rows++;
             }
+            cout << "value size " << endl << values.size() << endl;
+            cout << "rows " << endl << rows << endl;
             return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(values.data(), rows, values.size()/rows);
         }
 

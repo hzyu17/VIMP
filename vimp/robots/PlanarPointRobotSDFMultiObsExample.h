@@ -28,8 +28,8 @@ class PlanarPointRobotSDFMultiObsExample{
     public:
         PlanarPointRobotSDFMultiObsExample(){
             /// map and sdf
-            MatrixXd map_ground_truth = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/map_multiobs.csv");
-            _field = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs.csv");
+            MatrixXd map_ground_truth = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
+            _field = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv");
 
             // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
             Point2 origin(-20, -10);
@@ -39,7 +39,7 @@ class PlanarPointRobotSDFMultiObsExample{
 
             /// Robot model
             PointRobot pR(_ndof, _nlinks);
-            double r = 1.0;
+            double r = 1.5;
             BodySphereVector body_spheres;
             body_spheres.push_back(BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
             _pR_model = PointRobotModel(pR, body_spheres);

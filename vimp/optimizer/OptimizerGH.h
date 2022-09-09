@@ -36,16 +36,16 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int niters=10):
+    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_conf):
                                    _dim{vec_fact_optimizers[0]->Pk().cols()},
-                                   _niters{niters},
+                                   _niters{10},
                                    _sub_dim{vec_fact_optimizers[0]->Pk().rows()},
                                    _nsub_vars{vec_fact_optimizers.size()},
                                    _vec_factor_optimizers{std::move(vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
                                    _precision{MatrixXd::Identity(_dim, _dim)},
-                                   _inverser{_precision},
-                                   _covariance{MatrixXd::Identity(_dim, _dim)},
+                                   _inverser{_precision, dim_conf},
+                                   _covariance{_inverser.inverse()},
                                    _res_recorder{_niters, _dim}{}
 protected:
     /// optimization variables
@@ -73,6 +73,9 @@ protected:
     double _step_size_mu = 0.9;
     double _step_size_base_mu = 0.55;
     double _step_size_base_precision = 0.05;
+
+    /// filename for the perturbed costs
+    std::string _file_perturbed_cost;
 
 public:
 /// **************************************************************
@@ -105,12 +108,18 @@ public:
     double cost_value() const;
 
     /**
+     * @brief given a state, compute the total cost function value without the entropy term, using current values.
+     * @return cost value.
+     */
+    double cost_value_no_entropy() const;
+
+    /**
      * @brief Compute the costs of all factors for a given mean and cov.
      * @param x mean
-     * @param P covariance
+     * @param Precision precision matrix
      * @return VectorXd collection of factor costs
      */
-    VectorXd factor_costs(const VectorXd& x, const MatrixXd& Cov) const;
+    VectorXd factor_costs(const VectorXd& x, const MatrixXd& Precision) const;
 
     /**
      * @brief Compute the costs of all factors, using current values.
@@ -128,7 +137,8 @@ public:
     inline MatrixXd precision() const{ return _precision; }
 
     /// returns the covariance matrix
-    inline MatrixXd covariance(){ return _precision.inverse(); }
+    // inline MatrixXd covariance(){ return _precision.inverse(); }
+    inline MatrixXd covariance(){ return _inverser.inverse(_precision); }
 
     /**
      * @brief Purturb the mean by a random vector.
@@ -145,7 +155,13 @@ public:
      * @return purturbed precision matrix
      */
     inline MatrixXd purturb_precision(double scale=0.01) const{
-        return MatrixXd{_precision + MatrixXd::Random(_dim, _dim) * scale};
+        MatrixXd purturbation = MatrixXd::Zero(_dim, _dim);
+        purturbation.triangularView<Upper>() = (scale * MatrixXd::Random(_dim, _dim)).triangularView<Upper>();
+        purturbation.triangularView<Lower>() = purturbation.triangularView<Upper>().transpose();
+        purturbation = MatrixXd::Identity(_dim, _dim) + purturbation;
+
+        // save_matrix("data/2d_pR/purturbed.csv", purturbation*_precision*purturbation);
+        return MatrixXd{purturbation*_precision*purturbation};
     }   
 
     /**
@@ -156,7 +172,25 @@ public:
     inline double purturbed_cost(double scale=0.01) const{
         VectorXd p_mean = purturb_mean(scale);
         MatrixXd p_precision = purturb_precision(scale);
-        return cost_value(p_mean, p_precision.inverse());
+        // return cost_value(p_mean, p_precision.inverse());
+        return cost_value(p_mean, _inverser.inverse(p_precision));
+    }
+
+
+    /**
+     * @brief Repeated purturbations and statistics.
+     * @param scale purturbation level
+     * @param n_experiments number of experiments
+     */
+    inline void purturbation_stat(double scale=0.01, int n_experiments=100) const{
+        VectorXd purturbed_costs(n_experiments);
+        for (int i=0; i<n_experiments; i++){
+            purturbed_costs(i) = purturbed_cost(scale);
+        }
+        cout << "----- Average purturbed cost -----" << endl << purturbed_costs.mean() << endl;
+        cout << "----- Min purturbed cost -----" << endl << purturbed_costs.minCoeff() << endl;
+        // save_vector("data/2d_pR/purturbation_statistics.csv", purturbed_costs);
+        save_vector(_file_perturbed_cost, purturbed_costs);
     }
 
     /// update the step sizes
@@ -188,7 +222,9 @@ public:
         assert(new_precision.size() == _precision.size());
         _precision = new_precision;
         // _inverser.update_matrix(_precision);
-        _covariance = _precision.inverse();
+        // _covariance = _precision.inverse();
+
+        _covariance = _inverser.inverse(_precision);
 
         for (auto & opt_fact : _vec_factor_optimizers){
             opt_fact->update_precision_from_joint_covariance(_covariance);
@@ -232,8 +268,10 @@ public:
                                   const string& file_cov, 
                                   const string& file_precision, 
                                   const string& file_cost,
-                                  const string& file_fac_costs){
+                                  const string& file_fac_costs,
+                                  const string& file_perturbed_costs){
         _res_recorder.update_file_names(file_mean, file_cov, file_precision, file_cost, file_fac_costs);
+        _file_perturbed_cost = file_perturbed_costs;
     }
 
     /**
@@ -246,11 +284,11 @@ public:
     /**
      * @brief save a matrix to a file. 
      */
-    inline void save_matrix(const string& filename, const MatrixXd& m){
+    inline void save_matrix(const string& filename, const MatrixXd& m) const{
         _matrix_io.saveData<MatrixXd>(filename, m);
     }
 
-    inline void save_vector(const string& filename, const VectorXd& vec){
+    inline void save_vector(const string& filename, const VectorXd& vec) const{
         _matrix_io.saveData<VectorXd>(filename, vec);
     }
 
@@ -336,7 +374,7 @@ public:
             VectorXd mean{VectorXd::Constant(1, x_start + i*res_x)};
             for (int j=0; j<nmesh; j++){
                 MatrixXd cov{MatrixXd::Constant(1, 1, 1/(y_start + j*res_y))};
-                Z(j, i) = cost_value(mean, cov); /// the order of the matrix in cpp and in matlab
+                Z(j, i) = cost_value(mean, cov.inverse()); /// the order of the matrix in cpp and in matlab
             }
         }
         cout << "Z(0,0) " << endl << Z(0,0) << endl;
@@ -355,7 +393,7 @@ public:
             file << cost_m.format(CSVFormat);
             file.close();}
     }
-    
+
     }; //class
 } //namespace vimp
 

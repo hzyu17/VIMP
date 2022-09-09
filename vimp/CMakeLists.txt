@@ -83,14 +83,14 @@ target_link_libraries(factor  ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES})
 add_executable(Gaussian_GH src/conv_Gaussian_GH.cpp)
 target_link_libraries(Gaussian_GH ${EIGEN3_LIBRARIES})
 
-add_executable(prior_col_pR src/conv_prior_col_pR.cpp)
-target_link_libraries(prior_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
-
 add_executable(conv_prior_posvel_col_pR src/conv_prior_posvel_col_pR.cpp)
 target_link_libraries(conv_prior_posvel_col_pR ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(prior_pos_vel_col_Arm src/prior_pos_vel_col_Arm.cpp)
 target_link_libraries(prior_pos_vel_col_Arm ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
+
+add_executable(prior_pos_vel_col_3LinkArm src/prior_pos_vel_col_3LinkArm.cpp)
+target_link_libraries(prior_pos_vel_col_3LinkArm ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 add_executable(conv_1d src/conv_1d_example.cpp)
 target_link_libraries(conv_1d ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
@@ -144,6 +144,12 @@ target_link_libraries(test_vec_opt ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSA
 
 add_executable(test_gpmp2_obs tests/test_gpmp2_obs.cpp)
 target_link_libraries(test_gpmp2_obs ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+
+add_executable(test_pR_cost tests/test_pR_cost.cpp)
+target_link_libraries(test_pR_cost ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+
+add_executable(test_mesh_hinge tests/test_mesh_hinge_loss.cpp)
+target_link_libraries(test_mesh_hinge ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
 
 # -------------------------------------------- Doxygen for documentations
 find_package(Doxygen)
