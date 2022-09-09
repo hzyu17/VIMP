@@ -7,8 +7,7 @@ VIMP uses the variational inference to approach the motion planning problem as a
 [GTSAM](https://github.com/borglab/gtsam)    
  * Build and installation:\
    <code> git clone https://github.com/borglab/gtsam.git \
-                  mkdir build \
-                  cd build \
+                  cd gtsam && mkdir build && cd build\
              cmake -DGTSAM_BUILD_PYTHON:=ON -DGTSAM_BUILD_MATLAB:=ON -DGTSAM_INSTALL_MATLAB_TOOLBOX:=ON -DGTSAM_ALLOW_DEPRECATED_SINCE_V4:=OFF -DGTSAM_INSTALL_CYTHON_TOOLBOX:=ON  -DGTSAM_USE_SYSTEM_EIGEN:=ON .. \\
              sudo make install 
    </code> 
@@ -17,13 +16,12 @@ VIMP uses the variational inference to approach the motion planning problem as a
   * Build and installation:\
    <code>
         git clone https://github.com/gtrll/gpmp2.git \
-         mkdir build \
-         cd build \
+         cd gpmp2 && mkdir build && cd build\
          cmake -DGPMP2_BUILD_PYTHON_TOOLBOX:=ON -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON .. \
          sudo make install 
    </code> 
    \
- * Usage: 
+ * Usage: \
         After creating the neccessary ROS environments and installation of moveit
    * run the rviz world: 
         <code> roslaunch panda_moveit_config demo.launch pipeline:=ompl-chomp </code>
