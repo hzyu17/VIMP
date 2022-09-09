@@ -12,7 +12,8 @@ VIMP uses the variational inference to approach the motion planning problem as a
              cmake -DGTSAM_BUILD_PYTHON:=ON -DGTSAM_BUILD_MATLAB:=ON -               DGTSAM_INSTALL_MATLAB_TOOLBOX:=ON -DGTSAM_ALLOW_DEPRECATED_SINCE_V4:=OFF -DGTSAM_INSTALL_CYTHON_TOOLBOX:=ON  -DGTSAM_USE_SYSTEM_EIGEN:=ON .. \
              sudo make install 
    </code> 
-   [GPMP2](https://github.com/gtrll/gpmp2)
+   \
+   [GPMP2](https://github.com/gtrll/gpmp2) \
   * Build and installation:\
    <code>
              git clone https://github.com/gtrll/gpmp2.git \
@@ -20,7 +21,7 @@ VIMP uses the variational inference to approach the motion planning problem as a
               cd build \
               cmake -DGPMP2_BUILD_PYTHON_TOOLBOX:=ON -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON .. \
               sudo make install 
-   </code>
+   </code> \
  * Usage: \
         After creating the neccessary ROS environments and installation of moveit
    * run the rviz world: 
