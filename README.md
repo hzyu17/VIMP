@@ -1,8 +1,8 @@
 
-# This is the README for the project variational inference (GVI) to motion planning.
+# Gaussian variational inference (GVI) motion planning.
 
 ![Planning using Gaussian variational inference (GVI)](comparison.png)
-VIMP uses the variational inference to approach the motion planning problem as a probability inference. It models the trajectories using a mean and also a covariance. This project is built upon GTSAM and GPMP2.
+VIMP uses Gaussian variational inference to approach the motion planning problem as a probability inference. This project is built upon GTSAM and GPMP2.
  ** Build GTSAM: ** \
 [GTSAM](https://github.com/borglab/gtsam)    
  ** Build and installation: **
