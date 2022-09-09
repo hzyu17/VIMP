@@ -20,15 +20,3 @@ VIMP uses the variational inference to approach the motion planning problem as a
          cmake -DGPMP2_BUILD_PYTHON_TOOLBOX:=ON -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON .. \
          sudo make install 
    </code> 
-   \
- * Usage: \
-        After creating the neccessary ROS environments and installation of moveit
-   * run the rviz world: 
-        <code> roslaunch panda_moveit_config demo.launch pipeline:=ompl-chomp </code>
-   * adding obstacles:
-        <code> python ~/ws_moveit/src/moveit_collect_data/scripts/collision_scene.py </code>
-
-   * start the data listener:
-        <code> python ~/ws_moveit/src/moveit_collect_data/scripts/collect_data.py </code>
-   * start sampling node:
-        <code> rosrun moveit_collect_data random_sampling </code>
