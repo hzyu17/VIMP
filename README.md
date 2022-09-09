@@ -9,7 +9,7 @@ VIMP uses the variational inference to approach the motion planning problem as a
    <code> git clone https://github.com/borglab/gtsam.git \
                   mkdir build \
                   cd build \
-             cmake -DGTSAM_BUILD_PYTHON:=ON -DGTSAM_BUILD_MATLAB:=ON -               DGTSAM_INSTALL_MATLAB_TOOLBOX:=ON -DGTSAM_ALLOW_DEPRECATED_SINCE_V4:=OFF -DGTSAM_INSTALL_CYTHON_TOOLBOX:=ON  -DGTSAM_USE_SYSTEM_EIGEN:=ON .. \
+             cmake -DGTSAM_BUILD_PYTHON:=ON -DGTSAM_BUILD_MATLAB:=ON -DGTSAM_INSTALL_MATLAB_TOOLBOX:=ON -DGTSAM_ALLOW_DEPRECATED_SINCE_V4:=OFF -DGTSAM_INSTALL_CYTHON_TOOLBOX:=ON  -DGTSAM_USE_SYSTEM_EIGEN:=ON .. \\
              sudo make install 
    </code> 
    \
