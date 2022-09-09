@@ -22,6 +22,7 @@ VIMP uses the variational inference to approach the motion planning problem as a
          cmake -DGPMP2_BUILD_PYTHON_TOOLBOX:=ON -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON .. \
          sudo make install 
    </code> 
+   \
  * Usage: 
         After creating the neccessary ROS environments and installation of moveit
    * run the rviz world: 
