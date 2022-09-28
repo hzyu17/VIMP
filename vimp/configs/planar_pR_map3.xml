@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- The experiment setting for the narrow gap environment in the paper. 
+<!-- The experiment setting for the narrow gap environment in the paper. (The examples comparing with GPMP2)
      Two experiments are conducted, 
      1. go through the gap: initialized linearly first using a low T, then replan in high T. 
      2. go around the gap: using a go-around course plan in high T. -->
@@ -10,12 +10,12 @@
     
     <start_pos>
         <x>-3.0</x>
-        <y>-8.0</y>
+        <y>-7.0</y>
     </start_pos>
 
     <goal_pos>
-        <x>5.0</x>
-        <y>17.0</y>
+        <x>3.0</x>
+        <y>18.0</y>
     </goal_pos>
 
     <total_time>2.5</total_time>
@@ -38,7 +38,7 @@
 
     <replanning> 0 </replanning>
     <mean_file>none</mean_file>
-    <replanning_starting> 9 </replanning_starting>
+    <replanning_starting> 0 </replanning_starting>
 
 </parameters> -->
 
@@ -48,12 +48,12 @@
     
     <start_pos>
         <x>-3.0</x>
-        <y>-8.0</y>
+        <y>-7.0</y>
     </start_pos>
 
     <goal_pos>
-        <x>5.0</x>
-        <y>17.0</y>
+        <x>3.0</x>
+        <y>18.0</y>
     </goal_pos>
 
     <total_time>2.5</total_time>
@@ -76,22 +76,22 @@
 
     <replanning> 1 </replanning>
     <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
-    <replanning_starting> 7 </replanning_starting>
+    <replanning_starting> 2 </replanning_starting>
 
 </parameters>
 
 <!-- =========================================== experiment go around high T ============================================================= -->
 <!-- <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
-    
+
     <start_pos>
         <x>-3.0</x>
-        <y>-8.0</y>
+        <y>-7.0</y>
     </start_pos>
 
     <goal_pos>
-        <x>5.0</x>
-        <y>17.0</y>
+        <x>3.0</x>
+        <y>18.0</y>
     </goal_pos>
 
     <total_time>2.5</total_time>

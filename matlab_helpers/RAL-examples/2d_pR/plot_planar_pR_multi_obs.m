@@ -6,11 +6,11 @@ import gtsam.*
 import gpmp2.*
 
 %% choose the experiment and temperature to plot
-plot_temperture = "low";
-% plot_temperture = "high";
+% plot_temperture = "low";
+plot_temperture = "high";
 
-plot_experiment = "map1_above";
-% plot_experiment = "map1_below";
+% plot_experiment = "map1_above";
+plot_experiment = "map1_below";
 % plot_experiment = "map2_exp1";
 % plot_experiment = "map2_exp2";
 % plot_experiment = "map2_exp3";
