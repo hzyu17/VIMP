@@ -11,7 +11,7 @@ import gpmp2.*
 % sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
 sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 
-% an initilization specially for map3 narrow
+%% an initilization specially for map3 narrow
 % means = csvread("../../../vimp/data/2d_pR/mean_base.csv");
 % mean = means(1, 1:end);
 % positions = [-3, -8; 
@@ -28,7 +28,7 @@ sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 %                         10, 14;
 %                         10, 15;
 %                         8, 16;
-%                         5, 17];
+%                         4, 17];
 % for i=1:15
 %     mean(1, (i-1)*4+1:(i-1)*4+2) = positions(i, 1:end);
 % end
@@ -279,6 +279,9 @@ sum(prior_costs(niters,1:end))
 
 disp('========== final obs_costs cost ==========')
 sum(obs_costs(niters, 1:end))
+
+disp(['========== motion planning cost ', num2str(i),  '==========='])
+    sum(obs_costs(niters, 1:end)) + sum(prior_costs(niters,1:end))
 
 disp('========== final entropy cost ==========')
 entropy_costs(niters)

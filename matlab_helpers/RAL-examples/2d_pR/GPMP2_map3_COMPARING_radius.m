@@ -50,7 +50,7 @@ Qc = eye(2).*0.8;
 Qc_model = noiseModel.Gaussian.Covariance(Qc); 
 
 % obstacle cost settings
-cost_sigma = 0.0055;
+cost_sigma = 0.005;
 epsilon_dist = 0.6;
 
 % prior to start/goal
@@ -58,9 +58,9 @@ pose_fix = noiseModel.Isotropic.Sigma(2, 0.0001);
 vel_fix = noiseModel.Isotropic.Sigma(2, 0.0001);
 
 % start and end conf
-start_conf = [-3, -8]';
+start_conf = [-3, -7]';
 start_vel = [0, 0]';
-end_conf = [5, 17]';
+end_conf = [3, 18]';
 end_vel = [0, 0]';
 avg_vel = (end_conf / total_time_step) / delta_t;
 
@@ -168,12 +168,6 @@ end
 
 %% =============================== smaller radius =============================== 
 %% settings
-total_time_sec = 2.5;
-total_time_step = 14;
-total_check_step = 50;
-delta_t = total_time_sec / total_time_step;
-check_inter = total_check_step / total_time_step - 1;
-
 % use GP interpolation
 use_GP_inter = false;
 
@@ -185,36 +179,6 @@ sphere_vec = BodySphereVector;
 sphere_vec.push_back(BodySphere(spheres_data(1,1), spheres_data(1,5), ...
         Point3(spheres_data(1,2:4)')));
 pR_model = PointRobotModel(pR, sphere_vec);
-
-% GP
-Qc = eye(2).*0.8;
-Qc_model = noiseModel.Gaussian.Covariance(Qc); 
-
-% obstacle cost settings
-cost_sigma = 0.0055;
-epsilon_dist = 0.6;
-
-% prior to start/goal
-pose_fix = noiseModel.Isotropic.Sigma(2, 0.0001);
-vel_fix = noiseModel.Isotropic.Sigma(2, 0.0001);
-
-% start and end conf
-start_conf = [-3, -8]';
-start_vel = [0, 0]';
-end_conf = [5, 17]';
-end_vel = [0, 0]';
-avg_vel = (end_conf / total_time_step) / delta_t;
-
-% plot param
-pause_time = total_time_sec / total_time_step;
-
-% % plot start / end configuration
-% figure(1), hold on
-% plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
-% plotPointRobot2D(pR_model, start_conf);
-% plotPointRobot2D(pR_model, end_conf);
-% title('Layout')
-% hold off
 
 
 %% init optimization

@@ -8,8 +8,9 @@ import gpmp2.*
 %% read map
 sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
 
-v_niters = [21, 30];
+v_niters = [30, 30];
 v_nsteps = [6, 6];
+nsteps = 6;
 
 x0 = 500;
 y0 = 500;
@@ -50,8 +51,14 @@ for i = 1:2 % 4 experiments
     [niters, ttl_dim] = size(means);
     dim_conf = 2;
     dim_theta = 2*dim_conf;
-    niters = v_niters(i);
-    nsteps = v_nsteps(i);
+
+    niters = length(costs);
+    for ii=niters:-1:1
+        if costs(ii) ~= 0
+            niters=ii;
+            break
+        end
+    end
     step_size = floor(niters / nsteps);
     n_states = floor(ttl_dim / dim_theta);
     
@@ -125,16 +132,19 @@ for i = 1:2 % 4 experiments
         entropy_costs = [entropy_costs, log(det(precision_i))/2];
     end
     
-    disp(['========== final prior cost ', num2str(i),  '==========='])
+    disp(['========== prior cost ', num2str(i),  '==========='])
     sum(prior_costs(niters,1:end))
     
-    disp(['========== final obs cost ', num2str(i),  '==========='])
+    disp(['========== obs cost ', num2str(i),  '==========='])
     sum(obs_costs(niters, 1:end))
+
+    disp(['========== motion planning cost ', num2str(i),  '==========='])
+    sum(obs_costs(niters, 1:end)) + sum(prior_costs(niters,1:end))
     
-    disp(['========== final entropy cost ', num2str(i),  '==========='])
+    disp(['========== entropy cost ', num2str(i),  '==========='])
     entropy_costs(niters)
     
-    disp(['========== final total cost ', num2str(i),  '==========='])
+    disp(['========== total cost ', num2str(i),  '==========='])
     costs(niters)
 
 end
