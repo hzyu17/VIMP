@@ -101,57 +101,65 @@ target_link_libraries(conv_1d ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIB
 # target_link_libraries(conv_prior_col_pR_gp_inter ${GTSAM_LIBRARIES} ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES})
 
 
-# -------------------------------------------- Google tests
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG release-1.12.1
+# # -------------------------------------------- Google tests
+# include(FetchContent)
+# FetchContent_Declare(
+#   googletest
+#   GIT_REPOSITORY https://github.com/google/googletest.git
+#   GIT_TAG release-1.12.1
+# )
+# # For Windows: Prevent overriding the parent project's compiler/linker settings
+# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# FetchContent_MakeAvailable(googletest)
+add_library(gtest STATIC
+  3rd-part/googletest/1.10/googletest/include/gtest/gtest.h
+  3rd-part/googletest/1.10/googletest/src/gtest-all.cc
 )
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+target_include_directories(gtest PUBLIC
+  3rd-part/googletest/1.10/googletest/include
+)
+target_link_libraries(gtest Threads::Threads)
 
 
 #% --------------------------------------------------------- Tests files 
 add_executable(test_inverser tests/test_inverser.cpp)
-target_link_libraries(test_inverser ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_inverser ${EIGEN3_LIBRARIES} gtest)
 
 add_executable(test_optimizer tests/test_optimizer.cpp)
-target_link_libraries(test_optimizer ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_optimizer ${EIGEN3_LIBRARIES} gtest)
 
 add_executable(test_cython tests/test_cython.cpp)
-target_link_libraries(test_cython ${GTSAM_LIBRARIES} ${gpmp2_LIBRARIES} ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_cython ${GTSAM_LIBRARIES} ${gpmp2_LIBRARIES} ${EIGEN3_LIBRARIES} gtest)
 
 add_executable(test_Gh_instance instances/tests/test_GHInstance.cpp)
-target_link_libraries(test_Gh_instance ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_Gh_instance ${EIGEN3_LIBRARIES} gtest)
 
 add_executable(test_GH tests/test_GH.cpp)
-target_link_libraries(test_GH ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_GH ${EIGEN3_LIBRARIES} gtest)
 
 add_executable(test_gaussian tests/test_gaussian.cpp)
-target_link_libraries(test_gaussian ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_gaussian ${EIGEN3_LIBRARIES} gtest)
 
 add_executable(test_optimizer_functionals tests/test_optimizer_functionals.cpp)
-target_link_libraries(test_optimizer_functionals ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_optimizer_functionals ${EIGEN3_LIBRARIES} gtest)
 
 add_executable(test_read_sdf tests/test_read_sdf.cpp)
-target_link_libraries(test_read_sdf ${EIGEN3_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_read_sdf ${EIGEN3_LIBRARIES} gtest)
 
 add_executable(test_gp tests/test_gp.cpp)
-target_link_libraries(test_gp ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_gp ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} gtest)
 
 add_executable(test_vec_opt tests/test_vector_of_opts.cpp)
-target_link_libraries(test_vec_opt ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_vec_opt ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} gtest)
 
 add_executable(test_gpmp2_obs tests/test_gpmp2_obs.cpp)
-target_link_libraries(test_gpmp2_obs ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_gpmp2_obs ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} gtest)
 
 add_executable(test_pR_cost tests/test_pR_cost.cpp)
-target_link_libraries(test_pR_cost ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_pR_cost ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} gtest)
 
 add_executable(test_mesh_hinge tests/test_mesh_hinge_loss.cpp)
-target_link_libraries(test_mesh_hinge ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} GTest::gtest_main)
+target_link_libraries(test_mesh_hinge ${EIGEN3_LIBRARIES} ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} gtest)
 
 # -------------------------------------------- Doxygen for documentations
 find_package(Doxygen)
