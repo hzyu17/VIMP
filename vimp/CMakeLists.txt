@@ -35,7 +35,7 @@ find_package(Boost COMPONENTS timer REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 # GPMP2
-find_package( Eigen3 REQUIRED
+find_package( Eigen3 3.4 REQUIRED
               gpmp2 REQUIRED)
 
 set(GPMP2_LIBRARIES gpmp2)

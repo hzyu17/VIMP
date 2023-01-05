@@ -144,7 +144,7 @@ addpath("error_ellipse");
             vec_means{i_iter+1} = i_vec_means_2d;
             vec_covs{i_iter+1} = i_vec_covs_2d;
     end
-    
+
     %% ================ plot the last iteration ================ 
     hold on 
     plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
@@ -158,6 +158,20 @@ addpath("error_ellipse");
     end
     % xlim([-15, 20])
     ylim([-10, 20])
+
+    %% ================ plot the initialization =================
+    hold on
+    i_vec_means_2d = vec_means{1};
+    i_vec_covs_2d = vec_covs{1};
+    for j = 1:n_states
+        % means
+        scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 20, 'b');
+        % covariance
+        error_ellipse('C', i_vec_covs_2d{j}, 'mu', i_vec_means_2d{j}, 'conf', 0.997, 'scale', 1, 'style', 'b-.','clip', inf);
+    end
+    % xlim([-15, 20])
+    ylim([-10, 20])
+    
 
 %%  -------------------------------- go around initialization GPMP2 --------------------------------
 %% init optimization
@@ -241,4 +255,17 @@ for i=0:total_time_step
     plotPointRobot2D_1(pR_model, conf);
 %     pause(pause_time), hold off
 end
+ylim([-10, 20])
+
+%% ================ plot the initialization =================
+hold on
+i_vec_means_2d = vec_means{1};
+i_vec_covs_2d = vec_covs{1};
+for j = 1:n_states
+    % means
+    scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 20, 'b', 'filled');
+    % covariance
+%     error_ellipse('C', i_vec_covs_2d{j}, 'mu', i_vec_means_2d{j}, 'conf', 0.997, 'scale', 1, 'style', 'b-.','clip', inf);
+end
+% xlim([-15, 20])
 ylim([-10, 20])

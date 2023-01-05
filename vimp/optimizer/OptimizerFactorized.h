@@ -52,7 +52,7 @@ public:
 protected:
     // optimization variables
     int dim_;
-    int num_samples = 50000;
+    int num_samples = 10000;
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision, covariance_;
 
@@ -207,7 +207,7 @@ public:
         Vddmu = precision_ * tmp * precision_ - precision_ * (precision_t*covariance_).trace();
         Vddmu = Vddmu / 2;
 
-        }
+    }
 
     MatrixXd get_Vddmu(){
         return Vddmu;
