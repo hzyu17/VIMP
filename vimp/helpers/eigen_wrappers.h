@@ -271,28 +271,32 @@ public:
         SpMat Lsp = ldlt_sp.matrixL();
         Vector Dsp = ldlt_sp.vectorD().real();
         Vector Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
-
-        print_matrix(Dsp);
-        print_matrix(Dsp_inv);
         
         X_inv.setZero();
         for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
             int j = Rows.coeff(index);
             int k = Cols.coeff(index);
-            std::cout << "(j, k): (" << j << ", " << k << ")." << std::endl;
+            // std::cout << "(j, k): (" << j << ", " << k << ")." << std::endl;
             double cur_val = 0;
             if (j==k){ // diagonal
                 cur_val = Dsp_inv(j, k);
             }
-            // int l_indx=index+1; // iterate upward in L
-            for (int l_indx=index+1; l_indx < nnz; l_indx++){ 
+            // iterate downward in L, same column as k
+            for (int l_indx=index; l_indx < nnz; l_indx++){ 
                 if (Cols(l_indx) != k){
                     break;
                 }
-                std::cout << "(row_l, col_l): [" << Rows(l_indx) << ", " << Cols(l_indx) <<"]" << std::endl; 
-                cur_val = cur_val - X_inv.coeff(j, Rows(l_indx)) * Lsp.coeff(Rows(l_indx), k);
+                int l = Rows(l_indx);
+                // std::cout << " (l, k): [" << l << ", " << Cols(l_indx) <<"]" << std::endl; 
+                // std::cout << " (j, l): [" << j << ", " << l <<"]" << std::endl; 
+                if (l > j){
+                    cur_val = cur_val - X_inv.coeff(l, j) * Lsp.coeff(l, k);
+                }else{
+                    cur_val = cur_val - X_inv.coeff(j, l) * Lsp.coeff(l, k);
+                }
             }
             X_inv.coeffRef(j, k) = cur_val;
+            // std::cout << "X_inv(j,k):" << X_inv.coeff(j, k) << std::endl;
         }
         SpMat lower_tri = X_inv.triangularView<Eigen::StrictlyLower>().transpose();
         X_inv = X_inv + lower_tri;

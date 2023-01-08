@@ -241,8 +241,6 @@ TEST(TestSparse, sparse_permute){
  * 
  */
 TEST(TestSparse, sparse_inverse){
-    Matrix precision = m_io.load_csv("precision.csv");
-    SpMat precision_sp = precision.sparseView();
     SparseLDLT ldlt_sp(precision_sp);
     int size = precision_sp.rows();
     SpMat Lsp = ldlt_sp.matrixL();
@@ -259,18 +257,19 @@ TEST(TestSparse, sparse_inverse){
     Vector I,J,V;
     m_class.find_nnz(Lsp, I, J, V);
     SpMat precision_inv_sp(size, size);
-    precision_inv_sp.setZero();
+
+    std::cout << "sparse inverse time" << std::endl;
+    timer.start();
     m_class.inv_sparse(precision_sp, precision_inv_sp, I, J, V);
-    
+    timer.end();
+
+    std::cout << "full inverse time" << std::endl;
+    timer.start();
     Matrix inv_eigen = precision.inverse();
+    timer.end();
     Matrix inv_computed{precision_inv_sp};
 
-    m_io.saveData("cov_sparse_inv.csv", inv_computed);
-    m_io.saveData("cov_inv_eigen.csv", inv_eigen);
-
-    m_class.print_matrix(inv_computed - cov);
-
-    ASSERT_LE((inv_computed - cov).norm(), 1e-10);
+    ASSERT_TRUE(m_class.matrix_equal(inv_computed, cov));
 }
 
 
