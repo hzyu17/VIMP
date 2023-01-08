@@ -13,7 +13,6 @@
 
 #include "repeated_includes.h"
 #include <vector>
-using namespace Eigen;
 
 namespace vimp{
     class MatrixIO{
@@ -35,11 +34,11 @@ namespace vimp{
          * @brief read a sdf map from csv file, which can be the output of some gpmp2 functions.
          * modified from an online code piece.
          * @param filename 
-         * @return MatrixXd 
+         * @return Matrix 
          */
         /// https://stackoverflow.com/questions/34247057/how-to-read-csv-file-and-assign-to-eigen-matrix
 
-        MatrixXd load_csv (const std::string & path) {
+        Eigen::MatrixXd load_csv (const std::string & path) {
             std::ifstream indata;
             indata.open(path);
             if (indata.peek() == std::ifstream::traits_type::eof()){
@@ -57,8 +56,6 @@ namespace vimp{
                 }
                 rows++;
             }
-            cout << "value size " << endl << values.size() << endl;
-            cout << "rows " << endl << rows << endl;
             return Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(values.data(), rows, values.size()/rows);
         }
 

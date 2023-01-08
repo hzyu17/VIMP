@@ -17,10 +17,10 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
-using namespace Eigen;
+// using namespace std;
+// using namespace Eigen;
 
 //https://eigen.tuxfamily.org/dox/structEigen_1_1IOFormat.html
-IOFormat CSVFormat(FullPrecision, DontAlignCols, ", ", "\n");
+Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
 
 #endif /* REPEATED_INCLUDES */
