@@ -18,7 +18,7 @@
 #include <assert.h>
 #include <random>
 
-#include "../helpers/SparseMatrixHelper.h"
+#include "../helpers/eigen_wrappers.h"
 #include "../helpers/GaussHermite.h"
 
 
@@ -88,6 +88,9 @@ namespace vimp{
         /// Mapping matrix to the joint distribution
         MatrixXd _Pk;
 
+        // Sparse inverser and matrix helpers
+        EigenWrapper _eigen_wrapper = EigenWrapper();
+
     /// public functions
     public:
         /// update the GH approximator
@@ -118,7 +121,7 @@ namespace vimp{
          * @param new_mu a given mean
          */
         inline void update_mu(const VectorXd& new_mu){ 
-            assert(_mu.size() == new_mu.size()); 
+            // assert(_mu.size() == new_mu.size()); 
             _mu = new_mu; }
 
 
@@ -129,10 +132,12 @@ namespace vimp{
          */
         inline void update_covariance(const MatrixXd& new_cov){ 
             // cout << "_covariance " << endl << _covariance << endl;
-            assert(_covariance.cols() == new_cov.cols()); 
-            assert(_covariance.rows() == new_cov.rows()); 
+            // assert(_covariance.cols() == new_cov.cols()); 
+            // assert(_covariance.rows() == new_cov.rows()); 
             _covariance = new_cov; 
-            _precision = _covariance.inverse();}
+            // _eigen_wrapper.inv_sparse(_covariance, _precision, );
+            _precision = _covariance.inverse();
+        }
 
 
         /**

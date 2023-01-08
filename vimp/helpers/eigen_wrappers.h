@@ -14,36 +14,33 @@
 #include<Eigen/SparseCholesky>
 #include"random.h"
 
-typedef Eigen::VectorXd Vector;
-typedef Eigen::VectorXcd VectorC;
-typedef Eigen::MatrixXd Matrix;
 typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a column-major sparse matrix type of double
 typedef Eigen::SparseVector<double> SpVec; 
-typedef Eigen::Triplet<double> Triplet;
+typedef Eigen::Triplet<double> Trip;
 
-class MatrixClass{
+class EigenWrapper{
 public:
-    MatrixClass(){};
+    EigenWrapper(){};
 
     // ================= min and max values in a matrix or a vector =================
-    double minval(const Matrix& m){
+    double minval(const Eigen::MatrixXd& m){
         return m.minCoeff();
     }
 
-    double maxval(const Matrix& m){
+    double maxval(const Eigen::MatrixXd& m){
         return m.maxCoeff();
     }
     
     // ================= random matrix, full and sparse =================
-    Matrix random_matrix(int m, int n){
-        return Matrix::Random(m ,n);
+    Eigen::MatrixXd random_matrix(int m, int n){
+        return Eigen::MatrixXd::Random(m ,n);
     }
 
     void random_sparse_matrix(SpMat & mat, int m, int n, int nnz){
         if (nnz > m*n){
             throw std::invalid_argument( "received negative value" );
         }
-        std::vector<Triplet> tripletList;
+        std::vector<Trip> tripletList;
         tripletList.reserve(nnz);
 
         Random random;
@@ -52,7 +49,7 @@ public:
             int i_row = random.randint(0, m-1);
             int j_col = random.randint(0, n-1);
             double val = random.rand_double(0.0, 10.0);
-            tripletList.push_back(Triplet(i_row, j_col, val));
+            tripletList.push_back(Trip(i_row, j_col, val));
         }
         mat.setFromTriplets(tripletList.begin(), tripletList.end());
     }
@@ -61,7 +58,7 @@ public:
         if (nnz > m*n){
             throw std::invalid_argument( "received negative value" );
         }
-        std::vector<Triplet> tripletList;
+        std::vector<Trip> tripletList;
         tripletList.reserve(nnz);
 
         Random random;
@@ -70,7 +67,7 @@ public:
             int i_row = random.randint(0, m-1);
             int j_col = random.randint(0, n-1);
             double val = random.rand_double(0.0, 10.0);
-            tripletList.push_back(Triplet(i_row, j_col, val));
+            tripletList.push_back(Trip(i_row, j_col, val));
         }
 
         SpMat mat(m, n);
@@ -79,54 +76,54 @@ public:
         return mat;
     }
 
-    Vector random_vector(int n){
-        return Vector::Random(n);
+    Eigen::VectorXd random_vector(int n){
+        return Eigen::VectorXd::Random(n);
     }
 
     SpMat sp_eye(int n){
-        std::vector<Triplet> tripletList;
+        std::vector<Trip> tripletList;
         tripletList.reserve(n);
         for (int i=0; i<n; i++){
-            tripletList.push_back(Triplet(i, i, 1));
+            tripletList.push_back(Trip(i, i, 1));
         }
         SpMat mat(n, n);
         mat.setFromTriplets(tripletList.begin(), tripletList.end());
         return mat;
     }
 
-    bool matrix_equal(const Matrix& m1, const Matrix& m2){
+    bool matrix_equal(const Eigen::MatrixXd& m1, const Eigen::MatrixXd& m2){
         return (m1 - m2).sum() < 1e-10;
     }
 
     // ================= Eigen valules and eigen vectors =================
-    VectorC eigen_values(const Matrix& m){
+    Eigen::VectorXcd eigen_values(const Eigen::MatrixXd& m){
         return m.eigenvalues();
     }
 
     // return real part of eigen values.
-    Vector real_eigenvalues(const Matrix& m){
-        VectorC eigen_vals{eigen_values(m)};
+    Eigen::VectorXd real_eigenvalues(const Eigen::MatrixXd& m){
+        Eigen::VectorXcd eigen_vals{eigen_values(m)};
         return eigen_vals.real();
     }
 
     // ================= decompositions for psd matrices =================
-    Eigen::LDLT<Matrix> ldlt_full(const Matrix& m){
+    Eigen::LDLT<Eigen::MatrixXd> ldlt_full(const Eigen::MatrixXd& m){
         return m.ldlt();
     }
 
     // ================= solving sparse equations =================
-    Vector solve_cgd_sp(const SpMat& A, const Vector& b){
+    Eigen::VectorXd solve_cgd_sp(const SpMat& A, const Eigen::VectorXd& b){
         Eigen::ConjugateGradient<SpMat, Eigen::Upper> solver;
         return solver.compute(A).solve(b);
     }
 
-    Vector solve_llt(const Matrix& A, const Vector& b){
+    Eigen::VectorXd solve_llt(const Eigen::MatrixXd& A, const Eigen::VectorXd& b){
         return A.llt().solve(b);
     }
 
     // ================= PSD matrix =================
-    Matrix random_psd(int n){
-        Matrix m{random_matrix(n, n)};
+    Eigen::MatrixXd random_psd(int n){
+        Eigen::MatrixXd m{random_matrix(n, n)};
         return m.transpose() * m;
     }
 
@@ -143,24 +140,24 @@ public:
     }
 
     bool is_sparse_positive(const SpMat& spm){
-        Matrix m{spm};
-        Eigen::LDLT<Matrix> ldlt(m);        
+        Eigen::MatrixXd m{spm};
+        Eigen::LDLT<Eigen::MatrixXd> ldlt(m);        
         return ldlt.isPositive();
     }
 
-    bool is_positive(const Matrix& m){
-        Eigen::LDLT<Matrix> ldlt(m);
+    bool is_positive(const Eigen::MatrixXd& m){
+        Eigen::LDLT<Eigen::MatrixXd> ldlt(m);
         return ldlt.isPositive();
     }
 
     // ================= IO for matrix =================
-    void print_matrix(const Matrix& m){  
+    void print_matrix(const Eigen::MatrixXd& m){  
         Eigen::IOFormat CleanFmt(3, 0, ",", "\n", "[","]");
         std::cout << m.format(CleanFmt) << _sep;
     }
 
     void print_spmatrix(const SpMat& sp_m){
-        Matrix m(sp_m);
+        Eigen::MatrixXd m(sp_m);
         Eigen::IOFormat CleanFmt(3, 0, ",", "\n", "[","]");
         std::cout << m.format(CleanFmt) << _sep;
     }
@@ -207,11 +204,11 @@ public:
     Eigen::DenseBase<DerivedI> & I,
     Eigen::DenseBase<DerivedJ> & J,
     Eigen::DenseBase<DerivedV> & V){
-        std::vector<Triplet> tripletList;
+        std::vector<Trip> tripletList;
         int nnz = I.size();
         tripletList.reserve(nnz);
         for (int i=0; i<nnz; i++){
-            tripletList.push_back(Triplet(I(i, 0), J(i, 0), V(i, 0)));
+            tripletList.push_back(Trip(I(i, 0), J(i, 0), V(i, 0)));
         }
         X.setFromTriplets(tripletList.begin(), tripletList.end());
     }
@@ -228,27 +225,27 @@ public:
         int nrows = end_row - start_row + 1;
         int ncols = end_col - start_col + 1;
         // sparse matrix block is not writtable, conversion to dense first.
-        Matrix mat_full{mat};
+        Eigen::MatrixXd mat_full{mat};
         
         mat_full.block(start_row, start_col, nrows, ncols) = block;
         mat = mat_full.sparseView();
     }
 
-    Vector block_extract(Vector & mat, int start_row, int end_row, int start_col, int end_col){
+    Eigen::VectorXd block_extract(Eigen::VectorXd & mat, int start_row, int end_row, int start_col, int end_col){
         int nrows = end_row-start_row+1;
         int ncols = end_col-start_col+1;
         return mat.block(start_row, start_col, nrows, ncols);
     }
 
-    void block_insert(Vector & mat, int start_row, int end_row, int start_col, int end_col, const Vector& block){
+    void block_insert(Eigen::VectorXd & mat, int start_row, int end_row, int start_col, int end_col, const Eigen::VectorXd& block){
         int nrows = end_row-start_row+1;
         int ncols = end_col-start_col+1;
         mat.block(start_row, start_col, nrows, ncols) = block;
     }
 
-    bool is_symmetric(const Matrix& m){
-        Matrix lower = m.triangularView<Eigen::StrictlyLower>();
-        Matrix upper_trans = m.triangularView<Eigen::StrictlyUpper>().transpose();
+    bool is_symmetric(const Eigen::MatrixXd& m){
+        Eigen::MatrixXd lower = m.triangularView<Eigen::StrictlyLower>();
+        Eigen::MatrixXd upper_trans = m.triangularView<Eigen::StrictlyUpper>().transpose();
         return (lower - upper_trans).sum() <= 1e-14;
     }
 
@@ -261,7 +258,7 @@ public:
      * @param J col index of nnz elements in L
      * @param V value of nnz elements in L
      */
-    void inv_sparse(const SpMat& X, SpMat & X_inv, const Vector& Rows, const Vector& Cols, const Vector& Nzros){
+    void inv_sparse(const SpMat& X, SpMat & X_inv, const Eigen::VectorXd& Rows, const Eigen::VectorXd& Cols, const Eigen::VectorXd& Nzros){
         // ----------------- sparse ldlt decomposition -----------------
         typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
         
@@ -269,8 +266,8 @@ public:
         int size = X.rows();
         SparseLDLT ldlt_sp(X);
         SpMat Lsp = ldlt_sp.matrixL();
-        Vector Dsp = ldlt_sp.vectorD().real();
-        Vector Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
+        Eigen::VectorXd Dsp = ldlt_sp.vectorD().real();
+        Eigen::VectorXd Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
         
         X_inv.setZero();
         for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
