@@ -2,11 +2,11 @@ clear all
 close all
 clc
 
-precision = read_data("precision_10.csv");
+precision = read_data("precision_16.csv");
 precision = precision(1:end, 1:end);
-cov = read_data("cov_10.csv");
+cov = read_data("cov_16.csv");
 cov = cov(1:end, 1:end);
-
+spm = sparse(precision);
 K = size(precision, 1);
 
 figure()
@@ -57,11 +57,10 @@ norm(inv_full-inv_true, 'fro')
 assert(norm(inv_full-inv_true, 'fro') < 1e-10);
 
 %% compare time of ldlt
-spm = sparse(precision);
-disp("matlab built-in ldl")
-tic
-[L,D] = ldl(precision);
-toc
+% disp("matlab built-in ldl")
+% tic
+% [L,D] = ldl(precision);
+% toc
 % disp("golub ldl")
 % tic
 % [L1,D1] = ldl_golub(spm);
@@ -92,14 +91,23 @@ inv_true_masked = inv_true.*mask;
 norm(inv_sp-inv_true_masked, 'fro')
 assert(norm(inv_sp-inv_true_masked, 'fro') < 1e-10);
 
-%% EXTERNAL ldl
+% EXTERNAL ldl
 % [L,D] = ldl_golub(precision);
 % assert(norm(precision- L*D*L', 'fro')<1e-10);
 
-%% L, D from cpp
-%% inverser considering the sparsity pattern
-precision = read_data("precision_16.csv");
+%% compare inversion from matlab and cpp
+clear all
+clc
+precision = read_data("precision_10.csv");
 precision = precision(1:end, 1:end);
+Lcpp = read_data("L_cpp.csv");
+Lcpp = Lcpp(1:end, 1:end);
+Dcpp = read_data("D_cpp.csv");
+Dcpp = Dcpp(1:end, 1:end);
+
+% %
+% [L, D] = ldl_golub(precision);
+
 K = size(precision, 1);
 % ---------------- LDL factorization ----------------
 Lsp = sparse(Lcpp);
@@ -115,8 +123,8 @@ for index=nnz:-1:1
     if (j==k)
         cur_val = 1/Dcpp(j,j);
     end
+
     start_index = index;
-    
     for s_index=index:-1:1
         if (col(s_index) < k)
             start_index = s_index+1;
@@ -143,11 +151,18 @@ end
 
 inv_sp = inv_sp + tril(inv_sp, -1)';
 
-% verification
+% --------------- verification --------------- 
 inv_true = inv(precision);
-norm(inv_sp-inv_true, 'fro')
 mask = zeros(K,K);
 mask(inv_sp ~= 0) = 1;
 inv_true_masked = inv_true.*mask;
-norm(inv_sp-inv_true_masked, 'fro')
-assert(norm(inv_sp-inv_true_masked, 'fro') < 1e-10);
+diff_matlab = inv_sp - inv_true_masked;
+disp("diff_matlab: ");
+norm(diff_matlab, 'fro')
+% verification cpp results
+inv_cpp = read_data("inv_computed.csv");
+inv_cpp = inv_cpp(1:end, 1:end);
+diff_cpp = inv_cpp - inv_true_masked;
+disp("diff_cpp: ");
+norm(diff_cpp, 'fro')
+assert(norm(diff_cpp, 'fro')<1e-10);

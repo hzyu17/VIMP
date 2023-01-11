@@ -12,8 +12,8 @@
 #include<Eigen/Dense>
 #include<Eigen/Sparse>
 #include<Eigen/SparseCholesky>
+#include"data_io.h"
 #include"random.h"
-// #include"ldlt_golub.h"
 
 typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a column-major sparse matrix type of double
 typedef Eigen::SparseVector<double> SpVec; 
@@ -112,7 +112,26 @@ public:
         return spm;
             
     }
-    
+
+    void constant_sparse(SpMat & X, const Eigen::VectorXi & I, const Eigen::VectorXi & J, double value){
+        int nnz = I.rows();
+        int size = X.rows();
+        Eigen::VectorXd V{Eigen::VectorXd::Ones(size, size) * value};
+        assemble(X, I, J, V);
+    }
+    /**
+     * @brief check equality M1==M2 only in places indicated by (I,J).
+     */
+    bool masked_equal(const Eigen::MatrixXd & M1, const Eigen::MatrixXd & M2, const Eigen::VectorXi & I, const Eigen::VectorXi & J){
+        int size = M1.rows();
+        SpMat X(size, size);
+        Eigen::MatrixXd M1_masked(size, size); 
+        Eigen::MatrixXd M2_masked(size, size);
+        constant_sparse(X, I, J, 1.0);
+        M1_masked = M1.cwiseProduct(X);
+        M2_masked = M2.cwiseProduct(X);
+        return((M1_masked - M2_masked).norm()<1e-10);
+    }
 
     // ================= Eigen valules and eigen vectors =================
     Eigen::VectorXcd eigen_values(const Eigen::MatrixXd& m){
@@ -230,9 +249,9 @@ public:
 
     template <typename DerivedI, typename DerivedJ, typename DerivedV>
     inline void assemble(Eigen::SparseMatrix<double, Eigen::ColMajor> & X,
-    Eigen::DenseBase<DerivedI> & I,
-    Eigen::DenseBase<DerivedJ> & J,
-    Eigen::DenseBase<DerivedV> & V){
+    const Eigen::DenseBase<DerivedI> & I,
+    const Eigen::DenseBase<DerivedJ> & J,
+    const Eigen::DenseBase<DerivedV> & V){
         X.setZero();
         std::vector<Trip> tripletList;
         int nnz = I.size();
@@ -279,75 +298,145 @@ public:
      * @param I sorted row index of nnz elements in L
      * @param J col index of nnz elements in L
      */
-    void inv_sparse(const SpMat& X, SpMat & X_inv, const Eigen::VectorXd& Rows, const Eigen::VectorXd& Cols){
+    void inv_sparse(const SpMat & X, SpMat & X_inv, const Eigen::VectorXi& Rows, const Eigen::VectorXi& Cols, int nnz){
         // ----------------- sparse ldlt decomposition -----------------
-        typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
-        int K = X.rows();
-        int nnz = Rows.rows();
         SparseLDLT ldlt_sp(X);
         SpMat Lsp = ldlt_sp.matrixL();
         Eigen::VectorXd Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
 
-        // print_row_col(Rows, Cols);
-        
+        // int nnz = Rows.rows();
         X_inv.setZero();
-        std::cout << "nnz: " << nnz << std::endl;
         for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
-            int j = Rows.coeff(index);
-            int k = Cols.coeff(index);
-            std::cout << "index: " << index << std::endl;
-            std::cout << "----------- (j, k): (" << j << ", " << k << ") ----------" << std::endl;
-
-            double cur_val = 0;
+            int j = Rows(index);
+            int k = Cols(index);
+            double cur_val = 0.0;
 
             if (j==k){ // diagonal
-                cur_val = Dsp_inv(k, k);
+                cur_val = Dsp_inv(j);
             }
             // find upward the starting point for l = k+1
-            int start_indx = index;
-            for (int s_indx=index; s_indx>0; s_indx--){
-                if (Cols(s_indx)<k){
-                    start_indx = s_indx+1;
+            int s_indx = index;
+            while(true){
+                if(Cols(s_indx)<k || s_indx==0){
+                    s_indx = s_indx+1;
                     break;
                 }
+                s_indx -= 1;
             }
+            
             // iterate downward in L(l\in(k+1,K), k)
-            for (int l_indx=start_indx+1; l_indx < nnz; l_indx++){ 
-                if (Cols(l_indx) != k){
+            for (int l_indx=s_indx; l_indx < nnz; l_indx++){ 
+                if (Cols.coeff(l_indx) > k){
                     break;
                 }
 
                 int l = Rows(l_indx);
-                // std::cout << " (l, k): [" << l << ", " << Cols(l_indx) <<"]" << std::endl; 
-                // std::cout << " (j, l): [" << j << ", " << l <<"]" << std::endl; 
                 if (l > j){
-                    std::cout << "X_inv("<< l <<", " << j <<") * L("<< l <<", " << k << ")"  << std::endl;
-                    cur_val -= X_inv.coeff(l, j) * Lsp.coeff(l, k);
+                    cur_val = cur_val - X_inv.coeff(l, j) * Lsp.coeff(l, k);
                 }else{
-                    std::cout << "X_inv("<< j <<", " << l <<") * L("<< l <<", " << k << ")"  << std::endl;
-                    cur_val -= X_inv.coeff(j, l) * Lsp.coeff(l, k);
+                    cur_val = cur_val - X_inv.coeff(j, l) * Lsp.coeff(l, k);
                 }
             }
-            // if (j == K-1){
-            //     std::cout << "X_inv(" << K-1 << ", " << j << ") * L(" << K-1 <<", " << k << ")"  << std::endl;
-            //     cur_val -= X_inv.coeff(K-1, j) * Lsp.coeff(K-1, k);
-            // }
-            
             X_inv.coeffRef(j, k) = cur_val;
-            std::cout << "X_inv at(j,k): " << "(" << j << ", " << k << "):" << cur_val << std::endl;
+            // X_inv.coeffRef(k, j) = cur_val;
         }
         SpMat upper_tri = X_inv.triangularView<Eigen::StrictlyLower>().transpose();
         X_inv = X_inv + upper_tri;
+        
     }
 
-    void inv_full_sparseview(const Eigen::MatrixXd& X, SpMat & X_inv){
-        SpMat X_sp = X.sparseView();
-        Eigen::VectorXd I, J, V;
-        find_nnz(X_sp, I, J, V);
-        int size = X_sp.rows();
+    /**
+     * @brief Inversion of a precision matrix with known trajectory structure as following.
+     * [x x x x x x x x
+     *  x x x x x x x x
+     *  x x x x x x x x
+     *  x x x x x x x x
+     *  x x x x x x x x x x x x 
+     *  x x x x x x x x x x x x 
+     *  x x x x x x x x x x x x 
+     *  x x x x x x x x x x x x 
+     *          x x x x x x x x 
+     *          x x x x x x x x 
+     *          x x x x x x x x
+     *          x x x x x x x x ...]
+     */
+    void inv_sparse_trj(const SpMat & X, SpMat & X_inv, int nnz, int dim){
+        // ----------------- sparse ldlt decomposition -----------------
+        SparseLDLT ldlt_sp(X);
+        SpMat Lsp = ldlt_sp.matrixL();
+        Eigen::VectorXd Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
 
-        inv_sparse(X_sp, X_inv, I, J);
+        // int nnz = Rows.rows();
+        X_inv.setZero();
+        int K = X.rows();
+        int d = 0;
+        for (int k=K-1; k>=0; k--){
+            if (K-k>=2*dim && k%dim==3){
+                d += 4;
+            }
+            int band_len = K-k-d;
+            for (int j=k+band_len-1; j>=k; j--){
+                double cur_val = 0;
+                if (j==k){ // diagonal
+                    cur_val = Dsp_inv(j);
+                }
+                // for these (j, k), loop from l:(k+1: K-k-d)
+                for(int l=k+1; l<k+band_len; l++){
+                    if (l > j){
+                        cur_val = cur_val - X_inv.coeff(l, j) * Lsp.coeff(l, k);
+                    }else{
+                        cur_val = cur_val - X_inv.coeff(j, l) * Lsp.coeff(l, k);
+                    }
+                }
+                X_inv.coeffRef(j, k) = cur_val;
+            }
+        }
+
+        // for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
+        //     double cur_val = 0.0;
+
+        //     if (j==k){ // diagonal
+        //         cur_val = Dsp_inv(j);
+        //     }
+        //     // find upward the starting point for l = k+1
+        //     int s_indx = index;
+        //     while(true){
+        //         if(Cols(s_indx)<k || s_indx==0){
+        //             s_indx = s_indx+1;
+        //             break;
+        //         }
+        //         s_indx -= 1;
+        //     }
+            
+        //     // iterate downward in L(l\in(k+1,K), k)
+        //     for (int l_indx=s_indx; l_indx < nnz; l_indx++){ 
+        //         if (Cols.coeff(l_indx) > k){
+        //             break;
+        //         }
+
+        //         int l = Rows(l_indx);
+        //         if (l > j){
+        //             cur_val = cur_val - X_inv.coeff(l, j) * Lsp.coeff(l, k);
+        //         }else{
+        //             cur_val = cur_val - X_inv.coeff(j, l) * Lsp.coeff(l, k);
+        //         }
+        //     }
+        //     X_inv.coeffRef(j, k) = cur_val;
+        //     // X_inv.coeffRef(k, j) = cur_val;
+        // }
+        SpMat upper_tri = X_inv.triangularView<Eigen::StrictlyLower>().transpose();
+        X_inv = X_inv + upper_tri;
+        
     }
+
+    // void inv_full_sparseview(const Eigen::MatrixXd& X, SpMat & X_inv){
+    //     SpMat X_sp = X.sparseView();
+    //     Eigen::VectorXd I, J, V;
+    //     find_nnz(X_sp, I, J, V);
+    //     int size = X_sp.rows();
+
+    //     inv_sparse(X_sp, X_inv, I, J);
+    // }
 
 private:
     // IO related
