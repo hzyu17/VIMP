@@ -1,7 +1,7 @@
 /**
  * @file block_index.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief A class describing block matrix related notions.
+ * @brief A class describing \b square block matrix related notions.
  * @version 0.1
  * @date 2023-01-07
  * 
@@ -10,13 +10,13 @@
  */
 
 namespace vimp{
-class BlockIndex{
+class SquareBlock{
 public:
-    BlockIndex(int start_row, int end_row, int start_col, int end_col):
+    SquareBlock(){}
+    SquareBlock(int start_row, int end_row):
     _start_row(start_row),
     _end_row(end_row){
         _nrow = end_row - start_row + 1;
-        _ncol = end_row - start_row + 1;
     }
 
     int s_r(){
@@ -29,10 +29,6 @@ public:
 
     int nrows(){
         return _nrow;
-    }
-
-    int ncols(){
-        return _ncol;
     }
 
 private:

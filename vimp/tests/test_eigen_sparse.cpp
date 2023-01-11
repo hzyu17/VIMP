@@ -9,14 +9,12 @@
  * 
  */
 
-#include<Eigen/Sparse>
-#include<Eigen/Dense>
 #include<gtest/gtest.h>
+
 #include"../helpers/timer.h"
-#include"../helpers/eigen_wrappers.h"
+#include"../helpers/eigen_wrapper.h"
 #include"../helpers/data_io.h"
 
-#include<Eigen/SparseCholesky>
 #include<Eigen/IterativeLinearSolvers>
 
 
@@ -31,13 +29,14 @@ Timer timer;
 MatrixIO m_io;
 
 // ================== read ground truth matrices ==================
-Matrix precision = m_io.load_csv("precision.csv");
+Matrix precision = m_io.load_csv("precision_16.csv");
 SpMat precision_sp = precision.sparseView();
 Matrix cov = m_io.load_csv("expected_cov.csv");
 SpMat cov_sp = cov.sparseView();
 Matrix D_true = m_io.load_csv("expected_D.csv");
 Matrix L_true = m_io.load_csv("expected_L.csv");
-typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
+
+// SpMat precision16_sp = precision.sparseView();
 
 /**
  * @brief Test initialization of a sparse matrix.
@@ -45,6 +44,14 @@ typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> 
 TEST(TestSparse, initialization){
     int m = 4; // number of rows and cols
     int n = m*m; // the matrix dimension
+
+    // SparseLDLT ldlt_sp(precision_sp);
+    // SpMat Lsp = ldlt_sp.matrixL();
+    // Matrix D_cpp = ldlt_sp.vectorD().real().asDiagonal();
+    // Matrix L_cpp{Lsp};
+    // // Matrix D_cpp{Dsp};
+    // m_io.saveData("L_cpp.csv", L_cpp);
+    // m_io.saveData("D_cpp.csv", D_cpp);
 
     timer.start();
     Matrix rand_mat = eigen_wrapper.random_matrix(n, n);
@@ -206,35 +213,33 @@ TEST(TestSparse, sparse_permute){
                   2.961292370892880,    5.598315242672160,          2.316465704151060e-16,         0,
                  -4.500997556437790e-16, 2.316465704151060e-16,     6.250000000000390,              0,
                  0,                     0,                          0,                              6.250000000000380;
-    SpMat block_extracted = eigen_wrapper.block_extract_sparse(precision_sp, 0, 3, 0, 3);
+    SpMat block_extracted = eigen_wrapper.block_extract_sparse(precision_sp, 0, 0, 4, 4);
     ASSERT_TRUE(eigen_wrapper.matrix_equal(block_extracted, block_true));
 
     // zero block
     SpMat zero_block(4, 4);
     zero_block.setZero();
-    eigen_wrapper.block_insert_sparse(precision_sp, 0, 3, 0, 3, zero_block);
-    SpMat new_block = eigen_wrapper.block_extract_sparse(precision_sp, 0, 3, 0, 3);
+    eigen_wrapper.block_insert_sparse(precision_sp, 0, 0, 4, 4, zero_block);
+    SpMat new_block = eigen_wrapper.block_extract_sparse(precision_sp, 0, 0, 4, 4);
     ASSERT_EQ(new_block.norm(), 0);
 
     // insert back the original block
-    eigen_wrapper.block_insert_sparse(precision_sp, 0, 3, 0, 3, block_extracted);
-    block_extracted = eigen_wrapper.block_extract_sparse(precision_sp, 0, 3, 0, 3);
+    eigen_wrapper.block_insert_sparse(precision_sp, 0, 0, 4, 4, block_extracted);
+    block_extracted = eigen_wrapper.block_extract_sparse(precision_sp, 0, 0, 4, 4);
     ASSERT_TRUE(eigen_wrapper.matrix_equal(block_extracted, block_true));
 
     // block for vector
     Vector vec = eigen_wrapper.random_matrix(10, 1);
     Vector v_blk = eigen_wrapper.random_matrix(4, 1);
 
-    eigen_wrapper.block_insert(vec, 0, 3, 0, 0, v_blk);
-    Vector v_block_extract = eigen_wrapper.block_extract(vec, 0, 4, 0, 0);
-    ASSERT_EQ((v_block_extract - v_blk).norm(), 0);
+    eigen_wrapper.block_insert(vec, 0, 0, 4, 1, v_blk);
+    Vector v_block_extract = eigen_wrapper.block_extract(vec, 0, 0, 4, 1);
+    ASSERT_TRUE(eigen_wrapper.matrix_equal(v_block_extract, v_blk));
 
 }
 
 /**
  * @brief Test for the following functions:
- * 
- * 
  */
 TEST(TestSparse, sparse_inverse){
     SparseLDLT ldlt_sp(precision_sp);
@@ -258,7 +263,7 @@ TEST(TestSparse, sparse_inverse){
     // compare time
     std::cout << "sparse inverse time" << std::endl;
     timer.start();
-    eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp, I, J, V);
+    eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp, I, J);
     timer.end();
 
     std::cout << "full inverse time" << std::endl;
@@ -268,13 +273,107 @@ TEST(TestSparse, sparse_inverse){
 
     // assert inversion success
     Matrix inv_computed{precision_inv_sp};
-    ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, cov));
+    ASSERT_LE((inv_computed - cov).norm(), 1e-10);
+    // ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, cov));
 
     // inverse cov to match precision
     SpMat cov_inv_sp(size, size);
-    eigen_wrapper.inv_sparse(cov_sp, cov_inv_sp, I, J, V);
-    ASSERT_TRUE(eigen_wrapper.matrix_equal(cov_inv_sp, precision));
+    eigen_wrapper.inv_sparse(cov_sp, cov_inv_sp, I, J);
+    ASSERT_LE((cov_inv_sp - precision).norm(), 1e-10);
+    // ASSERT_TRUE(eigen_wrapper.matrix_equal(cov_inv_sp, precision));
 
+    // inverse when in full matrix format
+    std::cout << "full sparse view inverse time" << std::endl;
+    SpMat precision_inv_full_sp(size, size);
+    timer.start();
+    eigen_wrapper.inv_full_sparseview(precision, precision_inv_full_sp);
+    timer.end();
+    Matrix inv_computed_full{precision_inv_full_sp};
+    ASSERT_LE((inv_computed_full - cov).norm(), 1e-10);
+    // ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed_full, cov));
+
+}
+
+TEST(TestSparse, sparse_view){
+    int size = 10;
+    int nnz = 20;
+    Eigen::MatrixXd m{eigen_wrapper.random_sparse_matrix(size, size, nnz)};
+    SpMat spm = m.sparseView();
+
+    Vector I,J,V;
+    eigen_wrapper.find_nnz(spm, I, J, V);
+    
+    ASSERT_LE((spm - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
+
+    SpMat spm_1 = spm + eigen_wrapper.random_sparse_matrix(size, size, nnz);
+
+    ASSERT_GE((spm_1 - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
+    
+}
+
+
+TEST(TestSparse, random_inverse){
+    int size = 10;
+    int nnz = 20;
+    Eigen::MatrixXd m{eigen_wrapper.random_sparse_matrix(size, size, nnz)};
+    Eigen::MatrixXd eye = Eigen::MatrixXd::Identity(size, size);
+    m = m*m.transpose() + eye;
+
+    // Eigen::MatrixXd m(8, 8);
+    // m << 19718.95,  -0.00,      10.58,      0.00,       -126.96,    0.00,       10.58,     -0.00,  
+    //     -0.00,      19718.95,   0.00,       10.58,      -0.00,      -126.96,    0.00,       10.58,      
+    //     10.58,      0.00,       19593.17,   -0.00,      -10.58,     -0.00,      0.59,       0.00,
+    //     0.00,       10.58,      -0.00,      19593.17,   0.00,       -10.58,     -0.00,      0.59,
+    //     -126.96,    -0.00,      -10.58,     0.00,       253.93,     -0.00,      0.00,       0.00,
+    //     0.00,       -126.96,    -0.00,      -10.58,     -0.00,      253.94,     0.00,       0.00,
+    //     10.58,      0.00,       0.59,       -0.00,      0.00,       0.00,       2.37,       0.00,   
+    //     -0.00,      10.58,      0.00,       0.59,       0.00,       0.00,       0.00,       2.37;
+
+    ASSERT_TRUE(eigen_wrapper.is_psd(m));
+    SpMat spm = m.sparseView();
+
+    SparseLDLT ldlt_sp(spm);
+    SpMat L = ldlt_sp.matrixL();
+    SpMat Usp = ldlt_sp.matrixU(); Matrix Uf_sp{Usp};
+    Matrix Dsp = ldlt_sp.vectorD().real().asDiagonal();
+    Matrix Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
+
+    std::cout << "L " << std::endl;
+    eigen_wrapper.print_matrix(L);
+
+    std::cout << "D_inv " << std::endl;
+    eigen_wrapper.print_matrix(Dsp_inv);
+    
+    // reconstruction sparse
+    Matrix recons_sp = L*Dsp*Usp;
+
+    ASSERT_LE((recons_sp - spm).norm(), 1e-10);
+
+    Eigen::VectorXd I, J, V;
+    eigen_wrapper.find_nnz(L, I, J, V);
+    SpMat L_assemble(size, size);
+    eigen_wrapper.assemble(L_assemble, I, J, V);
+    ASSERT_LE((L_assemble - L).norm(), 1e-10);
+
+    SpMat spm_inv(size, size);
+    eigen_wrapper.inv_sparse(spm, spm_inv, I, J);
+    Eigen::MatrixXd spm_inv_full{spm_inv};
+
+    m_io.saveData("spm_inv_full.csv", spm_inv_full);
+
+    Eigen::MatrixXd inv_full = m.inverse();
+
+    std::cout << "X_inv" << std::endl;
+    eigen_wrapper.print_matrix(spm_inv_full);
+
+    SpMat inv_full_spview = eigen_wrapper.sparse_view(inv_full, I, J);
+    inv_full_spview = eigen_wrapper.sparse_view(inv_full_spview, I, I);
+
+    Eigen::MatrixXd diff = spm_inv_full - inv_full_spview;
+    std::cout << "difference " << std::endl;
+    eigen_wrapper.print_matrix(diff);
+
+    ASSERT_LE((spm_inv_full - inv_full_spview).norm(), 1e-10);
 }
 
 

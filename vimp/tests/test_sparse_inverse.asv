@@ -1,0 +1,79 @@
+clear all
+close all
+clc
+
+precision = read_data("precision_16.csv");
+precision = precision(1:end, 1:end);
+cov = read_data("cov_16.csv");
+cov = cov(1:end, 1:end);
+
+K = size(precision, 1);
+
+figure()
+title('precision')
+spy(precision)
+
+%% inversion without considering the sparsity pattern
+% ---------------- LDL factorization ----------------
+[L, D, P] = ldl(precision);
+figure()
+title('L')
+spy(L)
+% ---------------- residual P'*precision*P - L*D*LT ------------------
+precision_permute = P'*precision*P;
+norm(precision_permute - L*D*L', 'fro')
+
+% ---------------- main algorithm ----------------
+inv_sp = zeros(K, K);
+for k=K : -1 : 1
+    for j=K : -1 : k
+        cur_val = 0;
+        if (j==k)
+            cur_val = 1/D(j,k);
+        end
+        for l=k+1:K
+            if(l>j)
+                cur_val = cur_val - inv_sp(l, j)*L(l,k);
+            else
+                cur_val = cur_val - inv_sp(j, l)*L(l,k);
+            end
+        end
+        inv_sp(j,k) = cur_val;
+    end
+end
+
+% inv_sp is inv(P'*precision*P)
+inv_sp = inv_sp + tril(inv_sp, -1)';
+inv_sp = P*inv_sp*P';
+figure()
+spy(inv_sp)
+
+inv_true = inv(precision);
+assert(norm(cov-inv_true, 'fro') < 1e-10);
+norm(inv_sp-inv_true, 'fro')
+assert(norm(inv_sp-inv_true, 'fro') < 1e-10);
+
+%% inverser considering the sparsity pattern
+% ---------------- LDL factorization ----------------
+[L, D, P] = ldl(precision);
+figure()
+title('L')
+spy(L)
+Lsp = sparse(L);
+[row, col, val] = find(Lsp);
+nnz = size(row, 1);
+for index=1:nnz
+    j = row(index);
+    k = col(index);
+    start_index = index;
+    for s_index=index:-1:1
+        if (col(s_index) < k)
+            start_index = s_index+1;
+            break;
+        end
+    end
+    for l_indx=start_index+1:st
+        l = row(l_indx);
+        
+    end
+end

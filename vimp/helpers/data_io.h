@@ -21,9 +21,9 @@ namespace vimp{
         MatrixIO(){}
 
         template <typename T>
-        void saveData(const string& fileName, const T& matrix) const{
-            cout << "Saving data to: " << fileName << endl;
-            ofstream file(fileName);
+        void saveData(const std::string& fileName, const T& matrix) const{
+            std::cout << "Saving data to: " << fileName << std::endl;
+            std::ofstream file(fileName);
             if (file.is_open()){
                 file << matrix.format(CSVFormat);
                 file.close();

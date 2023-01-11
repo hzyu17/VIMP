@@ -110,6 +110,9 @@ include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(test_eigen_sparse tests/test_eigen_sparse.cpp)
 target_link_libraries(test_eigen_sparse ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
+add_executable(test_sparse_graph tests/test_sparse_graph.cpp)
+target_link_libraries(test_sparse_graph ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+
 # # add executables for the tests
 # file(GLOB vimp_test_files RELATIVE "${CMAKE_SOURCE_DIR}/tests" "${CMAKE_SOURCE_DIR}/tests/*.cpp")
 

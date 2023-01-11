@@ -18,7 +18,7 @@
 #include <assert.h>
 #include <random>
 
-#include "../helpers/eigen_wrappers.h"
+#include "../helpers/eigen_wrapper.h"
 #include "../helpers/GaussHermite.h"
 
 
