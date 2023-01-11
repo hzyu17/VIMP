@@ -345,6 +345,84 @@ public:
         
     }
 
+    void inv_sparse_1(const SpMat & X, 
+    SpMat & X_inv, 
+    const Eigen::VectorXi& Rows, 
+    const Eigen::VectorXi& Cols, 
+    Eigen::VectorXi& StartIndxs,
+    int nnz){
+        // ----------------- sparse ldlt decomposition -----------------
+        SparseLDLT ldlt_sp(X);
+        SpMat Lsp = ldlt_sp.matrixL();
+        Eigen::VectorXd Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
+
+        // int nnz = Rows.rows();
+        X_inv.setZero();
+        for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
+            int j = Rows(index);
+            int k = Cols(index);
+            double cur_val = 0.0;
+
+            if (j==k){ // diagonal
+                cur_val = Dsp_inv(j);
+            }
+            // find upward the starting point for l = k+1
+            int s_indx = StartIndxs(index);
+            
+            // iterate downward in L(l\in(k+1,K), k)
+            for (int l_indx=s_indx; l_indx < nnz; l_indx++){ 
+                if (Cols.coeff(l_indx) > k){
+                    break;
+                }
+
+                int l = Rows(l_indx);
+                if (l > j){
+                    cur_val = cur_val - X_inv.coeff(l, j) * Lsp.coeff(l, k);
+                }else{
+                    cur_val = cur_val - X_inv.coeff(j, l) * Lsp.coeff(l, k);
+                }
+            }
+            X_inv.coeffRef(j, k) = cur_val;
+            // X_inv.coeffRef(k, j) = cur_val;
+        }
+        SpMat upper_tri = X_inv.triangularView<Eigen::StrictlyLower>().transpose();
+        X_inv = X_inv + upper_tri;
+        
+    }
+
+    
+    void construct_iteration_order(const SpMat & X, 
+    const Eigen::VectorXi& Rows, 
+    const Eigen::VectorXi& Cols, 
+    Eigen::VectorXi& StartIndxs, 
+    int nnz){
+        // ----------------- sparse ldlt decomposition -----------------
+        SparseLDLT ldlt_sp(X);
+        SpMat Lsp = ldlt_sp.matrixL();
+        Eigen::VectorXd Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
+
+        // int nnz = Rows.rows();
+        for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
+            int j = Rows(index);
+            int k = Cols(index);
+            double cur_val = 0.0;
+
+            if (j==k){ // diagonal
+                cur_val = Dsp_inv(j);
+            }
+            // find upward the starting point for l = k+1
+            int s_indx = index;
+            while(true){
+                if(Cols(s_indx)<k || s_indx==0){
+                    s_indx = s_indx+1;
+                    break;
+                }
+                s_indx -= 1;
+            }
+            StartIndxs(index) = s_indx;
+        }
+    }
+
     /**
      * @brief Inversion of a precision matrix with known trajectory structure as following.
      * [x x x x x x x x
@@ -392,51 +470,10 @@ public:
             }
         }
 
-        // for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
-        //     double cur_val = 0.0;
-
-        //     if (j==k){ // diagonal
-        //         cur_val = Dsp_inv(j);
-        //     }
-        //     // find upward the starting point for l = k+1
-        //     int s_indx = index;
-        //     while(true){
-        //         if(Cols(s_indx)<k || s_indx==0){
-        //             s_indx = s_indx+1;
-        //             break;
-        //         }
-        //         s_indx -= 1;
-        //     }
-            
-        //     // iterate downward in L(l\in(k+1,K), k)
-        //     for (int l_indx=s_indx; l_indx < nnz; l_indx++){ 
-        //         if (Cols.coeff(l_indx) > k){
-        //             break;
-        //         }
-
-        //         int l = Rows(l_indx);
-        //         if (l > j){
-        //             cur_val = cur_val - X_inv.coeff(l, j) * Lsp.coeff(l, k);
-        //         }else{
-        //             cur_val = cur_val - X_inv.coeff(j, l) * Lsp.coeff(l, k);
-        //         }
-        //     }
-        //     X_inv.coeffRef(j, k) = cur_val;
-        //     // X_inv.coeffRef(k, j) = cur_val;
-        // }
         SpMat upper_tri = X_inv.triangularView<Eigen::StrictlyLower>().transpose();
         X_inv = X_inv + upper_tri;
         
     }
-
-    // void inv_full_sparseview(const Eigen::MatrixXd& X, SpMat & X_inv){
-    //     SpMat X_sp = X.sparseView();
-    //     Eigen::VectorXd I, J, V;
-    //     find_nnz(X_sp, I, J, V);
-    //     int size = X_sp.rows();
-
-    //     inv_sparse(X_sp, X_inv, I, J);
-    // }
 
 private:
     // IO related
