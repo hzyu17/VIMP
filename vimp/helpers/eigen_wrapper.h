@@ -130,7 +130,11 @@ public:
         constant_sparse(X, I, J, 1.0);
         M1_masked = M1.cwiseProduct(X);
         M2_masked = M2.cwiseProduct(X);
-        return((M1_masked - M2_masked).norm()<1e-10);
+        if ((M1_masked - M2_masked).norm()<1e-10){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     // ================= Eigen valules and eigen vectors =================
@@ -345,6 +349,38 @@ public:
         
     }
 
+    void construct_iteration_order(const SpMat & X, 
+    const Eigen::VectorXi& Rows, 
+    const Eigen::VectorXi& Cols, 
+    Eigen::VectorXi& StartIndxs, 
+    int nnz){
+        // ----------------- sparse ldlt decomposition -----------------
+        SparseLDLT ldlt_sp(X);
+        SpMat Lsp = ldlt_sp.matrixL();
+        Eigen::VectorXd Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
+
+        // int nnz = Rows.rows();
+        for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
+            int j = Rows(index);
+            int k = Cols(index);
+            double cur_val = 0.0;
+
+            if (j==k){ // diagonal
+                cur_val = Dsp_inv(j);
+            }
+            // find upward the starting point for l = k+1
+            int s_indx = index;
+            while(true){
+                if(Cols(s_indx)<k || s_indx==0){
+                    s_indx = s_indx+1;
+                    break;
+                }
+                s_indx -= 1;
+            }
+            StartIndxs(index) = s_indx;
+        }
+    }
+    
     void inv_sparse_1(const SpMat & X, 
     SpMat & X_inv, 
     const Eigen::VectorXi& Rows, 
@@ -390,38 +426,6 @@ public:
         
     }
 
-    
-    void construct_iteration_order(const SpMat & X, 
-    const Eigen::VectorXi& Rows, 
-    const Eigen::VectorXi& Cols, 
-    Eigen::VectorXi& StartIndxs, 
-    int nnz){
-        // ----------------- sparse ldlt decomposition -----------------
-        SparseLDLT ldlt_sp(X);
-        SpMat Lsp = ldlt_sp.matrixL();
-        Eigen::VectorXd Dsp_inv = ldlt_sp.vectorD().real().cwiseInverse();
-
-        // int nnz = Rows.rows();
-        for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
-            int j = Rows(index);
-            int k = Cols(index);
-            double cur_val = 0.0;
-
-            if (j==k){ // diagonal
-                cur_val = Dsp_inv(j);
-            }
-            // find upward the starting point for l = k+1
-            int s_indx = index;
-            while(true){
-                if(Cols(s_indx)<k || s_indx==0){
-                    s_indx = s_indx+1;
-                    break;
-                }
-                s_indx -= 1;
-            }
-            StartIndxs(index) = s_indx;
-        }
-    }
 
     /**
      * @brief Inversion of a precision matrix with known trajectory structure as following.

@@ -246,93 +246,14 @@ TEST(TestSparse, masked_equality){
     Eigen::VectorXd K;
     eigen_wrapper.find_nnz(spm, I, J, K);
 
-    SpMat disturbed_spm = eigen_wrapper.random_sparse_matrix(40, 40, 50) + spm;
+    SpMat disturbed_spm = spm;
+    disturbed_spm.coeffRef(I(0), J(0)) = 0;
     ASSERT_TRUE(eigen_wrapper.masked_equal(spm, spm, I, J));
     ASSERT_FALSE(eigen_wrapper.masked_equal(disturbed_spm, spm, I, J));
 }
 
-/**
- * @brief Test for the following functions:
- */
-TEST(TestSparse, sparse_inverse){
-    Matrix precision = m_io.load_csv("precision_16.csv");
-    int size = precision.rows();
-
-    SpMat precision_sp = precision.sparseView();
-    SparseLDLT ldlt_sp(precision_sp);
-    SpMat Lsp = ldlt_sp.matrixL();
-    Matrix Dsp = ldlt_sp.vectorD().real().asDiagonal();
-
-    // find nnz
-    Eigen::VectorXi I,J;
-    Eigen::VectorXd V;
-    eigen_wrapper.find_nnz(Lsp, I, J, V);
-    int nnz = I.rows();
-    SpMat precision_inv_sp(size, size);
-    SpMat precision_inv_trj(size, size);
-    Matrix inv_full(size, size);
-
-    // compare time
-    std::cout << "sparse inverse time" << std::endl;
-    timer.start();
-    for (int i=0; i<100; i++){
-        eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp, I, J, nnz);
-    }
-    timer.end();
-
-    
-    std::cout << "sparse inverse_1 time" << std::endl;
-    Eigen::VectorXi StartIndx(nnz);
-    eigen_wrapper.construct_iteration_order(precision_sp, I, J, StartIndx, nnz);
-    timer.start();
-    for (int i=0; i<100; i++){
-        eigen_wrapper.inv_sparse_1(precision_sp, precision_inv_sp, I, J, StartIndx, nnz);
-    }
-    timer.end();
-
-    std::cout << "sparse inverse trj time" << std::endl;
-    timer.start();
-    for (int i=0; i<100; i++){
-        eigen_wrapper.inv_sparse_trj(precision_sp, precision_inv_trj, nnz, 4);
-    }
-    timer.end();
-
-    std::cout << "full inverse time" << std::endl;
-    timer.start();
-    for (int i=0; i<100; i++){
-        inv_full = precision.inverse();
-    }
-    timer.end();
-
-    // assert inversion success
-    Matrix inv_computed = precision_inv_sp;
-    Matrix inv_computed_trj = precision_inv_trj;
-    // m_io.saveData("inv_computed.csv", inv_computed);
-    // m_io.saveData("inv_computed_trj.csv", inv_computed_trj);
-    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed, inv_full, I, J));
-    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_trj, inv_full, I, J));
-    
-}
-
-TEST(TestSparse, sparse_view){
-    int size = 10;
-    int nnz = 20;
-    Eigen::MatrixXd m{eigen_wrapper.random_sparse_matrix(size, size, nnz)};
-    SpMat spm = m.sparseView();
-
-    Vector I,J,V;
-    eigen_wrapper.find_nnz(spm, I, J, V);
-    
-    ASSERT_LE((spm - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
-
-    SpMat spm_1 = spm + eigen_wrapper.random_sparse_matrix(size, size, nnz);
-
-    ASSERT_GE((spm_1 - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
-    
-}
-
 TEST(TestSparse, compare_block_operations){
-    Matrix precision = m_io.load_csv("precision_16.csv");
+    Matrix precision = m_io.load_csv("precision_large.csv");
     SpMat precision_sp = precision.sparseView();
     int ndim = precision.rows();
     int dim_state = 4;
@@ -378,6 +299,90 @@ TEST(TestSparse, compare_block_operations){
     ASSERT_TRUE(eigen_wrapper.matrix_equal(precision_inserted_block, precision_inserted_Pk));
 }
 
+/**
+ * @brief Test for the sparse inverse function
+ */
+TEST(TestSparse, sparse_inverse){
+    Matrix precision = m_io.load_csv("precision_large.csv");
+    int size = precision.rows();
+
+    SpMat precision_sp = precision.sparseView();
+    SparseLDLT ldlt_sp(precision_sp);
+    SpMat Lsp = ldlt_sp.matrixL();
+    Matrix Dsp = ldlt_sp.vectorD().real().asDiagonal();
+
+    // find nnz
+    Eigen::VectorXi I,J;
+    Eigen::VectorXd V;
+    eigen_wrapper.find_nnz(Lsp, I, J, V);
+    int nnz = I.rows();
+    Matrix inv_full(size, size);
+
+    // compare time
+
+    std::cout << "sparse inverse time" << std::endl;
+    SpMat precision_inv_sp(size, size);
+    timer.start();
+    for (int i=0; i<100; i++){
+        eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp, I, J, nnz);
+    }
+    timer.end();
+
+    std::cout << "sparse inverse_1 time" << std::endl;
+    SpMat precision_inv_1_sp(size, size);
+    Eigen::VectorXi StartIndx(nnz);
+    eigen_wrapper.construct_iteration_order(precision_sp, I, J, StartIndx, nnz);
+    timer.start();
+    for (int i=0; i<100; i++){
+        eigen_wrapper.inv_sparse_1(precision_sp, precision_inv_1_sp, I, J, StartIndx, nnz);
+    }
+    timer.end();
+
+    std::cout << "sparse inverse trj time" << std::endl;
+    SpMat precision_inv_trj(size, size);
+    timer.start();
+    for (int i=0; i<100; i++){
+        eigen_wrapper.inv_sparse_trj(precision_sp, precision_inv_trj, nnz, 4);
+    }
+    timer.end();
+
+    std::cout << "full inverse time" << std::endl;
+    timer.start();
+    for (int i=0; i<100; i++){
+        inv_full = precision.inverse();
+    }
+    timer.end();
+
+    // assert inversion success
+    Matrix inv_computed = precision_inv_sp;
+    Matrix inv_computed_1 = precision_inv_1_sp;
+    Matrix inv_computed_trj = precision_inv_trj;
+    // m_io.saveData("inv_computed.csv", inv_computed);
+    // m_io.saveData("inv_computed_trj.csv", inv_computed_trj);
+    ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_1));
+    ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_trj));
+    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed, inv_full, I, J));
+    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_1, inv_full, I, J));
+    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_trj, inv_full, I, J));
+    
+}
+
+TEST(TestSparse, sparse_view){
+    int size = 10;
+    int nnz = 20;
+    Eigen::MatrixXd m{eigen_wrapper.random_sparse_matrix(size, size, nnz)};
+    SpMat spm = m.sparseView();
+
+    Vector I,J,V;
+    eigen_wrapper.find_nnz(spm, I, J, V);
+    
+    ASSERT_LE((spm - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
+
+    SpMat spm_1 = spm + eigen_wrapper.random_sparse_matrix(size, size, nnz);
+
+    ASSERT_GE((spm_1 - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
+    
+}
 
 
 int main(int argc, char **argv){
