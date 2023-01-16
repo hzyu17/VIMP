@@ -47,11 +47,11 @@ sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
 % addpath("error_ellipse");
 
 % % --- high temperature ---
-means = csvread("../../../vimp/data/2d_pR/mean.csv"); 
-covs = csvread("../../../vimp/data/2d_pR/cov.csv");
-precisions = csvread("../../../vimp/data/2d_pR/precisoin.csv");
-costs = csvread("../../../vimp/data/2d_pR/cost.csv");
-factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs.csv");
+% means = csvread("../../../vimp/data/2d_pR/mean.csv"); 
+% covs = csvread("../../../vimp/data/2d_pR/cov.csv");
+% precisions = csvread("../../../vimp/data/2d_pR/precisoin.csv");
+% costs = csvread("../../../vimp/data/2d_pR/cost.csv");
+% factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs.csv");
 
 % perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics.csv");
 % final_cost = csvread("../../../vimp/data/2d_pR/final_cost.csv");
@@ -63,7 +63,7 @@ dim_theta = 4;
 nsteps = 10;
 % niters
 % niters = length(costs);
-niters = 9;
+niters = 6;
 nsteps = 6;
 for i=niters:-1:1
     if costs(i) ~= 0
@@ -261,7 +261,7 @@ ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
 
 % verify that the sum of the factored costs is the same as the total cost
 sum_fact_costs = sum(factor_costs(1:niters, 1:end), 2);
-% diff = sum_fact_costs + entropy_costs' - costs(1:niters);
+diff = sum_fact_costs + entropy_costs' - costs(1:niters)
 
 % ================ plot the total costs ================
 % tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none') 

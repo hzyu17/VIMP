@@ -166,3 +166,8 @@ diff_cpp = inv_cpp - inv_true_masked;
 disp("diff_cpp: ");
 norm(diff_cpp, 'fro')
 assert(norm(diff_cpp, 'fro')<1e-10);
+
+
+%%
+covariance
+covariancefullsp

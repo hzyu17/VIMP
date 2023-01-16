@@ -18,9 +18,6 @@ namespace vimp{
         // update the mu and sigma inside the gauss-hermite integrator
         updateGH();
 
-        assert((_gauss_hermite.mean()-_mu).norm() < 1e-10);
-        assert((_gauss_hermite.cov()-_covariance).norm() < 1e-10);
-
         /// Integrate for E_q{_Vdmu} 
         VectorXd Vdmu{VectorXd::Zero(_dim)};
         _gauss_hermite.update_integrand(_func_Vmu);

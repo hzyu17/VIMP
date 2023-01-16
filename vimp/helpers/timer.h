@@ -34,7 +34,7 @@ public:
             cout << "Not started yet, must call start() first! " << endl;
         }else{
             _end = chrono::steady_clock::now();
-            cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(_end - _start).count() << "[µs]" << endl;
+            cout << "Time difference = " << chrono::duration_cast<chrono::milliseconds>(_end - _start).count() << "[ms]" << endl;
             _has_started = false;
         }
     }

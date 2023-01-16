@@ -11,7 +11,6 @@
 
 #include "square_block.h"
 #include "eigen_wrapper.h"
-typedef Eigen::SparseMatrix<double> SpMat; 
 
 namespace vimp{
 struct Block{
@@ -37,71 +36,56 @@ public:
     int _ncols;
 };
 
-class TrajectoryGraph{
+class TrajectoryBlock{
+
 public:
-    TrajectoryGraph(){};
-    TrajectoryGraph(int state_dim, int num_state): _state_dim(state_dim),
-                                                   _num_states(num_state), 
-                                                   _graph_dim(state_dim*num_state), 
-                                                   _graph_precision_matrix(_graph_dim, _graph_dim),
-                                                   _graph_covariance(_graph_dim, _graph_dim)
-    {
-        _graph_precision_matrix.setZero();
-        _graph_covariance.setZero();
-        // fill in the precision matrix to the known sparsity pattern
-        for (int i=0; i<num_state-1; i++){
-            Eigen::MatrixXd block = Eigen::MatrixXd::Ones(2*state_dim, 2*state_dim) * 0.01;
-            _eigen_wrapper.block_insert_sparse(_graph_precision_matrix, i*state_dim, i*state_dim, 2*state_dim, 2*state_dim, block);
-        }
+    TrajectoryBlock(){}
 
+    TrajectoryBlock(int state_dim, int num_states, int start_index, int block_length):
+    _state_dim(state_dim),
+    _num_states(num_states),
+    _start_index(start_index),
+    _block_length(block_length){
+        _block = Block{_start_index*state_dim, _start_index*state_dim, _block_length, _block_length};
+    };
+
+    SpMat extract(const SpMat & m){
+        return m.middleRows(_block.row(), _block.nrows()).middleCols(_block.col(), _block.ncols());
     }
 
-    SpMat precision_matrix(){
-        return _graph_precision_matrix;
+    VectorXd extract_vector(const VectorXd & vec){
+        return vec.block(_block.row(), 0, _block.nrows(), 1);
     }
 
-    SpMat covariance_matrix(){
-        return _graph_covariance;
+    void fill(MatrixXd & block, SpMat & matrix){
+        Eigen::MatrixXd mat_full{matrix};
+        mat_full.block(_block.row(), _block.col(), _block.nrows(), _block.ncols()) = block;
+        matrix = mat_full.sparseView();
     }
 
-    bool precision_matrix_eq(const Eigen::MatrixXd& spm){
-        return _eigen_wrapper.matrix_equal(spm, _graph_precision_matrix);
+    void fill_vector(VectorXd & vec, const VectorXd & vec_block){
+        vec.setZero();
+        vec.block(_block.row(), 0, _block.nrows(), 1) = vec_block;
     }
 
-    void inverse_precision(){
-        _graph_covariance.setZero();
-        _eigen_wrapper.inv_sparse(_graph_precision_matrix, _graph_covariance, _I, _J);
+    double start_element(){
+        return _start_index*_state_dim;
     }
 
-    void set_precision(const SpMat & precision){
-        _graph_precision_matrix = precision;
-        find_nnz_tables();
+    double block_length(){
+        return _block_length;
     }
 
-    void find_nnz_tables(){
-        // LDLT, get the pattern in L.
-        SparseLDLT ldlt_sp(_graph_precision_matrix);
-        SpMat Lsp = ldlt_sp.matrixL(); 
-        _eigen_wrapper.print_spmatrix(Lsp);
-        Eigen::VectorXd V;
-        _eigen_wrapper.find_nnz(Lsp, _I, _J, V);
+    void print(){
+        std::cout << "(starting index, block length): " << "(" << _start_index << ", " << _block_length << ")" << std::endl;
     }
-
-    SpMat covariance_block(const Block& block_index){
-        return _eigen_wrapper.block_extract_sparse(_graph_covariance, 
-                                                    block_index._start_row, block_index._start_col, 
-                                                    block_index._nrows, block_index._ncols);
-    }
-    
 
 private:
     int _state_dim;
     int _num_states;
-    int _graph_dim;
-    EigenWrapper _eigen_wrapper = EigenWrapper();
-    SpMat _graph_precision_matrix;
-    SpMat _graph_covariance;
-    Eigen::VectorXd _I, _J; // NNZ element positions in L
+    int _start_index, _block_length;
+    Block _block = Block();
+
 };
 
 } //namespace vimp

@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include<Eigen/Dense>
 #include<Eigen/Sparse>
 #include<Eigen/SparseCholesky>
@@ -82,19 +84,58 @@ public:
         return Eigen::VectorXd::Random(n);
     }
 
-    SpMat sp_eye(int n){
-        std::vector<Trip> tripletList;
-        tripletList.reserve(n);
-        for (int i=0; i<n; i++){
-            tripletList.push_back(Trip(i, i, 1));
-        }
-        SpMat mat(n, n);
-        mat.setFromTriplets(tripletList.begin(), tripletList.end());
-        return mat;
+    SpMat sp_eye(int n, double scale=1.0){
+        SpMat eye(n, n);
+        eye.setIdentity();
+        return eye*scale;
     }
 
-    bool matrix_equal(const Eigen::MatrixXd & m1, const Eigen::MatrixXd & m2){
-        return (m1 - m2).sum() < 1e-10;
+    Eigen::MatrixXd full_eye(int n, double scale=1.0){
+        return Eigen::MatrixXd::Identity(n, n) * scale;
+    }
+
+    void partial_diagonal_eye(SpMat & m, int start_row, int length, double scale=1.0){
+        if (length > m.rows()){
+            std::__throw_out_of_range("length out of range");
+        }
+        Eigen::MatrixXd block = block_extract_sparse(m, start_row, start_row, length, length);
+        block.diagonal() = sp_eye(length, scale);
+        block_insert_sparse(m, start_row, start_row, length, length, block);
+    }
+    template <typename Derived>
+    bool matrix_equal(const Eigen::MatrixBase<Derived>& m1, const Eigen::MatrixBase<Derived>& m2){
+        if (m1.rows()!=m2.rows() || m1.cols() != m2.cols()){
+            std::cout << "not same dimension!" << std::endl;
+            return false;
+        }
+        bool res = (m1 - m2).norm() < 1e-10;
+        if (res){
+            return res;
+        }else{
+            std::cout << "not equal, norm difference: " << (m1 - m2).norm() << endl;
+            return res;
+        }
+    }
+
+    double matrix_norm(const Eigen::MatrixXd & m){
+        return m.norm();
+    }
+
+    /**
+     * @brief overload in case that one matrix is sparse.
+     */
+    bool matrix_equal(const Eigen::MatrixXd& m1, const Eigen::MatrixXd& m2){
+        if (m1.rows()!=m2.rows() || m1.cols() != m2.cols()){
+            std::cout << "not same dimension!" << std::endl;
+            return false;
+        }
+        bool res = (m1 - m2).norm() < 1e-10;
+        if (res){
+            return res;
+        }else{
+            std::cout << "not equal, norm difference: " << (m1 - m2).norm() << endl;
+            return res;
+        }
     }
 
     SpMat sparse_view(const Eigen::MatrixXd& X, Eigen::VectorXd & Rows, Eigen::VectorXd & Cols){
@@ -202,10 +243,22 @@ public:
         return is_positive(m) && is_symmetric(m);
     }
 
-    // ================= IO for matrix =================
-    void print_matrix(const Eigen::MatrixXd& m){  
+    // ================= IO for matrix and digits =================
+    template <typename Derived>
+    void print_matrix(const Eigen::MatrixBase<Derived>& m, std::string header="matrix printed"){  
         Eigen::IOFormat CleanFmt(3, 0, ",", "\n", "[","]");
+        std::cout << header << std::endl;
         std::cout << m.format(CleanFmt) << _sep;
+    }
+
+    void print_vectorXi(const Eigen::VectorXi& vec){
+        std::cout << vec << _sep;
+    }
+
+    void printf_fixed_digits(double x, int precision=5, std::string header="printing fixed-digit double"){
+        std::cout.precision(precision);
+        std::cout << header << std::endl;
+        std::cout << fixed << x << std::endl;
     }
 
     void print_spmatrix(const SpMat& sp_m){
@@ -278,7 +331,10 @@ public:
         return mat.middleRows(start_row, nrows).middleCols(start_col, ncols);
     }
 
-    void block_insert_sparse(SpMat & mat, const int start_row, int start_col, int nrows, int ncols, const Eigen::MatrixXd & block){
+    void block_insert_sparse(SpMat & mat, int start_row, int start_col, int nrows, int ncols, const Eigen::MatrixXd & block){
+        if (nrows>mat.rows() || ncols>mat.cols()){
+            std::__throw_out_of_range("row or column length out of range!");
+        }
         // sparse matrix block is not writtable, conversion to dense first.
         Eigen::MatrixXd mat_full{mat};
         
@@ -302,7 +358,12 @@ public:
      * @param I sorted row index of nnz elements in L
      * @param J col index of nnz elements in L
      */
-    void inv_sparse(const SpMat & X, SpMat & X_inv, const Eigen::VectorXi& Rows, const Eigen::VectorXi& Cols, int nnz){
+    void inv_sparse(const SpMat & X, 
+    SpMat & X_inv, 
+    const Eigen::VectorXi& Rows, 
+    const Eigen::VectorXi& Cols, 
+    const Eigen::VectorXd& Vals,
+    int nnz){
         // ----------------- sparse ldlt decomposition -----------------
         SparseLDLT ldlt_sp(X);
         SpMat Lsp = ldlt_sp.matrixL();
@@ -349,6 +410,20 @@ public:
         
     }
 
+    /**
+     * @brief Find the fixed non-zero index in L matrix for a trajectory. 
+     */
+    void find_trj_nnz(int num_states, int state_dim, Eigen::VectorXi & Rows, Eigen::VectorXi & Cols){
+        Eigen::VectorXd Vals; // only local var
+        SpMat m(num_states*state_dim, num_states*state_dim);
+        for (int i=0; i<num_states-1; i++){
+            Eigen::MatrixXd block = Eigen::MatrixXd::Ones(2*state_dim, 2*state_dim) * 0.01;
+            block_insert_sparse(m, i*state_dim, i*state_dim, 2*state_dim, 2*state_dim, block);
+        }
+        SpMat m_lower = m.triangularView<Eigen::Lower>();
+        find_nnz(m_lower, Rows, Cols, Vals);
+    }
+
     void construct_iteration_order(const SpMat & X, 
     const Eigen::VectorXi& Rows, 
     const Eigen::VectorXi& Cols, 
@@ -380,11 +455,12 @@ public:
             StartIndxs(index) = s_indx;
         }
     }
-    
+
     void inv_sparse_1(const SpMat & X, 
     SpMat & X_inv, 
     const Eigen::VectorXi& Rows, 
     const Eigen::VectorXi& Cols, 
+    const Eigen::VectorXd& Vals,
     Eigen::VectorXi& StartIndxs,
     int nnz){
         // ----------------- sparse ldlt decomposition -----------------
@@ -413,9 +489,9 @@ public:
 
                 int l = Rows(l_indx);
                 if (l > j){
-                    cur_val = cur_val - X_inv.coeff(l, j) * Lsp.coeff(l, k);
+                    cur_val = cur_val - X_inv.coeff(l, j) * Vals(l_indx);
                 }else{
-                    cur_val = cur_val - X_inv.coeff(j, l) * Lsp.coeff(l, k);
+                    cur_val = cur_val - X_inv.coeff(j, l) * Vals(l_indx);
                 }
             }
             X_inv.coeffRef(j, k) = cur_val;
