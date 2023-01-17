@@ -158,10 +158,11 @@ int main(){
         std::cout << "/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv" << std::endl;
     }
 
+
     MatrixXd init_precision{MatrixXd::Identity(ndim, ndim)*init_precision_factor};
     init_precision.block(0, 0, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*10000;
     init_precision.block(N*dim_theta, N*dim_theta, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*10000;
-    optimizer.set_precision(init_precision);
+    optimizer.set_precision(init_precision.sparseView());
 
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);

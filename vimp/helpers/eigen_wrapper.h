@@ -304,6 +304,14 @@ public:
     }
     }
 
+    void find_nnz_known_ij(const SpMat & mat, const Eigen::VectorXi& Rows, const Eigen::VectorXi& Cols, Eigen::VectorXd& Vals){
+        int nnz = Rows.rows();
+        Vals.resize(nnz);
+        for (int i=0; i<nnz; i++){
+            Vals(i) = mat.coeff(Rows(i), Cols(i));
+        }
+    }
+
     template <typename DerivedI, typename DerivedJ, typename DerivedV>
     inline void assemble(Eigen::SparseMatrix<double, Eigen::ColMajor> & X,
     const Eigen::DenseBase<DerivedI> & I,
@@ -362,7 +370,7 @@ public:
     SpMat & X_inv, 
     const Eigen::VectorXi& Rows, 
     const Eigen::VectorXi& Cols, 
-    const Eigen::VectorXd& Vals,
+    // const Eigen::VectorXd& Vals,
     int nnz){
         // ----------------- sparse ldlt decomposition -----------------
         SparseLDLT ldlt_sp(X);
@@ -455,6 +463,57 @@ public:
             StartIndxs(index) = s_indx;
         }
     }
+
+    /**
+     * @brief inverse with known ldlt.
+     */
+    void inv_sparse(const SpMat & X, 
+    SpMat & X_inv, 
+    const Eigen::VectorXi& Rows, 
+    const Eigen::VectorXi& Cols, 
+    const Eigen::VectorXd& Vals,
+    const Eigen::VectorXd& Dinv)
+    {   
+        int nnz = Rows.rows();
+        X_inv.setZero();
+        for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
+            int j = Rows(index);
+            int k = Cols(index);
+            double cur_val = 0.0;
+
+            if (j==k){ // diagonal
+                cur_val = Dinv(j);
+            }
+            // find upward the starting point for l = k+1
+            int s_indx = index;
+            while(true){
+                if(Cols(s_indx)<k || s_indx==0){
+                    s_indx = s_indx+1;
+                    break;
+                }
+                s_indx -= 1;
+            }
+            
+            // iterate downward in L(l\in(k+1,K), k)
+            for (int l_indx=s_indx; l_indx < nnz; l_indx++){ 
+                if (Cols.coeff(l_indx) > k){
+                    break;
+                }
+
+                int l = Rows(l_indx);
+                if (l > j){
+                    cur_val = cur_val - X_inv.coeff(l, j) * Vals(l_indx);
+                }else{
+                    cur_val = cur_val - X_inv.coeff(j, l) * Vals(l_indx);
+                }
+            }
+            X_inv.coeffRef(j, k) = cur_val;
+            // X_inv.coeffRef(k, j) = cur_val;
+        }
+        SpMat upper_tri = X_inv.triangularView<Eigen::StrictlyLower>().transpose();
+        X_inv = X_inv + upper_tri;
+    }
+
 
     void inv_sparse_1(const SpMat & X, 
     SpMat & X_inv, 

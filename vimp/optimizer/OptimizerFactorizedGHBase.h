@@ -138,11 +138,7 @@ namespace vimp{
         /**
          * @brief Update the marginal mean using JOINT mean and 
          * mapping matrix Pk.
-         * 
-         * @param joint_mean 
          */
-        // inline void update_mu_from_joint_mean(const VectorXd& joint_mean){ 
-        //     _mu = _Pk * joint_mean;}
 
         inline void update_mu_from_joint(const VectorXd & joint_mean){
             _mu = _block.extract_vector(joint_mean);
@@ -154,9 +150,8 @@ namespace vimp{
             return res;
         }
 
-        inline MatrixXd extract_cov_from_joint(const MatrixXd& joint_covariance){
-            SpMat j_covariance = joint_covariance.sparseView();
-            MatrixXd covariance = _block.extract(j_covariance);
+        inline MatrixXd extract_cov_from_joint(const SpMat& joint_covariance){
+            MatrixXd covariance = _block.extract(joint_covariance);
             return covariance;
         }
 
@@ -234,13 +229,12 @@ namespace vimp{
         /**
          * @brief Get the joint Pk.T * V^2 / dmu /dmu * Pk using block insertion
          */
-        inline MatrixXd joint_Vddmu_sp() { 
+        inline SpMat joint_Vddmu_sp() { 
             
             SpMat res(_joint_size, _joint_size);
             res.setZero();
             _block.fill(_Vddmu, res);
-            MatrixXd res_full{res};
-            return res_full;
+            return res;
         }
 
         /**

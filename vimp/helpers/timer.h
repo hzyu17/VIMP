@@ -29,12 +29,22 @@ public:
         _has_started = true;
     }
 
-    void end(){
+    void end(const std::string & header="Time difference = "){
         if (!_has_started){
             cout << "Not started yet, must call start() first! " << endl;
         }else{
             _end = chrono::steady_clock::now();
-            cout << "Time difference = " << chrono::duration_cast<chrono::milliseconds>(_end - _start).count() << "[ms]" << endl;
+            cout << header << chrono::duration_cast<chrono::milliseconds>(_end - _start).count() << "[ms]" << endl;
+            _has_started = false;
+        }
+    }
+
+    void end_mus(const std::string & header="Time difference = "){
+        if (!_has_started){
+            cout << "Not started yet, must call start() first! " << endl;
+        }else{
+            _end = chrono::steady_clock::now();
+            cout << header << chrono::duration_cast<chrono::microseconds>(_end - _start).count() << "[us]" << endl;
             _has_started = false;
         }
     }

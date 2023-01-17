@@ -318,23 +318,36 @@ TEST(TestSparse, sparse_inverse){
     int nnz = I.rows();
     Matrix inv_full(size, size);
 
-    // compare time
+    SpMat precision_inv_1_sp(size, size);
+    Eigen::VectorXi StartIndx(nnz);
+    eigen_wrapper.find_nnz_known_ij(Lsp, I, J, V);
 
-    std::cout << "sparse inverse time" << std::endl;
+    // compare time
+    std::cout << "sparse inverse time: " << std::endl;
     SpMat precision_inv_sp(size, size);
     timer.start();
     for (int i=0; i<100; i++){
-        eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp, I, J, nnz);
+        eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp, I, J, V, nnz);
     }
     timer.end();
 
-    std::cout << "sparse inverse_1 time" << std::endl;
-    SpMat precision_inv_1_sp(size, size);
-    Eigen::VectorXi StartIndx(nnz);
+    std::cout << "sparse inverse with outside ldlt, time: " << std::endl;
+    SpMat precision_inv_sp1(size, size);
+    timer.start();
+    for (int i=0; i<100; i++){
+        SparseLDLT ldlt_sp1(precision_sp);
+        SpMat Lsp = ldlt_sp1.matrixL();
+        Eigen::VectorXd Dinv = ldlt_sp.vectorD().real().cwiseInverse();
+        eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp1, I, J, V, Dinv);
+    }
+    timer.end();
+
+    std::cout << "sparse inverse_1 time: " << std::endl;
+    
     eigen_wrapper.construct_iteration_order(precision_sp, I, J, StartIndx, nnz);
     timer.start();
     for (int i=0; i<100; i++){
-        eigen_wrapper.inv_sparse_1(precision_sp, precision_inv_1_sp, I, J, StartIndx, nnz);
+        eigen_wrapper.inv_sparse_1(precision_sp, precision_inv_1_sp, I, J, V, StartIndx, nnz);
     }
     timer.end();
 
@@ -355,12 +368,15 @@ TEST(TestSparse, sparse_inverse){
 
     // assert inversion success
     Matrix inv_computed = precision_inv_sp;
+    Matrix inv_computed_2 = precision_inv_sp1;
     Matrix inv_computed_1 = precision_inv_1_sp;
     Matrix inv_computed_trj = precision_inv_trj;
     // m_io.saveData("inv_computed.csv", inv_computed);
     // m_io.saveData("inv_computed_trj.csv", inv_computed_trj);
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_1));
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_trj));
+    ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_2));
+    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_trj, inv_full, I, J));
     ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed, inv_full, I, J));
     ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_1, inv_full, I, J));
     ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_trj, inv_full, I, J));
@@ -383,6 +399,37 @@ TEST(TestSparse, sparse_view){
     ASSERT_GE((spm_1 - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
     
 }
+
+TEST(TestSparse, determinant){
+    Matrix precision = m_io.load_csv("precision_16.csv");
+    SpMat precision_sp = precision.sparseView();
+
+    SparseLDLT ldlt_sp(precision_sp);
+
+    SpMat Lsp = ldlt_sp.matrixL(); Matrix Lf_sp{Lsp};
+    SpMat Usp = ldlt_sp.matrixU(); Matrix Uf_sp{Usp};
+    Matrix Dsp = ldlt_sp.vectorD().real().asDiagonal();
+
+    Eigen::MatrixXd LDLT = Lf_sp*Dsp*Uf_sp;
+
+    ASSERT_TRUE(eigen_wrapper.matrix_equal(LDLT, precision));
+
+    timer.start();
+    double logdet_sp = log(ldlt_sp.determinant());
+    timer.end_mus();
+
+    timer.start();
+    double logdet_origin = log(precision.determinant());
+    timer.end_mus();
+
+    timer.start();
+    double logdet_D = log(Dsp.determinant());
+    timer.end_mus();
+
+    ASSERT_LE(abs(logdet_D - logdet_origin), 1e-10);
+    ASSERT_LE(abs(logdet_sp - logdet_origin), 1e-10);
+}
+
 
 
 int main(int argc, char **argv){

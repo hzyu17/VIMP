@@ -43,31 +43,30 @@ public:
                                    _num_states{num_states},
                                    _dim{dim_state*num_states},
                                    _niters{10},
-                                   _nsub_vars{vec_fact_optimizers.size()},
+                                   _nfactors{vec_fact_optimizers.size()},
                                    _vec_factor_optimizers{std::move(vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
-                                   _precision{MatrixXd::Identity(_dim, _dim)},
-                                   _precision_sp{SpMat(_dim, _dim)},
-                                   _ldlt{_precision_sp},
-                                   _covariance_sp{SpMat(_dim, _dim)},
-                                   _covariance{MatrixXd::Identity(_dim, _dim)},
+                                   _precision{SpMat(_dim, _dim)},
+                                   _ldlt{_precision},
+                                   _covariance{SpMat(_dim, _dim)},
+                                //    _covariance{MatrixXd::Identity(_dim, _dim)},
                                    _res_recorder{_niters, _dim}
     {
                 _precision.setZero();
                 // fill in the precision matrix to the known sparsity pattern
                 for (int i=0; i<num_states-1; i++){
                     Eigen::MatrixXd block = MatrixXd::Ones(2*_dim_state, 2*_dim_state);
-                    _eigen_wrapper.block_insert_sparse(_precision_sp, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
+                    _eigen_wrapper.block_insert_sparse(_precision, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
                 }
 
-                SpMat lower = _precision_sp.triangularView<Eigen::Lower>();
+                SpMat lower = _precision.triangularView<Eigen::Lower>();
                 _eigen_wrapper.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
                 _nnz = _Rows.rows();
     }
 
 protected:
     /// optimization variables
-    int _dim, _niters, _nsub_vars, _dim_state, _num_states;
+    int _dim, _niters, _nfactors, _dim_state, _num_states;
 
     /// @param _vec_factor_optimizers Vector of marginal optimizers
     vector<std::shared_ptr<FactorizedOptimizer>> _vec_factor_optimizers;
@@ -75,20 +74,20 @@ protected:
     /// @param _mu mean
     /// @param _dmu incremental mean
     VectorXd _mu;
-    MatrixXd _precision;
-    MatrixXd _covariance;
+    // MatrixXd _precision;
+    // MatrixXd _covariance;
 
     /// Data and result storage
     VIMPResults _res_recorder;
     MatrixIO _matrix_io;
 
     // sparse matrices
-    SpMat _precision_sp, _covariance_sp;
+    SpMat _precision, _covariance;
     EigenWrapper _eigen_wrapper = EigenWrapper();
     VectorXi _Rows, _Cols; VectorXd _Vals;
     int _nnz = 0;
     SparseLDLT _ldlt;
-    SpMat _L; VectorXd _Dinv;
+    SpMat _L; VectorXd _D, _Dinv; // for computing the determinant
 
     // timer helper
     Timer _timer = Timer();
@@ -101,6 +100,14 @@ protected:
 
     /// filename for the perturbed costs
     std::string _file_perturbed_cost;
+
+    void ldlt_decompose(){
+        _ldlt.compute(_precision);
+        _L = _ldlt.matrixL();
+        _Dinv = _ldlt.vectorD().real().cwiseInverse();
+        _eigen_wrapper.find_nnz_known_ij(_L, _Rows, _Cols, _Vals);
+        // _D = ldlt.vectorD().real();
+    }
 
 public:
 /// **************************************************************
@@ -124,7 +131,7 @@ public:
     /**
      * @brief Compute the total cost function value given a mean and covariace.
      */
-    double cost_value(const VectorXd& x, const MatrixXd& Cov) const;
+    double cost_value(const VectorXd& x, SpMat& Precision);
 
     /**
      * @brief Compute the total cost function value given a state, using current values.
@@ -139,7 +146,7 @@ public:
     /**
      * @brief Compute the costs of all factors for a given mean and cov.
      */
-    VectorXd factor_costs(const VectorXd& x, const MatrixXd& Precision) const;
+    VectorXd factor_costs(const VectorXd& x, const SpMat& Precision) const;
 
     /**
      * @brief Compute the costs of all factors, using current values.
@@ -151,14 +158,23 @@ public:
 /// Internal data IO
     inline VectorXd mean() const{ return _mu; }
 
-    inline MatrixXd precision() const{ return _precision; }
+    inline SpMat precision() const{ return _precision; }
 
     /// returns the covariance matrix
-    inline MatrixXd covariance(){ return _covariance; }
+    inline SpMat covariance(){ 
+        inverse_inplace();
+        return _covariance; 
+    }
 
-    inline void covariance_sp(){
-        _precision_sp = _precision.sparseView();
-        _eigen_wrapper.inv_sparse(_precision_sp, _covariance_sp, _Rows, _Cols, _Vals, _nnz);
+    inline void inverse_inplace(){
+        ldlt_decompose();
+        _eigen_wrapper.inv_sparse(_precision, _covariance, _Rows, _Cols, _Vals, _Dinv);
+    }
+
+    inline SpMat inverse(SpMat & mat){
+        SpMat res(_dim, _dim);
+        _eigen_wrapper.inv_sparse(mat, res, _Rows, _Cols, _nnz);
+        return res;
     }
 
     /**
@@ -219,13 +235,13 @@ public:
         }
     }
 
-    inline void set_precision(const MatrixXd& new_precision);
+    inline void set_precision(const SpMat& new_precision);
     
     inline void set_niterations(int niters){
         _niters = niters;
         _res_recorder.update_niters(niters); }
 
-    inline void set_initial_values(const VectorXd& init_mean, const MatrixXd& init_precision){
+    inline void set_initial_values(const VectorXd& init_mean, const SpMat& init_precision){
         set_mu(init_mean);
         set_precision(init_precision);
     }
@@ -257,9 +273,7 @@ public:
     /**
      * @brief save process data into csv files.
      */
-    inline void save_data(){
-        _res_recorder.save_data();}
-
+    inline void save_data(){ _res_recorder.save_data();}
 
     /**
      * @brief save a matrix to a file. 
@@ -292,14 +306,9 @@ public:
 
     }
 
-    inline int dim() const{
-        return _dim;
-    }   
+    inline int dim() const{ return _dim; }   
 
-
-    inline int n_sub_factors() const{
-        return _nsub_vars;
-    }
+    inline int n_sub_factors() const{ return _nfactors; }
 
     /**
      * @brief calculate and return the E_q{phi(x)} s for each factorized entity.
