@@ -32,6 +32,7 @@
     <temperature>10.0</temperature>
 
     <replanning> 0 </replanning>
+    <mean_file>none</mean_file>
     <replanning_starting> 9 </replanning_starting>
 
 </parameters>

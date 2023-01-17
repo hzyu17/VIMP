@@ -45,14 +45,14 @@ public:
             Vddmu{MatrixXd::Zero(dim_, dim_)},
             precision_{MatrixXd::Identity(dim_, dim_)},
             d_precision{MatrixXd::Zero(dim_, dim_)},
-            covariance_{precision_.inverse()},
-            sampler_{normal_random_variable(mu_, precision_.inverse())},
+            covariance_{MatrixXd::Identity(dim_, dim_)},
+            sampler_{normal_random_variable(mu_, MatrixXd::Identity(dim_, dim_))},
             func_phi_{[&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};}},
             gauss_hermite_{10, dim_, mu_, covariance_, func_phi_}{}
 protected:
     // optimization variables
     int dim_;
-    int num_samples = 50000;
+    int num_samples = 10000;
     VectorXd mu_, d_mu;
     MatrixXd precision_, d_precision, covariance_;
 
@@ -207,7 +207,7 @@ public:
         Vddmu = precision_ * tmp * precision_ - precision_ * (precision_t*covariance_).trace();
         Vddmu = Vddmu / 2;
 
-        }
+    }
 
     MatrixXd get_Vddmu(){
         return Vddmu;

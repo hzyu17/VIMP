@@ -8,8 +8,8 @@ import gpmp2.*
 %% read map
 % sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs.csv");
 % sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy.csv");
-% sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
-sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
+sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
+% sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 
 %% an initilization specially for map3 narrow
 % means = csvread("../../../vimp/data/2d_pR/mean_base.csv");
@@ -39,9 +39,9 @@ sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map3.csv");
 % means = csvread("../../../vimp/data/2d_pR/mean_base.csv");
 % covs = csvread("../../../vimp/data/2d_pR/cov_base.csv");
 % precisions = csvread("../../../vimp/data/2d_pR/precisoin_base.csv");
-% costs = csvread("../../../vimp/data/2d_pR/cost_base.csv");
-% 
+% costs = csvread("../../../vimp/data/2d_pR/cost_base.csv"); 
 % factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs_base.csv");
+
 % perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics_base.csv");
 % final_cost = csvread("../../../vimp/data/2d_pR/final_cost_base.csv");
 % addpath("error_ellipse");
@@ -51,10 +51,10 @@ means = csvread("../../../vimp/data/2d_pR/mean.csv");
 covs = csvread("../../../vimp/data/2d_pR/cov.csv");
 precisions = csvread("../../../vimp/data/2d_pR/precisoin.csv");
 costs = csvread("../../../vimp/data/2d_pR/cost.csv");
-
 factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs.csv");
-perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics.csv");
-final_cost = csvread("../../../vimp/data/2d_pR/final_cost.csv");
+
+% perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics.csv");
+% final_cost = csvread("../../../vimp/data/2d_pR/final_cost.csv");
 addpath("error_ellipse");
 
 %%
@@ -62,7 +62,9 @@ addpath("error_ellipse");
 dim_theta = 4;
 nsteps = 10;
 % niters
-niters = length(costs);
+% niters = length(costs);
+niters = 9;
+nsteps = 6;
 for i=niters:-1:1
     if costs(i) ~= 0
         niters=i;
@@ -259,7 +261,7 @@ ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
 
 % verify that the sum of the factored costs is the same as the total cost
 sum_fact_costs = sum(factor_costs(1:niters, 1:end), 2);
-diff = sum_fact_costs + entropy_costs' - costs(1:niters)
+% diff = sum_fact_costs + entropy_costs' - costs(1:niters);
 
 % ================ plot the total costs ================
 % tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none') 

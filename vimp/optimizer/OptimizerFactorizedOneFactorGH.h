@@ -17,11 +17,13 @@ namespace vimp{
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
         using Function = std::function<double(const VectorXd&, const Cl1&)>;
         public:
-            VIMPFactorizedOneCost(const int& dimension, 
+            VIMPFactorizedOneCost(const int& dimension,
+                                    int dim_state, 
                                     const Function& function, 
                                     const Cl1& cost_class,
-                                    const MatrixXd& Pk_):
-                Base(dimension, Pk_){
+                                    int num_states,
+                                    int start_indx):
+                Base(dimension, dim_state, num_states, start_indx){
                 Base::_func_phi = [this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));};
                 Base::_func_Vmu = [this, function, cost_class](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class);};
                 Base::_func_Vmumu = [this, function, cost_class](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class)};};

@@ -14,11 +14,13 @@
 #include <utility>
 #include <memory>
 #include <assert.h>
-#include "../helpers/SparseInverseMatrix.h"
+
 #include "../helpers/result_recorder.h"
-#include "../helpers/data_io.h"
+#include "../helpers/eigen_wrapper.h"
+#include "../helpers/timer.h"
 
 using namespace std;
+
 
 namespace vimp{
 
@@ -36,20 +38,35 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_conf):
-                                   _dim{vec_fact_optimizers[0]->Pk().cols()},
+    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_state, int num_states):
+                                   _dim_state{dim_state},
+                                   _num_states{num_states},
+                                   _dim{dim_state*num_states},
                                    _niters{10},
-                                   _sub_dim{vec_fact_optimizers[0]->Pk().rows()},
-                                   _nsub_vars{vec_fact_optimizers.size()},
+                                   _nfactors{vec_fact_optimizers.size()},
                                    _vec_factor_optimizers{std::move(vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
-                                   _precision{MatrixXd::Identity(_dim, _dim)},
-                                   _inverser{_precision, dim_conf},
-                                   _covariance{_inverser.inverse()},
-                                   _res_recorder{_niters, _dim}{}
+                                   _precision{SpMat(_dim, _dim)},
+                                   _ldlt{_precision},
+                                   _covariance{SpMat(_dim, _dim)},
+                                //    _covariance{MatrixXd::Identity(_dim, _dim)},
+                                   _res_recorder{_niters, _dim}
+    {
+                _precision.setZero();
+                // fill in the precision matrix to the known sparsity pattern
+                for (int i=0; i<num_states-1; i++){
+                    Eigen::MatrixXd block = MatrixXd::Ones(2*_dim_state, 2*_dim_state);
+                    _eigen_wrapper.block_insert_sparse(_precision, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
+                }
+
+                SpMat lower = _precision.triangularView<Eigen::Lower>();
+                _eigen_wrapper.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
+                _nnz = _Rows.rows();
+    }
+
 protected:
     /// optimization variables
-    int _dim, _niters, _sub_dim, _nsub_vars;
+    int _dim, _niters, _nfactors, _dim_state, _num_states;
 
     /// @param _vec_factor_optimizers Vector of marginal optimizers
     vector<std::shared_ptr<FactorizedOptimizer>> _vec_factor_optimizers;
@@ -57,16 +74,23 @@ protected:
     /// @param _mu mean
     /// @param _dmu incremental mean
     VectorXd _mu;
-    MatrixXd _precision;
-    
-    /// Sparse matrix inverse helper, which utilizes the exact sparse pattern to do the matrix inversion
-    dense_inverser _inverser;
-
-    MatrixXd _covariance;
+    // MatrixXd _precision;
+    // MatrixXd _covariance;
 
     /// Data and result storage
     VIMPResults _res_recorder;
     MatrixIO _matrix_io;
+
+    // sparse matrices
+    SpMat _precision, _covariance;
+    EigenWrapper _eigen_wrapper = EigenWrapper();
+    VectorXi _Rows, _Cols; VectorXd _Vals;
+    int _nnz = 0;
+    SparseLDLT _ldlt;
+    SpMat _L; VectorXd _D, _Dinv; // for computing the determinant
+
+    // timer helper
+    Timer _timer = Timer();
 
     /// step sizes by default
     double _step_size_precision = 0.9;
@@ -76,6 +100,14 @@ protected:
 
     /// filename for the perturbed costs
     std::string _file_perturbed_cost;
+
+    void ldlt_decompose(){
+        _ldlt.compute(_precision);
+        _L = _ldlt.matrixL();
+        _Dinv = _ldlt.vectorD().real().cwiseInverse();
+        _eigen_wrapper.find_nnz_known_ij(_L, _Rows, _Cols, _Vals);
+        // _D = ldlt.vectorD().real();
+    }
 
 public:
 /// **************************************************************
@@ -99,61 +131,59 @@ public:
     /**
      * @brief Compute the total cost function value given a mean and covariace.
      */
-    double cost_value(const VectorXd& x, const MatrixXd& Cov) const;
+    double cost_value(const VectorXd& x, SpMat& Precision);
 
     /**
      * @brief Compute the total cost function value given a state, using current values.
-     * @return cost value.
      */
     double cost_value() const;
 
     /**
      * @brief given a state, compute the total cost function value without the entropy term, using current values.
-     * @return cost value.
      */
     double cost_value_no_entropy() const;
 
     /**
      * @brief Compute the costs of all factors for a given mean and cov.
-     * @param x mean
-     * @param Precision precision matrix
-     * @return VectorXd collection of factor costs
      */
-    VectorXd factor_costs(const VectorXd& x, const MatrixXd& Precision) const;
+    VectorXd factor_costs(const VectorXd& x, const SpMat& Precision) const;
 
     /**
      * @brief Compute the costs of all factors, using current values.
-     * @return VectorXd collection of factor costs
      */
     VectorXd factor_costs() const;
 
 
 /// **************************************************************
 /// Internal data IO
-    /// returns the mean
     inline VectorXd mean() const{ return _mu; }
 
-    /// returns the precision matrix
-    inline MatrixXd precision() const{ return _precision; }
+    inline SpMat precision() const{ return _precision; }
 
     /// returns the covariance matrix
-    // inline MatrixXd covariance(){ return _precision.inverse(); }
-    inline MatrixXd covariance(){ return _inverser.inverse(_precision); }
+    inline SpMat covariance(){ 
+        inverse_inplace();
+        return _covariance; 
+    }
+
+    inline void inverse_inplace(){
+        ldlt_decompose();
+        _eigen_wrapper.inv_sparse(_precision, _covariance, _Rows, _Cols, _Vals, _Dinv);
+    }
+
+    inline SpMat inverse(SpMat & mat){
+        SpMat res(_dim, _dim);
+        _eigen_wrapper.inv_sparse(mat, res, _Rows, _Cols, _nnz);
+        return res;
+    }
 
     /**
      * @brief Purturb the mean by a random vector.
-     * @param scale 
-     * @return purturbed mean vector
      */
     inline VectorXd purturb_mean(double scale=0.01) const{
         return VectorXd{_mu + VectorXd::Random(_dim) * scale};
     }
 
-    /**
-     * @brief Purturb the precision by a random matrix.
-     * @param scale 
-     * @return purturbed precision matrix
-     */
     inline MatrixXd purturb_precision(double scale=0.01) const{
         MatrixXd purturbation = MatrixXd::Zero(_dim, _dim);
         purturbation.triangularView<Upper>() = (scale * MatrixXd::Random(_dim, _dim)).triangularView<Upper>();
@@ -164,23 +194,16 @@ public:
         return MatrixXd{purturbation*_precision*purturbation};
     }   
 
-    /**
-     * @brief Purturb the variables and calculate the cost.
-     * @param scale 
-     * @return purturbed cost
-     */
     inline double purturbed_cost(double scale=0.01) const{
         VectorXd p_mean = purturb_mean(scale);
         MatrixXd p_precision = purturb_precision(scale);
         // return cost_value(p_mean, p_precision.inverse());
-        return cost_value(p_mean, _inverser.inverse(p_precision));
+        return cost_value(p_mean, p_precision.inverse());
     }
 
 
     /**
      * @brief Repeated purturbations and statistics.
-     * @param scale purturbation level
-     * @param n_experiments number of experiments
      */
     inline void purturbation_stat(double scale=0.01, int n_experiments=100) const{
         VectorXd purturbed_costs(n_experiments);
@@ -194,8 +217,6 @@ public:
     }
 
     /// update the step sizes
-    /// @param ss_mean new step size for the mean update
-    /// @param ss_precision new step size for the precision matrix update
     inline void set_step_size(double ss_mean, double ss_precision){
         _step_size_mu = ss_mean;
         _step_size_precision = ss_precision; }
@@ -206,50 +227,25 @@ public:
         _step_size_base_precision = ss_base_precision;
     }
 
-    /// assign a mean 
-    /// @param mean new mean
     inline void set_mu(const VectorXd& mean){
         assert(mean.size() == _mu.size());
         _mu = mean; 
         for (std::shared_ptr<FactorizedOptimizer> & opt_fact : _vec_factor_optimizers){
-            opt_fact->update_mu_from_joint_mean(_mu);
+            opt_fact->update_mu_from_joint(_mu);
         }
     }
 
-    /// assign a precision matrix
-    /// @param new_precision new precision
-    inline void set_precision(const MatrixXd& new_precision){
-        assert(new_precision.size() == _precision.size());
-        _precision = new_precision;
-        // _inverser.update_matrix(_precision);
-        // _covariance = _precision.inverse();
-
-        _covariance = _inverser.inverse(_precision);
-
-        for (auto & opt_fact : _vec_factor_optimizers){
-            opt_fact->update_precision_from_joint_covariance(_covariance);
-        }
-    }
-
-    /**
-     * @brief set number of iterations
-     * @param niters
-     */
+    inline void set_precision(const SpMat& new_precision);
+    
     inline void set_niterations(int niters){
         _niters = niters;
         _res_recorder.update_niters(niters); }
 
-    /**
-     * @brief Set initial values 
-     */
-    inline void set_initial_values(const VectorXd& init_mean, const MatrixXd& init_precision){
+    inline void set_initial_values(const VectorXd& init_mean, const SpMat& init_precision){
         set_mu(init_mean);
         set_precision(init_precision);
     }
 
-    /**
-     * @brief Set the degree of polynomial in gauss hermite integrator
-     */
     inline void set_GH_degree(const int deg){
         for (auto & opt_fact : _vec_factor_optimizers){
             opt_fact->set_GH_points(deg);
@@ -277,9 +273,7 @@ public:
     /**
      * @brief save process data into csv files.
      */
-    inline void save_data(){
-        _res_recorder.save_data();}
-
+    inline void save_data(){ _res_recorder.save_data();}
 
     /**
      * @brief save a matrix to a file. 
@@ -312,14 +306,9 @@ public:
 
     }
 
-    inline int dim() const{
-        return _dim;
-    }   
+    inline int dim() const{ return _dim; }   
 
-
-    inline int n_sub_factors() const{
-        return _nsub_vars;
-    }
+    inline int n_sub_factors() const{ return _nfactors; }
 
     /**
      * @brief calculate and return the E_q{phi(x)} s for each factorized entity.

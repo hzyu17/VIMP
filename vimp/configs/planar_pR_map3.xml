@@ -5,7 +5,7 @@
      2. go around the gap: using a go-around course plan in high T. -->
 
 <!-- =========================================== experiment 1 go through ============================================================= -->
-<!-- <parameters>
+<parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
     
     <start_pos>
@@ -40,10 +40,10 @@
     <mean_file>none</mean_file>
     <replanning_starting> 0 </replanning_starting>
 
-</parameters> -->
+</parameters>
 
 <!-- =========================================== experiment 1 high T ============================================================= -->
-<parameters>
+<!-- <parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map3.csv</field_file>
     
     <start_pos>
@@ -78,7 +78,7 @@
     <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 2 </replanning_starting>
 
-</parameters>
+</parameters> -->
 
 <!-- =========================================== experiment go around high T ============================================================= -->
 <!-- <parameters>

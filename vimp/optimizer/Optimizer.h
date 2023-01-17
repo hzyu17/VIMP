@@ -111,7 +111,6 @@ public:
 
         d_mu_ = precision_.colPivHouseholderQr().solve(-Vdmu_);
 
-
         mu_ = mu_ + step_size_mu * d_mu_;
 
     }

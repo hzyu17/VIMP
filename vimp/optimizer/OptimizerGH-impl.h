@@ -5,75 +5,6 @@ using namespace std;
 
 namespace vimp{
 
-    // /**
-    //  * @brief One step in the update, without backtracking.
-    //  * 
-    //  * @ return: New cost after one step.
-    //  */
-    // template <typename FactorizedOptimizer>
-    // void VIMPOptimizerGH<FactorizedOptimizer>::step(){
-
-    //     // cout << "_mu " << _mu.transpose() << endl;
-
-    //     cout << "cost " << cost_value() << endl;
-
-    //     assert(abs(cost_value() - cost_value(_mu, covariance())) < 1e-10);
-
-    //     VectorXd Vdmu{VectorXd::Zero(_dim)};
-    //     MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
-
-
-    //     for (auto& opt_k : _vec_factor_optimizers){
-    //         opt_k->calculate_partial_V();
-
-    //         Vdmu = Vdmu + opt_k->joint_Vdmu();
-    //         Vddmu = Vddmu + opt_k->joint_Vddmu();
-    //     }
-        
-    //     MatrixXd dprecision = -_precision + Vddmu;
-    //     MatrixXd new_precision = _precision + _step_size_precision * dprecision;
-    //     // MatrixXd new_precision = Vddmu;
-
-    //     VectorXd dmu = _precision.colPivHouseholderQr().solve(-Vdmu);
-    //     VectorXd new_mu  = _mu + _step_size_mu * dmu;
-
-    //     set_mu(new_mu);
-    //     set_precision(new_precision);
-
-    // }
-
-
-      // /**
-    //  * @brief optimize without backtracking
-    //  * 
-    //  */
-    // template <typename FactorizedOptimizer>
-    // void VIMPOptimizerGH<FactorizedOptimizer>::optimize(){
-        
-    //     for (int i_iter = 0; i_iter < _niters; i_iter++) {
-    //         double step_size = _step_size_mu;
-    //         step_size = step_size / pow((i_iter + 1), 1 / 3);
-    //         set_step_size(step_size, step_size);
-
-    //         /// Collect the results
-    //         VectorXd mean_iter{mean()};
-    //         MatrixXd cov_iter{covariance()};
-    //         MatrixXd precision_iter{_precision};
-    //         double cost_iter = cost_value();
-
-    //         cout << "iteration: " << i_iter << endl;
-    //         this->_res_recorder.update_data(mean_iter, cov_iter, precision_iter, cost_iter);
-    //         step();
-    //     }
-
-    //     /// print 5 iteration datas 
-    //     vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
-    //     print_series_results(iters);
-
-    //     save_data();
-    // } 
-
-
     /**
      * @brief optimize with backtracking
      */
@@ -82,63 +13,32 @@ namespace vimp{
         double new_cost = 0.0;
         for (int i_iter = 0; i_iter < _niters; i_iter++) {
             cout << "========= iter " << i_iter << " ========= "<< endl;
+            _timer.start();
+            /// ============= Collect results ============= 
+            // VectorXd mean_iter{mean()};
+            // SpMat cov_iter{covariance()};
+            // SpMat precision_iter{_precision};
+            // VectorXd fact_costs_iter = factor_costs();
+            // _res_recorder.update_data(mean_iter, cov_iter, precision_iter, cost_iter, fact_costs_iter);
 
-            /// Collect the results
-            VectorXd mean_iter{mean()};
-            MatrixXd cov_iter{covariance()};
-            MatrixXd precision_iter{_precision};
             double cost_iter = cost_value();
 
-            /// save matrices for debugging ...
-            // save_vector("/home/hongzhe/git/VIMP/vimp/data/debug/mean_" + to_string(i_iter)+".csv", mean());
-            // // save_matrix("data/debug/j_Vddmu_"+to_string(i_iter)+".csv", Vddmu);
-            // save_matrix("/home/hongzhe/git/VIMP/vimp/data/debug/precision_" + to_string(i_iter) + ".csv", _precision);
-            // save_matrix("/home/hongzhe/git/VIMP/vimp/data/debug/cov_" + to_string(i_iter) + ".csv", covariance());
-            // save_matrix("/home/hongzhe/git/VIMP/vimp/data/debug/cost_" + to_string(i_iter)+".csv", MatrixXd::Constant(1,1,cost_iter));
-            
-            // cout << "covariance() - precision.inverse()" << endl << (_precision.inverse() - covariance()).norm() << endl;
-            // new_cost = cost_value(_mu, covariance());
-            // cout << "diff " << endl << abs(cost_iter - new_cost) << endl;
-            // assert(abs(cost_iter - new_cost) < 1e-5);
-
-            // cout << "mean " << endl << mean().transpose() << endl;
             cout << "cost " << endl << cost_iter << endl;
 
-            VectorXd fact_costs_iter = factor_costs();
-
-            _res_recorder.update_data(mean_iter, cov_iter, precision_iter, cost_iter, fact_costs_iter);
-
             // one step
-            VectorXd Vdmu{VectorXd::Zero(_dim)};
-            MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
+            SpMat Vdmu(_dim, _dim);
+            SpMat Vddmu(_dim, _dim);
 
             for (auto& opt_k : _vec_factor_optimizers){
                 opt_k->calculate_partial_V();
-                Vdmu = Vdmu + opt_k->joint_Vdmu();
-                Vddmu = Vddmu + opt_k->joint_Vddmu();
+                Vdmu = Vdmu + opt_k->joint_Vdmu_sp();
+                Vddmu = Vddmu + opt_k->joint_Vddmu_sp();
+
             }
 
-            MatrixXd dprecision = -_precision + Vddmu;
-            VectorXd dmu = Vddmu.colPivHouseholderQr().solve(-Vdmu);
-
-            // save_matrix("/home/hongzhe/git/VIMP/vimp/data/debug/dprecision_" + to_string(i_iter) + ".csv", dprecision);
-
-            // cout << "mean " << endl << _mu(24) << ", " << _mu(25) << endl;
-            // cout << "dmu for the collided state " << endl << dmu(24) << ", " << dmu(25) << endl;
-
-            // backtracking
-            
-            // MatrixXd new_precision = _precision + _step_size_base_precision * dprecision;
-            // VectorXd new_mu  = _mu + _step_size_base_mu * dmu;
-            // new_cost = cost_value(new_mu, new_precision.inverse());
-
-            // // project the precision into psd cone
-            // Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver(new_precision);
-
-            // VectorXcd eigvals = new_precision.eigenvalues();
-            // // cout << "eigen values " << endl << new_precision.eigenvalues().real() << endl;
-            // cout << "min eigen values " << endl << new_precision.eigenvalues().real().minCoeff() << endl;
-            // cout << "det(precision) " << endl << new_precision.determinant() << endl;
+            SpMat dprecision = -_precision + Vddmu;
+            VectorXd dmu = _eigen_wrapper.solve_cgd_sp(Vddmu, -Vdmu);
+            // VectorXd dmu = Vddmu.colPivHouseholderQr().solve(-Vdmu);
 
             int cnt = 0;
             const int MAX_ITER = 20;
@@ -147,7 +47,7 @@ namespace vimp{
             double step_size_mu;
             double step_size_precision;
 
-            MatrixXd new_precision;
+            SpMat new_precision;
             VectorXd new_mu;
 
             while (true){
@@ -157,13 +57,6 @@ namespace vimp{
 
                 new_precision = _precision + step_size_precision * dprecision;
                 new_mu  = _mu + step_size_mu * dmu;
-
-                // Checking the psd of Sigma^{-1}
-                // VectorXcd eigvals = new_precision.eigenvalues();
-                // if (eigvals.real().minCoeff() > 0){
-                //     new_cost = cost_value(new_mu, new_precision);
-                //     if (new_cost < cost_iter){ break; }
-                // }
 
                 new_cost = cost_value(new_mu, new_precision);
                 if (new_cost < cost_iter){ break; }
@@ -191,20 +84,15 @@ namespace vimp{
                 cout << "--- number of backtrackings ---" << endl << B << endl;
                 break;
             }
-            
+        _timer.end();
         }
 
-        save_data();
+        // save_data();
 
         /// see a purturbed cost
         double scale = 0.001;
-        cout << "=== final cost ===" << endl << std::setprecision(20)<< new_cost << endl;
-        save_matrix("data/2d_pR/final_cost.csv", MatrixXd::Constant(1, 1, new_cost));
-        // purturbation_stat(scale, 100);
-        
-        /// print 5 iteration datas 
-        // vector<int> iters{int(_niters/5), int(_niters*2/5), int(_niters*3/5), int(_niters*4/5), _niters-1};
-        // print_series_results(iters);
+        cout << "=== final cost ===" << endl << new_cost << endl;
+        // save_matrix("data/2d_pR/final_cost.csv", MatrixXd::Constant(1, 1, new_cost));
 
     } 
 
@@ -217,28 +105,40 @@ namespace vimp{
     void VIMPOptimizerGH<FactorizedOptimizer>::step_closed_form(){
 
         VectorXd Vdmu{VectorXd::Zero(_dim)};
-        MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
+        SpMat Vddmu{MatrixXd::Zero(_dim, _dim)};
 
-        MatrixXd Sigma{_inverser.inverse(_precision)};
+        SpMat Sigma{inverse(_precision)};
 
-        for (int k=0; k<_nsub_vars; k++){
+        for (int k=0; k<_nfactors; k++){
 
-            _vec_factor_optimizers[k]->update_mu_from_joint_mean(_mu);
-            _vec_factor_optimizers[k]->update_precision_from_joint_covariance(Sigma);
+            _vec_factor_optimizers[k]->update_mu_from_joint(_mu);
+            _vec_factor_optimizers[k]->update_precision_from_joint(Sigma);
 
             _vec_factor_optimizers[k]->calculate_exact_partial_V();
 
-            Vdmu = Vdmu + _vec_factor_optimizers[k]->joint_Vdmu();
-            Vddmu = Vddmu + _vec_factor_optimizers[k]->joint_Vddmu();
+            Vdmu = Vdmu + _vec_factor_optimizers[k]->joint_Vdmu_sp();
+            Vddmu = Vddmu + _vec_factor_optimizers[k]->joint_Vddmu_sp();
         }
 
-        MatrixXd _dprecision = -_precision + Vddmu;
+        SpMat _dprecision = -_precision + Vddmu;
 
         _precision = _precision + _step_size_precision*_dprecision;
 
-        VectorXd dmu = _precision.colPivHouseholderQr().solve(-Vdmu);
+        VectorXd dmu = _eigen_wrapper.solve_cgd_sp(_precision, -Vdmu);
         _mu = _mu + _step_size_mu * dmu;
 
+    }
+
+
+    template <typename FactorizedOptimizer>
+    inline void VIMPOptimizerGH<FactorizedOptimizer>::set_precision(const SpMat& new_precision){
+        _precision = new_precision;
+        // sparse inverse
+        inverse_inplace();
+
+        for (auto & opt_fact : _vec_factor_optimizers){
+            opt_fact->update_precision_from_joint(_covariance);
+        }
     }
 
 
@@ -246,13 +146,14 @@ namespace vimp{
      * @brief Compute the costs of all factors for a given mean and cov.
      */
     template <typename FactorizedOptimizer>
-    VectorXd VIMPOptimizerGH<FactorizedOptimizer>::factor_costs(const VectorXd& x, const MatrixXd& Precision) const{
+    VectorXd VIMPOptimizerGH<FactorizedOptimizer>::factor_costs(const VectorXd& x, const SpMat& Precision) const{
         VectorXd fac_costs{VectorXd::Zero(n_sub_factors())};
         int cnt = 0;
-        MatrixXd Cov{_inverser.inverse(Precision)};
+        SpMat Cov = inverse(Precision);
         for (auto& opt_k : _vec_factor_optimizers){
-            VectorXd x_k = opt_k->Pk() * x;
-            MatrixXd Cov_k = opt_k->Pk() * Cov * opt_k->Pk().transpose().eval();
+            VectorXd x_k = opt_k->extract_mu_from_joint(x);
+
+            MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
             fac_costs(cnt) = opt_k->cost_value(x_k, Cov_k);
             cnt += 1;
         }
@@ -276,26 +177,23 @@ namespace vimp{
 
     /**
      * @brief Compute the total cost function value given a state.
-     * 
      * @return cost value.
      */
     template <typename FactorizedOptimizer>
-    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value(const VectorXd& x, const MatrixXd& Precision) const{
-        assert(dim() == x.size());
-        assert(dim() == Precision.rows());
-        assert(dim() == Precision.cols());
-
-        MatrixXd Cov;
-        Cov = _inverser.inverse(Precision);
+    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value(const VectorXd& x, SpMat& Precision){
+        
+        SpMat Cov = inverse(Precision);
+        // Cov = _inverser.inverse(Precision);
 
         double value = 0.0;
         for (auto& opt_k : _vec_factor_optimizers){
-            VectorXd x_k = opt_k->Pk() * x;
-            MatrixXd Cov_k = opt_k->Pk() * Cov * opt_k->Pk().transpose().eval();
+            VectorXd x_k = opt_k->extract_mu_from_joint(x);
+            MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
+
             value += opt_k->cost_value(x_k, Cov_k);
         }
-        // MatrixXd Precision{Cov.inverse()};
-        double logdetprec = log(Precision.determinant());
+        SparseLDLT ldlt(Precision);
+        double logdetprec = log(ldlt.determinant());
         if (-9999.9 > logdetprec){
             // cout << "precision " << endl << Precision << endl;
             std::runtime_error(std::string("Infinity log determinant precision matrix ..."));
@@ -311,10 +209,9 @@ namespace vimp{
     template <typename FactorizedOptimizer>
     double VIMPOptimizerGH<FactorizedOptimizer>::cost_value() const{
         
-        double prec_det = _precision.determinant();
-        double logdetprec = log(_precision.determinant());
+        double logdetprec = log(_ldlt.determinant());
         if (-99999 >  logdetprec){
-            cout << "_precision " << endl << _precision << endl;
+            cout << "logdetprec " << endl << logdetprec << endl;
             std::runtime_error(std::string("Infinity log determinant precision matrix ..."));
         }
         double value = cost_value_no_entropy() + logdetprec / 2;
