@@ -73,30 +73,25 @@ public:
      * @brief Define the Hermite polynomial of degree deg, evaluate at x.
      * @param deg the degree to evaluate
      * @param x input
-     * @return double function value
      */
     double HermitePolynomial(const int& deg, const double& x) const;
 
     /**
      * @brief Compute the weights in the Gauss-Hermite cubature method.
-     * 
-     * @return VectorXd Weights
      */
     void computeWeights();
 
     /**
      * @brief Compute the approximated integration using Gauss-Hermite.
-     * 
-     * @return MatrixXd 
      */
     MatrixXd Integrate();
 
     /**
      * Update member variables
      * */
-    inline void update_mean(const VectorXd& mean){ assert(_mean.size()== mean.size()); _mean = mean; }
+    inline void update_mean(const VectorXd& mean){ _mean = mean; }
 
-    inline void update_P(const MatrixXd& P){ assert(_P.size()==P.size()); _P = P; }
+    inline void update_P(const MatrixXd& P){ _P = P; }
 
     inline void set_polynomial_deg(const int& deg){ _deg = deg; }
 

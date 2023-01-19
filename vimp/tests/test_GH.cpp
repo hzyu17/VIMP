@@ -18,7 +18,9 @@ using namespace vimp;
 
 /// integrands used for testing
 MatrixXd gx_1d(const VectorXd& x){
-    return MatrixXd{MatrixXd::Constant(1, 1, x.norm()*x.norm())};
+    int dim = x.rows();
+    MatrixXd precision = MatrixXd::Identity(dim, dim)*10000;
+    return MatrixXd::Constant(1, 1, x.transpose() * precision * x);
 }
 
 MatrixXd gx_2d(const VectorXd& x){
@@ -37,8 +39,8 @@ MatrixXd gx_3d(const VectorXd& x){
  */
 TEST(GaussHermite, permute){
     int dim = 1;
-    VectorXd m = VectorXd::Ones(dim);
-    MatrixXd P = MatrixXd::Identity(dim, dim);
+    VectorXd m = VectorXd::Zero(dim);
+    MatrixXd P = MatrixXd::Identity(dim, dim)*0.0001;
 
     GaussHermite<std::function<MatrixXd(const VectorXd&)>> gausshermite(10, dim, m, P, gx_1d);
 
@@ -60,14 +62,17 @@ TEST(GaussHermite, permute){
 }
 
 
+/**
+ * @brief test the case where the cost function is 1 dimensional.
+ */
 TEST(GaussHermite, one_dim){
-    int dim = 1;
-    VectorXd m = VectorXd::Ones(dim);
-    MatrixXd P = MatrixXd::Identity(dim, dim);
-    GaussHermite<std::function<MatrixXd(const VectorXd&)>> gausshermite(10, dim, m, P, gx_1d);
+    int dim = 4;
+    VectorXd m = VectorXd::Zero(dim);
+    MatrixXd P = MatrixXd::Identity(dim, dim)*0.0001;
+    GaussHermite<std::function<MatrixXd(const VectorXd&)>> gausshermite(3, dim, m, P, gx_1d);
 
     MatrixXd integral1{gausshermite.Integrate()};
-    MatrixXd integral_expected{MatrixXd::Constant(1, 1, 2.0)};
+    MatrixXd integral_expected{MatrixXd::Constant(1, 1, 4.0)};
 
     ASSERT_LE((integral1 - integral_expected).norm(), 1e-10);
 

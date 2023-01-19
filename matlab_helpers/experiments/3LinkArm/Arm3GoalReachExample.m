@@ -1,30 +1,43 @@
-clear all
-clc
+% planar arm obstacle avoidance with reaching a goal
+% @author Jing Dong
+% @date Nov 23, 2015
 
-%% ******************* Read datas ******************
-addpath('/usr/local/gtsam_toolbox')
+close all
+clear
+
 import gtsam.*
 import gpmp2.*
 
-% means = csvread("../vimp/data/2d_Arm/mean.csv");
-% covs = csvread("../vimp/data/2d_Arm/cov.csv");
-% precisions = csvread("../vimp/data/2d_Arm/precisoin.csv");
-% costs = csvread("../vimp/data/2d_Arm/cost.csv");
-% sdfmap = csvread("../vimp/data/2d_Arm/map.csv");
-% factor_costs = csvread("../vimp/data/2d_Arm/factor_costs.csv");
-% addpath("error_ellipse");
 
-means = csvread("../../../vimp/data/checkpoints/2d_Arm/mean.csv");
-covs = csvread("../../../vimp/data/checkpoints/2d_Arm/cov.csv");
-precisions = csvread("../../../vimp/data/checkpoints/2d_Arm/precisoin.csv");
-costs = csvread("../../../vimp/data/checkpoints/2d_Arm/cost.csv");
-sdfmap = csvread("../../../vimp/data/checkpoints/2d_Arm/map.csv");
-factor_costs = csvread("../../../vimp/data/checkpoints/2d_Arm/factor_costs.csv");
+%% small dataset
+dataset = generate2Ddataset('TwoObstaclesDataset');
+rows = dataset.rows;
+cols = dataset.cols;
+cell_size = dataset.cell_size;
+origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
+
+% signed distance field
+field = signedDistanceField2D(dataset.map, cell_size);
+sdf = PlanarSDF(origin_point2, cell_size, field);
+
+% plot sdf
+figure(2)
+plotSignedDistanceField2D(field, dataset.origin_x, dataset.origin_y, dataset.cell_size);
+title('Signed Distance Field')
+
+% read data
+means = csvread("../../../vimp/data/2d_Arm3/mean_base.csv");
+covs = csvread("../../../vimp/data/2d_Arm3/cov_base.csv");
+precisions = csvread("../../../vimp/data/2d_Arm3/precisoin_base.csv");
+costs = csvread("../../../vimp/data/2d_Arm3/cost_base.csv");
+
+sdfmap = csvread("../../../vimp/data/2d_Arm3/map.csv");
+factor_costs = csvread("../../../vimp/data/2d_Arm3/factor_costs_base.csv");
 addpath("error_ellipse");
 
 % ----- parameters -----
 [niters, ttl_dim] = size(means);
-dim_theta = 4;
+dim_theta = 6;
 % niters
 niters = length(costs);
 for i=niters:-1:1
@@ -37,7 +50,11 @@ nsteps = 10;
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 %  ------- arm --------
-arm = generateArm('SimpleTwoLinksArm');
+a = [5, 5, 5]';
+d = [0, 0, 0]';
+alpha = [0, 0, 0]';
+arm = Arm(3, a, alpha, d);
+arm = generateArm('SimpleThreeLinksArm');
 
 %  ------- sdf --------
 cell_size = 0.01;
@@ -78,10 +95,10 @@ for i_iter = 0: nsteps-1
 end
 
 % -------- start and end conf -------- 
-start_conf = [0, 0]';
-start_vel = [0, 0]';
-end_conf = [pi/2, 0]';
-end_vel = [0, 0]';
+start_conf = [0, 0, 0]';
+start_vel = [0, 0, 0]';
+end_conf = [0.9, pi/2-0.9, 0]';
+end_vel = [0, 0, 0]';
 
 figure
 tiledlayout(2, floor(nsteps/2), 'TileSpacing', 'tight', 'Padding', 'tight')
@@ -182,10 +199,3 @@ scatter(linspace(1,niters, niters), entropy_costs(1:niters), 10, 'filled')
 xlabel('Iterations', 'fontweight', 'bold')
 ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
 
-%% create map and save
-% dataset = generate2Ddataset('OneObstacleDataset');
-% rows = dataset.rows;
-% cols = dataset.cols;
-% cell_size = dataset.cell_size;
-% origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
-% csvwrite( '../vimp/data/2d_Arm/map.csv', dataset.map);

@@ -14,12 +14,12 @@ import gpmp2.*
 % factor_costs = csvread("../vimp/data/2d_Arm/factor_costs.csv");
 % addpath("error_ellipse");
 
-means = csvread("../../../vimp/data/checkpoints/2d_Arm/mean.csv");
-covs = csvread("../../../vimp/data/checkpoints/2d_Arm/cov.csv");
-precisions = csvread("../../../vimp/data/checkpoints/2d_Arm/precisoin.csv");
-costs = csvread("../../../vimp/data/checkpoints/2d_Arm/cost.csv");
-sdfmap = csvread("../../../vimp/data/checkpoints/2d_Arm/map.csv");
-factor_costs = csvread("../../../vimp/data/checkpoints/2d_Arm/factor_costs.csv");
+means = csvread("../vimp/data/checkpoints/2d_Arm/mean.csv");
+covs = csvread("../vimp/data/checkpoints/2d_Arm/cov.csv");
+precisions = csvread("../vimp/data/checkpoints/2d_Arm/precisoin.csv");
+costs = csvread("../vimp/data/checkpoints/2d_Arm/cost.csv");
+sdfmap = csvread("../vimp/data/checkpoints/2d_Arm/map.csv");
+factor_costs = csvread("../vimp/data/checkpoints/2d_Arm/factor_costs.csv");
 addpath("error_ellipse");
 
 % ----- parameters -----

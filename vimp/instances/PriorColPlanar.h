@@ -14,14 +14,16 @@
 #include "../instances/CostFunctions.h"
 #include "../optimizer/OptimizerFactorizedOneFactorGH.h"
 #include "../optimizer/OptimizerGH.h"
+#include "../optimizer/OptimizerFactorizedLinear.h"
 
 using namespace Eigen;
 
 
 namespace vimp{
 
-    typedef VIMPFactorizedOneCost<FixedPriorGP> FixedGpPrior;
-    typedef VIMPFactorizedOneCost<MinimumAccGP> LinearGpPrior;
+    // typedef VIMPFactorizedOneCost<FixedPriorGP> FixedGpPriorOneCost;
+    typedef VIMPFactorizedLinear<FixedPriorGP> FixedGpPrior;
+    typedef VIMPFactorizedLinear<MinimumAccGP> LinearGpPrior;
     template <typename ROBOT>
     using OptPlanarSDFFactor = VIMPFactorizedOneCost<gpmp2::ObstaclePlanarSDFFactor<ROBOT>> ;
 

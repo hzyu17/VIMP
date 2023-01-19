@@ -11,16 +11,16 @@
 #include "../optimizer/OptimizerFactorizedGHBase.h"
 
 namespace vimp{
-    template <typename Cl1>
+    template <typename CostClass>
     class VIMPFactorizedOneCost : public VIMPOptimizerFactorizedBase{
         using Base = VIMPOptimizerFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
-        using Function = std::function<double(const VectorXd&, const Cl1&)>;
+        using CostFunction = std::function<double(const VectorXd&, const CostClass&)>;
         public:
             VIMPFactorizedOneCost(const int& dimension,
                                     int dim_state, 
-                                    const Function& function, 
-                                    const Cl1& cost_class,
+                                    const CostFunction& function, 
+                                    const CostClass& cost_class,
                                     int num_states,
                                     int start_indx):
                 Base(dimension, dim_state, num_states, start_indx){

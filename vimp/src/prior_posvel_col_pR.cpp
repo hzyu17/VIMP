@@ -23,7 +23,7 @@ using namespace vimp;
 int main(){
     
     /// reading XML configurations
-    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/planar_pR_map3.xml"); // Default template is char
+    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/planar_pR_map2.xml"); // Default template is char
     // rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/planar_pR_map2.xml");
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
@@ -39,6 +39,8 @@ int main(){
 
     int n_total_states = atoi(paramNode->first_node("n_total_states")->value());
     double total_time_sec = atof(paramNode->first_node("total_time")->value());
+
+    double Temperature = atof(paramNode->first_node("temperature")->value());
     
     double weight_Qc = atof(paramNode->first_node("coeff_Qc")->value());
     double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
@@ -88,7 +90,7 @@ int main(){
     MatrixXd K0_fixed = MatrixXd::Identity(dim_theta, dim_theta)*0.0001;
 
     /// Vector of base factored optimizers
-    vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_factor_opts;
+    vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_factors;
     /// initial values
     VectorXd joint_init_theta{VectorXd::Zero(ndim)};
 
@@ -100,42 +102,35 @@ int main(){
         theta.segment(dim_conf, dim_conf) = avg_vel;
         joint_init_theta.segment(i*dim_theta, dim_theta) = std::move(theta);   
 
+        MinimumAccGP lin_gp{Qc, delta_t};
+
         // fixed start and goal priors
         // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
         if (i==0 || i==n_total_states-1){
 
             // lin GP factor
             if (i == n_total_states-1){
-                MinimumAccGP lin_gp{Qc, delta_t};
-
-                std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1}}; 
-                vec_factor_opts.emplace_back(p_lin_gp);
+                
+                // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
+                vec_factors.emplace_back(new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1});
             }
 
             // Fixed gp factor
             FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta}};
-            std::shared_ptr<FixedGpPrior> p_fix_gp{new FixedGpPrior{dim_theta, dim_theta, cost_fixed_gp, fixed_gp, n_total_states, i}};
-            vec_factor_opts.emplace_back(p_fix_gp);
+            vec_factors.emplace_back(new FixedGpPrior{dim_theta, dim_theta, cost_fixed_gp, fixed_gp, n_total_states, i});
 
         }else{
-            // support states: linear gp priors
-            MinimumAccGP lin_gp{Qc, delta_t};
+            // linear gp factors
+            vec_factors.emplace_back(new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1});
 
-            // linear gp factor
-            std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1}}; 
-            vec_factor_opts.emplace_back(p_lin_gp);
-
-            // collision factor
+            // collision factors
             gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), pRModel, sdf, cost_sigma, epsilon};
-
-            /// Factored optimizer
-            std::shared_ptr<OptPlanarSDFFactorPointRobot> p_obs{new OptPlanarSDFFactorPointRobot{dim_conf, dim_theta, cost_sdf_pR, collision_k, n_total_states, i}};
-            vec_factor_opts.emplace_back(p_obs);
+            vec_factors.emplace_back(new OptPlanarSDFFactorPointRobot{dim_conf, dim_theta, cost_sdf_pR, collision_k, n_total_states, i});
         }
         
     }
     /// The joint optimizer
-    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts, dim_theta, n_total_states};
+    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factors, dim_theta, n_total_states, Temperature};
     if (replanning == 1){
         MatrixXd means = matrix_io.load_csv(replan_mean_file);
         VectorXd good_init_vec = means.row(replan_start);
@@ -167,7 +162,7 @@ int main(){
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
 
-    optimizer.set_step_size_base(step_size, step_size); // a local optima
+    optimizer.set_step_size_base(step_size); // a local optima
     optimizer.optimize();
     return 0;
 }
