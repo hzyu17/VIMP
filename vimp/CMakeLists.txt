@@ -24,15 +24,15 @@ include(GtsamTesting)
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 
 # Boost - same requirement as gtsam
-find_package(Boost 1.50 REQUIRED)
-find_package(Boost COMPONENTS filesystem REQUIRED)
-find_package(Boost COMPONENTS system REQUIRED)
-find_package(Boost COMPONENTS thread REQUIRED)
-find_package(Boost COMPONENTS serialization REQUIRED)
-find_package(Boost COMPONENTS date_time REQUIRED)
-find_package(Boost COMPONENTS timer REQUIRED)
+# find_package(Boost 1.50 REQUIRED)
+# find_package(Boost COMPONENTS filesystem REQUIRED)
+# find_package(Boost COMPONENTS system REQUIRED)
+# find_package(Boost COMPONENTS thread REQUIRED)
+# find_package(Boost COMPONENTS serialization REQUIRED)
+# find_package(Boost COMPONENTS date_time REQUIRED)
+# find_package(Boost COMPONENTS timer REQUIRED)
 
-include_directories(${Boost_INCLUDE_DIR})
+# include_directories(${Boost_INCLUDE_DIR})
 
 # GPMP2
 find_package( Eigen3 3.4.0 REQUIRED
@@ -112,6 +112,9 @@ target_link_libraries(test_eigen_sparse ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIE
 
 add_executable(test_sparse_graph tests/test_sparse_graph.cpp)
 target_link_libraries(test_sparse_graph ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+
+add_executable(test_GH tests/test_GH.cpp)
+target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
 # # add executables for the tests
 # file(GLOB vimp_test_files RELATIVE "${CMAKE_SOURCE_DIR}/tests" "${CMAKE_SOURCE_DIR}/tests/*.cpp")

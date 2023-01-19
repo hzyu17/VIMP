@@ -10,6 +10,8 @@
  * 
  */
 
+#pragma once
+
 //***C++11 Style:***
 #include <chrono>
 #include <iostream>
@@ -34,7 +36,7 @@ public:
             cout << "Not started yet, must call start() first! " << endl;
         }else{
             _end = chrono::steady_clock::now();
-            cout << header << chrono::duration_cast<chrono::milliseconds>(_end - _start).count() << "[ms]" << endl;
+            cout << header << " " << chrono::duration_cast<chrono::milliseconds>(_end - _start).count() << "[ms]" << endl;
             _has_started = false;
         }
     }
@@ -44,7 +46,7 @@ public:
             cout << "Not started yet, must call start() first! " << endl;
         }else{
             _end = chrono::steady_clock::now();
-            cout << header << chrono::duration_cast<chrono::microseconds>(_end - _start).count() << "[us]" << endl;
+            cout << header << " " << chrono::duration_cast<chrono::microseconds>(_end - _start).count() << "[us]" << endl;
             _has_started = false;
         }
     }

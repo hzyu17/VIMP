@@ -1,7 +1,7 @@
 /**
  * @file fixed_prior.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Fixed Gaussian prior
+ * @brief Fixed Gaussian prior -log(p(x|z)) = ||A*x - B*\mu_t||_{K^{-1}}.
  * @version 0.1
  * @date 2022-07-31
  * 
@@ -9,19 +9,17 @@
  * 
  */
 
-#include<Eigen/Dense>
-
-using namespace Eigen;
+#include "linear_factor.h"
 
 namespace vimp{
-    class FixedPriorGP{
+    class FixedPriorGP : public LinearFactor{
         public:
             FixedPriorGP(){}
-            FixedPriorGP(const MatrixXd& K, const VectorXd& mu):
+            FixedPriorGP(const MatrixXd& Covariance, const VectorXd& mu):
             _mu{mu}, 
             _dim{mu.size()}, 
-            _K{K}, 
-            _invK{K.inverse()}{}
+            _K{Covariance}, 
+            _invK{Covariance.inverse()}{}
 
         private:
             MatrixXd _K;
@@ -30,9 +28,19 @@ namespace vimp{
             VectorXd _mu;
 
         public:
-            double cost(const VectorXd& x) const{
-                return (x-_mu).transpose().eval() * _invK * (x-_mu);
-            }
+            double cost(const VectorXd& x) const{ return (x-_mu).transpose() * _invK * (x-_mu); }
+
+            VectorXd get_mean() const{ return _mu; }
+
+            MatrixXd get_precision() const{ return _invK; }
+
+            MatrixXd get_covariance() const{ return _K; }
+
+            MatrixXd get_A() const { return MatrixXd::Identity(_dim, _dim);}
+
+            MatrixXd get_B() const { return MatrixXd::Identity(_dim, _dim);}
+
+            double get_C() const {return 1.0;}
 
     };
 }// namespace vimp

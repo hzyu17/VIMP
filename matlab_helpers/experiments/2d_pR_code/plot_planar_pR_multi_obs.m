@@ -41,7 +41,7 @@ sdfmap = csvread("../../../vimp/data/2d_pR/map_multiobs_entropy_map2.csv");
 % precisions = csvread("../../../vimp/data/2d_pR/precisoin_base.csv");
 % costs = csvread("../../../vimp/data/2d_pR/cost_base.csv"); 
 % factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs_base.csv");
-
+% 
 % perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics_base.csv");
 % final_cost = csvread("../../../vimp/data/2d_pR/final_cost_base.csv");
 % addpath("error_ellipse");
@@ -53,8 +53,8 @@ precisions = csvread("../../../vimp/data/2d_pR/precisoin.csv");
 costs = csvread("../../../vimp/data/2d_pR/cost.csv");
 factor_costs = csvread("../../../vimp/data/2d_pR/factor_costs.csv");
 
-% perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics.csv");
-% final_cost = csvread("../../../vimp/data/2d_pR/final_cost.csv");
+perturb_stat= csvread("../../../vimp/data/2d_pR/perturbation_statistics.csv");
+final_cost = csvread("../../../vimp/data/2d_pR/final_cost.csv");
 addpath("error_ellipse");
 
 %%
@@ -63,8 +63,8 @@ dim_theta = 4;
 nsteps = 10;
 % niters
 % niters = length(costs);
-niters = 9;
-nsteps = 6;
+niters = 18;
+nsteps = 18;
 for i=niters:-1:1
     if costs(i) ~= 0
         niters=i;

@@ -20,6 +20,7 @@
 
 #include "../helpers/GaussHermite.h"
 #include "../helpers/sparse_graph.h"
+#include "../helpers/timer.h"
 
 
 using namespace std;
@@ -40,9 +41,9 @@ namespace vimp{
          * @brief Construct a new VIMPOptimizerFactorizedBase object
          * 
          * @param dimension The dimension of the state
-         * @param Pk_ Mapping matrix from marginal to joint
          */
-        VIMPOptimizerFactorizedBase(int dimension, int state_dim, int num_states, int start_index):
+        VIMPOptimizerFactorizedBase(int dimension, int state_dim, int num_states, int start_index, bool is_linear=false):
+                _is_linear{is_linear},
                 _dim{dimension},
                 _state_dim{state_dim},
                 _num_states{num_states},
@@ -52,13 +53,14 @@ namespace vimp{
                 _dprecision{MatrixXd::Zero(_dim, _dim)},
                 _Vdmu{VectorXd::Zero(_dim)},
                 _Vddmu{MatrixXd::Zero(_dim, _dim)},
-                // _Pk{Pk},
                 _block{state_dim, num_states, start_index, dimension}
                 {
                     _joint_size = _state_dim * _num_states;
                 }
     
-    
+    public:
+        bool _is_linear;
+        
     /// Public members for the inherited classes access
     public:
 
@@ -66,7 +68,6 @@ namespace vimp{
         int _dim, _state_dim, _num_states, _joint_size;
 
         VectorXd _mu;
-        MatrixXd _covariance;
         
         /// Intermediate functions for Gauss-Hermite quadratures, default definition, needed to be overrided by the
         /// derived classes.
@@ -78,24 +79,25 @@ namespace vimp{
         /// G-H quadrature class
         GaussHermite<GHFunction> _gauss_hermite = GaussHermite<GHFunction>();
 
-    private:
-        /// optimization variables
-        MatrixXd _precision, _dprecision;
 
+    protected:
         /// intermediate variables in optimization steps
         VectorXd _Vdmu;
         MatrixXd _Vddmu;
 
+        /// optimization variables
+        MatrixXd _precision, _dprecision;
+        MatrixXd _covariance;
+
+    private:
         /// step sizes
         double _step_size_mu = 0.9;
         double _step_size_Sigma = 0.9;
-
-        /// Mapping matrix to the joint distribution
-        // MatrixXd _Pk;
-
-        // sparse mapping
+        
+        // sparse mapping to sub variables
         TrajectoryBlock _block;
-
+        
+    protected:
         // Sparse inverser and matrix helpers
         EigenWrapper _eigen_wrapper = EigenWrapper();
 
@@ -136,21 +138,19 @@ namespace vimp{
 
 
         /**
-         * @brief Update the marginal mean using JOINT mean and 
-         * mapping matrix Pk.
+         * @brief Update the marginal mean.
          */
-
-        inline void update_mu_from_joint(const VectorXd & joint_mean){
+        inline void update_mu_from_joint(const VectorXd & joint_mean) {
             _mu = _block.extract_vector(joint_mean);
         }
 
-        inline VectorXd extract_mu_from_joint(const VectorXd & joint_mean){
+        inline VectorXd extract_mu_from_joint(const VectorXd & joint_mean) {
             VectorXd res(_dim);
             res = _block.extract_vector(joint_mean);
             return res;
         }
 
-        inline MatrixXd extract_cov_from_joint(const SpMat& joint_covariance){
+        inline MatrixXd extract_cov_from_joint(const SpMat& joint_covariance) {
             MatrixXd covariance = _block.extract(joint_covariance);
             return covariance;
         }
@@ -158,63 +158,106 @@ namespace vimp{
         /**
          * @brief Update the marginal precision matrix.
          */
-        inline void update_precision_from_joint(const SpMat& joint_covariance){
+        inline void update_precision_from_joint(const SpMat& joint_covariance) {
             _covariance = _block.extract(joint_covariance);
             _precision = _covariance.inverse();
         }
 
 
         /**
-         * @brief Main function calculating phi * (partial V) / (partial mu), and 
+         * @brief Calculating phi * (partial V) / (partial mu), and 
          * phi * (partial V^2) / (partial mu * partial mu^T)
-         * 
-         * @return * void 
          */
-        void calculate_partial_V();
+        virtual void calculate_partial_V(){
+            // update the mu and sigma inside the gauss-hermite integrator
+            updateGH();
 
+            /// Integrate for E_q{_Vdmu} 
+            VectorXd Vdmu{VectorXd::Zero(_dim)};
+            _gauss_hermite.update_integrand(_func_Vmu);
+            Vdmu = _gauss_hermite.Integrate();
 
-        /**
-         * @brief Main function calculating phi * (partial V) / (partial mu), and 
-         * phi * (partial V^2) / (partial mu * partial mu^T) for Gaussian posterior: closed-form expression
-         */
-        void calculate_exact_partial_V(VectorXd mu_t, MatrixXd covariance_t);
+            Vdmu = _precision * Vdmu;
 
+            /// Integrate for E_q{phi(x)}
+            _gauss_hermite.update_integrand(_func_phi);
+            double E_phi = _gauss_hermite.Integrate()(0, 0);
+            
+            /// Integrate for partial V^2 / ddmu_ 
+            _gauss_hermite.update_integrand(_func_Vmumu);
+            MatrixXd E_xxphi{_gauss_hermite.Integrate()};
 
-        /**
-         * @brief One step in the optimization.
-         */
-        bool step();
+            MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
+            Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
+            Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
 
-        
+            // update member variables
+            _Vdmu = Vdmu;
+            _Vddmu = Vddmu;
+        }
+
+        void calculate_partial_V_GH(){
+            // update the mu and sigma inside the gauss-hermite integrator
+            updateGH();
+
+            /// Integrate for E_q{_Vdmu} 
+            VectorXd Vdmu{VectorXd::Zero(_dim)};
+            _gauss_hermite.update_integrand(_func_Vmu);
+            Vdmu = _gauss_hermite.Integrate();
+
+            Vdmu = _precision * Vdmu;
+
+            /// Integrate for E_q{phi(x)}
+            _gauss_hermite.update_integrand(_func_phi);
+            double E_phi = _gauss_hermite.Integrate()(0, 0);
+            
+            /// Integrate for partial V^2 / ddmu_ 
+            _gauss_hermite.update_integrand(_func_Vmumu);
+            MatrixXd E_xxphi{_gauss_hermite.Integrate()};
+
+            MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
+            Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
+            Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+
+            // update member variables
+            _eigen_wrapper.print_matrix(Vdmu, "_Vdmu GH");
+            _eigen_wrapper.print_matrix(Vddmu, "Vddmu GH");
+            _Vdmu = Vdmu;
+            _Vddmu = Vddmu;
+        }
+
         /**
          * @brief Compute the cost function. V(x) = E_q(\phi(x))
          */
-        double cost_value(const VectorXd& x, const MatrixXd& Cov);
-
+        virtual double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) {
+            updateGH(x, Cov);
+            _gauss_hermite.update_integrand(_func_phi);
+            return _gauss_hermite.Integrate()(0, 0);
+        }
 
         /**
          * @brief Compute the cost function. V(x) = E_q(\phi(x)) using the current values.
          */
-        double cost_value();
-
+        virtual double fact_cost_value(){
+            updateGH();
+            _gauss_hermite.update_integrand(_func_phi);
+            double E_Phi = _gauss_hermite.Integrate()(0, 0);
+            return E_Phi;
+        }
 
         /**
          * @brief Get the marginal intermediate variable (partial V^2 / par mu / par mu)
          */
         inline MatrixXd Vddmu() const { return _Vddmu; }
 
-
         /**
          * @brief Get the marginal intermediate variable partial V / dmu
          */
         inline VectorXd Vdmu() const { return _Vdmu; }
 
-
         /**
          * @brief Get the joint intermediate variable (partial V / partial mu).
          */
-        // inline VectorXd joint_Vdmu() const { return _Pk.transpose() * _Vdmu; }
-
         inline VectorXd joint_Vdmu_sp() { 
             VectorXd res(_joint_size);
             _block.fill_vector(res, _Vdmu);
@@ -222,15 +265,9 @@ namespace vimp{
             }
 
         /**
-         * @brief Get the joint Pk.T * V^2 / dmu /dmu * Pk
-         */
-        // inline MatrixXd joint_Vddmu() const { return _Pk.transpose().eval() * _Vddmu * _Pk; }
-
-        /**
          * @brief Get the joint Pk.T * V^2 / dmu /dmu * Pk using block insertion
          */
         inline SpMat joint_Vddmu_sp() { 
-            
             SpMat res(_joint_size, _joint_size);
             res.setZero();
             _block.fill(_Vddmu, res);
@@ -240,9 +277,6 @@ namespace vimp{
         /**
          * @brief Get the mapping matrix Pk
          */
-        // inline MatrixXd Pk() const { return _Pk; }
-
-
         inline TrajectoryBlock block() const {return _block;}
 
         /**
@@ -312,4 +346,3 @@ namespace vimp{
     };
 
 }
-#include "../optimizer/OptimizerFactorizedGHBase-impl.h"

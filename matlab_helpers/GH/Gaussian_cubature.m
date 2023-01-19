@@ -2,8 +2,9 @@
 
 %% One dimension
 syms x
-gx = x^2;
-Int = GaussHermitOneDim(gx, 6, 1, 1)
+Kinv = 10000;
+gx = x*Kinv*x;
+Int = GaussHermitOneDim(gx, 6, 0, 0.0001)
 
 %% Higher dimensions
 n = 2;

@@ -103,50 +103,39 @@ int main(){
         if (i==0 || i==n_total_states-1){
             /// lin GP factor for the N th state
             if (i == n_total_states-1){
-                MatrixXd Pk_lingp{MatrixXd::Zero(2*dim_theta, ndim)};
-                Pk_lingp.block(0, (i-1) * dim_theta, 2*dim_theta, 2*dim_theta) = std::move(MatrixXd::Identity(2*dim_theta, 2*dim_theta));
-
                 MinimumAccGP lin_gp{Qc, delta_t};
 
-                std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, cost_linear_gp, lin_gp, Pk_lingp}}; 
+                std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1}}; 
                 vec_factor_opts.emplace_back(p_lin_gp);
 
             }
 
             /// Fixed GP
             FixedPriorGP fixed_gp{MatrixXd::Identity(dim_theta, dim_theta)*0.0001, MatrixXd{theta}};
-            MatrixXd Pk{MatrixXd::Zero(dim_theta, ndim)};
-            Pk.block(0, i * dim_theta, dim_theta, dim_theta) = std::move(MatrixXd::Identity(dim_theta, dim_theta));
 
-            std::shared_ptr<FixedGpPrior> p_fix_gp{new FixedGpPrior{dim_theta, cost_fixed_gp, fixed_gp, Pk}};
+            std::shared_ptr<FixedGpPrior> p_fix_gp{new FixedGpPrior{dim_theta, dim_theta, cost_fixed_gp, fixed_gp, n_total_states, i}};
             vec_factor_opts.emplace_back(p_fix_gp);
 
         }else{
             // support states: linear gp priors
-            MatrixXd Pk{MatrixXd::Zero(2*dim_theta, ndim)};
-            Pk.block(0, (i-1) * dim_theta, 2*dim_theta, 2*dim_theta) = std::move(MatrixXd::Identity(2*dim_theta, 2*dim_theta));
-
             MinimumAccGP lin_gp{Qc, delta_t};
 
             // linear gp factor
-            std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, cost_linear_gp, lin_gp, Pk}}; 
+            std::shared_ptr<LinearGpPrior> p_lin_gp{new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1}}; 
             vec_factor_opts.emplace_back(p_lin_gp);
 
             // collision factor
             gpmp2::ObstaclePlanarSDFFactorArm collision_k{gtsam::symbol('x', i), arm_model, sdf, cost_sigma, epsilon};
 
-            MatrixXd Pk_col{MatrixXd::Zero(dim_conf, ndim)};
-            Pk_col.block(0, i * dim_theta, dim_conf, dim_conf) = std::move(MatrixXd::Identity(dim_conf, dim_conf));
-
             /// Factored optimizer
-            std::shared_ptr<OptPlanarSDFFactorArm> p_obs{new OptPlanarSDFFactorArm{dim_conf, cost_sdf_Arm, collision_k, Pk_col}};
+            std::shared_ptr<OptPlanarSDFFactorArm> p_obs{new OptPlanarSDFFactorArm{dim_conf, dim_theta, cost_sdf_Arm, collision_k, n_total_states, i}};
             vec_factor_opts.emplace_back(p_obs);
         }
         
     }
 
     /// The joint optimizer
-    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts, dim_conf};
+    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factor_opts, dim_theta, n_total_states};
 
     MatrixIO matrix_io;
     /// Set initial value to the linear interpolation
@@ -166,7 +155,8 @@ int main(){
     MatrixXd init_precision{MatrixXd::Identity(ndim, ndim)*init_precision_factor};
     init_precision.block(0, 0, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*10000;
     init_precision.block(N*dim_theta, N*dim_theta, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*10000;
-    optimizer.set_precision(init_precision);
+
+    optimizer.set_precision(init_precision.sparseView());
 
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);

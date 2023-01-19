@@ -14,19 +14,19 @@
         <3>0.0</3>
     </goal_pos>
 
-    <total_time> 3.0 </total_time>
+    <total_time> 1.5 </total_time>
 
-    <n_total_states> 15 </n_total_states>
+    <n_total_states> 10 </n_total_states>
 
-    <coeff_Qc> 0.85 </coeff_Qc>
+    <coeff_Qc> 0.8 </coeff_Qc>
 
-    <cost_sigma> 0.0065 </cost_sigma>
+    <cost_sigma> 0.005 </cost_sigma>
 
     <epsilon> 0.45 </epsilon>
 
     <step_size> 0.35 </step_size>
 
-    <num_iter> 20 </num_iter>
+    <num_iter> 10 </num_iter>
 
     <init_precision_factor>10.0</init_precision_factor>
 

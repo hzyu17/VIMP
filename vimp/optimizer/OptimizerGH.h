@@ -13,7 +13,6 @@
 
 #include <utility>
 #include <memory>
-#include <assert.h>
 
 #include "../helpers/result_recorder.h"
 #include "../helpers/eigen_wrapper.h"
@@ -38,18 +37,20 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_state, int num_states):
+    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_state, int num_states, double temperature=1.0):
                                    _dim_state{dim_state},
                                    _num_states{num_states},
                                    _dim{dim_state*num_states},
                                    _niters{10},
+                                   _temperature{temperature},
                                    _nfactors{vec_fact_optimizers.size()},
-                                   _vec_factor_optimizers{std::move(vec_fact_optimizers)},
+                                   _vec_factors{std::move(vec_fact_optimizers)},
                                    _mu{VectorXd::Zero(_dim)},
+                                   _Vdmu{VectorXd::Zero(_dim)},
+                                   _Vddmu{SpMat(_dim, _dim)},
                                    _precision{SpMat(_dim, _dim)},
                                    _ldlt{_precision},
                                    _covariance{SpMat(_dim, _dim)},
-                                //    _covariance{MatrixXd::Identity(_dim, _dim)},
                                    _res_recorder{_niters, _dim}
     {
                 _precision.setZero();
@@ -62,20 +63,24 @@ public:
                 SpMat lower = _precision.triangularView<Eigen::Lower>();
                 _eigen_wrapper.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
                 _nnz = _Rows.rows();
+                
+                _Vdmu.setZero();
+                _Vddmu.setZero();
     }
 
 protected:
     /// optimization variables
     int _dim, _niters, _nfactors, _dim_state, _num_states;
 
-    /// @param _vec_factor_optimizers Vector of marginal optimizers
-    vector<std::shared_ptr<FactorizedOptimizer>> _vec_factor_optimizers;
+    /// @param _vec_factors Vector of marginal optimizers
+    vector<std::shared_ptr<FactorizedOptimizer>> _vec_factors;
 
-    /// @param _mu mean
-    /// @param _dmu incremental mean
     VectorXd _mu;
-    // MatrixXd _precision;
-    // MatrixXd _covariance;
+
+    VectorXd _Vdmu;
+    SpMat _Vddmu;
+    
+    double _temperature;
 
     /// Data and result storage
     VIMPResults _res_recorder;
@@ -93,10 +98,8 @@ protected:
     Timer _timer = Timer();
 
     /// step sizes by default
-    double _step_size_precision = 0.9;
-    double _step_size_mu = 0.9;
-    double _step_size_base_mu = 0.55;
-    double _step_size_base_precision = 0.05;
+    double _step_size = 0.9;
+    double _step_size_base = 0.55;
 
     /// filename for the perturbed costs
     std::string _file_perturbed_cost;
@@ -117,11 +120,6 @@ public:
      */
     void step();
 
-    /**
-     * @brief Verifier function which computes one step update in the Gaussian cost case, 
-     * which has the closed form solution.
-     */
-    void step_closed_form();
 
     /**
      * @brief The optimizing process.
@@ -195,10 +193,9 @@ public:
     }   
 
     inline double purturbed_cost(double scale=0.01) const{
-        VectorXd p_mean = purturb_mean(scale);
-        MatrixXd p_precision = purturb_precision(scale);
-        // return cost_value(p_mean, p_precision.inverse());
-        return cost_value(p_mean, p_precision.inverse());
+        // VectorXd p_mean = purturb_mean(scale);
+        // MatrixXd p_precision = purturb_precision(scale);
+        return cost_value(purturb_mean(scale), purturb_precision(scale).inverse());
     }
 
 
@@ -217,20 +214,14 @@ public:
     }
 
     /// update the step sizes
-    inline void set_step_size(double ss_mean, double ss_precision){
-        _step_size_mu = ss_mean;
-        _step_size_precision = ss_precision; }
+    inline void set_step_size(double step_size){ _step_size = step_size; }
 
     /// The base step size in backtracking
-    inline void set_step_size_base(double ss_base_mu, double ss_base_precision){
-        _step_size_base_mu = ss_base_mu;
-        _step_size_base_precision = ss_base_precision;
-    }
+    inline void set_step_size_base(double step_size_base){ _step_size_base = step_size_base; }
 
     inline void set_mu(const VectorXd& mean){
-        assert(mean.size() == _mu.size());
         _mu = mean; 
-        for (std::shared_ptr<FactorizedOptimizer> & opt_fact : _vec_factor_optimizers){
+        for (std::shared_ptr<FactorizedOptimizer> & opt_fact : _vec_factors){
             opt_fact->update_mu_from_joint(_mu);
         }
     }
@@ -247,7 +238,7 @@ public:
     }
 
     inline void set_GH_degree(const int deg){
-        for (auto & opt_fact : _vec_factor_optimizers){
+        for (auto & opt_fact : _vec_factors){
             opt_fact->set_GH_points(deg);
         }
     }
@@ -316,8 +307,8 @@ public:
      */
     vector<double> E_Phis(){
         vector<double> res;
-        for (auto & p_opt: _vec_factor_optimizers){
-            res.emplace_back(p_opt->E_Phi());
+        for (auto & p_factor: _vec_factors){
+            res.emplace_back(p_factor->E_Phi());
         }
         return res;
     }
@@ -328,8 +319,8 @@ public:
      */
     vector<MatrixXd> E_xMuPhis(){
         vector<MatrixXd> res;
-        for (auto & p_opt: _vec_factor_optimizers){
-            res.emplace_back(p_opt->E_xMuPhi());
+        for (auto & p_factor: _vec_factors){
+            res.emplace_back(p_factor->E_xMuPhi());
         }
         return res;
     }
@@ -340,8 +331,8 @@ public:
      */
     vector<MatrixXd> E_xMuxMuTPhis(){
         vector<MatrixXd> res;
-        for (auto & p_opt: _vec_factor_optimizers){
-            res.emplace_back(p_opt->E_xMuxMuTPhi());
+        for (auto & p_factor: _vec_factors){
+            res.emplace_back(p_factor->E_xMuxMuTPhi());
         }
         return res;
     }
@@ -366,9 +357,6 @@ public:
                 Z(j, i) = cost_value(mean, cov.inverse()); /// the order of the matrix in cpp and in matlab
             }
         }
-        cout << "Z(0,0) " << endl << Z(0,0) << endl;
-        cout << "Z(1,0) " << endl << Z(1,0) << endl;
-        cout << "Z(1,1) " << endl << Z(1,1) << endl;
         return Z;
     }
 
