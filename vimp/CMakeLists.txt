@@ -111,6 +111,9 @@ include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(test_eigen_sparse tests/test_eigen_sparse.cpp)
 target_link_libraries(test_eigen_sparse ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
+add_executable(test_linear_system tests/test_linear_system.cpp)
+target_link_libraries(test_linear_system ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+
 # add_executable(test_GH tests/test_GH.cpp)
 # target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 

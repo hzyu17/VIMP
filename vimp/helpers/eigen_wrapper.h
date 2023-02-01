@@ -22,6 +22,7 @@ typedef Eigen::SparseVector<double> SpVec;
 typedef Eigen::Triplet<double> Trip;
 typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
 
+namespace vimp{
 class EigenWrapper{
 public:
     EigenWrapper(){};
@@ -358,6 +359,14 @@ public:
         mat.block(start_row, start_col, nrows, ncols) = block;
     }
 
+    void block_insert(Eigen::MatrixXd & mat, int start_row, int start_col, int nrows, int ncols, const Eigen::MatrixXd& block){
+        mat.block(start_row, start_col, nrows, ncols) = block;
+    }
+
+    Eigen::MatrixXd block_extract(Eigen::MatrixXd & mat, int start_row, int start_col, int nrows, int ncols){
+        return mat.block(start_row, start_col, nrows, ncols);
+    }
+
     /**
      * @brief Sparse inversion for a psd matrix X
      * 
@@ -618,3 +627,4 @@ private:
     // IO related
     std::string _sep = "\n----------------------------------------\n";
 };
+}
