@@ -27,8 +27,8 @@ namespace vimp{
     public:
         ///@param dimension The dimension of the state
         ///@param function Template function class which calculate the cost
-        VIMPOptimizerFactorizedSimpleGH(const int& dimension, const Function& function, const MatrixXd& Pk):
-                OptBase(dimension, Pk)
+        VIMPOptimizerFactorizedSimpleGH(int dimension, int state_dim, int num_states, int start_index, const Function& function):
+                OptBase(dimension, state_dim, num_states, start_index)
                 {
                     /// Override of the base classes.
                     OptBase::_func_phi = [this, function](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function(x))};};

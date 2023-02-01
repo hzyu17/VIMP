@@ -103,6 +103,7 @@ endforeach(src_file)
 # target_link_libraries(gtest Threads::Threads)
 
 
+
 #% --------------------------------------------------------- Tests files 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
@@ -110,11 +111,8 @@ include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(test_eigen_sparse tests/test_eigen_sparse.cpp)
 target_link_libraries(test_eigen_sparse ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
-add_executable(test_sparse_graph tests/test_sparse_graph.cpp)
-target_link_libraries(test_sparse_graph ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
-
-add_executable(test_GH tests/test_GH.cpp)
-target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+# add_executable(test_GH tests/test_GH.cpp)
+# target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
 # # add executables for the tests
 # file(GLOB vimp_test_files RELATIVE "${CMAKE_SOURCE_DIR}/tests" "${CMAKE_SOURCE_DIR}/tests/*.cpp")
@@ -128,26 +126,25 @@ target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
 
 # -------------------------------------------- Doxygen for documentations
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-    # set input and output files
-    set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
-    set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile)
+# find_package(Doxygen)
+# if (DOXYGEN_FOUND)
+#     # set input and output files
+#     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
+#     set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile)
 
-    # request to configure the file
-    configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-    message("Doxygen build started")
+#     # request to configure the file
+#     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+#     message("Doxygen build started")
 
-    # note the option ALL which allows to build the docs together with the application
-    add_custom_target( doc_doxygen ALL
-        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-        COMMAND firefox ${CMAKE_CURRENT_SOURCE_DIR}/html/index.html
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Generating API documentation with Doxygen"
-        VERBATIM )
+#     # note the option ALL which allows to build the docs together with the application
+#     add_custom_target( doc_doxygen ALL
+#         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+#         COMMAND firefox ${CMAKE_CURRENT_SOURCE_DIR}/html/index.html
+#         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+#         COMMENT "Generating API documentation with Doxygen"
+#         VERBATIM )
         
-else (DOXYGEN_FOUND)
-  message("Doxygen need to be installed to generate the doxygen documentation")
-endif (DOXYGEN_FOUND)
-
+# else (DOXYGEN_FOUND)
+#   message("Doxygen need to be installed to generate the doxygen documentation")
+# endif (DOXYGEN_FOUND)
 

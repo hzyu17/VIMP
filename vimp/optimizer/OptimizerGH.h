@@ -19,6 +19,7 @@
 #include "../helpers/timer.h"
 
 using namespace std;
+using namespace Eigen;
 
 
 namespace vimp{
@@ -134,7 +135,7 @@ public:
     /**
      * @brief Compute the total cost function value given a state, using current values.
      */
-    double cost_value() const;
+    double cost_value();
 
     /**
      * @brief given a state, compute the total cost function value without the entropy term, using current values.
@@ -261,10 +262,42 @@ public:
         _file_perturbed_cost = file_perturbed_costs;
     }
 
+    inline void update_file_names(const string & prefix = "", const string & afterfix=""){
+        std::vector<string> vec_filenames;
+        vec_filenames.emplace_back("mean");
+        vec_filenames.emplace_back("cov");
+        vec_filenames.emplace_back("precisoin");
+        vec_filenames.emplace_back("cost");
+        vec_filenames.emplace_back("factor_costs");
+        vec_filenames.emplace_back("perturbation_statistics");
+
+        string underscore{"_"};
+        string file_type{".csv"};
+
+        if (prefix != ""){
+            for (string & i_file : vec_filenames){
+                i_file = prefix + i_file;
+            }
+        }
+
+        if (afterfix != ""){
+            for (string & i_file : vec_filenames){
+                i_file = i_file + underscore + afterfix;
+            }
+        }
+
+        for (string & i_file : vec_filenames){
+                i_file = i_file + file_type;
+        }
+
+        _res_recorder.update_file_names(vec_filenames[0], vec_filenames[1], vec_filenames[2], vec_filenames[3], vec_filenames[4]);
+        _file_perturbed_cost = vec_filenames[5];
+    }
+
     /**
      * @brief save process data into csv files.
      */
-    inline void save_data(){ _res_recorder.save_data();}
+    inline void save_data() { _res_recorder.save_data();}
 
     /**
      * @brief save a matrix to a file. 
@@ -353,8 +386,9 @@ public:
         for (int i=0; i<nmesh; i++){
             VectorXd mean{VectorXd::Constant(1, x_start + i*res_x)};
             for (int j=0; j<nmesh; j++){
-                MatrixXd cov{MatrixXd::Constant(1, 1, 1/(y_start + j*res_y))};
-                Z(j, i) = cost_value(mean, cov.inverse()); /// the order of the matrix in cpp and in matlab
+                SpMat precision(1, 1);
+                precision.coeffRef(0, 0) = (y_start + j*res_y);
+                Z(j, i) = cost_value(mean, precision); /// the order of the matrix in cpp and in matlab
             }
         }
         return Z;

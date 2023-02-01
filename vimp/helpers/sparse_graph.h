@@ -9,7 +9,6 @@
  * 
  */
 
-#include "square_block.h"
 #include "eigen_wrapper.h"
 
 namespace vimp{
@@ -34,7 +33,8 @@ public:
     int _start_col;
     int _nrows;
     int _ncols;
-};
+    
+}; // struct Block
 
 class TrajectoryBlock{
 
@@ -53,17 +53,17 @@ public:
         return m.middleRows(_block.row(), _block.nrows()).middleCols(_block.col(), _block.ncols());
     }
 
-    VectorXd extract_vector(const VectorXd & vec){
+    Eigen::VectorXd extract_vector(const Eigen::VectorXd & vec){
         return vec.block(_block.row(), 0, _block.nrows(), 1);
     }
 
-    void fill(MatrixXd & block, SpMat & matrix){
+    void fill(Eigen::MatrixXd & block, SpMat & matrix){
         Eigen::MatrixXd mat_full{matrix};
         mat_full.block(_block.row(), _block.col(), _block.nrows(), _block.ncols()) = block;
         matrix = mat_full.sparseView();
     }
 
-    void fill_vector(VectorXd & vec, const VectorXd & vec_block){
+    void fill_vector(Eigen::VectorXd & vec, const Eigen::VectorXd & vec_block){
         vec.setZero();
         vec.block(_block.row(), 0, _block.nrows(), 1) = vec_block;
     }
@@ -86,6 +86,6 @@ private:
     int _start_index, _block_length;
     Block _block = Block();
 
-};
+}; // class TrajectoryBlock
 
-} //namespace vimp
+} // namespace vimp

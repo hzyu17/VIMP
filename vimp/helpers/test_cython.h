@@ -9,13 +9,11 @@
  * 
  */
 
-#include <gtsam/base/Vector.h>
-// #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
+#include "../../gtsam/base/Vector.h"
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-// #include <vimp/instances/PriorColPlanarPointRobot.h>
-#include <gpmp2/kinematics/PointRobotModel.h>
+#include "../../gpmp2/kinematics/PointRobotModel.h"
 #include <boost/function.hpp>
 
 
@@ -42,27 +40,8 @@ namespace vimp{
 
     };
 
-    // class CythonTest{
-    //     public:
-    //         CythonTest(){};
-            
-    //         CythonTest(const gtsam::Vector& vec, const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact):_vec{vec}, 
-    //         _func{[](const gpmp2::ObstaclePlanarSDFFactorPointRobot& obs_fact){return 0;}}{};
-            
-    //         gtsam::Vector _vec;
-            
-    //         std::function<int(const gpmp2::ObstaclePlanarSDFFactorPointRobot&)> _func;
-            
-    //         gtsam::Vector vec() const{
-    //             return _vec;
-    //         }
-
-
-    // };
-
     /**
      * @brief Test the use of gpmp2 class.
-     * 
      */
     class CyTest2{  
         public:
@@ -77,7 +56,6 @@ namespace vimp{
 
     /**
      * @brief Test the functional, and make_shared
-     * 
      */
     typedef boost::function<double(const double&)> FunctionDoubleDouble;
 
@@ -96,7 +74,6 @@ namespace vimp{
 
     /**
      * @brief Test the std::vector
-     * 
      */
     class CyTest4{
         public:

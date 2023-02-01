@@ -23,26 +23,19 @@ namespace vimp{
             _Vdmu.setZero();
             _Vddmu.setZero();
 
-            _timer.start();
             for (auto& opt_k : _vec_factors){
-                // if (opt_k->_is_linear){
-                //     opt_k->calculate_partial_V();
-                //     // opt_k->calculate_partial_V_GH();
-                // }
                 opt_k->calculate_partial_V();
                 _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
                 _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
             }
             _Vdmu = _Vdmu / _temperature;
             _Vddmu = _Vddmu / _temperature;
-
-            _timer.end("Vdmu and Vddmu time: ");
             
             SpMat dprecision = -_precision + _Vddmu;
             VectorXd dmu = _eigen_wrapper.solve_cgd_sp(_Vddmu, -_Vdmu);
 
             int cnt = 1;
-            const int MAX_ITER = 10;
+            const int MAX_ITER = 20;
             double step_size;
 
             SpMat new_precision;
@@ -155,7 +148,7 @@ namespace vimp{
         }
         SparseLDLT ldlt(Precision);
         double det = ldlt.determinant();
-        if (det < 0){ std::runtime_error(std::string("Infinity log determinant precision matrix ...")); }
+        if (det < 0){ std::runtime_error("Infinity log determinant precision matrix ..."); }
         value += log(det) / 2;
         return value;
     }
@@ -164,9 +157,10 @@ namespace vimp{
      * @brief Compute the total cost function value given a state, using current values.
      */
     template <typename FactorizedOptimizer>
-    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value() const{
+    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value() {
         double det = _ldlt.determinant();
         if (0 >  det){
+            this->save_data();
             std::__throw_out_of_range("precision matrix not psd ...");
         }
         return cost_value_no_entropy() + log(det) / 2;

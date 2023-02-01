@@ -15,6 +15,6 @@
 
 namespace vimp{
 
-    auto cost_sdf_Arm = cost_obstacle<gpmp2::ArmModel>;
+    auto cost_sdf_Arm = cost_obstacle_planar<gpmp2::ArmModel>;
     using OptPlanarSDFFactorArm = OptPlanarSDFFactor<gpmp2::ArmModel>;
 }// namespace 

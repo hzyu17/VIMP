@@ -112,7 +112,7 @@ public:
         if (res){
             return res;
         }else{
-            std::cout << "not equal, norm difference: " << (m1 - m2).norm() << endl;
+            std::cout << "not equal, norm difference: " << (m1 - m2).norm() << std::endl;
             return res;
         }
     }
@@ -133,7 +133,7 @@ public:
         if (res){
             return res;
         }else{
-            std::cout << "not equal, norm difference: " << (m1 - m2).norm() << endl;
+            std::cout << "not equal, norm difference: " << (m1 - m2).norm() << std::endl;
             return res;
         }
     }
@@ -258,7 +258,7 @@ public:
     void printf_fixed_digits(double x, int precision=5, std::string header="printing fixed-digit double"){
         std::cout.precision(precision);
         std::cout << header << std::endl;
-        std::cout << fixed << x << std::endl;
+        std::cout << x << std::endl;
     }
 
     void print_spmatrix(const SpMat& sp_m){
