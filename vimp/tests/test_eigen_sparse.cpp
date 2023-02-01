@@ -327,7 +327,7 @@ TEST(TestSparse, sparse_inverse){
     SpMat precision_inv_sp(size, size);
     timer.start();
     for (int i=0; i<100; i++){
-        eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp, I, J, V, nnz);
+        eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp, I, J, nnz);
     }
     timer.end();
 

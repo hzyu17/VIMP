@@ -25,7 +25,7 @@ end
 % factor_costs = csvread([prefix+"/factor_costs.csv"]);
 % addpath("../../error_ellipse");
 
-% read data
+% read data low T
 means = csvread("../../../vimp/data/2d_Arm3/mean_base.csv");
 covs = csvread("../../../vimp/data/2d_Arm3/cov_base.csv");
 precisions = csvread("../../../vimp/data/2d_Arm3/precisoin_base.csv");
@@ -35,11 +35,22 @@ sdfmap = csvread("../../../vimp/data/2d_Arm3/map.csv");
 factor_costs = csvread("../../../vimp/data/2d_Arm3/factor_costs_base.csv");
 addpath("error_ellipse");
 
+% read data high T
+% --------------------------------------------------------------------------------------------------
+% means = csvread("../../../vimp/data/2d_Arm3/mean.csv");
+% covs = csvread("../../../vimp/data/2d_Arm3/cov.csv");
+% precisions = csvread("../../../vimp/data/2d_Arm3/precisoin.csv");
+% costs = csvread("../../../vimp/data/2d_Arm3/cost.csv");
+% 
+% sdfmap = csvread("../../../vimp/data/2d_Arm3/map.csv");
+% factor_costs = csvread("../../../vimp/data/2d_Arm3/factor_costs.csv");
+% addpath("error_ellipse");
+
 % ----- parameters -----
 [niters, ttl_dim] = size(means);
 dim_theta = 6;
-niters = 4;
-nsteps = 4;
+niters = 10;
+nsteps = 10;
 
 % niters
 niters = length(costs);
@@ -243,10 +254,10 @@ height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(2, 3, 'TileSpacing', 'tight', 'Padding', 'tight')
+tiledlayout(3, 5, 'TileSpacing', 'tight', 'Padding', 'tight')
 
 n_samples = 50;
-for j = 1:3:n_states
+for j = 1:1:n_states
     j
     nexttile
     t = title(['Support State ',num2str(j)]);
@@ -281,7 +292,7 @@ ylim([-0.5 1.5])
 end
 
 % final step
-j = 10;
+j = n_states;
 nexttile
 t = title(['Support State ',num2str(j)]);
 t.FontSize = 16;

@@ -10,16 +10,19 @@
  */
 
 #include "repeated_includes.h"
+#include <vector>
+
+using namespace std;
 
 namespace vimp{
     struct VIMPResults{
-        MatrixXd _res_mean;
-        vector<MatrixXd> _vec_res_covariances;
-        vector<MatrixXd> _vec_res_precisions;
+        Eigen::MatrixXd _res_mean;
+        std::vector<Eigen::MatrixXd> _vec_res_covariances;
+        std::vector<Eigen::MatrixXd> _vec_res_precisions;
         int _niters, _nstates;
         int _cur_iter=0;
-        vector<double> _vec_cost_values;
-        vector<VectorXd> _vec_factor_costs;
+        std::vector<double> _vec_cost_values;
+        std::vector<Eigen::VectorXd> _vec_factor_costs;
 
         std::string _file_mean{"mean.csv"};
         std::string _file_cov{"cov.csv"};
@@ -41,10 +44,9 @@ namespace vimp{
 
         /**
          * @brief reinitialize data sizes.
-         * 
          */
         inline void reinitialize_data(){
-            _res_mean = std::move(MatrixXd::Zero(_niters, _nstates));
+            _res_mean = std::move(Eigen::MatrixXd::Zero(_niters, _nstates));
             _vec_res_covariances.resize(_niters);
             _vec_res_precisions.resize(_niters);
             _vec_cost_values.resize(_niters);
@@ -69,9 +71,9 @@ namespace vimp{
          * @param new_cov the new coming covariance matrix
          * @param new_precision the new coming precision matrix
          */
-        void update_data(const VectorXd& new_mean, const MatrixXd& new_cov, 
-                        const MatrixXd& new_precision, const double& new_cost, 
-                        const VectorXd& new_factor_costs){
+        void update_data(const Eigen::VectorXd& new_mean, const Eigen::MatrixXd& new_cov, 
+                        const Eigen::MatrixXd& new_precision, const double& new_cost, 
+                        const Eigen::VectorXd& new_factor_costs){
             if (_cur_iter < _niters){
                 _res_mean.row(_cur_iter) = std::move(new_mean.transpose());
                 _vec_res_covariances[_cur_iter] = std::move(new_cov);
@@ -81,7 +83,7 @@ namespace vimp{
                 _cur_iter += 1;
             }
             else{
-                cout << "reached the last iteration" << endl;
+                std::cout << "reached the last iteration" << std::endl;
             }
         }
 
@@ -92,9 +94,9 @@ namespace vimp{
          */
         inline void print_data(int i_iter){
             assert(i_iter < _niters);
-            cout << "mean: " << endl << _res_mean.row(i_iter) << endl << endl;
-            cout << "precision: " << endl << _vec_res_precisions[i_iter] << endl;
-            cout << "cost: " << endl << _vec_cost_values[i_iter] << endl;
+            std::cout << "mean: " << std::endl << _res_mean.row(i_iter) << std::endl << std::endl;
+            std::cout << "precision: " << std::endl << _vec_res_precisions[i_iter] << std::endl;
+            std::cout << "cost: " << std::endl << _vec_cost_values[i_iter] << std::endl;
 
         }
 
@@ -104,11 +106,11 @@ namespace vimp{
          * @param file_mean filename for the means
          * @param file_cov filename for the covariances
          */
-        inline void update_file_names(const string& file_mean, 
-                                      const string& file_cov, 
-                                      const string& file_precision,
-                                      const string& file_cost,
-                                      const string& file_factor_costs){
+        inline void update_file_names(const std::string& file_mean, 
+                                      const std::string& file_cov, 
+                                      const std::string& file_precision,
+                                      const std::string& file_cost,
+                                      const std::string& file_factor_costs){
             _file_mean = file_mean;
             _file_cov = file_cov;
             _file_cost = file_cost;
@@ -128,26 +130,24 @@ namespace vimp{
                 file << _res_mean.format(CSVFormat);
                 file.close();
             }
-            
 
             /// save covariances
             ofstream f_cov(_file_cov);
             if (!f_cov.is_open()){
                 throw std::runtime_error(std::string("File dose not opened ...: ") + _file_cov);
             }else{
-                    for (MatrixXd& i_cov:_vec_res_covariances){
+                    for (Eigen::MatrixXd& i_cov:_vec_res_covariances){
                     f_cov << i_cov.format(CSVFormat) << "\n";
                 }
                 f_cov.close();
             }
-
 
             /// save precisions
             ofstream f_prec(_file_precision);
             if (!f_prec.is_open()){
                 throw std::runtime_error(std::string("File dose not opened ...: ") + _file_cov);
             }else{
-                    for (MatrixXd& i_prec:_vec_res_precisions){
+                    for (Eigen::MatrixXd& i_prec:_vec_res_precisions){
                     f_prec << i_prec.format(CSVFormat) << "\n";
                 }
                 f_prec.close();
@@ -169,7 +169,7 @@ namespace vimp{
             if (!f_factor_costs.is_open()){
                 throw std::runtime_error(std::string("File dose not opened ...: ") + _file_factor_costs);
             }else{
-                for (VectorXd& i_factor_costs:_vec_factor_costs){
+                for (Eigen::VectorXd& i_factor_costs:_vec_factor_costs){
                     f_factor_costs << i_factor_costs.transpose().format(CSVFormat) << "\n";
                 }
                 f_factor_costs.close();

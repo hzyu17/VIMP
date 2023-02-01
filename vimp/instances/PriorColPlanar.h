@@ -12,7 +12,7 @@
 // #pragma once
 
 #include "../instances/CostFunctions.h"
-#include "../optimizer/OptimizerFactorizedOneFactorGH.h"
+#include "../optimizer/OptimizerFactorizedNonlinerOneFactorGH.h"
 #include "../optimizer/OptimizerGH.h"
 #include "../optimizer/OptimizerFactorizedLinear.h"
 
@@ -25,7 +25,7 @@ namespace vimp{
     typedef VIMPFactorizedLinear<FixedPriorGP> FixedGpPrior;
     typedef VIMPFactorizedLinear<MinimumAccGP> LinearGpPrior;
     template <typename ROBOT>
-    using OptPlanarSDFFactor = VIMPFactorizedOneCost<gpmp2::ObstaclePlanarSDFFactor<ROBOT>> ;
+    using OptPlanarSDFFactor = OptimizerFactorizedNonlinerOneFactorGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>> ;
 
 }
 

@@ -16,7 +16,6 @@
 #include "../helpers/data_io.h"
 
 using namespace std;
-using namespace gpmp2;
 using namespace Eigen;
 using namespace vimp;
 using namespace gtsam;
@@ -35,20 +34,20 @@ class PlanarPointRobotSDFMultiObsExample{
             Point2 origin(-20, -10);
             double cell_size = 0.1;
 
-            _sdf = PlanarSDF(origin, cell_size, _field);
+            _sdf = gpmp2::PlanarSDF(origin, cell_size, _field);
 
             /// Robot model
-            PointRobot pR(_ndof, _nlinks);
+            gpmp2::PointRobot pR(_ndof, _nlinks);
             double r = 1.5;
-            BodySphereVector body_spheres;
-            body_spheres.push_back(BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
-            _pR_model = PointRobotModel(pR, body_spheres);
+            gpmp2::BodySphereVector body_spheres;
+            body_spheres.push_back(gpmp2::BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
+            _pR_model = gpmp2::PointRobotModel(pR, body_spheres);
 
         }
 
         public:
-            PointRobotModel _pR_model = PointRobotModel();
-            PlanarSDF _sdf = PlanarSDF();
+            gpmp2::PointRobotModel _pR_model = gpmp2::PointRobotModel();
+            gpmp2::PlanarSDF _sdf = gpmp2::PlanarSDF();
             MatrixXd _field;
             MatrixIO _matrix_io = MatrixIO();
 
@@ -57,8 +56,8 @@ class PlanarPointRobotSDFMultiObsExample{
             int _nlinks = 1;
 
         public:
-            PointRobotModel pRmodel() const { return _pR_model; }
-            PlanarSDF sdf() const { return _sdf; }
+            gpmp2::PointRobotModel pRmodel() const { return _pR_model; }
+            gpmp2::PlanarSDF sdf() const { return _sdf; }
             int ndof() const {return _ndof;}
             int nlinks() const {return _nlinks;}
             MatrixXd field() const {return _field;}

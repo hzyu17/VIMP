@@ -25,177 +25,208 @@ figure(2)
 plotSignedDistanceField2D(field, dataset.origin_x, dataset.origin_y, dataset.cell_size);
 title('Signed Distance Field')
 
-% read data
-means = csvread("../../../vimp/data/2d_Arm3/mean_base.csv");
-covs = csvread("../../../vimp/data/2d_Arm3/cov_base.csv");
-precisions = csvread("../../../vimp/data/2d_Arm3/precisoin_base.csv");
-costs = csvread("../../../vimp/data/2d_Arm3/cost_base.csv");
 
-sdfmap = csvread("../../../vimp/data/2d_Arm3/map.csv");
-factor_costs = csvread("../../../vimp/data/2d_Arm3/factor_costs_base.csv");
-addpath("error_ellipse");
+%% settings
+total_time_sec = 5.0;
+total_time_step = 10;
+total_check_step = 50;
+delta_t = total_time_sec / total_time_step;
+check_inter = total_check_step / total_time_step - 1;
 
-% ----- parameters -----
-[niters, ttl_dim] = size(means);
-dim_theta = 6;
-% niters
-niters = length(costs);
-for i=niters:-1:1
-    if costs(i) ~= 0
-        niters=i;
-        break
-    end
-end
-nsteps = 10;
-step_size = floor(niters / nsteps);
-n_states = floor(ttl_dim / dim_theta);
-%  ------- arm --------
+% use GP interpolation
+use_GP_inter = true;
+
+% abstract arm
 a = [5, 5, 5]';
 d = [0, 0, 0]';
 alpha = [0, 0, 0]';
 arm = Arm(3, a, alpha, d);
+
+% arm model
 arm = generateArm('SimpleThreeLinksArm');
 
-%  ------- sdf --------
-cell_size = 0.01;
-origin_x = -1;
-origin_y = -1;
-origin_point2 = Point2(origin_x, origin_y);
-field = signedDistanceField2D(sdfmap, cell_size);
-% save field
-% csvwrite("../vimp/data/2d_Arm/field.csv", field);
-sdf = PlanarSDF(origin_point2, cell_size, field);
+% GP
+Qc = eye(3);
+Qc_model = noiseModel.Gaussian.Covariance(Qc); 
 
-%% ==================  plot sdf and means and covs ================
-import gtsam.*
-import gpmp2.*
-% ----------------------- load the means and covs on the 2*2 level -----------------------
-% containers for all the steps data
-vec_means = cell(niters, 1);
-vec_covs = cell(niters, 1);
-vec_precisions = cell(niters, 1);
+% obstacle cost settings
+cost_sigma = 0.1;
+epsilon_dist = 0.1;
 
-for i_iter = 0: nsteps-1
-        % each time step 
-        i = i_iter * step_size;
-        i_mean = means(i+1, 1:end);
-        i_cov = covs(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
-        i_prec = precisions(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
-        i_vec_means_2d = cell(n_states, 1);
-        i_vec_covs_2d = cell(n_states, 1);
-        vec_precisions{i_iter+1} = i_prec;
-        for j = 0:n_states-1
-            % each state
-            i_vec_means_2d{j+1} = i_mean(j*dim_theta+1 : j*dim_theta+2);
-            i_vec_covs_2d{j+1} = i_cov(j*dim_theta +1 : j*dim_theta+2,  ...
-                                                                j*dim_theta+1 : j*dim_theta+2);
-        end
-        vec_means{i_iter+1} = i_vec_means_2d;
-        vec_covs{i_iter+1} = i_vec_covs_2d;
-end
+% prior model on start conf/velocity
+pose_fix = noiseModel.Isotropic.Sigma(3, 0.0001);
+vel_fix = noiseModel.Isotropic.Sigma(3, 0.0001);
 
-% -------- start and end conf -------- 
+% final goal point and noise model
+goal = [0, 1.1]';
+goal_point3 = Point3([goal; 0]);
+goal_fix = noiseModel.Isotropic.Sigma(3, 0.0001);
+
+% start and end conf
 start_conf = [0, 0, 0]';
 start_vel = [0, 0, 0]';
-end_conf = [0.9, pi/2-0.9, 0]';
+
+% end conf initial values
+end_conf_init = [0, 0, 0]';
+
+% end velocity
 end_vel = [0, 0, 0]';
+avg_vel = ((end_conf_init - start_conf) / total_time_step) / delta_t;
 
-figure
-tiledlayout(2, floor(nsteps/2), 'TileSpacing', 'tight', 'Padding', 'tight')
-for i_iter = 1: nsteps
-    nexttile
+% plot settings
+plot_smooth = false;
+plot_inter = 10;
+
+% plot start configuration / goal point
+figure(1), hold on
+plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
+plotPlanarArm(arm.fk_model(), start_conf, 'b', 2);
+plot(goal(1), goal(2), 'r*');
+title('Layout')
+hold off
+
+
+%% init optimization
+graph = NonlinearFactorGraph;
+init_values = Values;
+
+for i = 0 : total_time_step
+    key_pos = symbol('x', i);
+    key_vel = symbol('v', i);
     
-    i_vec_means_2d = vec_means{i_iter};
-    i_vec_covs_2d = vec_covs{i_iter};
-    for j = 1:n_states
-        hold on 
-        plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
-        % means
-        plotPlanarArm(arm.fk_model(), i_vec_means_2d{j}', 'c', 2);
-        pause(0.1), hold off
-        % covariance
-%         error_ellipse(i_vec_covs_2d{j}, i_vec_means_2d{j});
+    pose = start_conf * (total_time_step-i)/total_time_step + end_conf_init * i/total_time_step;
+    vel = avg_vel;
+    init_values.insert(key_pos, pose);
+    init_values.insert(key_vel, vel);
+    
+    % priors
+    if i==0
+        graph.add(PriorFactorVector(key_pos, start_conf, pose_fix));
+        graph.add(PriorFactorVector(key_vel, start_vel, vel_fix));
+    elseif i==total_time_step
+        graph.add(GoalFactorArm(key_pos, goal_fix, arm.fk_model(), goal_point3));
+        graph.add(PriorFactorVector(key_vel, end_vel, vel_fix));
     end
-    hold on
-    plotEvidenceMap2D(sdfmap, origin_x, origin_y, cell_size);
-    % means
-    plotPlanarArm(arm.fk_model(), i_vec_means_2d{j}', 'c', 2);
-    plotPlanarArm(arm.fk_model(), start_conf, 'b', 2);
-    plotPlanarArm(arm.fk_model(), end_conf, 'r', 2);
-    hold off
+    
+    % GP priors and cost factor
+    if i > 0
+        key_pos1 = symbol('x', i-1);
+        key_pos2 = symbol('x', i);
+        key_vel1 = symbol('v', i-1);
+        key_vel2 = symbol('v', i);
+        graph.add(GaussianProcessPriorLinear(key_pos1, key_vel1, ...
+            key_pos2, key_vel2, delta_t, Qc_model));
+        
+        % cost factor
+        graph.add(ObstaclePlanarSDFFactorArm(...
+            key_pos, arm, sdf, cost_sigma, epsilon_dist));
+        
+        % GP cost factor
+        if use_GP_inter & check_inter > 0
+            for j = 1:check_inter
+                tau = j * (total_time_sec / total_check_step);
+                graph.add(ObstaclePlanarSDFFactorGPArm( ...
+                    key_pos1, key_vel1, key_pos2, key_vel2, ...
+                    arm, sdf, cost_sigma, epsilon_dist, ...
+                    Qc_model, delta_t, tau));
+            end
+        end
+    end
 end
 
-%% ================ plot the total costs ================
-figure
-tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none') 
-nexttile
-title('Total Loss')
-grid minor 
-hold on
-plot(costs, 'LineWidth', 2.0, 'LineStyle', '-.');
-scatter(linspace(1, length(costs), length(costs)), costs, 'fill')
-xlabel('Iterations','fontweight','bold')
-ylabel('V(q)','fontweight','bold')
-
-%% ================ plot the process factor costs ================
-% figure
-% tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
-% title('Factor costs')
-% hold on
-% grid on
-% nexttile
-% for i_iter = 1:size(factor_costs, 2)
-%     plot(factor_costs(1:end, i_iter), 'LineWidth', 2)
+% %% plot initial values
+% for i=0:total_time_step
+%     figure(3), hold on
+%     title('Initial Values')
+%     % plot world
+%     plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
+%     % plot arm
+%     conf = init_values.atVector(symbol('x', i));
+%     plotPlanarArm(arm, conf, 'b', 2);
+%     pause(pause_time), hold off
 % end
-% legend({"FixedGP0","LinGP1","Obs1","LinGP2","Obs2","FixedGP1"})
 
-%% =============== plot cost for each factor ================
-fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
-prior_costs = [];
-for i = 1:n_states-1
-    prior_costs = [prior_costs, factor_costs(1:end, 1+(i-1)*2+1)];
+
+%% optimize!
+use_LM = false;
+use_trustregion_opt = true;
+
+if use_LM
+    parameters = LParams;
+    parameters.setVerbosity('ERROR');
+    optimizer = DoglegOptimizer(graph, init_values, parameters);
+elseif use_trustregion_opt
+    parameters = DoglegParams;
+    parameters.setVerbosity('ERROR');
+    optimizer = DoglegOptimizer(graph, init_values, parameters);
+else
+    parameters = GaussNewtonParams;
+    parameters.setVerbosity('ERROR');
+    optimizer = GaussNewtonOptimizer(graph, init_values, parameters);
 end
-obs_costs = [];
-for i = 1:n_states-2
-    obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
+
+tic
+optimizer.optimize();
+toc
+
+result = optimizer.values();
+% result.print('Final results')
+
+
+%% plot final values
+% interpolation for smooth traj to plot
+
+if plot_smooth
+    % smooth version
+    total_plot_step = total_time_step * plot_inter;
+    plot_values = interpolateArm3Traj(result, Qc_model, delta_t, plot_inter-1);
+    pause_time = total_time_sec / (total_time_step * plot_inter);
+else
+    % non-smooth version
+    total_plot_step = total_time_step;
+    plot_values = result;
+    pause_time = total_time_sec / total_time_step;
 end
 
-figure
-tiledlayout(1, 3, 'TileSpacing', 'tight', 'Padding', 'tight') 
-nexttile
-% subplot(1, 3, 1)
-title('Prior cost factors')
-hold on
-grid minor
-plot(prior_costs, 'LineWidth', 1.5, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 10, 'filled')
-xlabel('Iterations','fontweight','bold')
-ylabel('-log(p(x_k))','fontweight','bold')
-
-% subplot(1, 3, 2)
-nexttile
-title('Collision cost factors')
-hold on
-grid minor
-plot(obs_costs, 'LineWidth', 1.5, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 10, 'filled')
-xlabel('Iterations','fontweight','bold')
-ylabel('-log(p(z|x_k))','fontweight','bold')
-
-% --- entropy
-entropy_costs = [];
-n_dim = size(precisions, 2);
-for i = 1:niters
-    precision_i  = precisions((i-1)*n_dim+1: i*n_dim, 1:end);
-    entropy_costs = [entropy_costs, log(det(precision_i))/2];
+% generate traj line
+% each two rows are end eff pos
+opt_traj_line = [6, total_time_step+1];
+for i=0:total_time_step
+    conf = result.atVector(symbol('x', i));
+    position = arm.fk_model().forwardKinematicsPosition(conf);
+    for j=1:3
+        opt_traj_line(j*2-1:j*2, i+1) = position(1:2, j);
+    end
 end
-% subplot(1, 3, 3)
-nexttile
-title('Entropy cost factors')
-hold on
-grid minor
-plot(entropy_costs, 'LineWidth', 1.5, 'LineStyle','-.')
-scatter(linspace(1,niters, niters), entropy_costs(1:niters), 10, 'filled')
-xlabel('Iterations', 'fontweight', 'bold')
-ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold')
+
+smooth_traj_line = [6, total_plot_step+1];
+for i=0:total_plot_step
+    conf = plot_values.atVector(symbol('x', i));
+    position = arm.fk_model().forwardKinematicsPosition(conf);
+    for j=1:3
+        smooth_traj_line(j*2-1:j*2, i+1) = position(1:2, j);
+    end
+end
+
+
+% plot
+for i=0:total_plot_step
+    figure(4), hold on
+    title('Optimized Values')
+    % plot world
+    plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
+%     plotSignedDistanceField2D(field, dataset.origin_x, dataset.origin_y, dataset.cell_size, epsilon_dist);
+    % plot traj
+    for j=1:3
+        plot(opt_traj_line(2*j-1,:), opt_traj_line(2*j,:), 'r.', 'MarkerSize', 10);
+        plot(smooth_traj_line(2*j-1,:), smooth_traj_line(2*j,:), 'r-.');
+    end
+    % plot arm
+    conf = plot_values.atVector(symbol('x', i));
+    plotPlanarArm(arm.fk_model(), conf, 'b', 2);
+    % plot goal
+    plot(goal(1), goal(2), 'r*', 'MarkerSize', 10);
+    pause(pause_time), hold off
+end
+
 
