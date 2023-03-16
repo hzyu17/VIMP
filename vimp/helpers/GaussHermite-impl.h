@@ -9,9 +9,7 @@
  * 
  */
 
-// #include "GaussHermite.h"
 using namespace Eigen;
-
 
 namespace vimp{
     template <typename Function>

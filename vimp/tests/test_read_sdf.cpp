@@ -17,7 +17,7 @@ using namespace Eigen;
 
 TEST(SDFReader, read_csv){
     MatrixIO loader;
-    MatrixXd sdf = loader.load_csv("map_ground_truth.csv");
+    MatrixXd sdf = loader.load_csv("data/map_ground_truth.csv");
 
     MatrixXd map_ground_truth = (MatrixXd(7, 7) <<
                 0, 0, 0, 0, 0, 0, 0,

@@ -431,6 +431,36 @@ TEST(TestSparse, determinant){
 }
 
 
+TEST(TestSparse, sqrtm){
+    Matrix m = eigen_wrapper.random_psd(5);
+    Matrix m_inv = m.inverse();
+
+    Matrix sqrtm = eigen_wrapper.psd_sqrtm(m);
+    Matrix inv_sqrtm = eigen_wrapper.psd_invsqrtm(m);
+
+    ASSERT_LE((sqrtm*sqrtm - m).norm(), 1e-10);
+    ASSERT_LE((inv_sqrtm*inv_sqrtm - m_inv).norm(), 1e-10);
+}
+
+TEST(TestSparse, compress3d){
+    Matrix mat(3, 3);
+    mat << 1,2,3,4,5,6,7,8,9;
+    
+    Matrix mat3d{Matrix::Zero(9, 2)};
+    eigen_wrapper.compress3d(mat, mat3d, 0);
+
+    Matrix mat3d_groundtruth(9, 2);
+    mat3d_groundtruth << 1,0,4,0,7,0,2,0,5,0,8,0,3,0,6,0,9,0;
+
+    ASSERT_LE((mat3d - mat3d_groundtruth).norm(), 1e-10);
+
+    Matrix mat_decomposed{Matrix::Zero(3,3)};
+    eigen_wrapper.decompress3d(mat3d, mat_decomposed, 3, 3, 0);
+
+    ASSERT_LE((mat_decomposed - mat).norm(), 1e-10);
+
+}
+
 
 int main(int argc, char **argv){
 

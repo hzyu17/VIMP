@@ -46,6 +46,7 @@ set(vimp_subdirs
     helpers 
     instances
     robots
+    linear_CS
 )
 
 set(vimp_srcs)
@@ -79,9 +80,26 @@ foreach(src_file ${vimp_source_files})
   string( REPLACE ".cpp" "" src_file_prefix ${src_file} )
   add_executable(${src_file_prefix} "src/${src_file}")
   set_target_properties(${src_file_prefix} PROPERTIES LINKER_LANGUAGE CXX)
-  target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+  target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} TinyAD)
 endforeach(src_file)
 
+
+# # -------------------------------------------- TinyAD
+include(FetchContent)
+FetchContent_Declare(
+  tinyad
+  GIT_REPOSITORY https://github.com/patr-schm/tinyad.git
+  GIT_TAG 75093e14ef0d7bb39657c5f3b2aba1251afaa38c
+)
+
+FetchContent_GetProperties(tinyad)
+if(NOT tinyad_POPULATED)
+  # Fetch the content using previously declared details
+  FetchContent_Populate(tinyad)
+  message(STATUS "tinyad_SOURCE_DIR: ${tinyad_SOURCE_DIR}")
+  message(STATUS "tinyad_BINARY_DIR: ${tinyad_BINARY_DIR}")
+  add_subdirectory(${tinyad_SOURCE_DIR} ${tinyad_BINARY_DIR})
+endif()
 
 # # -------------------------------------------- Google tests
 # include(FetchContent)
@@ -110,6 +128,15 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 add_executable(test_eigen_sparse tests/test_eigen_sparse.cpp)
 target_link_libraries(test_eigen_sparse ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+
+add_executable(test_linear_system tests/test_linear_system.cpp)
+target_link_libraries(test_linear_system ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+
+add_executable(test_linear_CS tests/test_linear_CS.cpp)
+target_link_libraries(test_linear_CS ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+
+add_executable(test_SDF_Hessian tests/test_SDF_Hessian.cpp)
+target_link_libraries(test_SDF_Hessian ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} TinyAD)
 
 # add_executable(test_GH tests/test_GH.cpp)
 # target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
