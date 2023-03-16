@@ -367,6 +367,35 @@ public:
         return mat.block(start_row, start_col, nrows, ncols);
     }
 
+    Eigen::MatrixXd psd_sqrtm(const Eigen::MatrixXd & m){
+        Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es(m);
+        return es.operatorSqrt();
+    }
+
+    Eigen::MatrixXd psd_invsqrtm(const Eigen::MatrixXd & m){
+        Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es(m);
+        return es.operatorInverseSqrt();
+    }
+
+    /**
+     * @brief extract the i_th index from a 3d matrix in shape (rows*cols, nt):
+     * return the matrix mat in shape (rows, cols) from the i_th column. 
+     */
+    void decompress3d(Eigen::MatrixXd &mat3d, Eigen::MatrixXd & mat, 
+                      int rows, int cols, int i){
+        mat = mat3d.col(i).reshaped(rows, cols);
+    }
+
+    Eigen::MatrixXd decompress3d(Eigen::MatrixXd &mat3d, int rows, int cols, int i){
+        Eigen::MatrixXd mat(rows, cols);
+        mat = mat3d.col(i).reshaped(rows, cols);
+        return mat;
+    }
+
+    void compress3d(Eigen::MatrixXd &mat, Eigen::MatrixXd &mat3d, int i){
+        mat3d.col(i) = mat.reshaped(mat.rows()*mat.cols(), 1);
+    }
+
     /**
      * @brief Sparse inversion for a psd matrix X
      * 
