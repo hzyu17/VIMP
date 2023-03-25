@@ -396,6 +396,42 @@ public:
         mat3d.col(i) = mat.reshaped(mat.rows()*mat.cols(), 1);
     }
 
+    using vec_1d = std::vector<double>;
+    using vec_2d = std::vector<vec_1d>;
+
+    vec_2d eigen_to_vector(const Eigen::MatrixXd& mat){
+        vec_2d vec(mat.rows());
+        for (int i=0; i<mat.rows(); i++){
+            vec_1d row_i(mat.cols());
+            for (int j=0; j<mat.cols(); j++){
+                row_i[j] = mat.coeffRef(i, j);
+            }
+            vec[i] = row_i;
+        }
+        return vec;
+    }
+
+    /**
+     * @brief Put a compressed 3d matrix of 2-d vector fields into 2 meshs of 2-d vector field. 
+     * 
+     * @param mat in shape (2, rows*cols)
+     * @return std::pair<vector_2d, vector_2d> 
+     */
+    std::pair<vec_2d, vec_2d> meshify_2d(const Eigen::MatrixXd& mat, int rows, int cols){
+        vec_2d u(rows);
+        vec_2d v(rows);
+        for (int i=0; i<rows; i++){
+            vec_1d ui(cols), vi(cols);
+            for (int j=0; j< cols; j++){
+                ui[j] = mat.coeff(0, i*j);
+                vi[j] = mat.coeff(1, i*j);
+            }
+            u[i] = ui;
+            v[i] = vi;
+        }
+        return std::make_pair(u, v);
+    }
+
     /**
      * @brief Sparse inversion for a psd matrix X
      * 

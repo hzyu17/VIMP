@@ -110,7 +110,6 @@ int main(){
 
             // lin GP factor
             if (i == n_total_states-1){
-                
                 // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
                 vec_factors.emplace_back(new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1});
             }

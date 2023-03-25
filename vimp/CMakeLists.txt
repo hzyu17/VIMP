@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 enable_testing()
 project(vimp CXX C)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
 # Mac ONLY. Define Relative Path on Mac OS
@@ -39,6 +39,13 @@ find_package( Eigen3 3.4.0 REQUIRED
               gpmp2 REQUIRED)
 
 set(GPMP2_LIBRARIES gpmp2)
+
+# matplotcpp
+find_package(Matplot++ REQUIRED)
+
+# adept
+find_package(FastAD CONFIG REQUIRED)
+
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
 
 set(vimp_subdirs 
@@ -46,7 +53,8 @@ set(vimp_subdirs
     helpers 
     instances
     robots
-    linear_CS
+    covariance_steering
+    # autodiff
 )
 
 set(vimp_srcs)
@@ -135,8 +143,8 @@ target_link_libraries(test_linear_system ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARI
 add_executable(test_linear_CS tests/test_linear_CS.cpp)
 target_link_libraries(test_linear_CS ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
-add_executable(test_SDF_Hessian tests/test_SDF_Hessian.cpp)
-target_link_libraries(test_SDF_Hessian ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} TinyAD)
+add_executable(test_SDF_derivatives tests/test_SDF_derivatives.cpp)
+target_link_libraries(test_SDF_derivatives ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} TinyAD Matplot++::matplot FastAD::FastAD)
 
 # add_executable(test_GH tests/test_GH.cpp)
 # target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
