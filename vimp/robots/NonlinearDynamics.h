@@ -10,12 +10,14 @@
  */
 
 #include <Eigen/Dense>
+#include <string>
 
 namespace vimp{
 
 class NonlinearDynamics{
 public:
     NonlinearDynamics(){};
+    
      /**
       * @brief Linearization for use in proximal gradient covariance steering.
       * 
@@ -26,10 +28,13 @@ public:
       * @return std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd>,
       *         representing (At, Bt, at, nTr).
       */
-    virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> Linearize(const Vector4d& x, 
-                                                                        double sig, 
-                                                                        const Eigen::Matrix4d& Ak, 
-                                                                        const Eigen::Matrix4d& Sigk);
+    virtual std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd> linearize(const Eigen::VectorXd& x, 
+                                                                                                     double sig, 
+                                                                                                     const Eigen::MatrixXd& Ak, 
+                                                                                                     const Eigen::MatrixXd& Sigk);
+
+    virtual ~NonlinearDynamics(){};
+
 };
 
 }// namespace vimp

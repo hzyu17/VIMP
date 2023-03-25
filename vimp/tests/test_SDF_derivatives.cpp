@@ -11,8 +11,6 @@
 
 #include "../helpers/data_io.h"
 #include <gtest/gtest.h>
-#include "../helpers/HessianSDF.h"
-#include "../helpers/eigen_wrapper.h"
 #include "../helpers/hingeloss_helper.h"
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include <matplot/matplot.h>
@@ -158,7 +156,7 @@ TEST(SDFHessian, TinyADnTr){
     double cd = 0.005;
 
     Vector4d x;
-    x << 1.4167, 8.0000, 2.0020, 0.0003;
+    x << 1.4167, 8.0000, 1.7397, -0.2884;
 
     ei.print_matrix(x, "x data");
 
@@ -175,24 +173,24 @@ TEST(SDFHessian, TinyADnTr){
     grad_f = grad_f_T.transpose();
 
     // // grad(Tr(BBT*(grad_f_T - Ak)*Sigk*(grad_f_T' - Ak')))
-    Eigen::MatrixXd BBT(4,4);
-    BBT << 0,0,0,0,
-           0,0,0,0,
-           0,0,1,0,
-           0,0,0,1;
-    BBT = BBT*sig*sig;
+    Eigen::MatrixXd pinv_BBT(4,4);
+    pinv_BBT << 0,0,0,0,
+                0,0,0,0,
+                0,0,1,0,
+                0,0,0,1;
+    pinv_BBT = pinv_BBT/sig/sig;
 
     Eigen::MatrixXd Sigk(4,4);
-    Sigk << 0.0100,         0,    0.0021,         0,
-                 0,    0.0100,         0,    0.0021,
-            0.0021,         0,    0.0204,    0.0000,
-                 0,    0.0021,    0.0000,    0.0205;
+    Sigk << 0.0100,         0,    0.0019,    0.0000,
+                 0,    0.0100,    0.0000,    0.0019,
+            0.0019,    0.0000,    0.0183,    0.0000,
+            0.0000,    0.0019,    0.0000,    0.0183;
 
     Eigen::MatrixXd Ak(4,4);
-    Ak <<   0,     0,    5.0000,         0,
-            0,     0,         0,    5.0000,
-            0,     0,    0.0235,    0.0031,
-            0,     0,    0.0031,    0.0457;
+    Ak <<       0,         0,    5.0000,         0,
+                0,         0,         0,    5.0000,
+          -0.4500,    0.0000,   -2.7077,    0.0000,
+           0.0000,   -0.4500,    0.0000,   -2.7078;
 
     Eigen::MatrixXd Ak_T(4,4);
     Ak_T = Ak.transpose();
@@ -204,7 +202,7 @@ TEST(SDFHessian, TinyADnTr){
     temp2 = grad_f - Ak_T;
 
     Eigen::Matrix4<ADouble4> temp3;
-    temp3 = BBT*temp1;
+    temp3 = pinv_BBT*temp1;
 
     Eigen::Matrix4<ADouble4> temp4;
     temp4 = temp3*Sigk;
@@ -215,20 +213,20 @@ TEST(SDFHessian, TinyADnTr){
     std::cout << "Tr.grad" << std::endl << nTr << std::endl;
 
     Eigen::Vector4d nTr_groundtruth;
-    nTr_groundtruth << 0, 0, 0.004025790952274, -1.600792205445180e-04;
+    nTr_groundtruth << 0, 0, 3.055891179601370e-04, -5.066562425777253e-05;
 
     ASSERT_LE((nTr - nTr_groundtruth).norm(), 1e-5);
 
     // // Test function
-    
-    // std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_res;
-    // linearize_res = vimp::linearize_double_integrator(x, sig, 1000, Ak, Sigk);
-    // Eigen::Matrix4d fhAk = std::get<0>(linearize_res);
-    // Eigen::MatrixXd fB = std::get<1>(linearize_res);
-    // Eigen::Vector4d fhak = std::get<2>(linearize_res);
-    // Eigen::Vector4d fnTr = std::get<3>(linearize_res);
+    vimp::DoubleIntegrator dyn;
+    std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_res;
+    linearize_res = dyn.linearize(x, sig, Ak, Sigk);
+    Eigen::Matrix4d fhAk = std::get<0>(linearize_res);
+    Eigen::MatrixXd fB = std::get<1>(linearize_res);
+    Eigen::Vector4d fhak = std::get<2>(linearize_res);
+    Eigen::Vector4d fnTr = std::get<3>(linearize_res);
 
-    // ASSERT_LE((fnTr - nTr_groundtruth).norm(), 1e-5);
+    ASSERT_LE((fnTr - nTr_groundtruth).norm(), 1e-5);
     
 }
 

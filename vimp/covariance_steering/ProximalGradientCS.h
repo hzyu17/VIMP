@@ -10,7 +10,6 @@
  */
 
 #include "../robots/NonlinearDynamics.h"
-#include <Eigen/Dense>
 
 using namespace Eigen;
 
@@ -71,6 +70,7 @@ public:
             MatrixXd diffA_T = (_Ak - _hAk).transpose();
             _Qk = _eta / (1+_eta)^2 * diffA_T * pinv_BBT * (_Ak - _hAk);
             _rk = _eta / (2+2*_eta) * _nTr + _eta / (1+_eta)^2 * diffA_T * pinv_BBT * (_Ak - _hAk);
+
 
             
         }

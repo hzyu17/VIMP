@@ -46,6 +46,23 @@ find_package(Matplot++ REQUIRED)
 # adept
 find_package(FastAD CONFIG REQUIRED)
 
+# # -------------------------------------------- TinyAD
+include(FetchContent)
+FetchContent_Declare(
+  tinyad
+  GIT_REPOSITORY https://github.com/patr-schm/tinyad.git
+  GIT_TAG 75093e14ef0d7bb39657c5f3b2aba1251afaa38c
+)
+
+FetchContent_GetProperties(tinyad)
+if(NOT tinyad_POPULATED)
+  # Fetch the content using previously declared details
+  FetchContent_Populate(tinyad)
+  message(STATUS "tinyad_SOURCE_DIR: ${tinyad_SOURCE_DIR}")
+  message(STATUS "tinyad_BINARY_DIR: ${tinyad_BINARY_DIR}")
+  add_subdirectory(${tinyad_SOURCE_DIR} ${tinyad_BINARY_DIR})
+endif()
+
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
 
 set(vimp_subdirs 
@@ -67,6 +84,7 @@ foreach(subdir ${vimp_subdirs})
   file(GLOB subdir_srcs "${subdir}/*.cpp" "${subdir}/*.h")
   list(REMOVE_ITEM subdir_srcs "${excluded_sources}")
 
+  # message(${subdir_srcs})
   file(GLOB subdir_test_files "${subdir}/tests/*")
 
   list(APPEND vimp_srcs ${subdir_srcs})
@@ -75,6 +93,10 @@ foreach(subdir ${vimp_subdirs})
   # local and tests
   add_subdirectory(${subdir})
 endforeach(subdir)
+
+add_library(doubleintegrator robots/DoubleIntegrator.h)
+set_target_properties(doubleintegrator PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(doubleintegrator TinyAD)
 
 # include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
@@ -92,44 +114,6 @@ foreach(src_file ${vimp_source_files})
 endforeach(src_file)
 
 
-# # -------------------------------------------- TinyAD
-include(FetchContent)
-FetchContent_Declare(
-  tinyad
-  GIT_REPOSITORY https://github.com/patr-schm/tinyad.git
-  GIT_TAG 75093e14ef0d7bb39657c5f3b2aba1251afaa38c
-)
-
-FetchContent_GetProperties(tinyad)
-if(NOT tinyad_POPULATED)
-  # Fetch the content using previously declared details
-  FetchContent_Populate(tinyad)
-  message(STATUS "tinyad_SOURCE_DIR: ${tinyad_SOURCE_DIR}")
-  message(STATUS "tinyad_BINARY_DIR: ${tinyad_BINARY_DIR}")
-  add_subdirectory(${tinyad_SOURCE_DIR} ${tinyad_BINARY_DIR})
-endif()
-
-# # -------------------------------------------- Google tests
-# include(FetchContent)
-# FetchContent_Declare(
-#   googletest
-#   GIT_REPOSITORY https://github.com/google/googletest.git
-#   GIT_TAG release-1.12.1
-# )
-# # For Windows: Prevent overriding the parent project's compiler/linker settings
-# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-# FetchContent_MakeAvailable(googletest)
-# add_library(gtest STATIC
-#   3rd-part/googletest/1.10/googletest/include/gtest/gtest.h
-#   3rd-part/googletest/1.10/googletest/src/gtest-all.cc
-# )
-# target_include_directories(gtest PUBLIC
-#   3rd-part/googletest/1.10/googletest/include
-# )
-# target_link_libraries(gtest Threads::Threads)
-
-
-
 #% --------------------------------------------------------- Tests files 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
@@ -144,7 +128,7 @@ add_executable(test_linear_CS tests/test_linear_CS.cpp)
 target_link_libraries(test_linear_CS ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
 add_executable(test_SDF_derivatives tests/test_SDF_derivatives.cpp)
-target_link_libraries(test_SDF_derivatives ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} TinyAD Matplot++::matplot FastAD::FastAD)
+target_link_libraries(test_SDF_derivatives ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} ${EIGEN3_LIBRARIES} doubleintegrator Matplot++::matplot FastAD::FastAD)
 
 # add_executable(test_GH tests/test_GH.cpp)
 # target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
