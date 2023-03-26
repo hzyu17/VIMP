@@ -55,7 +55,7 @@ TEST(SDFHessian, ADinitialization){
     Eigen::Vector3d g = angle.grad;
     Eigen::Matrix3d H = angle.Hess;
 
-    ei.print_matrix(H, "Hessian");
+    // ei.print_matrix(H, "Hessian");
 }
 
 TEST(SDFHessian, ADHessian){
@@ -81,7 +81,7 @@ TEST(SDFHessian, ADJacobian){
     Jacobian.row(1) = f(1).grad;
     Jacobian.row(2) = f(2).grad;
     
-    ei.print_matrix(Jacobian, "Jacobian");
+    // ei.print_matrix(Jacobian, "Jacobian");
     Eigen::Matrix3d Jacobian_ground_truth;
     Jacobian_ground_truth << 1,1,0,0,1,1,1,0,1;
 
@@ -100,7 +100,7 @@ TEST(SDFHessian, LinearizeDynamics){
     Vector4d x;
     x << 1.4167, 8.0000, 2.0020, 0.0003;
 
-    ei.print_matrix(x, "var x");
+    // ei.print_matrix(x, "var x");
 
     Eigen::Vector4<ADouble4> xad = ADouble4::make_active(x);
 
@@ -158,7 +158,7 @@ TEST(SDFHessian, TinyADnTr){
     Vector4d x;
     x << 1.4167, 8.0000, 1.7397, -0.2884;
 
-    ei.print_matrix(x, "x data");
+    // ei.print_matrix(x, "x data");
 
     Eigen::Vector4<ADouble4> xad = ADouble4::make_active(x);
  
@@ -210,7 +210,7 @@ TEST(SDFHessian, TinyADnTr){
     auto res = temp4*temp2;
     auto nTr = res.trace().grad;
 
-    std::cout << "Tr.grad" << std::endl << nTr << std::endl;
+    // std::cout << "Tr.grad" << std::endl << nTr << std::endl;
 
     Eigen::Vector4d nTr_groundtruth;
     nTr_groundtruth << 0, 0, 3.055891179601370e-04, -5.066562425777253e-05;
@@ -218,9 +218,9 @@ TEST(SDFHessian, TinyADnTr){
     ASSERT_LE((nTr - nTr_groundtruth).norm(), 1e-5);
 
     // // Test function
-    vimp::DoubleIntegrator dyn;
+    vimp::DoubleIntegrator dyn(4, 2, 25);
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_res;
-    linearize_res = dyn.linearize(x, sig, Ak, Sigk);
+    linearize_res = dyn.linearize_timestamp(x, sig, Ak, Sigk);
     Eigen::Matrix4d fhAk = std::get<0>(linearize_res);
     Eigen::MatrixXd fB = std::get<1>(linearize_res);
     Eigen::Vector4d fhak = std::get<2>(linearize_res);
@@ -238,7 +238,7 @@ TEST(SDFHessian, FastADDynamics){
     Eigen::Vector4d x_adj;
     x_adj.setZero();
 
-    ei.print_matrix(x, "var x");
+    // ei.print_matrix(x, "var x");
 
     // Initialize variable.
     VarView<double, mat> xad(x.data(), x_adj.data(), 4, 1);
@@ -270,8 +270,8 @@ TEST(SDFHessian, FastADDynamics){
     seed.setOnes(); // Usually seed is 1. DONT'T FORGET!
 
     auto grad_1 = autodiff(f1, seed.array());
-    std::cout << xad.get_adj() << std::endl;
-    std::cout << "f_grad: " << grad_1 << std::endl;
+    // std::cout << xad.get_adj() << std::endl;
+    // std::cout << "f_grad: " << grad_1 << std::endl;
 
     // auto f_grad = ad::bind(ad::dot(cst1, grad_1));
     
@@ -294,8 +294,8 @@ TEST(SDFHessian, FastAD_FWD)
     ForwardVar<double> w4 = w3 + w1 * w2;
     ForwardVar<double> w5 = exp(w4 * w3);
 
-    std::cout << "f(x, y) = exp((x * sin(y) + x * y) * x * sin(y))\n"
-              << "df/dx = " << w5.get_adjoint() << std::endl;
+    // std::cout << "f(x, y) = exp((x * sin(y) + x * y) * x * sin(y))\n"
+    //           << "df/dx = " << w5.get_adjoint() << std::endl;
 }
 
 TEST(SDFHessian, FastAD_BWD){
@@ -336,10 +336,10 @@ TEST(SDFHessian, FastAD_BWD){
         loss += f.coeff(0);
     }
 
-    // Print results.
-    std::cout << "loss: " << loss << std::endl; // 6655
-    std::cout << theta.get() << std::endl;      //[1, 2]
-    std::cout << theta.get_adj() << std::endl;  //[-1210, -12100]
+    // // Print results.
+    // std::cout << "loss: " << loss << std::endl; // 6655
+    // std::cout << theta.get() << std::endl;      //[1, 2]
+    // std::cout << theta.get_adj() << std::endl;  //[-1210, -12100]
 
     theta_adj.setZero(); // Reset differential to zero after one full pass.
 
@@ -401,8 +401,7 @@ TEST(SDFHessian, hinge_loss_gradients){
     MatrixXd Jacobian = MatrixXd::Zero(1, 2);
     std::pair<double, MatrixXd> hinge_jacobian_point = hingeloss_gradient_point(-15.0, 0.0, sdf, eps, Jacobian);
 
-    std::cout << "hinge loss at (-15.0, 0.0): " << std::endl << hinge_jacobian_point.first << std::endl;
-    ei.print_matrix(hinge_jacobian_point.second, "hinge loss jacobian at (-15.0, 0.0)");
+    // ei.print_matrix(hinge_jacobian_point.second, "hinge loss jacobian at (-15.0, 0.0)");
 
     // hinge loss
     figure();

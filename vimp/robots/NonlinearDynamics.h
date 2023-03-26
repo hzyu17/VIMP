@@ -11,30 +11,44 @@
 
 #include <Eigen/Dense>
 #include <string>
+#include "../helpers/eigen_wrapper.h"
+
+using namespace Eigen;
 
 namespace vimp{
 
 class NonlinearDynamics{
 public:
-    NonlinearDynamics(){};
+    NonlinearDynamics(){}
+    NonlinearDynamics(int nx, int nu, int nt):_nx(nx),
+                                              _nu(nu),
+                                              _nt(nt){}
+    virtual ~NonlinearDynamics(){}
     
-     /**
-      * @brief Linearization for use in proximal gradient covariance steering.
-      * 
-      * @param x linearization point
-      * @param sig time scaling factor
-      * @param Ak iteration variable Ak
-      * @param Sigk iteration variable Sigk
-      * @return std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd>,
-      *         representing (At, Bt, at, nTr).
-      */
-    virtual std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd> linearize(const Eigen::VectorXd& x, 
-                                                                                                     double sig, 
-                                                                                                     const Eigen::MatrixXd& Ak, 
-                                                                                                     const Eigen::MatrixXd& Sigk);
-
-    virtual ~NonlinearDynamics(){};
-
+     
+    virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
+                                                                                    double sig, 
+                                                                                    const MatrixXd& Ak, 
+                                                                                    const MatrixXd& Sigk){}
+    /**
+    * @brief Linearization for use in proximal gradient covariance steering.
+    * 
+    * @param x linearization point
+    * @param sig time scaling factor
+    * @param Ak iteration variable Ak
+    * @param Sigk iteration variable Sigk
+    * @return std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd>,
+    *         representing (At, Bt, at, nTr).
+    */
+    virtual std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearize(const MatrixXd& x, 
+                                                                        double sig, 
+                                                                        const MatrixXd& Ak, 
+                                                                        const MatrixXd& Sigk){}
+public:
+  EigenWrapper _ei;
+private:
+  int _nx, _nu, _nt;
+    
 };
 
 }// namespace vimp

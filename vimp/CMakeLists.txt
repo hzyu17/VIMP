@@ -46,22 +46,22 @@ find_package(Matplot++ REQUIRED)
 # adept
 find_package(FastAD CONFIG REQUIRED)
 
-# # -------------------------------------------- TinyAD
-include(FetchContent)
-FetchContent_Declare(
-  tinyad
-  GIT_REPOSITORY https://github.com/patr-schm/tinyad.git
-  GIT_TAG 75093e14ef0d7bb39657c5f3b2aba1251afaa38c
-)
+# # # -------------------------------------------- TinyAD
+# include(FetchContent)
+# FetchContent_Declare(
+#   tinyad
+#   GIT_REPOSITORY https://github.com/patr-schm/tinyad.git
+#   GIT_TAG 75093e14ef0d7bb39657c5f3b2aba1251afaa38c
+# )
 
-FetchContent_GetProperties(tinyad)
-if(NOT tinyad_POPULATED)
-  # Fetch the content using previously declared details
-  FetchContent_Populate(tinyad)
-  message(STATUS "tinyad_SOURCE_DIR: ${tinyad_SOURCE_DIR}")
-  message(STATUS "tinyad_BINARY_DIR: ${tinyad_BINARY_DIR}")
-  add_subdirectory(${tinyad_SOURCE_DIR} ${tinyad_BINARY_DIR})
-endif()
+# FetchContent_GetProperties(tinyad)
+# if(NOT tinyad_POPULATED)
+#   # Fetch the content using previously declared details
+#   FetchContent_Populate(tinyad)
+#   message(STATUS "tinyad_SOURCE_DIR: ${tinyad_SOURCE_DIR}")
+#   message(STATUS "tinyad_BINARY_DIR: ${tinyad_BINARY_DIR}")
+#   add_subdirectory(${tinyad_SOURCE_DIR} ${tinyad_BINARY_DIR})
+# endif()
 
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
 
@@ -94,10 +94,6 @@ foreach(subdir ${vimp_subdirs})
   add_subdirectory(${subdir})
 endforeach(subdir)
 
-add_library(doubleintegrator robots/DoubleIntegrator.h)
-set_target_properties(doubleintegrator PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(doubleintegrator TinyAD)
-
 # include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${GPMP2_INCLUDE_DIRS})
@@ -110,7 +106,7 @@ foreach(src_file ${vimp_source_files})
   string( REPLACE ".cpp" "" src_file_prefix ${src_file} )
   add_executable(${src_file_prefix} "src/${src_file}")
   set_target_properties(${src_file_prefix} PROPERTIES LINKER_LANGUAGE CXX)
-  target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} TinyAD)
+  target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
 endforeach(src_file)
 
 
@@ -128,7 +124,10 @@ add_executable(test_linear_CS tests/test_linear_CS.cpp)
 target_link_libraries(test_linear_CS ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
 add_executable(test_SDF_derivatives tests/test_SDF_derivatives.cpp)
-target_link_libraries(test_SDF_derivatives ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} ${EIGEN3_LIBRARIES} doubleintegrator Matplot++::matplot FastAD::FastAD)
+target_link_libraries(test_SDF_derivatives ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot FastAD::FastAD)
+
+add_executable(test_pgcs tests/test_pgcs.cpp)
+target_link_libraries(test_pgcs ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
 # add_executable(test_GH tests/test_GH.cpp)
 # target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})

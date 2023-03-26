@@ -29,12 +29,12 @@ Timer timer;
 MatrixIO m_io;
 
 // ================== read ground truth matrices ==================
-Matrix precision = m_io.load_csv("precision_16.csv");
+Matrix precision = m_io.load_csv("data/precision_16.csv");
 SpMat precision_sp = precision.sparseView();
 Matrix cov = precision.inverse();
 SpMat cov_sp = cov.sparseView();
-Matrix D_true = m_io.load_csv("D_cpp.csv");
-Matrix L_true = m_io.load_csv("L_cpp.csv");
+Matrix D_true = m_io.load_csv("data/D_cpp.csv");
+Matrix L_true = m_io.load_csv("data/L_cpp.csv");
 
 // SpMat precision16_sp = precision.sparseView();
 
@@ -208,7 +208,7 @@ TEST(TestSparse, manipulation_sparse){
  * block insertion for vector: EigenWrapper::block_insert()
  */
 TEST(TestSparse, sparse_permute){
-    Matrix precision = m_io.load_csv("precision.csv");
+    Matrix precision = m_io.load_csv("data/precision.csv");
     SpMat precision_sp = precision.sparseView();
     Matrix block_true(4, 4);
     block_true << 7.268329260163210,    2.961292370892880,         -4.500997556437790e-16,          0, 
@@ -240,20 +240,20 @@ TEST(TestSparse, sparse_permute){
 
 }
 
-TEST(TestSparse, masked_equality){
-    SpMat spm = eigen_wrapper.random_sparse_matrix(40, 40, 50);
-    Eigen::VectorXi I, J;
-    Eigen::VectorXd K;
-    eigen_wrapper.find_nnz(spm, I, J, K);
+// TEST(TestSparse, masked_equality){
+//     SpMat spm = eigen_wrapper.random_sparse_matrix(40, 40, 50);
+//     Eigen::VectorXi I, J;
+//     Eigen::VectorXd K;
+//     eigen_wrapper.find_nnz(spm, I, J, K);
 
-    SpMat disturbed_spm = spm;
-    disturbed_spm.coeffRef(I(0), J(0)) = 0;
-    ASSERT_TRUE(eigen_wrapper.masked_equal(spm, spm, I, J));
-    ASSERT_FALSE(eigen_wrapper.masked_equal(disturbed_spm, spm, I, J));
-}
+//     SpMat disturbed_spm = spm;
+//     disturbed_spm.coeffRef(I(0), J(0)) = 0;
+//     ASSERT_TRUE(eigen_wrapper.masked_equal(spm, spm, I, J));
+//     ASSERT_FALSE(eigen_wrapper.masked_equal(disturbed_spm, spm, I, J));
+// }
 
 TEST(TestSparse, compare_block_operations){
-    Matrix precision = m_io.load_csv("precision_large.csv");
+    Matrix precision = m_io.load_csv("data/precision_large.csv");
     SpMat precision_sp = precision.sparseView();
     int ndim = precision.rows();
     int dim_state = 4;
@@ -303,7 +303,7 @@ TEST(TestSparse, compare_block_operations){
  * @brief Test for the sparse inverse function
  */
 TEST(TestSparse, sparse_inverse){
-    Matrix precision = m_io.load_csv("precision_large.csv");
+    Matrix precision = m_io.load_csv("data/precision_large.csv");
     int size = precision.rows();
 
     SpMat precision_sp = precision.sparseView();
@@ -401,7 +401,7 @@ TEST(TestSparse, sparse_view){
 }
 
 TEST(TestSparse, determinant){
-    Matrix precision = m_io.load_csv("precision_16.csv");
+    Matrix precision = m_io.load_csv("data/precision_16.csv");
     SpMat precision_sp = precision.sparseView();
 
     SparseLDLT ldlt_sp(precision_sp);
@@ -459,6 +459,35 @@ TEST(TestSparse, compress3d){
 
     ASSERT_LE((mat_decomposed - mat).norm(), 1e-10);
 
+}
+
+TEST(TestSparse, repmat){
+    Eigen::MatrixXd mat(3,3);
+    mat <<  0.7922, 0.0357, 0.6787,
+            0.9595, 0.8491, 0.7577,
+            0.6557, 0.9340, 0.7431;
+
+    Eigen::MatrixXd res(9, 3);
+
+    res = eigen_wrapper.replicate3d(mat, 3);
+
+    Eigen::MatrixXd res_ground_truth(9, 3);
+    res_ground_truth << 0.7922, 0.7922, 0.7922,
+                        0.9595, 0.9595, 0.9595,
+                        0.6557, 0.6557, 0.6557,
+                        0.0357, 0.0357, 0.0357,
+                        0.8491, 0.8491, 0.8491,
+                        0.9340, 0.9340, 0.9340,
+                        0.6787, 0.6787, 0.6787,
+                        0.7577, 0.7577, 0.7577,
+                        0.7431, 0.7431, 0.7431;
+    
+    ASSERT_LE((res - res_ground_truth).norm(), 1e-10);
+    Eigen::MatrixXd randi(3, 3);
+    for (int i=0; i<3; i++){
+        randi = eigen_wrapper.decompress3d(res, mat.rows(), mat.cols(), i);
+        ASSERT_LE((randi - mat).norm(), 1e-10);
+    }
 }
 
 

@@ -381,19 +381,26 @@ public:
      * @brief extract the i_th index from a 3d matrix in shape (rows*cols, nt):
      * return the matrix mat in shape (rows, cols) from the i_th column. 
      */
-    void decompress3d(Eigen::MatrixXd &mat3d, Eigen::MatrixXd & mat, 
+    void decompress3d(Eigen::MatrixXd mat3d, Eigen::MatrixXd& mat, 
                       int rows, int cols, int i){
         mat = mat3d.col(i).reshaped(rows, cols);
     }
 
-    Eigen::MatrixXd decompress3d(Eigen::MatrixXd &mat3d, int rows, int cols, int i){
+    Eigen::MatrixXd decompress3d(Eigen::MatrixXd mat3d, int rows, int cols, int i){
         Eigen::MatrixXd mat(rows, cols);
         mat = mat3d.col(i).reshaped(rows, cols);
         return mat;
     }
 
-    void compress3d(Eigen::MatrixXd &mat, Eigen::MatrixXd &mat3d, int i){
-        mat3d.col(i) = mat.reshaped(mat.rows()*mat.cols(), 1);
+    void compress3d(Eigen::MatrixXd mat, Eigen::MatrixXd& mat3d, int i){
+        Eigen::VectorXd column(mat.rows()*mat.cols());
+        column = mat.reshaped(mat.rows()*mat.cols(), 1);
+        mat3d.col(i) = column;
+    }
+
+    Eigen::MatrixXd replicate3d(Eigen::MatrixXd mat, const int len){
+        Eigen::MatrixXd m_reshaped = mat.reshaped(mat.rows()*mat.cols(), 1);
+        return m_reshaped.replicate(1, len);
     }
 
     using vec_1d = std::vector<double>;

@@ -19,10 +19,12 @@ namespace vimp{
 class DoubleIntegrator : public NonlinearDynamics{
 
 public:
-    DoubleIntegrator(){
-        NonlinearDynamics();
-    };
-    ~DoubleIntegrator(){};
+    DoubleIntegrator(int nx, int nu, int nt):NonlinearDynamics(nx, nu, nt),
+                                             _nx(nx),
+                                             _nu(nu),
+                                             _nt(nt){}
+
+    // virtual ~DoubleIntegrator(){}
 
 /**
  * @brief Linearization of a double integrator dynamics with drag (time invariant system).
@@ -31,10 +33,10 @@ public:
  * @param sig time scaling factor
  * @return std::tuple<Matrix4d, MatrixXd, Vector4d, Vector4d> At, Bt, at, nTr
  */
-std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize(const VectorXd& x, 
-                                                             double sig, 
-                                                             const MatrixXd& Ak, 
-                                                             const MatrixXd& Sigk)
+std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
+                                                                        double sig, 
+                                                                        const MatrixXd& Ak, 
+                                                                        const MatrixXd& Sigk)
 {
     using ADouble4 = TinyAD::Double<4>;
 
@@ -62,8 +64,8 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize(const VectorXd& x,
     Matrix4d hAk{MatrixXd::Zero(4, 4)};
     hAk <<  0,  0,                                 1,                                           0,
             0,  0,                                 0,                                           1, 
-            0,  0,  cd*(2*x(2)*x(2)+x(3)*x(3))/sqrt(x(2)*x(2)+x(3)*x(3)),   cd*x(2)*x(3)/sqrt(x(2)*x(2)+x(3)*x(3)),
-            0,  0,  cd*x(2)*x(3)/sqrt(x(2)*x(2)+x(3)*x(3)),                 cd*(x(2)*x(2)+2*x(3)*x(3))/sqrt(x(2)*x(2)+x(3)*x(3));
+            0,  0,  -cd*(2*x(2)*x(2)+x(3)*x(3))/sqrt(x(2)*x(2)+x(3)*x(3)),   -cd*x(2)*x(3)/sqrt(x(2)*x(2)+x(3)*x(3)),
+            0,  0,  -cd*x(2)*x(3)/sqrt(x(2)*x(2)+x(3)*x(3)),                 -cd*(x(2)*x(2)+2*x(3)*x(3))/sqrt(x(2)*x(2)+x(3)*x(3));
     hAk = sig * hAk;
 
     Vector4d f{VectorXd::Zero(4)};
@@ -79,8 +81,8 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize(const VectorXd& x,
     Matrix4<ADouble4> grad_f_T;
     grad_f_T << 0,  0,                                 1,                                                                0,
                 0,  0,                                 0,                                                                1, 
-                0,  0,  cd*(2*xad(2)*xad(2)+xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),   cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),
-                0,  0,  cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),                     cd*(xad(2)*xad(2)+2*xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3));
+                0,  0,  -cd*(2*xad(2)*xad(2)+xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),   -cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),
+                0,  0,  -cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),                     -cd*(xad(2)*xad(2)+2*xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3));
     grad_f_T = sig * grad_f_T;
 
     Matrix4<ADouble4> grad_f;
@@ -112,6 +114,49 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize(const VectorXd& x,
 
 }
 
+/**
+ * @brief Linearize along a trajectory.
+ * 
+ * @param x A trajectory of states, in shape (dim_state, nt).
+ * @return std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> return (hAt, hBt, hat, nTrt)
+ */
+std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearize(const MatrixXd& x, 
+                                                             double sig, 
+                                                             const MatrixXd& Ak, 
+                                                             const MatrixXd& Sigk)
+{   
+    // The result collectors for all time points
+    Eigen::MatrixXd hAt(_nx*_nx, _nt), Bt(_nx*_nu, _nt), hat(_nx, _nt), nTrt(_nx, _nt);
+
+    // The i_th matrices
+    Eigen::VectorXd zki(_nx), hai(_nx), nTri(_nx);
+    Eigen::MatrixXd Aki(_nx, _nx), hAi(_nx, _nx), Bi(_nx, _nu);
+    Eigen::MatrixXd Sigki(_nx, _nx);
+    std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> resi;
+    
+    for (int i=0; i<_nt; i++){
+        zki = _ei.decompress3d(x, _nx, 1, i);
+        Aki = _ei.decompress3d(Ak, _nx, _nx, i);
+        Sigki = _ei.decompress3d(Sigk, _nx, _nx, i);
+        // get the linearization results
+        resi = linearize_timestamp(zki, sig, Aki, Sigki);
+        hAi = std::get<0>(resi);
+        Bi = std::get<1>(resi);
+        hai = std::get<2>(resi);
+        nTri = std::get<3>(resi);
+        // assamble into the 3d matrices
+        _ei.compress3d(hAi, hAt, i);
+        _ei.compress3d(Bi, Bt, i);
+        _ei.compress3d(hai, hat, i);
+        _ei.compress3d(nTri, nTrt, i);
+        
+    }
+    return std::make_tuple(hAt, Bt, hat, nTrt);
+}
+
+
+private:
+    int _nt, _nx, _nu;
 };
 
 

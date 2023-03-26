@@ -61,9 +61,10 @@ public:
             MatrixXd Mi{MatrixXd::Zero(2*_nx, 2*_nx)};
             MatrixXd Ai = _ei.decompress3d(_At, _nx, _nx, i);
             MatrixXd Qi = _ei.decompress3d(_Qt, _nx, _nx, i);
+            MatrixXd Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
 
             Mi.block(0, 0, _nx, _nx) = Ai;
-            Mi.block(0, _nx, _nx, _nx) = -_Bt*_Bt.transpose();
+            Mi.block(0, _nx, _nx, _nx) = -Bi*Bi.transpose();
             Mi.block(_nx, 0, _nx, _nx) = -Qi;
             Mi.block(_nx, _nx, _nx, _nx) = -Ai.transpose();
             
