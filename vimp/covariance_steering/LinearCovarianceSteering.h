@@ -20,6 +20,8 @@ namespace vimp{
 class LinearCovarianceSteering{
 
 public:
+    LinearCovarianceSteering(){}
+
 /**
  * @brief Construct a new Linear Covariance Steering object
  * All time varying matrices should be in the shape (m*n, nt)
@@ -27,7 +29,7 @@ public:
     LinearCovarianceSteering(const MatrixXd& At, 
                              const MatrixXd& Bt,
                              const MatrixXd& at, 
-                             const double nt,
+                             const double& nt,
                              const double& epsilon,
                              const MatrixXd& Qt,
                              const MatrixXd& rt,
@@ -56,18 +58,19 @@ public:
                              _delta_t(1.0/(nt-1)),
                              _Kt(MatrixXd::Zero(_nu*_nx, _nt)),
                              _dt(MatrixXd::Zero(_nu, _nt)){
-
+        std::cout << "debug1" << std::endl;
+        MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), Qi(_nx, _nx), Mi(2*_nx, 2*_nx);
         for (int i=0; i< _nt; i++){
-            MatrixXd Mi{MatrixXd::Zero(2*_nx, 2*_nx)};
-            MatrixXd Ai = _ei.decompress3d(_At, _nx, _nx, i);
-            MatrixXd Qi = _ei.decompress3d(_Qt, _nx, _nx, i);
-            MatrixXd Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
-
+            Mi = MatrixXd::Zero(2*_nx, 2*_nx);
+            Ai = _ei.decompress3d(_At, _nx, _nx, i);
+            Qi = _ei.decompress3d(_Qt, _nx, _nx, i);
+            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
+            std::cout << "debug1" << std::endl;
             Mi.block(0, 0, _nx, _nx) = Ai;
             Mi.block(0, _nx, _nx, _nx) = -Bi*Bi.transpose();
             Mi.block(_nx, 0, _nx, _nx) = -Qi;
             Mi.block(_nx, _nx, _nx, _nx) = -Ai.transpose();
-            
+            std::cout << "debug1" << std::endl;
             _ei.compress3d(Mi, _Mt, i);
         }
 
@@ -78,7 +81,7 @@ public:
 
         _Phi11 = _Phi.block(0, 0, _nx, _nx);
         _Phi12 = _Phi.block(0, _nx, _nx, _nx);
-
+        std::cout << "debug1" << std::endl;
     }
 
     /**
@@ -106,6 +109,23 @@ public:
 
         std::cout << "Mi" << std::endl;
         _ei.print_matrix(Mi);
+    }
+
+    void update_params(MatrixXd A, MatrixXd B, VectorXd a, 
+                        int nt, double eps, 
+                        MatrixXd Q, VectorXd r, 
+                        VectorXd m0, MatrixXd Sig0, VectorXd mT, MatrixXd SigT){
+        _At = A;
+        _Bt = B;
+        _at = a;
+        _nt = nt;
+        _eps = eps;
+        _Qt = Q;
+        _rt = r;
+        _m0 = m0;
+        _Sig0 = Sig0;
+        _m1 = mT;
+        _Sig1 = SigT;
     }
 
     MatrixXd At(){

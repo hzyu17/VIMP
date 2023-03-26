@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include "NonlinearDynamics.h"
 #include "../3rd-part/TinyAD/Scalar.hh"
 

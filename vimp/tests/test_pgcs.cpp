@@ -11,11 +11,12 @@
 
 #include <gtest/gtest.h>
 #include "../robots/DoubleIntegrator.h"
+#include "../covariance_steering/ProximalGradientCS.h"
 
 using namespace Eigen;
 using namespace vimp;
 
-TEST(TestPGCS, linearization){
+TEST(TestDynamics, linearization){
     MatrixIO m_io;
     EigenWrapper ei;
     int nx=4, nu=2, nt=25;
@@ -40,10 +41,36 @@ TEST(TestPGCS, linearization){
     Bt = std::get<1>(res);
     hat = std::get<2>(res);
     nTr = std::get<3>(res);
-    
+
     ASSERT_LE((hAt-hAt_gt).norm(), 1e-10);
     ASSERT_LE((Bt - Bt_gt).norm(), 1e-10);
     ASSERT_LE((hat - hat_gt).norm(), 1e-10);
     ASSERT_LE((nTr - nTr_gt).norm(), 1e-10);
 
+}
+
+TEST(TestPGCS, solution){
+    VectorXd m0(4), mT(4);
+    MatrixXd Sig0(4,4), SigT(4,4);
+
+    double sig = 5.0, eps=0.01, eta=1e-6;
+    int nx=4, nu=2, nt=25;
+
+    m0 << 1, 8, 2, 0;
+    Sig0 = 0.01 * Eigen::MatrixXd::Identity(4, 4);
+
+    mT << 1, 2, -1, 0;
+    SigT = 0.1 * Eigen::Matrix4d::Identity(4, 4);
+
+    MatrixXd A0(nx, nx), B(nx, nu), a0(nx, 1);
+    std::cout << "debug" << std::endl;
+    DoubleIntegrator dyn(nx, nu, nt);
+    auto linearized_0 = dyn.linearize_timestamp(m0, sig, A0, Sig0);
+    std::cout << "debug" << std::endl;
+    A0  = std::get<0>(linearized_0);
+    B   = std::get<1>(linearized_0);
+    a0  = std::get<2>(linearized_0);
+    std::cout << "debug" << std::endl;
+    ProxGradCovSteer pgcs(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT);
+    std::cout << "debug" << std::endl;
 }

@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include <Eigen/Dense>
 #include <string>
 #include "../helpers/eigen_wrapper.h"

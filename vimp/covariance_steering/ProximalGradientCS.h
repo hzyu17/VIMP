@@ -19,7 +19,7 @@ namespace vimp{
 
 class ProxGradCovSteer{
 public:
-    ProxGradCovSteer(){}
+    ProxGradCovSteer(){};
 
     ProxGradCovSteer(MatrixXd A0, 
                      VectorXd a0, 
@@ -27,7 +27,7 @@ public:
                      double sig,
                      int nt,
                      double eta,
-                     double epsilon,
+                     double eps,
                      VectorXd z0,
                      MatrixXd Sig0,
                      VectorXd zT,
@@ -36,27 +36,30 @@ public:
                      _nx(A0.rows()),
                      _nu(B.cols()),
                      _nt(nt),
-                     _Ak(_ei.replicate3d(A0, _nt)),
-                     _ak(_ei.replicate3d(a0, _nt)),
-                     _B(_ei.replicate3d(B, _nt)),
+                     _Akt(_ei.replicate3d(A0, _nt)),
+                     _akt(_ei.replicate3d(a0, _nt)),
+                     _Bt(_ei.replicate3d(B, _nt)),
                      _sig(sig),
-                     _epsilon(epsilon),
+                     _eps(eps),
                      _dt(_sig / _nt),
-                     _Qk(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
-                     _rk(Eigen::VectorXd::Zero(_nx, _nt)),
-                     _hAk(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
-                     _hak(Eigen::VectorXd::Zero(_nx, _nt)),
-                     _zk(_ei.replicate3d(z0, _nt)),
-                     _Sigk(_ei.replicate3d(Sig0, _nt)),
-                     _z0(_ei.replicate3d(z0, _nt)),
-                     _Sig0(_ei.replicate3d(Sig0, _nt)),
-                     _zT(_ei.replicate3d(zT, _nt)),
-                     _SigT(_ei.replicate3d(SigT, _nt)),
+                     _Qkt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
+                     _Qt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
+                     _rkt(Eigen::MatrixXd::Zero(_nx, _nt)),
+                     _hAkt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
+                     _hakt(Eigen::MatrixXd::Zero(_nx, _nt)),
+                     _zkt(_ei.replicate3d(z0, _nt)),
+                     _Sigkt(_ei.replicate3d(Sig0, _nt)),
+                     _z0(z0),
+                     _Sig0(Sig0),
+                     _zT(zT),
+                     _SigT(SigT),
                      _dyn(_nx, _nu, _nt),
-                     _linear_cs(_Ak, _B, _ak, _nt, _epsilon, _Qk, _rk, _z0, _Sig0, _zT,_SigT)
+                     _linear_cs(_Akt, _Bt, _akt, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT,_SigT)
                      {
-                        _BT = _B.transpose();
-                        _pinvBBT = _B*_BT / _sig / _sig;
+                        std::cout << "debug0" << std::endl;
+                        _BT = _Bt.transpose();
+                        _pinvBBT = _Bt*_BT / _sig / _sig;
+                        std::cout << "debug0" << std::endl;
                      }
 
     /**
@@ -65,10 +68,17 @@ public:
      * @return std::tuple<MatrixXd, VectorXd> 
      */
     std::tuple<MatrixXd, VectorXd> optimize(){
-        int num_iter = 20;
-        for (int i=0; i<num_iter; i++){
+        double stop_err = 1e-4, err = 1;
+        MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
+        Ak_prev = _Akt;
+        ak_prev = _akt;
+        while (err > stop_err){
             step();
+            err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
+            Ak_prev = _Akt;
+            ak_prev = _akt;
         }
+
     }
 
     /**
@@ -76,68 +86,137 @@ public:
      * @return std::tuple<MatrixXd, VectorXd> representing (K, d).
      */
     std::tuple<MatrixXd, VectorXd> step(){
+        propagate_mean(_Akt, _akt, _Bt);
+
         linearization();
 
         // In the case where pinv(BBT)==BBT.
-        MatrixXd diffA_T = (_Ak - _hAk).transpose();
-        _Qk = _eta / (1+_eta) / (1+_eta) * diffA_T * _pinvBBT * (_Ak - _hAk);
-        _rk = _eta / (1+_eta) / 2 * _nTr + _eta / (1+_eta) / (1+_eta) * diffA_T * _pinvBBT * (_Ak - _hAk);
+        MatrixXd Aki(_nx, _nx), hAi(_nx, _nx), Bi(_nx, _nu), Qti(_nx, _nx), pinvBBTi(_nx, _nx), Qki(_nx, _nx), nTri(_nx, 1), zi(_nx, 1), rki(_nx, 1);
+        for (int i=0; i<_nt; i++){
+            Aki = _ei.decompress3d(_Akt, _nx, _nx, i);
+            hAi = _ei.decompress3d(_hAkt, _nx, _nx, i);
+            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
+            Qti = _ei.decompress3d(_Qt, _nx, _nx, i);
+            pinvBBTi = _ei.decompress3d(_pinvBBT, _nx, _nx, i);
+            nTri = _ei.decompress3d(_nTr, _nx, 1, i);
+            zi = _ei.decompress3d(_zkt, _nx, 1, i);
 
-        MatrixXd A(_nx, _nx);
-        MatrixXd a(_nx);
+            Qki = 2 * _eta / (1 + _eta)* Qti + _eta / (1+_eta) / (1+_eta) * (Aki - hAi).transpose() * pinvBBTi * (Aki - hAi);
+            rki = -_eta / (1 + _eta) * (Qti * zi) + _eta / (1+_eta) / 2 * nTri + _eta / (1+_eta) / (1+_eta) * (Aki - hAi).transpose() * pinvBBTi * (Aki - hAi);
 
-        A = _Ak / (1+_eta) + _eta * _hAk / (1+_eta);
-        a = _ak / (1+_eta) + _eta * _hak / (1+_eta);
+            _ei.compress3d(Qki, _Qkt, i);
+            _ei.compress3d(rki, _rkt, i);
+        }
+        
+        
+        MatrixXd Aprior(_nx, _nx);
+        VectorXd aprior(_nx);
 
-        _linear_cs = LinearCovarianceSteering(A, _B, a, _nt, _epsilon, _Qk, _rk, _z0, _Sig0, _zT, _SigT);
+        Aprior = _Akt / (1+_eta) + _eta * _hAkt / (1+_eta);
+        aprior = _akt / (1+_eta) + _eta * _hakt / (1+_eta);
+
+        _linear_cs.update_params(Aprior, _Bt, aprior, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT);
         _linear_cs.solve();
         
         _K = _linear_cs.Kt();
         _d = _linear_cs.dt();
 
         // propagate the mean and the covariance
-        _Ak = (_Ak + _eta * _hAk) / (1 + _eta) + _B * _K;
-        _ak = (_ak + _eta * _hak) / (1 + _eta) + _B * _d;
+        MatrixXd fbK(_nx*_nx, _nt);
+        MatrixXd fbd(_nx, _nt);
 
-        _zk = _zk + (_Ak * _zk + _ak) * _dt;
-        _Sigk = _Sigk + (_Ak * _Sigk + _Sigk*_Ak.transpose() + _sig * _B*_BT) * _dt;
+        MatrixXd Ki(_nu, _nx), fbKi(_nx, _nx), di(_nx, 1), fbdi(_nx, 1);
+        for (int i=0; i<_nt; i++){
+            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
+            Ki = _ei.decompress3d(_K, _nu, _nx, i);
+            di = _ei.decompress3d(_d, _nu, 1, i);
+            fbKi = Bi * Ki;
+            fbdi = Bi * di;
+            _ei.compress3d(fbKi, fbK, i);
+            _ei.compress3d(fbdi, fbd, i);
+        }
+
+        _Akt = (_Akt + _eta * _hAkt) / (1 + _eta) + fbK;
+        _akt = (_akt + _eta * _hakt) / (1 + _eta) + fbd;
 
     }    
+
+    MatrixXd zk(){
+        return _zkt;
+    }
+
+    MatrixXd Sigk(){
+        return _Sigkt;
+    }
+
+    MatrixXd Ak(){
+        return _Akt;
+    }
+
+    MatrixXd ak(){
+        return _akt;
+    }
+
+    /**
+     * @brief replicating a fixed state cost
+     */
+    void repliacteQt(MatrixXd Q){
+        _Qt = _ei.replicate3d(Q, _nt);
+    }
 
     /**
      * @brief linearization
      */
     void linearization(){
-        std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearized = _dyn.linearize(_zk, _sig, _Ak, _Sigk);
-        _hAk = std::get<0>(linearized);
-        _B = std::get<1>(linearized);
-        _hak = std::get<2>(linearized);
+        std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearized = _dyn.linearize(_zkt, _sig, _Akt, _Sigkt);
+        _hAkt = std::get<0>(linearized);
+        _Bt = std::get<1>(linearized);
+        _hakt = std::get<2>(linearized);
         _nTr = std::get<3>(linearized);
+    }
+
+    void propagate_mean(MatrixXd At, MatrixXd at, MatrixXd Bt){
+        // The i_th matrices
+        Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
+        Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu);
+        Eigen::MatrixXd Si(_nx, _nx), Snew(_nx, _nx);
+        for (int i=0; i<_nt-1; i++){
+            zi = _ei.decompress3d(_zkt, _nx, 1, i);
+            Ai = _ei.decompress3d(At, _nx, _nx, i);
+            ai = _ei.decompress3d(at, _nx, 1, i);
+            Bi = _ei.decompress3d(Bt, _nx, _nu, i);
+            Si = _ei.decompress3d(_Sigkt, _nx, _nx, i);
+
+            znew = zi + _dt*(zi + ai);
+            Snew = Si + _dt*(Ai*Si + Si*Ai.transpose() + _eps*(Bi*Bi.transpose()));
+
+            _ei.compress3d(znew, _zkt, i+1);
+            _ei.compress3d(Snew, _Sigkt, i+1);
+        }
     }
 
 private:
     EigenWrapper _ei;
     int _nx, _nu, _nt;
-    double _eta, _sig, _epsilon, _dt;
+    double _eta, _sig, _eps, _dt;
 
+    // All the variables are time variant (3d matrices)
     // iteration variables
-    MatrixXd _Ak, _B, _BT, _pinvBBT;
-    VectorXd _ak;
-    MatrixXd _Qk;
-    VectorXd _rk;
+    MatrixXd _Akt, _Bt, _akt, _BT, _pinvBBT;
+    MatrixXd _Qkt, _Qt; // Qk is the Q in each iteration, and Qt is the quadratic state cost matrix.
+    MatrixXd _rkt;
 
     // linearizations
-    MatrixXd _hAk;
-    VectorXd _hak;
-    VectorXd _nTr;
+    MatrixXd _hAkt, _hakt, _nTr;
 
     // boundary conditions
-    MatrixXd _Sigk, _Sig0, _SigT;
-    VectorXd _zk, _z0, _zT;
+    MatrixXd _Sigkt, _Sig0, _SigT;
+    VectorXd _z0, _zT;
+    MatrixXd _zkt;
 
     // Final result
     MatrixXd _K;
-    VectorXd _d;
+    MatrixXd _d;
 
     // Dynamics class
     NonlinearDynamics _dyn;
