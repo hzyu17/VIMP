@@ -45,7 +45,7 @@ public:
                      _Bt(_ei.replicate3d(B, _nt)),
                      _sig(sig),
                      _eps(eps),
-                     _deltt(_sig / (_nt-1)),
+                     _deltt(1.0 / (_nt-1)),
                      _Qkt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
                      _Qt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
                      _rkt(Eigen::MatrixXd::Zero(_nx, _nt)),
