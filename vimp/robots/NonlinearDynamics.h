@@ -9,27 +9,48 @@
  * 
  */
 
+#pragma once
+
 #include <Eigen/Dense>
+#include <string>
+#include "../helpers/eigen_wrapper.h"
+
+using namespace Eigen;
 
 namespace vimp{
 
 class NonlinearDynamics{
 public:
-    NonlinearDynamics(){};
-     /**
-      * @brief Linearization for use in proximal gradient covariance steering.
-      * 
-      * @param x linearization point
-      * @param sig time scaling factor
-      * @param Ak iteration variable Ak
-      * @param Sigk iteration variable Sigk
-      * @return std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd>,
-      *         representing (At, Bt, at, nTr).
-      */
-    virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> Linearize(const Vector4d& x, 
+    NonlinearDynamics(){}
+    NonlinearDynamics(int nx, int nu, int nt):_nx(nx),
+                                              _nu(nu),
+                                              _nt(nt){}
+    virtual ~NonlinearDynamics(){}
+    
+     
+    virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
+                                                                                    double sig, 
+                                                                                    const MatrixXd& Ak, 
+                                                                                    const MatrixXd& Sigk){}
+    /**
+    * @brief Linearization for use in proximal gradient covariance steering.
+    * 
+    * @param x linearization point
+    * @param sig time scaling factor
+    * @param Ak iteration variable Ak
+    * @param Sigk iteration variable Sigk
+    * @return std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd>,
+    *         representing (At, Bt, at, nTr).
+    */
+    virtual std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearize(const MatrixXd& x, 
                                                                         double sig, 
-                                                                        const Eigen::Matrix4d& Ak, 
-                                                                        const Eigen::Matrix4d& Sigk);
+                                                                        const MatrixXd& Ak, 
+                                                                        const MatrixXd& Sigk){}
+public:
+  EigenWrapper _ei;
+private:
+  int _nx, _nu, _nt;
+    
 };
 
 }// namespace vimp
