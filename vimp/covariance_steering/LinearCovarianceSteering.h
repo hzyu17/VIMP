@@ -130,8 +130,6 @@ public:
 
         _Phi11 = _Phi.block(0, 0, _nx, _nx);
         _Phi12 = _Phi.block(0, _nx, _nx, _nx);
-
-        // _ei.print_matrix(_Phi, "_Phi");
     }
 
     MatrixXd At(){ return _At; }
@@ -191,23 +189,19 @@ public:
         MatrixXd a_r{MatrixXd::Zero(2*_nx, _nt)};
         a_r << _at, 
               -_rt;
-        // _ei.print_matrix(_at, "_at");
-        // _ei.print_matrix(_rt, "_rt");
         
         MatrixXd Mi(2*_nx, 2*_nx);
         for (int i=0;i<_nt-1;i++){
             Mi = _ei.decompress3d(_Mt, 2*_nx, 2*_nx, i);
             s = s + (Mi*s + a_r.col(i))*_delta_t;
         }
-        // _ei.print_matrix(Mt(9), "Mt(9)");
-        // _ei.print_matrix(s, "s");
+
         VectorXd rhs{_m1 - _Phi11*_m0-s.block(0,0,_nx,1)};
         VectorXd Lambda_0 = _Phi12.colPivHouseholderQr().solve(rhs);
         MatrixXd X(2*_nx, _nt);
         VectorXd X0(2*_nx);
         X0 << _m0, Lambda_0;
-        // _ei.print_matrix(Lambda_0, "Lambda_0");
-        // _ei.print_matrix(X0, "X0");
+
         X.col(0) = X0;
         for (int i=0; i<_nt-1; i++){
             Mi = _ei.decompress3d(_Mt, 2*_nx, 2*_nx, i); 
@@ -234,7 +228,6 @@ public:
         
         MatrixXd Pi_0_T = Pi_0.transpose();
         Pi_0 = (Pi_0 + Pi_0_T)/2;
-        // _ei.print_matrix(Pi_0, "Pi_0");
         _ei.compress3d(Pi_0, _Pi, 0);
         MatrixXd Ai(_nx, _nx), Qi(_nx, _nx), l_Pi(_nx, _nx), Pinew(_nx, _nx);
         for (int i=0; i<_nt-1; i++){
@@ -246,7 +239,6 @@ public:
             Pinew = l_Pi - _delta_t*(Ai.transpose()*l_Pi+l_Pi*Ai-l_Pi*Bi*BiT*l_Pi+Qi);
             _ei.compress3d(Pinew, _Pi, i+1);
         }
-        // _ei.print_matrix(_Pi, "_Pi");
         MatrixXd Ki(_nu, _nx);
         for (int i=0; i<_nt; i++){
             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
