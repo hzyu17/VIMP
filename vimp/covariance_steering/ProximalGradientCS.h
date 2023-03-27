@@ -85,8 +85,6 @@ public:
         ak_prev = _akt;
         int i_step = 0;
         while (err > stop_err){
-            
-        // for (int i=0; i<2; i++){
             step(i_step);
             err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
             Ak_prev = _Akt;
@@ -113,19 +111,6 @@ public:
         // Update Qkt, rkt
         update_Qrk();
 
-        // if (indx == 1){
-        //     _ei.print_matrix(_zkt, "_zkt");
-        //     _ei.print_matrix(_Akt, "_Akt");
-        //     _ei.print_matrix(_hAkt, "_hAkt");
-        //     _ei.print_matrix(_akt, "_akt");
-        //     _ei.print_matrix(_hakt, "_hakt");
-        //     _ei.print_matrix(_nTrt, "_nTrt");
-        //     _ei.print_matrix(Apriort, "Apriort");
-        //     _ei.print_matrix(apriort, "apriort");
-        //     _ei.print_matrix(_Qkt, "_Qkt");
-        //     _ei.print_matrix(_rkt, "_rkt");
-        // }
-
         // solve for the linear covariance steering
         _linear_cs.update_params(Apriort, _Bt, apriort, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT);
         _linear_cs.solve();
@@ -134,8 +119,7 @@ public:
         _K = _linear_cs.Kt();
         _d = _linear_cs.dt();
 
-        MatrixXd fbK(_nx*_nx, _nt);
-        MatrixXd fbd(_nx, _nt);
+        MatrixXd fbK(_nx*_nx, _nt), fbd(_nx, _nt);
         MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), fbKi(_nx, _nx), di(_nx, 1), fbdi(_nx, 1), Bi(_nx, _nu);
         for (int i=0; i<_nt; i++){
             Aprior_i = _ei.decompress3d(Apriort, _nx, _nx, i);
@@ -144,8 +128,6 @@ public:
             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
             Ki = _ei.decompress3d(_K, _nu, _nx, i);
             di = _ei.decompress3d(_d, _nu, 1, i);
-            // _ei.print_matrix(Ki, "Ki");
-            // _ei.print_matrix(di, "di");
 
             Ai = Aprior_i + Bi * Ki;
             ai = aprior_i + Bi * di;
@@ -154,29 +136,17 @@ public:
         }
     }
 
-    MatrixXd zkt(){
-        return _zkt;
-    }
+    inline MatrixXd zkt(){ return _zkt; }
 
-    MatrixXd Sigkt(){
-        return _Sigkt;
-    }
+    inline MatrixXd Sigkt(){ return _Sigkt; }
 
-    MatrixXd Akt(){
-        return _Akt;
-    }
+    inline MatrixXd Akt(){ return _Akt; }
 
-    MatrixXd akt(){
-        return _akt;
-    }
+    inline MatrixXd akt(){ return _akt; }
 
-    MatrixXd Qkt(){
-        return _Qkt;
-    }
+    inline MatrixXd Qkt(){ return _Qkt; }
 
-    MatrixXd rkt(){
-        return _rkt;
-    }
+    inline MatrixXd rkt(){ return _rkt; }
 
     /**
      * @brief replicating a fixed state cost
