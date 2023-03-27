@@ -50,6 +50,8 @@ TEST(TestDynamics, linearization){
 }
 
 TEST(TestPGCS, solution){
+    MatrixIO m_io;
+    EigenWrapper ei;
     VectorXd m0(4), mT(4);
     MatrixXd Sig0(4,4), SigT(4,4);
 
@@ -57,20 +59,43 @@ TEST(TestPGCS, solution){
     int nx=4, nu=2, nt=25;
 
     m0 << 1, 8, 2, 0;
-    Sig0 = 0.01 * Eigen::MatrixXd::Identity(4, 4);
+    Sig0 = 0.01 * Eigen::MatrixXd::Identity(nx, nx);
 
     mT << 1, 2, -1, 0;
-    SigT = 0.1 * Eigen::Matrix4d::Identity(4, 4);
+    SigT = 0.1 * Eigen::Matrix4d::Identity(nx, nx);
 
     MatrixXd A0(nx, nx), B(nx, nu), a0(nx, 1);
-    std::cout << "debug" << std::endl;
-    DoubleIntegrator dyn(nx, nu, nt);
-    auto linearized_0 = dyn.linearize_timestamp(m0, sig, A0, Sig0);
-    std::cout << "debug" << std::endl;
+    std::shared_ptr<DoubleIntegrator> pdyn{new DoubleIntegrator(nx, nu, nt)};
+    std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearized_0 = pdyn->linearize_timestamp(m0, sig, A0, Sig0);
     A0  = std::get<0>(linearized_0);
     B   = std::get<1>(linearized_0);
     a0  = std::get<2>(linearized_0);
-    std::cout << "debug" << std::endl;
-    ProxGradCovSteer pgcs(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT);
-    std::cout << "debug" << std::endl;
+    
+    ProxGradCovSteer pgcs(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn);
+    
+    MatrixXd Q0(nx, nx);
+    Q0 = 0.1*MatrixXd::Identity(nx, nx);
+    pgcs.repliacteQt(Q0);
+    MatrixXd Kt(nx*nu, nt), dt(nu, nt), Kt_gt(nx*nu, nt), dt_gt(nu, nt);
+    std::tuple<MatrixXd, MatrixXd> res_Kd;
+    res_Kd = pgcs.optimize();
+
+    MatrixXd Qkt(nx*nx, nt), rkt(nx, nt);
+    MatrixXd Qkt_gt(nx*nx, nt), rkt_gt(nx, nt);
+    Qkt_gt = m_io.load_csv("data/Qkt.csv");
+    rkt_gt = m_io.load_csv("data/rkt.csv");
+    Qkt = pgcs.Qkt();
+    rkt = pgcs.rkt();
+    
+    ASSERT_LE((Qkt - Qkt_gt).norm(), 1e-8);
+    ASSERT_LE((rkt - rkt_gt).norm(), 1e-8);
+
+    Kt = std::get<0>(res_Kd);
+    dt = std::get<1>(res_Kd);
+
+    Kt_gt = m_io.load_csv("data/Kt.csv");
+    dt_gt = m_io.load_csv("data/dt.csv");
+
+    ASSERT_LE((Kt - Kt_gt).norm(), 1e-10);
+    ASSERT_LE((dt - dt_gt).norm(), 1e-10);
 }

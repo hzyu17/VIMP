@@ -38,7 +38,7 @@ public:
 std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
                                                                         double sig, 
                                                                         const MatrixXd& Ak, 
-                                                                        const MatrixXd& Sigk)
+                                                                        const MatrixXd& Sigk) override
 {
     using ADouble4 = TinyAD::Double<4>;
 
@@ -125,7 +125,7 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
 std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearize(const MatrixXd& x, 
                                                              double sig, 
                                                              const MatrixXd& Ak, 
-                                                             const MatrixXd& Sigk)
+                                                             const MatrixXd& Sigk) override
 {   
     // The result collectors for all time points
     Eigen::MatrixXd hAt(_nx*_nx, _nt), Bt(_nx*_nu, _nt), hat(_nx, _nt), nTrt(_nx, _nt);
@@ -135,7 +135,7 @@ std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearize(const MatrixXd& x,
     Eigen::MatrixXd Aki(_nx, _nx), hAi(_nx, _nx), Bi(_nx, _nu);
     Eigen::MatrixXd Sigki(_nx, _nx);
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> resi;
-    
+
     for (int i=0; i<_nt; i++){
         zki = _ei.decompress3d(x, _nx, 1, i);
         Aki = _ei.decompress3d(Ak, _nx, _nx, i);

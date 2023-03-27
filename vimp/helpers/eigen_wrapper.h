@@ -22,6 +22,8 @@ typedef Eigen::SparseVector<double> SpVec;
 typedef Eigen::Triplet<double> Trip;
 typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
 
+using namespace Eigen;
+
 namespace vimp{
 class EigenWrapper{
 public:
@@ -401,6 +403,18 @@ public:
     Eigen::MatrixXd replicate3d(Eigen::MatrixXd mat, const int len){
         Eigen::MatrixXd m_reshaped = mat.reshaped(mat.rows()*mat.cols(), 1);
         return m_reshaped.replicate(1, len);
+    }
+
+    Eigen::MatrixXd transpose3d(Eigen::MatrixXd mat3, int rows, int cols){
+        int len = mat3.cols();
+        MatrixXd mi(rows, cols), miT(cols, rows);
+        
+        for (int i=0; i<len; i++){
+            mi = decompress3d(mat3, rows, cols, i);
+            miT = mi.transpose();
+            compress3d(miT, mat3, i);
+        }
+        return mat3;
     }
 
     using vec_1d = std::vector<double>;
