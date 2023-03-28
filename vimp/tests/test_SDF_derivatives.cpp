@@ -11,7 +11,7 @@
 
 #include "../helpers/data_io.h"
 #include <gtest/gtest.h>
-#include "../helpers/hingeloss_helper.h"
+#include "../helpers/hinge2Dhelper.h"
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include <matplot/matplot.h>
 #include <fastad>
@@ -377,7 +377,7 @@ TEST(SDFHessian, hinge_loss_gradients){
     double cell_size = 0.1;
     double eps = 2.0;
 
-    gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);  
+    gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field); 
     MatrixXd Jacobians;
 
     std::pair<MatrixXd, MatrixXd> hingeloss_gradient;
@@ -387,7 +387,7 @@ TEST(SDFHessian, hinge_loss_gradients){
     std::tuple<MatrixXd, vec_2d, vec_2d> results;
     results = hingeloss_gradient_mesh(grid_X, grid_Y, sdf, eps, Jacobians);
 
-    // plot mesh hinge loss gradients
+    // plot mesh hinge loss and gradients
     using namespace matplot;
     int xlen = 400;
     int ylen = 300;
@@ -403,7 +403,7 @@ TEST(SDFHessian, hinge_loss_gradients){
 
     // ei.print_matrix(hinge_jacobian_point.second, "hinge loss jacobian at (-15.0, 0.0)");
 
-    // hinge loss
+    // plot hinge loss
     figure();
     MatrixXd hinge_loss = std::get<0>(results);
     vector_2d hinge_vec = ei.eigen_to_vector(hinge_loss);
@@ -415,7 +415,7 @@ TEST(SDFHessian, hinge_loss_gradients){
     figure();
     vec_2d grad_x_mesh = std::get<1>(results);
     vec_2d grad_y_mesh = std::get<2>(results);
-    quiver(x, y, grad_x_mesh, grad_y_mesh);
+    quiver(x, y, grad_x_mesh, grad_y_mesh, 4.0);
     save("data/hinge_loss_jacobians", "jpeg");
 
     show();

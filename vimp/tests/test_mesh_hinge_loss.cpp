@@ -9,7 +9,7 @@
  * 
  */
 
-#include "../helpers/hingeloss_helper.h"
+#include "../helpers/hinge2Dhelper.h"
 #include <gtest/gtest.h>
 
 

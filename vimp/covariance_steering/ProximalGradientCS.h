@@ -23,6 +23,8 @@ class ProxGradCovSteer{
 public:
     ProxGradCovSteer(){};
 
+    virtual ~ProxGradCovSteer(){}
+
     ProxGradCovSteer(MatrixXd A0, 
                      VectorXd a0, 
                      MatrixXd B, 
@@ -45,7 +47,7 @@ public:
                      _Bt(_ei.replicate3d(B, _nt)),
                      _sig(sig),
                      _eps(eps),
-                     _deltt(1.0 / (_nt-1)),
+                     _deltt(1.0/(nt-1)),
                      _Qkt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
                      _Qt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
                      _rkt(Eigen::MatrixXd::Zero(_nx, _nt)),
@@ -79,7 +81,7 @@ public:
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
     std::tuple<MatrixXd, MatrixXd> optimize(){
-        double stop_err = 1e-4, err = 1;
+        double stop_err = 1e-5, err = 1;
         MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
         Ak_prev = _Akt;
         ak_prev = _akt;
@@ -100,6 +102,7 @@ public:
      * @return none, but inside already compute (K, d).
      */
     void step(int indx){
+        std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_mean(_Akt, _akt, _Bt);
         linearization();
@@ -155,7 +158,10 @@ public:
         _Qt = _ei.replicate3d(Q0, _nt);
     }
 
-    void update_Qrk(){
+    /**
+     * @brief Problem with a state cost V(Xt) differs only in the expressions Qk and rk.
+     */
+    virtual void update_Qrk(){
         MatrixXd Aki(_nx, _nx), aki(_nx, 1), hAi(_nx, _nx), hai(_nx, 1), Bi(_nx, _nu), Qti(_nx, _nx), pinvBBTi(_nx, _nx), Qki(_nx, _nx), nTri(_nx, 1), zi(_nx, 1), rki(_nx, 1);
         MatrixXd temp(_nx, _nx);
         // for each time step
@@ -214,7 +220,8 @@ public:
         }
     }
 
-private:
+
+public:
     EigenWrapper _ei;
     int _nx, _nu, _nt;
     double _eta, _sig, _eps, _deltt;

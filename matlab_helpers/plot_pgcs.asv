@@ -1,0 +1,54 @@
+clear all
+close all
+
+addpath('/usr/local/gtsam_toolbox')
+import gtsam.*
+import gpmp2.*
+
+% sdf map
+sdfmap = csvread("RAL-examples/2d_pR/map1/map_multiobs.csv");
+
+colors = [255, 0, 0];
+cell_size = 0.1;
+origin_x = -20;
+origin_y = -10;
+origin_point2 = Point2(origin_x, origin_y);
+field = signedDistanceField2D(sdfmap, cell_size);
+sdf = PlanarSDF(origin_point2, cell_size, field);
+
+grid_rows = size(sdfmap, 1);
+grid_cols = size(sdfmap, 2);
+grid_corner_x = origin_x + (grid_cols-1)*cell_size;
+grid_corner_y = origin_y + (grid_rows-1)*cell_size;
+grid_X = origin_x : cell_size : grid_corner_x;
+grid_Y = origin_y : cell_size : grid_corner_y;
+
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+nexttile
+t.FontSize = 16;
+hold on 
+plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
+
+% plot results
+zk_star = csvread("/home/hongzhe/git/VIMP/vimp/tests/zk_sdf.csv")
+Sk_start = csvread("/home/hongzhe/git/VIMP/vimp/tests/Sk_sdf.csv")
+nt = size(zk_star, 2);
+zk_pos = zk_star(1:2, :);
+for i=1:nt
+    scatter(zk_pos(1, i), zk_pos(2, i));
+end
+
+%% plot marginal function
+sig = 5.0;
+m0 = [-10, -5, 2, 0]';
+% plot marginals
+Sig0 = 0.01*eye(4);
+step_size = floor(nt/5);
+Sig0_xy = Sig0(1:2, 1:2);
+Sk_xy = Sk_sdf(1:2, 1:2, 1:end-2);
+zk_2d = zk_sdf(1:2, 1:end-2);
+plot_marginal(m0, zk_2d, Sig0_xy, Sk_xy, nt, sig, step_size);
+set(gca,'fontsize',16);
+xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
+zlabel('Position $y$','Interpreter','latex');
+

@@ -129,6 +129,9 @@ target_link_libraries(test_SDF_derivatives ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRA
 add_executable(test_pgcs tests/test_pgcs.cpp)
 target_link_libraries(test_pgcs ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
+add_executable(test_pgcs_plannar_sdf tests/test_pgcs_plannar_sdf.cpp)
+target_link_libraries(test_pgcs_plannar_sdf ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+
 # add_executable(test_GH tests/test_GH.cpp)
 # target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
