@@ -22,7 +22,8 @@
 
     <eps_sdf> 1.5 </eps_sdf>
 
-    <cost_sigma> 5e-4 </cost_sigma>
+    <!-- <cost_sigma> 5e-4 </cost_sigma> -->
+    <cost_sigma> 100 </cost_sigma>
 
 
 </parameters>
