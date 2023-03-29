@@ -110,6 +110,17 @@ foreach(src_file ${vimp_source_files})
 endforeach(src_file)
 
 
+# pgcs
+file(GLOB vimp_pgcs_sources RELATIVE "${CMAKE_SOURCE_DIR}/src/pgcs" "${CMAKE_SOURCE_DIR}/src/pgcs/*.cpp")
+
+foreach(src_file ${vimp_pgcs_sources})
+  string( REPLACE ".cpp" "" src_file_prefix ${src_file} )
+  add_executable(${src_file_prefix} "src/pgcs/${src_file}")
+  set_target_properties(${src_file_prefix} PROPERTIES LINKER_LANGUAGE CXX)
+  target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+endforeach(src_file)
+
+
 #% --------------------------------------------------------- Tests files 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})

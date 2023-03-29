@@ -32,8 +32,9 @@ public:
                      std::shared_ptr<NonlinearDynamics> pdyn,
                      double eps_sdf,
                      gpmp2::PlanarSDF sdf,
-                     double sig_obs):
-                            ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn),
+                     double sig_obs,
+                     double Vscale=1.0):
+                            ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
                             _eps_sdf(eps_sdf),
                             _sdf(sdf),
                             _invSig_obs(1.0 / sig_obs){}
@@ -68,26 +69,16 @@ public:
             Vector4d grad_h;
             grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
 
-            double scale = 10.0;
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
             // if (hinge > 0){
             //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _invSig_obs;
             // }
             // Qki
-            Qki = scale * Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
+            Qki = _state_cost_scale * Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
-            rki = scale * grad_h * hinge * _invSig_obs * _eta / (1.0 + _eta) +  nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = _state_cost_scale * grad_h * hinge * _invSig_obs * _eta / (1.0 + _eta) +  nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
-            // VectorXd one_part(_nx), the_other_part(_nx);
-            // one_part = grad_h * hinge * _invSig_obs * _eta / (1.0 + _eta);
-            // the_other_part = nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
-            // if (one_part.norm() > 0){
-            //     std::cout << "one part cost " << std::endl << 
-            //     one_part.norm() << std::endl;
-            //     std::cout << "the other part cost " << std::endl << 
-            //     the_other_part.norm() << std::endl;
-            // }
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
             _ei.compress3d(rki, _rkt, i);

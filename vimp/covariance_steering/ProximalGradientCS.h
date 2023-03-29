@@ -36,7 +36,8 @@ public:
                      MatrixXd Sig0,
                      VectorXd zT,
                      MatrixXd SigT,
-                     std::shared_ptr<NonlinearDynamics> pdyn): 
+                     std::shared_ptr<NonlinearDynamics> pdyn,
+                     double Vscale=1.0): 
                      _ei(),
                      _nx(A0.rows()),
                      _nu(B.cols()),
@@ -48,6 +49,7 @@ public:
                      _sig(sig),
                      _eps(eps),
                      _deltt(1.0/(nt-1)),
+                     _state_cost_scale(Vscale),
                      _Qkt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
                      _Qt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
                      _rkt(Eigen::MatrixXd::Zero(_nx, _nt)),
@@ -65,7 +67,9 @@ public:
                      _K(_nu*_nx, _nt),
                      _d(_nu, _nt),
                      _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT)
-                     {
+                     {  
+                        // Initialize the final time covariance
+                        _ei.compress3d(_SigT, _Sigkt, _nt-1); 
                         MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
                         for (int i=0; i<_nt; i++){
                             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
@@ -178,8 +182,8 @@ public:
             nTri = _ei.decompress3d(_nTrt, _nx, 1, i);
             zi = _ei.decompress3d(_zkt, _nx, 1, i);
             temp = (Aki - hAi).transpose();
-            Qki = Qti * 2 * _eta / (1 + _eta)  + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
-            rki = - (Qti * zi) * _eta / (1 + _eta) +  nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            Qki = Qti * 2 * _state_cost_scale * _eta / (1 + _eta)  + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
+            rki = - (Qti * zi) * _state_cost_scale * _eta / (1 + _eta) +  nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
@@ -225,6 +229,7 @@ public:
     EigenWrapper _ei;
     int _nx, _nu, _nt;
     double _eta, _sig, _eps, _deltt;
+    double _state_cost_scale;
 
     // All the variables are time variant (3d matrices)
     // iteration variables

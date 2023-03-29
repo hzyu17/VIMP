@@ -25,4 +25,6 @@
 
     <cost_sigma> 5e-4 </cost_sigma>
 
+    <saving_prefix>/home/hongzhe/git/VIMP/vimp/data/pgcs/double_integrator/map1/</saving_prefix>
+
 </parameters>
