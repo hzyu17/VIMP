@@ -9,9 +9,9 @@
  * 
  */
 
-#include "../instances/PriorColPlanarArm.h"
-#include "../robots/Planar3LinkArmSDFExample.h"
-#include "../gtsam/inference/Symbol.h"
+#include "../../instances/PriorColPlanarArm.h"
+#include "../../robots/Planar3LinkArmSDFExample.h"
+#include <gtsam/inference/Symbol.h>
 
 using namespace std;
 using namespace gpmp2;
@@ -49,7 +49,6 @@ int main(){
     double init_precision_factor = atof(paramNode->first_node("init_precision_factor")->value());
 
     int replanning = atoi(paramNode->first_node("replanning")->value());
-    string replan_mean_file = static_cast<std::string>(paramNode->first_node("mean_file")->value());
     int replanning_starting = atoi(paramNode->first_node("replanning_starting")->value());
 
     // An example pr and sdf
@@ -103,6 +102,7 @@ int main(){
             /// lin GP factor for the N th state
             if (i == n_total_states-1){
                 vec_factor_opts.emplace_back(new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1});
+
             }
 
             /// Fixed GP
@@ -119,6 +119,7 @@ int main(){
             /// Factored optimizer
             vec_factor_opts.emplace_back(new OptPlanarSDFFactorArm{dim_conf, dim_theta, cost_sdf_Arm, collision_k, n_total_states, i});
         }
+        
     }
 
     /// The joint optimizer
@@ -126,8 +127,10 @@ int main(){
 
     MatrixIO matrix_io;
     /// Set initial value to the linear interpolation
+    // int num_iter = 20;
     if (replanning == 1){
-        MatrixXd means = matrix_io.load_csv(replan_mean_file);
+        MatrixXd means = matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_3Arm/mean_base.csv");
+        // VectorXd good_init_vec = means.row(means.rows()-1);
         VectorXd good_init_vec = means.row(replanning_starting);
         /// Set initial value to the linear interpolation
         optimizer.set_mu(good_init_vec);
@@ -136,11 +139,11 @@ int main(){
     }
 
     MatrixXd init_precision{MatrixXd::Identity(ndim, ndim)*init_precision_factor};
-    init_precision.block(0, 0, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*10000;
-    init_precision.block(N*dim_theta, N*dim_theta, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*10000;
+    init_precision.block(0, 0, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*1000;
+    init_precision.block(N*dim_theta, N*dim_theta, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*1000;
     optimizer.set_precision(init_precision.sparseView());
 
-    optimizer.set_GH_degree(4);
+    optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
     optimizer.set_step_size_base(step_size);
 

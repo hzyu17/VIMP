@@ -55,7 +55,7 @@ public:
             hai = _ei.decompress3d(_hakt, _nx, 1, i);
             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
             Qti = _ei.decompress3d(_Qt, _nx, _nx, i);
-            pinvBBTi = _ei.decompress3d(_pinvBBT, _nx, _nx, i);
+            pinvBBTi = _ei.decompress3d(_pinvBBTt, _nx, _nx, i);
             nTri = _ei.decompress3d(_nTrt, _nx, 1, i);
             zi = _ei.decompress3d(_zkt, _nx, 1, i);
             temp = (Aki - hAi).transpose();

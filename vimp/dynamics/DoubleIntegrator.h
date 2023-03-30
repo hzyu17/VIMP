@@ -120,15 +120,15 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
  * @brief Linearize along a trajectory.
  * 
  * @param x A trajectory of states, in shape (dim_state, nt).
- * @return std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> return (hAt, hBt, hat, nTrt)
+ * @return std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> return (hAt, hBt, hat, nTrt)
  */
-std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearize(const MatrixXd& x, 
+std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> linearize(const Matrix3D& xt, 
                                                              double sig, 
-                                                             const MatrixXd& Ak, 
-                                                             const MatrixXd& Sigk) override
+                                                             const Matrix3D& Akt, 
+                                                             const Matrix3D& Sigkt) override
 {   
     // The result collectors for all time points
-    Eigen::MatrixXd hAt(_nx*_nx, _nt), Bt(_nx*_nu, _nt), hat(_nx, _nt), nTrt(_nx, _nt);
+    Matrix3D hAt(_nx, _nx, _nt), Bt(_nx, _nu, _nt), hat(_nx, 1, _nt), nTrt(_nx, 1, _nt);
 
     // The i_th matrices
     Eigen::VectorXd zki(_nx), hai(_nx), nTri(_nx);
@@ -137,9 +137,9 @@ std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearize(const MatrixXd& x,
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> resi;
 
     for (int i=0; i<_nt; i++){
-        zki = _ei.decompress3d(x, _nx, 1, i);
-        Aki = _ei.decompress3d(Ak, _nx, _nx, i);
-        Sigki = _ei.decompress3d(Sigk, _nx, _nx, i);
+        zki = _ei.decompress3d(xt, _nx, 1, i);
+        Aki = _ei.decompress3d(Akt, _nx, _nx, i);
+        Sigki = _ei.decompress3d(Sigkt, _nx, _nx, i);
         // get the linearization results
         resi = linearize_timestamp(zki, sig, Aki, Sigki);
         hAi = std::get<0>(resi);

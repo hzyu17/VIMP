@@ -31,7 +31,7 @@ default_properties = struct(...
   'mu', [], ... % Center of ellipse (optional)
   'conf', 0.997, ... % Percent confidence/100
   'scale', 1, ... % Scale factor, e.g. 1e-3 to plot m as km
-  'style', 'r-.', ...  % Plot style
+  'style', 'r-.', 'LineWidth', 0.8, ...  % Plot style
   'clip', inf); % Clipping radius
 
 if length(varargin) >= 1 & isnumeric(varargin{1})

@@ -23,17 +23,6 @@ include(GtsamTesting)
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 
-# Boost - same requirement as gtsam
-# find_package(Boost 1.50 REQUIRED)
-# find_package(Boost COMPONENTS filesystem REQUIRED)
-# find_package(Boost COMPONENTS system REQUIRED)
-# find_package(Boost COMPONENTS thread REQUIRED)
-# find_package(Boost COMPONENTS serialization REQUIRED)
-# find_package(Boost COMPONENTS date_time REQUIRED)
-# find_package(Boost COMPONENTS timer REQUIRED)
-
-# include_directories(${Boost_INCLUDE_DIR})
-
 # GPMP2
 find_package( Eigen3 3.4.0 REQUIRED
               gpmp2 REQUIRED)
@@ -46,31 +35,16 @@ find_package(Matplot++ REQUIRED)
 # adept
 find_package(FastAD CONFIG REQUIRED)
 
-# # # -------------------------------------------- TinyAD
-# include(FetchContent)
-# FetchContent_Declare(
-#   tinyad
-#   GIT_REPOSITORY https://github.com/patr-schm/tinyad.git
-#   GIT_TAG 75093e14ef0d7bb39657c5f3b2aba1251afaa38c
-# )
-
-# FetchContent_GetProperties(tinyad)
-# if(NOT tinyad_POPULATED)
-#   # Fetch the content using previously declared details
-#   FetchContent_Populate(tinyad)
-#   message(STATUS "tinyad_SOURCE_DIR: ${tinyad_SOURCE_DIR}")
-#   message(STATUS "tinyad_BINARY_DIR: ${tinyad_BINARY_DIR}")
-#   add_subdirectory(${tinyad_SOURCE_DIR} ${tinyad_BINARY_DIR})
-# endif()
-
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
 
 set(vimp_subdirs 
+    base
     optimizer
     helpers 
     instances
     robots
     covariance_steering
+    dynamics
     # autodiff
 )
 
@@ -100,11 +74,11 @@ include_directories(${GPMP2_INCLUDE_DIRS})
 include_directories(${GTSAM_INCLUDE_DIRS})
 
 # add executables
-file(GLOB vimp_source_files RELATIVE "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/src/*.cpp")
+file(GLOB vimp_source_files RELATIVE "${CMAKE_SOURCE_DIR}/src/vimp" "${CMAKE_SOURCE_DIR}/src/vimp/*.cpp")
 
 foreach(src_file ${vimp_source_files})
   string( REPLACE ".cpp" "" src_file_prefix ${src_file} )
-  add_executable(${src_file_prefix} "src/${src_file}")
+  add_executable(${src_file_prefix} "src/vimp/${src_file}")
   set_target_properties(${src_file_prefix} PROPERTIES LINKER_LANGUAGE CXX)
   target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
 endforeach(src_file)

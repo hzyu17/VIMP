@@ -9,8 +9,8 @@
  * 
  */
 
-#include "../instances/PriorColPlanarArm.h"
-#include "../robots/PlanarArmSDFExample.h"
+#include "../../instances/PriorColPlanarArm.h"
+#include "../../robots/PlanarArmSDFExample.h"
 #include <gtsam/inference/Symbol.h>
 
 using namespace std;

@@ -10,8 +10,8 @@
  */
 
 
-#include "../optimizer/OptimizerFactorizedSimpleGH.h"
-#include "../optimizer/OptimizerGH.h"
+#include "../../optimizer/OptimizerFactorizedSimpleGH.h"
+#include "../../optimizer/OptimizerGH.h"
 
 using namespace Eigen;
 using namespace vimp;

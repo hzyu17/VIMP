@@ -27,7 +27,7 @@ public:
                                               _nt(nt){}
     virtual ~NonlinearDynamics(){}
     
-     
+
     virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
                                                                                     double sig, 
                                                                                     const MatrixXd& Ak, 
@@ -39,13 +39,13 @@ public:
     * @param sig time scaling factor
     * @param Ak iteration variable Ak
     * @param Sigk iteration variable Sigk
-    * @return std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd>,
+    * @return std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D>,
     *         representing (At, Bt, at, nTr).
     */
-    virtual std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> linearize(const MatrixXd& x, 
+    virtual std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> linearize(const Matrix3D& xt, 
                                                                         double sig, 
-                                                                        const MatrixXd& Ak, 
-                                                                        const MatrixXd& Sigk){}
+                                                                        const Matrix3D& Akt, 
+                                                                        const Matrix3D& Sigkt){}
 public:
   EigenWrapper _ei;
 private:

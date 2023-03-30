@@ -10,8 +10,8 @@
  * 
  */
 
-#include "../instances/PriorColPlanarPointRobot.h"
-#include "../robots/PlanarPointRobotSDFMultiObsExample.h"
+#include "../../instances/PriorColPlanarPointRobot.h"
+#include "../../robots/PlanarPointRobotSDFMultiObsExample.h"
 
 
 using namespace std;

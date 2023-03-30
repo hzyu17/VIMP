@@ -1,7 +1,7 @@
 /**
- * @file ProximalGradientCS.h
+ * @file ProximalGradientCSLinearDyn.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Proximal gradient algorithm for nonlinear covariance steering. 
+ * @brief Proximal gradient algorithm for nonlinear covariance steering, with linear dynamics. 
  * @version 0.1
  * @date 2023-03-15
  * 
@@ -50,13 +50,13 @@ public:
                      _eps(eps),
                      _deltt(1.0/(nt-1)),
                      _state_cost_scale(Vscale),
-                     _Qkt(Matrix3D(_nx, _nx, _nt)),
-                     _Qt(Matrix3D(_nx, _nx, _nt)),
-                     _rkt(Matrix3D(_nx, 1, _nt)),
-                     _hAkt(Matrix3D(_nx, _nx, _nt)),
-                     _hakt(Matrix3D(_nx, 1, _nt)),
-                     _nTrt(Matrix3D(_nx, 1, _nt)),
-                     _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
+                     _Qkt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
+                     _Qt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
+                     _rkt(Eigen::MatrixXd::Zero(_nx, _nt)),
+                     _hAkt(Eigen::MatrixXd::Zero(_nx*_nx, _nt)),
+                     _hakt(Eigen::MatrixXd::Zero(_nx, _nt)),
+                     _nTrt(Eigen::MatrixXd::Zero(_nx, _nt)),
+                     _pinvBBT(MatrixXd::Zero(_nx*_nx, _nt)),
                      _zkt(_ei.replicate3d(z0, _nt)),
                      _Sigkt(_ei.replicate3d(Sig0, _nt)),
                      _z0(z0),
@@ -64,8 +64,8 @@ public:
                      _zT(zT),
                      _SigT(SigT),
                      _dynptr{pdyn},
-                     _Kt(_nu, _nx, _nt),
-                     _dt(_nu, 1, _nt),
+                     _K(_nu*_nx, _nt),
+                     _d(_nu, _nt),
                      _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT)
                      {  
                         // Initialize the final time covariance
@@ -75,7 +75,7 @@ public:
                             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
                             BiT = Bi.transpose();
                             pinvBBTi = (Bi * BiT).completeOrthogonalDecomposition().pseudoInverse();;
-                            _ei.compress3d(pinvBBTi, _pinvBBTt, i);
+                            _ei.compress3d(pinvBBTi, _pinvBBT, i);
                         }
                      }
 
@@ -84,8 +84,8 @@ public:
      * sovling a linear CS, and push forward the mean and covariances.
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
-    std::tuple<MatrixXd, MatrixXd> optimize(double stop_err){
-        double err = 1;
+    std::tuple<MatrixXd, MatrixXd> optimize(){
+        double stop_err = 1e-5, err = 1;
         MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
         Ak_prev = _Akt;
         ak_prev = _akt;
@@ -98,7 +98,7 @@ public:
             i_step ++;
         }
 
-        return std::make_tuple(_Kt, _dt);
+        return std::make_tuple(_K, _d);
     }
 
     /**
@@ -123,18 +123,18 @@ public:
         _linear_cs.solve();
 
         // retrieve (K, d)
-        _Kt = _linear_cs.Kt();
-        _dt = _linear_cs.dt();
+        _K = _linear_cs.Kt();
+        _d = _linear_cs.dt();
 
-        Matrix3D fbK(_nx, _nx, _nt), fbd(_nx, 1, _nt);
+        MatrixXd fbK(_nx*_nx, _nt), fbd(_nx, _nt);
         MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), fbKi(_nx, _nx), di(_nx, 1), fbdi(_nx, 1), Bi(_nx, _nu);
         for (int i=0; i<_nt; i++){
             Aprior_i = _ei.decompress3d(Apriort, _nx, _nx, i);
             aprior_i = _ei.decompress3d(apriort, _nx, 1, i);
 
             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
-            Ki = _ei.decompress3d(_Kt, _nu, _nx, i);
-            di = _ei.decompress3d(_dt, _nu, 1, i);
+            Ki = _ei.decompress3d(_K, _nu, _nx, i);
+            di = _ei.decompress3d(_d, _nu, 1, i);
 
             Ai = Aprior_i + Bi * Ki;
             ai = aprior_i + Bi * di;
@@ -143,17 +143,17 @@ public:
         }
     }
 
-    inline Matrix3D zkt(){ return _zkt; }
+    inline MatrixXd zkt(){ return _zkt; }
 
-    inline Matrix3D Sigkt(){ return _Sigkt; }
+    inline MatrixXd Sigkt(){ return _Sigkt; }
 
-    inline Matrix3D Akt(){ return _Akt; }
+    inline MatrixXd Akt(){ return _Akt; }
 
-    inline Matrix3D akt(){ return _akt; }
+    inline MatrixXd akt(){ return _akt; }
 
-    inline Matrix3D Qkt(){ return _Qkt; }
+    inline MatrixXd Qkt(){ return _Qkt; }
 
-    inline Matrix3D rkt(){ return _rkt; }
+    inline MatrixXd rkt(){ return _rkt; }
 
     /**
      * @brief replicating a fixed state cost
@@ -178,7 +178,7 @@ public:
             hai = _ei.decompress3d(_hakt, _nx, 1, i);
             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
             Qti = _ei.decompress3d(_Qt, _nx, _nx, i);
-            pinvBBTi = _ei.decompress3d(_pinvBBTt, _nx, _nx, i);
+            pinvBBTi = _ei.decompress3d(_pinvBBT, _nx, _nx, i);
             nTri = _ei.decompress3d(_nTrt, _nx, 1, i);
             zi = _ei.decompress3d(_zkt, _nx, 1, i);
             temp = (Aki - hAi).transpose();
@@ -196,7 +196,7 @@ public:
      * @brief linearization
      */
     void linearization(){
-        std::tuple<Matrix3D, MatrixXd, Matrix3D, Matrix3D> res;
+        std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> res;
         res = _dynptr->linearize(_zkt, _sig, _Akt, _Sigkt);
         _hAkt = std::get<0>(res);
         _Bt   = std::get<1>(res);
@@ -204,7 +204,7 @@ public:
         _nTrt = std::get<3>(res);
     }
 
-    void propagate_mean(Matrix3D At, Matrix3D at, Matrix3D Bt){
+    void propagate_mean(MatrixXd At, MatrixXd at, MatrixXd Bt){
         // The i_th matrices
         Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
         Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu);
@@ -233,22 +233,21 @@ public:
 
     // All the variables are time variant (3d matrices)
     // iteration variables
-    Matrix3D _Akt, _Bt, _akt, _pinvBBTt;
-    Matrix3D _Qkt, _Qt; // Qk is the Q in each iteration, and Qt is the quadratic state cost matrix.
-    Matrix3D _rkt;
+    MatrixXd _Akt, _Bt, _akt, _pinvBBT;
+    MatrixXd _Qkt, _Qt; // Qk is the Q in each iteration, and Qt is the quadratic state cost matrix.
+    MatrixXd _rkt;
 
     // linearizations
-    Matrix3D _hAkt, _hakt, _nTrt;
+    MatrixXd _hAkt, _hakt, _nTrt;
 
     // boundary conditions
-    Matrix3D _Sigkt;
-    MatrixXd _Sig0, _SigT;
+    MatrixXd _Sigkt, _Sig0, _SigT;
     VectorXd _z0, _zT;
-    Matrix3D _zkt;
+    MatrixXd _zkt;
 
     // Final result
-    Matrix3D _Kt;
-    Matrix3D _dt;
+    MatrixXd _K;
+    MatrixXd _d;
 
     // Dynamics class
     std::shared_ptr<NonlinearDynamics> _dynptr;
