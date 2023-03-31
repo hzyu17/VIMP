@@ -9,13 +9,13 @@
  * 
  */
 
-#include "../helpers/data_io.h"
+#include "helpers/data_io.h"
 #include <gtest/gtest.h>
-#include "../helpers/hinge2Dhelper.h"
+#include "helpers/hinge2Dhelper.h"
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include <matplot/matplot.h>
 #include <fastad>
-#include "../robots/DoubleIntegrator.h"
+#include "robots/DoubleIntegrator.h"
     
 using namespace ad;
 using namespace vimp;

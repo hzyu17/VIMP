@@ -1,5 +1,5 @@
-#include "../instances/PriorColPlanarPointRobot.h"
-#include "../robots/PlanarPointRobotSDFMultiObsExample.h"
+#include "instances/PriorColPlanarPointRobot.h"
+#include "robots/PlanarPointRobotSDFMultiObsExample.h"
 #include <gtest/gtest.h>
 
 using namespace gpmp2;

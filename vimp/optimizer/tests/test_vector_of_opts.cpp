@@ -9,11 +9,11 @@
  * 
  */
 
-#include "../gp/fixed_prior.h"
-#include "../gp/minimum_acc_prior.h"
-#include "../optimizer/OptimizerFactorizedGHBase.h"
-#include "../robots/PlanarPointRobotSDFExample.h"
-#include "../optimizer/OptimizerGH.h"
+#include "gp/fixed_prior.h"
+#include "gp/minimum_acc_prior.h"
+#include "optimizer/OptimizerFactorizedGHBase.h"
+#include "robots/PlanarPointRobotSDFExample.h"
+#include "optimizer/OptimizerGH.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
 #include <gtest/gtest.h>

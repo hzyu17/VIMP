@@ -11,9 +11,9 @@
 
 #include<gtest/gtest.h>
 
-#include "../helpers/sparse_graph.h"
-#include "../helpers/data_io.h"
-#include "../helpers/timer.h"
+#include "helpers/sparse_graph.h"
+#include "helpers/data_io.h"
+#include "helpers/timer.h"
 
 vimp::MatrixIO m_io;
 Timer timer;

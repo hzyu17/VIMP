@@ -10,10 +10,10 @@
  */
 
 #include <gtest/gtest.h>
-#include "../dynamics/DoubleIntegrator.h"
-#include "../covariance_steering/PGCSPlannarSDF.h"
-#include "../3rd-part/rapidxml-1.13/rapidxml.hpp"
-#include "../3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
+#include "dynamics/DoubleIntegrator.h"
+#include "covariance_steering/PGCSPlannarSDF.h"
+#include "3rd-part/rapidxml-1.13/rapidxml.hpp"
+#include "3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
 
 using namespace Eigen;
 using namespace vimp;

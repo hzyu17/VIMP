@@ -9,7 +9,7 @@
  * 
  */
 
-#include "../helpers/data_io.h"
+#include "helpers/data_io.h"
 #include <gtest/gtest.h>
 
 using namespace vimp;

@@ -9,9 +9,9 @@
  * 
  */
 
-#include "../helpers/SparseInverseMatrix.h"
+#include "helpers/SparseInverseMatrix.h"
 #include <gtest/gtest.h>
-#include "../helpers/data_io.h"
+#include "helpers/data_io.h"
 
 using namespace Eigen;
 using namespace std;

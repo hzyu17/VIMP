@@ -11,9 +11,9 @@
 
 #include<gtest/gtest.h>
 
-#include"../helpers/timer.h"
-#include"../helpers/eigen_wrapper.h"
-#include"../helpers/data_io.h"
+#include"helpers/timer.h"
+#include"helpers/eigen_wrapper.h"
+#include"helpers/data_io.h"
 
 #include<Eigen/IterativeLinearSolvers>
 

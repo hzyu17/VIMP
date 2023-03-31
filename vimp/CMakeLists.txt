@@ -45,7 +45,6 @@ set(vimp_subdirs
     robots
     covariance_steering
     dynamics
-    # autodiff
 )
 
 set(vimp_srcs)
@@ -66,70 +65,52 @@ foreach(subdir ${vimp_subdirs})
 
   # local and tests
   add_subdirectory(${subdir})
+  
 endforeach(subdir)
 
 # include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${GPMP2_INCLUDE_DIRS})
 include_directories(${GTSAM_INCLUDE_DIRS})
-
-# add executables
-file(GLOB vimp_source_files RELATIVE "${CMAKE_SOURCE_DIR}/src/vimp" "${CMAKE_SOURCE_DIR}/src/vimp/*.cpp")
-
-foreach(src_file ${vimp_source_files})
-  string( REPLACE ".cpp" "" src_file_prefix ${src_file} )
-  add_executable(${src_file_prefix} "src/vimp/${src_file}")
-  set_target_properties(${src_file_prefix} PROPERTIES LINKER_LANGUAGE CXX)
-  target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
-endforeach(src_file)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 
-# pgcs
-file(GLOB vimp_pgcs_sources RELATIVE "${CMAKE_SOURCE_DIR}/src/pgcs" "${CMAKE_SOURCE_DIR}/src/pgcs/*.cpp")
+# Add all the source files in src/vimp as a separate executable
+file(GLOB_RECURSE VIMP_SOURCES src/vimp/*.cpp)
+foreach(vimp_source ${VIMP_SOURCES})
+    get_filename_component(vimp_name ${vimp_source} NAME_WE)
+    add_executable(${vimp_name} ${vimp_source})
+    set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
+    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+endforeach()
 
-foreach(src_file ${vimp_pgcs_sources})
-  string( REPLACE ".cpp" "" src_file_prefix ${src_file} )
-  add_executable(${src_file_prefix} "src/pgcs/${src_file}")
-  set_target_properties(${src_file_prefix} PROPERTIES LINKER_LANGUAGE CXX)
-  target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
-endforeach(src_file)
+# Add all the source files in src/pgcs as a separate executable
+file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
+foreach(pgcs_source ${PGCS_SOURCES})
+    get_filename_component(pgcs_name ${pgcs_source} NAME_WE)
+    add_executable(${pgcs_name} ${pgcs_source})
+    set_target_properties(${pgcs_name} PROPERTIES LINKER_LANGUAGE CXX)
+    target_link_libraries(${pgcs_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+    target_include_directories(${pgcs_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+endforeach()
 
 
 #% --------------------------------------------------------- Tests files 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-add_executable(test_eigen_sparse tests/test_eigen_sparse.cpp)
-target_link_libraries(test_eigen_sparse ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+# Recursively search for all test files in the subfolders
+file(GLOB_RECURSE TEST_SOURCES vimp_subdirs false */tests/*.cpp)
 
-add_executable(test_linear_system tests/test_linear_system.cpp)
-target_link_libraries(test_linear_system ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
-add_executable(test_linear_CS tests/test_linear_CS.cpp)
-target_link_libraries(test_linear_CS ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
-
-add_executable(test_SDF_derivatives tests/test_SDF_derivatives.cpp)
-target_link_libraries(test_SDF_derivatives ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot FastAD::FastAD)
-
-add_executable(test_pgcs tests/test_pgcs.cpp)
-target_link_libraries(test_pgcs ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
-
-add_executable(test_pgcs_plannar_sdf tests/test_pgcs_plannar_sdf.cpp)
-target_link_libraries(test_pgcs_plannar_sdf ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
-
-# add_executable(test_GH tests/test_GH.cpp)
-# target_link_libraries(test_GH ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
-
-# # add executables for the tests
-# file(GLOB vimp_test_files RELATIVE "${CMAKE_SOURCE_DIR}/tests" "${CMAKE_SOURCE_DIR}/tests/*.cpp")
-
-# foreach(test_file ${vimp_test_files})
-#   string( REPLACE ".cpp" "" test_file_prefix ${test_file} )
-#   add_executable(${test_file_prefix} "tests/${test_file}")
-#   set_target_properties(${test_file_prefix} PROPERTIES LINKER_LANGUAGE CXX)
-#   target_link_libraries(${src_file_prefix} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
-# endforeach(test_file)
-
+# Loop through each test file and add it as a test case
+foreach(TEST_SOURCE ${TEST_SOURCES})
+    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+    add_executable(${TEST_NAME} ${TEST_SOURCE})
+    target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+    target_include_directories(${TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+endforeach()
 
 # -------------------------------------------- Doxygen for documentations
 # find_package(Doxygen)

@@ -10,9 +10,9 @@
  */
 
 #include <gtest/gtest.h>
-#include "../optimizer/OptimizerGH.h"
-#include "../optimizer/OptimizerFactorizedGH.h"
-#include "../helpers/MVGsampler.h"
+#include "optimizer/OptimizerGH.h"
+#include "optimizer/OptimizerFactorizedGH.h"
+#include "helpers/MVGsampler.h"
 #include <iostream>
 #include <random>
 

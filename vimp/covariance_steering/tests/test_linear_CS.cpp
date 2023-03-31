@@ -9,10 +9,10 @@
  * 
  */
 
-#include "../linear_CS/LinearCovarianceSteering.h"
+#include "covariance_steering/LinearCovarianceSteering.h"
 #include <gtest/gtest.h>
-#include "../helpers/eigen_wrapper.h"
-#include "../helpers/data_io.h"
+#include "helpers/eigen_wrapper.h"
+#include "helpers/data_io.h"
 
 using namespace vimp;
 using namespace Eigen;
@@ -46,7 +46,7 @@ TEST(LinearCS, initializations){
 
     MatrixXd Bt = MatrixXd::Zero(nx, nu);
     Bt.block(2,0,2,2) = 5.0*MatrixXd::Identity(2,2);
-    LinearCovarianceSteering linear_cs(At, Bt, at, nt, 0.01, Qt, rt, m0, Sig0, m1, Sig1);
+    LinearCovarianceSteering linear_cs(At, Bt, at, 4, 2, nt, 0.01, Qt, rt, m0, Sig0, m1, Sig1);
     linear_cs.solve();
 
     MatrixXd M0{MatrixXd::Zero(8, 8)};
@@ -71,7 +71,7 @@ TEST(LinearCS, initializations){
         ASSERT_LE((linear_cs.Qt(i)-Qi).norm(), 1e-10);
         ASSERT_LE((linear_cs.Mt(i)-Mi).norm(), 1e-10);
         
-        ASSERT_LE((linear_cs.Pi(i)-Pii).norm(), 1e-10);
+        ASSERT_LE((linear_cs.Pit(i)-Pii).norm(), 1e-10);
         
     }
     

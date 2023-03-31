@@ -10,8 +10,8 @@
  */
 
 #include <gtest/gtest.h>
-#include "../dynamics/DoubleIntegrator.h"
-#include "../covariance_steering/ProximalGradientCS.h"
+#include "dynamics/DoubleIntegrator.h"
+#include "covariance_steering/ProximalGradientCS.h"
 
 using namespace Eigen;
 using namespace vimp;
@@ -98,6 +98,6 @@ TEST(TestPGCS, solution){
     Kt_gt = m_io.load_csv("data/Kt.csv");
     dt_gt = m_io.load_csv("data/dt.csv");
 
-    // ASSERT_LE((Kt - Kt_gt).norm(), 1e-10);
+    ASSERT_LE((Kt - Kt_gt).norm(), 1e-10);
     ASSERT_LE((dt - dt_gt).norm(), 1e-10);
 }

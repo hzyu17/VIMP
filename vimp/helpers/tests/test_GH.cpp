@@ -9,7 +9,7 @@
  * 
  */
 
-#include "../helpers/GaussHermite.h"
+#include "helpers/GaussHermite.h"
 #include <functional>
 #include <gtest/gtest.h>
 

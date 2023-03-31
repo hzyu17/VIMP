@@ -9,10 +9,10 @@
  * 
  */
 
-#include "../../dynamics/DoubleIntegrator.h"
-#include "../../covariance_steering/PGCSPlannarSDF.h"
-#include "../../3rd-part/rapidxml-1.13/rapidxml.hpp"
-#include "../../3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
+#include "dynamics/DoubleIntegrator.h"
+#include "covariance_steering/PGCSPlannarSDF.h"
+#include "3rd-part/rapidxml-1.13/rapidxml.hpp"
+#include "3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
 
 using namespace Eigen;
 using namespace vimp;
@@ -77,7 +77,9 @@ int main(){
     PGCSPlannarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
     
     std::tuple<MatrixXd, MatrixXd> res_Kd;
-    res_Kd = pgcs_sdf.optimize();
+
+    double stop_err = 1e-4;
+    res_Kd = pgcs_sdf.optimize(stop_err);
 
     MatrixXd Kt(4*4, nt), dt(4, nt);
     Kt = std::get<0>(res_Kd);
