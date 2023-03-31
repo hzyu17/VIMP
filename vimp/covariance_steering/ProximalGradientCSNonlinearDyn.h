@@ -1,16 +1,17 @@
 /**
- * @file ProximalGradientCSLinearDyn.h
+ * @file ProximalGradientCSNonlinearDyn.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Proximal gradient algorithm for nonlinear covariance steering, with linear dynamics. 
+ * @brief Proximal gradient algorithm for nonlinear covariance steering, nonlinear dynamics.
  * @version 0.1
- * @date 2023-03-15
+ * @date 2023-03-30
  * 
  * @copyright Copyright (c) 2023
  * 
  */
 
-#include "../dynamics/LinearDynamics.h"
 #include "ProximalGradientCS.h"
+#include "../dynamics/NonlinearDynamics.h"
+#include <memory>
 
 using namespace Eigen;
 
@@ -33,36 +34,44 @@ public:
                         const MatrixXd& Sig0,
                         const VectorXd& zT,
                         const MatrixXd& SigT,
-                        std::shared_ptr<LinearDynamics> pdyn,
+                        std::shared_ptr<NonlinearDynamics> pdyn,
                         double Vscale=1.0): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT), 
-                                            _pdyn(pdyn){
-                                                _hAkt = pdyn->At();
-                                                _Bt = pdyn->Bt();
-                                                _hakt = pdyn->at();
-                                            }
-                                            
+                                            _pdyn(pdyn){}
     
     /**
      * @brief Solving a linear covariance steering at each iteration.
      * @return none, but inside already compute (K, d).
      */
-    void step(int indx) override{
+    void step(int indx){
         std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_mean();
+        linearization();
 
-        MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
-        MatrixXd aprior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
+        MatrixXd A_prior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
+        MatrixXd a_prior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
 
         // Update Qkt, rkt
         update_Qrk();
 
         // solve inner loop linear CS
-        solve_internal_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
+        solve_internal_linearCS(A_prior, _Bt, a_prior, _Qkt, _rkt);
     }
 
-private:
-    std::shared_ptr<LinearDynamics> _pdyn;
+    /**
+     * @brief linearization
+     */
+    void linearization(){
+        std::tuple<LinearDynamics, Matrix3D> res;
+        res = _pdyn->linearize(_zkt, _sig, _Akt, _Sigkt);
+        _hAkt = std::get<0>(res).At();
+        _Bt   = std::get<0>(res).Bt();
+        _hakt = std::get<0>(res).at();
+        _nTrt = std::get<1>(res);
+    }
+
+protected:
+    std::shared_ptr<NonlinearDynamics> _pdyn;
     
 };
 }

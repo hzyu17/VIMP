@@ -9,8 +9,6 @@
  * 
  */
 
-#pragma once
-
 #include "NonlinearDynamics.h"
 #include "../3rd-part/TinyAD/Scalar.hh"
 
@@ -122,10 +120,10 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
  * @param x A trajectory of states, in shape (dim_state, nt).
  * @return std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> return (hAt, hBt, hat, nTrt)
  */
-std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> linearize(const Matrix3D& xt, 
-                                                             double sig, 
-                                                             const Matrix3D& Akt, 
-                                                             const Matrix3D& Sigkt) override
+std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt, 
+                                                double sig, 
+                                                const Matrix3D& Akt, 
+                                                const Matrix3D& Sigkt) override
 {   
     // The result collectors for all time points
     Matrix3D hAt(_nx, _nx, _nt), Bt(_nx, _nu, _nt), hat(_nx, 1, _nt), nTrt(_nx, 1, _nt);
@@ -153,11 +151,11 @@ std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> linearize(const Matrix3D& xt,
         _ei.compress3d(nTri, nTrt, i);
         
     }
-    return std::make_tuple(hAt, Bt, hat, nTrt);
+    return std::make_tuple(LinearDynamics{_nx, _nu, _nt, hAt, Bt, hat}, nTrt);
 }
 
 
-private:
+protected:
     int _nt, _nx, _nu;
 };
 

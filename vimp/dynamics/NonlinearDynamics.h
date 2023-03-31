@@ -11,20 +11,17 @@
 
 #pragma once
 
-#include <Eigen/Dense>
-#include <string>
 #include "../helpers/eigen_wrapper.h"
+#include "LinearDynamics.h"
 
 using namespace Eigen;
 
 namespace vimp{
 
-class NonlinearDynamics{
+class NonlinearDynamics: public Dynamics{
 public:
     NonlinearDynamics(){}
-    NonlinearDynamics(int nx, int nu, int nt):_nx(nx),
-                                              _nu(nu),
-                                              _nt(nt){}
+    NonlinearDynamics(int nx, int nu, int nt):Dynamics(nx, nu, nt){}
     virtual ~NonlinearDynamics(){}
     
 
@@ -39,18 +36,14 @@ public:
     * @param sig time scaling factor
     * @param Ak iteration variable Ak
     * @param Sigk iteration variable Sigk
-    * @return std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D>,
+    * @return std::tuple<LinearDynamics, Matrix3D>,
     *         representing (At, Bt, at, nTr).
     */
-    virtual std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> linearize(const Matrix3D& xt, 
-                                                                        double sig, 
-                                                                        const Matrix3D& Akt, 
-                                                                        const Matrix3D& Sigkt){}
-public:
-  EigenWrapper _ei;
-private:
-  int _nx, _nu, _nt;
-    
+    virtual std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt, 
+                                                            double sig, 
+                                                            const Matrix3D& Akt, 
+                                                            const Matrix3D& Sigkt){}
+
 };
 
 }// namespace vimp

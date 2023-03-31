@@ -11,7 +11,7 @@
 
 #include <gtest/gtest.h>
 #include "dynamics/DoubleIntegrator.h"
-#include "covariance_steering/ProximalGradientCS.h"
+#include "covariance_steering/ProximalGradientCSNonlinearDyn.h"
 
 using namespace Eigen;
 using namespace vimp;
@@ -33,14 +33,15 @@ TEST(TestDynamics, linearization){
     nTr_gt = m_io.load_csv("data/nTrt.csv");
 
     DoubleIntegrator dyn(nx, nu, nt);
+    LinearDynamics lin_dyn(nx, nu, nt);
 
-    std::tuple<MatrixXd, MatrixXd, MatrixXd, MatrixXd> res;
+    std::tuple<LinearDynamics, Matrix3D> res;
     res = dyn.linearize(zt, 5.0, At, St);
 
-    hAt = std::get<0>(res);
-    Bt = std::get<1>(res);
-    hat = std::get<2>(res);
-    nTr = std::get<3>(res);
+    hAt = std::get<0>(res).At();
+    Bt = std::get<0>(res).Bt();
+    hat = std::get<0>(res).at();
+    nTr = std::get<1>(res);
 
     ASSERT_LE((hAt-hAt_gt).norm(), 1e-10);
     ASSERT_LE((Bt - Bt_gt).norm(), 1e-10);
@@ -71,7 +72,7 @@ TEST(TestPGCS, solution){
     B   = std::get<1>(linearized_0);
     a0  = std::get<2>(linearized_0);
     
-    ProxGradCovSteer pgcs(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn);
+    ProxGradCovSteerNLDyn pgcs(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn);
     
     MatrixXd Q0(nx, nx);
     Q0 = 0.1*MatrixXd::Identity(nx, nx);

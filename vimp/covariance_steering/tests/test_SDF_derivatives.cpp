@@ -15,7 +15,7 @@
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include <matplot/matplot.h>
 #include <fastad>
-#include "robots/DoubleIntegrator.h"
+#include "dynamics/DoubleIntegrator.h"
     
 using namespace ad;
 using namespace vimp;
@@ -165,8 +165,8 @@ TEST(SDFHessian, TinyADnTr){
     Eigen::Matrix4<ADouble4> grad_f_T;
     grad_f_T << 0,  0,                                 1,                                                                0,
                 0,  0,                                 0,                                                                1, 
-                0,  0,  cd*(2*xad(2)*xad(2)+xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),   cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),
-                0,  0,  cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),                     cd*(xad(2)*xad(2)+2*xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3));
+                0,  0,  -cd*(2*xad(2)*xad(2)+xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),   -cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),
+                0,  0,  -cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),                     -cd*(xad(2)*xad(2)+2*xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3));
     grad_f_T = sig * grad_f_T;
 
     Eigen::Matrix4<ADouble4> grad_f;
@@ -213,9 +213,9 @@ TEST(SDFHessian, TinyADnTr){
     // std::cout << "Tr.grad" << std::endl << nTr << std::endl;
 
     Eigen::Vector4d nTr_groundtruth;
-    nTr_groundtruth << 0, 0, 3.055891179601370e-04, -5.066562425777253e-05;
+    nTr_groundtruth << 0, 0, -2.904078820914141e-04, 4.814376953478175e-05;
 
-    ASSERT_LE((nTr - nTr_groundtruth).norm(), 1e-5);
+    ASSERT_LE((nTr - nTr_groundtruth).norm(), 1e-6);
 
     // // Test function
     vimp::DoubleIntegrator dyn(4, 2, 25);
@@ -226,7 +226,7 @@ TEST(SDFHessian, TinyADnTr){
     Eigen::Vector4d fhak = std::get<2>(linearize_res);
     Eigen::Vector4d fnTr = std::get<3>(linearize_res);
 
-    ASSERT_LE((fnTr - nTr_groundtruth).norm(), 1e-5);
+    ASSERT_LE((fnTr - nTr_groundtruth).norm(), 1e-6);
     
 }
 

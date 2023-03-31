@@ -63,33 +63,6 @@ public:
         compute_M_Phi();
     }
 
-    /**
-     * @brief print the matrices at time step i.
-     */
-    void print_matrix_i(int i){
-        MatrixXd Ai, Mi, Qi, ai, ri;
-        _ei.decompress3d(_At, Ai, _nx, _nx, i);
-        _ei.decompress3d(_Qt, Qi, _nx, _nx, i);
-        _ei.decompress3d(_Mt, Mi, 2*_nx, 2*_nx, i);
-        std::cout << "Ai" << std::endl;
-        _ei.print_matrix(Ai);
-
-        std::cout << "ai" << std::endl;
-        _ei.print_matrix(_at.col(i));
-
-        std::cout << "Bi" << std::endl;
-        _ei.print_matrix(_Bt);
-
-        std::cout << "Qi" << std::endl;
-        _ei.print_matrix(Qi);
-
-        std::cout << "ri" << std::endl;
-        _ei.print_matrix(_rt.col(i));
-
-        std::cout << "Mi" << std::endl;
-        _ei.print_matrix(Mi);
-    }
-
     void update_params(const MatrixXd& At, const MatrixXd& Bt, const MatrixXd& at, 
                         const MatrixXd& Qt, const MatrixXd& rt){
         _At = At;

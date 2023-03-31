@@ -9,9 +9,7 @@
  * 
  */
 
-#include "../dynamics/NonlinearDynamics.h"
 #include "LinearCovarianceSteering.h"
-#include "../helpers/eigen_wrapper.h"
 #include <memory>
 #include <Eigen/QR> 
 
@@ -36,7 +34,6 @@ public:
                      MatrixXd Sig0,
                      VectorXd zT,
                      MatrixXd SigT,
-                     std::shared_ptr<NonlinearDynamics> pdyn,
                      double Vscale=1.0): 
                      _ei(),
                      _nx(A0.rows()),
@@ -63,7 +60,6 @@ public:
                      _Sig0(Sig0),
                      _zT(zT),
                      _SigT(SigT),
-                     _dynptr{pdyn},
                      _Kt(_nu, _nx, _nt),
                      _dt(_nu, 1, _nt),
                      _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT)
@@ -84,7 +80,7 @@ public:
      * sovling a linear CS, and push forward the mean and covariances.
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
-    std::tuple<MatrixXd, MatrixXd> optimize(double stop_err){
+    std::tuple<Matrix3D, Matrix3D> optimize(double stop_err){
         double err = 1;
         MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
         Ak_prev = _Akt;
@@ -101,47 +97,7 @@ public:
         return std::make_tuple(_Kt, _dt);
     }
 
-    /**
-     * @brief Solving a linear covariance steering at each iteration.
-     * @return none, but inside already compute (K, d).
-     */
-    void step(int indx){
-        std::cout << "----- iter " << indx << " -----" << std::endl;
-        // propagate the mean and the covariance
-        propagate_mean(_Akt, _akt, _Bt);
-        linearization();
-
-        MatrixXd Apriort(_nx*_nx, _nt), apriort(_nx, _nt);
-        Apriort = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
-        apriort = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
-
-        // Update Qkt, rkt
-        update_Qrk();
-
-        // solve for the linear covariance steering
-        _linear_cs.update_params(Apriort, _Bt, apriort, _Qkt, _rkt);
-        _linear_cs.solve();
-
-        // retrieve (K, d)
-        _Kt = _linear_cs.Kt();
-        _dt = _linear_cs.dt();
-
-        Matrix3D fbK(_nx, _nx, _nt), fbd(_nx, 1, _nt);
-        MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), fbKi(_nx, _nx), di(_nx, 1), fbdi(_nx, 1), Bi(_nx, _nu);
-        for (int i=0; i<_nt; i++){
-            Aprior_i = _ei.decompress3d(Apriort, _nx, _nx, i);
-            aprior_i = _ei.decompress3d(apriort, _nx, 1, i);
-
-            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
-            Ki = _ei.decompress3d(_Kt, _nu, _nx, i);
-            di = _ei.decompress3d(_dt, _nu, 1, i);
-
-            Ai = Aprior_i + Bi * Ki;
-            ai = aprior_i + Bi * di;
-            _ei.compress3d(Ai, _Akt, i);
-            _ei.compress3d(ai, _akt, i);
-        }
-    }
+    virtual void step(int indx) = 0;
 
     inline Matrix3D zkt(){ return _zkt; }
 
@@ -192,28 +148,42 @@ public:
         
     }
 
-    /**
-     * @brief linearization
-     */
-    void linearization(){
-        std::tuple<Matrix3D, MatrixXd, Matrix3D, Matrix3D> res;
-        res = _dynptr->linearize(_zkt, _sig, _Akt, _Sigkt);
-        _hAkt = std::get<0>(res);
-        _Bt   = std::get<1>(res);
-        _hakt = std::get<2>(res);
-        _nTrt = std::get<3>(res);
+    void solve_internal_linearCS(const MatrixXd& A, const MatrixXd& B, const MatrixXd& a, const MatrixXd& Q, const MatrixXd& r ){
+        // solve for the linear covariance steering
+        _linear_cs.update_params(A, B, a, Q, r);
+        _linear_cs.solve();
+
+        // retrieve (K, d)
+        _Kt = _linear_cs.Kt();
+        _dt = _linear_cs.dt();
+
+        Matrix3D fbK(_nx, _nx, _nt), fbd(_nx, 1, _nt);
+        MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), fbKi(_nx, _nx), di(_nx, 1), fbdi(_nx, 1), Bi(_nx, _nu);
+        for (int i=0; i<_nt; i++){
+            Aprior_i = _ei.decompress3d(A, _nx, _nx, i);
+            aprior_i = _ei.decompress3d(a, _nx, 1, i);
+
+            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
+            Ki = _ei.decompress3d(_Kt, _nu, _nx, i);
+            di = _ei.decompress3d(_dt, _nu, 1, i);
+
+            Ai = Aprior_i + Bi * Ki;
+            ai = aprior_i + Bi * di;
+            _ei.compress3d(Ai, _Akt, i);
+            _ei.compress3d(ai, _akt, i);
+        }
     }
 
-    void propagate_mean(Matrix3D At, Matrix3D at, Matrix3D Bt){
+    void propagate_mean(){
         // The i_th matrices
         Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
         Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu);
         Eigen::MatrixXd Si(_nx, _nx), Snew(_nx, _nx);
         for (int i=0; i<_nt-1; i++){
             zi = _ei.decompress3d(_zkt, _nx, 1, i);
-            Ai = _ei.decompress3d(At, _nx, _nx, i);
-            ai = _ei.decompress3d(at, _nx, 1, i);
-            Bi = _ei.decompress3d(Bt, _nx, _nu, i);
+            Ai = _ei.decompress3d(_Akt, _nx, _nx, i);
+            ai = _ei.decompress3d(_akt, _nx, 1, i);
+            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
             Si = _ei.decompress3d(_Sigkt, _nx, _nx, i);
 
             znew = zi + _deltt*(Ai*zi + ai);
@@ -225,7 +195,7 @@ public:
     }
 
 
-public:
+protected:
     EigenWrapper _ei;
     int _nx, _nu, _nt;
     double _eta, _sig, _eps, _deltt;
@@ -251,7 +221,6 @@ public:
     Matrix3D _dt;
 
     // Dynamics class
-    std::shared_ptr<NonlinearDynamics> _dynptr;
     LinearCovarianceSteering _linear_cs;
     
 };
