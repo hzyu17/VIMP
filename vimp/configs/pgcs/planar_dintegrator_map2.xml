@@ -1,0 +1,130 @@
+<!-- Experiemnt 1 -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    
+    <start_pos>
+        <x>7.0</x>
+        <y>-5.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>-10.0</x>
+        <y>17.0</y>
+    </goal_pos>
+    
+    <nt> 30 </nt>
+
+    <speed> 0.25 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1e-6 </eta>
+
+    <eps_sdf> 0.7 </eps_sdf>
+
+    <cost_sigma> 1.4e-5 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/vimp/data/pgcs/double_integrator/map2/case1/</saving_prefix>
+
+</parameters> -->
+
+<!-- Experiemnt 2 -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    
+    <start_pos>
+        <x>-7.0</x>
+        <y>-5.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>8.0</x>
+        <y>18.0</y>
+    </goal_pos>
+
+    <nt> 50 </nt>
+
+    <speed> 0.1 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 2e-6 </eta>
+
+    <eps_sdf> 0.7 </eps_sdf>
+
+    <cost_sigma> 5e-6 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/vimp/data/pgcs/double_integrator/map2/case2/</saving_prefix>
+
+</parameters> -->
+
+
+<!-- Experiemnt 3 -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    
+    <start_pos>
+        <x>-7.0</x>
+        <y>-5.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>13.0</x>
+        <y>18.0</y>
+    </goal_pos>
+
+    <nt> 50 </nt>
+
+    <speed> 0.14 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 2e-6 </eta>
+
+    <eps_sdf> 0.7 </eps_sdf>
+
+    <cost_sigma> 2e-5 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/vimp/data/pgcs/double_integrator/map2/case3/</saving_prefix>
+
+</parameters> -->
+
+
+<!-- Experiemnt 4 -->
+<parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    
+    <start_pos>
+        <x>13.0</x>
+        <y>14.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>-13.0</x>
+        <y>8.0</y>
+    </goal_pos>
+
+    <nt> 50 </nt>
+
+    <speed> 0.15 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 2e-6 </eta>
+
+    <eps_sdf> 0.7 </eps_sdf>
+
+    <cost_sigma> 5e-5 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/vimp/data/pgcs/double_integrator/map2/case4/</saving_prefix>
+
+</parameters>
+

@@ -26,15 +26,15 @@ public:
  * @brief Construct a new Linear Covariance Steering object
  * All time varying matrices should be in the shape (m*n, nt)
  */
-    LinearCovarianceSteering(const MatrixXd& At, 
-                             const MatrixXd& Bt,
-                             const MatrixXd& at, 
+    LinearCovarianceSteering(const Matrix3D& At, 
+                             const Matrix3D& Bt,
+                             const Matrix3D& at, 
                              const int nx,
                              const int nu,
                              const int nt,
                              const double epsilon,
-                             const MatrixXd& Qt,
-                             const MatrixXd& rt,
+                             const Matrix3D& Qt,
+                             const Matrix3D& rt,
                              const VectorXd& m0,
                              const MatrixXd& Sig0,
                              const VectorXd& m1,
@@ -50,63 +50,26 @@ public:
                              _Phi(MatrixXd::Identity(2*_nx, 2*_nx)),
                              _Phi11(MatrixXd::Zero(_nx, _nx)),
                              _Phi12(MatrixXd::Zero(_nx, _nx)),
-                             _Mt(MatrixXd::Zero(2*_nx * 2*_nx, _nt)),
-                             _Pi(MatrixXd::Zero(_nx*_nx, _nt)),
+                             _Mt(Matrix3D(2*_nx, 2*_nx, _nt)),
+                             _Pit(Matrix3D(_nx, _nx, _nt)),
                              _m0(m0),
                              _m1(m1),
                              _Sig0(Sig0),
                              _Sig1(Sig1),
                              _eps(epsilon),
                              _delta_t(1.0/(nt-1)),
-                             _Kt(MatrixXd::Zero(_nu*_nx, _nt)),
-                             _dt(MatrixXd::Zero(_nu, _nt)){
+                             _Kt(Matrix3D(_nu, _nx, _nt)),
+                             _dt(Matrix3D(_nu, 1, _nt)){
         compute_M_Phi();
     }
 
-    /**
-     * @brief print the matrices at time step i.
-     */
-    void print_matrix_i(int i){
-        MatrixXd Ai, Mi, Qi, ai, ri;
-        _ei.decompress3d(_At, Ai, _nx, _nx, i);
-        _ei.decompress3d(_Qt, Qi, _nx, _nx, i);
-        _ei.decompress3d(_Mt, Mi, 2*_nx, 2*_nx, i);
-        std::cout << "Ai" << std::endl;
-        _ei.print_matrix(Ai);
-
-        std::cout << "ai" << std::endl;
-        _ei.print_matrix(_at.col(i));
-
-        std::cout << "Bi" << std::endl;
-        _ei.print_matrix(_Bt);
-
-        std::cout << "Qi" << std::endl;
-        _ei.print_matrix(Qi);
-
-        std::cout << "ri" << std::endl;
-        _ei.print_matrix(_rt.col(i));
-
-        std::cout << "Mi" << std::endl;
-        _ei.print_matrix(Mi);
-    }
-
-    void update_params(MatrixXd At, MatrixXd Bt, MatrixXd at, 
-                        int nx, int nu, int nt, double eps, 
-                        MatrixXd Qt, MatrixXd rt, 
-                        VectorXd m0, MatrixXd Sig0, VectorXd mT, MatrixXd SigT){
+    void update_params(const MatrixXd& At, const MatrixXd& Bt, const MatrixXd& at, 
+                        const MatrixXd& Qt, const MatrixXd& rt){
         _At = At;
         _Bt = Bt;
         _at = at;
-        _nx = nx,
-        _nu = nu,
-        _nt = nt;
-        _eps = eps;
         _Qt = Qt;
         _rt = rt;
-        _m0 = m0;
-        _Sig0 = Sig0;
-        _m1 = mT;
-        _Sig1 = SigT;
         compute_M_Phi();
     }
 
@@ -130,11 +93,9 @@ public:
 
         _Phi11 = _Phi.block(0, 0, _nx, _nx);
         _Phi12 = _Phi.block(0, _nx, _nx, _nx);
-
-        // _ei.print_matrix(_Phi, "_Phi");
     }
 
-    MatrixXd At(){ return _At; }
+    Matrix3D At(){ return _At; }
 
     MatrixXd At(int i){
         MatrixXd Ai;
@@ -142,11 +103,11 @@ public:
         return Ai;
     }
 
-    inline MatrixXd at(){ return _at; }
+    inline Matrix3D at(){ return _at; }
 
     inline MatrixXd at(int i){ return _at.col(i); }
 
-    inline MatrixXd Bt(){ return _Bt; }
+    inline Matrix3D Bt(){ return _Bt; }
 
     inline MatrixXd Bt(int i){
         MatrixXd Bi;
@@ -154,21 +115,21 @@ public:
         return Bi;
     }
 
-    inline MatrixXd Qt(){ return _Qt; }
+    inline Matrix3D Qt(){ return _Qt; }
 
     inline MatrixXd Qt(int i){ return _ei.decompress3d(_Qt, _nx, _nx, i); }
 
-    inline MatrixXd rt(){ return _rt; }
+    inline Matrix3D rt(){ return _rt; }
 
     inline MatrixXd rt(int i){ return _rt.col(i); }
 
-    inline MatrixXd Kt(){ return _Kt; }
+    inline Matrix3D Kt(){ return _Kt; }
 
     inline MatrixXd Kt(int i){ return _ei.decompress3d(_Kt, _nu, _nx, i); }
 
-    inline MatrixXd dt(){ return _dt; }
+    inline Matrix3D dt(){ return _dt; }
 
-    inline MatrixXd Mt(){ return _Mt; }
+    inline Matrix3D Mt(){ return _Mt; }
 
     MatrixXd Mt(int i){
         MatrixXd Mi{MatrixXd::Zero(2*_nx, 2*_nx)};
@@ -182,39 +143,35 @@ public:
 
     inline MatrixXd Phi12(){ return _Phi12; }
 
-    inline MatrixXd Pi(){ return _Pi; }
+    inline Matrix3D Pit(){ return _Pit; }
 
-    inline MatrixXd Pi(int i){ return _ei.decompress3d(_Pi, _nx, _nx, i); }
+    inline MatrixXd Pit(int i){ return _ei.decompress3d(_Pit, _nx, _nx, i); }
 
     void solve(){
         VectorXd s{VectorXd::Zero(2*_nx)};
         MatrixXd a_r{MatrixXd::Zero(2*_nx, _nt)};
         a_r << _at, 
               -_rt;
-        // _ei.print_matrix(_at, "_at");
-        // _ei.print_matrix(_rt, "_rt");
         
         MatrixXd Mi(2*_nx, 2*_nx);
         for (int i=0;i<_nt-1;i++){
             Mi = _ei.decompress3d(_Mt, 2*_nx, 2*_nx, i);
             s = s + (Mi*s + a_r.col(i))*_delta_t;
         }
-        // _ei.print_matrix(Mt(9), "Mt(9)");
-        // _ei.print_matrix(s, "s");
+
         VectorXd rhs{_m1 - _Phi11*_m0-s.block(0,0,_nx,1)};
         VectorXd Lambda_0 = _Phi12.colPivHouseholderQr().solve(rhs);
-        MatrixXd X(2*_nx, _nt);
+        MatrixXd Xt(2*_nx, _nt);
         VectorXd X0(2*_nx);
         X0 << _m0, Lambda_0;
-        // _ei.print_matrix(Lambda_0, "Lambda_0");
-        // _ei.print_matrix(X0, "X0");
-        X.col(0) = X0;
+
+        Xt.col(0) = X0;
         for (int i=0; i<_nt-1; i++){
             Mi = _ei.decompress3d(_Mt, 2*_nx, 2*_nx, i); 
-            X.col(i+1) = X.col(i) + _delta_t*(Mi*X.col(i) + a_r.col(i));
+            Xt.col(i+1) = Xt.col(i) + _delta_t*(Mi*Xt.col(i) + a_r.col(i));
         }
-        MatrixXd xt{X.block(0,0,_nx,_nt)};
-        MatrixXd lbdt{X.block(_nx, 0, _nx, _nt)};
+        MatrixXd xt{Xt.block(0,0,_nx,_nt)};
+        MatrixXd lbdt{Xt.block(_nx, 0, _nx, _nt)};
         MatrixXd v(_nu, _nt);
         MatrixXd Bi(_nx, _nu), BiT(_nu, _nx);
         
@@ -234,24 +191,23 @@ public:
         
         MatrixXd Pi_0_T = Pi_0.transpose();
         Pi_0 = (Pi_0 + Pi_0_T)/2;
-        // _ei.print_matrix(Pi_0, "Pi_0");
-        _ei.compress3d(Pi_0, _Pi, 0);
+        _ei.compress3d(Pi_0, _Pit, 0);
         MatrixXd Ai(_nx, _nx), Qi(_nx, _nx), l_Pi(_nx, _nx), Pinew(_nx, _nx);
         for (int i=0; i<_nt-1; i++){
-            l_Pi = _ei.decompress3d(_Pi, _nx, _nx, i);
+            l_Pi = _ei.decompress3d(_Pit, _nx, _nx, i);
             Qi = _ei.decompress3d(_Qt, _nx, _nx, i);
             Ai = _ei.decompress3d(_At, _nx, _nx, i);
             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
             BiT = Bi.transpose();
             Pinew = l_Pi - _delta_t*(Ai.transpose()*l_Pi+l_Pi*Ai-l_Pi*Bi*BiT*l_Pi+Qi);
-            _ei.compress3d(Pinew, _Pi, i+1);
+            _ei.compress3d(Pinew, _Pit, i+1);
         }
-        // _ei.print_matrix(_Pi, "_Pi");
+
         MatrixXd Ki(_nu, _nx);
         for (int i=0; i<_nt; i++){
             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
             BiT = Bi.transpose();
-            l_Pi = _ei.decompress3d(_Pi, _nx, _nx, i);
+            l_Pi = _ei.decompress3d(_Pit, _nx, _nx, i);
             Ki = - BiT * l_Pi;
             _ei.compress3d(Ki, _Kt, i);
             _dt.col(i) = v.col(i) + BiT * l_Pi * xt.col(i);
@@ -261,21 +217,22 @@ public:
 
 
 private:
-    MatrixXd _At, _Bt, _at;
-    MatrixXd _Qt, _rt;
+    Matrix3D _At, _Bt, _at;
+    Matrix3D _Qt, _rt;
 
     int _nx, _nu, _nt;
 
-    MatrixXd _Phi, _Phi11, _Phi12, _Mt, _Pi;
+    MatrixXd _Phi, _Phi11, _Phi12;
 
+    Matrix3D _Mt, _Pit;
     VectorXd _m0, _m1;
     MatrixXd _Sig0, _Sig1;
 
     double _eps, _delta_t;
 
     // feedback gains
-    MatrixXd _Kt;
-    MatrixXd _dt;
+    Matrix3D _Kt;
+    Matrix3D _dt;
 
     // helper
     vimp::EigenWrapper _ei;

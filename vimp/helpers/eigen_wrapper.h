@@ -16,6 +16,7 @@
 #include<Eigen/SparseCholesky>
 #include"data_io.h"
 #include"random.h"
+#include"../base/Matrix.h"
 
 typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a column-major sparse matrix type of double
 typedef Eigen::SparseVector<double> SpVec; 
@@ -383,29 +384,31 @@ public:
      * @brief extract the i_th index from a 3d matrix in shape (rows*cols, nt):
      * return the matrix mat in shape (rows, cols) from the i_th column. 
      */
-    void decompress3d(Eigen::MatrixXd mat3d, Eigen::MatrixXd& mat, 
+    void decompress3d(Matrix3D mat3d, Eigen::MatrixXd& mat, 
                       int rows, int cols, int i){
         mat = mat3d.col(i).reshaped(rows, cols);
     }
 
-    Eigen::MatrixXd decompress3d(Eigen::MatrixXd mat3d, int rows, int cols, int i){
+    Eigen::MatrixXd decompress3d(Matrix3D mat3d, int rows, int cols, int i){
         Eigen::MatrixXd mat(rows, cols);
         mat = mat3d.col(i).reshaped(rows, cols);
         return mat;
     }
 
-    void compress3d(Eigen::MatrixXd mat, Eigen::MatrixXd& mat3d, int i){
+    void compress3d(Eigen::MatrixXd mat, Matrix3D& mat3d, int i){
         Eigen::VectorXd column(mat.rows()*mat.cols());
         column = mat.reshaped(mat.rows()*mat.cols(), 1);
         mat3d.col(i) = column;
     }
 
-    Eigen::MatrixXd replicate3d(Eigen::MatrixXd mat, const int len){
-        Eigen::MatrixXd m_reshaped = mat.reshaped(mat.rows()*mat.cols(), 1);
-        return m_reshaped.replicate(1, len);
+    Matrix3D replicate3d(Eigen::MatrixXd mat, const int len){
+        int rows = mat.rows(), cols = mat.cols();
+        Eigen::MatrixXd mat3(rows*cols, len);
+        mat3 = mat.reshaped(rows*cols, 1).replicate(1, len);
+        return mat3;
     }
 
-    Eigen::MatrixXd transpose3d(Eigen::MatrixXd mat3, int rows, int cols){
+    Matrix3D transpose3d(Matrix3D mat3, int rows, int cols){
         int len = mat3.cols();
         MatrixXd mi(rows, cols), miT(cols, rows);
         
