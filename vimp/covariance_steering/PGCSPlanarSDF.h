@@ -1,5 +1,5 @@
 /**
- * @file PGCSPlannarSDF.h
+ * @file PGCSPlanarSDF.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Proximal gradient algorithm for nonlinear covariance steering with plannar obstacles. 
  * @version 0.1
@@ -16,9 +16,9 @@ using namespace Eigen;
 
 namespace vimp{
 
-class PGCSPlannarSDF: public ProxGradCovSteerNLDyn{
+class PGCSPlanarSDF: public ProxGradCovSteerNLDyn{
 public:
-    PGCSPlannarSDF(const MatrixXd& A0, 
+    PGCSPlanarSDF(const MatrixXd& A0, 
                     const VectorXd& a0, 
                      const MatrixXd& B, 
                      double sig,
@@ -62,13 +62,17 @@ public:
             // Compute hinge loss and its gradients
             double zi_x = zi(0), zi_y = zi(1);
             std::pair<double, VectorXd> hingeloss_gradient;
-            MatrixXd J_hxy(1, 2);
+            MatrixXd J_hxy(1, _nx/2);
+
             hingeloss_gradient = hingeloss_gradient_point(zi_x, zi_y, _sdf, _eps_sdf, J_hxy);
             double hinge = std::get<0>(hingeloss_gradient);
 
-            Vector4d grad_h;
-            grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
+            MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
+            // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
 
+            velocity = zi.block(_nx/2, 0,_nx/2,1);
+            grad_h.block(0,0,_nx/2,1) = J_hxy.transpose();
+            grad_h.block(_nx/2,0,_nx/2,1) = J_hxy.transpose().cwiseProduct(velocity);
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
             // if (hinge > 0){

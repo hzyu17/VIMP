@@ -16,30 +16,30 @@ using namespace Eigen;
 
 namespace vimp{
 
-class ProxGradCovSteerNLDyn: public ProxGradCovSteer{
+class ProxGradCovSteerLinDyn: public ProxGradCovSteer{
 public:
-    ProxGradCovSteerNLDyn(){};
+    ProxGradCovSteerLinDyn(){};
 
-    virtual ~ProxGradCovSteerNLDyn(){}
+    virtual ~ProxGradCovSteerLinDyn(){}
 
-    ProxGradCovSteerNLDyn(const MatrixXd& A0, 
-                        const VectorXd& a0, 
-                        const MatrixXd& B, 
-                        double sig,
-                        int nt,
-                        double eta,
-                        double eps,
-                        const VectorXd& z0,
-                        const MatrixXd& Sig0,
-                        const VectorXd& zT,
-                        const MatrixXd& SigT,
-                        std::shared_ptr<LinearDynamics> pdyn,
-                        double Vscale=1.0): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT), 
-                                            _pdyn(pdyn){
-                                                _hAkt = pdyn->At();
-                                                _Bt = pdyn->Bt();
-                                                _hakt = pdyn->at();
-                                            }
+    ProxGradCovSteerLinDyn(const MatrixXd& A0, 
+                            const VectorXd& a0, 
+                            const MatrixXd& B, 
+                            double sig,
+                            int nt,
+                            double eta,
+                            double eps,
+                            const VectorXd& z0,
+                            const MatrixXd& Sig0,
+                            const VectorXd& zT,
+                            const MatrixXd& SigT,
+                            std::shared_ptr<LinearDynamics> pdyn,
+                            double Vscale=1.0): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT), 
+                                                _pdyn(pdyn){
+                                                    _hAkt = pdyn->At();
+                                                    _Bt = pdyn->Bt();
+                                                    _hakt = pdyn->at();
+                                                }
                                             
     
     /**

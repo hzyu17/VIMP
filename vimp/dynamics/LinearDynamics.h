@@ -37,7 +37,7 @@ public:
     inline Matrix3D Bt(){return _Bt;}
     inline Matrix3D at(){return _at;}
 
-private:
+protected:
     // compressed 3D matrices
     // shape: 
     // _At (_nx*_nx, _nt)
@@ -60,6 +60,12 @@ public:
                                         _ei.replicate3d(A, nt), 
                                         _ei.replicate3d(B, nt), 
                                         _ei.replicate3d(a, nt)){}
+
+    void update_matrices(const MatrixXd& A, const MatrixXd& B, const MatrixXd& a){
+        _At = _ei.replicate3d(A, _nt); 
+        _Bt = _ei.replicate3d(B, _nt); 
+        _at = _ei.replicate3d(a, _nt);
+    }
 
 };
 }

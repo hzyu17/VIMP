@@ -1,5 +1,5 @@
 /**
- * @file test_pgcs_plannar_sdf.cpp
+ * @file pgcs_dintegrator.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Test file for pgcs with plannar obstacles (plannar sdf).
  * @version 0.1
@@ -9,8 +9,7 @@
  * 
  */
 
-#include <gtest/gtest.h>
-#include "dynamics/DoubleIntegrator.h"
+#include "dynamics/DoubleIntegratorDraged.h"
 #include "covariance_steering/PGCSPlannarSDF.h"
 #include "3rd-part/rapidxml-1.13/rapidxml.hpp"
 #include "3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
@@ -18,33 +17,25 @@
 using namespace Eigen;
 using namespace vimp;
 
-TEST(TestPgcsSdf2D, initialization){
+int main(){
+
     MatrixIO m_io;
     EigenWrapper ei;
     VectorXd m0(4), mT(4);
     MatrixXd Sig0(4,4), SigT(4,4);
 
     /// reading XML configs
-    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/tests/pgcs_sdf_map1.xml"); // Default template is char
+    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_dintegrator_map2.xml"); // Default template is char
+    // rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_dintegrator_map1.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     rapidxml::xml_node<>* paramNode = doc.first_node("parameters");
 
     std::string field_file = static_cast<std::string>(paramNode->first_node("field_file")->value());
-
-    double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
-    double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
-
-    double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
-    double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
-    double sig0 = atof(paramNode->first_node("sig0")->value());
-    double sigT = atof(paramNode->first_node("sigT")->value());
     double eps_sdf = atof(paramNode->first_node("eps_sdf")->value());
     double speed = atof(paramNode->first_node("speed")->value());
-    double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
-    double eta = atof(paramNode->first_node("eta")->value());
+    
     int nt = atoi(paramNode->first_node("nt")->value());
-    double Vscale = atoi(paramNode->first_node("state_cost_scale")->value());
 
     double sig = speed * nt;
 
@@ -57,6 +48,15 @@ TEST(TestPgcsSdf2D, initialization){
     // proximal gradient parameters
     double eps=0.01;
     int nx=4, nu=2;
+
+    double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
+    double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
+
+    double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
+    double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
+
+    double sig0 = atof(paramNode->first_node("sig0")->value());
+    double sigT = atof(paramNode->first_node("sigT")->value());
 
     m0 << start_x, start_y, 2, 0;
     Sig0 = sig0 * Eigen::MatrixXd::Identity(nx, nx);
@@ -71,10 +71,15 @@ TEST(TestPgcsSdf2D, initialization){
     B   = std::get<1>(linearized_0);
     a0  = std::get<2>(linearized_0);
 
-    PGCSPlannarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
+    double eta = atof(paramNode->first_node("eta")->value());
+    double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
+    double Vscale = atoi(paramNode->first_node("state_cost_scale")->value());
+    PGCSPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
     
     std::tuple<MatrixXd, MatrixXd> res_Kd;
-    res_Kd = pgcs_sdf.optimize();
+
+    double stop_err = 1e-4;
+    res_Kd = pgcs_sdf.optimize(stop_err);
 
     MatrixXd Kt(4*4, nt), dt(4, nt);
     Kt = std::get<0>(res_Kd);
@@ -84,10 +89,12 @@ TEST(TestPgcsSdf2D, initialization){
     zk_star = pgcs_sdf.zkt();
     Sk_star = pgcs_sdf.Sigkt();
 
-    m_io.saveData("zk_sdf.csv", zk_star);
-    m_io.saveData("Sk_sdf.csv", Sk_star);
+    std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
 
-    m_io.saveData("Kt_sdf.csv", Kt);
-    m_io.saveData("dt_sdf.csv", dt);
+    m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
+    m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
+
+    m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
+    m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
 
 }

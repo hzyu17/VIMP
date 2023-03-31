@@ -9,31 +9,31 @@
  * 
  */
 
-#include "ProximalGradientCS.h"
+#include "ProximalGradientCSLinearDyn.h"
 #include "../helpers/hinge2Dhelper.h"
 
 using namespace Eigen;
 
 namespace vimp{
 
-class PGCSPlannarSDF: public ProxGradCovSteer{
+class PGCSLynDynPlanarSDF: public ProxGradCovSteerLinDyn{
 public:
-    PGCSPlannarSDF(MatrixXd A0, 
-                     VectorXd a0, 
-                     MatrixXd B, 
-                     double sig,
-                     int nt,
-                     double eta,
-                     double eps,
-                     VectorXd z0,
-                     MatrixXd Sig0,
-                     VectorXd zT,
-                     MatrixXd SigT,
-                     std::shared_ptr<NonlinearDynamics> pdyn,
-                     double eps_sdf,
-                     gpmp2::PlanarSDF sdf,
-                     double sig_obs,
-                     double Vscale=1.0):
+    PGCSLynDynPlanarSDF(const MatrixXd& A0, 
+                        const VectorXd& a0, 
+                        const MatrixXd& B, 
+                        double sig,
+                        int nt,
+                        double eta,
+                        double eps,
+                        const VectorXd& z0,
+                        const MatrixXd& Sig0,
+                        const VectorXd& zT,
+                        const MatrixXd& SigT,
+                        const std::shared_ptr<LinearDynamics>& pdyn,
+                        double eps_sdf,
+                        const gpmp2::PlanarSDF& sdf,
+                        double sig_obs,
+                        double Vscale=1.0):
                             ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
                             _eps_sdf(eps_sdf),
                             _sdf(sdf),
