@@ -10,7 +10,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "dynamics/DoubleIntegrator.h"
+#include "dynamics/DoubleIntegratorDraged.h"
 #include "covariance_steering/ProximalGradientCSNonlinearDyn.h"
 
 using namespace Eigen;

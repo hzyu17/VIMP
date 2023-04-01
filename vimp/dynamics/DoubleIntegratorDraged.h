@@ -1,5 +1,5 @@
 /**
- * @file DoubleIntegrator.h
+ * @file DoubleIntegratorDraged.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Define the double integrator with drag dynamics and linearize it.
  * @version 0.1

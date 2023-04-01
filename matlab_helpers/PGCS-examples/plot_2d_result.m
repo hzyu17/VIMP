@@ -1,4 +1,4 @@
-function output = plot_dIntegrator_sdf(sdfmap, zk, Sk)
+function output = plot_2d_result(sdfmap, zk, Sk)
 output = 1;
 
 cell_size = 0.1;

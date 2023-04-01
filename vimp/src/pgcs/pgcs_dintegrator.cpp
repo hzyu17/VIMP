@@ -1,5 +1,5 @@
 /**
- * @file test_pgcs_plannar_sdf.cpp
+ * @file pgcs_dintegrator.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Test file for pgcs with plannar obstacles (plannar sdf).
  * @version 0.1
@@ -9,8 +9,8 @@
  * 
  */
 
-#include "dynamics/DoubleIntegrator.h"
-#include "covariance_steering/PGCSPlannarSDF.h"
+#include "dynamics/DoubleIntegratorDraged.h"
+#include "covariance_steering/PGCSPlanarSDF.h"
 #include "3rd-part/rapidxml-1.13/rapidxml.hpp"
 #include "3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
 
@@ -73,8 +73,8 @@ int main(){
 
     double eta = atof(paramNode->first_node("eta")->value());
     double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
-    double Vscale = atoi(paramNode->first_node("state_cost_scale")->value());
-    PGCSPlannarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
+    double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
+    PGCSPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
     
     std::tuple<MatrixXd, MatrixXd> res_Kd;
 

@@ -1,7 +1,8 @@
 /**
  * @file test_pgcs_plannar_sdf.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Test file for pgcs with plannar obstacles (plannar sdf).
+ * @brief Test file for pgcs with plannar obstacles (plannar sdf). 
+ * Modification to file vimp/covariance_steering/PGCSPlanarSDF.h should pass this test. 
  * @version 0.1
  * @date 2023-03-27
  * 
@@ -10,8 +11,8 @@
  */
 
 #include <gtest/gtest.h>
-#include "dynamics/DoubleIntegrator.h"
-#include "covariance_steering/PGCSPlannarSDF.h"
+#include "dynamics/DoubleIntegratorDraged.h"
+#include "covariance_steering/PGCSPlanarSDF.h"
 #include "3rd-part/rapidxml-1.13/rapidxml.hpp"
 #include "3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
 
@@ -25,7 +26,7 @@ TEST(TestPgcsSdf2D, initialization){
     MatrixXd Sig0(4,4), SigT(4,4);
 
     /// reading XML configs
-    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/tests/pgcs_sdf_map1.xml"); // Default template is char
+    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/test_config_dintegrator_map2.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     rapidxml::xml_node<>* paramNode = doc.first_node("parameters");
@@ -44,7 +45,7 @@ TEST(TestPgcsSdf2D, initialization){
     double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
     double eta = atof(paramNode->first_node("eta")->value());
     int nt = atoi(paramNode->first_node("nt")->value());
-    double Vscale = atoi(paramNode->first_node("state_cost_scale")->value());
+    double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
 
     double sig = speed * nt;
 
@@ -71,10 +72,11 @@ TEST(TestPgcsSdf2D, initialization){
     B   = std::get<1>(linearized_0);
     a0  = std::get<2>(linearized_0);
 
-    PGCSPlannarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
+    PGCSPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
     
     std::tuple<MatrixXd, MatrixXd> res_Kd;
-    res_Kd = pgcs_sdf.optimize();
+    double stop_err = 1e-4;
+    res_Kd = pgcs_sdf.optimize(stop_err);
 
     MatrixXd Kt(4*4, nt), dt(4, nt);
     Kt = std::get<0>(res_Kd);
@@ -84,10 +86,16 @@ TEST(TestPgcsSdf2D, initialization){
     zk_star = pgcs_sdf.zkt();
     Sk_star = pgcs_sdf.Sigkt();
 
-    m_io.saveData("zk_sdf.csv", zk_star);
-    m_io.saveData("Sk_sdf.csv", Sk_star);
+    MatrixXd Kt_gt(4*4, nt), dt_gt(4, nt), zkt_gt(4, nt), Skt_gt(4*4, nt);
+    Kt_gt = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/Kt_sdf.csv");
+    dt_gt = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/dt_sdf.csv");
+    zkt_gt = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/zk_sdf.csv");
+    Skt_gt = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/Sk_sdf.csv");
 
-    m_io.saveData("Kt_sdf.csv", Kt);
-    m_io.saveData("dt_sdf.csv", dt);
+    ASSERT_LE((Kt-Kt_gt).norm(), 1e-10);
+    ASSERT_LE((dt-dt_gt).norm(), 1e-10);
+    ASSERT_LE((zk_star-zkt_gt).norm(), 1e-10);
+    ASSERT_LE((Sk_star-Skt_gt).norm(), 1e-10);
+
 
 }

@@ -102,7 +102,6 @@ include_directories(${GTEST_INCLUDE_DIRS})
 # Recursively search for all test files in the subfolders
 file(GLOB_RECURSE TEST_SOURCES vimp_subdirs false */tests/*.cpp)
 
-
 # Loop through each test file and add it as a test case
 foreach(TEST_SOURCE ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)

@@ -420,6 +420,19 @@ public:
         return mat3;
     }
 
+    MatrixXd linspace(const VectorXd & x0, const VectorXd & xT, int nt){
+        int rows = x0.rows();
+        VectorXd step_vec(rows);
+        step_vec.setZero();
+        step_vec = (xT-x0)/(nt-1);
+        MatrixXd res(rows, nt);
+        res.setZero();
+        for (int i=0; i<nt; i++){
+            res.col(i) = x0 + step_vec*i;
+        }
+        return res;
+    }
+
     using vec_1d = std::vector<double>;
     using vec_2d = std::vector<vec_1d>;
 

@@ -23,17 +23,17 @@ public:
 
     virtual ~ProxGradCovSteer(){}
 
-    ProxGradCovSteer(MatrixXd A0, 
-                     VectorXd a0, 
-                     MatrixXd B, 
+    ProxGradCovSteer(const MatrixXd & A0, 
+                     const VectorXd & a0, 
+                     const MatrixXd & B, 
                      double sig,
                      int nt,
                      double eta,
                      double eps,
-                     VectorXd z0,
-                     MatrixXd Sig0,
-                     VectorXd zT,
-                     MatrixXd SigT,
+                     const VectorXd & z0,
+                     const MatrixXd & Sig0,
+                     const VectorXd & zT,
+                     const MatrixXd & SigT,
                      double Vscale=1.0): 
                      _ei(),
                      _nx(A0.rows()),
@@ -66,6 +66,11 @@ public:
                      {  
                         // Initialize the final time covariance
                         _ei.compress3d(_SigT, _Sigkt, _nt-1); 
+
+                        // Linear interpolation for the mean zk
+                        // initialize_zk();
+
+                        // compute pinvBBT
                         MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
                         for (int i=0; i<_nt; i++){
                             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
@@ -87,6 +92,7 @@ public:
         ak_prev = _akt;
         int i_step = 0;
         while (err > stop_err){
+        // for (int i=0; i<200; i++){
             step(i_step);
             err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
             Ak_prev = _Akt;
@@ -116,6 +122,10 @@ public:
      */
     void repliacteQt(MatrixXd Q0){
         _Qt = _ei.replicate3d(Q0, _nt);
+    }
+
+    void initialize_zk(){
+        _zkt = _ei.linspace(_z0, _zT, _nt);
     }
 
     /**
