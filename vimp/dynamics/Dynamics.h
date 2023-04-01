@@ -22,7 +22,7 @@ public:
 
     Dynamics(int nx, int nu, int nt):_nx(nx), _nu(nu), _nt(nt){}
 
-public:
+protected:
     int _nx, _nu, _nt;
     EigenWrapper _ei;
 };

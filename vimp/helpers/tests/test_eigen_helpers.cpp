@@ -11,15 +11,13 @@
 
 #include<gtest/gtest.h>
 
-#include"helpers/timer.h"
-#include"helpers/eigen_wrapper.h"
-#include"helpers/data_io.h"
+#include "helpers/timer.h"
+#include "helpers/eigen_wrapper.h"
+#include "helpers/data_io.h"
 
 #include<Eigen/IterativeLinearSolvers>
 
 
-typedef Eigen::VectorXd Vector;
-typedef Eigen::MatrixXd Matrix;
 typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a col-major sparse matrix type of double
 typedef Eigen::Triplet<double> T;
 
@@ -29,12 +27,12 @@ Timer timer;
 MatrixIO m_io;
 
 // ================== read ground truth matrices ==================
-Matrix precision = m_io.load_csv("data/precision_16.csv");
+Eigen::MatrixXd precision = m_io.load_csv("data/precision_16.csv");
 SpMat precision_sp = precision.sparseView();
-Matrix cov = precision.inverse();
+Eigen::MatrixXd cov = precision.inverse();
 SpMat cov_sp = cov.sparseView();
-Matrix D_true = m_io.load_csv("data/D_cpp.csv");
-Matrix L_true = m_io.load_csv("data/L_cpp.csv");
+Eigen::MatrixXd D_true = m_io.load_csv("data/D_cpp.csv");
+Eigen::MatrixXd L_true = m_io.load_csv("data/L_cpp.csv");
 
 // SpMat precision16_sp = precision.sparseView();
 
@@ -47,14 +45,14 @@ TEST(TestSparse, initialization){
 
     // SparseLDLT ldlt_sp(precision_sp);
     // SpMat Lsp = ldlt_sp.matrixL();
-    // Matrix D_cpp = ldlt_sp.vectorD().real().asDiagonal();
-    // Matrix L_cpp{Lsp};
-    // // Matrix D_cpp{Dsp};
+    // Eigen::MatrixXd D_cpp = ldlt_sp.vectorD().real().asDiagonal();
+    // Eigen::MatrixXd L_cpp{Lsp};
+    // // Eigen::MatrixXd D_cpp{Dsp};
     // m_io.saveData("L_cpp.csv", L_cpp);
     // m_io.saveData("D_cpp.csv", D_cpp);
 
     timer.start();
-    Matrix rand_mat = eigen_wrapper.random_matrix(n, n);
+    Eigen::MatrixXd rand_mat = eigen_wrapper.random_matrix(n, n);
     std::cout << "full matrix init" << std::endl;
     timer.end();
 
@@ -82,9 +80,9 @@ TEST(TestSparse, computation_time){
     SpMat spm2 = eigen_wrapper.random_sparse_matrix(n, n, 4);
     SpMat spm3 = eigen_wrapper.random_sparse_matrix(n, n, 4);
 
-    Matrix m1(spm1);
-    Matrix m2(spm2);
-    Matrix m3(n, n);
+    Eigen::MatrixXd m1(spm1);
+    Eigen::MatrixXd m2(spm2);
+    Eigen::MatrixXd m3(n, n);
 
     timer.start();
     spm3 = spm1 * spm2;
@@ -109,18 +107,18 @@ TEST(TestSparse, solve_psd_eqn){
     ASSERT_TRUE(eigen_wrapper.is_sparse_positive(spm));
 
     // RHS
-    Vector b(eigen_wrapper.random_vector(n));
+    Eigen::VectorXd b(eigen_wrapper.random_vector(n));
 
     // solve full
-    Matrix fullm(spm);
+    Eigen::MatrixXd fullm(spm);
     timer.start();
-    Vector x = eigen_wrapper.solve_llt(fullm, b);
+    Eigen::VectorXd x = eigen_wrapper.solve_llt(fullm, b);
     std::cout << "solving time full matrix " << std::endl;
     timer.end();
 
     // solve sparse
     timer.start();
-    Vector spx = eigen_wrapper.solve_cgd_sp(spm, b);
+    Eigen::VectorXd spx = eigen_wrapper.solve_cgd_sp(spm, b);
     std::cout << "solving time sparse matrix " << std::endl;
     timer.end();
 
@@ -135,21 +133,21 @@ TEST(TestSparse, ldlt_decomp){
     ASSERT_LE((precision - L_true*D_true*L_true.transpose()).norm(), 1e-10);
     
     const Eigen::Index size = precision.rows();
-    Matrix eye(size,size);
+    Eigen::MatrixXd eye(size,size);
     eye.setIdentity();
 
     ASSERT_LE((precision - precision_sp).norm(), 1e-10);
 
     // ================== full ldlt decomposition ==================
     auto ldlt_full = eigen_wrapper.ldlt_full(precision);
-    Matrix Lf = ldlt_full.matrixL();
-    Matrix Uf = ldlt_full.matrixU();
-    Matrix Df = ldlt_full.vectorD().real().asDiagonal();
+    Eigen::MatrixXd Lf = ldlt_full.matrixL();
+    Eigen::MatrixXd Uf = ldlt_full.matrixU();
+    Eigen::MatrixXd Df = ldlt_full.vectorD().real().asDiagonal();
     auto Pf = ldlt_full.transpositionsP();
     ASSERT_LE((precision - ldlt_full.reconstructedMatrix()).norm(), 1e-10);
 
     // reconstruction
-    Matrix res(size,size);
+    Eigen::MatrixXd res(size,size);
     // important: the transpositions matrix must operate on another matrix.
     res = Pf * eye; 
     // L^* P
@@ -165,12 +163,12 @@ TEST(TestSparse, ldlt_decomp){
 
     // ================== sparse ldlt decomposition ==================
     SparseLDLT ldlt_sp(precision_sp);
-    SpMat Lsp = ldlt_sp.matrixL(); Matrix Lf_sp{Lsp};
-    SpMat Usp = ldlt_sp.matrixU(); Matrix Uf_sp{Usp};
-    Matrix Dsp = ldlt_sp.vectorD().real().asDiagonal();
+    SpMat Lsp = ldlt_sp.matrixL(); Eigen::MatrixXd Lf_sp{Lsp};
+    SpMat Usp = ldlt_sp.matrixU(); Eigen::MatrixXd Uf_sp{Usp};
+    Eigen::MatrixXd Dsp = ldlt_sp.vectorD().real().asDiagonal();
     
     // reconstruction sparse
-    Matrix res_sp = Lsp*Dsp*Usp;
+    Eigen::MatrixXd res_sp = Lsp*Dsp*Usp;
 
     ASSERT_TRUE(eigen_wrapper.matrix_equal(L_true, Lf_sp));
     ASSERT_TRUE(eigen_wrapper.matrix_equal(D_true, Dsp));
@@ -184,7 +182,7 @@ TEST(TestSparse, manipulation_sparse){
     SparseLDLT ldlt_sp(precision_sp);
     SpMat Lsp = ldlt_sp.matrixL();
 
-    Vector I, J, V;
+    Eigen::VectorXd I, J, V;
 
     Eigen::SparseMatrix<double, Eigen::RowMajor> X(10, 10);
 
@@ -208,9 +206,9 @@ TEST(TestSparse, manipulation_sparse){
  * block insertion for vector: EigenWrapper::block_insert()
  */
 TEST(TestSparse, sparse_permute){
-    Matrix precision = m_io.load_csv("data/precision.csv");
+    Eigen::MatrixXd precision = m_io.load_csv("data/precision.csv");
     SpMat precision_sp = precision.sparseView();
-    Matrix block_true(4, 4);
+    Eigen::MatrixXd block_true(4, 4);
     block_true << 7.268329260163210,    2.961292370892880,         -4.500997556437790e-16,          0, 
                   2.961292370892880,    5.598315242672160,          2.316465704151060e-16,         0,
                  -4.500997556437790e-16, 2.316465704151060e-16,     6.250000000000390,              0,
@@ -231,11 +229,11 @@ TEST(TestSparse, sparse_permute){
     ASSERT_TRUE(eigen_wrapper.matrix_equal(block_extracted, block_true));
 
     // block for vector
-    Vector vec = eigen_wrapper.random_matrix(10, 1);
-    Vector v_blk = eigen_wrapper.random_matrix(4, 1);
+    Eigen::VectorXd vec = eigen_wrapper.random_matrix(10, 1);
+    Eigen::VectorXd v_blk = eigen_wrapper.random_matrix(4, 1);
 
     eigen_wrapper.block_insert(vec, 0, 0, 4, 1, v_blk);
-    Vector v_block_extract = eigen_wrapper.block_extract(vec, 0, 0, 4, 1);
+    Eigen::VectorXd v_block_extract = eigen_wrapper.block_extract(vec, 0, 0, 4, 1);
     ASSERT_TRUE(eigen_wrapper.matrix_equal(v_block_extract, v_blk));
 
 }
@@ -253,18 +251,18 @@ TEST(TestSparse, sparse_permute){
 // }
 
 TEST(TestSparse, compare_block_operations){
-    Matrix precision = m_io.load_csv("data/precision_large.csv");
+    Eigen::MatrixXd precision = m_io.load_csv("data/precision_large.csv");
     SpMat precision_sp = precision.sparseView();
     int ndim = precision.rows();
     int dim_state = 4;
 
     // Pk
-    Matrix Pk{Matrix::Zero(2*dim_state, ndim)};
-    Pk.block(0, 3*dim_state, 2*dim_state, 2*dim_state) = std::move(Matrix::Identity(2*dim_state, 2*dim_state));
+    Eigen::MatrixXd Pk{Eigen::MatrixXd::Zero(2*dim_state, ndim)};
+    Pk.block(0, 3*dim_state, 2*dim_state, 2*dim_state) = std::move(Eigen::MatrixXd::Identity(2*dim_state, 2*dim_state));
 
     // results
-    Matrix Block_Pk(2*dim_state, 2*dim_state);
-    Matrix Block(2*dim_state, 2*dim_state);
+    Eigen::MatrixXd Block_Pk(2*dim_state, 2*dim_state);
+    Eigen::MatrixXd Block(2*dim_state, 2*dim_state);
 
     // compare the time between Pk*M*Pk^T and M.block(i,j,h,l);
     std::cout << "time elapsed: block by eigen" << std::endl;
@@ -280,7 +278,7 @@ TEST(TestSparse, compare_block_operations){
     ASSERT_TRUE(eigen_wrapper.matrix_equal(Block, Block_Pk));
 
     // compare the time between the two for block insertion
-    Matrix precision_inserted_Pk(ndim, ndim);
+    Eigen::MatrixXd precision_inserted_Pk(ndim, ndim);
     precision_inserted_Pk.setZero();
 
     SpMat precision_inserted_block(ndim, ndim);
@@ -303,20 +301,20 @@ TEST(TestSparse, compare_block_operations){
  * @brief Test for the sparse inverse function
  */
 TEST(TestSparse, sparse_inverse){
-    Matrix precision = m_io.load_csv("data/precision_large.csv");
+    Eigen::MatrixXd precision = m_io.load_csv("data/precision_large.csv");
     int size = precision.rows();
 
     SpMat precision_sp = precision.sparseView();
     SparseLDLT ldlt_sp(precision_sp);
     SpMat Lsp = ldlt_sp.matrixL();
-    Matrix Dsp = ldlt_sp.vectorD().real().asDiagonal();
+    Eigen::MatrixXd Dsp = ldlt_sp.vectorD().real().asDiagonal();
 
     // find nnz
     Eigen::VectorXi I,J;
     Eigen::VectorXd V;
     eigen_wrapper.find_nnz(Lsp, I, J, V);
     int nnz = I.rows();
-    Matrix inv_full(size, size);
+    Eigen::MatrixXd inv_full(size, size);
 
     SpMat precision_inv_1_sp(size, size);
     Eigen::VectorXi StartIndx(nnz);
@@ -367,10 +365,10 @@ TEST(TestSparse, sparse_inverse){
     timer.end();
 
     // assert inversion success
-    Matrix inv_computed = precision_inv_sp;
-    Matrix inv_computed_2 = precision_inv_sp1;
-    Matrix inv_computed_1 = precision_inv_1_sp;
-    Matrix inv_computed_trj = precision_inv_trj;
+    Eigen::MatrixXd inv_computed = precision_inv_sp;
+    Eigen::MatrixXd inv_computed_2 = precision_inv_sp1;
+    Eigen::MatrixXd inv_computed_1 = precision_inv_1_sp;
+    Eigen::MatrixXd inv_computed_trj = precision_inv_trj;
     // m_io.saveData("inv_computed.csv", inv_computed);
     // m_io.saveData("inv_computed_trj.csv", inv_computed_trj);
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_1));
@@ -389,7 +387,7 @@ TEST(TestSparse, sparse_view){
     Eigen::MatrixXd m{eigen_wrapper.random_sparse_matrix(size, size, nnz)};
     SpMat spm = m.sparseView();
 
-    Vector I,J,V;
+    Eigen::VectorXd I,J,V;
     eigen_wrapper.find_nnz(spm, I, J, V);
     
     ASSERT_LE((spm - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
@@ -401,14 +399,14 @@ TEST(TestSparse, sparse_view){
 }
 
 TEST(TestSparse, determinant){
-    Matrix precision = m_io.load_csv("data/precision_16.csv");
+    Eigen::MatrixXd precision = m_io.load_csv("data/precision_16.csv");
     SpMat precision_sp = precision.sparseView();
 
     SparseLDLT ldlt_sp(precision_sp);
 
-    SpMat Lsp = ldlt_sp.matrixL(); Matrix Lf_sp{Lsp};
-    SpMat Usp = ldlt_sp.matrixU(); Matrix Uf_sp{Usp};
-    Matrix Dsp = ldlt_sp.vectorD().real().asDiagonal();
+    SpMat Lsp = ldlt_sp.matrixL(); Eigen::MatrixXd Lf_sp{Lsp};
+    SpMat Usp = ldlt_sp.matrixU(); Eigen::MatrixXd Uf_sp{Usp};
+    Eigen::MatrixXd Dsp = ldlt_sp.vectorD().real().asDiagonal();
 
     Eigen::MatrixXd LDLT = Lf_sp*Dsp*Uf_sp;
 
@@ -432,36 +430,37 @@ TEST(TestSparse, determinant){
 
 
 TEST(TestSparse, sqrtm){
-    Matrix m = eigen_wrapper.random_psd(5);
-    Matrix m_inv = m.inverse();
+    Eigen::MatrixXd m = eigen_wrapper.random_psd(5);
+    Eigen::MatrixXd m_inv = m.inverse();
 
-    Matrix sqrtm = eigen_wrapper.psd_sqrtm(m);
-    Matrix inv_sqrtm = eigen_wrapper.psd_invsqrtm(m);
+    Eigen::MatrixXd sqrtm = eigen_wrapper.psd_sqrtm(m);
+    Eigen::MatrixXd inv_sqrtm = eigen_wrapper.psd_invsqrtm(m);
 
     ASSERT_LE((sqrtm*sqrtm - m).norm(), 1e-10);
     ASSERT_LE((inv_sqrtm*inv_sqrtm - m_inv).norm(), 1e-10);
 }
 
-TEST(TestSparse, compress3d){
-    Matrix mat(3, 3);
+TEST(TestMatrix3D, compress3d){
+    Eigen::MatrixXd mat(3, 3);
     mat << 1,2,3,4,5,6,7,8,9;
     
-    Matrix mat3d{Matrix::Zero(9, 2)};
+    Matrix3D mat3d(3,3,2);
+    mat3d.setZero();
     eigen_wrapper.compress3d(mat, mat3d, 0);
 
-    Matrix mat3d_groundtruth(9, 2);
+    Eigen::MatrixXd mat3d_groundtruth(9, 2);
     mat3d_groundtruth << 1,0,4,0,7,0,2,0,5,0,8,0,3,0,6,0,9,0;
 
     ASSERT_LE((mat3d - mat3d_groundtruth).norm(), 1e-10);
 
-    Matrix mat_decomposed{Matrix::Zero(3,3)};
+    Eigen::MatrixXd mat_decomposed{Eigen::MatrixXd::Zero(3,3)};
     eigen_wrapper.decompress3d(mat3d, mat_decomposed, 3, 3, 0);
 
     ASSERT_LE((mat_decomposed - mat).norm(), 1e-10);
 
 }
 
-TEST(TestSparse, repmat){
+TEST(TestMatrix3D, repmat){
     Eigen::MatrixXd mat(3,3);
     mat <<  0.7922, 0.0357, 0.6787,
             0.9595, 0.8491, 0.7577,
@@ -488,6 +487,23 @@ TEST(TestSparse, repmat){
         randi = eigen_wrapper.decompress3d(res, mat.rows(), mat.cols(), i);
         ASSERT_LE((randi - mat).norm(), 1e-10);
     }
+}
+
+TEST(TestMatrix3D, linspace){
+    int nt = 5;
+    Eigen::VectorXd x0(4), xT(4);
+    MatrixXd linspaced_gt(4, nt), linspaced(4, nt);
+    x0.setZero();xT.setZero();linspaced.setZero();linspaced_gt.setZero();
+    x0 << 0, 1, 2, 3;
+    xT << 4.8, 5.8, 6.8, 7.8;
+    linspaced_gt << 0, 1.2, 2.4, 3.6, 4.8,
+                    1, 2.2, 3.4, 4.6, 5.8,
+                    2, 3.2, 4.4, 5.6, 6.8,
+                    3, 4.2, 5.4, 6.6, 7.8;
+                    
+    linspaced = eigen_wrapper.linspace(x0, xT, nt);
+    ASSERT_LE((linspaced_gt - linspaced).norm(), 1e-10);
+
 }
 
 

@@ -45,7 +45,7 @@ TEST(TestPgcsSdf2D, initialization){
     double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
     double eta = atof(paramNode->first_node("eta")->value());
     int nt = atoi(paramNode->first_node("nt")->value());
-    double Vscale = atoi(paramNode->first_node("state_cost_scale")->value());
+    double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
 
     double sig = speed * nt;
 
