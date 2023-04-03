@@ -12,7 +12,7 @@
 #include <gpmp2/obstacle/ObstacleCost.h>
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include "data_io.h"
-#include "../helpers/eigen_wrapper.h"
+#include "eigen_wrapper.h"
 
 using namespace Eigen;
 using namespace vimp;

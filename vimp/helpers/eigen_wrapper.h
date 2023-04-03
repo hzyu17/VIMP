@@ -250,7 +250,7 @@ public:
     // ================= IO for matrix and digits =================
     template <typename Derived>
     void print_matrix(const Eigen::MatrixBase<Derived>& m, std::string header="matrix printed"){  
-        Eigen::IOFormat CleanFmt(3, 0, ",", "\n", "[","]");
+        Eigen::IOFormat CleanFmt(6, 0, ",", "\n", "[","]");
         std::cout << header << std::endl;
         std::cout << m.format(CleanFmt) << _sep;
     }
