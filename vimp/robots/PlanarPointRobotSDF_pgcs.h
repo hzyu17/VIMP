@@ -25,21 +25,15 @@ class PlanarPointRobotSDFPGCS{
     public:
         PlanarPointRobotSDFPGCS(double epsilon): _eps(epsilon){
             default_sdf();
-            default_pR(*_psdf);
+            generate_pr_sdf(*_psdf, 0.0);
         }
 
         PlanarPointRobotSDFPGCS(double epsilon, double r): _eps(epsilon), _r(r){
             // default sdf
             default_sdf();
 
-            /// Robot model
-            gpmp2::PointRobot pR(_ndof, _nlinks);
-            gpmp2::BodySphereVector body_spheres;
-            body_spheres.push_back(gpmp2::BodySphere(0, _r, Point3(0.0, 0.0, 0.0)));
-            _pR_model = gpmp2::PointRobotModel(pR, body_spheres);
-
-            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, *_psdf, 0.0, _eps));
-
+            // point robot with sdf
+            generate_pr_sdf(*_psdf, r);
         }
 
         void default_sdf(){
@@ -54,11 +48,11 @@ class PlanarPointRobotSDFPGCS{
 
         }
 
-        void default_pR(const gpmp2::PlanarSDF& sdf){
+        void generate_pr_sdf(const gpmp2::PlanarSDF& sdf, double r){
             /// Robot model
             gpmp2::PointRobot pR(_ndof, _nlinks);
             gpmp2::BodySphereVector body_spheres;
-            body_spheres.push_back(gpmp2::BodySphere(0, 0.0, Point3(0.0, 0.0, 0.0)));
+            body_spheres.push_back(gpmp2::BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
             _pR_model = gpmp2::PointRobotModel(pR, body_spheres);
 
             _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, 0.0, _eps));
