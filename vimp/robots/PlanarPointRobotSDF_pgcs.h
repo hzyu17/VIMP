@@ -28,7 +28,7 @@ class PlanarPointRobotSDFPGCS{
             default_pR(*_psdf);
         }
 
-        PlanarPointRobotSDFPGCS(double cost_sigma, double epsilon, double r): _cost_sig(cost_sigma), _eps(epsilon), _r(r){
+        PlanarPointRobotSDFPGCS(double epsilon, double r): _eps(epsilon), _r(r){
             // default sdf
             default_sdf();
 
@@ -38,7 +38,7 @@ class PlanarPointRobotSDFPGCS{
             body_spheres.push_back(gpmp2::BodySphere(0, _r, Point3(0.0, 0.0, 0.0)));
             _pR_model = gpmp2::PointRobotModel(pR, body_spheres);
 
-            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, *_psdf, _cost_sig, _eps));
+            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, *_psdf, 0.0, _eps));
 
         }
 
@@ -61,7 +61,7 @@ class PlanarPointRobotSDFPGCS{
             body_spheres.push_back(gpmp2::BodySphere(0, 0.0, Point3(0.0, 0.0, 0.0)));
             _pR_model = gpmp2::PointRobotModel(pR, body_spheres);
 
-            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, _cost_sig, _eps));
+            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, 0.0, _eps));
         }
 
         /**
@@ -76,7 +76,7 @@ class PlanarPointRobotSDFPGCS{
 
         inline void update_sdf(const gpmp2::PlanarSDF& sdf){
             _psdf = std::make_shared<gpmp2::PlanarSDF>(sdf);
-            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, _cost_sig, _eps));
+            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, 0.0, _eps));
         }
 
         inline gpmp2::PointRobotModel pRmodel() const { return _pR_model; }
@@ -97,7 +97,7 @@ class PlanarPointRobotSDFPGCS{
             int _ndof = 2;
             int _nlinks = 1;            
 
-            double _cost_sig, _eps, _r;
+            double _eps, _r;
 
 };
 }

@@ -56,7 +56,7 @@ TEST(TestPRSDF, initialization){
     double eps_sdf = std::get<2>(res);
     double sphere_r = std::get<3>(res);
     // construct the robot model with sdf
-    PlanarPointRobotSDFPGCS pr_sdf{cost_sigma, eps_sdf, sphere_r};
+    PlanarPointRobotSDFPGCS pr_sdf{eps_sdf, sphere_r};
     pr_sdf.update_sdf(sdf);
 }
 
@@ -68,7 +68,7 @@ TEST(TestPRSDF, pose_cost_jacobian){
     double eps_sdf = std::get<2>(res);
     double sphere_r = std::get<3>(res);
     // construct the robot model with sdf
-    PlanarPointRobotSDFPGCS pr_sdf{cost_sigma, eps_sdf, sphere_r};
+    PlanarPointRobotSDFPGCS pr_sdf{eps_sdf, sphere_r};
     pr_sdf.update_sdf(sdf);
 
     std::cout << "eps_sdf " << eps_sdf << std::endl << "sphere_r " << sphere_r << std::endl; 

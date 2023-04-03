@@ -33,14 +33,14 @@ public:
                                 const std::shared_ptr<LinearDynamics>& pdyn,
                                 double eps_sdf,
                                 const gpmp2::PlanarSDF& sdf,
-                                const 
+                                double sphere_r,
                                 double sig_obs,
                                 double Vscale=1.0):
                             ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
                             _eps_sdf(eps_sdf),
                             _sdf(sdf),
                             _invSig_obs(1.0 / sig_obs),
-                            _pRsdf(eps_sdf){
+                            _pRsdf(eps_sdf, sphere_r){
                                 _pRsdf.update_sdf(sdf);
                             }
 
@@ -65,36 +65,37 @@ public:
             temp = (Aki - hAi).transpose();
 
             // Compute hinge loss and its gradients
+            int n_spheres = _pRsdf.pRmodel().nr_body_spheres();
+            std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
-            double zi_x = zi(0), zi_y = zi(1);
-            std::pair<double, VectorXd> hingeloss_gradient;
-            MatrixXd J_hxy(1, _nx/2);
+            hingeloss_gradient = _pRsdf.hinge_jac(zi.block(0,0,2,1));
+            VectorXd hinge(n_spheres);
+            MatrixXd J_hxy(n_spheres, _nx/2);
+            hinge = std::get<0>(hingeloss_gradient);
+            J_hxy = std::get<1>(hingeloss_gradient);
 
-            hingeloss_gradient = hingeloss_gradient_point(zi_x, zi_y, _sdf, _eps_sdf, J_hxy);
-            double hinge = std::get<0>(hingeloss_gradient);
-
-            if (hinge > 0){
-                _ei.print_matrix(zi, "zi");
-                std::cout << "hinge loss " << hinge << std::endl;
-                _ei.print_matrix(J_hxy, "J_hxy");
-            }
-
-            MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
+            // MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
+            MatrixXd grad_h(n_spheres, _nx), velocity(1, _nx/2);
             // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
 
-            velocity = zi.block(_nx/2, 0,_nx/2,1);
-            grad_h.block(0,0,_nx/2,1) = J_hxy.transpose();
-            grad_h.block(_nx/2,0,_nx/2,1) = J_hxy.transpose().cwiseProduct(velocity);
+            velocity = zi.block(_nx/2,0,_nx/2,1).transpose();
+            for (int i_s=0; i_s<n_spheres; i_s++){
+                grad_h.block(i_s,0,1,_nx/2) = J_hxy.row(i_s);
+                grad_h.block(i_s,_nx/2,1,_nx/2) = J_hxy.row(i_s).cwiseProduct(velocity);
+            }          
 
+            MatrixXd inv_Sig{_invSig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
+
+            // std::cout << "_invSig_obs " << _invSig_obs << std::endl;
             // if (hinge > 0){
             //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _invSig_obs;
             // }
             // Qki
             Qki = _state_cost_scale * Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
-            rki = _state_cost_scale * grad_h * hinge * _invSig_obs * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = _state_cost_scale * grad_h.transpose() * inv_Sig * hinge * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);

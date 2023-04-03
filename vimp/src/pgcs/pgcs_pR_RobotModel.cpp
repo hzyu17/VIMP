@@ -52,8 +52,8 @@ int main(){
         double cell_size = 0.1;
         gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);
 
-        PlanarPointRobotSDFPGCS pR_sdf(sig_obs, eps_sdf, sphere_r);
-        pR_sdf.update_sdf(sdf);
+        // PlanarPointRobotSDFPGCS pR_sdf(eps_sdf, sphere_r);
+        // pR_sdf.update_sdf(sdf);
         
         // proximal gradient parameters
         double eps=0.01;
@@ -90,7 +90,7 @@ int main(){
 
         double eta = atof(paramNode->first_node("eta")->value());
         double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
-        PGCSLinDynPlanarSDF pgcs_lin_sdf(A0, a0, B0, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
+        PGCSLinDynPRModelPlanarSDF pgcs_lin_sdf(A0, a0, B0, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sphere_r, sig_obs, Vscale);
         
         std::tuple<MatrixXd, MatrixXd> res_Kd;
 

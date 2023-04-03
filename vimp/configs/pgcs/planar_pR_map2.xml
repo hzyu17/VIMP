@@ -3,10 +3,10 @@
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
-        <x>7.0</x>
+        <x>8.0</x>
         <y>-5.0</y>
         <vx>0.0</vx>
-        <vy>1.0</vy>
+        <vy>2.0</vy>
     </start_pos>
 
     <goal_pos>
@@ -30,7 +30,7 @@
 
     <cost_sigma> 2e-6 </cost_sigma>
 
-    <robot_sphere_r> 1.5 </robot_sphere_r>
+    <robot_sphere_r> 0.0 </robot_sphere_r>
 
     <stop_err> 1e-4 </stop_err>
 
@@ -46,14 +46,14 @@
     <start_pos>
         <x>-7.0</x>
         <y>-5.0</y>
-        <vx> 2</vx>
-        <vy> 0</vy>
+        <vx> 0</vx>
+        <vy> 2</vy>
     </start_pos>
 
     <goal_pos>
-        <x>8.0</x>
-        <y>18.0</y>
-        <vx> -1</vx>
+        <x>5.0</x>
+        <y>19.0</y>
+        <vx> 2</vx>
         <vy> 0</vy>
     </goal_pos>
 
@@ -67,11 +67,11 @@
 
     <eta> 1e-6 </eta>
 
-    <eps_sdf> 0.7 </eps_sdf>
+    <eps_sdf> 0.73 </eps_sdf>
 
-    <cost_sigma> 0.8e-6 </cost_sigma>
+    <cost_sigma> 7e-6 </cost_sigma>
 
-    <robot_sphere_r> 1.5 </robot_sphere_r>
+    <robot_sphere_r> 0.0 </robot_sphere_r>
 
     <stop_err> 1e-4 </stop_err>
 
@@ -112,7 +112,7 @@
 
     <cost_sigma> 0.5e-6 </cost_sigma>
 
-    <robot_sphere_r> 1.5 </robot_sphere_r>
+    <robot_sphere_r> 0.0 </robot_sphere_r>
 
     <stop_err> 1e-4 </stop_err>
 
