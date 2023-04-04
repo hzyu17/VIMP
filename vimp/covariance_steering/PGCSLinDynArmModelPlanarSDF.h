@@ -40,10 +40,9 @@ public:
                             _eps_sdf(eps_sdf),
                             _sdf(sdf),
                             _invSig_obs(1.0 / sig_obs),
-                            _pRsdf(eps_sdf, sphere_r){
-                                _pRsdf.update_sdf(sdf);
+                            _ArmSdf(eps_sdf, sphere_r){
+                                _ArmSdf.update_sdf(sdf);
                             }
-
 
     void update_Qrk() override{
         MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
@@ -65,10 +64,10 @@ public:
             temp = (Aki - hAi).transpose();
 
             // Compute hinge loss and its gradients
-            int n_spheres = _pRsdf.pRmodel().nr_body_spheres();
+            int n_spheres = _ArmSdf.ArmModel().nr_body_spheres();
             std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
-            hingeloss_gradient = _pRsdf.hinge_jac(zi.block(0,0,2,1));
+            hingeloss_gradient = _ArmSdf.hinge_jac(zi.block(0,0,2,1));
             VectorXd hinge(n_spheres);
             MatrixXd J_hxy(n_spheres, _nx/2);
             hinge = std::get<0>(hingeloss_gradient);
@@ -108,7 +107,7 @@ public:
 
 protected:
     gpmp2::PlanarSDF _sdf;
-    PlanarPointRobotSDFPGCS _pRsdf;
+    PlanarArmSDFPGCS _ArmSdf;
     double _eps_sdf;
     double _invSig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.

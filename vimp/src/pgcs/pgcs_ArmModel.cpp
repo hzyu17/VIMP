@@ -26,12 +26,12 @@ int main(){
     MatrixXd Sig0(4,4), SigT(4,4);
 
     /// reading XML configs
-    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_pR_map2.xml"); // Default template is char
+    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_2link_arm_map2.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
 
     // loop for 4 cases
-    for (int i=1; i<5; i++){
+    for (int i=1; i<2; i++){
         std::string ExpNodeName = "Experiment" + std::to_string(i);
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* ExpNode = doc.first_node(c_expname);
@@ -48,12 +48,9 @@ int main(){
 
         // construct sdf
         MatrixXd field = m_io.load_csv(field_file);
-        gtsam::Point2 origin(-20, -10);
-        double cell_size = 0.1;
+        gtsam::Point2 origin(-1, -1);
+        double cell_size = 0.01;
         gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);
-
-        // PlanarPointRobotSDFPGCS pR_sdf(eps_sdf, sphere_r);
-        // pR_sdf.update_sdf(sdf);
         
         // proximal gradient parameters
         double eps=0.01;

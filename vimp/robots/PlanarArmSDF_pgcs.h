@@ -37,7 +37,7 @@ class PlanarArmSDFPGCS{
 
         void default_sdf(){
             /// map and sdf
-            _field = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv");
+            _field = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/pgcs/2d_Arm/field_two_obs.csv");
 
             // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
             Point2 origin(-20, -10);
@@ -90,7 +90,7 @@ class PlanarArmSDFPGCS{
             _p_planar_sdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), _arm_model, sdf, 0.0, _eps));
         }
 
-        inline gpmp2::ArmModel Armmodel() const { return _arm_model; }
+        inline gpmp2::ArmModel ArmModel() const { return _arm_model; }
         inline std::shared_ptr<gpmp2::PlanarSDF> sdf() const { return _psdf; }
         inline int ndof() const {return _ndof;}
         inline int nlinks() const {return _nlinks;}
