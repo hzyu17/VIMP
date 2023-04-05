@@ -88,8 +88,8 @@ public:
             Hess.setZero();
 
             // std::cout << "_invSig_obs " << _invSig_obs << std::endl;
-            // if (hinge > 0){
-            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _invSig_obs;
+            // if (hinge.maxCoeff() > 0){
+            //     Hess.block(0,0,_nx/2,_nx/2) = MatrixXd::Identity(_nx/2,_nx/2) * _invSig_obs;
             // }
             // Qki
             Qki = _state_cost_scale * Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);

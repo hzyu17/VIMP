@@ -11,7 +11,6 @@
 
 #include "ProximalGradientCSLinearDyn.h"
 #include "../robots/PlanarPointRobotSDF_pgcs.h"
-#include "../helpers/hinge2Dhelper.h"
 
 using namespace Eigen;
 

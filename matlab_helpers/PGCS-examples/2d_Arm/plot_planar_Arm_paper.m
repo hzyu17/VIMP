@@ -19,6 +19,18 @@ switch map
         switch exp
             case 1
                 prefix = "map2/case1";
+                % boundary conditions
+                start_conf = [0, 0]';
+                start_vel = [0, 0]';
+                end_conf = [pi/2, 0]';
+                end_vel = [0, 0]';
+            case 2
+                prefix = "map2/case2";
+                % boundary conditions
+                start_conf = [-pi/2, 0]';
+                start_vel = [0.1, 0]';
+                end_conf = [pi/2, 0]';
+                end_vel = [0, 0]';
         end
 end
 
@@ -46,24 +58,18 @@ origin_point2 = Point2(origin_x, origin_y);
 field = signedDistanceField2D(sdfmap, cell_size);
 % save field
 sdf = PlanarSDF(origin_point2, cell_size, field);
-% boundary conditions
-start_conf = [0, 0]';
-start_vel = [0, 0]';
-end_conf = [pi/2, 0]';
-end_vel = [0, 0]';
+
 
 %% ================= plot the final iteration ===================
-
-
 x0 = 50;
 y0 = 50;
 width = 400;
 height = 350;
-figure
+figure(1)
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
-t=title("2-link arm");
+% t=title("2-link arm");
 t.FontSize = 16;
 
 hold on 
@@ -73,37 +79,59 @@ for j = 1:nt
     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, alpha];
     % means
-    plotPlanarArm1(arm.fk_model(), means(1:2,j), color, 2, true);
+    plotPlanarArm1(arm.fk_model(), means(1:2,j), color, 4, true);
 end
-plotPlanarArm1(arm.fk_model(), start_conf, 'r', 2, true);
-plotPlanarArm1(arm.fk_model(), end_conf, 'g', 2, true);
+plotPlanarArm1(arm.fk_model(), start_conf, 'r', 4, true);
+plotPlanarArm1(arm.fk_model(), end_conf, 'g', 4, true);
+axis off;
 hold off
 
-%% Plot the animated motion plan
-x0 = 50;
-y0 = 50;
-width = 400;
-height = 350;
-figure
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
-nexttile
-t=title("Animation");
-t.FontSize = 16;
+% % initial and final time covariance
+% covs(1:2, 1:2, 1)
+% covs(1:2, 1:2, 24)
 
-for j = 1:nt
-    hold on 
-    plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
-    plotPlanarArm1(arm.fk_model(), start_conf, 'r', 2, true);
-    plotPlanarArm1(arm.fk_model(), end_conf, 'g', 2, true);
-    % gradual changing colors
-%     alpha = (j / nt)^(1.15);
-    color = [0, 0, 1, 1];
-    % means
-    plotPlanarArm1(arm.fk_model(), means(1:2,j), color, 2, true);
-    hold off
-    pause(0.01)
-end
+% % ------ configuration space trajectory ------
+% nexttile
+% hold on 
+% t.FontSize = 16;
+% 
+% nt = size(means, 2);
+% for i=1:nt
+%     scatter(means(1, i), means(2, i), 20, 'k', 'fill');
+%     error_ellipse(covs(1:2,1:2,i), means(1:2, i));
+% end
+% hold off
+
+
+
+% %% ==== animated motion plan ==== 
+% x0 = 50;
+% y0 = 50;
+% width = 400;
+% height = 350;
+% figure(2)
+% set(figure(2),'position',[x0,y0,width,height])
+% tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'none')
+% nexttile
+% t=title("Animation");
+% t.FontSize = 16;
+% 
+% % ---------- plot the mean positions ---------- 
+% for j = 1:nt
+%     hold on 
+%     figure(2)
+%     plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+%     plotPlanarArm1(arm.fk_model(), start_conf, 'r', 2, true);
+%     plotPlanarArm1(arm.fk_model(), end_conf, 'g', 2, true);
+%     % gradual changing colors
+% %     alpha = (j / nt)^(1.15);
+%     color = [0, 0, 1, 1];
+%     % means
+%     plotPlanarArm1(arm.fk_model(), means(1:2,j), color, 2, true);
+%     hold off
+%     pause(0.01)
+% end
+
 % %% ==== plot sampled covariance for the states ==== 
 % x0 = 500;
 % y0 = 500;

@@ -436,6 +436,14 @@ public:
     using vec_1d = std::vector<double>;
     using vec_2d = std::vector<vec_1d>;
 
+    vec_1d VectorXd_to_vector(const Eigen::VectorXd& input_v){
+        vec_1d vec(input_v.size());
+        for (int i=0; i<input_v.size(); i++){
+            vec[i] = input_v(i);
+        }
+        return vec;
+    }
+
     vec_2d eigen_to_vector(const Eigen::MatrixXd& mat){
         vec_2d vec(mat.rows());
         for (int i=0; i<mat.rows(); i++){

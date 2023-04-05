@@ -94,7 +94,6 @@ foreach(pgcs_source ${PGCS_SOURCES})
     target_include_directories(${pgcs_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 endforeach()
 
-
 #% --------------------------------------------------------- Tests files 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
