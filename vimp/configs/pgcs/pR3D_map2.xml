@@ -1,38 +1,38 @@
 <Experiment1>
 <parameters>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
     
     <start_pos>
-        <x>-1.0</x>
-        <y>-1.0</y>
-        <z>-1.0</z>
+        <x>-5.0</x>
+        <y>-5.0</y>
+        <z>-5.0</z>
         <vx>2.0</vx>
         <vy>2.0</vy>
         <vz>2.0</vz>
     </start_pos>
 
     <goal_pos>
-        <x>1.0</x>
-        <y>1.0</y>
-        <z>1.0</z>
+        <x>40.0</x>
+        <y>40.0</y>
+        <z>40.0</z>
         <vx>0.0</vx>
         <vy>0.0</vy>
         <vz>0.0</vz>
     </goal_pos>
     
-    <nt> 50 </nt>
+    <nt> 80 </nt>
 
-    <speed> 0.18 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
+    <speed> 0.03 </speed>
+    <state_cost_scale> 1000.0 </state_cost_scale>
 
     <sig0> 0.01 </sig0>
     <sigT> 0.05 </sigT>
 
-    <eta> 1e-6 </eta>
+    <eta> 1e-5 </eta>
 
-    <eps_sdf> 0.75 </eps_sdf>
+    <eps_sdf> 0.7 </eps_sdf>
 
-    <cost_sigma> 1e-4 </cost_sigma>
+    <cost_sigma> 1e-6 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 
@@ -45,7 +45,7 @@
 
 <!-- <Experiment2>
 <parameters>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
     
     <start_pos>
         <x>-6.0</x>
@@ -90,7 +90,7 @@
 
 <Experiment3>
 <parameters>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
     
     <start_pos>
         <x>-4.0</x>
@@ -135,7 +135,7 @@
 
 <Experiment4>
 <parameters>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
     
     <start_pos>
         <x>-3.0</x>

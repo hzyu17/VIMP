@@ -64,10 +64,10 @@ public:
             temp = (Aki - hAi).transpose();
 
             // Compute hinge loss and its gradients
-            int n_spheres = _pRsdf.pRmodel().nr_body_spheres();
+            int n_spheres = 1;
             std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
-            hingeloss_gradient = _pRsdf.hinge_jac(zi.block(0,0,2,1));
+            hingeloss_gradient = _pRsdf.hinge_jac(zi.block(0,0,_nx/2,1));
             VectorXd hinge(n_spheres);
             MatrixXd J_hxy(n_spheres, _nx/2);
             hinge = std::get<0>(hingeloss_gradient);
@@ -86,9 +86,9 @@ public:
             MatrixXd inv_Sig{_invSig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
-
             // std::cout << "_invSig_obs " << _invSig_obs << std::endl;
-            // if (hinge > 0){
+            // if (hinge.maxCoeff() > 0){
+            //     std::cout << "nonzero hinge loss" << std::endl;
             //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _invSig_obs;
             // }
             // Qki

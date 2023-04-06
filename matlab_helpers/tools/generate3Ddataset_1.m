@@ -26,28 +26,28 @@ if strcmp(dataset_str, 'SmallDemo')
     dataset.origin_x = -1;
     dataset.origin_y = -1;
     dataset.origin_z = -1;
-    dataset.cell_size = 0.01;
+    dataset.cell_size = 0.1;
     % map
     dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
     % obstacles
     dataset.corner_idx = [];
     [dataset.map, dataset.corner_idx] = add_obstacle([150 150 150], [140, 140, 80], dataset.map, dataset.corner_idx);
     
-elseif strcmp(dataset_str, 'UAVDataset')
+elseif strcmp(dataset_str, '3dPRMap2')
     % params
-    dataset.cols = 300;
-    dataset.rows = 300;
-    dataset.z = 300;
-    dataset.origin_x = -1.5;
-    dataset.origin_y = -1.5;
-    dataset.origin_z = -1.5;
-    dataset.cell_size = 0.01;
+    dataset.cols = 500;
+    dataset.rows = 500;
+    dataset.z = 500;
+    dataset.origin_x = -10;
+    dataset.origin_y = -10;
+    dataset.origin_z = -10;
+    dataset.cell_size = 0.1;
     % map
     dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
-
+    % obstacles
     dataset.corner_idx = [];
-    [dataset.map, dataset.corner_idx] = add_obstacle([170 220 130], [140, 60, 5], dataset.map, dataset.corner_idx);
-    
+    [dataset.map, dataset.corner_idx] = add_obstacle([250 250 250], [140, 100, 200], dataset.map, dataset.corner_idx);
+     
 % dataset 2: desk dataset for WAM WAMDeskDataset
 elseif strcmp(dataset_str, 'WAMDeskDataset')
     % params

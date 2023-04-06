@@ -31,7 +31,7 @@ default_properties = struct(...
   'mu', [], ... % Center of ellipse (optional)
   'conf', 0.997, ... % Percent confidence/100
   'scale', 1, ... % Scale factor, e.g. 1e-3 to plot m as km
-  'style', 'r-.', ...  % Plot style
+  'style', 'r-.', 'LineWidth', 3.8, ...  % Plot style
   'clip', inf); % Clipping radius
 
 if length(varargin) >= 1 & isnumeric(varargin{1})
@@ -119,10 +119,8 @@ if r==3 & c==3
   X(:) = scale*(k*XYZ(:,1)+x0);
   Y(:) = scale*(k*XYZ(:,2)+y0);
   Z(:) = scale*(k*XYZ(:,3)+z0);
-  h4=surf(X,Y,Z,'edgecolor','none','facecolor','red', 'FaceAlpha',0.3);
-%   colormap summer
-%     shading interp
-%   colormap gray
+  h4=surf(X,Y,Z);
+  colormap gray
   alpha(0.3)
   camlight
   if nargout

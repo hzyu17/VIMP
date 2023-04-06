@@ -5,10 +5,12 @@ addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 addpath("../")
+addpath("../../error_ellipse");
+addpath("../../../matlab_helpers/");
 
 %% generate SDF
 % dataset
-dataset = generate3Ddataset_1('SmallDemo');
+dataset = generate3Ddataset_1('3dPRMap2');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
@@ -29,32 +31,32 @@ x0 = 50;
 y0 = 50;
 width = 800;
 height = 550;
-figure
+figure(1)
+
 set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
 
 t.FontSize = 14;
 view(3)
 
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
-
 for i = 1:1 % 4 experiments
     nexttile
-    grid on
     hold on 
     prefix = ["map2/case"+num2str(i)+"/"];
     % % --- high temperature ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
-   
-    addpath("../error_ellipse");
-    addpath("../../../matlab_helpers/");
-    
+       
     plotMap3D(dataset.corner_idx, origin, cell_size);
-    
     plot_3d_result(means, covs);
+    
+    % plot the goal position and cov
+    
 
-    xlim([-5, 5])
-    ylim([-5, 5])
-    zlim([-5, 5])
+    xlim([-10, 45])
+    ylim([-10, 45])
+    zlim([-10, 45])
+
+    axis off;
 
 end

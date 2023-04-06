@@ -48,18 +48,16 @@ inline std::tuple<VectorXd, MatrixXd> mesh3D_hinge_gradient(const VectorXd& mesh
 }
 
 
-std::pair<double, VectorXd> hingeloss_gradient_point(double x, double y, 
-                            const gpmp2::PlanarSDF& sdf, 
-                            double eps, 
-                            Eigen::MatrixXd& Jacobian)
+std::tuple<VectorXd, MatrixXd> hinge_gradient_point(const VectorXd & pose, 
+                                                    const gpmp2::SignedDistanceField& sdf, 
+                                                    double eps)
 {
-    VectorXd point(2);
-    point << x, y;
-    Jacobian = MatrixXd::Zero(1, 2);
-    double hinge_loss = gpmp2::hingeLossObstacleCost(point, sdf, eps, Jacobian);
-    MatrixXd Jacobian_column = Jacobian.transpose();
-    std::pair<double, VectorXd> res = std::make_pair(hinge_loss, Jacobian_column);
-    return res;
+    VectorXd point(3);
+    VectorXd hinge(1);
+    MatrixXd Jacobian(1, 3);
+    point << pose(0), pose(1), pose(2);
+    hinge(0) = gpmp2::hingeLossObstacleCost(point, sdf, eps, Jacobian);
+    return std::make_tuple(hinge, Jacobian);
 }
 
 

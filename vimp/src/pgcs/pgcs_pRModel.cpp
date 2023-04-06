@@ -51,9 +51,6 @@ int main(){
         gtsam::Point2 origin(-20, -10);
         double cell_size = 0.1;
         gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);
-
-        // PlanarPointRobotSDFPGCS pR_sdf(eps_sdf, sphere_r);
-        // pR_sdf.update_sdf(sdf);
         
         // proximal gradient parameters
         double eps=0.01;
