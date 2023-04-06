@@ -187,7 +187,7 @@ public:
     void propagate_mean(){
         // The i_th matrices
         Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
-        Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu);
+        Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx);
         Eigen::MatrixXd Si(_nx, _nx), Snew(_nx, _nx);
         for (int i=0; i<_nt-1; i++){
             zi = _ei.decompress3d(_zkt, _nx, 1, i);
@@ -195,9 +195,11 @@ public:
             ai = _ei.decompress3d(_akt, _nx, 1, i);
             Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
             Si = _ei.decompress3d(_Sigkt, _nx, _nx, i);
+            AiT = Ai.transpose();
+            BiT = Bi.transpose();
 
             znew = zi + _deltt*(Ai*zi + ai);
-            Snew = Si + _deltt*(Ai*Si + Si*Ai.transpose() + _eps*(Bi*Bi.transpose()));
+            Snew = Si + _deltt*(Ai*Si + Si*AiT + _eps*(Bi*BiT));
 
             _ei.compress3d(znew, _zkt, i+1);
             _ei.compress3d(Snew, _Sigkt, i+1);

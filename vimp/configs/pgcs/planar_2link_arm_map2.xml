@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Experiment1>
+<parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>1.5707963</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <nt> 25 </nt>
+
+    <speed> 0.3 </speed>
+    <state_cost_scale> 1e1 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1e-5 </eta>
+
+    <eps_sdf> 0.75 </eps_sdf>
+
+    <cost_sigma> 1.48e-5 </cost_sigma>
+
+    <robot_sphere_r> 0.0 </robot_sphere_r>
+
+    <stop_err> 1e-4 </stop_err>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
+
+</parameters>
+</Experiment1>
+
+<Experiment2>
+<parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
+    
+    <start_pos>
+        <x>-1.5707963</x>
+        <y>0.0</y>
+        <vx>-0.1</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>1.5707963</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <nt> 50 </nt>
+
+    <speed> 0.17 </speed>
+    <state_cost_scale> 1e1 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 2e-6 </eta>
+
+    <eps_sdf> 0.75 </eps_sdf>
+
+    <cost_sigma> 4.3e-6 </cost_sigma>
+
+    <robot_sphere_r> 0.0 </robot_sphere_r>
+
+    <stop_err> 1e-4 </stop_err>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case2/</saving_prefix>
+
+</parameters>
+</Experiment2>

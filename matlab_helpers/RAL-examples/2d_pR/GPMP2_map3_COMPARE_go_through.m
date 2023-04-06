@@ -5,6 +5,7 @@
 close all
 clear
 addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/2d_pR')
 %% Load libraries
 import gtsam.*
 import gpmp2.*

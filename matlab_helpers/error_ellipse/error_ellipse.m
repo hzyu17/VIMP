@@ -119,8 +119,10 @@ if r==3 & c==3
   X(:) = scale*(k*XYZ(:,1)+x0);
   Y(:) = scale*(k*XYZ(:,2)+y0);
   Z(:) = scale*(k*XYZ(:,3)+z0);
-  h4=surf(X,Y,Z);
-  colormap gray
+  h4=surf(X,Y,Z,'edgecolor','none','facecolor','red', 'FaceAlpha',0.3);
+%   colormap summer
+%     shading interp
+%   colormap gray
   alpha(0.3)
   camlight
   if nargout

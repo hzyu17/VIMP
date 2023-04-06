@@ -6,7 +6,7 @@ import gtsam.*
 import gpmp2.*
 
 %% read map
-sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+sdfmap = csvread("map2/map_multiobs_map2.csv");
 
 v_niters = [18, 10, 18, 18];
 v_nsteps = [6, 10, 6, 6];

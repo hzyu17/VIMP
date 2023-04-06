@@ -1,0 +1,40 @@
+<Experiment1>
+<parameters>
+    <field_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/field_long_range.csv</field_file>
+    
+    <start_pos>
+        <x>-5.0</x>
+        <y>-5.0</y>
+        <vx>0.01</vx>
+        <vy>0.1</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>55.0</x>
+        <y>60.0</y>
+        <vx>0.01</vx>
+        <vy>0.1</vy>
+    </goal_pos>
+    
+    <nt> 200 </nt>
+
+    <speed> 0.055 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1.3e-6 </eta>
+
+    <eps_sdf> 0.6 </eps_sdf>
+
+    <cost_sigma> 0.8e-6 </cost_sigma>
+
+    <robot_sphere_r> 0.0 </robot_sphere_r>
+
+    <stop_err> 0.9e-4 </stop_err>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/</saving_prefix>
+
+</parameters>
+</Experiment1>

@@ -250,7 +250,7 @@ public:
     // ================= IO for matrix and digits =================
     template <typename Derived>
     void print_matrix(const Eigen::MatrixBase<Derived>& m, std::string header="matrix printed"){  
-        Eigen::IOFormat CleanFmt(3, 0, ",", "\n", "[","]");
+        Eigen::IOFormat CleanFmt(6, 0, ",", "\n", "[","]");
         std::cout << header << std::endl;
         std::cout << m.format(CleanFmt) << _sep;
     }
@@ -435,6 +435,14 @@ public:
 
     using vec_1d = std::vector<double>;
     using vec_2d = std::vector<vec_1d>;
+
+    vec_1d VectorXd_to_vector(const Eigen::VectorXd& input_v){
+        vec_1d vec(input_v.size());
+        for (int i=0; i<input_v.size(); i++){
+            vec[i] = input_v(i);
+        }
+        return vec;
+    }
 
     vec_2d eigen_to_vector(const Eigen::MatrixXd& mat){
         vec_2d vec(mat.rows());

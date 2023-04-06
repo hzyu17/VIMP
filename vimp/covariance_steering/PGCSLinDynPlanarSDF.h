@@ -10,6 +10,7 @@
  */
 
 #include "ProximalGradientCSLinearDyn.h"
+#include "../robots/PlanarPointRobotSDF_pgcs.h"
 #include "../helpers/hinge2Dhelper.h"
 
 using namespace Eigen;
@@ -37,7 +38,9 @@ public:
                             ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
                             _eps_sdf(eps_sdf),
                             _sdf(sdf),
-                            _invSig_obs(1.0 / sig_obs){
+                            _invSig_obs(1.0 / sig_obs),
+                            _pRsdf(eps_sdf){
+                                _pRsdf.update_sdf(sdf);
                             }
 
 
@@ -61,12 +64,19 @@ public:
             temp = (Aki - hAi).transpose();
 
             // Compute hinge loss and its gradients
+            
             double zi_x = zi(0), zi_y = zi(1);
             std::pair<double, VectorXd> hingeloss_gradient;
             MatrixXd J_hxy(1, _nx/2);
 
             hingeloss_gradient = hingeloss_gradient_point(zi_x, zi_y, _sdf, _eps_sdf, J_hxy);
             double hinge = std::get<0>(hingeloss_gradient);
+
+            if (hinge > 0){
+                _ei.print_matrix(zi, "zi");
+                std::cout << "hinge loss " << hinge << std::endl;
+                _ei.print_matrix(J_hxy, "J_hxy");
+            }
 
             MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
             // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
@@ -96,6 +106,7 @@ public:
 
 protected:
     gpmp2::PlanarSDF _sdf;
+    PlanarPointRobotSDFPGCS _pRsdf;
     double _eps_sdf;
     double _invSig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.

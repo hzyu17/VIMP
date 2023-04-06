@@ -11,8 +11,8 @@ addpath("../")
 
 x0 = 500;
 y0 = 500;
-width = 600;
-height = 350;
+width = 1290.427199;
+height = 800;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
@@ -24,9 +24,14 @@ for i = 1:4 % 4 experiments
     % % --- high temperature ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
-   
+    
+    disp("final time cov")
+    covs(1:2, 1:2, end)
+
     addpath("../error_ellipse");
     addpath("../../../matlab_helpers/");
     
     plot_2d_result(sdfmap, means, covs);
+
+    axis off ; 
 end

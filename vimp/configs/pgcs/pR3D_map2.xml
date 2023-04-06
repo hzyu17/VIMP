@@ -1,0 +1,177 @@
+<Experiment1>
+<parameters>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
+    
+    <start_pos>
+        <x>-5.0</x>
+        <y>-5.0</y>
+        <z>-5.0</z>
+        <vx>2.0</vx>
+        <vy>2.0</vy>
+        <vz>2.0</vz>
+    </start_pos>
+
+    <goal_pos>
+        <x>40.0</x>
+        <y>40.0</y>
+        <z>40.0</z>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vz>0.0</vz>
+    </goal_pos>
+    
+    <nt> 80 </nt>
+
+    <speed> 0.03 </speed>
+    <state_cost_scale> 1000.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1e-5 </eta>
+
+    <eps_sdf> 0.7 </eps_sdf>
+
+    <cost_sigma> 1e-6 </cost_sigma>
+
+    <robot_sphere_r> 0.0 </robot_sphere_r>
+
+    <stop_err> 1e-4 </stop_err>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
+
+</parameters>
+</Experiment1>
+
+<!-- <Experiment2>
+<parameters>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
+    
+    <start_pos>
+        <x>-6.0</x>
+        <y>-6.0</y>
+        <z>-6.0</z>
+        <vx>2.0</vx>
+        <vy>2.0</vy>
+        <vz>2.0</vz>
+    </start_pos>
+
+    <goal_pos>
+        <x>4.0</x>
+        <y>4.0</y>
+        <z>4.0</z>
+        <vx>2.0</vx>
+        <vy>2.0</vy>
+        <vz>2.0</vz>
+    </goal_pos>
+
+    <nt> 50 </nt>
+
+    <speed> 0.18 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1e-6 </eta>
+
+    <eps_sdf> 0.73 </eps_sdf>
+
+    <cost_sigma> 7e-6 </cost_sigma>
+
+    <robot_sphere_r> 0.0 </robot_sphere_r>
+
+    <stop_err> 1e-4 </stop_err>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
+
+</parameters>
+</Experiment2>
+
+<Experiment3>
+<parameters>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
+    
+    <start_pos>
+        <x>-4.0</x>
+        <y>-4.0</y>
+        <z>-4.0</z>
+        <vx>2.0</vx>
+        <vy>2.0</vy>
+        <vz>2.0</vz>
+    </start_pos>
+
+    <goal_pos>
+        <x>5.0</x>
+        <y>5.0</y>
+        <z>5.0</z>
+        <vx>2.0</vx>
+        <vy>2.0</vy>
+        <vz>2.0</vz>
+    </goal_pos>
+
+    <nt> 50 </nt>
+
+    <speed> 0.18 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1e-6 </eta>
+
+    <eps_sdf> 0.7 </eps_sdf>
+
+    <cost_sigma> 0.5e-6 </cost_sigma>
+
+    <robot_sphere_r> 0.0 </robot_sphere_r>
+
+    <stop_err> 1e-4 </stop_err>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
+
+</parameters>
+</Experiment3>
+
+<Experiment4>
+<parameters>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
+    
+    <start_pos>
+        <x>-3.0</x>
+        <y>-3.0</y>
+        <z>-3.0</z>
+        <vx>2.0</vx>
+        <vy>2.0</vy>
+        <vz>2.0</vz>
+    </start_pos>
+
+    <goal_pos>
+        <x>6.0</x>
+        <y>6.0</y>
+        <z>6.0</z>
+        <vx>2.0</vx>
+        <vy>2.0</vy>
+        <vz>2.0</vz>
+    </goal_pos>
+
+    <nt> 50 </nt>
+
+    <speed> 0.18 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1e-6 </eta>
+
+    <eps_sdf> 0.7 </eps_sdf>
+
+    <robot_sphere_r> 0.0 </robot_sphere_r>
+    <cost_sigma> 1.2e-6 </cost_sigma>
+    <stop_err> 1e-4 </stop_err>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
+
+</parameters>
+</Experiment4> -->

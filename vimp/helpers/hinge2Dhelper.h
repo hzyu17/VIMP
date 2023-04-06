@@ -1,7 +1,7 @@
 /**
- * @file hingeloss_helper.h
+ * @file hinge2Dhelper.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Helper functions for hing loss in a sdf
+ * @brief Helper functions for hing loss in a 2D sdf
  * @version 0.1
  * @date 2022-08-16
  * 
@@ -12,7 +12,7 @@
 #include <gpmp2/obstacle/ObstacleCost.h>
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include "data_io.h"
-#include "../helpers/eigen_wrapper.h"
+#include "eigen_wrapper.h"
 
 using namespace Eigen;
 using namespace vimp;
