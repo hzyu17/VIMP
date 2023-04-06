@@ -90,7 +90,7 @@ class PlanarArmSDFPGCS{
             _p_planar_sdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), _arm_model, sdf, 0.0, _eps));
         }
 
-        inline gpmp2::ArmModel ArmModel() const { return _arm_model; }
+        inline gpmp2::ArmModel arm_model() const { return _arm_model; }
         inline std::shared_ptr<gpmp2::PlanarSDF> sdf() const { return _psdf; }
         inline int ndof() const {return _ndof;}
         inline int nlinks() const {return _nlinks;}

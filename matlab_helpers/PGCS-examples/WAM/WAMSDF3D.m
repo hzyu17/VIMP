@@ -8,7 +8,7 @@ import gpmp2.*
 
 addpath("../../tools")                      
 %% dataset
-dataset = generate3Ddataset_1('SmallDemo');
+dataset = generate3Ddataset_1('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
@@ -24,7 +24,7 @@ for z = 1:size(field, 3)
     sdf.initFieldData(z-1, field(:,:,z)');
 end
 
-%% plot 3D SDF
+% plot 3D SDF
 x0 = 50;
 y0 = 50;
 width = 800;
@@ -38,13 +38,22 @@ grid on
 hold on 
 view(3)
 plotMap3D(dataset.corner_idx, origin, cell_size);
-xlim([-2, 2])
-ylim([-2, 2])
-zlim([-2, 2])
+xlim([0.2, 1.4])
+ylim([-1, 0.8])
+zlim([-0, 0.9])
 
 %% save SDF
 disp('saving sdf to .bin file...');
-sdf.saveSDF('pRSDF3D.bin');
+sdf.saveSDF('../3dSDFs/WAMDeskDataset.bin');
 
-% create the mesh for visualization
-   
+% %% create the mesh for visualization
+% [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);
+% X = reshape(X, [31*31*31, 1]);
+% Y = reshape(Y, [31*31*31, 1]);
+% Z = reshape(Z, [31*31*31, 1]);
+% csvwrite("gridX.csv", X);
+% csvwrite("gridY.csv", Y);
+% csvwrite("gridZ.csv", Z);
+
+% %% read mesh hinge 3D
+% max(meshhinge3D)

@@ -38,13 +38,13 @@ grid on
 hold on 
 view(3)
 plotMap3D(dataset.corner_idx, origin, cell_size);
-xlim([-10, 60])
-ylim([-10, 60])
-zlim([-10, 60])
+xlim([-20, 40])
+ylim([-20, 40])
+zlim([-10, 40])
 
 %% save SDF
 disp('saving sdf to .bin file...');
-sdf.saveSDF('../3dSDFs/pRSDF3D.bin');
+sdf.saveSDF('../3dSDFs/pRSDF3DMap2.bin');
 
 %% create the mesh for visualization
 [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);

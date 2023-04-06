@@ -9,20 +9,44 @@
  * 
  */
 
+#include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/ArmModel.h>
 #include <gpmp2/obstacle/SignedDistanceField.h>
+#include <gpmp2/obstacle/ObstacleSDFFactorArm.h>
 
 using namespace gpmp2;
+using ObsArmSDF = gpmp2::ObstacleSDFFactorArm;
+using SDF = gpmp2::SignedDistanceField;
+using sym = gtsam::Symbol;
 
 namespace vimp{
 
     class WamArmSDFExample{
         public:
-            WamArmSDFExample(const string& sdf_file){
-
-                _sdf = SignedDistanceField();
+            WamArmSDFExample(const string& sdf_file, double eps): _eps(eps){
+                _sdf = SDF();
                 _sdf.loadSDF(sdf_file);
+                generateArm();
+                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, 0.0, _eps));
+            }
 
+            WamArmSDFExample(double eps, double r): _eps(eps){
+                default_sdf();
+                generateArm();
+                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, r, _eps));
+            }
+
+            WamArmSDFExample(double eps): _eps(eps){
+                default_sdf();
+                generateArm();
+                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, 0.0, _eps));
+            }
+
+            void update_arm_sdf(double radius=0.0){
+                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, radius, _eps));
+            }
+
+            void generateArm(){
                 // WAM arm exmaple, only joint position, no rotation
                 gtsam::Vector7 a = (gtsam::Vector7() << 0.0, 0.0, 0.045, -0.045, 0.0, 0.0, 0.0).finished();
                 gtsam::Vector7 alpha = (gtsam::Vector7() << -M_PI/2.0, M_PI/2.0, -M_PI/2.0, M_PI/2.0, -M_PI/2.0, M_PI/2.0, 0.0).finished();
@@ -53,25 +77,45 @@ namespace vimp{
                 body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.15,  0.025,  0.13)));
                 body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(-0.15,  0.0,  0.13)));
 
-                _arm = ArmModel{arm, body_spheres};
-
+                _arm = gpmp2::ArmModel{arm, body_spheres};
             }
 
-            ArmModel arm_model(){
-                return _arm;
+            /**
+             * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
+             * */
+            std::tuple<VectorXd, MatrixXd> hinge_jac(const VectorXd& pose){
+                MatrixXd Jacobian;
+                VectorXd vec_err = _parm_sdf->evaluateError(pose, Jacobian);
+
+                return std::make_tuple(vec_err, Jacobian);
             }
 
-            SignedDistanceField sdf() const { return _sdf; }
+            void default_sdf(){
+                _sdf = SDF();
+                _sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin");
+            }
+
+            void update_sdf(const SDF& sdf){ 
+                _sdf = sdf; 
+                update_arm_sdf(0.0);
+            }
+            
+            SDF sdf() const { return _sdf; }
             int ndof() const {return _ndof; }
             int nlinks() const {return _nlinks; }
+            gpmp2::ArmModel arm_model(){ return _arm; }
 
         private:
-            ArmModel _arm;
-            SignedDistanceField _sdf;
-
+            gpmp2::ArmModel _arm;
+            SDF _sdf;
+            
             /// Arm robot
             int _ndof = 1;
             int _nlinks = 7;
+
+            // obstacle factor
+            std::shared_ptr<ObsArmSDF> _parm_sdf;
+            double _eps;
     };
 
 }// namespace

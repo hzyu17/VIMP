@@ -27,20 +27,19 @@ for z = 1:size(field, 3)
 end
 
 %% plot 3D SDF
-x0 = 50;
-y0 = 50;
-width = 800;
+x0 = 550;
+y0 = 550;
+width = 600;
 height = 550;
-figure(1)
 
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
+for i = 1:4 % 4 experiments
+    figure(i)
+    set(gcf,'position',[x0,y0,width,height])
+    tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
+    t.FontSize = 14;
 
-t.FontSize = 14;
-view(3)
-
-for i = 1:1 % 4 experiments
     nexttile
+    grid on
     hold on 
     prefix = ["map2/case"+num2str(i)+"/"];
     % % --- high temperature ---
@@ -51,11 +50,13 @@ for i = 1:1 % 4 experiments
     plot_3d_result(means, covs);
     
     % plot the goal position and cov
+    xlim([-20, 40])
+    ylim([-20, 40])
+    zlim([-10, 40])
     
-
-    xlim([-10, 45])
-    ylim([-10, 45])
-    zlim([-10, 45])
+    % camera angle
+    v = [-25 -15 10];
+    [caz,cel] = view(v);
 
     axis off;
 

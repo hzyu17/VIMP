@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <parameters>
+    <field_file>data/WAM/WAMDeskDataset.bin</field_file>
+    
+    <start_pos>
+        <1>-0.8</1>
+        <2>-1.70</2>
+        <3>1.64</3>
+        <4>1.29</4>
+        <5>1.1</5>
+        <6>-0.106</6>
+        <7>2.2</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>-0.0</1>
+        <2>0.94</2>
+        <3>0.00</3>
+        <4>1.6</4>
+        <5>0.0</5>
+        <6>-0.919</6>
+        <7>1.55</7>
+    </goal_pos>
+
+    <total_time> 2.0 </total_time>
+
+    <n_total_states> 15 </n_total_states>
+
+    <coeff_Qc> 1.0 </coeff_Qc>
+
+    <cost_sigma> 0.003 </cost_sigma>
+
+    <epsilon> 0.15 </epsilon>
+
+    <step_size> 0.35 </step_size>
+
+    <num_iter> 20 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+    <replanning> 0 </replanning>
+    <mean_file> none </mean_file>
+    <replanning_starting> 0 </replanning_starting>
+
+</parameters> -->
+
+<!-- <parameters>
+    <field_file>data/WAM/WAMDeskDataset.bin</field_file>
+    
+    <start_pos>
+        <1>-0.8</1>
+        <2>-1.70</2>
+        <3>1.64</3>
+        <4>1.29</4>
+        <5>1.1</5>
+        <6>-0.106</6>
+        <7>2.2</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>-0.0</1>
+        <2>0.94</2>
+        <3>0.00</3>
+        <4>1.6</4>
+        <5>0.0</5>
+        <6>-0.919</6>
+        <7>1.55</7>
+    </goal_pos>
+
+    <total_time> 2.0 </total_time>
+
+    <n_total_states> 15 </n_total_states>
+
+    <coeff_Qc> 1.0 </coeff_Qc>
+
+    <cost_sigma> 0.003 </cost_sigma>
+
+    <epsilon> 0.15 </epsilon>
+
+    <step_size> 0.35 </step_size>
+
+    <num_iter> 20 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+    <replanning> 0 </replanning>
+    <mean_file> none </mean_file>
+    <replanning_starting> 0 </replanning_starting>
+
+</parameters> -->
+
+
+<!-- replanning -->
+<Experiment1>
+<parameters>
+    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
+    
+    <start_pos>
+        <1>-0.8</1>
+        <2>-1.70</2>
+        <3>1.64</3>
+        <4>1.29</4>
+        <5>1.1</5>
+        <6>-0.106</6>
+        <7>2.2</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>-0.0</1>
+        <2>0.94</2>
+        <3>0.00</3>
+        <4>1.6</4>
+        <5>0.0</5>
+        <6>-0.919</6>
+        <7>1.55</7>
+    </goal_pos>
+
+    <nt> 50 </nt>
+
+    <speed> 0.05 </speed>
+    <state_cost_scale> 1e1 </state_cost_scale>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1e-5 </eta>
+
+    <eps_sdf> 0.15 </eps_sdf>
+
+    <cost_sigma> 1.48e-5 </cost_sigma>
+
+    <robot_sphere_r> 0.0 </robot_sphere_r>
+
+    <stop_err> 1e-4 </stop_err>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/WAM/case1/</saving_prefix>
+
+</parameters>
+</Experiment1>

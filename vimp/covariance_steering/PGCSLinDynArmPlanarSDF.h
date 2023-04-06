@@ -17,32 +17,32 @@ using namespace Eigen;
 
 namespace vimp{
 
-class PGCSLinDynPRModelPlanarSDF: public ProxGradCovSteerLinDyn{
+class PGCSLinArmPlanarSDF: public ProxGradCovSteerLinDyn{
 public:
-    PGCSLinDynPRModelPlanarSDF(const MatrixXd& A0, 
-                                const VectorXd& a0, 
-                                const MatrixXd& B, 
-                                double sig,
-                                int nt,
-                                double eta,
-                                double eps,
-                                const VectorXd& z0,
-                                const MatrixXd& Sig0,
-                                const VectorXd& zT,
-                                const MatrixXd& SigT,
-                                const std::shared_ptr<LinearDynamics>& pdyn,
-                                double eps_sdf,
-                                const gpmp2::PlanarSDF& sdf,
-                                double sphere_r,
-                                double sig_obs,
-                                double Vscale=1.0):
-                            ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
-                            _eps_sdf(eps_sdf),
-                            _sdf(sdf),
-                            _invSig_obs(1.0 / sig_obs),
-                            _ArmSdf(eps_sdf, sphere_r){
-                                _ArmSdf.update_sdf(sdf);
-                            }
+    PGCSLinArmPlanarSDF(const MatrixXd& A0, 
+                            const VectorXd& a0, 
+                            const MatrixXd& B, 
+                            double sig,
+                            int nt,
+                            double eta,
+                            double eps,
+                            const VectorXd& z0,
+                            const MatrixXd& Sig0,
+                            const VectorXd& zT,
+                            const MatrixXd& SigT,
+                            const std::shared_ptr<LinearDynamics>& pdyn,
+                            double eps_sdf,
+                            const gpmp2::PlanarSDF& sdf,
+                            double sphere_r,
+                            double sig_obs,
+                            double Vscale=1.0):
+                        ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
+                        _eps_sdf(eps_sdf),
+                        _sdf(sdf),
+                        _invSig_obs(1.0 / sig_obs),
+                        _ArmSdf(eps_sdf, sphere_r){
+                            _ArmSdf.update_sdf(sdf);
+                        }
 
     void update_Qrk() override{
         MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
@@ -64,7 +64,7 @@ public:
             temp = (Aki - hAi).transpose();
 
             // Compute hinge loss and its gradients
-            int n_spheres = _ArmSdf.ArmModel().nr_body_spheres();
+            int n_spheres = _ArmSdf.arm_model().nr_body_spheres();
             std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
             hingeloss_gradient = _ArmSdf.hinge_jac(zi.block(0,0,2,1));
