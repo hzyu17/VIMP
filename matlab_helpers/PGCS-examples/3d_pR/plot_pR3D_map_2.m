@@ -7,6 +7,7 @@ import gpmp2.*
 addpath("../")
 addpath("../../error_ellipse");
 addpath("../../../matlab_helpers/");
+addpath("../../../matlab_helpers/tools");
 
 %% generate SDF
 % dataset
@@ -33,10 +34,11 @@ width = 600;
 height = 550;
 
 for i = 1:4 % 4 experiments
+    i
     figure(i)
     set(gcf,'position',[x0,y0,width,height])
     tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
-    t.FontSize = 14;
+    t.FontSize = 16;
 
     nexttile
     grid on
@@ -50,7 +52,7 @@ for i = 1:4 % 4 experiments
     plot_3d_result(means, covs);
     
     % plot the goal position and cov
-    xlim([-20, 40])
+    xlim([-15, 40])
     ylim([-20, 40])
     zlim([-10, 40])
     
@@ -58,6 +60,10 @@ for i = 1:4 % 4 experiments
     v = [-25 -15 10];
     [caz,cel] = view(v);
 
-    axis off;
+    set(gca,'fontsize',16);
+    xlabel('Position $x$','Interpreter','latex'),ylabel('Position $y$','Interpreter','latex');
+    zlabel('Position $z$','Interpreter','latex');
+
+%     axis off;
 
 end

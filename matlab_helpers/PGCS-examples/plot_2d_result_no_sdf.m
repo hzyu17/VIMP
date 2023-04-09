@@ -1,11 +1,9 @@
-function output = plot_2d_result(sdfmap, zk, Sk)
+function output = plot_2d_result_no_sdf(zk, Sk)
 output = 1;
 
 cell_size = 0.1;
 origin_x = -20;
 origin_y = -10;
-
-plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
 
 nt = size(zk, 2);
 zk_pos = zk(1:2, :);

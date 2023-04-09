@@ -14,7 +14,7 @@
     <goal_pos>
         <x>35.0</x>
         <y>35.0</y>
-        <z>35.0</z>
+        <z>27.0</z>
         <vx>0.0</vx>
         <vy>0.0</vy>
         <vz>0.0</vz>
@@ -22,17 +22,17 @@
     
     <nt> 80 </nt>
 
-    <speed> 0.03 </speed>
+    <speed> 0.05 </speed>
     <state_cost_scale> 10.0 </state_cost_scale>
 
     <sig0> 0.01 </sig0>
     <sigT> 0.05 </sigT>
 
-    <eta> 1e-5 </eta>
+    <eta> 5e-5 </eta>
 
     <eps_sdf> 0.7 </eps_sdf>
 
-    <cost_sigma> 1e-6 </cost_sigma>
+    <cost_sigma> 1e-5 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 
@@ -67,17 +67,17 @@
     
     <nt> 80 </nt>
 
-    <speed> 0.03 </speed>
+    <speed> 0.05 </speed>
     <state_cost_scale> 10.0 </state_cost_scale>
 
     <sig0> 0.01 </sig0>
     <sigT> 0.05 </sigT>
 
-    <eta> 1e-5 </eta>
+    <eta> 5e-5 </eta>
 
     <eps_sdf> 0.7 </eps_sdf>
 
-    <cost_sigma> 1e-6 </cost_sigma>
+    <cost_sigma> 1e-5 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 
@@ -96,7 +96,7 @@
         <x>30.0</x>
         <y>-10.0</y>
         <z>-5.0</z>
-        <vx>2.0</vx>
+        <vx>-2.0</vx>
         <vy>2.0</vy>
         <vz>2.0</vz>
     </start_pos>
@@ -112,17 +112,17 @@
     
     <nt> 80 </nt>
 
-    <speed> 0.03 </speed>
+    <speed> 0.05 </speed>
     <state_cost_scale> 10.0 </state_cost_scale>
 
     <sig0> 0.01 </sig0>
     <sigT> 0.05 </sigT>
 
-    <eta> 1e-5 </eta>
+    <eta> 5e-5 </eta>
 
     <eps_sdf> 0.7 </eps_sdf>
 
-    <cost_sigma> 1e-6 </cost_sigma>
+    <cost_sigma> 1e-5 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 
@@ -142,7 +142,7 @@
         <y>25.0</y>
         <z>0.0</z>
         <vx>2.0</vx>
-        <vy>2.0</vy>
+        <vy>-2.0</vy>
         <vz>2.0</vz>
     </start_pos>
 
@@ -157,17 +157,17 @@
     
     <nt> 80 </nt>
 
-    <speed> 0.03 </speed>
+    <speed> 0.05 </speed>
     <state_cost_scale> 10.0 </state_cost_scale>
 
     <sig0> 0.01 </sig0>
     <sigT> 0.05 </sigT>
 
-    <eta> 1e-5 </eta>
+    <eta> 5e-5 </eta>
 
     <eps_sdf> 0.7 </eps_sdf>
 
-    <cost_sigma> 1e-6 </cost_sigma>
+    <cost_sigma> 7e-4 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 

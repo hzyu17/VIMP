@@ -31,7 +31,7 @@ int main(){
     doc.parse<0>(xmlFile.data());
 
     // loop for 4 cases
-    for (int i=1; i<2; i++){
+    for (int i=1; i<4; i++){
         std::string ExpNodeName = "Experiment" + std::to_string(i);
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* ExpNode = doc.first_node(c_expname);
