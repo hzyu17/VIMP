@@ -99,19 +99,23 @@ y0 = 50;
 width = 400;
 height = 350;
 
-start_conf = [-0.8,-1.70,1.64,1.29,1.1,-0.106,2.2;
-                            -0.9,-1.70,1.34,1.19,1.1,-0.126,1.2;
-                            -1.8,-1.50,1.84,1.29,1.5,0.26,0.2];
-end_conf = [-0.0,0.94,0,1.6,0,-0.919,1.55;
-                        -0.7,1.1,0.1,1.0,0,-0.619,1.75;
-                        -0.0,0.6,-0.5,0.2,0.2,0.8,1.15];
+start_conf = [-0.8,    -1.70,   1.64,  1.29,   1.1,    -0.106,     2.2;
+                            -0.9,    -1.70,   1.34,  1.19,   0.8,    -0.126,     2.5;
+                            -1.8,    -1.50,   1.84,  1.29,   1.5,    0.26,         0.2];
+end_conf = [-0.0,       0.94,     0,       1.6,     0,       -0.919,     1.55;
+                          -0.7,     1.35,     1.2,      1.0,     -0.7,    -0.1,           1.2;
+                          -0.0,        0.6,       -0.5,   0.2,    0.2,    0.8,           1.15];
 
-for i = 1:3 % 4 experiments
-    i
+for i_exp = 1:1 % 4 experiments
+    i_exp
     
-    prefix = ["case"+num2str(i)+"/"];
+    prefix = ["case"+num2str(i_exp)+"/"];
 
-    % % --- high temperature ---
+    % read gpmp2 results
+    gpmp2_confs = csvread([prefix+"/zk_gpmp2.csv"]);
+    [nx_gpmp2, nt_gpmp2] = size(gpmp2_confs);
+
+    %  read pgcs results
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
 
@@ -127,6 +131,16 @@ for i = 1:3 % 4 experiments
     view(3)
     plotMap3D(dataset.corner_idx, origin, cell_size);
     
+    % plot gpmp2 results
+    for j = 1:nt_gpmp2
+        % gradual changing colors
+        alpha = (j / nt_gpmp2)^(1.15);
+        color = [0, 1, 1, 0.5];
+        % means
+        plotArm3D(arm.fk_model(), gpmp2_confs(:, j), color, 4, true);
+    end
+
+    % plot pgcs results
     for j = 1:nt
         % gradual changing colors
         alpha = (j / nt)^(1.15);
@@ -134,15 +148,17 @@ for i = 1:3 % 4 experiments
         % means
         plotArm3D(arm.fk_model(), means(:, j), color, 4, true);
     end
-    plotArm3D(arm.fk_model(), start_conf(i,1:end)', 'r', 6, true);
+
+    plotArm3D(arm.fk_model(), start_conf(i_exp,1:end)', 'r', 6, true);
     for jj=1:5
-        plotArm3D(arm.fk_model(), end_conf(i,1:end)', 'g', 6, true);
+        plotArm3D(arm.fk_model(), end_conf(i_exp,1:end)', 'g', 6, true);
     end
     axis off;
     xlim([-1, 1.4])
     ylim([-1, 1.0])
     zlim([-0.8, 0.9])
-
+    
+    % ======================= plot configuration space marginals =====================
     % q1 q2 q3
     figure
     set(gcf,'position',[x0,y0,width,height])
@@ -152,13 +168,17 @@ for i = 1:3 % 4 experiments
     grid on
     plot_3d_result(means(1:3,1:end), covs(1:3,1:3,1:end));
 
+    % gpmp2 q1 q2 q3
+    for i_gpmp2 = 1:nt_gpmp2
+        scatter3(gpmp2_confs(1, i_gpmp2), gpmp2_confs(2, i_gpmp2), gpmp2_confs(3, i_gpmp2), 20, 'blue', 'filled','d');
+    end
     set(gca,'fontsize',16);
     xlabel('Joint $q_1$','Interpreter','latex'),ylabel('Joint $q_2$','Interpreter','latex');
     zlabel('Joint $q_3$','Interpreter','latex');
     
-    xlim([-2, 2])
-    ylim([-2, 2])
-    zlim([-2, 2])
+%     xlim([-2, 2])
+%     ylim([-2, 2])
+%     zlim([-2, 2])
     
     % q4 q5
     figure
@@ -169,11 +189,15 @@ for i = 1:3 % 4 experiments
     hold on
     plot_2d_result_no_sdf(means(4:5,1:end), covs(4:5,4:5,1:end));
     
+    for i_gpmp2 = 1:nt_gpmp2
+        scatter(gpmp2_confs(4, i_gpmp2), gpmp2_confs(5, i_gpmp2), 20, 'blue', 'filled','d');
+    end
+
     set(gca,'fontsize',16);
     xlabel('Joint $q_4$','Interpreter','latex'),ylabel('Joint $q_5$','Interpreter','latex');
 
-    xlim([0, 3])
-    ylim([-1.5, 2])
+%     xlim([0, 3])
+%     ylim([-1.5, 2])
 
     % q6 q7
     figure
@@ -184,11 +208,15 @@ for i = 1:3 % 4 experiments
     hold on
     plot_2d_result_no_sdf(means(6:7,1:end), covs(6:7,6:7,1:end));
     
+    for i_gpmp2 = 1:nt_gpmp2
+        scatter(gpmp2_confs(6, i_gpmp2), gpmp2_confs(7, i_gpmp2), 20, 'blue', 'filled','d');
+    end
+
     set(gca,'fontsize',16);
     xlabel('Joint $q_6$','Interpreter','latex'),ylabel('Joint $q_7$','Interpreter','latex');
     
-    xlim([-2, 0.8])
-    ylim([-1, 3])
+%     xlim([-2, 0.8])
+%     ylim([-1, 3])
    
 end
 

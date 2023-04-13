@@ -30,20 +30,14 @@ namespace vimp{
                 _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, 0.0, _eps));
             }
 
-            WamArmSDFExample(double eps, double r): _eps(eps){
-                default_sdf();
-                generateArm();
-                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, r, _eps));
-            }
-
             WamArmSDFExample(double eps): _eps(eps){
                 default_sdf();
                 generateArm();
                 _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, 0.0, _eps));
             }
 
-            void update_arm_sdf(double radius=0.0){
-                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, radius, _eps));
+            void update_arm_sdf(){
+                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, 0.0, _eps));
             }
 
             void generateArm(){
@@ -55,6 +49,29 @@ namespace vimp{
             
                 // body spheres    
                 BodySphereVector body_spheres;
+                // body_spheres.push_back(BodySphere(0, 0.15, gtsam::Point3(0.0,  0.0,  0.0)));
+
+                // body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.2)));
+                // body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.3)));
+                // body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.4)));
+                // body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.5)));
+
+                // body_spheres.push_back(BodySphere(2, 0.06, gtsam::Point3(0.0,  0.0,  0.0)));
+
+                // body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.1)));
+                // body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.2)));
+                // body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.3)));
+
+                // body_spheres.push_back(BodySphere(5, 0.06, gtsam::Point3(0.0,  0.0,  0.1)));
+
+                // body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.1, -0.025,  0.08)));
+                // body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.1,  0.025,  0.08)));
+                // body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(-0.1,  0.0,  0.08)));
+                // body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.15, -0.025,  0.13)));
+                // body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.15,  0.025,  0.13)));
+                // body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(-0.15,  0.0,  0.13)));
+
+                double r = 0.0;
                 body_spheres.push_back(BodySphere(0, 0.15, gtsam::Point3(0.0,  0.0,  0.0)));
 
                 body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.2)));
@@ -62,20 +79,20 @@ namespace vimp{
                 body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.4)));
                 body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.5)));
 
-                body_spheres.push_back(BodySphere(2, 0.06, gtsam::Point3(0.0,  0.0,  0.0)));
+                body_spheres.push_back(BodySphere(2, r, gtsam::Point3(0.0,  0.0,  0.0)));
 
-                body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.1)));
-                body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.2)));
-                body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.3)));
+                body_spheres.push_back(BodySphere(3, r, gtsam::Point3(0.0,  0.0,  0.1)));
+                body_spheres.push_back(BodySphere(3, r, gtsam::Point3(0.0,  0.0,  0.2)));
+                body_spheres.push_back(BodySphere(3, r, gtsam::Point3(0.0,  0.0,  0.3)));
 
-                body_spheres.push_back(BodySphere(5, 0.06, gtsam::Point3(0.0,  0.0,  0.1)));
+                body_spheres.push_back(BodySphere(5, r, gtsam::Point3(0.0,  0.0,  0.1)));
 
-                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.1, -0.025,  0.08)));
-                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.1,  0.025,  0.08)));
-                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(-0.1,  0.0,  0.08)));
-                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.15, -0.025,  0.13)));
-                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.15,  0.025,  0.13)));
-                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(-0.15,  0.0,  0.13)));
+                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.1, -0.025,  0.08)));
+                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.1,  0.025,  0.08)));
+                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(-0.1,  0.0,  0.08)));
+                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.15, -0.025,  0.13)));
+                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.15,  0.025,  0.13)));
+                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(-0.15,  0.0,  0.13)));
 
                 _arm = gpmp2::ArmModel{arm, body_spheres};
             }
@@ -83,9 +100,9 @@ namespace vimp{
             /**
              * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
              * */
-            std::tuple<VectorXd, MatrixXd> hinge_jac(const VectorXd& pose){
-                MatrixXd Jacobian;
-                VectorXd vec_err = _parm_sdf->evaluateError(pose, Jacobian);
+            std::tuple<Eigen::VectorXd, Eigen::MatrixXd> hinge_jac(const Eigen::VectorXd& pose){
+                Eigen::MatrixXd Jacobian;
+                Eigen::VectorXd vec_err = _parm_sdf->evaluateError(pose, Jacobian);
 
                 return std::make_tuple(vec_err, Jacobian);
             }
@@ -97,7 +114,7 @@ namespace vimp{
 
             void update_sdf(const SDF& sdf){ 
                 _sdf = sdf; 
-                update_arm_sdf(0.0);
+                update_arm_sdf();
             }
             
             SDF sdf() const { return _sdf; }

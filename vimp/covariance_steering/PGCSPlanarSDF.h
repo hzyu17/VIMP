@@ -36,7 +36,7 @@ public:
                     double Vscale=1.0): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
                                         _eps_sdf(eps_sdf),
                                         _sdf(sdf),
-                                        _invSig_obs(1.0 / sig_obs){}
+                                        _Sig_obs(sig_obs){}
 
 
     void update_Qrk() override{
@@ -76,12 +76,12 @@ public:
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
             // if (hinge > 0){
-            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _invSig_obs;
+            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
             // }
             // Qki
             Qki = _state_cost_scale * Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
-            rki = _state_cost_scale * grad_h * hinge * _invSig_obs * _eta / (1.0 + _eta) +  nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = _state_cost_scale * grad_h * hinge * _Sig_obs * _eta / (1.0 + _eta) +  nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
@@ -133,7 +133,7 @@ public:
 protected:
     gpmp2::PlanarSDF _sdf;
     double _eps_sdf;
-    double _invSig_obs; // The inverse of Covariance matrix related to the obs penalty. 
+    double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.
 };
 }

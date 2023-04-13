@@ -38,11 +38,31 @@ public:
                             ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
                             _eps_sdf(eps_sdf),
                             _sdf(sdf),
-                            _invSig_obs(1.0 / sig_obs),
+                            _Sig_obs(sig_obs),
                             _pRsdf(eps_sdf){
                                 _pRsdf.update_sdf(sdf);
                             }
 
+
+    double total_hingeloss(){
+        double total_hingeloss = 0;
+        std::pair<double, VectorXd> hingeloss_gradient;
+        MatrixXd zi(_nx, 1);
+        for (int i=0; i<_nt; i++){
+            zi = _ei.decompress3d(_zkt, _nx, 1, i);
+            double zi_x = zi(0), zi_y = zi(1);
+            MatrixXd J_hxy(1, _nx/2);
+            hingeloss_gradient = hingeloss_gradient_point(zi_x, zi_y, _sdf, _eps_sdf, J_hxy);
+            double hinge = std::get<0>(hingeloss_gradient);
+            total_hingeloss += hinge;
+        }
+        return total_hingeloss;
+    }
+
+    double total_control_energy(){
+        double total_E = 0;
+        
+    }
 
     void update_Qrk() override{
         MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
@@ -88,12 +108,12 @@ public:
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
             // if (hinge > 0){
-            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _invSig_obs;
+            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
             // }
             // Qki
             Qki = _state_cost_scale * Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
-            rki = _state_cost_scale * grad_h * hinge * _invSig_obs * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = _state_cost_scale * grad_h * hinge * _Sig_obs * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
@@ -108,7 +128,7 @@ protected:
     gpmp2::PlanarSDF _sdf;
     PlanarPointRobotSDFPGCS _pRsdf;
     double _eps_sdf;
-    double _invSig_obs; // The inverse of Covariance matrix related to the obs penalty. 
+    double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.
 };
 }

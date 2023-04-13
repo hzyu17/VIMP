@@ -103,13 +103,12 @@ if r==3 & c==3
   Cyz = C(2:3,2:3);
   Czx = C([3 1],[3 1]);
 
-  [x,y,z] = getpoints(Cxy,prop.clip);
-  h1=plot3(x0+k*x,y0+k*y,z0+k*z,prop.style);hold on
-  [y,z,x] = getpoints(Cyz,prop.clip);
-  h2=plot3(x0+k*x,y0+k*y,z0+k*z,prop.style);hold on
-  [z,x,y] = getpoints(Czx,prop.clip);
-  h3=plot3(x0+k*x,y0+k*y,z0+k*z,prop.style);hold on
-
+%   [x,y,z] = getpoints(Cxy,prop.clip);
+%   h1=plot3(x0+k*x,y0+k*y,z0+k*z,prop.style);hold on
+%   [y,z,x] = getpoints(Cyz,prop.clip);
+%   h2=plot3(x0+k*x,y0+k*y,z0+k*z,prop.style);hold on
+%   [z,x,y] = getpoints(Czx,prop.clip);
+%   h3=plot3(x0+k*x,y0+k*y,z0+k*z,prop.style);hold on
   
   [eigvec,eigval] = eig(C);
 
@@ -119,12 +118,13 @@ if r==3 & c==3
   X(:) = scale*(k*XYZ(:,1)+x0);
   Y(:) = scale*(k*XYZ(:,2)+y0);
   Z(:) = scale*(k*XYZ(:,3)+z0);
-  h4=surf(X,Y,Z,'edgecolor','none','facecolor','red', 'FaceAlpha',0.3);
-%   colormap summer
+  h4=surf(X,Y,Z,'edgecolor','none','LineStyle','none','facecolor','red', 'FaceAlpha',0.01);
+    hold on
+    h1=plot3(x0,y0,z0,prop.style);
+  %   colormap summer
 %     shading interp
 %   colormap gray
-  alpha(0.3)
-  camlight
+%   camlight
   if nargout
     h=[h1 h2 h3 h4];
   end

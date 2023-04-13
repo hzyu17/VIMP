@@ -26,7 +26,7 @@ int main(){
     MatrixXd Sig0(nx,nx), SigT(nx,nx);
 
     /// reading XML configs
-    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/pgcs/wam_arm.xml"); // Default template is char
+    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/pgcs/wam_arm_Hess.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
 
@@ -39,9 +39,9 @@ int main(){
 
         std::string sdf_file = static_cast<std::string>(paramNode->first_node("sdf_file")->value());
         double eps_sdf = atof(paramNode->first_node("eps_sdf")->value());
-        double sphere_r = atof(paramNode->first_node("robot_sphere_r")->value());
         double speed = atof(paramNode->first_node("speed")->value());
         double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
+        int max_iter = atof(paramNode->first_node("max_iter")->value());
         int nt = atoi(paramNode->first_node("nt")->value());
 
         double sig = speed * nt;
@@ -93,7 +93,7 @@ int main(){
 
         double eta = atof(paramNode->first_node("eta")->value());
         double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
-        PGCSLinDynArmSDF pgcs_lin_sdf(A0, a0, B0, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sphere_r, sig_obs, Vscale);
+        PGCSLinDynArmSDF pgcs_lin_sdf(A0, a0, B0, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale, max_iter);
 
         std::tuple<MatrixXd, MatrixXd> res_Kd;
 

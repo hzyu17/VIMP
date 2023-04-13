@@ -8,6 +8,17 @@ import gtsam.*
 import gpmp2.*
 
 
+% 3 configurations
+start_confs = [-0.8,    -1.70,   1.64,  1.29,   1.1,    -0.106,     2.2;
+                            -0.9,    -1.70,   1.34,  1.19,   0.8,    -0.126,     2.5;
+                            -1.8,    -1.50,   1.84,  1.29,   1.5,    0.26,         0.2];
+end_confs = [-0.0,       0.94,     0,       1.6,     0,       -0.919,     1.55;
+                          -0.7,     1.35,     1.2,      1.0,     -0.7,    -0.1,           1.2;
+                          -0.0,        0.6,       -0.5,   0.2,    0.2,    0.8,           1.15];
+
+for i_exp = 1:3 % 4 experiments
+    i_exp
+
 %% dataset
 dataset = generate3Ddataset('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
@@ -22,13 +33,13 @@ disp('calculating signed distance field done');
 % arm: WAM arm
 arm = generateArm('WAMArm');
 
-start_conf = [-0.8,-1.70,1.64,1.29,1.1,-0.106,2.2]';
-end_conf = [-0.0,0.94,0,1.6,0,-0.919,1.55]';
+start_conf = start_confs(i_exp,1:end)';
+end_conf = end_confs(i_exp,1:end)';
 start_vel = zeros(7,1);
 end_vel = zeros(7,1);
 
 % plot problem setting
-figure(1), hold on
+figure, hold on
 title('Problem Settings')
 plotMap3D(dataset.corner_idx, origin, cell_size);
 plotRobotModel(arm, start_conf)
@@ -41,7 +52,7 @@ hold off
 
 %% settings
 total_time_sec = 2;
-total_time_step = 10;
+total_time_step = 50;
 total_check_step = 100;
 delta_t = total_time_sec / total_time_step;
 check_inter = total_check_step / total_time_step - 1;
@@ -79,31 +90,6 @@ pause_time = total_time_sec / total_plot_step;
 
 %% initial traj
 init_values = initArmTrajStraightLine(start_conf, end_conf, total_time_step);
-
-% % plot initial traj
-% if plot_inter_traj
-%     plot_values = interpolateArmTraj(init_values, Qc_model, delta_t, plot_inter);
-% else
-%     plot_values = init_values;
-% end
-% 
-% % plot init values
-% figure(3),
-% hold on
-% title('Initial Values')
-% % plot world
-% plotMap3D(dataset.corner_idx, origin, cell_size);
-% for i=0:total_plot_step
-%     % plot arm
-%     conf = plot_values.atVector(symbol('x', i));
-%     plotPhysicalArm(arm, conf)
-%     % plot config
-%     set3DPlotRange(dataset)
-%     grid on, view(2)
-%     pause(pause_time)
-% end
-% hold off
-
 
 %% init optimization
 graph = NonlinearFactorGraph;
@@ -192,40 +178,17 @@ else
     plot_values = result;
 end
 
-% plot final values
-figure(4),
-clf, hold on
-title('Result Values')
-% plot world
-plotMap3D(dataset.corner_idx, origin, cell_size);
+% collect result configurations
+gpmp2_result_confs = zeros(7, total_plot_step+1);
 for i=0:total_plot_step
-    % plot arm
     conf = plot_values.atVector(symbol('x', i));
-    plotArm(arm.fk_model(), conf, 'b', 2)
-    % plot config
-    set3DPlotRange(dataset)
-    grid on, view(-5, 12)
-    pause(pause_time)
+    gpmp2_result_confs(1:7, i+1) = conf;
 end
-hold off
+prefix = ["case"+num2str(i_exp)+"/"];
+csvwrite([prefix+"zk_gpmp2.csv"], gpmp2_result_confs);
+    
 
-
-% plot final values
-figure(5),
-for i=0:total_plot_step
-    clf
-    hold on, view(-5, 12)
-    title('Result Values')
-    % plot world
-    plotMap3D(dataset.corner_idx, origin, cell_size);
-    % plot arm
-    conf = plot_values.atVector(symbol('x', i));
-    plotRobotModel(arm, conf)
-    % plot config
-    set3DPlotRange(dataset)
-    grid on, 
-    pause(pause_time)
 end
-hold off
+
 
 

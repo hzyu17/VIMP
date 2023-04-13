@@ -34,7 +34,8 @@ public:
                      const MatrixXd & Sig0,
                      const VectorXd & zT,
                      const MatrixXd & SigT,
-                     double Vscale=1.0): 
+                     double Vscale=1.0,
+                     int max_iteration=30): 
                      _ei(),
                      _nx(A0.rows()),
                      _nu(B.cols()),
@@ -62,6 +63,7 @@ public:
                      _SigT(SigT),
                      _Kt(_nu, _nx, _nt),
                      _dt(_nu, 1, _nt),
+                     _max_iter(max_iteration),
                      _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT)
                      {  
                         // Initialize the final time covariance
@@ -90,8 +92,8 @@ public:
         MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
         Ak_prev = _Akt;
         ak_prev = _akt;
-        int i_step = 0;
-        while (err > stop_err){
+        int i_step = 1;
+        while ((err > stop_err) && (i_step <= _max_iter)){
         // for (int i=0; i<200; i++){
             step(i_step);
             err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
@@ -126,6 +128,10 @@ public:
 
     void initialize_zk(){
         _zkt = _ei.linspace(_z0, _zT, _nt);
+    }
+
+    void set_max_iter(int max_iter){
+        _max_iter = max_iter;
     }
 
     /**
@@ -212,6 +218,7 @@ protected:
     int _nx, _nu, _nt;
     double _eta, _sig, _eps, _deltt;
     double _state_cost_scale;
+    int _max_iter;
 
     // All the variables are time variant (3d matrices)
     // iteration variables

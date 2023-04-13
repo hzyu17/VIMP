@@ -24,15 +24,15 @@
     <sig0> 0.01 </sig0>
     <sigT> 0.05 </sigT>
 
-    <eta> 1.3e-6 </eta>
+    <eta> 1e-6 </eta>
 
     <eps_sdf> 0.6 </eps_sdf>
 
-    <cost_sigma> 0.8e-6 </cost_sigma>
+    <cost_sigma> 2.75e5 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 
-    <stop_err> 0.9e-4 </stop_err>
+    <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/</saving_prefix>
 

@@ -198,6 +198,7 @@ clf, hold on
 title('Result Values')
 % plot world
 plotMap3D(dataset.corner_idx, origin, cell_size);
+
 for i=0:total_plot_step
     % plot arm
     conf = plot_values.atVector(symbol('x', i));

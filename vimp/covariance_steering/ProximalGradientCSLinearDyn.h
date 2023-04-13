@@ -34,7 +34,8 @@ public:
                             const VectorXd& zT,
                             const MatrixXd& SigT,
                             const std::shared_ptr<LinearDynamics>& pdyn,
-                            double Vscale=1.0): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT), 
+                            double Vscale=1.0,
+                            int max_iter=30): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, Vscale, max_iter), 
                                                 _pdyn(pdyn){
                                                     _hAkt = _sig * pdyn->At();
                                                     _Bt = _sig * pdyn->Bt();

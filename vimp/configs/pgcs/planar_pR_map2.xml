@@ -28,7 +28,7 @@
 
     <eps_sdf> 0.7 </eps_sdf>
 
-    <cost_sigma> 2e-6 </cost_sigma>
+    <cost_sigma> 5.6e4 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 
@@ -69,7 +69,7 @@
 
     <eps_sdf> 0.73 </eps_sdf>
 
-    <cost_sigma> 7e-6 </cost_sigma>
+    <cost_sigma> 6e4 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 
@@ -87,14 +87,14 @@
     <start_pos>
         <x>-7.0</x>
         <y>-5.0</y>
-        <vx> 2</vx>
-        <vy> 0</vy>
+        <vx> 0</vx>
+        <vy> 2</vy>
     </start_pos>
 
     <goal_pos>
         <x>13.0</x>
         <y>18.0</y>
-        <vx> -1</vx>
+        <vx> 2</vx>
         <vy> 0</vy>
     </goal_pos>
 
@@ -110,7 +110,7 @@
 
     <eps_sdf> 0.7 </eps_sdf>
 
-    <cost_sigma> 0.5e-6 </cost_sigma>
+    <cost_sigma> 9e4 </cost_sigma>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
 
@@ -152,7 +152,9 @@
     <eps_sdf> 0.7 </eps_sdf>
 
     <robot_sphere_r> 0.0 </robot_sphere_r>
-    <cost_sigma> 1.2e-6 </cost_sigma>
+
+    <cost_sigma> 4e4 </cost_sigma>
+
     <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case4/</saving_prefix>

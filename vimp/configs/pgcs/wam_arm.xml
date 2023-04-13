@@ -37,8 +37,6 @@
 
     <cost_sigma> 1.48e-5 </cost_sigma>
 
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
     <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/WAM/case1/</saving_prefix>
@@ -83,8 +81,6 @@
     <eps_sdf> 0.15 </eps_sdf>
 
     <cost_sigma> 1.48e-5 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
 
     <stop_err> 1e-4 </stop_err>
 
@@ -131,8 +127,6 @@
     <eps_sdf> 0.15 </eps_sdf>
 
     <cost_sigma> 1.48e-5 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
 
     <stop_err> 1e-4 </stop_err>
 

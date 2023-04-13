@@ -35,6 +35,9 @@ find_package(Matplot++ REQUIRED)
 # adept
 find_package(FastAD CONFIG REQUIRED)
 
+# argarse
+find_package(argparse REQUIRED)
+
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
 
 set(vimp_subdirs 
@@ -73,7 +76,7 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${GPMP2_INCLUDE_DIRS})
 include_directories(${GTSAM_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
+include_directories(${ARGPARSE_INCLUDE_DIRS})
 
 # Add all the source files in src/vimp as a separate executable
 file(GLOB_RECURSE VIMP_SOURCES src/vimp/*.cpp)
@@ -81,7 +84,7 @@ foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
     add_executable(${vimp_name} ${vimp_source})
     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} ${ARGPARSE_LIBRARIES})
 endforeach()
 
 # Add all the source files in src/pgcs as a separate executable
@@ -100,7 +103,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 # Recursively search for all test files in the subfolders
 file(GLOB_RECURSE TEST_SOURCES vimp_subdirs false */tests/*.cpp)
- 
+  
 # Loop through each test file and add it as a test case
 foreach(TEST_SOURCE ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
