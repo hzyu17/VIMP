@@ -87,7 +87,7 @@ public:
      * sovling a linear CS, and push forward the mean and covariances.
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
-    std::tuple<Matrix3D, Matrix3D> optimize(double stop_err){
+    virtual std::tuple<Matrix3D, Matrix3D> optimize(double stop_err){
         double err = 1;
         MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
         Ak_prev = _Akt;

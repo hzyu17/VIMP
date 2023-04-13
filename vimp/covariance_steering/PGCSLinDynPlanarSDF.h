@@ -12,6 +12,7 @@
 #include "ProximalGradientCSLinearDyn.h"
 #include "../robots/PlanarPointRobotSDF_pgcs.h"
 #include "../helpers/hinge2Dhelper.h"
+#include "../helpers/cost_helpers.h"
 
 using namespace Eigen;
 
@@ -34,12 +35,15 @@ public:
                         double eps_sdf,
                         const gpmp2::PlanarSDF& sdf,
                         double sig_obs,
-                        double Vscale=1.0):
+                        double Vscale=1.0,
+                        int max_iter = 30):
                             ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
                             _eps_sdf(eps_sdf),
                             _sdf(sdf),
                             _Sig_obs(sig_obs),
-                            _pRsdf(eps_sdf){
+                            _pRsdf(eps_sdf),
+                            _cost_helper(max_iter)
+                            {
                                 _pRsdf.update_sdf(sdf);
                             }
 
@@ -60,8 +64,39 @@ public:
     }
 
     double total_control_energy(){
-        double total_E = 0;
+        double total_Eu = 0;
+        MatrixXd zi(_nx, 1), Ki(_nu, _nx);
+        for (int i=0; i<_nt; i++){
+            zi = _ei.decompress3d(_zkt, _nx, 1, i);
+            Ki = _ei.decompress3d(_Kt, _nu, _nx, i);
+            VectorXd u_i = Ki * zi;
+            double E_ui = u_i.dot(u_i) * _deltt;
+            total_Eu += E_ui;
+        }
+        return total_Eu;
+    }
+
+    /**
+     * @brief The optimization process, including recording the costs.
+     * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
+     */
+    std::tuple<Matrix3D, Matrix3D> optimize(double stop_err) override{
+        double err = 1;
+        MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
+        Ak_prev = _Akt;
+        ak_prev = _akt;
+        int i_step = 1;
+        while ((err > stop_err) && (i_step <= _max_iter)){
+            step(i_step);
+            err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
+            Ak_prev = _Akt;
+            ak_prev = _akt;
+            i_step ++;
+            _cost_helper.add_cost(i_step, total_hingeloss(), total_control_energy());
+        }
+        _cost_helper.plot_costs();
         
+        return std::make_tuple(_Kt, _dt);
     }
 
     void update_Qrk() override{
@@ -124,11 +159,14 @@ public:
         
     }
 
+
+
 protected:
     gpmp2::PlanarSDF _sdf;
     PlanarPointRobotSDFPGCS _pRsdf;
     double _eps_sdf;
     double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.
+    CostHelper _cost_helper;
 };
 }

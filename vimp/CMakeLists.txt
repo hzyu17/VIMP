@@ -84,7 +84,7 @@ foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
     add_executable(${vimp_name} ${vimp_source})
     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} ${ARGPARSE_LIBRARIES})
+    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
 endforeach()
 
 # Add all the source files in src/pgcs as a separate executable
@@ -93,7 +93,7 @@ foreach(pgcs_source ${PGCS_SOURCES})
     get_filename_component(pgcs_name ${pgcs_source} NAME_WE)
     add_executable(${pgcs_name} ${pgcs_source})
     set_target_properties(${pgcs_name} PROPERTIES LINKER_LANGUAGE CXX)
-    target_link_libraries(${pgcs_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+    target_link_libraries(${pgcs_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} Matplot++::matplot)
     target_include_directories(${pgcs_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 endforeach()
 
