@@ -48,10 +48,10 @@ public:
             zi = _ei.decompress3d(_zkt, _nx, 1, i);
 
             // Compute hinge loss and its gradients
-            int n_spheres = _robot_sdf.pRmodel().nr_body_spheres();
+            int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
             std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
-            hingeloss_gradient = _robot_sdf.hinge_jac(zi.block(0,0,2,1));
+            hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,2,1));
             VectorXd hinge(n_spheres);
             hinge = std::get<0>(hingeloss_gradient);
 
@@ -125,10 +125,10 @@ public:
             temp = (Aki - hAi).transpose();
 
             // Compute hinge loss and its gradients
-            int n_spheres = _robot_sdf.pRmodel().nr_body_spheres();
+            int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
             std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
-            hingeloss_gradient = _robot_sdf.hinge_jac(zi.block(0,0,2,1));
+            hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,2,1));
             VectorXd hinge(n_spheres);
             MatrixXd J_hxy(n_spheres, _nx/2);
             hinge = std::get<0>(hingeloss_gradient);

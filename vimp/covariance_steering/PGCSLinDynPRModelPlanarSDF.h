@@ -16,6 +16,6 @@ using namespace Eigen;
 
 namespace vimp{
 
-    using PGCSLinDynPRModelPlanarSDF = PGCSLinDynRobotSDF<PlanarPointRobotSDFPGCS>;
+    using PGCSLinDynPRModelPlanarSDF = PGCSLinDynRobotSDF<PlanarPRSDFExample>;
 
 }

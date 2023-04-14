@@ -13,7 +13,7 @@
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/ArmModel.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
-#include "../helpers/data_io.h"
+
 
 using namespace Eigen;
 using namespace gpmp2;
@@ -78,7 +78,7 @@ class PlanarArmSDFPGCS{
         /**
          * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
          * */
-        std::tuple<VectorXd, MatrixXd> hinge_jac(const VectorXd& pose){
+        std::tuple<VectorXd, MatrixXd> hinge_jacobian(const VectorXd& pose){
             MatrixXd Jacobian;
             VectorXd vec_err = _p_planar_sdf_factor->evaluateError(pose, Jacobian);
 
@@ -90,7 +90,7 @@ class PlanarArmSDFPGCS{
             _p_planar_sdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), _arm_model, sdf, 0.0, _eps));
         }
 
-        inline gpmp2::ArmModel arm_model() const { return _arm_model; }
+        inline gpmp2::ArmModel RobotModel() const { return _arm_model; }
         inline std::shared_ptr<gpmp2::PlanarSDF> sdf() const { return _psdf; }
         inline int ndof() const {return _ndof;}
         inline int nlinks() const {return _nlinks;}
