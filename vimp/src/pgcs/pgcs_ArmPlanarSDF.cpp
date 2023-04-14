@@ -87,7 +87,7 @@ int main(){
 
         double eta = atof(paramNode->first_node("eta")->value());
         double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
-        PGCSLinArmPlanarSDF pgcs_lin_sdf(A0, a0, B0, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sphere_r, sig_obs, Vscale);
+        PGCSLinArmPlanarSDF pgcs_lin_sdf(A0, a0, B0, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sig_obs, Vscale);
         
         std::tuple<MatrixXd, MatrixXd> res_Kd;
 

@@ -23,13 +23,22 @@ public:
     RobotSDFBase(){}
     virtual ~RobotSDFBase(){}
 
-    virtual ROBOT RobotModel() const = 0;
-    virtual std::shared_ptr<SDF> sdf() const = 0;
-    virtual std::tuple<VectorXd, MatrixXd> hinge_jacobian(const VectorXd& pose) = 0;
     virtual void update_sdf(const SDF& sdf) = 0;
-    virtual int ndof() const = 0;
-    virtual int nlinks() const = 0;
     virtual void default_sdf() = 0;
+
+    /**
+     * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
+     * */
+    virtual std::tuple<VectorXd, MatrixXd> hinge_jacobian(const VectorXd& pose){
+        MatrixXd Jacobian;
+        VectorXd vec_err = _psdf_factor->evaluateError(pose, Jacobian);
+        return std::make_tuple(vec_err, Jacobian);
+    }
+
+    virtual inline ROBOT RobotModel() const { return _robot; }
+    virtual inline std::shared_ptr<SDF> sdf() const { return _psdf; }
+    virtual inline int ndof() const {return _ndof;}
+    virtual inline int nlinks() const {return _nlinks;}
 
 protected:
     ROBOT _robot;

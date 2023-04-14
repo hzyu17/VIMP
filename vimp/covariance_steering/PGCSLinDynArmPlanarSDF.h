@@ -18,7 +18,7 @@ using namespace Eigen;
 
 namespace vimp{
 
-using PGCSLinArmPlanarSDF = PGCSLinDynRobotSDF<PlanarArmSDFPGCS>;
+using PGCSLinArmPlanarSDF = PGCSLinDynRobotSDF<PlanarArmSDFExample>;
 
 // class PGCSLinArmPlanarSDF: public ProxGradCovSteerLinDyn{
 // public:

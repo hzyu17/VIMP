@@ -23,7 +23,7 @@ namespace vimp{
 
 class PlanarPRSDFExample: public RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>{
     public:
-        PlanarPRSDFExample(double epsilon): _eps(epsilon), _r(0.0){
+        PlanarPRSDFExample(double epsilon): _ndof(2), _nlinks(1), _eps(epsilon), _r(0.0){
             default_sdf();
             generate_pr_sdf(*_psdf, 0.0);
         }
@@ -45,41 +45,20 @@ class PlanarPRSDFExample: public RobotSDFBase<gpmp2::PointRobotModel, gpmp2::Pla
             gpmp2::PointRobot pR(_ndof, _nlinks);
             gpmp2::BodySphereVector body_spheres;
             body_spheres.push_back(gpmp2::BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
-            _pR_model = gpmp2::PointRobotModel(pR, body_spheres);
+            _robot = gpmp2::PointRobotModel(pR, body_spheres);
 
-            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, 0.0, _eps));
+            _psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));
         }
-
-        /**
-         * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
-         * */
-        std::tuple<VectorXd, MatrixXd> hinge_jacobian(const VectorXd& pose){
-            MatrixXd Jacobian;
-            VectorXd vec_err = _p_planar_sdf_factor->evaluateError(pose, Jacobian);
-
-            return std::make_tuple(vec_err, Jacobian);
-        }
-
+        
         inline void update_sdf(const gpmp2::PlanarSDF& sdf){
             _psdf = std::make_shared<gpmp2::PlanarSDF>(sdf);
-            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, 0.0, _eps));
+            _psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));
         }
 
-        inline gpmp2::PointRobotModel RobotModel() const { return _pR_model; }
-        inline std::shared_ptr<gpmp2::PlanarSDF> sdf() const { return _psdf; }
-        inline int ndof() const {return _ndof;}
-        inline int nlinks() const {return _nlinks;}
-
         public:
-            gpmp2::PointRobotModel _pR_model;
-            std::shared_ptr<gpmp2::PlanarSDF> _psdf;
-            
-            std::shared_ptr<pRSDF> _p_planar_sdf_factor;
-
             /// 2D point robot
             int _ndof = 2;
             int _nlinks = 1;            
-
             double _eps, _r;
 
 };
