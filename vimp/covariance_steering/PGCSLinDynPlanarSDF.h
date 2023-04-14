@@ -82,19 +82,27 @@ public:
      */
     std::tuple<Matrix3D, Matrix3D> optimize(double stop_err) override{
         double err = 1;
-        MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
-        Ak_prev = _Akt;
-        ak_prev = _akt;
-        int i_step = 1;
-        while ((err > stop_err) && (i_step <= _max_iter)){
+        // MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
+        // Ak_prev = _Akt;
+        // ak_prev = _akt;
+        int i_step = 0;
+
+        double total_cost_prev = this->total_hingeloss() + this->total_control_energy();
+        double total_cost = 0.0, hingeloss = 0.0, control_energy=0.0;
+        while ((err > stop_err) && (i_step < _max_iter)){
             step(i_step);
-            err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
-            Ak_prev = _Akt;
-            ak_prev = _akt;
+            // err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
+            hingeloss = this->total_hingeloss();
+            control_energy = this->total_control_energy();
+            total_cost = hingeloss + control_energy;
+            err = std::abs(total_cost - total_cost_prev);
+            
+            _cost_helper.add_cost(i_step, hingeloss, control_energy);
+            total_cost_prev = total_cost;
+            
             i_step ++;
-            _cost_helper.add_cost(i_step, total_hingeloss(), total_control_energy());
         }
-        _cost_helper.plot_costs();
+        // _cost_helper.plot_costs();
         
         return std::make_tuple(_Kt, _dt);
     }

@@ -12,29 +12,33 @@
 #include <matplot/matplot.h>
 
 using namespace std;
+using namespace matplot;
 
 namespace vimp{
 class CostHelper{
 public:
     CostHelper(){}
+    ~CostHelper(){}
     CostHelper(int max_iter):_max_iter(max_iter), 
                              _control_energy_costs(max_iter),
                              _collision_costs(max_iter),
                              _total_costs(max_iter)
     {
-        _control_energy_costs.assign(max_iter, 0);
-        _collision_costs.assign(max_iter, 0);
-        _total_costs.assign(max_iter, 0);
+        for (int i=0; i< _max_iter; i++){
+            _control_energy_costs[i] = 0.0;
+            _collision_costs[i] = 0.0;
+            _total_costs[i] = 0.0;
+        }
     }
 
-    void add_cost(int i, double col_cost, double control_cost){
+    void add_cost(const int & i, const double & col_cost, const double & control_cost){
         _control_energy_costs[i] = control_cost;
         _collision_costs[i] = col_cost;
         _total_costs[i] = control_cost + col_cost;
     }
 
     void plot_costs(){
-        using namespace matplot;
+        
         figure();
         std::vector<double> x = linspace(0, _max_iter, _max_iter);
         plot(x, _control_energy_costs, "r");
@@ -43,7 +47,6 @@ public:
         plot(x, _total_costs, "k");
         show();
     }
-    
 
 private:
     int _max_iter;

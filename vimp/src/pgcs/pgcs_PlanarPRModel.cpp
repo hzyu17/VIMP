@@ -31,20 +31,34 @@ int main(){
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
 
+    // Common parameters
+    std::string CommonNodeName = "Commons";
+    char * c_commons = CommonNodeName.data();
+    rapidxml::xml_node<>* CommonNode = doc.first_node(c_commons);
+    rapidxml::xml_node<>* commonParams = CommonNode->first_node("parameters");
+    double eps_sdf = atof(commonParams->first_node("eps_sdf")->value());
+    double speed = atof(commonParams->first_node("speed")->value());
+    int nt = atoi(commonParams->first_node("nt")->value());
+
+    double sig0 = atof(commonParams->first_node("sig0")->value());
+    double sigT = atof(commonParams->first_node("sigT")->value());
+
+    double eta = atof(commonParams->first_node("eta")->value());
+    double stop_err = atof(commonParams->first_node("stop_err")->value());
+    int max_iterations = atoi(commonParams->first_node("max_iter")->value());
+
     // loop for 4 cases
     for (int i=1; i<5; i++){
+        
         std::string ExpNodeName = "Experiment" + std::to_string(i);
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* ExpNode = doc.first_node(c_expname);
         rapidxml::xml_node<>* paramNode = ExpNode->first_node("parameters");
 
         std::string field_file = static_cast<std::string>(paramNode->first_node("field_file")->value());
-        double eps_sdf = atof(paramNode->first_node("eps_sdf")->value());
-        double sphere_r = atof(paramNode->first_node("robot_sphere_r")->value());
-        double speed = atof(paramNode->first_node("speed")->value());
+        
         double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
-        int nt = atoi(paramNode->first_node("nt")->value());
-
+        
         double sig = speed * nt;
 
         // construct sdf
@@ -71,8 +85,6 @@ int main(){
         double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
 
-        double sig0 = atof(paramNode->first_node("sig0")->value());
-        double sigT = atof(paramNode->first_node("sigT")->value());
 
         m0 << start_x, start_y, start_vx, start_vy;
         Sig0 = sig0 * Eigen::MatrixXd::Identity(nx, nx);
@@ -82,19 +94,19 @@ int main(){
 
         MatrixXd A0(nx, nx), B0(nx, nu), a0(nx, 1);
         A0.setZero(); B0.setZero(); a0.setZero();
-
+        
         std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(nx, nu, nt)};
         A0 = pdyn->A0() * sig;
         B0 = pdyn->B0() * sig;
         a0 = pdyn->a0() * sig;
 
-        double eta = atof(paramNode->first_node("eta")->value());
-        double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
-        PGCSLinDynPRModelPlanarSDF pgcs_lin_sdf(A0, a0, B0, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sphere_r, sig_obs, Vscale);
+        PGCSLinDynPRModelPlanarSDF pgcs_lin_sdf(A0, a0, B0, 
+                                                sig, nt, eta, eps, 
+                                                m0, Sig0, mT, SigT, 
+                                                pdyn, eps_sdf, sig_obs, max_iterations);
         
         std::tuple<MatrixXd, MatrixXd> res_Kd;
 
-        double stop_err = atof(paramNode->first_node("stop_err")->value());
         res_Kd = pgcs_lin_sdf.optimize(stop_err);
 
         MatrixXd Kt(nx*nx, nt), dt(nx, nt);
@@ -112,6 +124,7 @@ int main(){
 
         m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
         m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+
     }
     
 

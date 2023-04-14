@@ -23,17 +23,9 @@ namespace vimp{
 
 class PlanarPointRobotSDFPGCS{
     public:
-        PlanarPointRobotSDFPGCS(double epsilon): _eps(epsilon){
+        PlanarPointRobotSDFPGCS(double epsilon): _eps(epsilon), _r(0.0){
             default_sdf();
             generate_pr_sdf(*_psdf, 0.0);
-        }
-
-        PlanarPointRobotSDFPGCS(double epsilon, double r): _eps(epsilon), _r(r){
-            // default sdf
-            default_sdf();
-
-            // point robot with sdf
-            generate_pr_sdf(*_psdf, r);
         }
 
         void default_sdf(){
