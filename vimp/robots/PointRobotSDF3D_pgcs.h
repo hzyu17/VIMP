@@ -11,23 +11,26 @@
  */
 
 #include <gtsam/inference/Symbol.h>
-#include "../helpers/hinge3Dhelper.h"
-#include "../helpers/data_io.h"
-#include "../helpers/eigen_wrapper.h"
+#include <gpmp2/kinematics/PointRobotModel.h>
+#include <gpmp2/obstacle/ObstacleSDFFactor.h>
+#include "RobotSDFBase.h"
 
 using namespace Eigen;
 
+using PRModel = gpmp2::PointRobotModel;
 using SDF = gpmp2::SignedDistanceField;
+using pRSDF = gpmp2::ObstacleSDFFactor<PRModel>;
 
 namespace vimp{
 
-class PointRobotSDFPGCS{
+class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
     public:
-        PointRobotSDFPGCS(double epsilon): _eps(epsilon){
+        PointRobot3DSDFExample(double epsilon): _ndof(3), _nlinks(1), _eps(epsilon), _r(0.0){
             default_sdf();
+            generate_pr_sdf(*_psdf, 0.0);
         }
 
-        PointRobotSDFPGCS(double epsilon, double r): _eps(epsilon), _r(r){
+        PointRobot3DSDFExample(double epsilon, double r): _eps(epsilon), _r(r){
             // default sdf
             default_sdf();
         }
@@ -38,23 +41,25 @@ class PointRobotSDFPGCS{
             _psdf = std::make_shared<SDF>(sdf);
         }
 
-        /**
-         * Obstacle factor: case, returns the Vector of h(x) and the Jacobian matrix.
-         * */
-        std::tuple<VectorXd, MatrixXd> hinge_jac(const VectorXd& pose){
-            return hinge_gradient_point(pose, *_psdf, _eps);
+        void generate_pr_sdf(const SDF& sdf, double r){
+            /// Robot model
+            gpmp2::PointRobot pR(_ndof, _nlinks);
+            gpmp2::BodySphereVector body_spheres;
+            body_spheres.push_back(gpmp2::BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
+            _robot = PRModel(pR, body_spheres);
+
+            _psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));
         }
 
         inline void update_sdf(const SDF& sdf){
-            _psdf = std::make_shared<SDF>(sdf);  
+            _psdf = std::make_shared<SDF>(sdf);
+            _psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));
         }
 
-        inline SDF sdf() const { return *_psdf; }
-
         public:
-            EigenWrapper _ei;
-            std::shared_ptr<SDF> _psdf;    
-
+            /// 3D point robot
+            int _ndof = 3;
+            int _nlinks = 1;            
             double _eps, _r;
 
     };

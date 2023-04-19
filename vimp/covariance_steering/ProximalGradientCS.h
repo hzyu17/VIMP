@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include "LinearCovarianceSteering.h"
 #include <memory>
 #include <Eigen/QR> 
@@ -141,6 +143,7 @@ public:
         // for each time step
         _Qkt.setZero();
         _rkt.setZero();
+
         for (int i=0; i<_nt; i++){
             Aki = _ei.decompress3d(_Akt, _nx, _nx, i);
             aki = _ei.decompress3d(_akt, _nx, 1, i);

@@ -1,3 +1,18 @@
+<Commons>
+<parameters>
+    <nt> 80 </nt>
+    <speed> 0.05 </speed>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 5e-5 </eta>
+    <eps_sdf> 0.7 </eps_sdf>
+    <stop_err> 1e-4 </stop_err>
+    <max_iter> 30 </max_iter>
+</parameters>
+</Commons>
+
 <Experiment1>
 <parameters>
     <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
@@ -20,23 +35,7 @@
         <vz>0.0</vz>
     </goal_pos>
     
-    <nt> 80 </nt>
-
-    <speed> 0.05 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 5e-5 </eta>
-
-    <eps_sdf> 0.7 </eps_sdf>
-
     <cost_sigma> 1e-5 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
 
@@ -65,23 +64,7 @@
         <vz>0.0</vz>
     </goal_pos>
     
-    <nt> 80 </nt>
-
-    <speed> 0.05 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 5e-5 </eta>
-
-    <eps_sdf> 0.7 </eps_sdf>
-
     <cost_sigma> 1e-5 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
 
@@ -109,24 +92,8 @@
         <vy>0.0</vy>
         <vz>0.0</vz>
     </goal_pos>
-    
-    <nt> 80 </nt>
-
-    <speed> 0.05 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 5e-5 </eta>
-
-    <eps_sdf> 0.7 </eps_sdf>
 
     <cost_sigma> 1e-5 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
 
@@ -154,24 +121,8 @@
         <vy>0.0</vy>
         <vz>0.0</vz>
     </goal_pos>
-    
-    <nt> 80 </nt>
-
-    <speed> 0.05 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 5e-5 </eta>
-
-    <eps_sdf> 0.7 </eps_sdf>
 
     <cost_sigma> 7e-4 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
 

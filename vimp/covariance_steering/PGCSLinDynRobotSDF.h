@@ -113,6 +113,7 @@ public:
         // for each time step
         _Qkt.setZero();
         _rkt.setZero();
+
         for (int i=0; i<_nt; i++){
             Aki = _ei.decompress3d(_Akt, _nx, _nx, i);
             aki = _ei.decompress3d(_akt, _nx, 1, i);
@@ -123,12 +124,11 @@ public:
             pinvBBTi = _ei.decompress3d(_pinvBBTt, _nx, _nx, i);
             zi = _ei.decompress3d(_zkt, _nx, 1, i);
             temp = (Aki - hAi).transpose();
-
             // Compute hinge loss and its gradients
             int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
             std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
-            hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,2,1));
+            hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,_nx/2,1));
             VectorXd hinge(n_spheres);
             MatrixXd J_hxy(n_spheres, _nx/2);
             hinge = std::get<0>(hingeloss_gradient);
@@ -137,17 +137,15 @@ public:
             // MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
             MatrixXd grad_h(n_spheres, _nx), velocity(1, _nx/2);
             // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
-
             velocity = zi.block(_nx/2,0,_nx/2,1).transpose();
+
             for (int i_s=0; i_s<n_spheres; i_s++){
-                grad_h.block(i_s,0,1,_nx/2) = J_hxy.row(i_s);
+                    grad_h.block(i_s,0,1,_nx/2) = J_hxy.row(i_s);
                 grad_h.block(i_s,_nx/2,1,_nx/2) = J_hxy.row(i_s).cwiseProduct(velocity);
             }          
-
             MatrixXd Sig_obs{_Sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
-
             // std::cout << "_Sig_obs " << _Sig_obs << std::endl;
             // if (hinge > 0){
             //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
@@ -156,7 +154,6 @@ public:
             Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
             rki = grad_h.transpose() * Sig_obs * hinge * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
-
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
             _ei.compress3d(rki, _rkt, i);

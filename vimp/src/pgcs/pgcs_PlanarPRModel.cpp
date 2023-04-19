@@ -10,10 +10,8 @@
  * 
  */
 
-#include "dynamics/LinearDynamics.h"
 #include "covariance_steering/PGCSLinDynPRModelPlanarSDF.h"
 #include "helpers/experiment_runner.h"
-
 
 using namespace Eigen;
 using namespace vimp;

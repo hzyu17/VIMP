@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include "../dynamics/LinearDynamics.h"
 #include "ProximalGradientCS.h"
 
@@ -50,18 +52,19 @@ public:
         std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_mean();
-
+        
         // _ei.print_matrix(_Akt, "_Akt");
         // _ei.print_matrix(_zkt, "_zkt");
 
         MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
         MatrixXd aprior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
-
+        
         // Update Qkt, rkt
         update_Qrk();
 
         // solve inner loop linear CS
         solve_internal_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
+
     }
 
 protected:

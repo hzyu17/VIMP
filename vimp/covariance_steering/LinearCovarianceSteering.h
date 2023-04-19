@@ -12,6 +12,8 @@
  * 
  */
 
+#pragma once
+
 #include <Eigen/Dense>
 #include "../helpers/eigen_wrapper.h"
 using namespace Eigen;

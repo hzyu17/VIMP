@@ -1,0 +1,106 @@
+<parameters>
+    <Commons>
+        <nt> 50 </nt>
+        <eps_sdf> 0.7 </eps_sdf>
+        <speed> 0.18 </speed>
+
+        <sig0> 0.01 </sig0>
+        <sigT> 0.05 </sigT>
+
+        <eta> 1e-6 </eta>
+        <stop_err> 1e-4 </stop_err>
+        <max_iter> 20 </max_iter>
+    </Commons>
+    <Experiment1>
+        <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+        
+        <start_pos>
+            <x>8.0</x>
+            <y>-5.0</y>
+            <vx>0.0</vx>
+            <vy>2.0</vy>
+        </start_pos>
+
+        <goal_pos>
+            <x>-10.0</x>
+            <y>17.0</y>
+            <vx>-2.0</vx>
+            <vy>0.0</vy>
+        </goal_pos>
+        
+        <cost_sigma> 5.6e4 </cost_sigma>
+
+        <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case1/</saving_prefix>
+
+    </Experiment1>
+
+    <Experiment2>
+        <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+        
+        <start_pos>
+            <x>-7.0</x>
+            <y>-5.0</y>
+            <vx> 0</vx>
+            <vy> 2</vy>
+        </start_pos>
+
+        <goal_pos>
+            <x>5.0</x>
+            <y>19.0</y>
+            <vx> 2</vx>
+            <vy> 0</vy>
+        </goal_pos>
+
+        <cost_sigma> 6e4 </cost_sigma>
+
+        <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case2/</saving_prefix>
+
+    </Experiment2>
+
+    <Experiment3>
+        <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+        
+        <start_pos>
+            <x>-7.0</x>
+            <y>-5.0</y>
+            <vx> 0</vx>
+            <vy> 2</vy>
+        </start_pos>
+
+        <goal_pos>
+            <x>13.0</x>
+            <y>18.0</y>
+            <vx> 2</vx>
+            <vy> 0</vy>
+        </goal_pos>
+
+        <cost_sigma> 9e4 </cost_sigma>
+
+        <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case3/</saving_prefix>
+
+    </Experiment3>
+
+    <Experiment4>
+        <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+        
+        <start_pos>
+            <x>13.0</x>
+            <y>14.0</y>
+            <vx> 2</vx>
+            <vy> 0</vy>
+        </start_pos>
+
+        <goal_pos>
+            <x>-13.0</x>
+            <y>8.0</y>
+            <vx> -1</vx>
+            <vy> 0</vy>
+        </goal_pos>
+
+        <cost_sigma> 4e4 </cost_sigma>
+
+        <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case4/</saving_prefix>
+
+    </Experiment4>
+
+</parameters>
