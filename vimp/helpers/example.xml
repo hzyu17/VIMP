@@ -1,15 +1,15 @@
 <parameters>
     <Commons>
-        <nt> 50 </nt>
-        <eps_sdf> 0.7 </eps_sdf>
-        <speed> 0.18 </speed>
+        <nt>58.582089552238806</nt>
+        <eps_sdf>58.582089552238806</eps_sdf>
+        <speed>58.582089552238806</speed>
 
-        <sig0> 0.01 </sig0>
-        <sigT> 0.05 </sigT>
+        <sig0>58.582089552238806</sig0>
+        <sigT>58.582089552238806</sigT>
 
-        <eta> 1e-6 </eta>
-        <stop_err> 1e-4 </stop_err>
-        <max_iter> 20 </max_iter>
+        <eta>58.582089552238806</eta>
+        <stop_err>58.582089552238806</stop_err>
+        <max_iter>58.582089552238806</max_iter>
     </Commons>
     <Experiment1>
         <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
