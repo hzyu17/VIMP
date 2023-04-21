@@ -103,7 +103,7 @@ public:
         this->update_Qrk();
 
         // solve inner loop 
-        // solve_internal_linearCS();
+        // solve_linearCS();
 
         // solve for the linear covariance steering
         _linear_cs.update_params(A_prior, _Bt, a_prior, _Qkt, _rkt);

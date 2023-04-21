@@ -9,7 +9,7 @@
  * 
  */
 
-#include "ProximalGradientCS.h"
+#include "ProximalGradientCovarianceSteering.h"
 #include "../dynamics/NonlinearDynamics.h"
 #include <memory>
 
@@ -55,7 +55,7 @@ public:
         update_Qrk();
 
         // solve inner loop linear CS
-        solve_internal_linearCS(A_prior, _Bt, a_prior, _Qkt, _rkt);
+        solve_linearCS(A_prior, _Bt, a_prior, _Qkt, _rkt);
     }
 
     /**

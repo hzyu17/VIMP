@@ -12,7 +12,7 @@
 #pragma once
 
 #include "../dynamics/LinearDynamics.h"
-#include "ProximalGradientCS.h"
+#include "ProximalGradientCovarianceSteering.h"
 
 using namespace Eigen;
 
@@ -63,7 +63,7 @@ public:
         update_Qrk();
 
         // solve inner loop linear CS
-        solve_internal_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
+        solve_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
 
     }
 
