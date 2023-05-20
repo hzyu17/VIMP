@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<Commons>
+<parameters>
+    <eps_sdf> 0.15 </eps_sdf>
+    <speed> 0.05 </speed>
+    <nt> 50 </nt>
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+    <eta> 1e-5 </eta>
+    <stop_err> 1e-4 </stop_err>
+    <max_iter> 20 </max_iter>
+</parameters>
+</Commons>
+
 <Experiment1>
 <parameters>
     <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
@@ -23,21 +36,7 @@
         <7>1.55</7>
     </goal_pos>
 
-    <nt> 50 </nt>
-
-    <speed> 0.05 </speed>
-    <state_cost_scale> 1e1 </state_cost_scale>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1e-5 </eta>
-
-    <eps_sdf> 0.15 </eps_sdf>
-
     <cost_sigma> 1.48e-5 </cost_sigma>
-
-    <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/WAM/case1/</saving_prefix>
 
@@ -68,21 +67,7 @@
         <7>1.75</7>
     </goal_pos>
 
-    <nt> 50 </nt>
-
-    <speed> 0.03 </speed>
-    <state_cost_scale> 1e1 </state_cost_scale>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1e-5 </eta>
-
-    <eps_sdf> 0.15 </eps_sdf>
-
     <cost_sigma> 1.48e-5 </cost_sigma>
-
-    <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/WAM/case2/</saving_prefix>
 
@@ -114,21 +99,7 @@
         <7>1.15</7>
     </goal_pos>
 
-    <nt> 50 </nt>
-
-    <speed> 0.05 </speed>
-    <state_cost_scale> 1e1 </state_cost_scale>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1e-5 </eta>
-
-    <eps_sdf> 0.15 </eps_sdf>
-
     <cost_sigma> 1.48e-5 </cost_sigma>
-
-    <stop_err> 1e-4 </stop_err>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/WAM/case3/</saving_prefix>
 

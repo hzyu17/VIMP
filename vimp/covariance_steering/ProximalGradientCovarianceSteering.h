@@ -64,7 +64,8 @@ namespace vimp{
                                                    _Kt(_nu, _nx, _nt),
                                                    _dt(_nu, 1, _nt),
                                                    _max_iter(max_iteration),
-                                                   _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT)
+                                                   _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
+                                                   _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
         {
             // Initialize the final time covariance
             _ei.compress3d(_SigT, _Sigkt, _nt - 1);
@@ -274,6 +275,9 @@ namespace vimp{
 
         // Data buffer
         DataBuffer _buffer;
+
+        // Data recorder for iteration plot
+        DataRecorder _recorder;
 
         // Dynamics class
         LinearCovarianceSteering _linear_cs;

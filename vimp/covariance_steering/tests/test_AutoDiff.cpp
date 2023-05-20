@@ -12,7 +12,7 @@
 #include "helpers/data_io.h"
 #include <gtest/gtest.h>
 #include <fastad>
-#include "dynamics/DoubleIntegrator.h"
+#include "dynamics/DoubleIntegratorDraged.h"
     
 using namespace ad;
 using namespace vimp;

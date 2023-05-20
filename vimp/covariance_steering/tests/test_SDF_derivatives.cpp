@@ -15,7 +15,7 @@
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include <matplot/matplot.h>
 #include <fastad>
-#include "dynamics/DoubleIntegrator.h"
+#include "dynamics/DoubleIntegratorDraged.h"
     
 using namespace ad;
 using namespace vimp;

@@ -68,7 +68,7 @@ void test_coupled(){
     VectorXd init_mean{VectorXd::Zero(ndim)};
     MatrixXd init_precision{MatrixXd::Identity(ndim, ndim)};
     optimizer.set_initial_values(init_mean, init_precision);
-    optimizer.set_step_size(0.6, 0.6);
+    optimizer.set_step_size(0.6);
     optimizer.optimize();
 
     cout << "mean " << endl << optimizer.mean() << endl;

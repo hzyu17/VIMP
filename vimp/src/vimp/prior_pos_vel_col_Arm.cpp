@@ -160,7 +160,7 @@ int main(){
 
     optimizer.set_GH_degree(3);
     optimizer.set_niterations(num_iter);
-    optimizer.set_step_size_base(step_size, step_size);
+    optimizer.set_step_size_base(step_size);
 
     if (replanning==0){
         optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean_base.csv", 

@@ -17,11 +17,10 @@ using namespace Eigen;
 using namespace vimp;
 
 int main(){
-    int nx=6, nu=3;
     int num_exp = 4;
     
     std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/pR3D_map2.xml"};
-    ExperimentRunner3D<PGCSLinDynPRModelSDF> runner(nx, nu, num_exp, config_file);
+    ExperimentRunner3D<PGCSLinDynPRModelSDF> runner(num_exp, config_file);
 
     runner.read_config_file();
     runner.run();

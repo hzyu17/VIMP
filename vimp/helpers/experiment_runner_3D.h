@@ -18,10 +18,9 @@ namespace vimp{
 template <typename PGCSOptimizer>
 class ExperimentRunner3D: public ExperimentRunner<PGCSOptimizer>{
 public:
-    // ExperimentRunner3D():ExperimentRunner<PGCSOptimizer>(){}
     
-    ExperimentRunner3D(int nx, int nu, int num_exp, const std::string & config):
-                        ExperimentRunner<PGCSOptimizer>(nx, nu, num_exp, config){}
+    ExperimentRunner3D(int num_exp, const std::string & config):
+                        ExperimentRunner<PGCSOptimizer>(6, 3, num_exp, config){}
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode) override{
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());

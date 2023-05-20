@@ -32,17 +32,13 @@ public:
                                 const MatrixXd& SigT,
                                 const std::shared_ptr<LinearDynamics>& pdyn,
                                 double eps_sdf,
-                                const gpmp2::SignedDistanceField& sdf,
                                 double sig_obs,
-                                double Vscale=1.0,
                                 int max_iteration = 30):
-                            ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale, max_iteration),
+                            ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iteration),
                             _eps_sdf(eps_sdf),
-                            _sdf(sdf),
                             _Sig_obs(sig_obs),
-                            _ArmSdf(eps_sdf){
-                                _ArmSdf.update_sdf(sdf);
-                            }
+                            _ArmSdf(eps_sdf)
+                            { }
 
     void update_Qrk() override{
         MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
@@ -92,9 +88,9 @@ public:
             //     Hess.block(0,0,_nx/2,_nx/2) = MatrixXd::Identity(_nx/2,_nx/2) * _Sig_obs;
             // }
             // Qki
-            Qki = _state_cost_scale * Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
+            Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
-            rki = _state_cost_scale * grad_h.transpose() * Sig_obs * hinge * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = grad_h.transpose() * Sig_obs * hinge * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
@@ -106,7 +102,7 @@ public:
     }
 
 protected:
-    gpmp2::SignedDistanceField _sdf;
+    // gpmp2::SignedDistanceField _sdf;
     WamArmSDFExample _ArmSdf;
     double _eps_sdf;
     double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
