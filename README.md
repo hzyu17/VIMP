@@ -20,7 +20,7 @@ Build and installation:
    ```
    git clone https://github.com/gtrll/gpmp2.git
    cd gpmp2 && mkdir build && cd build\
-   cmake -DGPMP2_BUILD_PYTHON_TOOLBOX:=ON -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON .. 
+   cmake -DGPMP2_BUILD_PYTHON_TOOLBOX:=OFF -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON .. 
    sudo make install 
    ```
 
