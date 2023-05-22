@@ -235,55 +235,6 @@ public:
 
         return true;
 
-        /// backtracking
-//        // last-step value cost function evaluation
-//        float l_V = accum_phi / num_samples + log(precision_.determinant()) / 2.0;
-//        cout << "l_V" << l_V << endl;
-//        MatrixXd l_precision_{precision_};
-//        VectorXd l_mu{mu_};
-//        precision_.setZero();
-//        mu_.setZero();
-//        for (int i_ls=0; i_ls<10; i_ls++){
-//            B = i_ls;
-//
-//            precision_ = l_precision_ + pow(step_size_Sigma, B) * d_precision;
-//            d_mu = precision_.colPivHouseholderQr().solve(-Vdmu);
-//
-//            mu_ = l_mu + pow(step_size_mu, B) * d_mu;
-//
-//            // Update the sampler parameters
-//            sampler_.updateMean(mu_);
-//            sampler_.updatePrecisionMatrix(precision_);
-//
-//            // Evaluate the cost function
-//            gtsam::Matrix samples_ls{sampler_(num_samples)};
-//            auto colwise_ls = samples_ls.colwise();
-//            double accum_phi_ls = 0;
-//            std::for_each(colwise_ls.begin(), colwise_ls.end(), [&](auto const &sample) {
-//                double phi_ls = cost_function(sample);
-//                accum_phi_ls += phi_ls;
-//            });
-//            double new_V = accum_phi_ls/ double(num_samples) + log(precision_.determinant())/2.0;
-//
-//            if (new_V < l_V){
-//                cout << "Lower value function" << endl << "precision_ " << endl << precision_.format(CleanFmt) << endl;
-//                return true;
-//            }
-//
-//            if (isnan(new_V)){
-//                cout << "nan new cost function" << endl << "precision matrix" << endl
-//                     << precision_.format(CleanFmt) << endl << "determinate" << precision_.determinant() << endl;
-//                break;
-//            }
-//        }
-
-//        // Update the sampler parameters
-//        sampler_.updateMean(l_mu);
-//        sampler_.updatePrecisionMatrix(l_precision_);
-
-//        cout << "no lower value function" << endl << "precision_ " << endl << precision_.format(CleanFmt) << endl;
-//        return false;
-
     }
 
     VectorXd get_mean(){

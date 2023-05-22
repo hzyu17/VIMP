@@ -71,5 +71,7 @@ end
     xlim([-15, 20])
     ylim([-10, 20])
 
+    axis off
+
 output = 1;
 end

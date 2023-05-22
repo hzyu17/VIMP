@@ -98,12 +98,12 @@ namespace vimp{
             int i_step = 1;
             while ((err > stop_err) && (i_step <= _max_iter))
             {
-                // for (int i=0; i<200; i++){
                 step(i_step);
                 err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
                 Ak_prev = _Akt;
                 ak_prev = _akt;
                 i_step++;
+                _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
             }
 
             return std::make_tuple(_Kt, _dt);

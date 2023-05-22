@@ -6,7 +6,7 @@ import gtsam.*
 import gpmp2.*
 
 %% read map
-sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
+sdfmap = csvread("map3/map_multiobs_map3.csv");
 
 v_niters = [30, 30];
 v_nsteps = [6, 6];
@@ -26,25 +26,26 @@ for i = 1:2 % 4 experiments
     if i == 1
         t = title('Go Through Plan');
         t.FontSize = 20;
-        prefix = ["map_narrow/shortcut/"];
+        prefix = ["map3/shortcut/"];
         means = csvread([prefix + "mean.csv"]);
         covs = csvread([prefix + "cov.csv"]);
         precisions = csvread([prefix + "precisoin.csv"]);
         costs = csvread([prefix + "cost.csv"]);
         factor_costs = csvread([prefix + "factor_costs.csv"]);
          addpath("error_ellipse");
+         axis off
 
     else
         t = title('Go Around Plan');
         t.FontSize = 20;
-        prefix = ["map_narrow/circumvent/"];
+        prefix = ["map3/circumvent/"];
         means = csvread([prefix + "mean.csv"]);
         covs = csvread([prefix + "cov.csv"]);
         precisions = csvread([prefix + "precisoin.csv"]);
         costs = csvread([prefix + "cost.csv"]);
         factor_costs = csvread([prefix + "factor_costs.csv"]);
          addpath("error_ellipse");
-
+        axis off
     end
 
     %%

@@ -35,9 +35,8 @@ public:
                         double eps_sdf,
                         const gpmp2::PlanarSDF& sdf,
                         double sig_obs,
-                        double Vscale=1.0,
                         int max_iter = 30):
-                            ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
+                            ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iter),
                             _eps_sdf(eps_sdf),
                             _sdf(sdf),
                             _Sig_obs(sig_obs),
@@ -82,16 +81,13 @@ public:
      */
     std::tuple<Matrix3D, Matrix3D> optimize(double stop_err) override{
         double err = 1;
-        // MatrixXd Ak_prev(_nx*_nx, _nt), ak_prev(_nx, _nt);
-        // Ak_prev = _Akt;
-        // ak_prev = _akt;
+
         int i_step = 0;
 
         double total_cost_prev = this->total_hingeloss() + this->total_control_energy();
         double total_cost = 0.0, hingeloss = 0.0, control_energy=0.0;
         while ((err > stop_err) && (i_step < _max_iter)){
             step(i_step);
-            // err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
             hingeloss = this->total_hingeloss();
             control_energy = this->total_control_energy();
             total_cost = hingeloss + control_energy;
@@ -102,7 +98,6 @@ public:
             
             i_step ++;
         }
-        // _cost_helper.plot_costs();
         
         return std::make_tuple(_Kt, _dt);
     }
@@ -142,7 +137,6 @@ public:
             }
 
             MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
-            // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
 
             velocity = zi.block(_nx/2, 0,_nx/2,1);
             grad_h.block(0,0,_nx/2,1) = J_hxy.transpose();
@@ -162,8 +156,6 @@ public:
             _ei.compress3d(Qki, _Qkt, i);
             _ei.compress3d(rki, _rkt, i);
         }
-        // _ei.print_matrix(_Qkt, "_Qkt");
-        // _ei.print_matrix(_rkt, "_rkt");
         
     }
 

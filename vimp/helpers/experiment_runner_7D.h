@@ -43,13 +43,13 @@ public:
         mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
         this->_m0.block(0,0,7,1) = mo_pos;
         this->_m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
-        this->_Sig0 = this->sig0 * Eigen::MatrixXd::Identity(this->_nx, this->_nx);
+        this->_Sig0 = this->sig0 * Eigen::MatrixXd::Identity(14, 14);
         
         Eigen::VectorXd mT_pos(7);
         mT_pos << goal_1, goal_2, goal_3, goal_4, goal_5, goal_6, goal_7;
         this->_mT.block(0,0,7,1) = mT_pos;
         this->_mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
-        this->_SigT = this->sigT * Eigen::MatrixXd::Identity(this->_nx, this->_nx);
+        this->_SigT = this->sigT * Eigen::MatrixXd::Identity(14, 14);
 
     }
 

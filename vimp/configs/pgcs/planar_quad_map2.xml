@@ -1,0 +1,45 @@
+<Commons>
+<parameters>
+    <nt> 2000 </nt>
+    <eps_sdf> 0.7 </eps_sdf>
+    <speed> 0.18 </speed>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eta> 1e-6 </eta>
+    <stop_err> 1e-5 </stop_err>
+    <max_iter> 20 </max_iter>
+
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+
+</parameters>
+</Commons>
+
+<Experiment1>
+<parameters>
+
+    <start_pos>
+        <x>5.0</x>
+        <y>8.0</y>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>2.0</x>
+        <y>2.0</y>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vphi>0.0</vphi>
+    </goal_pos>
+
+    <cost_sigma> 1.2e-5 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case1/</saving_prefix>
+
+</parameters>
+</Experiment1>

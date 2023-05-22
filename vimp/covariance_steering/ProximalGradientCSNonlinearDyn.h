@@ -35,7 +35,7 @@ public:
                         const VectorXd& zT,
                         const MatrixXd& SigT,
                         std::shared_ptr<NonlinearDynamics> pdyn,
-                        double Vscale=1.0): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, Vscale), 
+                        int max_iteration=20): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, max_iteration), 
                                             _pdyn(pdyn){}
     
     /**

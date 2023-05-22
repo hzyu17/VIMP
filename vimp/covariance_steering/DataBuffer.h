@@ -120,18 +120,16 @@ namespace vimp
                     const Matrix3D& zkt,
                     const Matrix3D& Sigkt)
                     {
-                        push_back(Akt, Bt, akt, Qkt, rkt, Kkt, dkt, zkt, Sigkt);
+                        add_iteration(Akt, Bt, akt, Qkt, rkt, Kkt, dkt, zkt, Sigkt);
                     }
                     
-        void push_back(const Matrix3D& Akt, 
+        void add_iteration(const Matrix3D& Akt, 
                         const Matrix3D& Bt, 
                         const Matrix3D& akt,
                         const Matrix3D& Qkt,
                         const Matrix3D& rkt,
                         const Matrix3D& Kkt,
                         const Matrix3D& dkt,
-                        // const Matrix3D& hAkt,
-                        // const Matrix3D& hakt,
                         const Matrix3D& zkt,
                         const Matrix3D& Sigkt){
                             
@@ -142,11 +140,13 @@ namespace vimp
                         _rkt.push_back(rkt);
                         _Kkt.push_back(Kkt),
                         _dkt.push_back(dkt);
-                        // _hAkt.push_back(hAkt);
-                        // _hakt.push_back(hakt);
                         _zkt.push_back(zkt);
                         _Sigkt.push_back(Sigkt);
                     }
+
+        void write_records(){
+            
+        }
 
 
     private:

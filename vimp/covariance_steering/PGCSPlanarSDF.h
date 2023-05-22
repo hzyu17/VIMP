@@ -33,7 +33,7 @@ public:
                     double eps_sdf,
                     const gpmp2::PlanarSDF& sdf,
                     double sig_obs,
-                    double Vscale=1.0): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, Vscale),
+                    int max_iter=20): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iter),
                                         _eps_sdf(eps_sdf),
                                         _sdf(sdf),
                                         _Sig_obs(sig_obs){}
