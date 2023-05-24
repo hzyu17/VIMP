@@ -9,35 +9,41 @@
  * 
  */
 
+#include "RobotSDFBase.h"
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/ArmModel.h>
 #include <gpmp2/obstacle/SignedDistanceField.h>
 #include <gpmp2/obstacle/ObstacleSDFFactorArm.h>
 
 using namespace gpmp2;
+using ArmModel = gpmp2::ArmModel;
 using ObsArmSDF = gpmp2::ObstacleSDFFactorArm;
 using SDF = gpmp2::SignedDistanceField;
 using sym = gtsam::Symbol;
 
 namespace vimp{
 
-    class WamArmSDFExample{
+    class WamArmSDFExample:public RobotSDFBase<ArmModel, SDF, ObsArmSDF>{
         public:
-            WamArmSDFExample(const string& sdf_file, double eps): _eps(eps){
-                _sdf = SDF();
-                _sdf.loadSDF(sdf_file);
+            WamArmSDFExample(const string& sdf_file, double eps): 
+                RobotSDFBase<ArmModel, SDF, ObsArmSDF>(),
+                _eps(eps)
+            {
+                this->_sdf.loadSDF(sdf_file);
+                this->_psdf = std::make_shared<SDF>(this->_sdf);
                 generateArm();
-                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, 0.0, _eps));
+                this->_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), this->_robot, this->_sdf, 0.0, _eps));
             }
 
             WamArmSDFExample(double eps): _eps(eps){
                 default_sdf();
                 generateArm();
-                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, 0.0, _eps));
+                this->_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), this->_robot, this->_sdf, 0.0, _eps));
             }
 
-            void update_arm_sdf(){
-                _parm_sdf = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), _arm, _sdf, 0.0, _eps));
+            inline void update_sdf(const SDF& sdf){
+                this->_psdf = std::make_shared<SDF>(sdf);
+                this->_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(gtsam::symbol('x', 0), this->_robot, sdf, 0.0, _eps));
             }
 
             void generateArm(){
@@ -94,7 +100,7 @@ namespace vimp{
                 body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.15,  0.025,  0.13)));
                 body_spheres.push_back(BodySphere(6, r, gtsam::Point3(-0.15,  0.0,  0.13)));
 
-                _arm = gpmp2::ArmModel{arm, body_spheres};
+                this->_robot = gpmp2::ArmModel{arm, body_spheres};
             }
 
             /**
@@ -102,36 +108,27 @@ namespace vimp{
              * */
             std::tuple<Eigen::VectorXd, Eigen::MatrixXd> hinge_jac(const Eigen::VectorXd& pose){
                 Eigen::MatrixXd Jacobian;
-                Eigen::VectorXd vec_err = _parm_sdf->evaluateError(pose, Jacobian);
+                Eigen::VectorXd vec_err = this->_psdf_factor->evaluateError(pose, Jacobian);
 
                 return std::make_tuple(vec_err, Jacobian);
             }
 
             void default_sdf(){
-                _sdf = SDF();
-                _sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin");
+                this->_sdf = SDF();
+                this->_sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin");
+                this->_psdf = std::make_shared<SDF>(this->_sdf);
             }
 
-            void update_sdf(const SDF& sdf){ 
-                _sdf = sdf; 
-                update_arm_sdf();
-            }
             
-            SDF sdf() const { return _sdf; }
+            // SDF sdf() const { return this->_sdf; }
             int ndof() const {return _ndof; }
             int nlinks() const {return _nlinks; }
-            gpmp2::ArmModel arm_model(){ return _arm; }
 
-        private:
-            gpmp2::ArmModel _arm;
-            SDF _sdf;
-            
+        public:
+           
             /// Arm robot
             int _ndof = 1;
             int _nlinks = 7;
-
-            // obstacle factor
-            std::shared_ptr<ObsArmSDF> _parm_sdf;
             double _eps;
     };
 

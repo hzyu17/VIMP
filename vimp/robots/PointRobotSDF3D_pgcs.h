@@ -25,6 +25,8 @@ namespace vimp{
 
 class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
     public:
+        virtual ~PointRobot3DSDFExample(){}
+        
         PointRobot3DSDFExample(double epsilon): _ndof(3), _nlinks(1), _eps(epsilon), _r(0.0){
             default_sdf();
             generate_pr_sdf(*_psdf, 0.0);
@@ -35,7 +37,7 @@ class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
             default_sdf();
         }
 
-        void default_sdf(){
+        virtual void default_sdf(){
             SDF sdf = SDF();
             sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
             _psdf = std::make_shared<SDF>(sdf);

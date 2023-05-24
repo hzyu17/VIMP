@@ -10,7 +10,7 @@
  */
 
 #include "dynamics/DoubleIntegratorDraged.h"
-#include "covariance_steering/PGCSPlanarSDF.h"
+#include "covariance_steering/PGCSNLDynPlanarSDF.h"
 #include "3rd-part/rapidxml-1.13/rapidxml.hpp"
 #include "3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
 
@@ -90,7 +90,7 @@ int main(){
         double eta = atof(paramNode->first_node("eta")->value());
         double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
         double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
-        PGCSPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
+        PGCSNLDynPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
         
         std::tuple<MatrixXd, MatrixXd> res_Kd;
 

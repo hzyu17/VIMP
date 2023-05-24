@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "../helpers/experimentParam.h"
 #include "LinearCovarianceSteering.h"
 #include <memory>
 #include <Eigen/QR>
@@ -29,6 +30,60 @@ namespace vimp{
         ProxGradCovSteer(const MatrixXd &A0,
                          const VectorXd &a0,
                          const MatrixXd &B,
+                         ExperimentParams& params):
+                         _ei(),
+                        _nx(params.nx()),
+                        _nu(params.nu()),
+                        _nt(params.nt()),
+                        _eta(params.eta()),
+                        _Akt(_ei.replicate3d(A0, _nt)),
+                        _akt(_ei.replicate3d(a0, _nt)),
+                        _Bt(_ei.replicate3d(B, _nt)),
+                        _sig(params.sig()),
+                        _eps(params.eps()),
+                        _deltt(1.0 / (_nt - 1)),
+                        _z0(params.m0()),
+                        _Sig0(params.Sig0()),
+                        _zT(params.mT()),
+                        _SigT(params.SigT()),
+                        _max_iter(params.max_iter()),
+                        _stop_err(params.stop_err()),
+                        _Qkt(Matrix3D(_nx, _nx, _nt)),
+                        _Qt(Matrix3D(_nx, _nx, _nt)),
+                        _rkt(Matrix3D(_nx, 1, _nt)),
+                        _hAkt(Matrix3D(_nx, _nx, _nt)),
+                        _hakt(Matrix3D(_nx, 1, _nt)),
+                        _nTrt(Matrix3D(_nx, 1, _nt)),
+                        _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
+                        _zkt(_ei.replicate3d(_z0, _nt)),
+                        _Sigkt(_ei.replicate3d(_Sig0, _nt)),
+                        _Kt(_nu, _nx, _nt),
+                        _dt(_nu, 1, _nt),
+                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
+                        _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
+                        {
+                            // Initialize the final time covariance
+                            _ei.compress3d(_SigT, _Sigkt, _nt - 1);
+
+                            // Linear interpolation for the mean zk
+                            // initialize_zk();
+
+                            // compute pinvBBT
+                            MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
+                            for (int i = 0; i < _nt; i++)
+                            {
+                                Bi = Bt_i(i);
+                                BiT = Bi.transpose();
+                                pinvBBTi = (Bi * BiT).completeOrthogonalDecomposition().pseudoInverse();
+                                _ei.compress3d(pinvBBTi, _pinvBBTt, i);
+                            }
+                        }
+
+                        
+
+        ProxGradCovSteer(const MatrixXd &A0,
+                         const VectorXd &a0,
+                         const MatrixXd &B,
                          double sig,
                          int nt,
                          double eta,
@@ -37,35 +92,38 @@ namespace vimp{
                          const MatrixXd &Sig0,
                          const VectorXd &zT,
                          const MatrixXd &SigT,
-                         int max_iteration = 30) : _ei(),
-                                                   _nx(A0.rows()),
-                                                   _nu(B.cols()),
-                                                   _nt(nt),
-                                                   _eta(eta),
-                                                   _Akt(_ei.replicate3d(A0, _nt)),
-                                                   _akt(_ei.replicate3d(a0, _nt)),
-                                                   _Bt(_ei.replicate3d(B, _nt)),
-                                                   _sig(sig),
-                                                   _eps(eps),
-                                                   _deltt(1.0 / (nt - 1)),
-                                                   _Qkt(Matrix3D(_nx, _nx, _nt)),
-                                                   _Qt(Matrix3D(_nx, _nx, _nt)),
-                                                   _rkt(Matrix3D(_nx, 1, _nt)),
-                                                   _hAkt(Matrix3D(_nx, _nx, _nt)),
-                                                   _hakt(Matrix3D(_nx, 1, _nt)),
-                                                   _nTrt(Matrix3D(_nx, 1, _nt)),
-                                                   _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
-                                                   _zkt(_ei.replicate3d(z0, _nt)),
-                                                   _Sigkt(_ei.replicate3d(Sig0, _nt)),
-                                                   _z0(z0),
-                                                   _Sig0(Sig0),
-                                                   _zT(zT),
-                                                   _SigT(SigT),
-                                                   _Kt(_nu, _nx, _nt),
-                                                   _dt(_nu, 1, _nt),
-                                                   _max_iter(max_iteration),
-                                                   _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
-                                                   _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
+                         double stop_err,
+                         int max_iteration = 30) : 
+                         _ei(),
+                        _nx(A0.rows()),
+                        _nu(B.cols()),
+                        _nt(nt),
+                        _eta(eta),
+                        _Akt(_ei.replicate3d(A0, _nt)),
+                        _akt(_ei.replicate3d(a0, _nt)),
+                        _Bt(_ei.replicate3d(B, _nt)),
+                        _sig(sig),
+                        _eps(eps),
+                        _deltt(1.0 / (nt - 1)),
+                        _Qkt(Matrix3D(_nx, _nx, _nt)),
+                        _Qt(Matrix3D(_nx, _nx, _nt)),
+                        _rkt(Matrix3D(_nx, 1, _nt)),
+                        _hAkt(Matrix3D(_nx, _nx, _nt)),
+                        _hakt(Matrix3D(_nx, 1, _nt)),
+                        _nTrt(Matrix3D(_nx, 1, _nt)),
+                        _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
+                        _zkt(_ei.replicate3d(z0, _nt)),
+                        _Sigkt(_ei.replicate3d(Sig0, _nt)),
+                        _z0(z0),
+                        _Sig0(Sig0),
+                        _zT(zT),
+                        _SigT(SigT),
+                        _Kt(_nu, _nx, _nt),
+                        _dt(_nu, 1, _nt),
+                        _max_iter(max_iteration),
+                        _stop_err(stop_err),
+                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
+                        _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
         {
             // Initialize the final time covariance
             _ei.compress3d(_SigT, _Sigkt, _nt - 1);
@@ -89,14 +147,14 @@ namespace vimp{
          * sovling a linear CS, and push forward the mean and covariances.
          * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
          */
-        virtual std::tuple<Matrix3D, Matrix3D> optimize(double stop_err)
+        virtual std::tuple<Matrix3D, Matrix3D> optimize()
         {
             double err = 1;
             MatrixXd Ak_prev(_nx * _nx, _nt), ak_prev(_nx, _nt);
             Ak_prev = _Akt;
             ak_prev = _akt;
             int i_step = 1;
-            while ((err > stop_err) && (i_step <= _max_iter))
+            while ((err > _stop_err) && (i_step <= _max_iter))
             {
                 step(i_step);
                 err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
@@ -251,7 +309,7 @@ namespace vimp{
     protected:
         EigenWrapper _ei;
         int _nx, _nu, _nt;
-        double _eta, _sig, _eps, _deltt;
+        double _eta, _sig, _eps, _deltt, _stop_err;
         int _max_iter;
 
         // All the variables are time variant (3d matrices)

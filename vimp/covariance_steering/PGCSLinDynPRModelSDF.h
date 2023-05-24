@@ -1,5 +1,5 @@
 /**
- * @file PGCSLinDynPRModelPlanarSDF.h
+ * @file PGCSLinDynPRModelSDF.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Proximal gradient algorithm for nonlinear covariance steering with plannar obstacles, linear dynamics. 
  * @version 0.1

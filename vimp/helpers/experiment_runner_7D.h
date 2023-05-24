@@ -1,7 +1,7 @@
 /**
  * @file run_experiment_template.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The template of running a motion planning experiment for 6D robot.
+ * @brief The template of running a motion planning experiment for 7D robot.
  * @version 0.1
  * @date 2023-04-14
  * 
@@ -39,18 +39,20 @@ public:
         double goal_6 = atof(paramNode->first_node("goal_pos")->first_node("6")->value());
         double goal_7 = atof(paramNode->first_node("goal_pos")->first_node("7")->value());
 
+        VectorXd m0(14), mT(14); 
+
         Eigen::VectorXd mo_pos(7);
         mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
-        this->_m0.block(0,0,7,1) = mo_pos;
-        this->_m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
-        this->_Sig0 = this->sig0 * Eigen::MatrixXd::Identity(14, 14);
+        m0.block(0, 0, 7, 1) = mo_pos;
+        m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
         
         Eigen::VectorXd mT_pos(7);
         mT_pos << goal_1, goal_2, goal_3, goal_4, goal_5, goal_6, goal_7;
-        this->_mT.block(0,0,7,1) = mT_pos;
-        this->_mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
-        this->_SigT = this->sigT * Eigen::MatrixXd::Identity(14, 14);
+        mT.block(0, 0, 7, 1) = mT_pos;
+        mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
+        this->_params.set_m0(m0);
+        this->_params.set_mT(mT);
     }
 
 };

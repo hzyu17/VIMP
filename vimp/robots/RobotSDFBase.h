@@ -21,13 +21,15 @@ class RobotSDFBase{
 
 public:
     RobotSDFBase(){}
+    RobotSDFBase(const string& sdf_file, double eps){}
+    
     virtual ~RobotSDFBase(){}
 
     virtual void update_sdf(const SDF& sdf) = 0;
     virtual void default_sdf() = 0;
 
     /**
-     * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
+     * Obstacle Returns the Vector of h(x) and the Jacobian matrix.
      * */
     virtual std::tuple<VectorXd, MatrixXd> hinge_jacobian(const VectorXd& pose){
         MatrixXd Jacobian;

@@ -26,6 +26,18 @@ public:
 
     ProxGradCovSteerLinDyn(const MatrixXd& A0, 
                             const VectorXd& a0, 
+                            const MatrixXd& B,
+                            const std::shared_ptr<LinearDynamics>& pdyn,
+                            ExperimentParams& params):
+                            ProxGradCovSteer(A0, a0, B, params),
+                            _pdyn(pdyn){
+                                _hAkt = _sig * pdyn->At();
+                                _Bt = _sig * pdyn->Bt();
+                                _hakt = _sig * pdyn->at();
+                            }
+
+    ProxGradCovSteerLinDyn(const MatrixXd& A0, 
+                            const VectorXd& a0, 
                             const MatrixXd& B, 
                             double sig,
                             int nt,
@@ -36,12 +48,13 @@ public:
                             const VectorXd& zT,
                             const MatrixXd& SigT,
                             const std::shared_ptr<LinearDynamics>& pdyn,
-                            int max_iter): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, max_iter), 
-                                                _pdyn(pdyn){
-                                                    _hAkt = _sig * pdyn->At();
-                                                    _Bt = _sig * pdyn->Bt();
-                                                    _hakt = _sig * pdyn->at();
-                                                }
+                            double stop_err,
+                            int max_iter): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, stop_err, max_iter), 
+                                            _pdyn(pdyn){
+                                                _hAkt = _sig * pdyn->At();
+                                                _Bt = _sig * pdyn->Bt();
+                                                _hakt = _sig * pdyn->at();
+                                            }
                                             
     
     /**
@@ -52,9 +65,6 @@ public:
         std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_mean();
-        
-        // _ei.print_matrix(_Akt, "_Akt");
-        // _ei.print_matrix(_zkt, "_zkt");
 
         MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
         MatrixXd aprior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);

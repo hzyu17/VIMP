@@ -9,79 +9,44 @@
  * 
  */
 
-#include "Eigen/Dense"
-#include "data_io.h"
-#include "eigen_wrapper.h"
-#include <gpmp2/obstacle/PlanarSDF.h>
-#include "../3rd-part/rapidxml-1.13/rapidxml.hpp"
-#include "../3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
+#include "experiment_runner.h"
 
 using namespace Eigen;
 
 namespace vimp{
 
 template <typename PGCSOptimizer, typename Dynamics>
-class ExperimentRunner{
+class ExperimentRunnerNL: public ExperimentRunner<PGCSOptimizer>{
 public:
     // ExperimentRunner(){}
-    virtual ~ExperimentRunner(){}
+    virtual ~ExperimentRunnerNL(){}
 
-    ExperimentRunner(int nx, int nu, int num_exp, const std::string & config): 
-                                                        _nx(nx),
-                                                        _nu(nu),
-                                                        _num_exp(num_exp),
-                                                        _m0(nx), 
-                                                        _mT(nx),
-                                                        _Sig0(nx,nx), 
-                                                        _SigT(nx,nx),
-                                                        sig0(0),
-                                                        sigT(0),
-                                                        nt(0),
-                                                        max_iterations(0),
-                                                        speed(0),
-                                                        stop_err(0),
-                                                        eta(0),
-                                                        eps_sdf(0),
-                                                        _config_file{config}{}
+    ExperimentRunnerNL(int nx, int nu, int num_exp, const std::string & config): 
+            ExperimentRunner<PGCSOptimizer>(nx, nu, num_exp, config),
+            {
+                rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
+                rapidxml::xml_document<> doc;
+                doc.parse<0>(xmlFile.data());
 
-    void read_config_file(){
-        rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
-        rapidxml::xml_document<> doc;
-        doc.parse<0>(xmlFile.data());
+                // Common parameters
+                std::string CommonNodeName = "Commons";
+                char * c_commons = CommonNodeName.data();
+                rapidxml::xml_node<>* CommonNode = doc.first_node(c_commons);
+                rapidxml::xml_node<>* commonParams = CommonNode->first_node("parameters");
 
-        // Common parameters
-        std::string CommonNodeName = "Commons";
-        char * c_commons = CommonNodeName.data();
-        rapidxml::xml_node<>* CommonNode = doc.first_node(c_commons);
-        rapidxml::xml_node<>* commonParams = CommonNode->first_node("parameters");
+                std::string field_file = static_cast<std::string>(commonParams->first_node("field_file")->value());
 
-        eps_sdf = atof(commonParams->first_node("eps_sdf")->value());
-        speed = atof(commonParams->first_node("speed")->value());
-        nt = atoi(commonParams->first_node("nt")->value());
+                MatrixXd field = m_io.load_csv(field_file);
+                gtsam::Point2 origin(-20, -10);
+                double cell_size = 0.1;
+                _sdf = gpmp2::PlanarSDF(origin, cell_size, field);
 
-        _sig = speed * nt;
+            }
 
-        sig0 = atof(commonParams->first_node("sig0")->value());
-        sigT = atof(commonParams->first_node("sigT")->value());
-
-        eta = atof(commonParams->first_node("eta")->value());
-        stop_err = atof(commonParams->first_node("stop_err")->value());
-        max_iterations = atoi(commonParams->first_node("max_iter")->value());
-
-        std::string field_file = static_cast<std::string>(commonParams->first_node("field_file")->value());
-
-        MatrixXd field = m_io.load_csv(field_file);
-        gtsam::Point2 origin(-20, -10);
-        double cell_size = 0.1;
-        _sdf = gpmp2::PlanarSDF(origin, cell_size, field);
-
-    }
-
-    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
         double start_phi = atof(paramNode->first_node("start_pos")->first_node("phi")->value());
-
         double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
         double start_vy = atof(paramNode->first_node("start_pos")->first_node("vy")->value());
         double start_vphi = atof(paramNode->first_node("start_pos")->first_node("vphi")->value());
@@ -89,7 +54,6 @@ public:
         double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
         double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
         double goal_phi = atof(paramNode->first_node("goal_pos")->first_node("phi")->value());
-
         double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
         double goal_vphi = atof(paramNode->first_node("goal_pos")->first_node("vphi")->value());
@@ -128,9 +92,9 @@ public:
             B0  = std::get<1>(linearized_0);
             a0  = std::get<2>(linearized_0);
             PGCSOptimizer pgcs_nonlin_sdf(A0, a0, B0, 
-                                        _sig, nt, eta, eps, 
+                                        sig, nt, eta, eps, 
                                         _m0, _Sig0, _mT, _SigT, 
-                                        pdyn, eps_sdf, _sdf, sig_obs,  max_iterations);
+                                        pdyn, eps_sdf, _sdf, sig_obs, max_iterations);
             
             std::tuple<MatrixXd, MatrixXd> res_Kd;
             res_Kd = pgcs_nonlin_sdf.optimize(stop_err);
@@ -152,23 +116,6 @@ public:
         }
     }
 
-
-protected:
-    
-    MatrixIO m_io;
-    EigenWrapper ei;
-    VectorXd _m0, _mT;
-    MatrixXd _Sig0, _SigT;
-
-    double speed, eps_sdf, sig0, sigT, eta, stop_err;
-    int nt, max_iterations, _num_exp;
-    int _nx, _nu;
-
-    std::string _config_file;
-
-    gpmp2::PlanarSDF _sdf;
-    
-    double _sig;
 };
 
 

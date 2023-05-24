@@ -1,5 +1,5 @@
 /**
- * @file PGCSPlanarSDF.h
+ * @file PGCSNLDynPlanarSDF.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Proximal gradient algorithm for nonlinear covariance steering with plannar obstacles. 
  * @version 0.1
@@ -16,9 +16,9 @@ using namespace Eigen;
 
 namespace vimp{
 
-class PGCSPlanarSDF: public ProxGradCovSteerNLDyn{
+class PGCSNLDynPlanarSDF: public ProxGradCovSteerNLDyn{
 public:
-    PGCSPlanarSDF(const MatrixXd& A0, 
+    PGCSNLDynPlanarSDF(const MatrixXd& A0, 
                     const VectorXd& a0, 
                     const MatrixXd& B, 
                     double sig,

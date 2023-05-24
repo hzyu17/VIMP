@@ -9,9 +9,7 @@
  * 
  */
 
-#include "Eigen/Dense"
-#include "data_io.h"
-#include "eigen_wrapper.h"
+#include "experimentParam.h"
 #include "../3rd-part/rapidxml-1.13/rapidxml.hpp"
 #include "../3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
 
@@ -26,22 +24,13 @@ public:
     virtual ~ExperimentRunner(){}
 
     ExperimentRunner(int nx, int nu, int num_exp, const std::string & config): 
-                                                        _nx(nx),
-                                                        _nu(nu),
-                                                        _num_exp(num_exp),
-                                                        _m0(nx), 
-                                                        _mT(nx),
-                                                        _Sig0(nx,nx), 
-                                                        _SigT(nx,nx),
-                                                        sig0(0),
-                                                        sigT(0),
-                                                        nt(0),
-                                                        max_iterations(0),
-                                                        speed(0),
-                                                        stop_err(0),
-                                                        eta(0),
-                                                        eps_sdf(0),
-                                                        _config_file{config}{}
+                    _nx(nx),
+                    _nu(nu),
+                    _params(nx, nu),
+                    _num_exp(num_exp),
+                    _config_file{config}{
+                        read_config_file();
+                    }
 
     void read_config_file(){
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
@@ -54,16 +43,21 @@ public:
         rapidxml::xml_node<>* CommonNode = doc.first_node(c_commons);
         rapidxml::xml_node<>* commonParams = CommonNode->first_node("parameters");
 
-        eps_sdf = atof(commonParams->first_node("eps_sdf")->value());
-        speed = atof(commonParams->first_node("speed")->value());
-        nt = atoi(commonParams->first_node("nt")->value());
+        double eps = atoi(commonParams->first_node("eps")->value());
+        double eps_sdf = atof(commonParams->first_node("eps_sdf")->value());
+        double speed = atof(commonParams->first_node("speed")->value());
+        _nt = atoi(commonParams->first_node("nt")->value());
 
-        sig0 = atof(commonParams->first_node("sig0")->value());
-        sigT = atof(commonParams->first_node("sigT")->value());
+        double sig0 = atof(commonParams->first_node("sig0")->value());
+        double sigT = atof(commonParams->first_node("sigT")->value());
 
-        eta = atof(commonParams->first_node("eta")->value());
-        stop_err = atof(commonParams->first_node("stop_err")->value());
-        max_iterations = atoi(commonParams->first_node("max_iter")->value());
+        double eta = atof(commonParams->first_node("eta")->value());
+        double stop_err = atof(commonParams->first_node("stop_err")->value());
+        int max_iterations = atoi(commonParams->first_node("max_iter")->value());
+        double sig_obs = atof(commonParams->first_node("cost_sigma")->value());
+        // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
+
+        _params = ExperimentParams(_nx, _nu, eps_sdf, eps, speed, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations);
 
     }
 
@@ -79,12 +73,14 @@ public:
 
         double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
+        
+        VectorXd m0(_nx), mT(_nx); 
+        m0 << start_x, start_y, start_vx, start_vy;
+        mT << goal_x, goal_y, goal_vx, goal_vy;
 
-        _m0 << start_x, start_y, start_vx, start_vy;
-        _Sig0 = sig0 * Eigen::MatrixXd::Identity(_nx, _nx);
-
-        _mT << goal_x, goal_y, goal_vx, goal_vy;
-        _SigT = sigT * Eigen::MatrixXd::Identity(_nx, _nx);
+        _params.set_m0(m0);
+        _params.set_mT(mT);
+       
     }
 
     void run(){
@@ -97,36 +93,29 @@ public:
             char * c_expname = ExpNodeName.data();
             rapidxml::xml_node<>* ExpNode = doc.first_node(c_expname);
             rapidxml::xml_node<>* paramNode = ExpNode->first_node("parameters");            
-            double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
             
-            double sig = speed * nt;
-
-            // proximal gradient parameters
-            double eps=0.01;
-
+            std::cout << "=== debug 0 ===" << std::endl;
             this->read_boundary_conditions(paramNode);
             MatrixXd A0(_nx, _nx), B0(_nx, _nu), a0(_nx, 1);
             A0.setZero(); B0.setZero(); a0.setZero();
-            
-            std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(_nx, _nu, nt)};
-            A0 = pdyn->A0() * sig;
-            B0 = pdyn->B0() * sig;
-            a0 = pdyn->a0() * sig;
-            PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, 
-                                        sig, nt, eta, eps, 
-                                        _m0, _Sig0, _mT, _SigT, 
-                                        pdyn, eps_sdf, sig_obs, max_iterations);
-            
+            std::cout << "=== debug 0 ===" << std::endl;
+            std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(_nx, _nu, _nt)};
+            A0 = pdyn->A0() * _params.sig();
+            B0 = pdyn->B0() * _params.sig();
+            a0 = pdyn->a0() * _params.sig();
+            std::cout << "=== debug 0 ===" << std::endl;
+            PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, pdyn, _params);
+            std::cout << "=== debug 0 ===" << std::endl;
             std::tuple<MatrixXd, MatrixXd> res_Kd;
-            res_Kd = pgcs_lin_sdf.optimize(stop_err);
-
-            MatrixXd Kt(_nx*_nx, nt), dt(_nx, nt);
+            res_Kd = pgcs_lin_sdf.optimize();
+            std::cout << "=== debug 0 ===" << std::endl;
+            MatrixXd Kt(_nx*_nx, _nt), dt(_nx, _nt);
             Kt = std::get<0>(res_Kd);
             dt = std::get<1>(res_Kd);
-            MatrixXd zk_star(_nx, nt), Sk_star(_nx*_nx, nt);
+            MatrixXd zk_star(_nx, _nt), Sk_star(_nx*_nx, _nt);
             zk_star = pgcs_lin_sdf.zkt();
             Sk_star = pgcs_lin_sdf.Sigkt();
-
+            std::cout << "=== debug 0 ===" << std::endl;
             std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
             m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
             m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
@@ -138,18 +127,13 @@ public:
     }
 
 
-protected:
+public:
     
     MatrixIO m_io;
-    EigenWrapper ei;
-    VectorXd _m0, _mT;
-    MatrixXd _Sig0, _SigT;
-
-    double speed, eps_sdf, sig0, sigT, eta, stop_err;
-    int nt, max_iterations, _num_exp;
-    int _nx, _nu;
-
+    ExperimentParams _params;
     std::string _config_file;
+
+    int _num_exp, _nx, _nu, _nt;
 
 };
 

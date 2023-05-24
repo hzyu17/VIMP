@@ -20,6 +20,18 @@ template <typename RobotSDF>
 class PGCSLinDynRobotSDF: public ProxGradCovSteerLinDyn{
 public:
     PGCSLinDynRobotSDF(const MatrixXd& A0, 
+                        const VectorXd& a0, 
+                        const MatrixXd& B, 
+                        const std::shared_ptr<LinearDynamics>& pdyn,
+                        ExperimentParams& params):
+                        ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params),
+                        _eps_sdf(params.eps_sdf()),
+                        _Sig_obs(params.sig_obs()),
+                        _robot_sdf(params.eps_sdf()),
+                        _cost_helper(_max_iter){}
+
+
+    PGCSLinDynRobotSDF(const MatrixXd& A0, 
                             const VectorXd& a0, 
                             const MatrixXd& B, 
                             double sig,
@@ -33,8 +45,9 @@ public:
                             const std::shared_ptr<LinearDynamics>& pdyn,
                             double eps_sdf,
                             double sig_obs,
+                            double stop_err,
                             int max_iter):
-                        ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iter),
+                        ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, stop_err, max_iter),
                         _eps_sdf(eps_sdf),
                         _Sig_obs(sig_obs),
                         _robot_sdf(eps_sdf),
@@ -78,13 +91,13 @@ public:
      * @brief The optimization process, including recording the costs.
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
-    std::tuple<Matrix3D, Matrix3D> optimize(double stop_err) override{
+    std::tuple<Matrix3D, Matrix3D> optimize() override{
         double err = 1;
 
         double total_cost_prev = 0.0;
 
         int i_step = 0;
-        while ((err > stop_err) && (i_step < _max_iter)){
+        while ((err > _stop_err) && (i_step < _max_iter)){
 
             this->step(i_step);
 
