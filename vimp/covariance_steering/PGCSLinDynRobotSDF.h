@@ -98,10 +98,11 @@ public:
 
         int i_step = 0;
         while ((err > _stop_err) && (i_step < _max_iter)){
-
+                        
             this->step(i_step);
 
             double hingeloss = this->total_hingeloss();
+
             double control_energy = this->total_control_energy();
             double total_cost = hingeloss + control_energy;
             err = std::abs(total_cost - total_cost_prev);
@@ -147,6 +148,7 @@ public:
             hinge = std::get<0>(hingeloss_gradient);
             J_hxy = std::get<1>(hingeloss_gradient);
 
+
             // MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
             MatrixXd grad_h(n_spheres, _nx), velocity(1, _nx/2);
             // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
@@ -159,6 +161,7 @@ public:
             MatrixXd Sig_obs{_Sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
+
             // std::cout << "_Sig_obs " << _Sig_obs << std::endl;
             // if (hinge > 0){
             //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;

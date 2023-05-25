@@ -21,35 +21,18 @@ class ExperimentParams{
 public:
     ExperimentParams(){}
 
-    ExperimentParams(int nx, int nu):
-                        _nx(nx),
-                        _nu(nu),
-                        _m0(nx), 
-                        _mT(nx),
-                        _Sig0(nx,nx), 
-                        _SigT(nx,nx),
-                        _sig0(0),
-                        _sigT(0),
-                        _nt(0),
-                        _max_iterations(0),
-                        _speed(0),
-                        _sig(1.0),
-                        _stop_err(0),
-                        _eta(0),
-                        _eps_sdf(0),
-                        _sig_obs(0){}
-
     ExperimentParams(int nx, int nu, double eps_sdf, double eps,
                     double speed, int nt, double sig0, 
                     double sigT, double eta, double stop_err, double sig_obs,
-                    int max_iterations, std::string sdf_file=""):_nx(nx),
+                    int max_iterations, std::string sdf_file=""):
+                                        _nx(nx),
                                         _nu(nu),
                                         _m0(nx), 
                                         _mT(nx),
                                         _sig0(sig0),
                                         _sigT(sigT),
-                                        _Sig0(sig0 * Eigen::MatrixXd::Identity(_nx, _nx)), 
-                                        _SigT(sigT * Eigen::MatrixXd::Identity(_nx, _nx)),
+                                        _Sig0(_nx, _nx), 
+                                        _SigT(_nx, _nx),
                                         _nt(nt),
                                         _max_iterations(max_iterations),
                                         _speed(speed),
@@ -59,7 +42,12 @@ public:
                                         _eps_sdf(eps_sdf),
                                         _eps(eps),
                                         _sig_obs(sig_obs),
-                                        _sdf_file(sdf_file){}
+                                        _sdf_file(sdf_file){
+                                            _m0.setZero();
+                                            _mT.setZero();
+                                            _Sig0 = MatrixXd::Identity(_nx, _nx) * sig0;
+                                            _SigT = MatrixXd::Identity(_nx, _nx) * sigT;
+                                         }
 
     void set_m0(const VectorXd& m0){ _m0 = m0; }
 
@@ -68,31 +56,31 @@ public:
     void set_sigobs(double sig_obs){ _sig_obs = sig_obs; }
 
     // getters
-    const int nx(){ return _nx; }
-    const int nu(){return _nu; }
-    const int nt(){return _nt; }
-    const int max_iter(){return _max_iterations; }
+    int nx() const { return _nx; }
+    int nu() const { return _nu; }
+    int nt() const { return _nt; }
+    int max_iter() const { return _max_iterations; }
 
-    const double speed(){return _speed;}
-    const double eps_sdf(){return _eps_sdf; }
-    const double sig(){return _sig;}
-    const double sig0(){return _sig0; }
-    const double sigT(){return _sigT; }
-    const double eta(){return _eta; }
-    const double eps(){return _eps; }
-    const double stop_err(){return _stop_err; }
-    const double sig_obs(){return _sig_obs; }
-    const std::string sdf_file(){ return _sdf_file; }
+    double speed() const { return _speed;}
+    double eps_sdf() const { return _eps_sdf; }
+    double sig() const { return _sig;}
+    double sig0() const { return _sig0; }
+    double sigT() const { return _sigT; }
+    double eta() const { return _eta; }
+    double eps() const { return _eps; }
+    double stop_err() const { return _stop_err; }
+    double sig_obs() const { return _sig_obs; }
+    std::string sdf_file() const { return _sdf_file; }
 
-    const VectorXd m0(){return _m0; }
-    const VectorXd mT(){return _mT; }
-    const MatrixXd Sig0(){return _Sig0; }
-    const MatrixXd SigT(){return _SigT; }
+    VectorXd m0() const { return _m0; }
+    VectorXd mT() const { return _mT; }
+    MatrixXd Sig0() const { return _Sig0; }
+    MatrixXd SigT() const { return _SigT; }
 
 
 protected:
     MatrixIO _m_io;
-    EigenWrapper ei;
+    EigenWrapper _ei;
     VectorXd _m0, _mT;
     MatrixXd _Sig0, _SigT;
 

@@ -26,10 +26,9 @@ public:
     ExperimentRunner(int nx, int nu, int num_exp, const std::string & config): 
                     _nx(nx),
                     _nu(nu),
-                    _params(nx, nu),
                     _num_exp(num_exp),
                     _config_file{config}{
-                        read_config_file();
+                        this->read_config_file();
                     }
 
     void read_config_file(){
@@ -94,28 +93,24 @@ public:
             rapidxml::xml_node<>* ExpNode = doc.first_node(c_expname);
             rapidxml::xml_node<>* paramNode = ExpNode->first_node("parameters");            
             
-            std::cout << "=== debug 0 ===" << std::endl;
             this->read_boundary_conditions(paramNode);
             MatrixXd A0(_nx, _nx), B0(_nx, _nu), a0(_nx, 1);
             A0.setZero(); B0.setZero(); a0.setZero();
-            std::cout << "=== debug 0 ===" << std::endl;
             std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(_nx, _nu, _nt)};
             A0 = pdyn->A0() * _params.sig();
             B0 = pdyn->B0() * _params.sig();
             a0 = pdyn->a0() * _params.sig();
-            std::cout << "=== debug 0 ===" << std::endl;
+
             PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, pdyn, _params);
-            std::cout << "=== debug 0 ===" << std::endl;
+
             std::tuple<MatrixXd, MatrixXd> res_Kd;
             res_Kd = pgcs_lin_sdf.optimize();
-            std::cout << "=== debug 0 ===" << std::endl;
             MatrixXd Kt(_nx*_nx, _nt), dt(_nx, _nt);
             Kt = std::get<0>(res_Kd);
             dt = std::get<1>(res_Kd);
             MatrixXd zk_star(_nx, _nt), Sk_star(_nx*_nx, _nt);
             zk_star = pgcs_lin_sdf.zkt();
             Sk_star = pgcs_lin_sdf.Sigkt();
-            std::cout << "=== debug 0 ===" << std::endl;
             std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
             m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
             m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
@@ -130,6 +125,7 @@ public:
 public:
     
     MatrixIO m_io;
+    EigenWrapper _ei;
     ExperimentParams _params;
     std::string _config_file;
 

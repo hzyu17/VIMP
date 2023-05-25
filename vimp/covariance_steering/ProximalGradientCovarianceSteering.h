@@ -56,10 +56,10 @@ namespace vimp{
                         _nTrt(Matrix3D(_nx, 1, _nt)),
                         _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
                         _zkt(_ei.replicate3d(_z0, _nt)),
-                        _Sigkt(_ei.replicate3d(_Sig0, _nt)),
+                        _Sigkt(_ei.replicate3d(params.Sig0(), _nt)),
                         _Kt(_nu, _nx, _nt),
                         _dt(_nu, 1, _nt),
-                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
+                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, params.Sig0(), _zT, params.SigT()),
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
                         {
                             // Initialize the final time covariance
@@ -231,7 +231,7 @@ namespace vimp{
         }
 
         void propagate_mean()
-        {
+        {   
             // The i_th matrices
             Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
             Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx);
@@ -243,6 +243,7 @@ namespace vimp{
                 ai = akt_i(i);
                 Bi = Bt_i(i);
                 Si = Sigkt_i(i);
+
                 AiT = Ai.transpose();
                 BiT = Bi.transpose();
 

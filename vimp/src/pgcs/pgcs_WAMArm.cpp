@@ -23,7 +23,6 @@ int main(int argc, char* argv[]){
     int num_exp = 3;
     std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/wam_arm.xml"};
     ExperimentRunner7D<PGCSLinDynArmSDF> runner(num_exp, config_file);
-    // runner.read_config_file();
     runner.run();
 
     // }
