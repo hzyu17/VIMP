@@ -91,7 +91,7 @@ public:
      * @brief The optimization process, including recording the costs.
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
-    std::tuple<Matrix3D, Matrix3D> optimize() override{
+    std::tuple<Matrix3D, Matrix3D, int> optimize() override{
         double err = 1;
 
         double total_cost_prev = 0.0;
@@ -115,7 +115,7 @@ public:
         }
         // _cost_helper.plot_costs();
         
-        return std::make_tuple(_Kt, _dt);
+        return std::make_tuple(_Kt, _dt, i_step);
     }
 
 

@@ -27,12 +27,12 @@ public:
                     int max_iterations, std::string sdf_file=""):
                                         _nx(nx),
                                         _nu(nu),
-                                        _m0(nx), 
-                                        _mT(nx),
+                                        _m0(VectorXd::Zero(nx)), 
+                                        _mT(VectorXd::Zero(nx)),
                                         _sig0(sig0),
                                         _sigT(sigT),
-                                        _Sig0(_nx, _nx), 
-                                        _SigT(_nx, _nx),
+                                        _Sig0(nx, nx), 
+                                        _SigT(nx, nx),
                                         _nt(nt),
                                         _max_iterations(max_iterations),
                                         _speed(speed),
@@ -43,8 +43,6 @@ public:
                                         _eps(eps),
                                         _sig_obs(sig_obs),
                                         _sdf_file(sdf_file){
-                                            _m0.setZero();
-                                            _mT.setZero();
                                             _Sig0 = MatrixXd::Identity(_nx, _nx) * sig0;
                                             _SigT = MatrixXd::Identity(_nx, _nx) * sigT;
                                          }
@@ -76,6 +74,8 @@ public:
     VectorXd mT() const { return _mT; }
     MatrixXd Sig0() const { return _Sig0; }
     MatrixXd SigT() const { return _SigT; }
+
+    void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
 
 
 protected:

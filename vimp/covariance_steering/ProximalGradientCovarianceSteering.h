@@ -147,7 +147,7 @@ namespace vimp{
          * sovling a linear CS, and push forward the mean and covariances.
          * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
          */
-        virtual std::tuple<Matrix3D, Matrix3D> optimize()
+        virtual std::tuple<Matrix3D, Matrix3D, int> optimize()
         {
             double err = 1;
             MatrixXd Ak_prev(_nx * _nx, _nt), ak_prev(_nx, _nt);
@@ -164,7 +164,7 @@ namespace vimp{
                 _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
             }
 
-            return std::make_tuple(_Kt, _dt);
+            return std::make_tuple(_Kt, _dt, i_step);
         }
 
         virtual void step(int indx) = 0;

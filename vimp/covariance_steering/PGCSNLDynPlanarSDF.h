@@ -91,16 +91,17 @@ public:
     }
 
     void step(int indx) override{
-        std::cout << "----- iter " << indx << " -----" << std::endl;
+        // std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_mean();
         linearization();
-
+ 
         MatrixXd A_prior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
         MatrixXd a_prior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
 
         // Update Qkt, rkt
         this->update_Qrk();
+
 
         // solve inner loop 
         // solve_linearCS();

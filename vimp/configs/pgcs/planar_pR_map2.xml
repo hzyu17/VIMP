@@ -1,21 +1,19 @@
 <Commons>
-<parameters>
-    <nt> 50 </nt>
+
+    <eps> 0.01 </eps>
     <eps_sdf> 0.7 </eps_sdf>
-    <speed> 0.18 </speed>
-
-    <sig0> 0.01 </sig0>
+    <speed> 0.01 </speed>
+    <nt> 100 </nt>
+    <sig0> 0.05 </sig0>
     <sigT> 0.05 </sigT>
-
-    <eta> 1e-6 </eta>
+    <eta> 1e-5 </eta>
     <stop_err> 1e-4 </stop_err>
-    <max_iter> 20 </max_iter>
+    <max_iter> 30 </max_iter>
+    <cost_sigma> 5.6e4 </cost_sigma>
 
-</parameters>
 </Commons>
 
 <Experiment1>
-<parameters>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
@@ -32,15 +30,14 @@
         <vy>0.0</vy>
     </goal_pos>
     
-    <cost_sigma> 5.6e4 </cost_sigma>
+    <cost_sigma> 5.6e6 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case1/</saving_prefix>
 
-</parameters>
 </Experiment1>
 
 <Experiment2>
-<parameters>
+
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
@@ -57,15 +54,15 @@
         <vy> 0</vy>
     </goal_pos>
 
-    <cost_sigma> 6e4 </cost_sigma>
+    <cost_sigma> 6e6 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case2/</saving_prefix>
 
-</parameters>
+
 </Experiment2>
 
 <Experiment3>
-<parameters>
+
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
@@ -82,15 +79,14 @@
         <vy> 0</vy>
     </goal_pos>
 
-    <cost_sigma> 9e4 </cost_sigma>
+    <cost_sigma> 9e6 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case3/</saving_prefix>
 
-</parameters>
 </Experiment3>
 
 <Experiment4>
-<parameters>
+
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
@@ -107,9 +103,9 @@
         <vy> 0</vy>
     </goal_pos>
 
-    <cost_sigma> 4e4 </cost_sigma>
+    <cost_sigma> 4e6 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case4/</saving_prefix>
 
-</parameters>
+
 </Experiment4>

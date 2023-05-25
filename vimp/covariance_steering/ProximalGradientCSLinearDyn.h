@@ -62,7 +62,7 @@ public:
      * @return none, but inside already compute (K, d).
      */
     void step(int indx) override{
-        std::cout << "----- iter " << indx << " -----" << std::endl;
+        // std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         
         propagate_mean();
