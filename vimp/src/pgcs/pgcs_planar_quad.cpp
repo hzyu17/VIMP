@@ -11,7 +11,7 @@
 
 #include "dynamics/PlanarQuadDynamics.h"
 #include "covariance_steering/PGCSNLDynPlanarSDF.h"
-#include "helpers/experiment_runner_nonlinear.h"
+#include "helpers/ExperimentRunnerNL.h"
 
 using namespace Eigen;
 using namespace vimp;

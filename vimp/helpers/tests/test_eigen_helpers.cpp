@@ -454,7 +454,7 @@ TEST(TestMatrix3D, compress3d){
     ASSERT_LE((mat3d - mat3d_groundtruth).norm(), 1e-10);
 
     Eigen::MatrixXd mat_decomposed{Eigen::MatrixXd::Zero(3,3)};
-    eigen_wrapper.decompress3d(mat3d, mat_decomposed, 3, 3, 0);
+    eigen_wrapper.decomp3d(mat3d, mat_decomposed, 3, 3, 0);
 
     ASSERT_LE((mat_decomposed - mat).norm(), 1e-10);
 
@@ -484,7 +484,7 @@ TEST(TestMatrix3D, repmat){
     ASSERT_LE((res - res_ground_truth).norm(), 1e-10);
     Eigen::MatrixXd randi(3, 3);
     for (int i=0; i<3; i++){
-        randi = eigen_wrapper.decompress3d(res, mat.rows(), mat.cols(), i);
+        randi = eigen_wrapper.decomp3d(res, mat.rows(), mat.cols(), i);
         ASSERT_LE((randi - mat).norm(), 1e-10);
     }
 }

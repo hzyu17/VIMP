@@ -33,6 +33,7 @@ public:
                              const Matrix3D& at, 
                              const int nx,
                              const int nu,
+                             const double T,
                              const int nt,
                              const double epsilon,
                              const Matrix3D& Qt,
@@ -48,6 +49,7 @@ public:
                              _Qt(Qt),
                              _nx(nx),
                              _nu(nu),
+                             _T(T),
                              _nt(nt),
                              _Phi(MatrixXd::Identity(2*_nx, 2*_nx)),
                              _Phi11(MatrixXd::Zero(_nx, _nx)),
@@ -59,7 +61,7 @@ public:
                              _Sig0(Sig0),
                              _Sig1(Sig1),
                              _eps(epsilon),
-                             _delta_t(1.0/(nt-1)),
+                             _delta_t(T/(nt-1)),
                              _Kt(Matrix3D(_nu, _nx, _nt)),
                              _dt(Matrix3D(_nu, 1, _nt)){
         compute_M_Phi();
@@ -78,9 +80,9 @@ public:
     void compute_M_Phi(){
         MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), BiT(_nu, _nx), Qi(_nx, _nx), Mi(2*_nx, 2*_nx);
         for (int i=0; i< _nt; i++){
-            Ai = _ei.decompress3d(_At, _nx, _nx, i);
-            Qi = _ei.decompress3d(_Qt, _nx, _nx, i);
-            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
+            Ai = _ei.decomp3d(_At, _nx, _nx, i);
+            Qi = _ei.decomp3d(_Qt, _nx, _nx, i);
+            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
             BiT = Bi.transpose();
             Mi.block(0, 0, _nx, _nx) = Ai;
             Mi.block(0, _nx, _nx, _nx) = -Bi*BiT;
@@ -90,7 +92,7 @@ public:
         }
         _Phi = MatrixXd::Identity(2*_nx, 2*_nx);
         for (int i=0; i<_nt-1; i++){
-            MatrixXd Mi = _ei.decompress3d(_Mt, 2*_nx, 2*_nx, i);
+            MatrixXd Mi = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i);
             _Phi = _Phi + Mi*_Phi*_delta_t;
         }
 
@@ -102,7 +104,7 @@ public:
 
     MatrixXd At(int i){
         MatrixXd Ai;
-        _ei.decompress3d(_At, Ai, _nx, _nx, i);
+        _ei.decomp3d(_At, Ai, _nx, _nx, i);
         return Ai;
     }
 
@@ -114,13 +116,13 @@ public:
 
     inline MatrixXd Bt(int i){
         MatrixXd Bi;
-        _ei.decompress3d(_Bt, Bi, _nx, _nu, i);
+        _ei.decomp3d(_Bt, Bi, _nx, _nu, i);
         return Bi;
     }
 
     inline Matrix3D Qt(){ return _Qt; }
 
-    inline MatrixXd Qt(int i){ return _ei.decompress3d(_Qt, _nx, _nx, i); }
+    inline MatrixXd Qt(int i){ return _ei.decomp3d(_Qt, _nx, _nx, i); }
 
     inline Matrix3D rt(){ return _rt; }
 
@@ -128,7 +130,7 @@ public:
 
     inline Matrix3D Kt(){ return _Kt; }
 
-    inline MatrixXd Kt(int i){ return _ei.decompress3d(_Kt, _nu, _nx, i); }
+    inline MatrixXd Kt(int i){ return _ei.decomp3d(_Kt, _nu, _nx, i); }
 
     inline Matrix3D dt(){ return _dt; }
 
@@ -136,7 +138,7 @@ public:
 
     MatrixXd Mt(int i){
         MatrixXd Mi{MatrixXd::Zero(2*_nx, 2*_nx)};
-        _ei.decompress3d(_Mt, Mi, 2*_nx, 2*_nx, i);
+        _ei.decomp3d(_Mt, Mi, 2*_nx, 2*_nx, i);
         return Mi;
     }
 
@@ -148,7 +150,7 @@ public:
 
     inline Matrix3D Pit(){ return _Pit; }
 
-    inline MatrixXd Pit(int i){ return _ei.decompress3d(_Pit, _nx, _nx, i); }
+    inline MatrixXd Pit(int i){ return _ei.decomp3d(_Pit, _nx, _nx, i); }
 
     void solve(){
         VectorXd s{VectorXd::Zero(2*_nx)};
@@ -158,7 +160,7 @@ public:
         
         MatrixXd Mi(2*_nx, 2*_nx);
         for (int i=0;i<_nt-1;i++){
-            Mi = _ei.decompress3d(_Mt, 2*_nx, 2*_nx, i);
+            Mi = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i);
             s = s + (Mi*s + a_r.col(i))*_delta_t;
         }
 
@@ -170,7 +172,7 @@ public:
 
         Xt.col(0) = X0;
         for (int i=0; i<_nt-1; i++){
-            Mi = _ei.decompress3d(_Mt, 2*_nx, 2*_nx, i); 
+            Mi = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i); 
             Xt.col(i+1) = Xt.col(i) + _delta_t*(Mi*Xt.col(i) + a_r.col(i));
         }
         MatrixXd xt{Xt.block(0,0,_nx,_nt)};
@@ -179,7 +181,7 @@ public:
         MatrixXd Bi(_nx, _nu), BiT(_nu, _nx);
         
         for (int i=0; i<_nt; i++){
-            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
+            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
             BiT = Bi.transpose();
             v.col(i) = -BiT*lbdt.col(i);
         }
@@ -200,10 +202,10 @@ public:
         MatrixXd Ai(_nx, _nx), AiT(_nx, _nx), Qi(_nx, _nx), Pii(_nx, _nx), Pinew(_nx, _nx);
         Ai.setZero(); AiT.setZero(); Qi.setZero(); Pii.setZero(); Pinew.setZero();
         for (int i=0; i<_nt-1; i++){
-            Pii = _ei.decompress3d(_Pit, _nx, _nx, i);
-            Qi = _ei.decompress3d(_Qt, _nx, _nx, i);
-            Ai = _ei.decompress3d(_At, _nx, _nx, i);
-            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
+            Pii = _ei.decomp3d(_Pit, _nx, _nx, i);
+            Qi = _ei.decomp3d(_Qt, _nx, _nx, i);
+            Ai = _ei.decomp3d(_At, _nx, _nx, i);
+            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
             BiT = Bi.transpose();
             AiT = Ai.transpose();
             Pinew = Pii - _delta_t*(AiT*Pii+Pii*Ai-Pii*Bi*BiT*Pii+Qi);
@@ -213,9 +215,9 @@ public:
         MatrixXd Ki(_nu, _nx);
         Ki.setZero();
         for (int i=0; i<_nt; i++){
-            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
+            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
             BiT = Bi.transpose();
-            Pii = _ei.decompress3d(_Pit, _nx, _nx, i);
+            Pii = _ei.decomp3d(_Pit, _nx, _nx, i);
             Ki = - BiT * Pii;
             _ei.compress3d(Ki, _Kt, i);
             _dt.col(i) = v.col(i) + BiT * Pii * xt.col(i);
@@ -236,7 +238,7 @@ private:
     VectorXd _m0, _m1;
     MatrixXd _Sig0, _Sig1;
 
-    double _eps, _delta_t;
+    double _eps, _T, _delta_t;
 
     // feedback gains
     Matrix3D _Kt;

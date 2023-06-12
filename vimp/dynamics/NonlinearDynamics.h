@@ -25,22 +25,22 @@ public:
     virtual ~NonlinearDynamics(){}
     
 
-    virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
-                                                                                    double sig, 
+    virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& x, 
+                                                                                    // double sig, 
                                                                                     const MatrixXd& Ak, 
                                                                                     const MatrixXd& Sigk){}
     /**
     * @brief Linearization for use in proximal gradient covariance steering.
     * 
     * @param x linearization point
-    * @param sig time scaling factor
+    // * @param sig time scaling factor
     * @param Ak iteration variable Ak
     * @param Sigk iteration variable Sigk
     * @return std::tuple<LinearDynamics, Matrix3D>,
     *         representing (At, Bt, at, nTr).
     */
     virtual std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt, 
-                                                            double sig, 
+                                                            // double sig, 
                                                             const Matrix3D& Akt, 
                                                             const Matrix3D& Sigkt){}
 

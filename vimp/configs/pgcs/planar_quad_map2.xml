@@ -1,8 +1,9 @@
 <Commons>
 <parameters>
-    <nt> 2000 </nt>
+    <eps> 0.001 </eps>
+    <nt> 10000 </nt>
     <eps_sdf> 0.7 </eps_sdf>
-    <speed> 0.18 </speed>
+    <speed> 0.0002 </speed>
 
     <sig0> 0.01 </sig0>
     <sigT> 0.05 </sigT>
@@ -20,8 +21,8 @@
 <parameters>
 
     <start_pos>
-        <x>5.0</x>
-        <y>8.0</y>
+        <x>4.0</x>
+        <y>4.0</y>
         <phi>0.0</phi>
         <vx>0.0</vx>
         <vy>0.0</vy>

@@ -26,6 +26,14 @@ public:
     ProxGradCovSteerNLDyn(const MatrixXd& A0, 
                         const VectorXd& a0, 
                         const MatrixXd& B, 
+                        const ExperimentParams& params,
+                        std::shared_ptr<NonlinearDynamics> pdyn): 
+                                            ProxGradCovSteer(A0, a0, B, params), 
+                                            _pdyn(pdyn){}
+
+    ProxGradCovSteerNLDyn(const MatrixXd& A0, 
+                        const VectorXd& a0, 
+                        const MatrixXd& B, 
                         double sig,
                         int nt,
                         double eta,
@@ -63,7 +71,7 @@ public:
      */
     void linearization(){
         std::tuple<LinearDynamics, Matrix3D> res;
-        res = _pdyn->linearize(_zkt, _sig, _Akt, _Sigkt);
+        res = _pdyn->linearize(_zkt, _Akt, _Sigkt);
         _hAkt = std::get<0>(res).At();
         _Bt   = std::get<0>(res).Bt();
         _hakt = std::get<0>(res).at();

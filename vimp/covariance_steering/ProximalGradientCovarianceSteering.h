@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "../helpers/experimentParam.h"
+#include "../helpers/ExperimentParams.h"
 #include "LinearCovarianceSteering.h"
 #include <memory>
 #include <Eigen/QR>
@@ -30,7 +30,7 @@ namespace vimp{
         ProxGradCovSteer(const MatrixXd &A0,
                          const VectorXd &a0,
                          const MatrixXd &B,
-                         ExperimentParams& params):
+                         const ExperimentParams& params):
                          _ei(),
                         _nx(params.nx()),
                         _nu(params.nu()),
@@ -41,7 +41,7 @@ namespace vimp{
                         _Bt(_ei.replicate3d(B, _nt)),
                         _sig(params.sig()),
                         _eps(params.eps()),
-                        _deltt(1.0 / (_nt - 1)),
+                        _deltt(params.sig() / (_nt - 1)),
                         _z0(params.m0()),
                         _Sig0(params.Sig0()),
                         _zT(params.mT()),
@@ -59,7 +59,7 @@ namespace vimp{
                         _Sigkt(_ei.replicate3d(params.Sig0(), _nt)),
                         _Kt(_nu, _nx, _nt),
                         _dt(_nu, 1, _nt),
-                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, params.Sig0(), _zT, params.SigT()),
+                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _sig, _nt, _eps, _Qkt, _rkt, _z0, params.Sig0(), _zT, params.SigT()),
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
                         {
                             // Initialize the final time covariance
@@ -78,8 +78,6 @@ namespace vimp{
                                 _ei.compress3d(pinvBBTi, _pinvBBTt, i);
                             }
                         }
-
-                        
 
         ProxGradCovSteer(const MatrixXd &A0,
                          const VectorXd &a0,
@@ -104,7 +102,7 @@ namespace vimp{
                         _Bt(_ei.replicate3d(B, _nt)),
                         _sig(sig),
                         _eps(eps),
-                        _deltt(1.0 / (nt - 1)),
+                        _deltt(sig / (nt - 1)),
                         _Qkt(Matrix3D(_nx, _nx, _nt)),
                         _Qt(Matrix3D(_nx, _nx, _nt)),
                         _rkt(Matrix3D(_nx, 1, _nt)),
@@ -122,7 +120,7 @@ namespace vimp{
                         _dt(_nu, 1, _nt),
                         _max_iter(max_iteration),
                         _stop_err(stop_err),
-                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
+                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _sig, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
         {
             // Initialize the final time covariance
@@ -215,8 +213,8 @@ namespace vimp{
             MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), fbKi(_nx, _nx), di(_nx, 1), fbdi(_nx, 1), Bi(_nx, _nu);
             for (int i = 0; i < _nt; i++)
             {
-                Aprior_i = _ei.decompress3d(A, _nx, _nx, i);
-                aprior_i = _ei.decompress3d(a, _nx, 1, i);
+                Aprior_i = _ei.decomp3d(A, _nx, _nx, i);
+                aprior_i = _ei.decomp3d(a, _nx, 1, i);
 
                 Bi = Bt_i(i);
                 Ki = Kt_i(i);
@@ -272,31 +270,31 @@ namespace vimp{
          * @brief get the matrices at specific time point i.
          */
 
-        inline MatrixXd Akt_i(int i){ return _ei.decompress3d(_Akt, _nx, _nx, i);}
+        inline MatrixXd Akt_i(int i){ return _ei.decomp3d(_Akt, _nx, _nx, i);}
 
-        inline MatrixXd akt_i(int i){ return _ei.decompress3d(_akt, _nx, 1, i);}
+        inline MatrixXd akt_i(int i){ return _ei.decomp3d(_akt, _nx, 1, i);}
 
-        inline MatrixXd hAkt_i(int i){ return _ei.decompress3d(_hAkt, _nx, _nx, i);}
+        inline MatrixXd hAkt_i(int i){ return _ei.decomp3d(_hAkt, _nx, _nx, i);}
 
-        inline MatrixXd hakt_i(int i){ return _ei.decompress3d(_hakt, _nx, 1, i);}
+        inline MatrixXd hakt_i(int i){ return _ei.decomp3d(_hakt, _nx, 1, i);}
 
-        inline MatrixXd Bt_i(int i){ return _ei.decompress3d(_Bt, _nx, _nu, i);}
+        inline MatrixXd Bt_i(int i){ return _ei.decomp3d(_Bt, _nx, _nu, i);}
 
-        inline MatrixXd Qt_i(int i){ return _ei.decompress3d(_Qt, _nx, _nx, i);}
+        inline MatrixXd Qt_i(int i){ return _ei.decomp3d(_Qt, _nx, _nx, i);}
 
-        inline MatrixXd Qkt_i(int i){ return _ei.decompress3d(_Qkt, _nx, _nx, i);}
+        inline MatrixXd Qkt_i(int i){ return _ei.decomp3d(_Qkt, _nx, _nx, i);}
 
-        inline MatrixXd pinvBBTt_i(int i){ return _ei.decompress3d(_pinvBBTt, _nx, _nx, i);}
+        inline MatrixXd pinvBBTt_i(int i){ return _ei.decomp3d(_pinvBBTt, _nx, _nx, i);}
 
-        inline MatrixXd nTrt_i(int i){ return _ei.decompress3d(_nTrt, _nx, 1, i);}
+        inline MatrixXd nTrt_i(int i){ return _ei.decomp3d(_nTrt, _nx, 1, i);}
         
-        inline MatrixXd zkt_i(int i){ return _ei.decompress3d(_zkt, _nx, 1, i);}
+        inline MatrixXd zkt_i(int i){ return _ei.decomp3d(_zkt, _nx, 1, i);}
 
-        inline MatrixXd Kt_i(int i){ return _ei.decompress3d(_Kt, _nu, _nx, i);}
+        inline MatrixXd Kt_i(int i){ return _ei.decomp3d(_Kt, _nu, _nx, i);}
 
-        inline MatrixXd dt_i(int i){ return _ei.decompress3d(_dt, _nu, 1, i);}
+        inline MatrixXd dt_i(int i){ return _ei.decomp3d(_dt, _nu, 1, i);}
 
-        inline MatrixXd Sigkt_i(int i){ return _ei.decompress3d(_Sigkt, _nx, _nx, i);}
+        inline MatrixXd Sigkt_i(int i){ return _ei.decomp3d(_Sigkt, _nx, _nx, i);}
 
         /**
          * @brief replicating a fixed state cost

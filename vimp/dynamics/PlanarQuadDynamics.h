@@ -29,13 +29,12 @@ public:
  * @brief Linearization.
  * 
  * @param x linearization point
- * @param sig time scaling factor
+//  * @param sig time scaling factor
  * @return std::tuple<Matrix(3)d, MatrixXd, Vector4d, Vector4d> At, Bt, at, nTr
  */
-std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
-                                                                        double sig, 
-                                                                        const MatrixXd& Ak, 
-                                                                        const MatrixXd& Sigk) override
+std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& x, 
+                                                                const MatrixXd& Ak, 
+                                                                const MatrixXd& Sigk) override
 {
     using ADouble6 = TinyAD::Double<6>;
 
@@ -53,9 +52,8 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
          0, 0,
          0, 0,
          0, 0,
-         1/m, 1/m,
-         l/J, -l/J;
-    B = sig*B;
+         1/sqrt(2), 1/sqrt(2),
+         1/sqrt(2), -1/sqrt(2);
 
     // BBT
     MatrixXd p_invBBT(_nx,_nx);
@@ -63,9 +61,8 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
                 0,0,0,0,0,0,
                 0,0,0,0,0,0,
                 0,0,0,0,0,0,
-                0,0,0,0,0.1181, 0,
-                0,0,0,0,0,0.0001;
-    p_invBBT = p_invBBT/sig/sig;
+                0,0,0,0,1,0,
+                0,0,0,0,0,1;
 
     MatrixXd hAk{MatrixXd::Zero(6, 6)};
     hAk <<  0,    0,     -x(3)*sin(x(2))-x(4)*cos(x(2)),    cos(x(2)),       -sin(x(2)),       0, 
@@ -74,7 +71,6 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
             0,    0,              -g*cos(x(2)),                0,               x(5),        x(4),
             0,    0,              g*sin(x(2)),              -x(5),               0,         -x(3),
             0,    0,                  0,                       0,                0,            0;
-    hAk = sig * hAk;
 
     VectorXd f{VectorXd::Zero(6)};
     f << x(3)*cos(x(2)) - x(4)*sin(x(2)),
@@ -83,7 +79,6 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
         x(4)*x(5)-g*sin(x(2)),
         -x(3)*x(5)-g*cos(x(2)),
         0;
-    f = sig * f;
 
     VectorXd hak{VectorXd::Zero(6)};
     hak = f - hAk*x;
@@ -95,7 +90,6 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
                 0,    0,               -g*cos(x(2)),                    0,                x(5),           x(4),
                 0,    0,                g*sin(x(2)),                  -x(5),                0,           -x(3),
                 0,    0,                      0,                        0,                  0,               0;
-    grad_f_T = sig * grad_f_T;
 
     Matrix<ADouble6, 6, 6> grad_f;
     grad_f = grad_f_T.transpose();
@@ -133,7 +127,6 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
  * @return std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> return (hAt, hBt, hat, nTrt)
  */
 std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt, 
-                                                double sig, 
                                                 const Matrix3D& Akt, 
                                                 const Matrix3D& Sigkt) override
 {   
@@ -147,11 +140,11 @@ std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt,
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> resi;
 
     for (int i=0; i<_nt; i++){
-        zki = _ei.decompress3d(xt, _nx, 1, i);
-        Aki = _ei.decompress3d(Akt, _nx, _nx, i);
-        Sigki = _ei.decompress3d(Sigkt, _nx, _nx, i);
+        zki = _ei.decomp3d(xt, _nx, 1, i);
+        Aki = _ei.decomp3d(Akt, _nx, _nx, i);
+        Sigki = _ei.decomp3d(Sigkt, _nx, _nx, i);
         // get the linearization results
-        resi = linearize_timestamp(zki, sig, Aki, Sigki);
+        resi = linearize_at(zki, Aki, Sigki);
         hAi = std::get<0>(resi);
         Bi = std::get<1>(resi);
         hai = std::get<2>(resi);

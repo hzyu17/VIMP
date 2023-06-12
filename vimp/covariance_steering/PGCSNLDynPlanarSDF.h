@@ -19,6 +19,16 @@ namespace vimp{
 class PGCSNLDynPlanarSDF: public ProxGradCovSteerNLDyn{
 public:
     PGCSNLDynPlanarSDF(const MatrixXd& A0, 
+                        const VectorXd& a0, 
+                        const MatrixXd& B, 
+                        const ExperimentParams& params,
+                        const std::shared_ptr<NonlinearDynamics>& pdyn,
+                        const gpmp2::PlanarSDF& sdf): ProxGradCovSteerNLDyn(A0, a0, B, params, pdyn),
+                                            _eps_sdf(params.eps_sdf()),
+                                            _sdf(sdf),
+                                            _Sig_obs(params.sig_obs()){}
+
+    PGCSNLDynPlanarSDF(const MatrixXd& A0, 
                     const VectorXd& a0, 
                     const MatrixXd& B, 
                     double sig,
@@ -48,15 +58,15 @@ public:
         _Qkt.setZero();
         _rkt.setZero();
         for (int i=0; i<_nt; i++){
-            Aki = _ei.decompress3d(_Akt, _nx, _nx, i);
-            aki = _ei.decompress3d(_akt, _nx, 1, i);
-            hAi = _ei.decompress3d(_hAkt, _nx, _nx, i);
-            hai = _ei.decompress3d(_hakt, _nx, 1, i);
-            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
-            Qti = _ei.decompress3d(_Qt, _nx, _nx, i);
-            pinvBBTi = _ei.decompress3d(_pinvBBTt, _nx, _nx, i);
-            nTri = _ei.decompress3d(_nTrt, _nx, 1, i);
-            zi = _ei.decompress3d(_zkt, _nx, 1, i);
+            Aki = _ei.decomp3d(_Akt, _nx, _nx, i);
+            aki = _ei.decomp3d(_akt, _nx, 1, i);
+            hAi = _ei.decomp3d(_hAkt, _nx, _nx, i);
+            hai = _ei.decomp3d(_hakt, _nx, 1, i);
+            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
+            Qti = _ei.decomp3d(_Qt, _nx, _nx, i);
+            pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
+            nTri = _ei.decomp3d(_nTrt, _nx, 1, i);
+            zi = _ei.decomp3d(_zkt, _nx, 1, i);
             temp = (Aki - hAi).transpose();
 
             // Compute hinge loss and its gradients
@@ -79,9 +89,9 @@ public:
             //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
             // }
             // Qki
-            Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
+            Qki = temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
-            rki = grad_h * hinge * _Sig_obs * _eta / (1.0 + _eta) +  nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
@@ -94,6 +104,7 @@ public:
         // std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_mean();
+
         linearization();
  
         MatrixXd A_prior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
@@ -101,7 +112,6 @@ public:
 
         // Update Qkt, rkt
         this->update_Qrk();
-
 
         // solve inner loop 
         // solve_linearCS();
@@ -117,12 +127,12 @@ public:
         Matrix3D fbK(_nx, _nx, _nt), fbd(_nx, 1, _nt);
         MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), fbKi(_nx, _nx), di(_nx, 1), fbdi(_nx, 1), Bi(_nx, _nu);
         for (int i=0; i<_nt; i++){
-            Aprior_i = _ei.decompress3d(A_prior, _nx, _nx, i);
-            aprior_i = _ei.decompress3d(a_prior, _nx, 1, i);
+            Aprior_i = _ei.decomp3d(A_prior, _nx, _nx, i);
+            aprior_i = _ei.decomp3d(a_prior, _nx, 1, i);
 
-            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
-            Ki = _ei.decompress3d(_Kt, _nu, _nx, i);
-            di = _ei.decompress3d(_dt, _nu, 1, i);
+            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
+            Ki = _ei.decomp3d(_Kt, _nu, _nx, i);
+            di = _ei.decomp3d(_dt, _nu, 1, i);
 
             Ai = Aprior_i + Bi * Ki;
             ai = aprior_i + Bi * di;

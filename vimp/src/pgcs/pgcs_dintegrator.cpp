@@ -82,7 +82,7 @@ int main(){
 
         MatrixXd A0(nx, nx), B(nx, nu), a0(nx, 1);
         std::shared_ptr<DoubleIntegrator> pdyn{new DoubleIntegrator(nx, nu, nt)};
-        std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearized_0 = pdyn->linearize_timestamp(m0, sig, A0, Sig0);
+        std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearized_0 = pdyn->linearize_at(m0, sig, A0, Sig0);
         A0  = std::get<0>(linearized_0);
         B   = std::get<1>(linearized_0);
         a0  = std::get<2>(linearized_0);

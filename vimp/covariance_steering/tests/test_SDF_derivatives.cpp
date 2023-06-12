@@ -220,7 +220,7 @@ TEST(SDFHessian, TinyADnTr){
     // // Test function
     vimp::DoubleIntegrator dyn(4, 2, 25);
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_res;
-    linearize_res = dyn.linearize_timestamp(x, sig, Ak, Sigk);
+    linearize_res = dyn.linearize_at(x, sig, Ak, Sigk);
     Eigen::Matrix4d fhAk = std::get<0>(linearize_res);
     Eigen::MatrixXd fB = std::get<1>(linearize_res);
     Eigen::Vector4d fhak = std::get<2>(linearize_res);

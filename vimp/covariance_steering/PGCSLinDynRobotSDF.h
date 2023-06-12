@@ -58,7 +58,7 @@ public:
         std::pair<double, VectorXd> hingeloss_gradient;
         MatrixXd zi(_nx, 1);
         for (int i=0; i<_nt; i++){
-            zi = _ei.decompress3d(_zkt, _nx, 1, i);
+            zi = _ei.decomp3d(_zkt, _nx, 1, i);
 
             // Compute hinge loss and its gradients
             int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
@@ -78,8 +78,8 @@ public:
         double total_Eu = 0;
         MatrixXd zi(_nx, 1), Ki(_nu, _nx);
         for (int i=0; i<_nt; i++){
-            zi = _ei.decompress3d(_zkt, _nx, 1, i);
-            Ki = _ei.decompress3d(_Kt, _nu, _nx, i);
+            zi = _ei.decomp3d(_zkt, _nx, 1, i);
+            Ki = _ei.decomp3d(_Kt, _nu, _nx, i);
             VectorXd u_i = Ki * zi;
             double E_ui = u_i.dot(u_i) * _deltt;
             total_Eu += E_ui;
@@ -129,14 +129,14 @@ public:
         _rkt.setZero();
 
         for (int i=0; i<_nt; i++){
-            Aki = _ei.decompress3d(_Akt, _nx, _nx, i);
-            aki = _ei.decompress3d(_akt, _nx, 1, i);
-            hAi = _ei.decompress3d(_hAkt, _nx, _nx, i);
-            hai = _ei.decompress3d(_hakt, _nx, 1, i);
-            Bi = _ei.decompress3d(_Bt, _nx, _nu, i);
-            Qti = _ei.decompress3d(_Qt, _nx, _nx, i);
-            pinvBBTi = _ei.decompress3d(_pinvBBTt, _nx, _nx, i);
-            zi = _ei.decompress3d(_zkt, _nx, 1, i);
+            Aki = _ei.decomp3d(_Akt, _nx, _nx, i);
+            aki = _ei.decomp3d(_akt, _nx, 1, i);
+            hAi = _ei.decomp3d(_hAkt, _nx, _nx, i);
+            hai = _ei.decomp3d(_hakt, _nx, 1, i);
+            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
+            Qti = _ei.decomp3d(_Qt, _nx, _nx, i);
+            pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
+            zi = _ei.decomp3d(_zkt, _nx, 1, i);
             temp = (Aki - hAi).transpose();
             // Compute hinge loss and its gradients
             int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();

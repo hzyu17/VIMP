@@ -54,10 +54,10 @@ TEST(LinearCS, initializations){
 
     MatrixXd M0{MatrixXd::Zero(8, 8)};
     MatrixXd Mt = linear_cs.Mt();
-    eigen_wrapper.decompress3d(Mt, M0, 8, 8, 24);
+    eigen_wrapper.decomp3d(Mt, M0, 8, 8, 24);
 
     MatrixXd M0_gt{MatrixXd::Zero(8, 8)};
-    eigen_wrapper.decompress3d(Mt_gt, M0_gt, 8, 8, 24);
+    eigen_wrapper.decomp3d(Mt_gt, M0_gt, 8, 8, 24);
 
     for (int i=0; i<25; i++){
         MatrixXd Mi{MatrixXd::Zero(2*nx, 2*nx)};
@@ -65,10 +65,10 @@ TEST(LinearCS, initializations){
         MatrixXd Qi{MatrixXd::Zero(nx, nx)};
         MatrixXd Pii{MatrixXd::Zero(nx, nx)};
 
-        eigen_wrapper.decompress3d(At, Ai, nx, nx, i);
-        eigen_wrapper.decompress3d(Qt, Qi, nx, nx, i);
-        eigen_wrapper.decompress3d(Mt_gt, Mi, 2*nx, 2*nx, i);
-        eigen_wrapper.decompress3d(Pi_gt, Pii, nx, nx, i);
+        eigen_wrapper.decomp3d(At, Ai, nx, nx, i);
+        eigen_wrapper.decomp3d(Qt, Qi, nx, nx, i);
+        eigen_wrapper.decomp3d(Mt_gt, Mi, 2*nx, 2*nx, i);
+        eigen_wrapper.decomp3d(Pi_gt, Pii, nx, nx, i);
 
         ASSERT_LE((linear_cs.At(i)-Ai).norm(), 1e-10);
         ASSERT_LE((linear_cs.Qt(i)-Qi).norm(), 1e-10);

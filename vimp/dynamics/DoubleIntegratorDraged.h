@@ -33,7 +33,7 @@ public:
  * @param sig time scaling factor
  * @return std::tuple<Matrix4d, MatrixXd, Vector4d, Vector4d> At, Bt, at, nTr
  */
-std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
+std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& x, 
                                                                         double sig, 
                                                                         const MatrixXd& Ak, 
                                                                         const MatrixXd& Sigk) override
@@ -135,11 +135,11 @@ std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt,
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> resi;
 
     for (int i=0; i<_nt; i++){
-        zki = _ei.decompress3d(xt, _nx, 1, i);
-        Aki = _ei.decompress3d(Akt, _nx, _nx, i);
-        Sigki = _ei.decompress3d(Sigkt, _nx, _nx, i);
+        zki = _ei.decomp3d(xt, _nx, 1, i);
+        Aki = _ei.decomp3d(Akt, _nx, _nx, i);
+        Sigki = _ei.decomp3d(Sigkt, _nx, _nx, i);
         // get the linearization results
-        resi = linearize_timestamp(zki, sig, Aki, Sigki);
+        resi = linearize_at(zki, sig, Aki, Sigki);
         hAi = std::get<0>(resi);
         Bi = std::get<1>(resi);
         hai = std::get<2>(resi);

@@ -31,9 +31,9 @@ public:
                             ExperimentParams& params):
                             ProxGradCovSteer(A0, a0, B, params),
                             _pdyn(pdyn){
-                                _hAkt = _sig * pdyn->At();
-                                _Bt = _sig * pdyn->Bt();
-                                _hakt = _sig * pdyn->at();
+                                _hAkt = pdyn->At();
+                                _Bt = pdyn->Bt();
+                                _hakt = pdyn->at();
                             }
 
     ProxGradCovSteerLinDyn(const MatrixXd& A0, 
@@ -51,9 +51,13 @@ public:
                             double stop_err,
                             int max_iter): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, stop_err, max_iter), 
                                             _pdyn(pdyn){
-                                                _hAkt = _sig * pdyn->At();
-                                                _Bt = _sig * pdyn->Bt();
-                                                _hakt = _sig * pdyn->at();
+                                                _hAkt = pdyn->At();
+                                                _Bt = pdyn->Bt();
+                                                _hakt = pdyn->at();
+
+                                                // _hAkt = _sig * pdyn->At();
+                                                // _Bt = _sig * pdyn->Bt();
+                                                // _hakt = _sig * pdyn->at();
                                             }
                                             
     
@@ -62,7 +66,7 @@ public:
      * @return none, but inside already compute (K, d).
      */
     void step(int indx) override{
-        // std::cout << "----- iter " << indx << " -----" << std::endl;
+        std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         
         propagate_mean();
