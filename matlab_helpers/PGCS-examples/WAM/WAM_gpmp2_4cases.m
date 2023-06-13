@@ -11,7 +11,7 @@ import gpmp2.*
 % 3 configurations
 start_confs = [-0.8,    -1.70,   1.64,  1.29,   1.1,    -0.106,     2.2;
                             -0.9,    -1.70,   1.34,  1.19,   0.8,    -0.126,     2.5;
-                            -1.8,    -1.50,   1.84,  1.29,   1.5,    0.26,         0.2];
+                            -1.8,    -1.50,   1.84,  1.29,   1.5,    -0.56,         0.2];
 end_confs = [-0.0,       0.94,     0,       1.6,     0,       -0.919,     1.55;
                           -0.7,     1.35,     1.2,      1.0,     -0.7,    -0.1,           1.2;
                           -0.0,        0.6,       -0.5,   0.2,    0.2,    0.8,           1.15];
@@ -40,7 +40,8 @@ end_vel = zeros(7,1);
 
 % plot problem setting
 figure, hold on
-title('Problem Settings')
+ttl = ['Problem Settings ', i_exp];
+title(ttl)
 plotMap3D(dataset.corner_idx, origin, cell_size);
 plotRobotModel(arm, start_conf)
 plotRobotModel(arm, end_conf)

@@ -11,6 +11,23 @@ addpath("../../../matlab_helpers/");
 
 %% read map
 sdfmap = csvread("../../RAL-examples/2d_pR/map2/map_multiobs_map2.csv");
+i_exp = 1;
+eps = 0.01;
+eps_map = 0.6;
+speed = 0.23;
+nt = 50;
+sig0 = 0.001;
+sigT = 0.001;
+eta = 1e-6;
+stop_err = 1e-5;
+max_iter = 50;
+cost_sigma = 1.5e5;
+
+args = [num2str(i_exp), ' ', num2str(eps), ' ', num2str(eps_map), ' ', num2str(speed), ' ', num2str(nt), ' ', num2str(sig0), ' ', num2str(sigT), ' ', ...
+            num2str(eta), ' ', num2str(stop_err), ' ', num2str(max_iter), ' ', num2str(cost_sigma)];
+    
+command = ['/home/hongzhe/git/VIMP/vimp/build/pgcs_PlanarPRModel', ' ', args];
+num_iter = system(command);
 
 x0 = 500;
 y0 = 500;

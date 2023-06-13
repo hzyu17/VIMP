@@ -45,14 +45,17 @@ public:
         mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
         m0.block(0, 0, 7, 1) = mo_pos;
         m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
-        
+
         Eigen::VectorXd mT_pos(7);
         mT_pos << goal_1, goal_2, goal_3, goal_4, goal_5, goal_6, goal_7;
         mT.block(0, 0, 7, 1) = mT_pos;
         mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
+        double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
+
         this->_params.set_m0(m0);
         this->_params.set_mT(mT);
+        this->_params.update_sig_obs(sig_obs);
     }
 
 };

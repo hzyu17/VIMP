@@ -2,11 +2,11 @@
 
     <eps> 0.01 </eps>
     <eps_sdf> 0.6 </eps_sdf>
-    <speed> 0.2 </speed>
-    <nt> 100 </nt>
-    <sig0> 0.02 </sig0>
-    <sigT> 0.02 </sigT>
-    <eta> 1e-5 </eta>
+    <speed> 0.25 </speed>
+    <nt> 50 </nt>
+    <sig0> 0.001 </sig0>
+    <sigT> 0.001 </sigT>
+    <eta> 1e-6 </eta>
     <stop_err> 1e-5 </stop_err>
     <max_iter> 30 </max_iter>
     <cost_sigma> 5.6e3 </cost_sigma>
@@ -30,7 +30,7 @@
         <vy>0.0</vy>
     </goal_pos>
     
-    <cost_sigma> 1e4 </cost_sigma>
+    <cost_sigma> 2e5 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case1/</saving_prefix>
 
@@ -54,7 +54,7 @@
         <vy> 0</vy>
     </goal_pos>
 
-    <cost_sigma> 1e4 </cost_sigma>
+    <cost_sigma> 2e4 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case2/</saving_prefix>
 
