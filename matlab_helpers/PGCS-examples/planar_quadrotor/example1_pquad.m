@@ -92,8 +92,8 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 
 nexttile
-t.FontSize = 14;
-grid on
+% t.FontSize = 14;
+% grid on
 hold on
 % --------------------- plot samples --------------------- 
 for i_sample=1:n_samples
@@ -117,9 +117,6 @@ for i=1:nt-1
 end
 plot3(t, mus(1, :), mus(2, :), 'r', 'LineWidth', 7.5);
 
-xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
-zlabel('Position $y$','Interpreter','latex');
-
 % --------------------- plot covariance --------------------- 
 Sigk = Sig0;
 Sigs = zeros(6,6,nt);
@@ -130,8 +127,8 @@ for i=1:nt-1
 end
 plot_marginal(m0, mus, Sig0(1:2,1:2), Sigs(1:2,1:2,:), nt, sig, 100);
 
-xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
-zlabel('Position $y$','Interpreter','latex');
+xlabel('Time $t$','Interpreter','latex', 'FontSize',18),ylabel('Position $x$','Interpreter','latex', 'FontSize',18);
+zlabel('Position $y$','Interpreter','latex', 'FontSize',18);
 
 % ========================= plot the controlled linear system ========================= 
 
@@ -144,8 +141,8 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 
 nexttile
-t.FontSize = 14;
-grid on
+% t.FontSize = 14;
+% grid on
 hold on
 % --------------------- plot samples --------------------- 
 for i_sample=1:n_samples
@@ -172,8 +169,6 @@ for i=1:nt-1
     mus(:,i+1) = mu;
 end
 plot3(t, mus(1, :), mus(2, :), 'r', 'LineWidth', 7.5);
-xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
-zlabel('Position $y$','Interpreter','latex');
 
 % --------------------- plot covariance --------------------- 
 Sigk = Sig0;
@@ -188,8 +183,8 @@ for i=1:nt-1
 end
 plot_marginal(m0, mus, Sig0(1:2,1:2), Sigs(1:2,1:2,:), nt, sig, 100);
 
-xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
-zlabel('Position $y$','Interpreter','latex');
+xlabel('Time $t$','Interpreter','latex', 'FontSize',18),ylabel('Position $x$','Interpreter','latex', 'FontSize',18);
+zlabel('Position $y$','Interpreter','latex', 'FontSize',18);
 
 %% plotting
 % =================== ellipsoids =================== 

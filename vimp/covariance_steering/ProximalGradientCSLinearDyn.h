@@ -55,9 +55,6 @@ public:
                                                 _Bt = pdyn->Bt();
                                                 _hakt = pdyn->at();
 
-                                                // _hAkt = _sig * pdyn->At();
-                                                // _Bt = _sig * pdyn->Bt();
-                                                // _hakt = _sig * pdyn->at();
                                             }
                                             
     
@@ -80,6 +77,49 @@ public:
         // solve inner loop linear CS
         solve_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
 
+    }
+
+    /**
+     * @brief A step with given local matrices and a given step size;
+     * @return (Kkt, dkt, Akt, akt, zkt, Sigkt) 
+     */
+    StepResult step(int indx, 
+                    double step_size, 
+                    const Matrix3D& At, 
+                    const Matrix3D& at, 
+                    const Matrix3D& Bt,
+                    const Matrix3D& hAt,
+                    const Matrix3D& hat, 
+                    const Matrix3D& zt, 
+                    const Matrix3D& Sigt) override
+    {
+        std::cout << "----- iter " << indx << " -----" << std::endl;
+        // propagate the mean and the covariance
+        
+        std::tuple<Matrix3D, Matrix3D> ztSigt;
+        ztSigt = propagate_mean(At, at, Bt, zt, Sigt);
+
+        MatrixXd Aprior = At / (1 + step_size) + hAt * step_size / (1 + step_size);
+        MatrixXd aprior = at / (1 + step_size) + hat * step_size / (1 + step_size);
+
+        // Update Qkt, rkt
+        std::tuple<Matrix3D, Matrix3D> Qtrt;
+        Qtrt = update_Qrk(zt, Sigt, At, at, Bt, _hAkt, _hakt, step_size);
+
+        Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
+        Qt = std::get<0>(Qtrt);
+        rt = std::get<1>(Qtrt);
+
+        // solve inner loop linear CS
+        std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> KtdtAtat;
+        KtdtAtat = solve_linearCS_return(Aprior, _Bt, aprior, Qt, rt);
+
+        return std::make_tuple(std::get<0>(KtdtAtat), 
+                               std::get<1>(KtdtAtat), 
+                               std::get<2>(KtdtAtat), 
+                               std::get<3>(KtdtAtat), 
+                               std::get<0>(ztSigt), 
+                               std::get<1>(ztSigt));
     }
 
 protected:

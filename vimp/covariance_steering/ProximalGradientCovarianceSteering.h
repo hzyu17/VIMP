@@ -15,11 +15,14 @@
 #include "LinearCovarianceSteering.h"
 #include <memory>
 #include <Eigen/QR>
-#include "DataBuffer.h"
+#include "../helpers/PGCSDataBuffer.h"
 
 using namespace Eigen;
 
+
 namespace vimp{
+    // return type of one step: (Kt, dt, At, at, zt, Sigt) 
+    using StepResult = std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D, Matrix3D, Matrix3D>;  
     class ProxGradCovSteer
     {
     public:
@@ -165,7 +168,44 @@ namespace vimp{
             return std::make_tuple(_Kt, _dt, i_step);
         }
 
+        /**
+         * @brief step with given matrices, return a total cost of this step.
+         */
+        virtual StepResult step(int indx, 
+                                double step_size, 
+                                const Matrix3D& At, 
+                                const Matrix3D& at, 
+                                const Matrix3D& Bt,
+                                const Matrix3D& hAt,
+                                const Matrix3D& hat, 
+                                const Matrix3D& zt, 
+                                const Matrix3D& Sigt) = 0;
+
+        void update_from_step_res(const StepResult& res){
+            // return type of one step: (Kt, dt, At, at, zt, Sigt) 
+            _Kt = std::get<0>(res);
+            _dt = std::get<1>(res);
+            _Akt = std::get<2>(res);
+            _akt = std::get<3>(res);
+            _zkt = std::get<4>(res);
+            _Sigkt = std::get<5>(res);
+        }
+
         virtual void step(int indx) = 0;
+
+        /**
+         * @brief Qrk with given matrices.
+         * return: (Qt, rt)
+         */
+        virtual std::tuple<Matrix3D, Matrix3D> update_Qrk(const Matrix3D& zt, 
+                                                        const Matrix3D& Sigt, 
+                                                        const Matrix3D& At, 
+                                                        const Matrix3D& at, 
+                                                        const Matrix3D& Bt,
+                                                        const Matrix3D& hAt,
+                                                        const Matrix3D& hat,
+                                                        const double step_size){}
+
 
         /**
          * @brief Problem with a state cost V(Xt) differs only in the expressions Qk and rk.
@@ -199,6 +239,44 @@ namespace vimp{
             }
         }
 
+        /**
+         * @brief solve linear CS with local matrix inputs. 
+         * @return std::tuple<K, d, A, a> where A, a are close-loop linear system already containing the feedback control. 
+         */
+        std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> solve_linearCS_return(const MatrixXd &A, 
+                                                                                const MatrixXd &B, 
+                                                                                const MatrixXd &a, 
+                                                                                const MatrixXd &Q, 
+                                                                                const MatrixXd &r)
+        {
+            // solve for the linear covariance steering
+            _linear_cs.update_params(A, B, a, Q, r);
+            _linear_cs.solve();
+
+            // retrieve (K, d)
+            Matrix3D Kt(_nu, _nx, _nt), dt(_nu, 1, _nt), At(_nx, _nx, _nt), at(_nx, 1, _nt);
+            Kt = _linear_cs.Kt();
+            dt = _linear_cs.dt();
+
+            MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), di(_nx, 1), Bi(_nx, _nu);
+            for (int i = 0; i < _nt; i++)
+            {
+                Aprior_i = _ei.decomp3d(A, _nx, _nx, i);
+                aprior_i = _ei.decomp3d(a, _nx, 1, i);
+
+                Bi = Bt_i(i);
+                Ki = _ei.decomp3d(Kt, _nu, _nx, i);
+                di = _ei.decomp3d(dt, _nu, 1, i);
+
+                Ai = Aprior_i + Bi * Ki;
+                ai = aprior_i + Bi * di;
+
+                _ei.compress3d(Ai, At, i);
+                _ei.compress3d(ai, at, i);
+            }
+            return std::make_tuple(Kt, dt, At, at);
+        }
+
         void solve_linearCS(const MatrixXd &A, const MatrixXd &B, const MatrixXd &a, const MatrixXd &Q, const MatrixXd &r)
         {
             // solve for the linear covariance steering
@@ -226,6 +304,43 @@ namespace vimp{
                 _ei.compress3d(Ai, _Akt, i);
                 _ei.compress3d(ai, _akt, i);
             }
+        }
+
+        std::tuple<Matrix3D, Matrix3D> propagate_mean(const Matrix3D& At, 
+                                                      const Matrix3D& at, 
+                                                      const Matrix3D& Bt,
+                                                      const Matrix3D& zt,
+                                                      const Matrix3D& Sigt){
+            // The i_th matrices
+            Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
+            Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx);
+            Eigen::MatrixXd Si(_nx, _nx), Snew(_nx, _nx);
+            Matrix3D zt_new(_nx, 1, _nt), Sigt_new(_nx, _nx, _nt);
+
+            for (int i = 0; i < _nt - 1; i++)
+            {
+                zi = _ei.decomp3d(zt, _nx, 1, i);
+                Ai = _ei.decomp3d(At, _nx, _nx, i);
+                ai = _ei.decomp3d(at, _nx, 1, i);
+                Bi = _ei.decomp3d(Bt, _nx, _nu, i);
+                Si = _ei.decomp3d(Sigt, _nx, _nx, i);
+
+                AiT = Ai.transpose();
+                BiT = Bi.transpose();
+
+                if (i==0){
+                    _ei.compress3d(zi, zt_new, 0);
+                    _ei.compress3d(Si, Sigt_new, 0);
+                }
+
+                znew = zi + _deltt * (Ai * zi + ai);
+                Snew = Si + _deltt * (Ai * Si + Si * AiT + _eps * (Bi * BiT));
+                
+                _ei.compress3d(znew, zt_new, i + 1);
+                _ei.compress3d(Snew, Sigt_new, i + 1);
+            }
+
+            return std::make_tuple(zt_new, Sigt_new);
         }
 
         void propagate_mean()
@@ -338,5 +453,6 @@ namespace vimp{
 
         // Dynamics class
         LinearCovarianceSteering _linear_cs;
+
     };
 }

@@ -82,16 +82,20 @@ end
 dt = sig/(nt-1);
 t = linspace(0,sig,nt);
 n_samples = 20;
+
 x0 = 50;
 y0 = 50;
-width = 800;
+width = 400;
 height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'none')
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+
 nexttile
-grid on
+% t.FontSize = 14;
+% grid on
 hold on
+% --------------------- plot samples --------------------- 
 for i_sample=1:n_samples
     xs = zeros(6, nt);
     xs(:,1) = m0 + Sig0^(1/2)* randn(6, 1);
@@ -100,9 +104,10 @@ for i_sample=1:n_samples
         xt = xt + (hAstar(:,:,i)*xt + hastar(i)) .* dt + sqrt(epsilon*dt).*B(:,:,i) * randn(2,1);
         xs(:,i+1) = xt;
     end
-    plot3(t, xs(1, :), xs(2, :), 'LineWidth', 1.5);
+    plot3(t, xs(1, :), xs(2, :), 'LineWidth', 1);
 end
-% plot mean
+
+% --------------------- plot mean --------------------- 
 mus = zeros(6, nt);
 mus(:,1) = m0;
 xt = m0;
@@ -110,30 +115,36 @@ for i=1:nt-1
     xt = xt + (hAstar(:,:,i)*xt + hastar(i)) .* dt;
     mus(:,i+1) = xt;
 end
-plot3(t, mus(1, :), mus(2, :), 'r', 'LineWidth', 5.5);
+plot3(t, mus(1, :), mus(2, :), 'r', 'LineWidth', 7.5);
 
-xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
-zlabel('Position $y$','Interpreter','latex');
-
-% plot covariance
-Sk = Sig0;
+% --------------------- plot covariance --------------------- 
+Sigk = Sig0;
 Sigs = zeros(6,6,nt);
 Sigs(:,:,1) = Sig0;
 for i=1:nt-1
-    Sk = Sk + (hAstar(:,:,i)*Sk + Sk*hAstar(:,:,i)' + epsilon*B(:,:,i)*B(:,:,i)').*dt;
-    Sigs(:,:,i+1) = Sk;
-%     error_ellipse_easy(Sk, mu(:,i+1),[],t);
+    Sigk = Sigk + (hAstar(:,:,i)*Sigk + Sigk*hAstar(:,:,i)' + epsilon*B(:,:,i)*B(:,:,i)').*dt;
+    Sigs(:,:,i+1) = Sigk;
 end
-plot_marginal(m0, xs, Sig0(1:2,1:2), Sigs(1:2,1:2,:), nt, sig, 50);
+plot_marginal(m0, mus, Sig0(1:2,1:2), Sigs(1:2,1:2,:), nt, sig, 100);
 
-xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
-zlabel('Position $y$','Interpreter','latex');
+xlabel('Time $t$','Interpreter','latex', 'FontSize',18),ylabel('Position $x$','Interpreter','latex', 'FontSize',18);
+zlabel('Position $y$','Interpreter','latex', 'FontSize',18);
 
 % ========================= plot the controlled linear system ========================= 
 
+x0 = 50;
+y0 = 50;
+width = 400;
+height = 350;
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+
 nexttile
-grid on
+% t.FontSize = 14;
+% grid on
 hold on
+% --------------------- plot samples --------------------- 
 for i_sample=1:n_samples
     xs = zeros(6, nt);
     xs(:,1) = m0 + Sig0^(1/2)* randn(6, 1);
@@ -144,10 +155,10 @@ for i_sample=1:n_samples
         xt = xt + (Acl*xt + acl) .* dt +  +  sqrt(epsilon*dt).*B(:,:,i) * randn(2,1);
         xs(:,i+1) = xt;
     end
-    plot3(t, xs(1, :), xs(2, :), 'LineWidth', 1.5);
+    plot3(t, xs(1, :), xs(2, :), 'LineWidth', 1);
 end
 
-% plot mean
+% --------------------- plot mean --------------------- 
 mus = zeros(6, nt);
 mus(:,1) = m0;
 mu = m0;
@@ -157,27 +168,24 @@ for i=1:nt-1
     mu = mu + (Acl*mu + acl) .* dt;
     mus(:,i+1) = mu;
 end
-plot3(t, mus(1, :), mus(2, :), 'r', 'LineWidth', 5.5);
-xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
-zlabel('Position $y$','Interpreter','latex');
+plot3(t, mus(1, :), mus(2, :), 'r', 'LineWidth', 7.5);
 
-% plot covariance
-Sk = Sig0;
+
+% --------------------- plot covariance --------------------- 
+Sigk = Sig0;
 Sigs = zeros(6,6,nt);
 Sigs(:,:,1) = Sig0;
 for i=1:nt-1
     Acl = hAstar(:,:,i) + B(:,:,i)*Ks(:,:,i);
     acl = hastar(i) + B(:,:,i)*ds(:,i);
-    Sk = Sk + (Acl*Sk + Sk*Acl' + epsilon*B(:,:,i)*B(:,:,i)').*dt;
-    Sigs(:,:,i+1) = Sk;
+    Sigk = Sigk + (Acl*Sigk + Sigk*Acl' + epsilon*B(:,:,i)*B(:,:,i)').*dt;
+    Sigs(:,:,i+1) = Sigk;
 %     error_ellipse_easy(Sk, mu(:,i+1),[],t);
 end
-plot_marginal(m0, xs, Sig0(1:2,1:2), Sigs(1:2,1:2,:), nt, sig, 50);
+plot_marginal(m0, mus, Sig0(1:2,1:2), Sigs(1:2,1:2,:), nt, sig, 100);
 
 xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
 zlabel('Position $y$','Interpreter','latex');
-
-%%
 
 %% plotting
 % =================== ellipsoids =================== 
@@ -192,7 +200,7 @@ nexttile
 hold on 
 
 % ---------------------------- positions ---------------------------- 
-step_size = floor(nt/5);
+step_size = 100;
 Sig0_xy = Sig0(1:2, 1:2, 1:end);
 Sk_xy = Sk(1:2, 1:2, 1:end);
 zk_2d = zk(1:2, :);
@@ -215,27 +223,7 @@ for j=1:n2
     plot3(t,x(1,:),x(2,:),cstring(mod(j,6)+1),'LineWidth',2);
 end
 
-%%
-
-% % --------------------------- angle ------------------------------
-% x0 = 50;
-% y0 = 50;
-% width = 400;
-% height = 350;
-% t  = linspace(0,sig,nt);
-% figure
-% set(gcf,'position',[x0,y0,width,height])
-% tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
-% nexttile
-% hold on 
-% step_size = floor(nt/5);
-% zk3 = zk(3, :);
-% plot(t,zk3(:),'LineWidth',2);
-% set(gca,'fontsize',16);
-% xlabel('Time $t$','Interpreter','latex'),ylabel('Angle $\phi$','Interpreter','latex');
-
-
-%% plot the mean quadrotor trajectory
+% plot the mean quadrotor trajectory
 x0 = 50;
 y0 = 50;
 width = 400;
@@ -246,7 +234,7 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
 hold on 
-step_size = floor(nt/5);
+step_size = 100;
 
 for ti=1:30:nt
     mean_x = zk(1, ti);
@@ -255,7 +243,7 @@ for ti=1:30:nt
     draw_planarquad([mean_x,mean_y], 0.25, 0.05, angle_phi, [0.1,0.1,0.1]);
 end
 
-%%
+%
 % ---------------------------- velocities ---------------------------- 
 x0 = 50;
 y0 = 50;
@@ -276,7 +264,7 @@ x1=zeros(n,n2);
 Sig0_vxy = Sig0(3:4, 3:4, 1:end);
 Sk_vxy = Sk(3:4, 3:4, 1:end);
 vzk_2d = zk(3:4, :);
-v0 = [2;0];
+v0 = m0(4:5);
 plot_marginal(v0, vzk_2d, Sig0_vxy, Sk_vxy, nt, sig, step_size);
 set(gca,'fontsize',16);
 xlabel('Time $t$','Interpreter','latex'),ylabel('Velocity $v_x$','Interpreter','latex');

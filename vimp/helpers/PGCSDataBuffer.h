@@ -23,85 +23,64 @@ namespace vimp
     class DataBuffer{
     public:
         DataBuffer(){}
-        DataBuffer(const Matrix3D& Akt, 
+        DataBuffer(const Matrix3D& At, 
                     const Matrix3D& Bt, 
-                    const Matrix3D& akt,
+                    const Matrix3D& at,
                     const Matrix3D& pinvBBTt,
-                    const Matrix3D& Qkt,
-                    const Matrix3D& rkt,
-                    const Matrix3D& hAkt,
-                    const Matrix3D& hakt,
-                    const Matrix3D& nTrt)
+                    const Matrix3D& Qt,
+                    const Matrix3D& rt,
+                    const Matrix3D& hAt,
+                    const Matrix3D& hat,
+                    const Matrix3D& nTrt,
+                    const Matrix3D& zt,
+                    const Matrix3D& Sigt)
                     {
-                        update(Akt, Bt, akt, pinvBBTt, Qkt, rkt, hAkt, hakt, nTrt);
+                        update(At, Bt, at, pinvBBTt, Qt, rt, hAt, hat, nTrt, zt, Sigt);
                     }
                     
-        void update(const Matrix3D& Akt, 
+        void update(const Matrix3D& At, 
                     const Matrix3D& Bt, 
-                    const Matrix3D& akt,
+                    const Matrix3D& at,
                     const Matrix3D& pinvBBTt,
-                    const Matrix3D& Qkt,
-                    const Matrix3D& rkt,
-                    const Matrix3D& hAkt,
-                    const Matrix3D& hakt,
-                    const Matrix3D& nTrt){
-                        _Akt = Akt;
+                    const Matrix3D& Qt,
+                    const Matrix3D& rt,
+                    const Matrix3D& hAt,
+                    const Matrix3D& hat,
+                    const Matrix3D& nTrt,
+                    const Matrix3D& zt,
+                    const Matrix3D& Sigt){
+                        _At = At;
                         _Bt = Bt;
-                        _akt = akt;
+                        _at = at;
                         _pinvBBTt = pinvBBTt;
-                        _Qkt = Qkt;
-                        _rkt = rkt;
-                        _hAkt = hAkt;
-                        _hakt = hakt;
+                        _Qt = Qt;
+                        _rt = rt;
+                        _hAt = hAt;
+                        _hat = hat;
                         _nTrt = nTrt;
+                        _zt = zt;
+                        _Sigt = Sigt;
                     }
 
-        void update_forward(){
-            _Akt = _Akt_next;
-            _Bt = _Bt_next;
-            _akt = _akt_next;
-            _pinvBBTt = _pinvBBTt_next;
-            _Qkt = _Qkt_next;
-            _rkt = _rkt_next;
-            _hAkt = _hAkt_next;
-            _hakt = _hakt_next;
-            _nTrt = _nTrt_next;
+        void update_nominal(const Matrix3D& zt, const Matrix3D& Sigt){
+            _zt = zt;
+            _Sigt = Sigt;
         }
 
-        void update_Akt_i_next(const MatrixXd& Ai, int i){ _ei.compress3d(Ai, _Akt_next, i); }
-
-        void update_akt_i_next(const MatrixXd& ai, int i){ _ei.compress3d(ai, _akt_next, i); }
-
-        void update_Bt_i_next(const MatrixXd& Bi, int i){ _ei.compress3d(Bi, _Bt_next, i); }
-
-        void update_hAkt_i_next(const MatrixXd& hAi, int i){ _ei.compress3d(hAi, _hAkt_next, i); }
-
-        void update_hakt_i_next(const MatrixXd& hai, int i){ _ei.compress3d(hai, _hakt_next, i); }
-
-        void update_nTrt_i_next(const MatrixXd& nTri, int i){ _ei.compress3d(nTri, _nTrt_next, i); }
-
-        void update_Qkt_i_next(const MatrixXd& Qki, int i){ _ei.compress3d(Qki, _Qkt_next, i); }
-
-        void update_rkt_i_next(const MatrixXd& rki, int i){ _ei.compress3d(rki, _rkt_next, i); }
 
     private:
         EigenWrapper _ei;
 
         // 3D matrices
-        Matrix3D _Akt, _Bt, _akt, _pinvBBTt;
-        Matrix3D _Qkt, _rkt;
+        Matrix3D _At, _Bt, _at, _pinvBBTt;
+        Matrix3D _Qt, _rt;
 
         // linearizations
-        Matrix3D _hAkt, _hakt, _nTrt;
+        Matrix3D _hAt, _hat, _nTrt;
 
-        // Next time matrices
-        // 3D matrices
-        Matrix3D _Akt_next, _Bt_next, _akt_next, _pinvBBTt_next;
-        Matrix3D _Qkt_next, _Qt_next; // Qk is the Q in each iteration, and Qt is the quadratic state cost matrix.
-        Matrix3D _rkt_next;
+        // nominals
+        Matrix3D _zt, _Sigt;
 
-        // linearizations
-        Matrix3D _hAkt_next, _hakt_next, _nTrt_next;
     };
 
     /**

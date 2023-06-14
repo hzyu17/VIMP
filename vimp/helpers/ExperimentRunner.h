@@ -131,7 +131,8 @@ public:
         PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, pdyn, param);
 
         std::tuple<MatrixXd, MatrixXd, int> res_Kd;
-        res_Kd = pgcs_lin_sdf.optimize();
+        // res_Kd = pgcs_lin_sdf.optimize();
+        res_Kd = pgcs_lin_sdf.backtrack();
 
         MatrixXd Kt(_nx*_nx, param.nt()), dt(_nx, param.nt());
         Kt = std::get<0>(res_Kd);
@@ -174,7 +175,8 @@ public:
             PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, pdyn, _params);
 
             std::tuple<MatrixXd, MatrixXd, int> res_Kd;
-            res_Kd = pgcs_lin_sdf.optimize();
+            // res_Kd = pgcs_lin_sdf.optimize();
+            res_Kd = pgcs_lin_sdf.backtrack();
 
             MatrixXd Kt(_nx*_nx, _nt), dt(_nx, _nt);
             Kt = std::get<0>(res_Kd);

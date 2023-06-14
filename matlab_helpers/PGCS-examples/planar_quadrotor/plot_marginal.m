@@ -20,7 +20,8 @@ for i=1:step_size
 end
 
 cstring='grbcmk';
-hold on; grid on;
+hold on; 
+% grid on;
 surf(X,Y,Z,'FaceColor','blue','EdgeColor','none');
 alpha(0.1);
 view(-30,30);

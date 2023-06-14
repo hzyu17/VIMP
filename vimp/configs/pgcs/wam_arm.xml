@@ -3,11 +3,11 @@
 
     <eps> 0.001 </eps>
     <eps_sdf> 0.2 </eps_sdf>
-    <speed> 0.0055 </speed>
-    <nt> 100 </nt>
+    <speed> 0.01 </speed>
+    <nt> 50 </nt>
     <sig0> 0.001 </sig0>
     <sigT> 0.001 </sigT>
-    <eta> 1e-2 </eta>
+    <eta> 1e-1 </eta>
     <stop_err> 1e-5 </stop_err>
     <max_iter> 30 </max_iter>
     <cost_sigma> 1 </cost_sigma>
@@ -35,7 +35,7 @@
         <7>1.55</7>
     </goal_pos>
 
-    <cost_sigma> 1e6 </cost_sigma>
+    <cost_sigma> 1.45e4 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/WAM/case1/</saving_prefix>
 
