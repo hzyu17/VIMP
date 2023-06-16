@@ -127,7 +127,7 @@ public:
                 // std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
                 
                 // shringking step size
-                // step_size = 0.1*step_size;
+                step_size = 0.5*step_size;
 
                 // tentative one step
                 StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
@@ -145,25 +145,30 @@ public:
                 std::cout << "total cost " << total_cost << std::endl;
                 total_cost_prev = total_cost;
                 
-                // // stop backtracking 
-                // if (total_cost < total_cost_prev){
+                // stop backtracking 
+                if (total_cost < total_cost_prev){
                     
-                //     // update the internal parameters
-                //     update_from_step_res(AtatKtdtztSigt);
-
-                //     // register for the current cost
-                //     total_cost_prev = total_cost;
-                    
-                //     // go to next iteration
-                //     i_step += 1;
-                    
-                //     break;
-                // }
-
-                if (i_bt == MBT-1){
+                    // update the internal parameters
                     update_from_step_res(KtdtAtatztSigt);
+
+                    // register for the current cost
+                    total_cost_prev = total_cost;
+                    
+                    // go to next iteration
+                    i_step += 1;
+
                     v_zt.push_back(_zkt);
                     v_Sigzt.push_back(_Sigkt);
+                    
+                    break;
+                }
+
+                // no good step size found.
+                if (i_bt == MBT-1){
+                    
+                    // update_from_step_res(KtdtAtatztSigt);
+                    // v_zt.push_back(_zkt);
+                    // v_Sigzt.push_back(_Sigkt);
                     i_step += 1;
                     break;
                 }

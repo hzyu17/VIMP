@@ -37,7 +37,6 @@ public:
 
     virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
         read_boundary_conditions(paramNode, _params);
-       
     }
 
     virtual void run(){

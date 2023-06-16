@@ -65,11 +65,11 @@ namespace vimp{
                         _hakt(Matrix3D(_nx, 1, _nt)),
                         _nTrt(Matrix3D(_nx, 1, _nt)),
                         _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
-                        _zkt(_ei.replicate3d(_z0, _nt)),
+                        _zkt(_ei.replicate3d(params.m0(), _nt)),
                         _Sigkt(_ei.replicate3d(params.Sig0(), _nt)),
                         _Kt(_nu, _nx, _nt),
                         _dt(_nu, 1, _nt),
-                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _sig, _nt, _eps, _Qkt, _rkt, _z0, params.Sig0(), _zT, params.SigT()),
+                        _linear_cs(_Akt, _Bt, _akt, params.nx(), params.nu(), params.sig(), params.nt(), params.eps(), _Qkt, _rkt, params.m0(), params.Sig0(), params.mT(), params.SigT()),
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
                         {
                             // Initialize the final time covariance
@@ -265,7 +265,7 @@ namespace vimp{
             Kt = _linear_cs.Kt();
             dt = _linear_cs.dt();
 
-            MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), di(_nx, 1), Bi(_nx, _nu);
+            MatrixXd Ai(_nx, _nx), ai(_nx, 1), Bi(_nx, _nu), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), di(_nx, 1);
             for (int i = 0; i < _nt; i++)
             {
                 Aprior_i = _ei.decomp3d(A, _nx, _nx, i);
@@ -304,27 +304,26 @@ namespace vimp{
             Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx), Si(_nx, _nx), Snew(_nx, _nx);
             Matrix3D zt_new(_nx, 1, _nt), Sigt_new(_nx, _nx, _nt);
 
+            zt_new = zt;
+            Sigt_new = Sigt;
+
             for (int i = 0; i < _nt - 1; i++)
             {
-                zi = _ei.decomp3d(zt, _nx, 1, i);
+                zi = _ei.decomp3d(zt_new, _nx, 1, i);
                 Ai = _ei.decomp3d(At, _nx, _nx, i);
                 ai = _ei.decomp3d(at, _nx, 1, i);
                 Bi = _ei.decomp3d(Bt, _nx, _nu, i);
-                Si = _ei.decomp3d(Sigt, _nx, _nx, i);
+                Si = _ei.decomp3d(Sigt_new, _nx, _nx, i);
 
                 AiT = Ai.transpose();
                 BiT = Bi.transpose();
-
-                if (i==0){
-                    _ei.compress3d(zi, zt_new, 0);
-                    _ei.compress3d(Si, Sigt_new, 0);
-                }
 
                 znew = zi + _deltt * (Ai * zi + ai);
                 Snew = Si + _deltt * (Ai * Si + Si * AiT + _eps * (Bi * BiT));
 
                 _ei.compress3d(znew, zt_new, i + 1);
                 _ei.compress3d(Snew, Sigt_new, i + 1);
+
             }
 
             return std::make_tuple(zt_new, Sigt_new);
@@ -332,27 +331,10 @@ namespace vimp{
 
         void propagate_mean()
         {   
-            // The i_th matrices
-            Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
-            Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx);
-            Eigen::MatrixXd Si(_nx, _nx), Snew(_nx, _nx);
-            for (int i = 0; i < _nt - 1; i++)
-            {
-                zi = zkt_i(i);
-                Ai = Akt_i(i);
-                ai = akt_i(i);
-                Bi = Bt_i(i);
-                Si = Sigkt_i(i);
-
-                AiT = Ai.transpose();
-                BiT = Bi.transpose();
-
-                znew = zi + _deltt * (Ai * zi + ai);
-                Snew = Si + _deltt * (Ai * Si + Si * AiT + _eps * (Bi * BiT));
-
-                _ei.compress3d(znew, _zkt, i + 1);
-                _ei.compress3d(Snew, _Sigkt, i + 1);
-            }
+            std::tuple<Matrix3D, Matrix3D> ztSigt;
+            ztSigt = propagate_mean(_Akt, _akt, _Bt, _zkt, _Sigkt);
+            _zkt = std::get<0>(ztSigt);
+            _Sigkt = std::get<1>(ztSigt);
         }
 
 
@@ -423,14 +405,12 @@ namespace vimp{
         Matrix3D _hAkt, _hakt, _nTrt;
 
         // boundary conditions
-        Matrix3D _Sigkt;
+        Matrix3D _Sigkt, _zkt;
         MatrixXd _Sig0, _SigT;
         VectorXd _z0, _zT;
-        Matrix3D _zkt;
 
         // Final result
-        Matrix3D _Kt;
-        Matrix3D _dt;
+        Matrix3D _Kt, _dt;
 
         // Data buffer
         DataBuffer _buffer;

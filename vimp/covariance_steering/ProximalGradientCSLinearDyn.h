@@ -98,7 +98,6 @@ public:
         ztSigt = propagate_mean(At, at, Bt, zt, Sigt);
 
         Matrix3D ztnew(_nx, 1, _nt), Sigtnew(_nx, _nx, _nt);
-        ztnew.setZero(); Sigtnew.setZero();
         ztnew = std::get<0>(ztSigt);
         Sigtnew = std::get<1>(ztSigt);
         
