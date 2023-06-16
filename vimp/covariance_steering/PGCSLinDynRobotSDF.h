@@ -106,68 +106,92 @@ public:
      * @brief The optimization process, including recording the costs.
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
-    std::tuple<Matrix3D, Matrix3D, int> backtrack(){
+    std::tuple<Matrix3D, Matrix3D, NominalHistory> backtrack(){
         double err = 1;
-
         int i_step = 0; 
+        int MBT = 1; // max backtracking number
+        double total_cost_prev = 1e9; // initial cost buffer
 
-        double step_size = _eta; // initial step size
-        int MBT = 10; // max backtracking number
-        double total_cost_prev = 1e6; // initial cost buffer
+        NominalHistory hnom;
+        std::vector<Matrix3D> v_zt, v_Sigzt;
 
-        while ((err > _stop_err) && (i_step < _max_iter)){
+        while ((total_cost_prev > _stop_err) && (i_step < _max_iter)){
             
+            std::cout << "================ iter " << i_step << " ================" << std::endl;
+            // std::cout << "total_cost_prev " << total_cost_prev << std::endl;
+
             // backtracking 
+            double step_size = _eta; // initial step size
             for (int i_bt=0; i_bt<MBT; i_bt++){
 
-                std::cout << " ================ backtracking # " << i_bt << " ================ " << std::endl;
+                // std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
                 
                 // shringking step size
-                step_size = std::pow(_eta, i_bt);
+                // step_size = 0.1*step_size;
 
                 // tentative one step
-                StepResult AtatKtdtztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
-                AtatKtdtztSigt = step(i_step, step_size, _Akt, _akt, _Bt, _hAkt, _hakt, _zkt, _Sigkt);
+                StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
+                KtdtAtatztSigt = step(i_step, step_size, _Akt, _akt, _Bt, _hAkt, _hakt, _zkt, _Sigkt);
 
                 // compute the tentative cost
                 Matrix3D zt(_nx, 1, _nt), Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
-                Kt = std::get<0>(AtatKtdtztSigt);
-                dt = std::get<1>(AtatKtdtztSigt);
-                zt = std::get<4>(AtatKtdtztSigt);
-                double total_cost = control_energy(zt, Kt, dt) + hingeloss(zt);
-                
-                // stop backtracking 
-                if ( (total_cost < total_cost_prev) || (i_bt == MBT-1) ){
-                    
-                    // update the internal parameters
-                    update_from_step_res(AtatKtdtztSigt);
+                zt.setZero(); Kt.setZero(); dt.setZero();
 
-                    // register for the current cost
-                    total_cost_prev = total_cost;
+                Kt = std::get<0>(KtdtAtatztSigt);
+                dt = std::get<1>(KtdtAtatztSigt);
+                zt = std::get<4>(KtdtAtatztSigt);
+
+                double total_cost = control_energy(zt, Kt, dt) + hingeloss(zt);
+                std::cout << "total cost " << total_cost << std::endl;
+                total_cost_prev = total_cost;
+                
+                // // stop backtracking 
+                // if (total_cost < total_cost_prev){
+                    
+                //     // update the internal parameters
+                //     update_from_step_res(AtatKtdtztSigt);
+
+                //     // register for the current cost
+                //     total_cost_prev = total_cost;
+                    
+                //     // go to next iteration
+                //     i_step += 1;
+                    
+                //     break;
+                // }
+
+                if (i_bt == MBT-1){
+                    update_from_step_res(KtdtAtatztSigt);
+                    v_zt.push_back(_zkt);
+                    v_Sigzt.push_back(_Sigkt);
+                    i_step += 1;
                     break;
                 }
+                
+            }
+        }  
+        // _cost_helper.plot_costs();
 
-                // go to next iteration
-                i_step += 1;
-
-            }     
-
-        }        
-        return std::make_tuple(_Kt, _dt, i_step);
+        hnom = make_tuple(v_zt, v_Sigzt);
+        return std::make_tuple(_Kt, _dt, hnom);      
     }
 
     /**
      * @brief The optimization process, including recording the costs.
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
-    std::tuple<Matrix3D, Matrix3D, int> optimize() override{
+    std::tuple<Matrix3D, Matrix3D, NominalHistory> optimize() override{
         double err = 1;
 
         double total_cost_prev = 1e6;
 
         int i_step = 0;
+        NominalHistory hnom;
+        std::vector<Matrix3D> v_zt, v_Sigzt;
+            
         while ((err > _stop_err) && (i_step < _max_iter)){
-                        
+
+            std::cout << "================ iter " << i_step << " ================" << std::endl;     
             step(i_step);
 
             double total_hingeloss = hingeloss();
@@ -181,10 +205,13 @@ public:
 
             i_step = i_step+1;
 
+            v_zt.push_back(_zkt);
+            v_Sigzt.push_back(_Sigkt);
+
         }
         // _cost_helper.plot_costs();
-        
-        return std::make_tuple(_Kt, _dt, i_step);
+        hnom = make_tuple(v_zt, v_Sigzt);
+        return std::make_tuple(_Kt, _dt, hnom);
     }
 
     /**
@@ -192,19 +219,19 @@ public:
      * return: (Qt, rt)
      */
     std::tuple<Matrix3D, Matrix3D> update_Qrk(const Matrix3D& zt, 
-                                            const Matrix3D& Sigt, 
-                                            const Matrix3D& At, 
-                                            const Matrix3D& at, 
-                                            const Matrix3D& Bt,
-                                            const Matrix3D& hAt,
-                                            const Matrix3D& hat,
-                                            const double step_size)
+                                              const Matrix3D& Sigt, 
+                                              const Matrix3D& At, 
+                                              const Matrix3D& at, 
+                                              const Matrix3D& Bt,
+                                              const Matrix3D& hAt,
+                                              const Matrix3D& hat,
+                                              const double step_size)
     {
         MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), ai(_nx, 1), 
                  hAi(_nx, _nx), hai(_nx, 1),
                  Qti(_nx, _nx), Qki(_nx, _nx), rki(_nx, 1), zi(_nx, 1);
         MatrixXd temp(_nx, _nx);
-        // for each time step
+
         Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
         Qt.setZero();
         rt.setZero();
@@ -256,62 +283,67 @@ public:
 
 
     void update_Qrk() override{
-        MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
-                 hAi(_nx, _nx), hai(_nx, 1),
-                 Qti(_nx, _nx), Qki(_nx, _nx), rki(_nx, 1), zi(_nx, 1);
-        MatrixXd temp(_nx, _nx);
-        // for each time step
-        _Qkt.setZero();
-        _rkt.setZero();
+        std::tuple<Matrix3D, Matrix3D> Qtrt;
+        Qtrt = update_Qrk(_zkt, _Sigkt, _Akt, _akt, _Bt, _hAkt, _hakt, _eta);
+        _Qkt = std::get<0>(Qtrt);
+        _rkt = std::get<1>(Qtrt);
 
-        for (int i=0; i<_nt; i++){
-            Aki = _ei.decomp3d(_Akt, _nx, _nx, i);
-            aki = _ei.decomp3d(_akt, _nx, 1, i);
-            hAi = _ei.decomp3d(_hAkt, _nx, _nx, i);
-            hai = _ei.decomp3d(_hakt, _nx, 1, i);
-            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
-            Qti = _ei.decomp3d(_Qt, _nx, _nx, i);
-            pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
-            zi = _ei.decomp3d(_zkt, _nx, 1, i);
-            temp = (Aki - hAi).transpose();
-            // Compute hinge loss and its gradients
-            int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
-            std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
+        // MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
+        //          hAi(_nx, _nx), hai(_nx, 1),
+        //          Qti(_nx, _nx), Qki(_nx, _nx), rki(_nx, 1), zi(_nx, 1);
+        // MatrixXd temp(_nx, _nx);
+        // // for each time step
+        // _Qkt.setZero();
+        // _rkt.setZero();
+
+        // for (int i=0; i<_nt; i++){
+        //     Aki = _ei.decomp3d(_Akt, _nx, _nx, i);
+        //     aki = _ei.decomp3d(_akt, _nx, 1, i);
+        //     hAi = _ei.decomp3d(_hAkt, _nx, _nx, i);
+        //     hai = _ei.decomp3d(_hakt, _nx, 1, i);
+        //     Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
+        //     Qti = _ei.decomp3d(_Qt, _nx, _nx, i);
+        //     pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
+        //     zi = _ei.decomp3d(_zkt, _nx, 1, i);
+        //     temp = (Aki - hAi).transpose();
+        //     // Compute hinge loss and its gradients
+        //     int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
+        //     std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
-            hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,_nx/2,1));
-            VectorXd hinge(n_spheres);
-            MatrixXd J_hxy(n_spheres, _nx/2);
-            hinge = std::get<0>(hingeloss_gradient);
-            J_hxy = std::get<1>(hingeloss_gradient);
+        //     hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,_nx/2,1));
+        //     VectorXd hinge(n_spheres);
+        //     MatrixXd J_hxy(n_spheres, _nx/2);
+        //     hinge = std::get<0>(hingeloss_gradient);
+        //     J_hxy = std::get<1>(hingeloss_gradient);
 
 
-            // MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
-            MatrixXd grad_h(n_spheres, _nx), velocity(1, _nx/2);
-            // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
-            velocity = zi.block(_nx/2,0,_nx/2,1).transpose();
+        //     // MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
+        //     MatrixXd grad_h(n_spheres, _nx), velocity(1, _nx/2);
+        //     // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
+        //     velocity = zi.block(_nx/2,0,_nx/2,1).transpose();
 
-            for (int i_s=0; i_s<n_spheres; i_s++){
-                    grad_h.block(i_s,0,1,_nx/2) = J_hxy.row(i_s);
-                grad_h.block(i_s,_nx/2,1,_nx/2) = J_hxy.row(i_s).cwiseProduct(velocity);
-            }          
-            MatrixXd Sig_obs{_Sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
-            MatrixXd Hess(_nx, _nx);
-            Hess.setZero();
+        //     for (int i_s=0; i_s<n_spheres; i_s++){
+        //             grad_h.block(i_s,0,1,_nx/2) = J_hxy.row(i_s);
+        //         grad_h.block(i_s,_nx/2,1,_nx/2) = J_hxy.row(i_s).cwiseProduct(velocity);
+        //     }          
+        //     MatrixXd Sig_obs{_Sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
+        //     MatrixXd Hess(_nx, _nx);
+        //     Hess.setZero();
 
-            // std::cout << "_Sig_obs " << _Sig_obs << std::endl;
-            // if (hinge > 0){
-            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
-            // }
-            // Qki
-            Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
-            // rki
-            rki = grad_h.transpose() * Sig_obs * hinge * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
-            // update Qkt, rkt
-            _ei.compress3d(Qki, _Qkt, i);
-            _ei.compress3d(rki, _rkt, i);
-        }
-        // _ei.print_matrix(_Qkt, "_Qkt");
-        // _ei.print_matrix(_rkt, "_rkt");
+        //     // std::cout << "_Sig_obs " << _Sig_obs << std::endl;
+        //     // if (hinge > 0){
+        //     //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
+        //     // }
+        //     // Qki
+        //     Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
+        //     // rki
+        //     rki = grad_h.transpose() * Sig_obs * hinge * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+        //     // update Qkt, rkt
+        //     _ei.compress3d(Qki, _Qkt, i);
+        //     _ei.compress3d(rki, _rkt, i);
+        // }
+        // // _ei.print_matrix(_Qkt, "_Qkt");
+        // // _ei.print_matrix(_rkt, "_rkt");
         
     }
 

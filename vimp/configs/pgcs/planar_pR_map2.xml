@@ -4,8 +4,9 @@
     <eps_sdf> 0.6 </eps_sdf>
     <speed> 0.25 </speed>
     <nt> 50 </nt>
-    <sig0> 0.001 </sig0>
-    <sigT> 0.001 </sigT>
+    <sig0> 0.01 </sig0>
+    <sigT> 0.01 </sigT>
+    <!-- <eta> 1e-6 </eta> -->
     <eta> 1e-6 </eta>
     <stop_err> 1e-5 </stop_err>
     <max_iter> 30 </max_iter>

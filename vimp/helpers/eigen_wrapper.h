@@ -420,6 +420,22 @@ public:
         return mat3;
     }
 
+    Matrix3D vec2mat3d(const std::vector<Matrix3D>& vec){
+        int len = vec.size();
+        Matrix3D m0 = vec[0];
+        int rc = m0.rows();
+        int nt = m0.cols();
+
+        Eigen::MatrixXd res(rc, len*nt);
+
+        int cnt=0;
+        for (auto& item:vec){
+            res.block(0, cnt*nt, rc, nt) = item;
+            cnt += 1;
+        }
+        return res;
+    }
+
     MatrixXd linspace(const VectorXd & x0, const VectorXd & xT, int nt){
         int rows = x0.rows();
         VectorXd step_vec(rows);

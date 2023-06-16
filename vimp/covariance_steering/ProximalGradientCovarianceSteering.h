@@ -23,6 +23,13 @@ using namespace Eigen;
 namespace vimp{
     // return type of one step: (Kt, dt, At, at, zt, Sigt) 
     using StepResult = std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D, Matrix3D, Matrix3D>;  
+    
+    // history of the nonimals: (zts, Sigts)
+    using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
+
+    // return type of linear covariance steering: (Kt, dt, At, at)
+    using LinearCSResult = std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D>;
+
     class ProxGradCovSteer
     {
     public:
@@ -129,9 +136,6 @@ namespace vimp{
             // Initialize the final time covariance
             _ei.compress3d(_SigT, _Sigkt, _nt - 1);
 
-            // Linear interpolation for the mean zk
-            // initialize_zk();
-
             // compute pinvBBT
             MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
             for (int i = 0; i < _nt; i++)
@@ -148,13 +152,15 @@ namespace vimp{
          * sovling a linear CS, and push forward the mean and covariances.
          * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
          */
-        virtual std::tuple<Matrix3D, Matrix3D, int> optimize()
+        virtual std::tuple<Matrix3D, Matrix3D, NominalHistory> optimize()
         {
             double err = 1;
             MatrixXd Ak_prev(_nx * _nx, _nt), ak_prev(_nx, _nt);
             Ak_prev = _Akt;
             ak_prev = _akt;
             int i_step = 1;
+            NominalHistory hnom;
+            std::vector<Matrix3D> hzt, hSigzt;
             while ((err > _stop_err) && (i_step <= _max_iter))
             {
                 step(i_step);
@@ -162,10 +168,15 @@ namespace vimp{
                 Ak_prev = _Akt;
                 ak_prev = _akt;
                 i_step++;
-                _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
+
+                hzt.push_back(_zkt);
+                hSigzt.push_back(_Sigkt);
+                // _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
             }
 
-            return std::make_tuple(_Kt, _dt, i_step);
+            hnom = make_tuple(hzt, hSigzt);
+
+            return std::make_tuple(_Kt, _dt, hnom);
         }
 
         /**
@@ -243,11 +254,7 @@ namespace vimp{
          * @brief solve linear CS with local matrix inputs. 
          * @return std::tuple<K, d, A, a> where A, a are close-loop linear system already containing the feedback control. 
          */
-        std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> solve_linearCS_return(const MatrixXd &A, 
-                                                                                const MatrixXd &B, 
-                                                                                const MatrixXd &a, 
-                                                                                const MatrixXd &Q, 
-                                                                                const MatrixXd &r)
+        LinearCSResult solve_linearCS_return(const MatrixXd &A, const MatrixXd &B, const MatrixXd &a, const MatrixXd &Q, const MatrixXd &r)
         {
             // solve for the linear covariance steering
             _linear_cs.update_params(A, B, a, Q, r);
@@ -279,31 +286,12 @@ namespace vimp{
 
         void solve_linearCS(const MatrixXd &A, const MatrixXd &B, const MatrixXd &a, const MatrixXd &Q, const MatrixXd &r)
         {
-            // solve for the linear covariance steering
-            _linear_cs.update_params(A, B, a, Q, r);
-            _linear_cs.solve();
-
-            // retrieve (K, d)
-            _Kt = _linear_cs.Kt();
-            _dt = _linear_cs.dt();
-
-            Matrix3D fbK(_nx, _nx, _nt), fbd(_nx, 1, _nt);
-            MatrixXd Ai(_nx, _nx), ai(_nx, 1), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), fbKi(_nx, _nx), di(_nx, 1), fbdi(_nx, 1), Bi(_nx, _nu);
-            for (int i = 0; i < _nt; i++)
-            {
-                Aprior_i = _ei.decomp3d(A, _nx, _nx, i);
-                aprior_i = _ei.decomp3d(a, _nx, 1, i);
-
-                Bi = Bt_i(i);
-                Ki = Kt_i(i);
-                di = dt_i(i);
-
-                Ai = Aprior_i + Bi * Ki;
-                ai = aprior_i + Bi * di;
-
-                _ei.compress3d(Ai, _Akt, i);
-                _ei.compress3d(ai, _akt, i);
-            }
+            LinearCSResult KtdtAtat;
+            KtdtAtat = solve_linearCS_return(A, B, a, Q, r);
+            _Kt = std::get<0>(KtdtAtat);
+            _dt = std::get<1>(KtdtAtat);
+            _Akt = std::get<2>(KtdtAtat);
+            _akt = std::get<3>(KtdtAtat);
         }
 
         std::tuple<Matrix3D, Matrix3D> propagate_mean(const Matrix3D& At, 
@@ -313,8 +301,7 @@ namespace vimp{
                                                       const Matrix3D& Sigt){
             // The i_th matrices
             Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
-            Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx);
-            Eigen::MatrixXd Si(_nx, _nx), Snew(_nx, _nx);
+            Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx), Si(_nx, _nx), Snew(_nx, _nx);
             Matrix3D zt_new(_nx, 1, _nt), Sigt_new(_nx, _nx, _nt);
 
             for (int i = 0; i < _nt - 1; i++)
@@ -335,7 +322,7 @@ namespace vimp{
 
                 znew = zi + _deltt * (Ai * zi + ai);
                 Snew = Si + _deltt * (Ai * Si + Si * AiT + _eps * (Bi * BiT));
-                
+
                 _ei.compress3d(znew, zt_new, i + 1);
                 _ei.compress3d(Snew, Sigt_new, i + 1);
             }
@@ -453,6 +440,8 @@ namespace vimp{
 
         // Dynamics class
         LinearCovarianceSteering _linear_cs;
+
+        
 
     };
 }

@@ -63,9 +63,8 @@ public:
      * @return none, but inside already compute (K, d).
      */
     void step(int indx) override{
-        std::cout << "----- iter " << indx << " -----" << std::endl;
+
         // propagate the mean and the covariance
-        
         propagate_mean();
 
         MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
@@ -93,20 +92,25 @@ public:
                     const Matrix3D& zt, 
                     const Matrix3D& Sigt) override
     {
-        std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         
         std::tuple<Matrix3D, Matrix3D> ztSigt;
         ztSigt = propagate_mean(At, at, Bt, zt, Sigt);
 
+        Matrix3D ztnew(_nx, 1, _nt), Sigtnew(_nx, _nx, _nt);
+        ztnew.setZero(); Sigtnew.setZero();
+        ztnew = std::get<0>(ztSigt);
+        Sigtnew = std::get<1>(ztSigt);
+        
         MatrixXd Aprior = At / (1 + step_size) + hAt * step_size / (1 + step_size);
         MatrixXd aprior = at / (1 + step_size) + hat * step_size / (1 + step_size);
 
         // Update Qkt, rkt
         std::tuple<Matrix3D, Matrix3D> Qtrt;
-        Qtrt = update_Qrk(zt, Sigt, At, at, Bt, _hAkt, _hakt, step_size);
+        Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, _hAkt, _hakt, step_size);
 
         Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
+        Qt.setZero(); rt.setZero();
         Qt = std::get<0>(Qtrt);
         rt = std::get<1>(Qtrt);
 

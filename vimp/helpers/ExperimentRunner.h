@@ -32,6 +32,79 @@ public:
                     }
 
     void read_config_file(){
+        read_config_file(_params);
+    }
+
+    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
+        read_boundary_conditions(paramNode, _params);
+       
+    }
+
+    virtual void run(){
+        rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
+        rapidxml::xml_document<> doc;
+        doc.parse<0>(xmlFile.data());
+
+        for (int i=1; i<_num_exp+1; i++){
+            run_one_exp(i, _params);
+        }
+    }
+
+    int run_one_exp(int exp, ExperimentParams& param){
+        rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
+        rapidxml::xml_document<> doc;
+        doc.parse<0>(xmlFile.data());
+        
+        std::string ExpNodeName = "Experiment" + std::to_string(exp);
+
+        char * c_expname = ExpNodeName.data();
+        rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
+        
+        this->read_boundary_conditions(paramNode, param);
+        MatrixXd A0(_nx, _nx), B0(_nx, _nu), a0(_nx, 1);
+        A0.setZero(); B0.setZero(); a0.setZero();
+        std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(param.nx(), param.nu(), param.nt())};
+        A0 = pdyn->A0();
+        B0 = pdyn->B0();
+        a0 = pdyn->a0();
+
+        PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, pdyn, param);
+
+        using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
+        std::tuple<MatrixXd, MatrixXd, NominalHistory> res_Kd;
+        res_Kd = pgcs_lin_sdf.optimize();
+        // res_Kd = pgcs_lin_sdf.backtrack();
+
+        MatrixXd Kt(_nx*_nx, param.nt()), dt(_nx, param.nt());
+        Kt = std::get<0>(res_Kd);
+        dt = std::get<1>(res_Kd);
+
+        NominalHistory ztSigt;
+        ztSigt = std::get<2>(res_Kd);
+        Matrix3D h_zt, h_Sigt;
+        h_zt = _ei.vec2mat3d(std::get<0>(ztSigt));
+        h_Sigt = _ei.vec2mat3d(std::get<1>(ztSigt));
+
+        MatrixXd zk_star(_nx, param.nt()), Sk_star(_nx*_nx, param.nt());
+        zk_star = pgcs_lin_sdf.zkt();
+        Sk_star = pgcs_lin_sdf.Sigkt();
+
+        std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+
+        m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
+        m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
+
+        m_io.saveData(saving_prefix + std::string{"zk_history.csv"}, h_zt);
+        m_io.saveData(saving_prefix + std::string{"Sk_history.csv"}, h_Sigt);
+
+        m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
+        m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+
+        return 0;
+
+    }
+
+    void read_config_file(ExperimentParams& param){
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());
@@ -55,40 +128,11 @@ public:
         double sig_obs = atof(commonParams->first_node("cost_sigma")->value());
         // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
-        _params = ExperimentParams(_nx, _nu, eps_sdf, eps, speed, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations);
+        param = ExperimentParams(_nx, _nu, eps_sdf, eps, speed, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations);
 
     }
 
-    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
-        double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
-        double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
-
-        double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
-        double start_vy = atof(paramNode->first_node("start_pos")->first_node("vy")->value());
-
-        double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
-        double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
-
-        double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
-        double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
-
-        double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
-
-        // double speed = sqrt((start_x-goal_x)*(start_x-goal_x) + (start_y-goal_y)*(start_y-goal_y)) / _params.sig() / (_nt-1);
-        // _params.set_speed(speed);
-
-        _params.update_sig_obs(sig_obs);
-        
-        VectorXd m0(_nx), mT(_nx); 
-        m0 << start_x, start_y, start_vx, start_vy;
-        mT << goal_x, goal_y, goal_vx, goal_vy;
-
-        _params.set_m0(m0);
-        _params.set_mT(mT);
-       
-    }
-
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, ExperimentParams& param){
+    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, ExperimentParams& param){
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
 
@@ -108,95 +152,6 @@ public:
         param.set_m0(m0);
         param.set_mT(mT);
        
-    }
-
-    int run_one_exp(int exp, ExperimentParams& param){
-        rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
-        rapidxml::xml_document<> doc;
-        doc.parse<0>(xmlFile.data());
-        
-        std::string ExpNodeName = "Experiment" + std::to_string(exp);
-
-        char * c_expname = ExpNodeName.data();
-        rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
-        
-        this->read_boundary_conditions(paramNode, param);
-        MatrixXd A0(_nx, _nx), B0(_nx, _nu), a0(_nx, 1);
-        A0.setZero(); B0.setZero(); a0.setZero();
-        std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(param.nx(), param.nu(), param.nt())};
-        A0 = pdyn->A0();
-        B0 = pdyn->B0();
-        a0 = pdyn->a0();
-
-        PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, pdyn, param);
-
-        std::tuple<MatrixXd, MatrixXd, int> res_Kd;
-        // res_Kd = pgcs_lin_sdf.optimize();
-        res_Kd = pgcs_lin_sdf.backtrack();
-
-        MatrixXd Kt(_nx*_nx, param.nt()), dt(_nx, param.nt());
-        Kt = std::get<0>(res_Kd);
-        dt = std::get<1>(res_Kd);
-
-        MatrixXd zk_star(_nx, param.nt()), Sk_star(_nx*_nx, param.nt());
-        zk_star = pgcs_lin_sdf.zkt();
-        Sk_star = pgcs_lin_sdf.Sigkt();
-
-        std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
-
-        m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
-        m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
-
-        m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
-        m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
-
-        return std::get<2>(res_Kd);
-
-    }
-
-    virtual void run(){
-        rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
-        rapidxml::xml_document<> doc;
-        doc.parse<0>(xmlFile.data());
-
-        for (int i=1; i<_num_exp+1; i++){
-            std::string ExpNodeName = "Experiment" + std::to_string(i);
-            char * c_expname = ExpNodeName.data();
-            rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
-            
-            this->read_boundary_conditions(paramNode);
-            MatrixXd A0(_nx, _nx), B0(_nx, _nu), a0(_nx, 1);
-            A0.setZero(); B0.setZero(); a0.setZero();
-            std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(_nx, _nu, _nt)};
-            A0 = pdyn->A0();
-            B0 = pdyn->B0();
-            a0 = pdyn->a0();
-
-            PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, pdyn, _params);
-
-            std::tuple<MatrixXd, MatrixXd, int> res_Kd;
-            // res_Kd = pgcs_lin_sdf.optimize();
-            res_Kd = pgcs_lin_sdf.backtrack();
-
-            MatrixXd Kt(_nx*_nx, _nt), dt(_nx, _nt);
-            Kt = std::get<0>(res_Kd);
-            dt = std::get<1>(res_Kd);
-
-            MatrixXd zk_star(_nx, _nt), Sk_star(_nx*_nx, _nt);
-            zk_star = pgcs_lin_sdf.zkt();
-            Sk_star = pgcs_lin_sdf.Sigkt();
-
-            std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
-
-            m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
-            m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
-
-            m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
-            m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
-
-            int num_iterations = std::get<2>(res_Kd);
-
-        }
     }
 
 

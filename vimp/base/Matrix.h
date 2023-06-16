@@ -30,6 +30,7 @@ public:
         // additional custom logic for MyMatrix
         return *this;
     }
+    
 };
 
 class Vector3D : public VectorXd{

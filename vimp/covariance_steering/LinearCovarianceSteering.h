@@ -64,7 +64,7 @@ public:
                              _delta_t(T/(nt-1)),
                              _Kt(Matrix3D(_nu, _nx, _nt)),
                              _dt(Matrix3D(_nu, 1, _nt)){
-        compute_M_Phi();
+        compute_Phi();
     }
 
     void update_params(const MatrixXd& At, const MatrixXd& Bt, const MatrixXd& at, 
@@ -74,10 +74,10 @@ public:
         _at = at;
         _Qt = Qt;
         _rt = rt;
-        compute_M_Phi();
+        compute_Phi();
     }
 
-    void compute_M_Phi(){
+    void compute_Phi(){
         MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), BiT(_nu, _nx), Qi(_nx, _nx), Mi(2*_nx, 2*_nx);
         for (int i=0; i< _nt; i++){
             Ai = _ei.decomp3d(_At, _nx, _nx, i);
@@ -100,59 +100,8 @@ public:
         _Phi12 = _Phi.block(0, _nx, _nx, _nx);
     }
 
-    Matrix3D At(){ return _At; }
-
-    MatrixXd At(int i){
-        MatrixXd Ai;
-        _ei.decomp3d(_At, Ai, _nx, _nx, i);
-        return Ai;
-    }
-
-    inline Matrix3D at(){ return _at; }
-
-    inline MatrixXd at(int i){ return _at.col(i); }
-
-    inline Matrix3D Bt(){ return _Bt; }
-
-    inline MatrixXd Bt(int i){
-        MatrixXd Bi;
-        _ei.decomp3d(_Bt, Bi, _nx, _nu, i);
-        return Bi;
-    }
-
-    inline Matrix3D Qt(){ return _Qt; }
-
-    inline MatrixXd Qt(int i){ return _ei.decomp3d(_Qt, _nx, _nx, i); }
-
-    inline Matrix3D rt(){ return _rt; }
-
-    inline MatrixXd rt(int i){ return _rt.col(i); }
-
-    inline Matrix3D Kt(){ return _Kt; }
-
-    inline MatrixXd Kt(int i){ return _ei.decomp3d(_Kt, _nu, _nx, i); }
-
-    inline Matrix3D dt(){ return _dt; }
-
-    inline Matrix3D Mt(){ return _Mt; }
-
-    MatrixXd Mt(int i){
-        MatrixXd Mi{MatrixXd::Zero(2*_nx, 2*_nx)};
-        _ei.decomp3d(_Mt, Mi, 2*_nx, 2*_nx, i);
-        return Mi;
-    }
-
-    inline MatrixXd Phi(){ return _Phi; }
-
-    inline MatrixXd Phi11(){ return _Phi11; }
-
-    inline MatrixXd Phi12(){ return _Phi12; }
-
-    inline Matrix3D Pit(){ return _Pit; }
-
-    inline MatrixXd Pit(int i){ return _ei.decomp3d(_Pit, _nx, _nx, i); }
-
-    void solve(){
+    std::tuple<Matrix3D, Matrix3D> solve_return(){
+        Matrix3D Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
         VectorXd s{VectorXd::Zero(2*_nx)};
         MatrixXd a_r{MatrixXd::Zero(2*_nx, _nt)};
         a_r << _at, 
@@ -219,10 +168,71 @@ public:
             BiT = Bi.transpose();
             Pii = _ei.decomp3d(_Pit, _nx, _nx, i);
             Ki = - BiT * Pii;
-            _ei.compress3d(Ki, _Kt, i);
-            _dt.col(i) = v.col(i) + BiT * Pii * xt.col(i);
+            _ei.compress3d(Ki, Kt, i);
+            dt.col(i) = v.col(i) + BiT * Pii * xt.col(i);
         }
-        
+
+        return std::make_tuple(Kt, dt);
+    }
+
+    void solve(){
+        std::tuple<Matrix3D, Matrix3D> Ktdt;
+        Ktdt = solve_return();
+        _Kt = std::get<0>(Ktdt);
+        _dt = std::get<1>(Ktdt);
+    }
+
+
+    inline MatrixXd Phi(){ return _Phi; }
+
+    inline MatrixXd Phi11(){ return _Phi11; }
+
+    inline MatrixXd Phi12(){ return _Phi12; }
+
+    inline Matrix3D Pit(){ return _Pit; }
+
+    inline MatrixXd Pit(int i){ return _ei.decomp3d(_Pit, _nx, _nx, i); }
+
+    inline Matrix3D Qt(){ return _Qt; }
+
+    inline MatrixXd Qt(int i){ return _ei.decomp3d(_Qt, _nx, _nx, i); }
+
+    inline Matrix3D rt(){ return _rt; }
+
+    inline MatrixXd rt(int i){ return _rt.col(i); }
+
+    inline Matrix3D Kt(){ return _Kt; }
+
+    inline MatrixXd Kt(int i){ return _ei.decomp3d(_Kt, _nu, _nx, i); }
+
+    inline Matrix3D dt(){ return _dt; }
+
+    inline Matrix3D Mt(){ return _Mt; }
+
+    inline Matrix3D at(){ return _at; }
+
+    inline MatrixXd at(int i){ return _at.col(i); }
+
+    inline Matrix3D Bt(){ return _Bt; }
+
+    Matrix3D At(){ return _At; }
+
+    MatrixXd At(int i){
+        MatrixXd Ai;
+        _ei.decomp3d(_At, Ai, _nx, _nx, i);
+        return Ai;
+    }
+
+    inline MatrixXd Bt(int i){
+        MatrixXd Bi;
+        _ei.decomp3d(_Bt, Bi, _nx, _nu, i);
+        return Bi;
+    }
+
+    MatrixXd Mt(int i){
+        MatrixXd Mi{MatrixXd::Zero(2*_nx, 2*_nx)};
+        _ei.decomp3d(_Mt, Mi, 2*_nx, 2*_nx, i);
+        return Mi;
     }
 
 
