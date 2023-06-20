@@ -41,15 +41,15 @@ for i = 1:1 % 4 experiments
     figure
     set(gcf,'position',[x0,y0,width,height])
     
-    tiledlayout(1, n_iters, 'TileSpacing', 'tight', 'Padding', 'tight')
+    tiledlayout(2, floor(n_iters/2), 'TileSpacing', 'tight', 'Padding', 'tight')
     
     for i_iter = 1: n_iters-1
         nexttile
         hold on
         prefix = ["map2/case"+num2str(i)+"/"];
         % % --- read means and covariances ---
-        means = m_iters(:, i_iter*nt: (i_iter+1)*nt);
-        covs = cov_iters(:, i_iter*nt: (i_iter+1)*nt);
+        means = m_iters(:, (i_iter-1)*nt+1: i_iter*nt);
+        covs = cov_iters(:, (i_iter-1)*nt+1: i_iter*nt);
         
         plot_2d_result(sdfmap, means, covs);
     end

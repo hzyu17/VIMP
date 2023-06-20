@@ -94,8 +94,8 @@ public:
             rki = nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
-            _ei.compress3d(Qki, _Qkt, i);
-            _ei.compress3d(rki, _rkt, i);
+            _ei.comp3d(Qki, _Qkt, i);
+            _ei.comp3d(rki, _rkt, i);
         }
         
     }
@@ -103,7 +103,7 @@ public:
     void step(int indx) override{
         // std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
-        propagate_mean();
+        propagate_nominal();
 
         linearization();
  
@@ -136,8 +136,8 @@ public:
 
             Ai = Aprior_i + Bi * Ki;
             ai = aprior_i + Bi * di;
-            _ei.compress3d(Ai, _Akt, i);
-            _ei.compress3d(ai, _akt, i);
+            _ei.comp3d(Ai, _Akt, i);
+            _ei.comp3d(ai, _akt, i);
         }
     }
 

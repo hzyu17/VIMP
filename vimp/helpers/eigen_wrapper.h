@@ -395,7 +395,7 @@ public:
         return mat;
     }
 
-    void compress3d(Eigen::MatrixXd mat, Matrix3D& mat3d, int i){
+    void comp3d(Eigen::MatrixXd mat, Matrix3D& mat3d, int i){
         Eigen::VectorXd column(mat.rows()*mat.cols());
         column = mat.reshaped(mat.rows()*mat.cols(), 1);
         mat3d.col(i) = column;
@@ -415,7 +415,7 @@ public:
         for (int i=0; i<len; i++){
             mi = decomp3d(mat3, rows, cols, i);
             miT = mi.transpose();
-            compress3d(miT, mat3, i);
+            comp3d(miT, mat3, i);
         }
         return mat3;
     }

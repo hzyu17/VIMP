@@ -10,11 +10,13 @@ nu = 2;
 sig = 2.0;
 
 %%
-m0 = [4; 4; 0.0;0; 0; 0];
+m0 = [4; 4; 0.0; 0; 0.0; 0];
 Sig0  =  0.001 .* eye(6);
 
-m1 = [2; 2; 0; 0; 0; 0];
+m1 = [2; 2; 0; -0.0; -0.0; 0];
 Sig1 = 0.001 .* eye(6);
+
+nt = 2000;
 
 [A1, B1, a1] = linearization(m0);
 
@@ -40,8 +42,6 @@ stop_err = 1e-5;
 Q1 = zeros(nx, nx);
 % Q1(6,6) = 0.1;
 % Q1(3,3) = 1;
-
-nt = 20000;
 
 % 3D matrices
 A  = A1(:)*ones(1,nt);
@@ -81,7 +81,7 @@ end
 % ========================= uncontrolled dynamics ========================= 
 dt = sig/(nt-1);
 t = linspace(0,sig,nt);
-n_samples = 20;
+n_samples = 10;
 
 x0 = 50;
 y0 = 50;
@@ -104,7 +104,7 @@ for i_sample=1:n_samples
         xt = xt + (hAstar(:,:,i)*xt + hastar(i)) .* dt + sqrt(epsilon*dt).*B(:,:,i) * randn(2,1);
         xs(:,i+1) = xt;
     end
-    plot3(t, xs(1, :), xs(2, :), 'LineWidth', 1);
+    plot3(t, xs(1, :), xs(2, :), 'LineWidth', 1.5);
 end
 
 % --------------------- plot mean --------------------- 
@@ -288,7 +288,15 @@ n=2;
 x0=zeros(n,n2);
 x1=zeros(n,n2);
 
-figure; hold on;
+x0 = 50;
+y0 = 50;
+width = 400;
+height = 350;
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+nexttile
+hold on 
 cstring='grbcmk';
 for j=1:n2
     init = randn(nx,1);

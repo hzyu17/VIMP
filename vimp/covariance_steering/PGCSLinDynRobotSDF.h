@@ -109,25 +109,26 @@ public:
     std::tuple<Matrix3D, Matrix3D, NominalHistory> backtrack(){
         double err = 1;
         int i_step = 0; 
-        int MBT = 1; // max backtracking number
+        int MBT = 10; // max backtracking number
         double total_cost_prev = 1e9; // initial cost buffer
+        bool no_improve = false;
 
         NominalHistory hnom;
         std::vector<Matrix3D> v_zt, v_Sigzt;
 
-        while ((total_cost_prev > _stop_err) && (i_step < _max_iter)){
-            
+        // while ((err > _stop_err) && (i_step < _max_iter) && (!no_improve)){
+        while ((i_step < _max_iter) && (!no_improve)){
             std::cout << "================ iter " << i_step << " ================" << std::endl;
-            // std::cout << "total_cost_prev " << total_cost_prev << std::endl;
 
-            // backtracking 
-            double step_size = _eta; // initial step size
+            // initial step size
+            double step_size = _eta; 
+
+            // backtracking
             for (int i_bt=0; i_bt<MBT; i_bt++){
 
-                // std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
+                std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
                 
-                // shringking step size
-                step_size = 0.5*step_size;
+                // step_size = pow(_eta, i_bt);
 
                 // tentative one step
                 StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
@@ -143,36 +144,38 @@ public:
 
                 double total_cost = control_energy(zt, Kt, dt) + hingeloss(zt);
                 std::cout << "total cost " << total_cost << std::endl;
-                total_cost_prev = total_cost;
                 
-                // stop backtracking 
+                // stop backtracking if cost dicreases
                 if (total_cost < total_cost_prev){
                     
-                    // update the internal parameters
+                    // update internal parameters
                     update_from_step_res(KtdtAtatztSigt);
 
-                    // register for the current cost
+                    // // register the current cost
+                    // err = total_cost_prev - total_cost;
+
                     total_cost_prev = total_cost;
-                    
+                                        
                     // go to next iteration
                     i_step += 1;
 
+                    // upadte iterations
                     v_zt.push_back(_zkt);
                     v_Sigzt.push_back(_Sigkt);
-                    
+
                     break;
+                }else{
+                    // shrink step size
+                    step_size = 0.5*step_size;
                 }
 
                 // no good step size found.
                 if (i_bt == MBT-1){
-                    
-                    // update_from_step_res(KtdtAtatztSigt);
-                    // v_zt.push_back(_zkt);
-                    // v_Sigzt.push_back(_Sigkt);
-                    i_step += 1;
+                    std::cout << "##### No good step size found! #####" << std::endl;
+                    no_improve = true;
                     break;
                 }
-                
+
             }
         }  
         // _cost_helper.plot_costs();
@@ -190,6 +193,10 @@ public:
 
         double total_cost_prev = 1e6;
 
+        MatrixXd Ak_prev(_nx * _nx, _nt), ak_prev(_nx, _nt);
+        Ak_prev = _Akt;
+        ak_prev = _akt;
+
         int i_step = 0;
         NominalHistory hnom;
         std::vector<Matrix3D> v_zt, v_Sigzt;
@@ -203,7 +210,12 @@ public:
             double Eu = control_energy();
             double total_cost = total_hingeloss + Eu;
             
-            err = std::abs(total_cost - total_cost_prev);
+            err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
+            Ak_prev = _Akt;
+            ak_prev = _akt;
+            i_step++;
+
+            // err = std::abs(total_cost - total_cost_prev);
             
             _cost_helper.add_cost(i_step, total_hingeloss, Eu);
             total_cost_prev = total_cost;
@@ -279,8 +291,8 @@ public:
             // rki
             rki = grad_h.transpose() * Sig_obs * hinge * step_size / (1.0 + step_size) +  temp * pinvBBTi * (ai - hai) * step_size / (1+step_size) / (1+step_size);
             // update Qkt, rkt
-            _ei.compress3d(Qki, Qt, i);
-            _ei.compress3d(rki, rt, i);
+            _ei.comp3d(Qki, Qt, i);
+            _ei.comp3d(rki, rt, i);
         }
 
         return make_tuple(Qt, rt);
@@ -344,8 +356,8 @@ public:
         //     // rki
         //     rki = grad_h.transpose() * Sig_obs * hinge * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
         //     // update Qkt, rkt
-        //     _ei.compress3d(Qki, _Qkt, i);
-        //     _ei.compress3d(rki, _rkt, i);
+        //     _ei.comp3d(Qki, _Qkt, i);
+        //     _ei.comp3d(rki, _rkt, i);
         // }
         // // _ei.print_matrix(_Qkt, "_Qkt");
         // // _ei.print_matrix(_rkt, "_rkt");

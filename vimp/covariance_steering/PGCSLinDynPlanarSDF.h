@@ -153,8 +153,8 @@ public:
             rki = grad_h * hinge * _Sig_obs * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
-            _ei.compress3d(Qki, _Qkt, i);
-            _ei.compress3d(rki, _rkt, i);
+            _ei.comp3d(Qki, _Qkt, i);
+            _ei.comp3d(rki, _rkt, i);
         }
         
     }

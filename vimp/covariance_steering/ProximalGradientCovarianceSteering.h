@@ -1,5 +1,5 @@
 /**
- * @file ProximalGradientCS.h
+ * @file ProximalGradientCovarianceSteering.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Proximal gradient algorithm for nonlinear covariance steering.
  * @version 0.1
@@ -73,7 +73,7 @@ namespace vimp{
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
                         {
                             // Initialize the final time covariance
-                            _ei.compress3d(_SigT, _Sigkt, _nt - 1);
+                            _ei.comp3d(_SigT, _Sigkt, _nt - 1);
 
                             // Linear interpolation for the mean zk
                             // initialize_zk();
@@ -85,7 +85,7 @@ namespace vimp{
                                 Bi = Bt_i(i);
                                 BiT = Bi.transpose();
                                 pinvBBTi = (Bi * BiT).completeOrthogonalDecomposition().pseudoInverse();
-                                _ei.compress3d(pinvBBTi, _pinvBBTt, i);
+                                _ei.comp3d(pinvBBTi, _pinvBBTt, i);
                             }
                         }
 
@@ -134,7 +134,7 @@ namespace vimp{
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
         {
             // Initialize the final time covariance
-            _ei.compress3d(_SigT, _Sigkt, _nt - 1);
+            _ei.comp3d(_SigT, _Sigkt, _nt - 1);
 
             // compute pinvBBT
             MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
@@ -143,7 +143,7 @@ namespace vimp{
                 Bi = Bt_i(i);
                 BiT = Bi.transpose();
                 pinvBBTi = (Bi * BiT).completeOrthogonalDecomposition().pseudoInverse();
-                _ei.compress3d(pinvBBTi, _pinvBBTt, i);
+                _ei.comp3d(pinvBBTi, _pinvBBTt, i);
             }
         }
 
@@ -245,8 +245,8 @@ namespace vimp{
                 rki = -(Qti * zi) * _eta / (1 + _eta) + nTri * _eta / (1 + _eta) / 2 + temp * pinvBBTi * (aki - hai) * _eta / (1 + _eta) / (1 + _eta);
 
                 // update Qkt, rkt
-                _ei.compress3d(Qki, _Qkt, i);
-                _ei.compress3d(rki, _rkt, i);
+                _ei.comp3d(Qki, _Qkt, i);
+                _ei.comp3d(rki, _rkt, i);
             }
         }
 
@@ -258,12 +258,15 @@ namespace vimp{
         {
             // solve for the linear covariance steering
             _linear_cs.update_params(A, B, a, Q, r);
-            _linear_cs.solve();
+            // _linear_cs.solve();
+            std::tuple<Matrix3D, Matrix3D> Ktdt;
+            Ktdt = _linear_cs.solve_return();
 
             // retrieve (K, d)
             Matrix3D Kt(_nu, _nx, _nt), dt(_nu, 1, _nt), At(_nx, _nx, _nt), at(_nx, 1, _nt);
-            Kt = _linear_cs.Kt();
-            dt = _linear_cs.dt();
+            Kt.setZero(); dt.setZero();At.setZero();at.setZero();
+            Kt = std::get<0>(Ktdt);
+            dt = std::get<1>(Ktdt);
 
             MatrixXd Ai(_nx, _nx), ai(_nx, 1), Bi(_nx, _nu), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), di(_nx, 1);
             for (int i = 0; i < _nt; i++)
@@ -278,8 +281,8 @@ namespace vimp{
                 Ai = Aprior_i + Bi * Ki;
                 ai = aprior_i + Bi * di;
 
-                _ei.compress3d(Ai, At, i);
-                _ei.compress3d(ai, at, i);
+                _ei.comp3d(Ai, At, i);
+                _ei.comp3d(ai, at, i);
             }
             return std::make_tuple(Kt, dt, At, at);
         }
@@ -294,47 +297,59 @@ namespace vimp{
             _akt = std::get<3>(KtdtAtat);
         }
 
-        std::tuple<Matrix3D, Matrix3D> propagate_mean(const Matrix3D& At, 
-                                                      const Matrix3D& at, 
-                                                      const Matrix3D& Bt,
-                                                      const Matrix3D& zt,
-                                                      const Matrix3D& Sigt){
+        std::tuple<Matrix3D, Matrix3D> propagate_nominal(const Matrix3D& At, 
+                                                        const Matrix3D& at, 
+                                                        const Matrix3D& Bt,
+                                                        const Matrix3D& zt,
+                                                        const Matrix3D& Sigt){
             // The i_th matrices
-            Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
-            Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx), Si(_nx, _nx), Snew(_nx, _nx);
+            Eigen::VectorXd zi(_nx), znew(_nx), zi_next(_nx), ai(_nx), ai_next(_nx);
+            Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx), Si(_nx, _nx), Snew(_nx, _nx), Si_next(_nx, _nx);
+            Eigen::MatrixXd Ai_next(_nx, _nx), Bi_next(_nx, _nu), AiT_next(_nx, _nx), BiT_next(_nu, _nx);
             Matrix3D zt_new(_nx, 1, _nt), Sigt_new(_nx, _nx, _nt);
 
-            zt_new = zt;
-            Sigt_new = Sigt;
+            zt_new.setZero();
+            Sigt_new.setZero();
+            zt_new.col(0) = zt.col(0);
+            Sigt_new.col(0) = Sigt.col(0);
 
             for (int i = 0; i < _nt - 1; i++)
             {
-                zi = _ei.decomp3d(zt_new, _nx, 1, i);
+                zi = _ei.decomp3d(zt, _nx, 1, i);
                 Ai = _ei.decomp3d(At, _nx, _nx, i);
                 ai = _ei.decomp3d(at, _nx, 1, i);
                 Bi = _ei.decomp3d(Bt, _nx, _nu, i);
-                Si = _ei.decomp3d(Sigt_new, _nx, _nx, i);
-
                 AiT = Ai.transpose();
                 BiT = Bi.transpose();
+                Si = _ei.decomp3d(Sigt, _nx, _nx, i);
 
+                // Ai_next = _ei.decomp3d(At, _nx, _nx, i+1);
+                // ai_next = _ei.decomp3d(at, _nx, 1, i+1);
+                // Bi_next = _ei.decomp3d(Bt, _nx, _nu, i+1);
+                // AiT_next = Ai_next.transpose();
+                // BiT_next = Bi_next.transpose();
+                
                 znew = zi + _deltt * (Ai * zi + ai);
                 Snew = Si + _deltt * (Ai * Si + Si * AiT + _eps * (Bi * BiT));
 
-                _ei.compress3d(znew, zt_new, i + 1);
-                _ei.compress3d(Snew, Sigt_new, i + 1);
+                // zi_next = zi + _deltt * ((Ai * zi + ai) + (Ai_next * znew + ai_next)) / 2;
+                // Si_next = Si + _deltt * ((Ai * Si + Si * AiT + _eps * (Bi * BiT)) + (Ai_next * Snew + Snew * AiT_next + _eps * (Bi_next * BiT_next))) / 2;
+
+                _ei.comp3d(znew, zt_new, i + 1);
+                _ei.comp3d(Snew, Sigt_new, i + 1);
 
             }
 
             return std::make_tuple(zt_new, Sigt_new);
         }
 
-        void propagate_mean()
+        void propagate_nominal()
         {   
             std::tuple<Matrix3D, Matrix3D> ztSigt;
-            ztSigt = propagate_mean(_Akt, _akt, _Bt, _zkt, _Sigkt);
+            ztSigt = propagate_nominal(_Akt, _akt, _Bt, _zkt, _Sigkt);
             _zkt = std::get<0>(ztSigt);
             _Sigkt = std::get<1>(ztSigt);
+            _ei.print_matrix(_zkt);
         }
 
 

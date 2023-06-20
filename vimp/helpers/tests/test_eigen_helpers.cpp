@@ -440,13 +440,13 @@ TEST(TestSparse, sqrtm){
     ASSERT_LE((inv_sqrtm*inv_sqrtm - m_inv).norm(), 1e-10);
 }
 
-TEST(TestMatrix3D, compress3d){
+TEST(TestMatrix3D, comp3d){
     Eigen::MatrixXd mat(3, 3);
     mat << 1,2,3,4,5,6,7,8,9;
     
     Matrix3D mat3d(3,3,2);
     mat3d.setZero();
-    eigen_wrapper.compress3d(mat, mat3d, 0);
+    eigen_wrapper.comp3d(mat, mat3d, 0);
 
     Eigen::MatrixXd mat3d_groundtruth(9, 2);
     mat3d_groundtruth << 1,0,4,0,7,0,2,0,5,0,8,0,3,0,6,0,9,0;

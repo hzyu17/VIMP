@@ -9,9 +9,9 @@
  * 
  */
 
-#include <vimp/optimizer/OptimizerGH.h>
+#include <vimp/gvimp/OptimizerGH.h>
 #include <vimp/instances/GaussianPriorUnaryTranslation.h>
-#include <vimp/optimizer/OptimizerFactorizedGH.h>
+#include <vimp/gvimp/OptimizerFactorizedGH.h>
 
 using namespace vimp;
 using namespace gpmp2;

@@ -9,7 +9,7 @@
  * 
  */
 
-#include <vimp/optimizer/Optimizer.h>
+#include <vimp/gvimp/Optimizer.h>
 #include <gtsam/base/Matrix.h>
 #include <iostream>
 #include <random>

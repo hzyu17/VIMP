@@ -150,10 +150,10 @@ std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt,
         hai = std::get<2>(resi);
         nTri = std::get<3>(resi);
         // assamble into the 3d matrices
-        _ei.compress3d(hAi, hAt, i);
-        _ei.compress3d(Bi, Bt, i);
-        _ei.compress3d(hai, hat, i);
-        _ei.compress3d(nTri, nTrt, i);
+        _ei.comp3d(hAi, hAt, i);
+        _ei.comp3d(Bi, Bt, i);
+        _ei.comp3d(hai, hat, i);
+        _ei.comp3d(nTri, nTrt, i);
         
     }
     return std::make_tuple(LinearDynamics{_nx, _nu, _nt, hAt, Bt, hat}, nTrt);

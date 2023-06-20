@@ -54,7 +54,6 @@ public:
                                                 _hAkt = pdyn->At();
                                                 _Bt = pdyn->Bt();
                                                 _hakt = pdyn->at();
-
                                             }
                                             
     
@@ -65,7 +64,7 @@ public:
     void step(int indx) override{
 
         // propagate the mean and the covariance
-        propagate_mean();
+        propagate_nominal();
 
         MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
         MatrixXd aprior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
@@ -95,7 +94,7 @@ public:
         // propagate the mean and the covariance
         
         std::tuple<Matrix3D, Matrix3D> ztSigt;
-        ztSigt = propagate_mean(At, at, Bt, zt, Sigt);
+        ztSigt = propagate_nominal(At, at, Bt, zt, Sigt);
 
         Matrix3D ztnew(_nx, 1, _nt), Sigtnew(_nx, _nx, _nt);
         ztnew = std::get<0>(ztSigt);
@@ -103,7 +102,7 @@ public:
         
         MatrixXd Aprior = At / (1 + step_size) + hAt * step_size / (1 + step_size);
         MatrixXd aprior = at / (1 + step_size) + hat * step_size / (1 + step_size);
-
+        
         // Update Qkt, rkt
         std::tuple<Matrix3D, Matrix3D> Qtrt;
         Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, _hAkt, _hakt, step_size);

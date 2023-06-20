@@ -9,8 +9,8 @@
  * 
  */
 
-#include "optimizer/OptimizerFactorizedSimpleGH.h"
-#include "optimizer/OptimizerGH.h"
+#include "gvimp/OptimizerFactorizedSimpleGH.h"
+#include "gvimp/OptimizerGH.h"
 #include <gtest/gtest.h>
 
 

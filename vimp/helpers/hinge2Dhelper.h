@@ -113,7 +113,7 @@ std::tuple<MatrixXd, vec_2d, vec_2d> hingeloss_gradient_mesh(const MatrixXd& mes
             point << mesh_x(i), mesh_y(j);
             mesh_hinge(i, j) = gpmp2::hingeLossObstacleCost(point, sdf, eps, Jacobian_ij);
             // MatrixXd Jacobian_ij_column = Jacobian_ij.transpose();
-            // ei.compress3d(Jacobian_ij_column, Jacobians, i*j);
+            // ei.comp3d(Jacobian_ij_column, Jacobians, i*j);
             grad_xi[j] = Jacobian_ij(0);
             grad_yi[j] = Jacobian_ij(1);
 

@@ -408,4 +408,4 @@ public:
     }; //class
 } //namespace vimp
 
-#include "../optimizer/OptimizerGH-impl.h"
+#include "../gvimp/OptimizerGH-impl.h"

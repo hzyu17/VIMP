@@ -42,7 +42,7 @@ find_package(argparse REQUIRED)
 
 set(vimp_subdirs 
     base
-    optimizer
+    gvimp
     helpers 
     instances
     robots

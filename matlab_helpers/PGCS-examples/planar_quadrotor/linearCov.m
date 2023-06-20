@@ -10,14 +10,19 @@ for i = 1:nt
 end
 Phi   = eye(2*nx);
 for i = 1:nt-1
-    Phi  = Phi+dt.*(M(:,:,i)*Phi);
+    Phi_tild  = Phi+dt.*(M(:,:,i)*Phi);
+
+    Phi  = Phi+dt.* ( (M(:,:,i)*Phi) + (M(:,:,i+1)*Phi_tild) ) / 2;
+
 end
 Phi12 = Phi(1:nx,nx+1:2*nx);
 Phi11 = Phi(1:nx,1:nx);
 
 s     = zeros(2*nx,1);
 for i = 1:nt-1
-    s = s+dt.*(M(:,:,i)*s+[a(:,i);-r(:,i)]);
+    s_tild = s+dt.*(M(:,:,i)*s+[a(:,i);-r(:,i)]);
+
+    s = s+dt.*( (M(:,:,i)*s+[a(:,i);-r(:,i)]) + (M(:,:,i+1)*s_tild+[a(:,i+1);-r(:,i+1)]) ) / 2;
 end
 
 lambda0 = Phi12\(m1-Phi11*m0-s(1:nx));
@@ -26,6 +31,8 @@ Xl(:,1) = [m0;lambda0];
 for i = 1:nt-1
     temp     = Xl(:,i);
    Xl(:,i+1) = temp+dt.*(M(:,:,i)*temp+[a(:,i);-r(:,i)]);
+   tem_next = Xl(:,i+1);
+   Xl(:,i+1) = temp+dt.*( (M(:,:,i)*temp+[a(:,i);-r(:,i)]) + (M(:,:,i+1)*tem_next+[a(:,i+1);-r(:,i+1)]) ) / 2;
 end
 bx = Xl(1:nx,:);
 bl = Xl(nx+1:2*nx,:);
@@ -44,6 +51,9 @@ Pi(:,:,1) = (Pi0+Pi0')./2;
 for i = 1:nt-1
     temp=Pi(:,:,i);
     Pi(:,:,i+1)=temp-dt.*(A(:,:,i)'*temp+temp*A(:,:,i)-temp*B(:,:,i)*B(:,:,i)'*temp+Q(:,:,i));
+    tem_next = Pi(:,:,i+1);
+    Pi(:,:,i+1)=temp - dt.*( (A(:,:,i)'*temp+temp*A(:,:,i)-temp*B(:,:,i)*B(:,:,i)'*temp+Q(:,:,i)) + ...
+        (A(:,:,i+1)'*tem_next+tem_next*A(:,:,i+1)-tem_next*B(:,:,i+1)*B(:,:,i+1)'*tem_next+Q(:,:,i+1)) ) / 2;
 end
 K = zeros(nu,nx,nt);
 d = zeros(nu,nt);

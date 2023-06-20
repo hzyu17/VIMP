@@ -53,7 +53,7 @@ public:
     void step(int indx){
         std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
-        propagate_mean();
+        propagate_nominal();
         linearization();
 
         MatrixXd A_prior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);

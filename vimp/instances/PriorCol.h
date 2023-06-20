@@ -12,9 +12,9 @@
 // #pragma once
 
 #include "CostFunctions.h"
-#include "../optimizer/OptimizerFactorizedNonlinerOneFactorGH.h"
-#include "../optimizer/OptimizerGH.h"
-#include "../optimizer/OptimizerFactorizedLinear.h"
+#include "../gvimp/OptimizerFactorizedNonlinerOneFactorGH.h"
+#include "../gvimp/OptimizerGH.h"
+#include "../gvimp/OptimizerFactorizedLinear.h"
 
 using namespace Eigen;
 

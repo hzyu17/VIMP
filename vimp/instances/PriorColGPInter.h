@@ -13,7 +13,7 @@
 #include <gpmp2/gp/GPutils.h>
 #include <gpmp2/gp/GaussianProcessPriorLinear.h>
 #include <gpmp2/obstacle/ObstacleSDFFactorGP.h>
-#include <vimp/optimizer/OptimizerFactorizedTwoFactorsGH.h>
+#include <vimp/gvimp/OptimizerFactorizedTwoFactorsGH.h>
 
 using namespace Eigen;
 
