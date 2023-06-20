@@ -91,9 +91,13 @@ public:
             _ei.compress3d(Mi, _Mt, i);
         }
         _Phi = MatrixXd::Identity(2*_nx, 2*_nx);
+        MatrixXd Phi_tild(2*_nx, 2*_nx);
+
         for (int i=0; i<_nt-1; i++){
             MatrixXd Mi = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i);
-            _Phi = _Phi + Mi*_Phi*_delta_t;
+            MatrixXd Mi_next = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i+1);
+            Phi_tild = _Phi + Mi*_Phi*_delta_t;
+            _Phi = _Phi + _delta_t * (Mi*_Phi + Mi_next*Phi_tild) / 2.0;
         }
 
         _Phi11 = _Phi.block(0, 0, _nx, _nx);
@@ -102,27 +106,32 @@ public:
 
     std::tuple<Matrix3D, Matrix3D> solve_return(){
         Matrix3D Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
-        VectorXd s{VectorXd::Zero(2*_nx)};
+        VectorXd s{VectorXd::Zero(2*_nx)}, s_tild{VectorXd::Zero(2*_nx)};
         MatrixXd a_r{MatrixXd::Zero(2*_nx, _nt)};
         a_r << _at, 
               -_rt;
         
-        MatrixXd Mi(2*_nx, 2*_nx);
+        MatrixXd Mi(2*_nx, 2*_nx), Mi_next(2*_nx, 2*_nx);
         for (int i=0;i<_nt-1;i++){
             Mi = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i);
-            s = s + (Mi*s + a_r.col(i))*_delta_t;
+            Mi_next = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i+1);
+            s_tild = s + (Mi*s + a_r.col(i))*_delta_t;
+            s = s + _delta_t * ((Mi*s + a_r.col(i)) + (Mi_next*s_tild + a_r.col(i+1))) / 2.0;
         }
 
         VectorXd rhs{_m1 - _Phi11*_m0-s.block(0,0,_nx,1)};
         VectorXd Lambda_0 = _Phi12.colPivHouseholderQr().solve(rhs);
-        MatrixXd Xt(2*_nx, _nt);
+        MatrixXd Xt(2*_nx, _nt), X_tild(2*_nx, _nt);
         VectorXd X0(2*_nx);
         X0 << _m0, Lambda_0;
 
         Xt.col(0) = X0;
+
         for (int i=0; i<_nt-1; i++){
             Mi = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i); 
-            Xt.col(i+1) = Xt.col(i) + _delta_t*(Mi*Xt.col(i) + a_r.col(i));
+            Mi_next = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i+1); 
+            X_tild = Xt.col(i) + _delta_t*(Mi*Xt.col(i) + a_r.col(i));
+            Xt.col(i+1) = Xt.col(i) + _delta_t* ( (Mi*Xt.col(i) + a_r.col(i)) + (Mi_next*X_tild + a_r.col(i+1)) ) / 2.0;
         }
         MatrixXd xt{Xt.block(0,0,_nx,_nt)};
         MatrixXd lbdt{Xt.block(_nx, 0, _nx, _nt)};
@@ -149,7 +158,10 @@ public:
         Pi_0 = (Pi_0 + Pi_0_T)/2;
         _ei.compress3d(Pi_0, _Pit, 0);
         MatrixXd Ai(_nx, _nx), AiT(_nx, _nx), Qi(_nx, _nx), Pii(_nx, _nx), Pinew(_nx, _nx);
-        Ai.setZero(); AiT.setZero(); Qi.setZero(); Pii.setZero(); Pinew.setZero();
+        MatrixXd Ai_next(_nx, _nx), AiT_next(_nx, _nx), Qi_next(_nx, _nx), Pii_next(_nx, _nx), Pi_next(_nx, _nx);
+        MatrixXd Bi_next(_nx, _nu), BiT_next(_nu, _nx);
+        Ai.setZero(); AiT.setZero(); Qi.setZero(); Pii.setZero(); Pinew.setZero(); Bi_next.setZero(); BiT_next.setZero();
+        Ai_next.setZero(); AiT_next.setZero(); Qi_next.setZero(); Pii_next.setZero(); Pi_next.setZero();
         for (int i=0; i<_nt-1; i++){
             Pii = _ei.decomp3d(_Pit, _nx, _nx, i);
             Qi = _ei.decomp3d(_Qt, _nx, _nx, i);
@@ -157,8 +169,18 @@ public:
             Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
             BiT = Bi.transpose();
             AiT = Ai.transpose();
+
+            Pii_next = _ei.decomp3d(_Pit, _nx, _nx, i+1);
+            Qi_next = _ei.decomp3d(_Qt, _nx, _nx, i+1);
+            Ai_next = _ei.decomp3d(_At, _nx, _nx, i+1);
+            Bi_next = _ei.decomp3d(_Bt, _nx, _nu, i+1);
+            BiT_next = Bi_next.transpose();
+            AiT_next = Ai.transpose();
+
             Pinew = Pii - _delta_t*(AiT*Pii+Pii*Ai-Pii*Bi*BiT*Pii+Qi);
-            _ei.compress3d(Pinew, _Pit, i+1);
+            Pi_next = Pii - _delta_t* ( (AiT*Pii+Pii*Ai-Pii*Bi*BiT*Pii+Qi) + 
+                                        (AiT_next*Pinew+Pinew*Ai_next-Pinew*Bi_next*BiT_next*Pinew+Qi_next) ) / 2.0;
+            _ei.compress3d(Pi_next, _Pit, i+1);
         }
 
         MatrixXd Ki(_nu, _nx);

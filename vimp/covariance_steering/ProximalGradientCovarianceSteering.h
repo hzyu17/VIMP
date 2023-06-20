@@ -300,8 +300,9 @@ namespace vimp{
                                                       const Matrix3D& zt,
                                                       const Matrix3D& Sigt){
             // The i_th matrices
-            Eigen::VectorXd zi(_nx), znew(_nx), ai(_nx);
+            Eigen::VectorXd zi(_nx), zt_next(_nx), znew(_nx), ai(_nx), ai_next(_nx);
             Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx), Si(_nx, _nx), Snew(_nx, _nx);
+            Eigen::MatrixXd Ai_next(_nx, _nx), Bi_next(_nx, _nu), AiT_next(_nx, _nx), BiT_next(_nu, _nx), Si_next(_nx, _nx);
             Matrix3D zt_new(_nx, 1, _nt), Sigt_new(_nx, _nx, _nt);
 
             zt_new = zt;
@@ -309,20 +310,29 @@ namespace vimp{
 
             for (int i = 0; i < _nt - 1; i++)
             {
-                zi = _ei.decomp3d(zt_new, _nx, 1, i);
                 Ai = _ei.decomp3d(At, _nx, _nx, i);
                 ai = _ei.decomp3d(at, _nx, 1, i);
                 Bi = _ei.decomp3d(Bt, _nx, _nu, i);
                 Si = _ei.decomp3d(Sigt_new, _nx, _nx, i);
-
                 AiT = Ai.transpose();
                 BiT = Bi.transpose();
+
+                zi = _ei.decomp3d(zt_new, _nx, 1, i);
 
                 znew = zi + _deltt * (Ai * zi + ai);
                 Snew = Si + _deltt * (Ai * Si + Si * AiT + _eps * (Bi * BiT));
 
-                _ei.compress3d(znew, zt_new, i + 1);
-                _ei.compress3d(Snew, Sigt_new, i + 1);
+                Ai_next = _ei.decomp3d(At, _nx, _nx, i+1);
+                ai_next = _ei.decomp3d(at, _nx, 1, i+1);
+                Bi_next = _ei.decomp3d(Bt, _nx, _nu, i+1);
+                AiT_next = Ai_next.transpose();
+                BiT_next = Bi_next.transpose();
+
+                zt_next = zi + _deltt * ((Ai * zi + ai) + (Ai_next * znew + ai_next)) / 2.0;
+                Si_next = Si + _deltt * ((Ai * Si + Si * AiT + _eps * (Bi * BiT)) + (Ai_next * Snew + Snew * AiT_next + _eps * (Bi_next * BiT_next))) / 2.0;
+
+                _ei.compress3d(zt_next, zt_new, i + 1);
+                _ei.compress3d(Si_next, Sigt_new, i + 1);
 
             }
 

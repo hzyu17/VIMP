@@ -41,7 +41,7 @@ Q1 = zeros(nx, nx);
 % Q1(6,6) = 0.1;
 % Q1(3,3) = 1;
 
-nt = 20000;
+nt = 500;
 
 % 3D matrices
 A  = A1(:)*ones(1,nt);
