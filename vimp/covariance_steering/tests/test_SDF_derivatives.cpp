@@ -9,7 +9,7 @@
  * 
  */
 
-#include "helpers/data_io.h"
+#include "helpers/MatrixIO.h"
 #include <gtest/gtest.h>
 #include "helpers/hinge2Dhelper.h"
 #include <gpmp2/obstacle/PlanarSDF.h>

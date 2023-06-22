@@ -12,7 +12,7 @@
 #include "ProximalGradientCSLinearDyn.h"
 #include "../robots/PlanarPointRobotSDF_pgcs.h"
 #include "../helpers/hinge2Dhelper.h"
-#include "../helpers/cost_helpers.h"
+#include "../helpers/CostHelper.h"
 
 using namespace Eigen;
 

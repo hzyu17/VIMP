@@ -11,7 +11,7 @@
  */
 
 #include "covariance_steering/PGCSLinDynArmSDF.h"
-#include "helpers/ExperimentRunner7D.h"
+#include "helpers/ExperimentRunner.h"
 
 using namespace vimp;
 

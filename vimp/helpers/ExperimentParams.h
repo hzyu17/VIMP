@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "data_io.h"
+#include "MatrixIO.h"
 #include "eigen_wrapper.h"
 
 namespace vimp{
@@ -24,7 +24,7 @@ public:
     ExperimentParams(int nx, int nu, double eps_sdf, double eps,
                     double speed, int nt, double sig0, 
                     double sigT, double eta, double stop_err, double sig_obs,
-                    int max_iterations, std::string sdf_file=""):
+                    int max_iterations, double backtracking_ratio, int max_n_backtracking, std::string sdf_file=""):
                                         _nx(nx),
                                         _nu(nu),
                                         _m0(VectorXd::Zero(nx)), 
@@ -42,6 +42,8 @@ public:
                                         _eps_sdf(eps_sdf),
                                         _eps(eps),
                                         _sig_obs(sig_obs),
+                                        _backtrack_ratio(backtracking_ratio),
+                                        _max_n_backtrack(max_n_backtracking),
                                         _sdf_file(sdf_file){
                                             _Sig0 = MatrixXd::Identity(_nx, _nx) * sig0;
                                             _SigT = MatrixXd::Identity(_nx, _nx) * sigT;
@@ -70,6 +72,8 @@ public:
     double eps() const { return _eps; }
     double stop_err() const { return _stop_err; }
     double sig_obs() const { return _sig_obs; }
+    double backtrack_ratio() const { return _backtrack_ratio; }
+    int max_n_backtrack() const { return _max_n_backtrack; }
     std::string sdf_file() const { return _sdf_file; }
 
     VectorXd m0() const { return _m0; }
@@ -86,8 +90,8 @@ protected:
     VectorXd _m0, _mT;
     MatrixXd _Sig0, _SigT;
 
-    double _speed, _eps_sdf, _sig0, _sigT, _eta, _stop_err;
-    int _nt, _max_iterations;
+    double _speed, _eps_sdf, _sig0, _sigT, _eta, _stop_err, _backtrack_ratio;
+    int _nt, _max_iterations, _max_n_backtrack;
     int _nx, _nu;
 
     double _eps, _sig_obs;

@@ -9,7 +9,7 @@
  * 
  */
 
-#include "helpers/data_io.h"
+#include "helpers/MatrixIO.h"
 #include <gtest/gtest.h>
 #include <fastad>
 #include "dynamics/DoubleIntegratorDraged.h"

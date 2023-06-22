@@ -14,7 +14,7 @@
 #include<Eigen/Dense>
 #include<Eigen/Sparse>
 #include<Eigen/SparseCholesky>
-#include"data_io.h"
+#include"MatrixIO.h"
 #include"random.h"
 #include"../base/Matrix.h"
 

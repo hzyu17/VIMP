@@ -19,7 +19,7 @@
 #include <Eigen/SparseCore>
 #include <Eigen/SparseCholesky>
 #include <iostream>
-#include "data_io.h"
+#include "MatrixIO.h"
 
 typedef Eigen::SparseMatrix<double> SpMatrix;
 using namespace Eigen;

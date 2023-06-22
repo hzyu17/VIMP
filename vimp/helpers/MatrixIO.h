@@ -1,5 +1,5 @@
 /**
- * @file data_io.h
+ * @file MatrixIO.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Helpers related to the data io stream
  * @version 0.1

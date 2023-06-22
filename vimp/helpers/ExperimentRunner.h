@@ -71,8 +71,8 @@ public:
 
         using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
         std::tuple<MatrixXd, MatrixXd, NominalHistory> res_Kd;
-        res_Kd = pgcs_lin_sdf.optimize();
-        // res_Kd = pgcs_lin_sdf.backtrack();
+        // res_Kd = pgcs_lin_sdf.optimize();
+        res_Kd = pgcs_lin_sdf.backtrack();
 
         MatrixXd Kt(_nx*_nx, param.nt()), dt(_nx, param.nt());
         Kt = std::get<0>(res_Kd);
@@ -98,6 +98,8 @@ public:
 
         m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
         m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+
+        pgcs_lin_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
 
         return 0;
 
@@ -125,9 +127,11 @@ public:
         double stop_err = atof(commonParams->first_node("stop_err")->value());
         int max_iterations = atoi(commonParams->first_node("max_iter")->value());
         double sig_obs = atof(commonParams->first_node("cost_sigma")->value());
+        double backtracking_ratio = atof(commonParams->first_node("backtracking_ratio")->value());
+        int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
         // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
-        param = ExperimentParams(_nx, _nu, eps_sdf, eps, speed, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations);
+        param = ExperimentParams(_nx, _nu, eps_sdf, eps, speed, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations, backtracking_ratio, max_n_backtracking);
 
     }
 
@@ -164,6 +168,84 @@ public:
     int _num_exp, _nx, _nu, _nt;
 
 };
+
+template <typename PGCSOptimizer>
+class ExperimentRunner3D: public ExperimentRunner<PGCSOptimizer>{
+public:
+    
+    ExperimentRunner3D(int num_exp, const std::string & config):
+                        ExperimentRunner<PGCSOptimizer>(6, 3, num_exp, config){}
+
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode) override{
+        double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
+        double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
+        double start_z = atof(paramNode->first_node("start_pos")->first_node("z")->value());
+
+        double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
+        double start_vy = atof(paramNode->first_node("start_pos")->first_node("vy")->value());
+        double start_vz = atof(paramNode->first_node("start_pos")->first_node("vz")->value());
+
+        double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
+        double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
+        double goal_z = atof(paramNode->first_node("goal_pos")->first_node("z")->value());
+
+        double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
+        double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
+        double goal_vz = atof(paramNode->first_node("goal_pos")->first_node("vz")->value());
+
+        this->_m0 << start_x, start_y, start_z, start_vx, start_vy, start_vz;
+        this->_Sig0 = this->sig0 * Eigen::MatrixXd::Identity(this->_nx, this->_nx);
+
+        this->_mT << goal_x, goal_y, goal_z, goal_vx, goal_vy, goal_vz;
+        this->_SigT = this->sigT * Eigen::MatrixXd::Identity(this->_nx, this->_nx);
+    }
+};
+
+template <typename PGCSOptimizer>
+class ExperimentRunner7D: public ExperimentRunner<PGCSOptimizer>{
+public:
+    
+    ExperimentRunner7D(int num_exp, const std::string & config):
+                        ExperimentRunner<PGCSOptimizer>(14, 7, num_exp, config){}
+
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode) override{
+        double start_1 = atof(paramNode->first_node("start_pos")->first_node("1")->value());
+        double start_2 = atof(paramNode->first_node("start_pos")->first_node("2")->value());
+        double start_3 = atof(paramNode->first_node("start_pos")->first_node("3")->value());
+        double start_4 = atof(paramNode->first_node("start_pos")->first_node("4")->value());
+        double start_5 = atof(paramNode->first_node("start_pos")->first_node("5")->value());
+        double start_6 = atof(paramNode->first_node("start_pos")->first_node("6")->value());
+        double start_7 = atof(paramNode->first_node("start_pos")->first_node("7")->value());
+
+        double goal_1 = atof(paramNode->first_node("goal_pos")->first_node("1")->value());
+        double goal_2 = atof(paramNode->first_node("goal_pos")->first_node("2")->value());
+        double goal_3 = atof(paramNode->first_node("goal_pos")->first_node("3")->value());
+        double goal_4 = atof(paramNode->first_node("goal_pos")->first_node("4")->value());
+        double goal_5 = atof(paramNode->first_node("goal_pos")->first_node("5")->value());
+        double goal_6 = atof(paramNode->first_node("goal_pos")->first_node("6")->value());
+        double goal_7 = atof(paramNode->first_node("goal_pos")->first_node("7")->value());
+
+        VectorXd m0(14), mT(14); 
+
+        Eigen::VectorXd mo_pos(7);
+        mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
+        m0.block(0, 0, 7, 1) = mo_pos;
+        m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
+
+        Eigen::VectorXd mT_pos(7);
+        mT_pos << goal_1, goal_2, goal_3, goal_4, goal_5, goal_6, goal_7;
+        mT.block(0, 0, 7, 1) = mT_pos;
+        mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
+
+        double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
+
+        this->_params.set_m0(m0);
+        this->_params.set_mT(mT);
+        this->_params.update_sig_obs(sig_obs);
+    }
+
+};
+
 
 
 }

@@ -20,6 +20,8 @@ for i = 1:1 % 4 experiments
 %     figure
 %     set(gcf,'position',[x0,y0,width,height])
 %     tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
+    
+    prefix = ["map2/case"+num2str(i)+"/"];
 
     % read last iteration to decide the time discretizations
     means = csvread([prefix + "zk_sdf.csv"]);
@@ -39,43 +41,24 @@ for i = 1:1 % 4 experiments
     figure
     set(gcf,'position',[x0,y0,width,height])
     
-    tiledlayout(2, floor(n_iters/2), 'TileSpacing', 'tight', 'Padding', 'tight')
+    tiledlayout(1, n_iters, 'TileSpacing', 'tight', 'Padding', 'tight')
     
-    for i_iter = 1: n_iters
+    for i_iter = 1: n_iters-1
         nexttile
         hold on
         prefix = ["map2/case"+num2str(i)+"/"];
         % % --- read means and covariances ---
-        means = m_iters(:, i_iter*nt:i_iter);
-        covs = csvread([prefix + "Sk_sdf.csv"]);
-        
+        means = m_iters(:, i_iter*nt: (i_iter+1)*nt);
+        covs = cov_iters(:, i_iter*nt: (i_iter+1)*nt);
         plot_2d_result(sdfmap, means, covs);
     end
-
-%     % --- read baselines ---
-%     means_prm = csvread([prefix + "prm_5000.csv"]);
-%     means_rrt = csvread([prefix + "RRTstar_3000.csv"]);
-% 
-%     % --- plot baselines ---
-%     [~, nt_prm] = size(means_prm);
-%     [~, nt_rrt] = size(means_rrt);
-%     
-%     for i_pt = 1:nt_prm-1
-%         plot([means_prm(1, i_pt), means_prm(1, i_pt+1)], ...
-%             [means_prm(2, i_pt), means_prm(2, i_pt+1)], 'LineWidth', 3.0, 'Color', 'b');
-%     end
-%     
-%     hold on
-% 
-%     for i_pt = 1:nt_rrt-1
-%         plot([means_rrt(1, i_pt), means_rrt(1, i_pt+1)], ...
-%             [means_rrt(2, i_pt), means_rrt(2, i_pt+1)], 'LineWidth', 3.0, 'Color', 'g');
-%     end
-    
-%     if i==3
         xlim([-20, 25]);
         ylim([-15, 22]);
-%     end
-%     axis off ; 
 
+        %% plot costs
+        prefix = ["map2/case"+num2str(i)+"/"];
+        cost_
 end
+
+
+

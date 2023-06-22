@@ -58,6 +58,8 @@ namespace vimp{
                         _SigT(params.SigT()),
                         _max_iter(params.max_iter()),
                         _stop_err(params.stop_err()),
+                        _backtrack_ratio(params.backtrack_ratio()),
+                        _max_n_backtrack(params.max_n_backtrack()),
                         _Qkt(Matrix3D(_nx, _nx, _nt)),
                         _Qt(Matrix3D(_nx, _nx, _nt)),
                         _rkt(Matrix3D(_nx, 1, _nt)),
@@ -75,9 +77,6 @@ namespace vimp{
                             // Initialize the final time covariance
                             _ei.compress3d(_SigT, _Sigkt, _nt - 1);
 
-                            // Linear interpolation for the mean zk
-                            // initialize_zk();
-
                             // compute pinvBBT
                             MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
                             for (int i = 0; i < _nt; i++)
@@ -88,64 +87,6 @@ namespace vimp{
                                 _ei.compress3d(pinvBBTi, _pinvBBTt, i);
                             }
                         }
-
-        ProxGradCovSteer(const MatrixXd &A0,
-                         const VectorXd &a0,
-                         const MatrixXd &B,
-                         double sig,
-                         int nt,
-                         double eta,
-                         double eps,
-                         const VectorXd &z0,
-                         const MatrixXd &Sig0,
-                         const VectorXd &zT,
-                         const MatrixXd &SigT,
-                         double stop_err,
-                         int max_iteration = 30) : 
-                         _ei(),
-                        _nx(A0.rows()),
-                        _nu(B.cols()),
-                        _nt(nt),
-                        _eta(eta),
-                        _Akt(_ei.replicate3d(A0, _nt)),
-                        _akt(_ei.replicate3d(a0, _nt)),
-                        _Bt(_ei.replicate3d(B, _nt)),
-                        _sig(sig),
-                        _eps(eps),
-                        _deltt(sig / (nt - 1)),
-                        _Qkt(Matrix3D(_nx, _nx, _nt)),
-                        _Qt(Matrix3D(_nx, _nx, _nt)),
-                        _rkt(Matrix3D(_nx, 1, _nt)),
-                        _hAkt(Matrix3D(_nx, _nx, _nt)),
-                        _hakt(Matrix3D(_nx, 1, _nt)),
-                        _nTrt(Matrix3D(_nx, 1, _nt)),
-                        _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
-                        _zkt(_ei.replicate3d(z0, _nt)),
-                        _Sigkt(_ei.replicate3d(Sig0, _nt)),
-                        _z0(z0),
-                        _Sig0(Sig0),
-                        _zT(zT),
-                        _SigT(SigT),
-                        _Kt(_nu, _nx, _nt),
-                        _dt(_nu, 1, _nt),
-                        _max_iter(max_iteration),
-                        _stop_err(stop_err),
-                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _sig, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
-                        _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
-        {
-            // Initialize the final time covariance
-            _ei.compress3d(_SigT, _Sigkt, _nt - 1);
-
-            // compute pinvBBT
-            MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
-            for (int i = 0; i < _nt; i++)
-            {
-                Bi = Bt_i(i);
-                BiT = Bi.transpose();
-                pinvBBTi = (Bi * BiT).completeOrthogonalDecomposition().pseudoInverse();
-                _ei.compress3d(pinvBBTi, _pinvBBTt, i);
-            }
-        }
 
         /**
          * @brief The optimization process, including linearization,
@@ -180,26 +121,23 @@ namespace vimp{
         }
 
         /**
+         * @brief Backtracking to select step sizes in optimization.
+         * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
+         */
+        virtual std::tuple<Matrix3D, Matrix3D, NominalHistory> backtrack(){}
+
+        /**
          * @brief step with given matrices, return a total cost of this step.
          */
-        virtual StepResult step(int indx, 
-                                double step_size, 
-                                const Matrix3D& At, 
-                                const Matrix3D& at, 
-                                const Matrix3D& Bt,
-                                const Matrix3D& hAt,
-                                const Matrix3D& hat, 
-                                const Matrix3D& zt, 
-                                const Matrix3D& Sigt) = 0;
+        virtual StepResult step(int indx, double step_size, const Matrix3D& At, 
+                                const Matrix3D& at, const Matrix3D& Bt, const Matrix3D& hAt,
+                                const Matrix3D& hat, const Matrix3D& zt, const Matrix3D& Sigt) = 0;
 
         void update_from_step_res(const StepResult& res){
             // return type of one step: (Kt, dt, At, at, zt, Sigt) 
-            _Kt = std::get<0>(res);
-            _dt = std::get<1>(res);
-            _Akt = std::get<2>(res);
-            _akt = std::get<3>(res);
-            _zkt = std::get<4>(res);
-            _Sigkt = std::get<5>(res);
+            _Kt = std::get<0>(res); _dt = std::get<1>(res);
+            _Akt = std::get<2>(res); _akt = std::get<3>(res);
+            _zkt = std::get<4>(res); _Sigkt = std::get<5>(res);
         }
 
         virtual void step(int indx) = 0;
@@ -208,47 +146,16 @@ namespace vimp{
          * @brief Qrk with given matrices.
          * return: (Qt, rt)
          */
-        virtual std::tuple<Matrix3D, Matrix3D> update_Qrk(const Matrix3D& zt, 
-                                                        const Matrix3D& Sigt, 
-                                                        const Matrix3D& At, 
-                                                        const Matrix3D& at, 
-                                                        const Matrix3D& Bt,
-                                                        const Matrix3D& hAt,
-                                                        const Matrix3D& hat,
-                                                        const double step_size){}
+        virtual std::tuple<Matrix3D, Matrix3D> update_Qrk(const Matrix3D& zt, const Matrix3D& Sigt, 
+                                                        const Matrix3D& At,  const Matrix3D& at, 
+                                                        const Matrix3D& Bt, const Matrix3D& hAt,
+                                                        const Matrix3D& hat, const double step_size){}
 
 
         /**
          * @brief Problem with a state cost V(Xt) differs only in the expressions Qk and rk.
          */
-        virtual void update_Qrk()
-        {
-            MatrixXd Aki(_nx, _nx), aki(_nx, 1), hAi(_nx, _nx), hai(_nx, 1), Bi(_nx, _nu), Qti(_nx, _nx), pinvBBTi(_nx, _nx), Qki(_nx, _nx), nTri(_nx, 1), zi(_nx, 1), rki(_nx, 1);
-            MatrixXd temp(_nx, _nx);
-            // for each time step
-            _Qkt.setZero();
-            _rkt.setZero();
-
-            for (int i = 0; i < _nt; i++)
-            {
-                Aki = Akt_i(i);
-                aki = akt_i(i);
-                hAi = hAkt_i(i);
-                hai = hakt_i(i);
-                Bi = Bt_i(i);
-                Qti = Qt_i(i);
-                pinvBBTi = pinvBBTt_i(i);
-                nTri = nTrt_i(i);
-                zi = zkt_i(i);
-                temp = (Aki - hAi).transpose();
-                Qki = Qti * 2 * _eta / (1 + _eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1 + _eta) / (1 + _eta);
-                rki = -(Qti * zi) * _eta / (1 + _eta) + nTri * _eta / (1 + _eta) / 2 + temp * pinvBBTi * (aki - hai) * _eta / (1 + _eta) / (1 + _eta);
-
-                // update Qkt, rkt
-                _ei.compress3d(Qki, _Qkt, i);
-                _ei.compress3d(rki, _rkt, i);
-            }
-        }
+        virtual void update_Qrk(){ }
 
         /**
          * @brief solve linear CS with local matrix inputs. 
@@ -288,16 +195,12 @@ namespace vimp{
         {
             LinearCSResult KtdtAtat;
             KtdtAtat = solve_linearCS_return(A, B, a, Q, r);
-            _Kt = std::get<0>(KtdtAtat);
-            _dt = std::get<1>(KtdtAtat);
-            _Akt = std::get<2>(KtdtAtat);
-            _akt = std::get<3>(KtdtAtat);
+            _Kt = std::get<0>(KtdtAtat); _dt = std::get<1>(KtdtAtat);
+            _Akt = std::get<2>(KtdtAtat); _akt = std::get<3>(KtdtAtat);
         }
 
-        std::tuple<Matrix3D, Matrix3D> propagate_mean(const Matrix3D& At, 
-                                                      const Matrix3D& at, 
-                                                      const Matrix3D& Bt,
-                                                      const Matrix3D& zt,
+        std::tuple<Matrix3D, Matrix3D> propagate_mean(const Matrix3D& At, const Matrix3D& at, 
+                                                      const Matrix3D& Bt, const Matrix3D& zt,
                                                       const Matrix3D& Sigt){
             // The i_th matrices
             Eigen::VectorXd zi(_nx), zt_next(_nx), znew(_nx), ai(_nx), ai_next(_nx);
@@ -343,8 +246,7 @@ namespace vimp{
         {   
             std::tuple<Matrix3D, Matrix3D> ztSigt;
             ztSigt = propagate_mean(_Akt, _akt, _Bt, _zkt, _Sigkt);
-            _zkt = std::get<0>(ztSigt);
-            _Sigkt = std::get<1>(ztSigt);
+            _zkt = std::get<0>(ztSigt); _Sigkt = std::get<1>(ztSigt);
         }
 
 
@@ -402,8 +304,8 @@ namespace vimp{
     protected:
         EigenWrapper _ei;
         int _nx, _nu, _nt;
-        double _eta, _sig, _eps, _deltt, _stop_err;
-        int _max_iter;
+        double _eta, _sig, _eps, _deltt, _stop_err, _backtrack_ratio;
+        int _max_iter, _max_n_backtrack;
 
         // All the variables are time variant (3d matrices)
         // iteration variables

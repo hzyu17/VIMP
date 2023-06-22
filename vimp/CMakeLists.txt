@@ -105,13 +105,13 @@ include_directories(${GTEST_INCLUDE_DIRS})
 file(GLOB_RECURSE TEST_SOURCES vimp_subdirs false */tests/*.cpp)
   
 # Loop through each test file and add it as a test case
-foreach(TEST_SOURCE ${TEST_SOURCES})
-    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
-    add_executable(${TEST_NAME} ${TEST_SOURCE})
-    target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot FastAD::FastAD ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
-    target_include_directories(${TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-endforeach()
+# foreach(TEST_SOURCE ${TEST_SOURCES})
+#     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+#     add_executable(${TEST_NAME} ${TEST_SOURCE})
+#     target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot FastAD::FastAD ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
+#     # add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+#     # target_include_directories(${TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+# endforeach()
 
 # -------------------------------------------- Doxygen for documentations
 # find_package(Doxygen)

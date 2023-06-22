@@ -10,7 +10,8 @@
  */
 
 #include "ProximalGradientCSLinearDyn.h"
-#include "../helpers/cost_helpers.h"
+#include "../helpers/CostHelper.h"
+#include <iomanip>
 
 using namespace Eigen;
 
@@ -30,30 +31,7 @@ public:
                         _robot_sdf(params.eps_sdf()),
                         _cost_helper(_max_iter){}
 
-
-    PGCSLinDynRobotSDF(const MatrixXd& A0, 
-                            const VectorXd& a0, 
-                            const MatrixXd& B, 
-                            double sig,
-                            int nt,
-                            double eta,
-                            double eps,
-                            const VectorXd& z0,
-                            const MatrixXd& Sig0,
-                            const VectorXd& zT,
-                            const MatrixXd& SigT,
-                            const std::shared_ptr<LinearDynamics>& pdyn,
-                            double eps_sdf,
-                            double sig_obs,
-                            double stop_err,
-                            int max_iter):
-                        ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, stop_err, max_iter),
-                        _eps_sdf(eps_sdf),
-                        _Sig_obs(sig_obs),
-                        _robot_sdf(eps_sdf),
-                        _cost_helper(max_iter){ }
-
-    double hingeloss(const Matrix3D& zt){
+    double hingeloss(const Matrix3D& zt, const Matrix3D& Sigt){
         double hingeloss = 0;
         std::pair<double, VectorXd> hingeloss_gradient;
         MatrixXd zi(_nx, 1);
@@ -76,10 +54,10 @@ public:
     }
 
     double hingeloss(){
-        return hingeloss(_zkt);
+        return hingeloss(_zkt, _Sigkt);
     }
 
-    double control_energy(const Matrix3D& zt, const Matrix3D& Kt, const Matrix3D& dt){
+    double control_energy(const Matrix3D& zt, const Matrix3D& Sigt, const Matrix3D& Kt, const Matrix3D& dt){
         double total_Eu = 0;
         MatrixXd zi(_nx, 1), Ki(_nu, _nx), di(_nu, 1);
 
@@ -99,86 +77,7 @@ public:
     }
 
     double control_energy(){
-        return control_energy(_zkt, _Kt, _dt);
-    }
-
-    /**
-     * @brief The optimization process, including recording the costs.
-     * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
-     */
-    std::tuple<Matrix3D, Matrix3D, NominalHistory> backtrack(){
-        double err = 1;
-        int i_step = 0; 
-        int MBT = 1; // max backtracking number
-        double total_cost_prev = 1e9; // initial cost buffer
-
-        NominalHistory hnom;
-        std::vector<Matrix3D> v_zt, v_Sigzt;
-
-        while ((total_cost_prev > _stop_err) && (i_step < _max_iter)){
-            
-            std::cout << "================ iter " << i_step << " ================" << std::endl;
-            // std::cout << "total_cost_prev " << total_cost_prev << std::endl;
-
-            // backtracking 
-            double step_size = _eta; // initial step size
-            for (int i_bt=0; i_bt<MBT; i_bt++){
-
-                // std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
-                
-                // shringking step size
-                step_size = 0.5*step_size;
-
-                // tentative one step
-                StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
-                KtdtAtatztSigt = step(i_step, step_size, _Akt, _akt, _Bt, _hAkt, _hakt, _zkt, _Sigkt);
-
-                // compute the tentative cost
-                Matrix3D zt(_nx, 1, _nt), Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
-                zt.setZero(); Kt.setZero(); dt.setZero();
-
-                Kt = std::get<0>(KtdtAtatztSigt);
-                dt = std::get<1>(KtdtAtatztSigt);
-                zt = std::get<4>(KtdtAtatztSigt);
-
-                double total_cost = control_energy(zt, Kt, dt) + hingeloss(zt);
-                std::cout << "total cost " << total_cost << std::endl;
-                total_cost_prev = total_cost;
-                
-                // stop backtracking 
-                if (total_cost < total_cost_prev){
-                    
-                    // update the internal parameters
-                    update_from_step_res(KtdtAtatztSigt);
-
-                    // register for the current cost
-                    total_cost_prev = total_cost;
-                    
-                    // go to next iteration
-                    i_step += 1;
-
-                    v_zt.push_back(_zkt);
-                    v_Sigzt.push_back(_Sigkt);
-                    
-                    break;
-                }
-
-                // no good step size found.
-                if (i_bt == MBT-1){
-                    
-                    // update_from_step_res(KtdtAtatztSigt);
-                    // v_zt.push_back(_zkt);
-                    // v_Sigzt.push_back(_Sigkt);
-                    i_step += 1;
-                    break;
-                }
-                
-            }
-        }  
-        // _cost_helper.plot_costs();
-
-        hnom = make_tuple(v_zt, v_Sigzt);
-        return std::make_tuple(_Kt, _dt, hnom);      
+        return control_energy(_zkt, _Sigkt, _Kt, _dt);
     }
 
     /**
@@ -218,6 +117,101 @@ public:
         hnom = make_tuple(v_zt, v_Sigzt);
         return std::make_tuple(_Kt, _dt, hnom);
     }
+
+    /**
+     * @brief The optimization process, including recording the costs.
+     * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
+     */
+    std::tuple<Matrix3D, Matrix3D, NominalHistory> backtrack() override{
+        double err = 1;
+        int i_step = 0; 
+        double total_cost_prev = 1e9; // initial cost buffer
+        bool no_better_stepsize = false;
+
+        NominalHistory hnom;
+        std::vector<Matrix3D> v_zt, v_Sigzt;
+
+        while ( ((err<0) || (err>_stop_err)) && (i_step < _max_iter) && (!no_better_stepsize)){
+            
+            std::cout << "================ iter " << i_step << " ================" << std::endl;
+
+            // backtracking 
+            double step_size = _eta; // initial step size
+            for (int i_bt=0; i_bt<_max_n_backtrack; i_bt++){
+
+                std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
+
+                // tentative one step
+                StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
+                KtdtAtatztSigt = step(i_step, step_size, _Akt, _akt, _Bt, _hAkt, _hakt, _zkt, _Sigkt);
+
+                // compute the tentative cost
+                Matrix3D zt(_nx, 1, _nt), Sigt(_nx, _nx, _nt), Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
+                zt.setZero(); Kt.setZero(); dt.setZero(); Sigt.setZero();
+
+                Kt = std::get<0>(KtdtAtatztSigt);
+                dt = std::get<1>(KtdtAtatztSigt);
+                zt = std::get<4>(KtdtAtatztSigt);
+                Sigt = std::get<5>(KtdtAtatztSigt);
+
+                double total_cost = control_energy(zt, Sigt, Kt, dt) + hingeloss(zt, Sigt);
+                _cost_helper.add_cost(i_step, hingeloss(zt, Sigt), control_energy(zt, Sigt, Kt, dt));
+
+                std::cout << " total cost " << std::fixed << std::setprecision(4) << total_cost << std::endl;
+    
+                if (total_cost < total_cost_prev){
+
+                    std::cout << "Found better cost " << std::endl;
+                    
+                    // update the internal parameters
+                    update_from_step_res(KtdtAtatztSigt);
+
+                    // register for the current cost
+                    err = total_cost_prev - total_cost;
+                    total_cost_prev = total_cost;
+                    
+                    // go to next iteration
+                    i_step += 1;
+
+                    v_zt.push_back(_zkt);
+                    v_Sigzt.push_back(_Sigkt);
+                    
+                    break;
+                }else{
+                    // shringking step size
+                    step_size = _backtrack_ratio*step_size;
+                }
+
+                // no good step size found: taking the smallest step.
+                if (i_bt == _max_n_backtrack-1){
+                    std::cout << "there is no better step size " << std::endl;
+
+                    // update the internal parameters
+                    update_from_step_res(KtdtAtatztSigt);
+
+                    // register for the current cost
+                    err = total_cost_prev - total_cost;
+                    total_cost_prev = total_cost;
+                    
+                    // go to next iteration
+                    i_step += 1;
+
+                    v_zt.push_back(_zkt);
+                    v_Sigzt.push_back(_Sigkt);
+
+                    break;
+                }
+
+                std::cout << "step size " << step_size << std::endl;
+            }
+        }  
+
+        _cost_helper.plot_costs();
+
+        hnom = make_tuple(v_zt, v_Sigzt);
+        return std::make_tuple(_Kt, _dt, hnom);      
+    }
+
 
     /**
      * @brief Qrk with given matrices.
@@ -292,71 +286,16 @@ public:
         Qtrt = update_Qrk(_zkt, _Sigkt, _Akt, _akt, _Bt, _hAkt, _hakt, _eta);
         _Qkt = std::get<0>(Qtrt);
         _rkt = std::get<1>(Qtrt);
+    }
 
-        // MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
-        //          hAi(_nx, _nx), hai(_nx, 1),
-        //          Qti(_nx, _nx), Qki(_nx, _nx), rki(_nx, 1), zi(_nx, 1);
-        // MatrixXd temp(_nx, _nx);
-        // // for each time step
-        // _Qkt.setZero();
-        // _rkt.setZero();
-
-        // for (int i=0; i<_nt; i++){
-        //     Aki = _ei.decomp3d(_Akt, _nx, _nx, i);
-        //     aki = _ei.decomp3d(_akt, _nx, 1, i);
-        //     hAi = _ei.decomp3d(_hAkt, _nx, _nx, i);
-        //     hai = _ei.decomp3d(_hakt, _nx, 1, i);
-        //     Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
-        //     Qti = _ei.decomp3d(_Qt, _nx, _nx, i);
-        //     pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
-        //     zi = _ei.decomp3d(_zkt, _nx, 1, i);
-        //     temp = (Aki - hAi).transpose();
-        //     // Compute hinge loss and its gradients
-        //     int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
-        //     std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
-            
-        //     hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,_nx/2,1));
-        //     VectorXd hinge(n_spheres);
-        //     MatrixXd J_hxy(n_spheres, _nx/2);
-        //     hinge = std::get<0>(hingeloss_gradient);
-        //     J_hxy = std::get<1>(hingeloss_gradient);
-
-
-        //     // MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
-        //     MatrixXd grad_h(n_spheres, _nx), velocity(1, _nx/2);
-        //     // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
-        //     velocity = zi.block(_nx/2,0,_nx/2,1).transpose();
-
-        //     for (int i_s=0; i_s<n_spheres; i_s++){
-        //             grad_h.block(i_s,0,1,_nx/2) = J_hxy.row(i_s);
-        //         grad_h.block(i_s,_nx/2,1,_nx/2) = J_hxy.row(i_s).cwiseProduct(velocity);
-        //     }          
-        //     MatrixXd Sig_obs{_Sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
-        //     MatrixXd Hess(_nx, _nx);
-        //     Hess.setZero();
-
-        //     // std::cout << "_Sig_obs " << _Sig_obs << std::endl;
-        //     // if (hinge > 0){
-        //     //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
-        //     // }
-        //     // Qki
-        //     Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
-        //     // rki
-        //     rki = grad_h.transpose() * Sig_obs * hinge * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
-        //     // update Qkt, rkt
-        //     _ei.compress3d(Qki, _Qkt, i);
-        //     _ei.compress3d(rki, _rkt, i);
-        // }
-        // // _ei.print_matrix(_Qkt, "_Qkt");
-        // // _ei.print_matrix(_rkt, "_rkt");
-        
+    void save_costs(const string& filename){
+        _cost_helper.save_costs(filename);
     }
 
 protected:
     RobotSDF _robot_sdf;
     double _eps_sdf;
     double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
-    // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.
     CostHelper _cost_helper;
 };
 }

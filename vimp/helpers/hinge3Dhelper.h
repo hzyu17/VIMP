@@ -11,7 +11,7 @@
 
 #include <gpmp2/obstacle/ObstacleCost.h>
 #include <gpmp2/obstacle/SignedDistanceField.h>
-#include "data_io.h"
+#include "MatrixIO.h"
 #include "eigen_wrapper.h"
 
 

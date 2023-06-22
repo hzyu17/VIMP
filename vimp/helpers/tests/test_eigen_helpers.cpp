@@ -13,7 +13,7 @@
 
 #include "helpers/timer.h"
 #include "helpers/eigen_wrapper.h"
-#include "helpers/data_io.h"
+#include "helpers/MatrixIO.h"
 
 #include<Eigen/IterativeLinearSolvers>
 

@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
     // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
-    else if (argc == 12){
+    else if (argc == 14){
         
         int i_exp = std::stoi(argv[1]);
         double eps = std::stof(argv[2]);
@@ -42,8 +42,10 @@ int main(int argc, char* argv[]){
         double stop_err = std::stof(argv[9]);
         int max_iter = std::stof(argv[10]);
         double sig_obs = std::stof(argv[11]);
+        double backtrack_ratio = std::stof(argv[12]);
+        int backtrack_iterations = std::stoi(argv[13]);
 
-        ExperimentParams param(nx, nu, eps_sdf, eps, speed, nt, sig0, sigT, eta, stop_err, sig_obs, max_iter);
+        ExperimentParams param(nx, nu, eps_sdf, eps, speed, nt, sig0, sigT, eta, stop_err, sig_obs, max_iter, backtrack_ratio, backtrack_iterations);
         return runner.run_one_exp(i_exp, param);
     }
     else{

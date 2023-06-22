@@ -36,28 +36,6 @@ public:
                                 _hakt = pdyn->at();
                             }
 
-    ProxGradCovSteerLinDyn(const MatrixXd& A0, 
-                            const VectorXd& a0, 
-                            const MatrixXd& B, 
-                            double sig,
-                            int nt,
-                            double eta,
-                            double eps,
-                            const VectorXd& z0,
-                            const MatrixXd& Sig0,
-                            const VectorXd& zT,
-                            const MatrixXd& SigT,
-                            const std::shared_ptr<LinearDynamics>& pdyn,
-                            double stop_err,
-                            int max_iter): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, stop_err, max_iter), 
-                                            _pdyn(pdyn){
-                                                _hAkt = pdyn->At();
-                                                _Bt = pdyn->Bt();
-                                                _hakt = pdyn->at();
-
-                                            }
-                                            
-    
     /**
      * @brief Solving a linear covariance steering at each iteration.
      * @return none, but inside already compute (K, d).
@@ -82,15 +60,10 @@ public:
      * @brief A step with given local matrices and a given step size;
      * @return (Kkt, dkt, Akt, akt, zkt, Sigkt) 
      */
-    StepResult step(int indx, 
-                    double step_size, 
-                    const Matrix3D& At, 
-                    const Matrix3D& at, 
-                    const Matrix3D& Bt,
-                    const Matrix3D& hAt,
-                    const Matrix3D& hat, 
-                    const Matrix3D& zt, 
-                    const Matrix3D& Sigt) override
+    StepResult step(int indx, double step_size, 
+                    const Matrix3D& At, const Matrix3D& at, const Matrix3D& Bt,
+                    const Matrix3D& hAt, const Matrix3D& hat, 
+                    const Matrix3D& zt, const Matrix3D& Sigt) override
     {
         // propagate the mean and the covariance
         
@@ -106,7 +79,7 @@ public:
 
         // Update Qkt, rkt
         std::tuple<Matrix3D, Matrix3D> Qtrt;
-        Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, _hAkt, _hakt, step_size);
+        Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, hAt, hat, step_size);
 
         Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
         Qt.setZero(); rt.setZero();
@@ -115,7 +88,7 @@ public:
 
         // solve inner loop linear CS
         std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> KtdtAtat;
-        KtdtAtat = solve_linearCS_return(Aprior, _Bt, aprior, Qt, rt);
+        KtdtAtat = solve_linearCS_return(Aprior, Bt, aprior, Qt, rt);
 
         return std::make_tuple(std::get<0>(KtdtAtat), 
                                std::get<1>(KtdtAtat), 
