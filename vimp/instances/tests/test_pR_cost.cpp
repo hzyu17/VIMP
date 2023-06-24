@@ -1,4 +1,4 @@
-#include "instances/PriorColPlanarPointRobot.h"
+#include "instances/PlanarPRFactor.h"
 #include "robots/PlanarPointRobotSDFMultiObsExample.h"
 #include <gtest/gtest.h>
 

@@ -16,13 +16,13 @@ using namespace Eigen;
 namespace vimp{
 
 template <typename PGCSOptimizer, typename Dynamics>
-class ExperimentRunnerNL: public ExperimentRunner<PGCSOptimizer>{
+class ExperimentRunnerNL: public PGCSRunner<PGCSOptimizer>{
 public:
-    // ExperimentRunner(){}
+    // PGCSRunner(){}
     virtual ~ExperimentRunnerNL(){}
 
     ExperimentRunnerNL(int nx, int nu, int num_exp, const std::string & config): 
-            ExperimentRunner<PGCSOptimizer>(nx, nu, num_exp, config)
+            PGCSRunner<PGCSOptimizer>(nx, nu, num_exp, config)
             {
                 rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
                 rapidxml::xml_document<> doc;

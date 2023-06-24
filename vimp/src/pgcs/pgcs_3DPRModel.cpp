@@ -20,7 +20,7 @@ int main(){
     int num_exp = 4;
     
     std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/pR3D_map2.xml"};
-    ExperimentRunner3D<PGCSLinDynPRModelSDF> runner(num_exp, config_file);
+    PGCSRunner3D<PGCSLinDynPRModelSDF> runner(num_exp, config_file);
 
     runner.read_config_file();
     runner.run();

@@ -1,5 +1,5 @@
 /**
- * @file PriorColPlanarArm.h
+ * @file PlanarArmFactor.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Planar case for Arm
  * @version 0.1
@@ -10,7 +10,7 @@
  */
 
 
-#include "PriorColPlanar.h"
+#include "PlanarFactor.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorArm.h>
 
 namespace vimp{

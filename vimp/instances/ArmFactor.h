@@ -1,5 +1,5 @@
 /**
- * @file PriorColArm.h
+ * @file ArmFactor.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Define prior and collision factors for Arm Robot.
  * @version 0.1

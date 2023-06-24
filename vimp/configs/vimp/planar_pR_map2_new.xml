@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Commons>
+    <total_time>2.5</total_time>
+    <n_states>15</n_states>
+    <coeff_Qc> 0.8 </coeff_Qc>
+    <sig_obs> 0.0035 </sig_obs>
+    <eps_sdf> 0.7 </eps_sdf>
+    <step_size> 0.45 </step_size>
+    <max_iterations> 6 </max_iterations>
+    <init_precision_factor>20.0</init_precision_factor>
+    <temperature>10.0</temperature>
+    <high_temperature> 100.0 <high_temperature>
+    <low_temp_iterations> 0 </low_temp_iterations>
+    <stop_err>  </stop_err>
+    <max_n_backtracking> 10 </max_n_backtracking>
+
+</Commons>
+<!-- =========================================== experiment 1 ============================================================= -->
+<Experiment1>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    
+    <start_pos>
+        <x>7.0</x>
+        <y>-5.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>-10.0</x>
+        <y>16.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <cost_sigma> 0.0035 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case1/</saving_prefix>
+
+</Experiment1>
+
+<!-- =========================================== experiment 2 ============================================================= -->
+<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
+<Experiment2>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    
+    <start_pos>
+        <x>-7.0</x>
+        <y>-5.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>8.0</x>
+        <y>18.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <cost_sigma> 0.0045 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case2/</saving_prefix>
+
+</Experiment2>
+
+<!-- =========================================== experiment 3 ============================================================= -->
+<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
+<Experiment3>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    
+    <start_pos>
+        <x>-7.0</x>
+        <y>-5.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>13.0</x>
+        <y>10.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <cost_sigma> 0.0045 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case3/</saving_prefix>
+
+</Experiment3>
+
+
+<!-- =========================================== experiment 4 ============================================================= -->
+<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
+<Experiment4>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    
+    <start_pos>
+        <x>13.0</x>
+        <y>14.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>-13.0</x>
+        <y>8.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <cost_sigma> 0.004 </cost_sigma>
+
+    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case4/</saving_prefix>
+
+</Experiment4>

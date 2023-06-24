@@ -1,5 +1,5 @@
 /**
- * @file PriorColPlanarPointRobot.h
+ * @file PlanarPRFactor.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Joint optimizer for planar point robot with prior and collision factors.
  * @version 0.1
@@ -11,8 +11,9 @@
 
 // // #pragma once
 
-#include "PriorColPlanar.h"
+#include "PlanarFactor.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
+#include "../robots/PlanarPointRobotSDF_pgcs.h"
 
 namespace vimp{
 

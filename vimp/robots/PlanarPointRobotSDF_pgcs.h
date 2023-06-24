@@ -23,9 +23,9 @@ namespace vimp{
 
 class PlanarPRSDFExample: public RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>{
     public:
-        PlanarPRSDFExample(double epsilon): _ndof(2), _nlinks(1), _eps(epsilon), _r(0.0){
+        PlanarPRSDFExample(double epsilon): _ndof(2), _nlinks(1), _eps(epsilon), _r(1.5){
             default_sdf();
-            generate_pr_sdf(*_psdf, 0.0);
+            generate_pr_sdf(*_psdf, 1.5);
         }
 
         void default_sdf(){

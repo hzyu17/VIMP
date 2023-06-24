@@ -16,12 +16,12 @@
 
 namespace vimp{
 
-class ExperimentParams{
+class PGCSExperimentParams{
 
 public:
-    ExperimentParams(){}
+    PGCSExperimentParams(){}
 
-    ExperimentParams(int nx, int nu, double eps_sdf, double eps,
+    PGCSExperimentParams(int nx, int nu, double eps_sdf, double eps,
                     double speed, int nt, double sig0, 
                     double sigT, double eta, double stop_err, double sig_obs,
                     int max_iterations, double backtracking_ratio, int max_n_backtracking, std::string sdf_file=""):
@@ -99,6 +99,69 @@ protected:
     double _sig;
 
     std::string _sdf_file;
+
+};
+
+class GVIMPExperimentParams{
+public:
+    GVIMPExperimentParams(){}
+
+    GVIMPExperimentParams(int nx,
+                        int nu,
+                        double total_time, 
+                        int n_states, 
+                        double coeff_Qc, 
+                        double sigma_obs, 
+                        double eps_obs, 
+                        double step_size,
+                        int num_iter,
+                        double initial_precision_factor,
+                        double temperature,
+                        double high_temperature,
+                        int low_temp_iterations,
+                        double stop_err,
+                        int max_n_backtracking):
+                        _nx(nx),
+                        _nu(nu),
+                        _total_time(total_time),
+                        _nt(n_states),
+                        _coeff_Qc(coeff_Qc),
+                        _sig_obs(sigma_obs),
+                        _eps_sdf(eps_obs),
+                        _step_size(step_size),
+                        _max_iterations(num_iter),
+                        _initial_precision_factor(initial_precision_factor),
+                        _temperature(temperature),
+                        _high_temperature(high_temperature),
+                        _low_temp_iterations(low_temp_iterations),
+                        _stop_err(stop_err),
+                        _max_n_backtrack(max_n_backtracking),
+                        _m0(VectorXd::Zero(nx)),
+                        _mT(VectorXd::Zero(nx)),
+                        _Sig0(MatrixXd::Zero(nx, nx)),
+                        _SigT(MatrixXd::Zero(nx, nx)){
+    }
+
+    void set_m0(const VectorXd& m0){ _m0 = m0; }
+
+    void set_mT(const VectorXd& mT){ _mT = mT; }
+
+    void set_sigobs(double sig_obs){ _sig_obs = sig_obs; }
+
+    void set_temperature(double temperature){ _temperature = temperature; }
+
+    void set_high_temperature(double high_temp){ _high_temperature = high_temp; }
+
+protected:
+    MatrixIO _m_io;
+    EigenWrapper _ei;
+    VectorXd _m0, _mT;
+    MatrixXd _Sig0, _SigT;
+
+    double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio;
+    int _nt, _max_iterations, _low_temp_iterations, _max_n_backtrack;
+    int _nx, _nu;
+    double _coeff_Qc, _eps_sdf, _sig_obs, _initial_precision_factor, _temperature, _high_temperature;
 
 };
 

@@ -9,7 +9,7 @@
  * 
  */
 
-#include "../../instances/PriorColPlanarArm.h"
+#include "../../instances/PlanarArmFactor.h"
 #include "../../robots/Planar3LinkArmSDFExample.h"
 #include <gtsam/inference/Symbol.h>
 

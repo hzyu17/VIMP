@@ -11,7 +11,7 @@
 
 
 #include <gtest/gtest.h>
-#include "../instances/PriorColPlanarPointRobot.h"
+#include "../instances/PlanarPRFactor.h"
 #include <gpmp2/gp/GaussianProcessPriorLinear.h>
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/gp/GPutils.h>

@@ -20,7 +20,7 @@ int main(){
     int nx=4, nu=2;
     int num_exp = 4;
     std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_pR_map2.xml"};
-    ExperimentRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
+    PGCSRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
 
     runner.read_config_file();
 

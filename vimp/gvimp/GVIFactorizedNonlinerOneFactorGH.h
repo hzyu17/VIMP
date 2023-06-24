@@ -18,11 +18,11 @@ namespace vimp{
         using CostFunction = std::function<double(const VectorXd&, const CostClass&)>;
         public:
             GVIFactorizedNonlinerOneFactorGH(const int& dimension,
-                                    int dim_state, 
-                                    const CostFunction& function, 
-                                    const CostClass& cost_class,
-                                    int num_states,
-                                    int start_indx):
+                                            int dim_state, 
+                                            const CostFunction& function, 
+                                            const CostClass& cost_class,
+                                            int num_states,
+                                            int start_indx):
                 Base(dimension, dim_state, num_states, start_indx){
                 Base::_func_phi = [this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));};
                 Base::_func_Vmu = [this, function, cost_class](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class);};

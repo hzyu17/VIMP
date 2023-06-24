@@ -1,5 +1,5 @@
 /**
- * @file PriorColPlanar.h
+ * @file PlanarFactor.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Class definition for planar robots and obstacles, templated on robot type.
  * @version 0.1

@@ -19,7 +19,7 @@ using namespace vimp;
 int main(){
     int nx=4, nu=2, num_exp=2;
     std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_2link_arm_map2.xml"};
-    ExperimentRunner<PGCSLinArmPlanarSDF> runner(nx, nu, num_exp, config_file);
+    PGCSRunner<PGCSLinArmPlanarSDF> runner(nx, nu, num_exp, config_file);
 
     runner.read_config_file();
 

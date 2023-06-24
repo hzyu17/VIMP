@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
     int nx=4, nu=2;
     int num_exp = 4;
 
-    ExperimentRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
+    PGCSRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
 
     // no experiment argument, run the default scripts
     if (argc == 1){
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
         double backtrack_ratio = std::stof(argv[12]);
         int backtrack_iterations = std::stoi(argv[13]);
 
-        ExperimentParams param(nx, nu, eps_sdf, eps, speed, nt, sig0, sigT, eta, stop_err, sig_obs, max_iter, backtrack_ratio, backtrack_iterations);
+        PGCSExperimentParams param(nx, nu, eps_sdf, eps, speed, nt, sig0, sigT, eta, stop_err, sig_obs, max_iter, backtrack_ratio, backtrack_iterations);
         return runner.run_one_exp(i_exp, param);
     }
     else{

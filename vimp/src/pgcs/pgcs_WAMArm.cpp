@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
 
     int num_exp = 3;
     std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/wam_arm.xml"};
-    ExperimentRunner7D<PGCSLinDynArmSDF> runner(num_exp, config_file);
+    PGCSRunner7D<PGCSLinDynArmSDF> runner(num_exp, config_file);
     // no experiment argument, run the default scripts
     if (argc == 1){
         runner.run();
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
         int max_iter = std::stof(argv[10]);
         double sig_obs = std::stof(argv[11]);
 
-        ExperimentParams param(nx, nu, eps_sdf, eps, speed, nt, sig0, sigT, eta, stop_err, sig_obs, max_iter);
+        PGCSExperimentParams param(nx, nu, eps_sdf, eps, speed, nt, sig0, sigT, eta, stop_err, sig_obs, max_iter);
         return runner.run_one_exp(i_exp, param);
     }
     else{

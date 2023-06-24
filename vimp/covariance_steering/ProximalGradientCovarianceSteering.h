@@ -40,7 +40,7 @@ namespace vimp{
         ProxGradCovSteer(const MatrixXd &A0,
                          const VectorXd &a0,
                          const MatrixXd &B,
-                         const ExperimentParams& params):
+                         const PGCSExperimentParams& params):
                          _ei(),
                         _nx(params.nx()),
                         _nu(params.nu()),
