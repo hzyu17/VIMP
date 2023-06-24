@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedThreeFactorsGH.h
+ * @file GVIFactorizedThreeFactorsGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Optimizer. cost function takes three cost classes.
  * @version 0.1
@@ -9,7 +9,7 @@
  * 
  */
 
-#include "OptimizerFactorizedGHBase.h"
+#include "GVIFactorizedGHBase.h"
 
 namespace vimp{
     template <typename Function, typename CostClass, typename CostClass1, typename CostClass2>

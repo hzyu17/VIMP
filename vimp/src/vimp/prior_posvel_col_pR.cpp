@@ -143,14 +143,14 @@ int main(){
         /// Set initial value to the linear interpolation
         optimizer.set_mu(good_init_vec);
     }else{
-        optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv", 
+        optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv", 
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cov_base.csv", 
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/precisoin_base.csv", 
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cost_base.csv",
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/factor_costs_base.csv",
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/perturbation_statistics_base.csv");
         optimizer.set_mu(joint_init_theta);
-        std::cout << "/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv" << std::endl;
+        std::cout << "/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv" << std::endl;
     }
 
 

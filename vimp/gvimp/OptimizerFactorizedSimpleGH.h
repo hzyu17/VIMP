@@ -10,7 +10,7 @@
  * 
  */
 
-#include "../gvimp/OptimizerFactorizedGHBase.h"
+#include "../gvimp/GVIFactorizedGHBase.h"
 #include <memory>
 #include "../helpers/repeated_includes.h"
 

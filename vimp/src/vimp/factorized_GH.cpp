@@ -8,7 +8,7 @@
 #include <random>
 #include <vimp/helpers/SparseInverseMatrix.h>
 #include <vimp/helpers/MVGsampler.h>
-#include <vimp/optimizer/OptimizerFactorizedGH.h>
+#include <vimp/gvimp/GVIFactorizedGH.h>
 
 using namespace std;
 using namespace vimp;

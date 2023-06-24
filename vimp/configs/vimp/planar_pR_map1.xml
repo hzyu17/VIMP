@@ -71,7 +71,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 9 </replanning_starting>
 
 </parameters> -->

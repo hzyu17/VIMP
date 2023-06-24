@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedGH.h
+ * @file GVIFactorizedGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The marginal optimizer class expecting two functions, one is the cost function, f1(x, cost1); 
  * the other is the function for GH expectation, f2(x).
@@ -10,7 +10,7 @@
  * 
  */
 
-#include "../optimizer/OptimizerFactorizedGHBase.h"
+#include "../gvimp/GVIFactorizedGHBase.h"
 #include <memory>
 
 using namespace std;

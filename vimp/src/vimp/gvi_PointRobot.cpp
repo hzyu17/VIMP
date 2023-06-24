@@ -23,8 +23,7 @@ using namespace vimp;
 int main(){
     
     /// reading XML configurations
-    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/planar_pR_map2.xml"); // Default template is char
-    // rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/planar_pR_map2.xml");
+    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/configs/vimp/planar_pR_map2.xml"); 
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     rapidxml::xml_node<>* paramNode = doc.first_node("parameters");
@@ -90,7 +89,7 @@ int main(){
     MatrixXd K0_fixed = MatrixXd::Identity(dim_theta, dim_theta)*0.0001;
 
     /// Vector of base factored optimizers
-    vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_factors;
+    vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
     /// initial values
     VectorXd joint_init_theta{VectorXd::Zero(ndim)};
 
@@ -129,7 +128,7 @@ int main(){
         
     }
     /// The joint optimizer
-    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> optimizer{vec_factors, dim_theta, n_total_states, Temperature};
+    GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_theta, n_total_states, Temperature};
     if (replanning == 1){
         MatrixXd means = matrix_io.load_csv(replan_mean_file);
         VectorXd good_init_vec = means.row(replan_start);
@@ -142,16 +141,15 @@ int main(){
         /// Set initial value to the linear interpolation
         optimizer.set_mu(good_init_vec);
     }else{
-        optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv", 
+        optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv", 
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cov_base.csv", 
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/precisoin_base.csv", 
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/cost_base.csv",
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/factor_costs_base.csv",
                                     "/home/hongzhe/git/VIMP/vimp/data/2d_pR/perturbation_statistics_base.csv");
         optimizer.set_mu(joint_init_theta);
-        std::cout << "/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv" << std::endl;
+        std::cout << "/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv" << std::endl;
     }
-
 
     MatrixXd init_precision{MatrixXd::Identity(ndim, ndim)*init_precision_factor};
     init_precision.block(0, 0, dim_theta, dim_theta) = MatrixXd::Identity(dim_theta, dim_theta)*10000;

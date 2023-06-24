@@ -12,8 +12,8 @@
 
 /// Test the convergence of algorithm using a known Gaussian posterior.
 
-#include "../../optimizer/OptimizerGH.h"
-#include "../../optimizer/OptimizerFactorizedGH.h"
+#include "../../gvimp/GVI-GH.h"
+#include "../../gvimp/GVIFactorizedGH.h"
 #include "../../helpers/MVGsampler.h"
 #include <iostream>
 #include <random>

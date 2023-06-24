@@ -12,9 +12,9 @@
 // #pragma once
 
 #include "../instances/CostFunctions.h"
-#include "../optimizer/OptimizerFactorizedNonlinerOneFactorGH.h"
-#include "../optimizer/OptimizerGH.h"
-#include "../optimizer/OptimizerFactorizedLinear.h"
+#include "../gvimp/GVIFactorizedNonlinerOneFactorGH.h"
+#include "../gvimp/GVI-GH.h"
+#include "../gvimp/GVIFactorizedLinear.h"
 
 using namespace Eigen;
 
@@ -22,10 +22,10 @@ using namespace Eigen;
 namespace vimp{
 
     // typedef VIMPFactorizedOneCost<FixedPriorGP> FixedGpPriorOneCost;
-    typedef VIMPFactorizedLinear<FixedPriorGP> FixedGpPrior;
-    typedef VIMPFactorizedLinear<MinimumAccGP> LinearGpPrior;
+    typedef GVIFactorizedLinear<FixedPriorGP> FixedGpPrior;
+    typedef GVIFactorizedLinear<MinimumAccGP> LinearGpPrior;
     template <typename ROBOT>
-    using OptPlanarSDFFactor = OptimizerFactorizedNonlinerOneFactorGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>> ;
+    using OptPlanarSDFFactor = GVIFactorizedNonlinerOneFactorGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>> ;
 
 }
 

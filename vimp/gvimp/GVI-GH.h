@@ -1,5 +1,5 @@
 /**
- * @file OptimizerGH.h
+ * @file GVI-GH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The joint optimizer class using Gauss-Hermite quadrature. 
  * @version 0.1
@@ -25,12 +25,12 @@ using namespace Eigen;
 namespace vimp{
 
 template <typename FactorizedOptimizer>
-class VIMPOptimizerGH{
+class GVIGH{
 public:
     /**
      * @brief Default Constructor
      */
-    VIMPOptimizerGH(){}
+    GVIGH(){}
 
     /**
      * @brief Construct a new VIMPOptimizerGH object
@@ -38,7 +38,7 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    VIMPOptimizerGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_state, int num_states, double temperature=1.0):
+    GVIGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_state, int num_states, double temperature=1.0):
                                    _dim_state{dim_state},
                                    _num_states{num_states},
                                    _dim{dim_state*num_states},
@@ -408,4 +408,4 @@ public:
     }; //class
 } //namespace vimp
 
-#include "../gvimp/OptimizerGH-impl.h"
+#include "../gvimp/GVI-GH-impl.h"

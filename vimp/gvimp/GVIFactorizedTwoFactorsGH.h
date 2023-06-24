@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedTwoFactorsGH.h
+ * @file GVIFactorizedTwoFactorsGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Optimizer. cost function takes two cost classes.
  * @version 0.1
@@ -9,24 +9,24 @@
  * 
  */
 
-#include "OptimizerFactorizedGHBase.h"
+#include "GVIFactorizedGHBase.h"
 
 namespace vimp{
     template <typename Function, typename CostClass, typename CostClass1>
     /// Decription: The marginal optimizer using Gauss-Hermite quadrature to calculate the expectations
-    class VIMPOptimizerFactorizedTwoClassGH: public VIMPOptimizerFactorizedBase{
-    using Base = VIMPOptimizerFactorizedBase;
+    class GVIFactorizedTwoClassGH: public GVIFactorizedBase{
+    using Base = GVIFactorizedBase;
     using GHFunction = std::function<MatrixXd(const VectorXd&)>;
     public:
         /// Default constructor
-        VIMPOptimizerFactorizedTwoClassGH(){};
+        GVIFactorizedTwoClassGH(){};
 
         /// Constructor
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
         ///@param cost_class_ CostClass
         ///@param cost_class_1 CostClass1
-        VIMPOptimizerFactorizedTwoClassGH(const int& dimension, 
+        GVIFactorizedTwoClassGH(const int& dimension, 
                                           const Function& function_, 
                                           const CostClass& cost_class_,
                                           const CostClass1& cost_class1_,

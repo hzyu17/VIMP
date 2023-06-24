@@ -11,7 +11,7 @@
  * 
  */
 
-#include "../optimizer/OptimizerFactorizedGHBase.h"
+#include "../gvimp/GVIFactorizedGHBase.h"
 #include "../gp/linear_factor.h"
 
 namespace vimp{

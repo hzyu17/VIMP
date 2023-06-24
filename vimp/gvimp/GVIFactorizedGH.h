@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedGH.h
+ * @file GVIFactorizedGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The marginal optimizer class expecting two functions, one is the cost function, f1(x, cost1); 
  * the other is the function for GH expectation, f2(x).
@@ -10,7 +10,7 @@
  * 
  */
 
-#include "../gvimp/OptimizerFactorizedGHBase.h"
+#include "../gvimp/GVIFactorizedGHBase.h"
 #include <memory>
 
 using namespace std;
@@ -18,15 +18,15 @@ using namespace Eigen;
 
 namespace vimp{
     template <typename Function, typename CostClass>
-    class VIMPOptimizerFactorizedGaussHermite: public VIMPOptimizerFactorizedBase{
+    class GVIFactorizedGaussHermite: public GVIFactorizedBase{
 
-        using OptBase = VIMPOptimizerFactorizedBase;
+        using OptBase = GVIFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 
     public:
         ///@param dimension The dimension of the state
         ///@param function_ Template function class which calculate the cost
-        VIMPOptimizerFactorizedGaussHermite(const int& dimension, const Function& function_, const CostClass& cost_class_, const MatrixXd& Pk_):
+        GVIFactorizedGaussHermite(const int& dimension, const Function& function_, const CostClass& cost_class_, const MatrixXd& Pk_):
                 OptBase(dimension, Pk_)
                 {
                     /// Override of the base classes.
@@ -36,7 +36,7 @@ namespace vimp{
                     OptBase::_gauss_hermite = GaussHermite<GHFunction>{6, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
                 }
     public:
-        typedef std::shared_ptr<VIMPOptimizerFactorizedGaussHermite> shared_ptr;
+        typedef std::shared_ptr<GVIFactorizedGaussHermite> shared_ptr;
 
     };
 

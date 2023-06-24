@@ -11,16 +11,16 @@
  * 
  */
 
-#include "../gvimp/OptimizerFactorizedGHBase.h"
+#include "GVIFactorizedGHBase.h"
 #include "../gp/linear_factor.h"
 
 namespace vimp{
     template <typename CostClass>
-    class VIMPFactorizedLinear : public VIMPOptimizerFactorizedBase{
-        using Base = VIMPOptimizerFactorizedBase;
+    class GVIFactorizedLinear : public GVIFactorizedBase{
+        using Base = GVIFactorizedBase;
         using CostFunction = std::function<double(const VectorXd&, const CostClass&)>;
     public:
-        VIMPFactorizedLinear(const int& dimension,
+        GVIFactorizedLinear(const int& dimension,
                             int dim_state, 
                             const CostFunction& function, 
                             const CostClass& linear_factor,

@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedGHBase.h
+ * @file GVIFactorizedGHBase.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The base class for marginal optimizer.
  * @version 0.1

@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedOneFactorGH.h
+ * @file GVIFactorizedOneFactorGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief factorized optimizer which only takes one cost class. (templated)
  * @version 0.1
@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include "../optimizer/OptimizerFactorizedGHBase.h"
+#include "../gvimp/GVIFactorizedGHBase.h"
 
 namespace vimp{
     template <typename CostClass>

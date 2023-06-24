@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedGHBase.h
+ * @file GVIFactorizedGHBase.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The base class for marginal optimizer.
  * @version 0.1
@@ -29,20 +29,20 @@ using namespace Eigen;
 IOFormat CleanFmt(4, 0, ", ", "\n");
 
 namespace vimp{
-    class VIMPOptimizerFactorizedBase{
+    class GVIFactorizedBase{
     public:
         
         /**
          * @brief Default Constructor
          */
-        VIMPOptimizerFactorizedBase(){}
+        GVIFactorizedBase(){}
 
         /**
-         * @brief Construct a new VIMPOptimizerFactorizedBase object
+         * @brief Construct a new GVIFactorizedBase object
          * 
          * @param dimension The dimension of the state
          */
-        VIMPOptimizerFactorizedBase(int dimension, int state_dim, int num_states, int start_index, bool is_linear=false):
+        GVIFactorizedBase(int dimension, int state_dim, int num_states, int start_index, bool is_linear=false):
                 _is_linear{is_linear},
                 _dim{dimension},
                 _state_dim{state_dim},

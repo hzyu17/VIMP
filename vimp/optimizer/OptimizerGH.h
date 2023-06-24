@@ -1,5 +1,5 @@
 /**
- * @file OptimizerGH.h
+ * @file GVI-GH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The joint optimizer class using Gauss-Hermite quadrature. 
  * @version 0.1
@@ -408,4 +408,4 @@ public:
     }; //class
 } //namespace vimp
 
-#include "../optimizer/OptimizerGH-impl.h"
+#include "../gvimp/GVI-GH-impl.h"

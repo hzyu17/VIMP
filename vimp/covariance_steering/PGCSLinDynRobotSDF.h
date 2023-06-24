@@ -212,7 +212,6 @@ public:
         return std::make_tuple(_Kt, _dt, hnom);      
     }
 
-
     /**
      * @brief Qrk with given matrices.
      * return: (Qt, rt)
@@ -279,7 +278,6 @@ public:
 
         return make_tuple(Qt, rt);
     }
-
 
     void update_Qrk() override{
         std::tuple<Matrix3D, Matrix3D> Qtrt;

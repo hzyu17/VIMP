@@ -10,7 +10,7 @@
  */
 
 #include "gvimp/OptimizerFactorizedSimpleGH.h"
-#include "gvimp/OptimizerGH.h"
+#include "gvimp/GVI-GH.h"
 #include <gtest/gtest.h>
 
 

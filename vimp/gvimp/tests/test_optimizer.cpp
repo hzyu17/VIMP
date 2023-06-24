@@ -10,8 +10,8 @@
  */
 
 #include <gtest/gtest.h>
-#include <vimp/gvimp/OptimizerGH.h>
-#include <vimp/gvimp/OptimizerFactorizedGHBase.h>
+#include <vimp/gvimp/GVI-GH.h>
+#include <vimp/gvimp/GVIFactorizedGHBase.h>
 
 using namespace std;
 using namespace vimp;

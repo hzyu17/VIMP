@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorized.h
+ * @file GVIFactorized.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief 
  * @version 0.1
@@ -30,12 +30,12 @@ IOFormat CleanFmt(4, 0, ", ", "\n");
 namespace vimp{
     template <typename Function, typename costClass, typename... Args>
 /// Decription: The marginal optimizer using vanilla Mnte Carlo sampling to calculate the expectations
-class VIMPOptimizerFactorized{
+class GVIFactorized{
 public:
     ///@param dimension The dimension of the state
     ///@param _function Template function class which calculate the cost
     ///@param _cost_class The class which provides the source of cost, e.g., collision factor for collision cost.
-    VIMPOptimizerFactorized(const int& dimension, Function _function, const costClass& _cost_class):
+    GVIFactorized(const int& dimension, Function _function, const costClass& _cost_class):
             dim_{dimension},
             cost_function_{std::forward<Function>(_function)},
             cost_class_{_cost_class},

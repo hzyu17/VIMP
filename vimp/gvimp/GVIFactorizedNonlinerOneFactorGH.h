@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedNonlinerOneFactorGH.h
+ * @file GVIFactorizedNonlinerOneFactorGH.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief factorized optimizer which only takes one cost class. (templated)
  * @version 0.1
@@ -8,16 +8,16 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include "../gvimp/OptimizerFactorizedGHBase.h"
+#include "../gvimp/GVIFactorizedGHBase.h"
 
 namespace vimp{
     template <typename CostClass>
-    class OptimizerFactorizedNonlinerOneFactorGH : public VIMPOptimizerFactorizedBase{
-        using Base = VIMPOptimizerFactorizedBase;
+    class GVIFactorizedNonlinerOneFactorGH : public GVIFactorizedBase{
+        using Base = GVIFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
         using CostFunction = std::function<double(const VectorXd&, const CostClass&)>;
         public:
-            OptimizerFactorizedNonlinerOneFactorGH(const int& dimension,
+            GVIFactorizedNonlinerOneFactorGH(const int& dimension,
                                     int dim_state, 
                                     const CostFunction& function, 
                                     const CostClass& cost_class,

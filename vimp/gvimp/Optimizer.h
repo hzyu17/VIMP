@@ -15,7 +15,7 @@
 #endif //VIMP_OPTIMIZER_H
 
 #include <vimp/helpers/SparseInverseMatrix.h>
-#include <vimp/gvimp/OptimizerFactorized.h>
+#include <vimp/gvimp/GVIFactorized.h>
 #include <boost/scoped_ptr.hpp>
 
 using namespace std;

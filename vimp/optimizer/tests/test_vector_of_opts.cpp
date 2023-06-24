@@ -11,9 +11,9 @@
 
 #include "gp/fixed_prior.h"
 #include "gp/minimum_acc_prior.h"
-#include "optimizer/OptimizerFactorizedGHBase.h"
+#include "gvimp/GVIFactorizedGHBase.h"
 #include "robots/PlanarPointRobotSDFExample.h"
-#include "optimizer/OptimizerGH.h"
+#include "gvimp/GVI-GH.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
 #include <gtest/gtest.h>

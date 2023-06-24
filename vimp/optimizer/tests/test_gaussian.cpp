@@ -10,8 +10,8 @@
  */
 
 #include <gtest/gtest.h>
-#include "optimizer/OptimizerGH.h"
-#include "optimizer/OptimizerFactorizedGH.h"
+#include "gvimp/GVI-GH.h"
+#include "gvimp/GVIFactorizedGH.h"
 #include "helpers/MVGsampler.h"
 #include <iostream>
 #include <random>

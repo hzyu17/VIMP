@@ -9,7 +9,7 @@
 #include <random>
 
 #include <vimp/helpers/SparseInverseMatrix.h>
-#include <vimp/optimizer/OptimizerFactorized.h>
+#include <vimp/gvimp/GVIFactorized.h>
 
 
 using namespace gtsam;

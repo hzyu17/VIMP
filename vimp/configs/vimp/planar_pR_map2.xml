@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- =========================================== experiment 1 ============================================================= -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>7.0</x>
@@ -40,7 +40,7 @@
 
 <!-- Replanning high temperature: go above the obstacles: ENTROPY MAP -->
 <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>7.0</x>
@@ -71,7 +71,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 5 </replanning_starting>
 
 </parameters>
@@ -79,7 +79,7 @@
 <!-- =========================================== experiment 2 ============================================================= -->
 <!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -118,7 +118,7 @@
 
 <!-- Replanning high temperature: go above the obstacles: ENTROPY MAP -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -149,7 +149,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 8 </replanning_starting>
 
 </parameters> -->
@@ -157,7 +157,7 @@
 <!-- =========================================== experiment 3 ============================================================= -->
 <!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -196,7 +196,7 @@
 
 <!-- Replanning high temperature: go above the obstacles: ENTROPY MAP -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -227,7 +227,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 8 </replanning_starting>
 
 </parameters> -->
@@ -236,7 +236,7 @@
 <!-- =========================================== experiment 4 ============================================================= -->
 <!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>13.0</x>
@@ -275,7 +275,7 @@
 
 <!-- Replanning high temperature: go above the obstacles: ENTROPY MAP -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>13.0</x>
@@ -306,7 +306,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/mean_base.csv</mean_file>
+    <mean_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv</mean_file>
     <replanning_starting> 4 </replanning_starting>
 
 </parameters> -->

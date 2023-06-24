@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorized.h
+ * @file GVIFactorized.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief 
  * @version 0.1

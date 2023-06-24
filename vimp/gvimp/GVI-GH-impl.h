@@ -8,7 +8,7 @@ namespace vimp{
      * @brief optimize with backtracking
      */
     template <typename FactorizedOptimizer>
-    void VIMPOptimizerGH<FactorizedOptimizer>::optimize(){
+    void GVIGH<FactorizedOptimizer>::optimize(){
         double new_cost = 0.0;
         double cost_iter =  0.0;
         for (int i_iter = 0; i_iter < _niters; i_iter++) {
@@ -84,7 +84,7 @@ namespace vimp{
 
 
     template <typename FactorizedOptimizer>
-    inline void VIMPOptimizerGH<FactorizedOptimizer>::set_precision(const SpMat& new_precision){
+    inline void GVIGH<FactorizedOptimizer>::set_precision(const SpMat& new_precision){
         _precision = new_precision;
         // sparse inverse
         inverse_inplace();
@@ -98,7 +98,7 @@ namespace vimp{
      * @brief Compute the costs of all factors for a given mean and cov.
      */
     template <typename FactorizedOptimizer>
-    VectorXd VIMPOptimizerGH<FactorizedOptimizer>::factor_costs(const VectorXd& x, const SpMat& Precision) const{
+    VectorXd GVIGH<FactorizedOptimizer>::factor_costs(const VectorXd& x, const SpMat& Precision) const{
         VectorXd fac_costs(_nfactors);
         fac_costs.setZero();
         int cnt = 0;
@@ -118,7 +118,7 @@ namespace vimp{
      * @brief Compute the costs of all factors, using current values.
      */
     template <typename FactorizedOptimizer>
-    VectorXd VIMPOptimizerGH<FactorizedOptimizer>::factor_costs() const{
+    VectorXd GVIGH<FactorizedOptimizer>::factor_costs() const{
         VectorXd fac_costs(_nfactors);
         fac_costs.setZero();
         int cnt = 0;
@@ -135,7 +135,7 @@ namespace vimp{
      * @brief Compute the total cost function value given a state.
      */
     template <typename FactorizedOptimizer>
-    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value(const VectorXd& x, SpMat& Precision){
+    double GVIGH<FactorizedOptimizer>::cost_value(const VectorXd& x, SpMat& Precision){
         
         SpMat Cov = inverse(Precision);
 
@@ -157,7 +157,7 @@ namespace vimp{
      * @brief Compute the total cost function value given a state, using current values.
      */
     template <typename FactorizedOptimizer>
-    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value() {
+    double GVIGH<FactorizedOptimizer>::cost_value() {
         double det = _ldlt.determinant();
         if (0 >  det){
             this->save_data();
@@ -170,7 +170,7 @@ namespace vimp{
      * @brief given a state, compute the total cost function value without the entropy term, using current values.
      */
     template <typename FactorizedOptimizer>
-    double VIMPOptimizerGH<FactorizedOptimizer>::cost_value_no_entropy() const{
+    double GVIGH<FactorizedOptimizer>::cost_value_no_entropy() const{
         double value = 0.0;
         for (auto& opt_k : _vec_factors){
             value += opt_k->fact_cost_value();
