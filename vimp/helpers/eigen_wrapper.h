@@ -11,12 +11,12 @@
 
 #pragma once
 
-#include<Eigen/Dense>
-#include<Eigen/Sparse>
-#include<Eigen/SparseCholesky>
-#include"MatrixIO.h"
-#include"random.h"
-#include"../base/Matrix.h"
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <Eigen/SparseCholesky>
+#include "MatrixIO.h"
+#include "random.h"
+#include "../base/Matrix.h"
 
 typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a column-major sparse matrix type of double
 typedef Eigen::SparseVector<double> SpVec; 

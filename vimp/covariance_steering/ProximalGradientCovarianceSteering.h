@@ -87,6 +87,63 @@ namespace vimp{
                                 _ei.compress3d(pinvBBTi, _pinvBBTt, i);
                             }
                         }
+        
+        ProxGradCovSteer(const MatrixXd &A0,
+                         const VectorXd &a0,
+                         const MatrixXd &B,
+                         double sig,
+                         int nt,
+                         double eta,
+                         double eps,
+                         const VectorXd &z0,
+                         const MatrixXd &Sig0,
+                         const VectorXd &zT,
+                         const MatrixXd &SigT,
+                         double stop_err,
+                         int max_iteration = 30) : 
+                         _ei(),
+                        _nx(A0.rows()),
+                        _nu(B.cols()),
+                        _nt(nt),
+                        _eta(eta),
+                        _Akt(_ei.replicate3d(A0, _nt)),
+                        _akt(_ei.replicate3d(a0, _nt)),
+                        _Bt(_ei.replicate3d(B, _nt)),
+                        _sig(sig),
+                        _eps(eps),
+                        _deltt(sig / (nt - 1)),
+                        _Qkt(Matrix3D(_nx, _nx, _nt)),
+                        _Qt(Matrix3D(_nx, _nx, _nt)),
+                        _rkt(Matrix3D(_nx, 1, _nt)),
+                        _hAkt(Matrix3D(_nx, _nx, _nt)),
+                        _hakt(Matrix3D(_nx, 1, _nt)),
+                        _nTrt(Matrix3D(_nx, 1, _nt)),
+                        _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
+                        _zkt(_ei.replicate3d(z0, _nt)),
+                        _Sigkt(_ei.replicate3d(Sig0, _nt)),
+                        _z0(z0),
+                        _Sig0(Sig0),
+                        _zT(zT),
+                        _SigT(SigT),
+                        _Kt(_nu, _nx, _nt),
+                        _dt(_nu, 1, _nt),
+                        _max_iter(max_iteration),
+                        _stop_err(stop_err),
+                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _sig, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
+                        _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
+        {
+            // Initialize the final time covariance
+            _ei.compress3d(_SigT, _Sigkt, _nt - 1);
+            // compute pinvBBT
+            MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
+            for (int i = 0; i < _nt; i++)
+            {
+                Bi = Bt_i(i);
+                BiT = Bi.transpose();
+                pinvBBTi = (Bi * BiT).completeOrthogonalDecomposition().pseudoInverse();
+                _ei.compress3d(pinvBBTi, _pinvBBTt, i);
+            }
+        }
 
         /**
          * @brief The optimization process, including linearization,

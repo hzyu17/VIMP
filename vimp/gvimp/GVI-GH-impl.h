@@ -15,6 +15,7 @@ namespace vimp{
             cout << "========= iteration " << i_iter << " ========= "<< endl;
             // ============= Collect results ============= 
             VectorXd fact_costs_iter = factor_costs();
+            std::cout << "debug 0" << std::endl;
             cost_iter = cost_value();
             cout << "cost: " << cost_iter << endl;
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);

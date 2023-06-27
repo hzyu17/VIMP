@@ -1,21 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
 <Commons>
     <total_time>2.5</total_time>
     <n_states>15</n_states>
-    <coeff_Qc> 0.8 </coeff_Qc>
-    <sig_obs> 0.0035 </sig_obs>
-    <eps_sdf> 0.7 </eps_sdf>
-    <step_size> 0.45 </step_size>
-    <max_iterations> 6 </max_iterations>
+    <coeff_Qc>0.8</coeff_Qc>
+    <sig_obs>0.0035</sig_obs>
+    <eps_sdf>0.7</eps_sdf>
+    <radius>1.5</radius>
+    <step_size>0.45</step_size>
     <init_precision_factor>20.0</init_precision_factor>
+    <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
-    <high_temperature> 100.0 <high_temperature>
-    <low_temp_iterations> 0 </low_temp_iterations>
-    <stop_err>  </stop_err>
-    <max_n_backtracking> 10 </max_n_backtracking>
+    <high_temperature>100.0</high_temperature>
+    <low_temp_iterations>6</low_temp_iterations>
+    <stop_err>1e-5</stop_err>
+    <max_iterations>15</max_iterations>
+    <max_n_backtracking>10</max_n_backtracking>
 
 </Commons>
-<!-- =========================================== experiment 1 ============================================================= -->
+
 <Experiment1>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
@@ -39,8 +41,6 @@
 
 </Experiment1>
 
-<!-- =========================================== experiment 2 ============================================================= -->
-<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <Experiment2>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
@@ -64,8 +64,6 @@
 
 </Experiment2>
 
-<!-- =========================================== experiment 3 ============================================================= -->
-<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <Experiment3>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
@@ -89,9 +87,6 @@
 
 </Experiment3>
 
-
-<!-- =========================================== experiment 4 ============================================================= -->
-<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <Experiment4>
     <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     

@@ -1,5 +1,5 @@
 /**
- * @file OptimizerFactorizedLinearGH.h
+ * @file GVIFactorizedLinear.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Factorized optimization steps for linear gaussian factors 
  * -log(p(x|z)) = ||Ax - B\mu_t||_{\Sigma_t^{-1}},
@@ -23,7 +23,7 @@ namespace vimp{
         GVIFactorizedLinear(const int& dimension,
                             int dim_state, 
                             const CostFunction& function, 
-                            const CostClass& linear_factor,
+                            CostClass& linear_factor,
                             int num_states,
                             int start_indx):
             Base(dimension, dim_state, num_states, start_indx, true),
@@ -34,17 +34,17 @@ namespace vimp{
                 Base::_func_Vmumu = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};};
                 Base::_gauss_hermite = GaussHermite<GHFunction>{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi};
 
-                _target_mean = linear_factor.get_mean();
+                _target_mean = linear_factor.get_mu();
                 _target_precision = linear_factor.get_precision();
-                _A = linear_factor.get_A();
-                _B = linear_factor.get_B();
+                _Lambda = linear_factor.get_Lambda();
+                _Psi = linear_factor.get_Psi();
                 _const_multiplier = linear_factor.get_C();
             }
 
     private:
         CostClass _linear_factor;
 
-        MatrixXd _target_mean, _target_precision, _A, _B;
+        MatrixXd _target_mean, _target_precision, _Lambda, _Psi;
 
         double _const_multiplier = 1.0;
 
@@ -59,9 +59,9 @@ namespace vimp{
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 
             // partial V / partial mu           
-            _Vdmu = _const_multiplier * (2 * _A.transpose() * _target_precision * (_A*_mu - _B*_target_mean));
+            _Vdmu = _const_multiplier * (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean));
             
-            MatrixXd AT_precision_A = _A.transpose() * _target_precision * _A;
+            MatrixXd AT_precision_A = _Lambda.transpose() * _target_precision * _Lambda;
 
             // partial V^2 / partial mu*mu^T
             // update tmp matrix
@@ -79,13 +79,12 @@ namespace vimp{
         }
 
         double fact_cost_value() {
-            return _const_multiplier * ((_A.transpose()*_target_precision*_A * _covariance).trace() + 
-                    (_A*_mu - _B*_target_mean).transpose() * _target_precision * (_A*_mu - _B*_target_mean));
+            return fact_cost_value(_mu, _covariance);
         }
 
         double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) {
-            return _const_multiplier * ((_A.transpose()*_target_precision*_A * Cov).trace() + 
-                    (_A*x - _B*_target_mean).transpose() * _target_precision * (_A*x - _B*_target_mean));
+            return _const_multiplier * ((_Lambda.transpose()*_target_precision*_Lambda * Cov).trace() + 
+                    (_Lambda*x - _Psi*_target_mean).transpose() * _target_precision * (_Lambda*x - _Psi*_target_mean));
         }
 
     };

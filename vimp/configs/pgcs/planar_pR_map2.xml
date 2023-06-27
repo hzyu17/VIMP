@@ -2,6 +2,7 @@
 
     <eps> 0.01 </eps>
     <eps_sdf> 0.6 </eps_sdf>
+    <radius> 0.0 </radius>
     <speed> 0.25 </speed>
     <nt> 80 </nt>
     <sig0> 0.01 </sig0>

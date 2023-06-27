@@ -17,14 +17,16 @@ using namespace Eigen;
 namespace vimp{
 class LinearFactor{
 public:
-    LinearFactor(){};
+    virtual ~LinearFactor(){} 
+    LinearFactor(){}
 
-    virtual VectorXd get_mean(){};
-    virtual MatrixXd get_covariance(){};
-    virtual MatrixXd get_precision(){};
+    // virtual VectorXd get_mean() = 0;
+    inline virtual VectorXd get_mu() = 0;
+    inline virtual MatrixXd get_covariance() const = 0;
+    inline virtual MatrixXd get_precision() const = 0;
 
-    virtual MatrixXd get_A(){};
-    virtual MatrixXd get_B(){};
-    virtual double get_C(){}; // get the constant
+    inline virtual MatrixXd get_Lambda() const = 0;
+    inline virtual MatrixXd get_Psi() const = 0;
+    inline virtual double get_C() const = 0; // get the constant
 };
 }

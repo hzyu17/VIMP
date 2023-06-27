@@ -23,28 +23,18 @@ public:
     PGCSLinDynPlanarSDF(const MatrixXd& A0, 
                         const VectorXd& a0, 
                         const MatrixXd& B, 
-                        double sig,
-                        int nt,
-                        double eta,
-                        double eps,
-                        const VectorXd& z0,
-                        const MatrixXd& Sig0,
-                        const VectorXd& zT,
-                        const MatrixXd& SigT,
+                        const PGCSExperimentParams& params,
                         const std::shared_ptr<LinearDynamics>& pdyn,
-                        double eps_sdf,
-                        const gpmp2::PlanarSDF& sdf,
-                        double sig_obs,
-                        int max_iter = 30):
-                            ProxGradCovSteerLinDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iter),
-                            _eps_sdf(eps_sdf),
-                            _sdf(sdf),
-                            _Sig_obs(sig_obs),
-                            _pRsdf(eps_sdf),
-                            _cost_helper(max_iter)
-                            {
-                                _pRsdf.update_sdf(sdf);
-                            }
+                        const gpmp2::PlanarSDF & sdf):
+                        ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params),
+                        _eps_sdf(params.eps_sdf(), params.radius()),
+                        _sdf(sdf),
+                        _Sig_obs(params.sig_obs()),
+                        _pRsdf(params.eps_sdf()),
+                        _cost_helper(params.max_iter())
+                        {
+                            _pRsdf.update_sdf(sdf);
+                        }
 
 
     double total_hingeloss(){
@@ -164,6 +154,7 @@ public:
 protected:
     gpmp2::PlanarSDF _sdf;
     PlanarPRSDFExample _pRsdf;
+
     double _eps_sdf;
     double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.

@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2023
  * 
  */
+#pragma once
 
 #include "../helpers/MatrixIO.h"
 #include <Eigen/Dense>
@@ -21,7 +22,7 @@ class RobotSDFBase{
 
 public:
     RobotSDFBase(){}
-    RobotSDFBase(const string& sdf_file, double eps){}
+    RobotSDFBase(int ndof, int nlinks): _ndof(ndof), _nlinks(nlinks){}
     
     virtual ~RobotSDFBase(){}
 
@@ -37,12 +38,13 @@ public:
         return std::make_tuple(vec_err, Jacobian);
     }
 
-    virtual inline ROBOT RobotModel() const { return _robot; }
-    virtual inline std::shared_ptr<SDF> sdf() const { return _psdf; }
-    virtual inline int ndof() const {return _ndof;}
-    virtual inline int nlinks() const {return _nlinks;}
+    inline ROBOT RobotModel() const { return _robot; }
+    inline std::shared_ptr<SDF> psdf() const { return _psdf; }
+    inline SDF sdf() const { return *_psdf; }
+    inline int ndof() const {return _ndof;}
+    inline int nlinks() const {return _nlinks;}
 
-protected:
+public:
     ROBOT _robot;
     SDF _sdf;
     std::shared_ptr<SDFFACTOR> _psdf_factor; 

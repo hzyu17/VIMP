@@ -10,6 +10,8 @@
  * 
  */
 
+#pragma once
+
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
@@ -20,12 +22,15 @@ using namespace Eigen;
 using pRSDF = gpmp2::ObstaclePlanarSDFFactor<gpmp2::PointRobotModel>;
 
 namespace vimp{
-
-class PlanarPRSDFExample: public RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>{
+using RobotSDFBasePlanarPR = RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>;
+class PlanarPRSDFExample: public RobotSDFBasePlanarPR{
     public:
-        PlanarPRSDFExample(double epsilon): _ndof(2), _nlinks(1), _eps(epsilon), _r(1.5){
+        PlanarPRSDFExample(double epsilon, double radius): RobotSDFBasePlanarPR(2, 1), 
+                                                           _eps(epsilon), 
+                                                           _r(radius)
+        {
             default_sdf();
-            generate_pr_sdf(*_psdf, 1.5);
+            generate_pr_sdf(*_psdf, radius);
         }
 
         void default_sdf(){
@@ -57,8 +62,8 @@ class PlanarPRSDFExample: public RobotSDFBase<gpmp2::PointRobotModel, gpmp2::Pla
 
         public:
             /// 2D point robot
-            int _ndof = 2;
-            int _nlinks = 1;            
+            // int _ndof;
+            // int _nlinks;            
             double _eps, _r;
 
 };
