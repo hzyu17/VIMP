@@ -61,9 +61,7 @@ class PlanarPRSDFExample: public RobotSDFBasePlanarPR{
         }
 
         public:
-            /// 2D point robot
-            // int _ndof;
-            // int _nlinks;            
+            /// 2D point robot         
             double _eps, _r;
 
 };

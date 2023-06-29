@@ -35,7 +35,7 @@ namespace vimp{
                 this->_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), this->_robot, this->_sdf, 0.0, _eps));
             }
 
-            WamArmSDFExample(double eps): _eps(eps){
+            WamArmSDFExample(double eps, double radius): _eps(eps), _radius(radius){
                 default_sdf();
                 generateArm();
                 this->_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), this->_robot, this->_sdf, 0.0, _eps));
@@ -77,7 +77,6 @@ namespace vimp{
                 // body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.15,  0.025,  0.13)));
                 // body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(-0.15,  0.0,  0.13)));
 
-                double r = 0.0;
                 body_spheres.push_back(BodySphere(0, 0.15, gtsam::Point3(0.0,  0.0,  0.0)));
 
                 body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.2)));
@@ -85,20 +84,20 @@ namespace vimp{
                 body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.4)));
                 body_spheres.push_back(BodySphere(1, 0.06, gtsam::Point3(0.0,  0.0,  0.5)));
 
-                body_spheres.push_back(BodySphere(2, r, gtsam::Point3(0.0,  0.0,  0.0)));
+                body_spheres.push_back(BodySphere(2, 0.06, gtsam::Point3(0.0,  0.0,  0.0)));
 
-                body_spheres.push_back(BodySphere(3, r, gtsam::Point3(0.0,  0.0,  0.1)));
-                body_spheres.push_back(BodySphere(3, r, gtsam::Point3(0.0,  0.0,  0.2)));
-                body_spheres.push_back(BodySphere(3, r, gtsam::Point3(0.0,  0.0,  0.3)));
+                body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.1)));
+                body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.2)));
+                body_spheres.push_back(BodySphere(3, 0.06, gtsam::Point3(0.0,  0.0,  0.3)));
 
-                body_spheres.push_back(BodySphere(5, r, gtsam::Point3(0.0,  0.0,  0.1)));
+                body_spheres.push_back(BodySphere(5, 0.06, gtsam::Point3(0.0,  0.0,  0.1)));
 
-                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.1, -0.025,  0.08)));
-                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.1,  0.025,  0.08)));
-                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(-0.1,  0.0,  0.08)));
-                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.15, -0.025,  0.13)));
-                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(0.15,  0.025,  0.13)));
-                body_spheres.push_back(BodySphere(6, r, gtsam::Point3(-0.15,  0.0,  0.13)));
+                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.1, -0.025,  0.08)));
+                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.1,  0.025,  0.08)));
+                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(-0.1,  0.0,  0.08)));
+                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.15, -0.025,  0.13)));
+                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(0.15,  0.025,  0.13)));
+                body_spheres.push_back(BodySphere(6, 0.04, gtsam::Point3(-0.15,  0.0,  0.13)));
 
                 this->_robot = gpmp2::ArmModel{arm, body_spheres};
             }
@@ -129,7 +128,7 @@ namespace vimp{
             /// Arm robot
             int _ndof = 1;
             int _nlinks = 7;
-            double _eps;
+            double _eps, _radius;
     };
 
 }// namespace

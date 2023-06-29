@@ -137,6 +137,8 @@ public:
 
             // backtracking 
             double step_size = _eta; // initial step size
+            double best_backtrack_cost = 1e9;
+            StepResult best_KtdtAtatztSigt;
             for (int i_bt=0; i_bt<_max_n_backtrack; i_bt++){
 
                 std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
@@ -178,6 +180,10 @@ public:
                     
                     break;
                 }else{
+                    if (total_cost < best_backtrack_cost){
+                        best_backtrack_cost = total_cost;
+                        best_KtdtAtatztSigt = KtdtAtatztSigt;
+                    }
                     // shringking step size
                     step_size = _backtrack_ratio*step_size;
                 }
@@ -187,11 +193,11 @@ public:
                     std::cout << "there is no better step size " << std::endl;
 
                     // update the internal parameters
-                    update_from_step_res(KtdtAtatztSigt);
+                    update_from_step_res(best_KtdtAtatztSigt);
 
                     // register for the current cost
-                    err = total_cost_prev - total_cost;
-                    total_cost_prev = total_cost;
+                    err = total_cost_prev - best_backtrack_cost;
+                    total_cost_prev = best_backtrack_cost;
                     
                     // go to next iteration
                     i_step += 1;

@@ -23,6 +23,7 @@ public:
     {}
 
     void run_optimization(const GVIMPExperimentParams& params){
+        std::cout << "run_optimization " << std::endl;
         /// parameters
         int N = params.nt() - 1;
         const int dim_conf = _robot_sdf.ndof() * _robot_sdf.nlinks();
@@ -74,9 +75,27 @@ public:
                 // linear gp factors
                 vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, params.nt(), i-1});
 
-                // collision factors
-                gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), std::move(_robot_sdf.RobotModel()), _robot_sdf.sdf(), params.sig_obs(), params.eps_sdf()};
-                vec_factors.emplace_back(new OptPlanarSDFFactorPointRobot{dim_conf, dim_state, cost_sdf_pR, collision_k, params.nt(), i});
+                // // collision factors
+                // Robot robot = _robot_sdf.RobotModel();
+
+                // VectorXd conf{VectorXd::Zero(dim_conf)};
+                // vector<Point3> sph_centers;
+                // vector<gtsam::Matrix> J_px_jp;
+                // robot.sphereCenters(conf, sph_centers, J_px_jp);
+
+                // _ei.print_matrix(conf, "conf");
+                
+                gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), _robot_sdf.RobotModel(), _robot_sdf.sdf(), params.sig_obs(), params.eps_sdf()};
+                vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, collision_k, params.nt(), i});
+
+                VectorXd conf{VectorXd::Zero(dim_conf)};
+                double cost = cost_sdf_pR(conf, collision_k);
+                std::cout << "cost " << std::endl;
+                std::cout << "cost " << cost << std::endl;
+                // VectorXd vec_err = collision_k.evaluateError(conf);
+
+                // _ei.print_matrix(vec_err, "vec_err");
+
             }
             
         }

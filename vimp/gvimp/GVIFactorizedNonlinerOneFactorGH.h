@@ -17,7 +17,7 @@ namespace vimp{
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
         using CostFunction = std::function<double(const VectorXd&, const CostClass&)>;
         public:
-            GVIFactorizedNonlinerOneFactorGH(const int& dimension,
+            GVIFactorizedNonlinerOneFactorGH(int dimension,
                                             int dim_state, 
                                             const CostFunction& function, 
                                             const CostClass& cost_class,

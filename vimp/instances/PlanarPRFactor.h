@@ -18,5 +18,5 @@
 namespace vimp{
 
     auto cost_sdf_pR = cost_obstacle_planar<gpmp2::PointRobotModel>;
-    using OptPlanarSDFFactorPointRobot = OptPlanarSDFFactor<gpmp2::PointRobotModel>;
+    using PlanarSDFFactorPR = OptPlanarSDFFactor<gpmp2::PointRobotModel>;
 }// namespace 

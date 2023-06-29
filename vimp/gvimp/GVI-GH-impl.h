@@ -123,12 +123,16 @@ namespace vimp{
         VectorXd fac_costs(_nfactors);
         fac_costs.setZero();
         int cnt = 0;
+
+        std::cout << "_nfactors " << _nfactors << std::endl;
         
         Timer timer;
         for (auto& opt_k : _vec_factors){
+            std::cout << "cnt " << cnt << std::endl;
             fac_costs(cnt) = opt_k->fact_cost_value();
             cnt += 1;
         }
+        std::cout << "len _vec_factors " << _vec_factors.size() << std::endl;
         return fac_costs  / _temperature;
     }
 

@@ -79,6 +79,7 @@ namespace vimp{
         }
 
         double fact_cost_value() {
+            std::cout << "fact cost linear factor " << std::endl;
             return fact_cost_value(_mu, _covariance);
         }
 

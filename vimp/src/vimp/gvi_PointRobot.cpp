@@ -20,7 +20,7 @@ int main(){
     int nx = 4, nu = 2, num_exp = 4;
     GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
     GVIMPExperimentParams params;
-
+    std::cout << "main " << std::endl;
     runner.read_config_file(params);
     runner.run();
     

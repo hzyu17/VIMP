@@ -46,7 +46,6 @@ namespace vimp{
             L(i+1, i) = c_over_a(i);
             L(i, i+1) = a(i);
         }
-
         _sigmapts = L.eigenvalues().real();
     }
 
@@ -70,6 +69,7 @@ namespace vimp{
     template <typename Function>
     void GaussHermite<Function>::computeWeights(){
         computeSigmaPts();
+
         VectorXd W(_deg);
         int cnt = 0;
         for (double i_pt : _sigmapts){
@@ -81,13 +81,18 @@ namespace vimp{
 
     template <typename Function>
     MatrixXd GaussHermite<Function>::Integrate(){
-
         computeWeights();
         LLT<MatrixXd> lltP(_P);
         MatrixXd sig{lltP.matrixL()};
 
-        VectorXd pt_0 = VectorXd::Zero(_dim);
+        VectorXd pt_0 = VectorXd::Zero(2);
+
+        std::cout << "_f(pt_0) " << std::endl;
+        std::cout <<  _f(pt_0) << std::endl;
+
         MatrixXd res{MatrixXd::Zero(_f(pt_0).rows(), _f(pt_0).cols())}; 
+
+        std::cout << "Integrate 1" << std::endl;
 
         /// Compute permutations
         std::vector<int> range_deg;
@@ -96,6 +101,8 @@ namespace vimp{
         }
         std::vector<int> permutation(_dim);
         std::vector<std::vector<int>> v_permutations;
+
+        std::cout << "Integrate 1" << std::endl;
 
         permute_replacing(range_deg, _dim, permutation, 0, v_permutations);
 
@@ -106,11 +113,14 @@ namespace vimp{
             for(int& j : i_v){
                 pt_ij(cnt) = _sigmapts(j);
                 weights = weights*_W(j);
-                cnt+=1;
+                cnt += 1;
             }
             pt_ij = sig * pt_ij + _mean;
             res += weights * _f(pt_ij);
         }
+
+        std::cout << "Integrate 1" << std::endl;
+
         return res;
     }
 

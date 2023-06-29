@@ -30,7 +30,8 @@ public:
                 const std::string & config):
                 _nx(nx),
                 _nu(nu),
-                _config_file(config){}
+                _config_file(config),
+                _num_exp(num_exp){}
 
     virtual void read_config_file(ExperimentParams& params) = 0;
     virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, ExperimentParams& param) = 0;
@@ -41,11 +42,12 @@ public:
     }
 
     void run(){
+        std::cout << "run " << std::endl;
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());
         for (int i=1; i<_num_exp+1; i++){
-            run_one_exp(i, _params);
+            this->run_one_exp(i, _params);
         }
     }
 
@@ -130,15 +132,12 @@ public:
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         param.set_saving_prefix(saving_prefix);
 
-        std::cout << "finished read config " << std::endl;
-
     }
 
     void run_one_exp(int exp, GVIMPExperimentParams& params) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
-        doc.parse<0>(xmlFile.data());
-        
+        doc.parse<0>(xmlFile.data());        
         std::string ExpNodeName = "Experiment" + std::to_string(exp);
 
         char * c_expname = ExpNodeName.data();
@@ -149,7 +148,6 @@ public:
         MatrixIO matrix_io;
         // An example pr and sdf
         GVIMPOptimizer gvimp_robotsdf(params);
-        std::cout << "run one exp" << std::endl;
         gvimp_robotsdf.run_optimization(params);
 
     }
@@ -182,14 +180,15 @@ public:
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
         
-        read_boundary_conditions(paramNode, param);
+        this->read_boundary_conditions(paramNode, param);
+
         MatrixXd A0(_nx, _nx), B0(_nx, _nu), a0(_nx, 1);
         A0.setZero(); B0.setZero(); a0.setZero();
         std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(param.nx(), param.nu(), param.nt())};
         A0 = pdyn->A0();
         B0 = pdyn->B0();
         a0 = pdyn->a0();
-
+        
         PGCSOptimizer pgcs_lin_sdf(A0, a0, B0, pdyn, param);
 
         using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
@@ -328,7 +327,7 @@ public:
     PGCSRunner7D(int num_exp, const std::string & config):
                         PGCSRunner<PGCSOptimizer>(14, 7, num_exp, config){}
 
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSExperimentParams& param) override{
         double start_1 = atof(paramNode->first_node("start_pos")->first_node("1")->value());
         double start_2 = atof(paramNode->first_node("start_pos")->first_node("2")->value());
         double start_3 = atof(paramNode->first_node("start_pos")->first_node("3")->value());
@@ -359,9 +358,9 @@ public:
 
         double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
 
-        this->_params.set_m0(m0);
-        this->_params.set_mT(mT);
-        this->_params.update_sig_obs(sig_obs);
+        param.set_m0(m0);
+        param.set_mT(mT);
+        param.update_sig_obs(sig_obs);
     }
 
 };

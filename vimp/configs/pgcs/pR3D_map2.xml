@@ -1,16 +1,18 @@
 <Commons>
-<parameters>
-    <nt> 80 </nt>
-    <speed> 0.05 </speed>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 5e-5 </eta>
+    <eps> 0.01 </eps>
     <eps_sdf> 0.7 </eps_sdf>
-    <stop_err> 1e-4 </stop_err>
-    <max_iter> 30 </max_iter>
-</parameters>
+    <radius> 0.5 </radius>
+    <speed> 0.25 </speed>
+    <nt> 80 </nt>
+    <sig0> 0.01 </sig0>
+    <sigT> 0.01 </sigT>
+    <eta> 1e-5 </eta>
+    <stop_err> 1e-3 </stop_err>
+    <max_iter> 50 </max_iter>
+    <cost_sigma> 5.6e3 </cost_sigma>
+    <backtracking_ratio> 0.75 </backtracking_ratio>
+    <max_n_backtracking> 10 </max_n_backtracking>
+
 </Commons>
 
 <Experiment1>

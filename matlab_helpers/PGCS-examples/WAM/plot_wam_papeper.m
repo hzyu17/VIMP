@@ -29,27 +29,30 @@ switch exp
         end_conf = [ 0.0, 0.6, -0.5, 0.2, 0.2, 0.8, 1.15]';
 end
 
-
-
 %% ===================== experiments ===================
-% % -------------------------- run experiment -----------------------------
-% i_exp = 1;
-% eps = 0.01;
-% eps_map = 0.6;
-% speed = 0.23;
-% nt = 50;
-% sig0 = 0.001;
-% sigT = 0.001;
-% eta = 1e-6;
-% stop_err = 1e-5;
-% max_iter = 50;
-% cost_sigma = 1.5e5;
-% 
-% args = [num2str(i_exp), ' ', num2str(eps), ' ', num2str(eps_map), ' ', num2str(speed), ' ', num2str(nt), ' ', num2str(sig0), ' ', num2str(sigT), ' ', ...
-%             num2str(eta), ' ', num2str(stop_err), ' ', num2str(max_iter), ' ', num2str(cost_sigma)];
-%     
-% command = ['/home/hongzhe/git/VIMP/vimp/build/pgcs_WAMArm', ' ', args];
-% num_iter = system(command);
+% -------------------------- run experiment -----------------------------
+i_exp = 2;
+eps = 0.01;
+eps_map = 0.6;
+radius = 0.1;
+speed = 0.23;
+nt = 50;
+sig0 = 0.001;
+sigT = 0.001;
+eta = 1e-6;
+stop_err = 1e-5;
+max_iter = 50;
+cost_sigma = 1.5e5;
+backtrack_ratio = 0.5;
+max_n_backtracking = 8;
+
+args = [num2str(i_exp), ' ', num2str(eps), ' ', num2str(eps_map), ' ',... 
+    num2str(radius), ' ', num2str(speed), ' ', num2str(nt), ' ', num2str(sig0), ...
+    ' ', num2str(sigT), ' ', num2str(eta), ' ', num2str(stop_err), ' ', num2str(max_iter), ' ', ...
+    num2str(cost_sigma), num2str(backtrack_ratio), ' ', num2str(max_n_backtracking)];
+    
+command = ['/home/hongzhe/git/VIMP/vimp/build/pgcs_WAMArm', ' ', args];
+num_iter = system(command);
 
 %%
 % -------------------------- analyze results --------------------------
@@ -89,9 +92,9 @@ end_conf = [-0.0,       0.94,     0,       1.6,     0,       -0.919,     1.55;
                           -0.7,     1.35,     1.2,      1.0,     -0.7,    -0.1,           1.2;
                           -0.0,        0.6,       -0.5,   0.2,    0.2,    0.8,           1.15];
 
-for i_exp = 1:1 % 4 experiments
+for i_exp = 1:1 % 3 experiments
  
-    prefix = ["case"+num2str(exp)+"/"];
+    prefix = ["case"+num2str(i_exp)+"/"];
 
     % read gpmp2 results
     gpmp2_confs = csvread([prefix+"/zk_gpmp2.csv"]);
@@ -106,6 +109,8 @@ for i_exp = 1:1 % 4 experiments
     figure
     set(gcf,'position',[x0,y0,width,height])
     tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+
+    % --------------------------- plot gpmp2 results ---------------------------
     nexttile
     t.FontSize = 14;
     grid on
@@ -113,7 +118,6 @@ for i_exp = 1:1 % 4 experiments
     view(3)
     plotMap3D(dataset.corner_idx, origin, cell_size);
     
-    % --------------------------- plot gpmp2 results ---------------------------
     for j = 1:nt_gpmp2
         % gradual changing colors
         alpha = (j / nt_gpmp2)^(1.15);
@@ -122,7 +126,26 @@ for i_exp = 1:1 % 4 experiments
         plotArm3D(arm.fk_model(), gpmp2_confs(:, j), color, 4, true);
     end
 
+    plotArm3D(arm.fk_model(), start_conf(i_exp,1:end)', 'r', 6, true);
+    for jj=1:5
+        plotArm3D(arm.fk_model(), end_conf(i_exp,1:end)', 'g', 6, true);
+    end
+    axis off;
+    xlim([-1, 1.4])
+    ylim([-1, 1.0])
+    zlim([-0.8, 0.9])
+
+    figure
+    set(gcf,'position',[x0,y0,width,height])
+    tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+    
     % --------------------------- plot pgcs results ---------------------------
+    nexttile
+    t.FontSize = 14;
+    grid on
+    hold on 
+    view(3)
+    plotMap3D(dataset.corner_idx, origin, cell_size);
     for j = 1:nt
         % gradual changing colors
         alpha = (j / nt)^(1.15);
@@ -131,9 +154,9 @@ for i_exp = 1:1 % 4 experiments
         plotArm3D(arm.fk_model(), means(:, j), color, 4, true);
     end
 
-    plotArm3D(arm.fk_model(), start_conf(exp,1:end)', 'r', 6, true);
+    plotArm3D(arm.fk_model(), start_conf(i_exp,1:end)', 'r', 6, true);
     for jj=1:5
-        plotArm3D(arm.fk_model(), end_conf(exp,1:end)', 'g', 6, true);
+        plotArm3D(arm.fk_model(), end_conf(i_exp,1:end)', 'g', 6, true);
     end
     axis off;
     xlim([-1, 1.4])
