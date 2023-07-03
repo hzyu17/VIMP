@@ -42,7 +42,7 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& 
     double l = 0.25;
     double m = 0.486;
     double J = 0.00383;
-    double g=9.81;
+    double g = 9.81;
     
     Vector<ADouble6, 6> xad = ADouble6::make_active(x);
 
@@ -140,16 +140,19 @@ std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt,
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> resi;
 
     for (int i=0; i<_nt; i++){
+        // Get the nominals
         zki = _ei.decomp3d(xt, _nx, 1, i);
         Aki = _ei.decomp3d(Akt, _nx, _nx, i);
         Sigki = _ei.decomp3d(Sigkt, _nx, _nx, i);
-        // get the linearization results
+
+        // Get the linearization results
         resi = linearize_at(zki, Aki, Sigki);
         hAi = std::get<0>(resi);
         Bi = std::get<1>(resi);
         hai = std::get<2>(resi);
         nTri = std::get<3>(resi);
-        // assamble into the 3d matrices
+
+        // Assamble into the 3d matrices
         _ei.compress3d(hAi, hAt, i);
         _ei.compress3d(Bi, Bt, i);
         _ei.compress3d(hai, hat, i);

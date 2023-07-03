@@ -1,11 +1,11 @@
 function [t,x,u] = planar_quadrotor(K,d,epsilon,init,sig)
 
-[nu,nx,nt] = size(K);
-t  = linspace(0,sig,nt);
-x  = zeros(nx,nt);
-u  = zeros(nu,nt);
+[nu, nx, nt] = size(K);
+t  = linspace(0, sig, nt);
+x  = zeros(nx, nt);
+u  = zeros(nu, nt);
 x(:,1) = init;
-dt = sig/(nt-1);
+dt = sig / (nt-1);
 
 g=9.81;
 m=0.486;

@@ -147,11 +147,9 @@ public:
                                          }
 
     void set_m0(const VectorXd& m0){ _m0 = m0; }
-
     void set_mT(const VectorXd& mT){ _mT = mT; }
 
     void set_sigobs(double sig_obs){ _sig_obs = sig_obs; }
-
     void set_speed(double speed){ _speed = speed; _sig = speed*_nt; }
 
     // getters
@@ -180,6 +178,7 @@ public:
     MatrixXd SigT() const { return _SigT; }
 
     void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
+    void update_sdf_file(const std::string& sdf_file){ _sdf_file = sdf_file; }
 
 
 protected:

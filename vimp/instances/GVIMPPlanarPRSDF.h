@@ -13,6 +13,6 @@
 #include "../robots/PlanarPointRobotSDF_pgcs.h"
 
 namespace vimp{
-    using GVIMPPlanarPRSDF = GVIMPPlanarRobotSDF<gpmp2::PointRobotModel, vimp::PlanarPRSDFExample>;
+    using GVIMPPlanarPRSDF = GVIMPPlanarRobotSDF<gpmp2::PointRobotModel, PlanarPRSDFExample>;
 
 }

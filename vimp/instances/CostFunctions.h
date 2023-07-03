@@ -34,14 +34,12 @@ double cost_linear_gp(const VectorXd& pose_cmb, const vimp::MinimumAccGP& gp_min
 template <typename ROBOT>
 double cost_obstacle_planar(const VectorXd& pose, 
                     const gpmp2::ObstaclePlanarSDFFactor<ROBOT>& obs_factor){
-    
     VectorXd vec_err = obs_factor.evaluateError(pose);
 
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
-    std::cout << "cost_obstacle_planar " << std::endl;
     precision_obs = precision_obs / obs_factor.get_noiseModel()->sigmas()[0];
 
-    std::cout << "cost_obstacle_planar " << std::endl;
+    // std::cout << "cost_obstacle_planar " << std::endl;
 
     return vec_err.transpose().eval() * precision_obs * vec_err;
 
@@ -54,7 +52,7 @@ double cost_obstacle_planar(const VectorXd& pose,
 template <typename ROBOT>
 double cost_obstacle(const VectorXd& pose, 
                     const gpmp2::ObstacleSDFFactor<ROBOT>& obs_factor){
-    
+    std::cout << "cost_obstacle_planar " << std::endl;
     VectorXd vec_err = obs_factor.evaluateError(pose);
 
     // MatrixXd precision_obs;

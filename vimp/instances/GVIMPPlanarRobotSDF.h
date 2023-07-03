@@ -36,7 +36,7 @@ public:
         VectorXd goal_theta{ params.mT() };
 
         /// prior 
-        double delta_t = params.total_time() / N;
+        double delt_t = params.total_time() / N;
 
         VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
         MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*params.coeff_Qc()};
@@ -55,7 +55,7 @@ public:
             theta.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta);   
 
-            MinimumAccGP lin_gp{Qc, i, delta_t, start_theta};
+            MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -64,41 +64,30 @@ public:
                 // lin GP factor
                 if (i == params.nt()-1){
                     // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
-                    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, params.nt(), i-1});
+                    vec_factors.emplace_back(std::make_shared<LinearGpPrior>(LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, params.nt(), i-1}));
                 }
 
                 // Fixed gp factor
                 FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta}};
-                vec_factors.emplace_back(new FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, params.nt(), i});
+                vec_factors.emplace_back(std::make_shared<FixedGpPrior>(FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, params.nt(), i}));
 
             }else{
                 // linear gp factors
-                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, params.nt(), i-1});
+                vec_factors.emplace_back(std::make_shared<LinearGpPrior>(LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, params.nt(), i-1}));
 
-                // // collision factors
-                // Robot robot = _robot_sdf.RobotModel();
-
-                // VectorXd conf{VectorXd::Zero(dim_conf)};
-                // vector<Point3> sph_centers;
-                // vector<gtsam::Matrix> J_px_jp;
-                // robot.sphereCenters(conf, sph_centers, J_px_jp);
-
-                // _ei.print_matrix(conf, "conf");
-                
                 gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), _robot_sdf.RobotModel(), _robot_sdf.sdf(), params.sig_obs(), params.eps_sdf()};
-                vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, collision_k, params.nt(), i});
-
-                VectorXd conf{VectorXd::Zero(dim_conf)};
-                double cost = cost_sdf_pR(conf, collision_k);
-                std::cout << "cost " << std::endl;
-                std::cout << "cost " << cost << std::endl;
-                // VectorXd vec_err = collision_k.evaluateError(conf);
-
-                // _ei.print_matrix(vec_err, "vec_err");
+                vec_factors.emplace_back(std::make_shared<PlanarSDFFactorPR>(PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, collision_k, params.nt(), i}));    
+                if (i==1){
+                    std::cout << "fact_cost_value() " << std::endl << vec_factors[2]->fact_cost_value() << std::endl;
+                }
 
             }
             
         }
+        auto factor_2 = vec_factors[2];
+        VectorXd conf{VectorXd::Zero(dim_conf)};
+        std::cout << "factor_2->_gauss_hermite->f(conf) " << std::endl << vec_factors[2]->fact_cost_value() << std::endl;
+        std::cout << "factor_2->_gauss_hermite->Integrate() " << std::endl << factor_2->_gauss_hermite->Integrate() << std::endl;
 
         /// The joint optimizer
         GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, params.nt(), params.temperature()};
@@ -118,8 +107,10 @@ public:
         init_precision.block(N*dim_state, N*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*10000;
         optimizer.set_precision(init_precision.sparseView());
 
-        optimizer.set_GH_degree(3);
+        // optimizer.set_GH_degree(3);
         optimizer.set_niterations(params.max_iter());
+
+        std::cout << "factor 2 cost value " << std::endl << vec_factors[2]->_gauss_hermite->Integrate() << std::endl;
 
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.optimize();

@@ -27,14 +27,12 @@ class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
     public:
         virtual ~PointRobot3DSDFExample(){}
         
-        PointRobot3DSDFExample(double epsilon): _ndof(3), _nlinks(1), _eps(epsilon), _r(0.0){
+        PointRobot3DSDFExample(double epsilon, double radius):RobotSDFBase<PRModel, SDF, pRSDF>(3, 1),
+                                                              _eps(epsilon), 
+                                                              _r(radius)
+        {
             default_sdf();
-            generate_pr_sdf(*_psdf, 0.0);
-        }
-
-        PointRobot3DSDFExample(double epsilon, double r): _eps(epsilon), _r(r){
-            // default sdf
-            default_sdf();
+            generate_pr_sdf(*_psdf, radius);
         }
 
         virtual void default_sdf(){

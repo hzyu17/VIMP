@@ -80,9 +80,9 @@ for i = 1:4 % 4 experiments
 %     end
     
 %     if i==3
-        xlim([-20, 25]);
-        ylim([-15, 22]);
+%         xlim([-20, 25]);
+%         ylim([-15, 22]);
 %     end
-%     axis off ; 
+    axis off ; 
 
 end

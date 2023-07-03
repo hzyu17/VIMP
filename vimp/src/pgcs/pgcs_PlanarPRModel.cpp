@@ -1,8 +1,8 @@
 /**
  * @file pgcs_PRModel.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief pgcs with plannar obstacles and point robot, 
- * using Robot Model which has a vector of balls to check collisions.
+ * @brief pgcs with plannar obstacles and point robot. 
+ * We use runner class defined under helpers/ to run the experiments. 
  * @version 0.1
  * @date 2023-03-31
  * 

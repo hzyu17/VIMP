@@ -190,6 +190,13 @@ namespace vimp{
                                 const Matrix3D& at, const Matrix3D& Bt, const Matrix3D& hAt,
                                 const Matrix3D& hat, const Matrix3D& zt, const Matrix3D& Sigt) = 0;
 
+        /**
+         * @brief step with given matrices, return a total cost of this step.
+         */
+        virtual StepResult step(int indx, double step_size, const Matrix3D& At, const Matrix3D& Bt, 
+                                const Matrix3D& hat, const Matrix3D& zt, const Matrix3D& Sigt){}
+
+
         void update_from_step_res(const StepResult& res){
             // return type of one step: (Kt, dt, At, at, zt, Sigt) 
             _Kt = std::get<0>(res); _dt = std::get<1>(res);

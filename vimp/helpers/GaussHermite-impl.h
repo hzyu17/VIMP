@@ -46,7 +46,7 @@ namespace vimp{
             L(i+1, i) = c_over_a(i);
             L(i, i+1) = a(i);
         }
-        _sigmapts = L.eigenvalues().real();
+        this->_sigmapts = L.eigenvalues().real();
     }
 
     template <typename Function>
@@ -76,7 +76,7 @@ namespace vimp{
             W(cnt) = boost::math::factorial<double>(_deg) / _deg / _deg / HermitePolynomial(_deg-1, i_pt) / HermitePolynomial(_deg-1, i_pt);
             cnt += 1;
         }
-        _W = W;
+        this->_W = W;
     }
 
     template <typename Function>
@@ -85,14 +85,13 @@ namespace vimp{
         LLT<MatrixXd> lltP(_P);
         MatrixXd sig{lltP.matrixL()};
 
-        VectorXd pt_0 = VectorXd::Zero(2);
+        VectorXd pt_0(_dim);
+        pt_0.setZero();
 
         std::cout << "_f(pt_0) " << std::endl;
-        std::cout <<  _f(pt_0) << std::endl;
+        std::cout <<  f(pt_0) << std::endl;
 
-        MatrixXd res{MatrixXd::Zero(_f(pt_0).rows(), _f(pt_0).cols())}; 
-
-        std::cout << "Integrate 1" << std::endl;
+        MatrixXd res{MatrixXd::Zero(f(pt_0).rows(), f(pt_0).cols())}; 
 
         /// Compute permutations
         std::vector<int> range_deg;
@@ -116,7 +115,7 @@ namespace vimp{
                 cnt += 1;
             }
             pt_ij = sig * pt_ij + _mean;
-            res += weights * _f(pt_ij);
+            res += weights * f(pt_ij);
         }
 
         std::cout << "Integrate 1" << std::endl;

@@ -56,13 +56,12 @@ namespace vimp{
                 _block{state_dim, num_states, start_index, dimension}
                 {
                     _joint_size = _state_dim * _num_states;
-                }
-    
-    public:
-        bool _is_linear;
+                }        
         
     /// Public members for the inherited classes access
     public:
+
+        bool _is_linear;
 
         /// dimension
         int _dim, _state_dim, _num_states, _joint_size;
@@ -72,12 +71,13 @@ namespace vimp{
         /// Intermediate functions for Gauss-Hermite quadratures, default definition, needed to be overrided by the
         /// derived classes.
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
-        GHFunction _func_phi = GHFunction();
-        GHFunction _func_Vmu = GHFunction();
-        GHFunction _func_Vmumu = GHFunction();
+        std::shared_ptr<GHFunction> _func_phi;
+        std::shared_ptr<GHFunction> _func_Vmu;
+        std::shared_ptr<GHFunction> _func_Vmumu;
 
         /// G-H quadrature class
-        GaussHermite<GHFunction> _gauss_hermite = GaussHermite<GHFunction>();
+        using GH = GaussHermite<GHFunction> ;
+        std::shared_ptr<GH> _gauss_hermite;
 
 
     protected:
@@ -105,13 +105,13 @@ namespace vimp{
     public:
         /// update the GH approximator
         void updateGH(){
-            _gauss_hermite.update_mean(_mu);
-            _gauss_hermite.update_P(_covariance); }
+            _gauss_hermite->update_mean(_mu);
+            _gauss_hermite->update_P(_covariance); }
 
         /// update the GH approximator
         void updateGH(const VectorXd& x, const MatrixXd& P){
-            _gauss_hermite.update_mean(x);
-            _gauss_hermite.update_P(P); }
+            _gauss_hermite->update_mean(x);
+            _gauss_hermite->update_P(P); }
 
         /**
          * @brief Update the step size
@@ -174,18 +174,18 @@ namespace vimp{
 
             /// Integrate for E_q{_Vdmu} 
             VectorXd Vdmu{VectorXd::Zero(_dim)};
-            _gauss_hermite.update_integrand(_func_Vmu);
-            Vdmu = _gauss_hermite.Integrate();
+            _gauss_hermite->update_integrand(_func_Vmu);
+            Vdmu = _gauss_hermite->Integrate();
 
             Vdmu = _precision * Vdmu;
 
             /// Integrate for E_q{phi(x)}
-            _gauss_hermite.update_integrand(_func_phi);
-            double E_phi = _gauss_hermite.Integrate()(0, 0);
+            _gauss_hermite->update_integrand(_func_phi);
+            double E_phi = _gauss_hermite->Integrate()(0, 0);
             
             /// Integrate for partial V^2 / ddmu_ 
-            _gauss_hermite.update_integrand(_func_Vmumu);
-            MatrixXd E_xxphi{_gauss_hermite.Integrate()};
+            _gauss_hermite->update_integrand(_func_Vmumu);
+            MatrixXd E_xxphi{_gauss_hermite->Integrate()};
 
             MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
             Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
@@ -202,18 +202,18 @@ namespace vimp{
 
             /// Integrate for E_q{_Vdmu} 
             VectorXd Vdmu{VectorXd::Zero(_dim)};
-            _gauss_hermite.update_integrand(_func_Vmu);
-            Vdmu = _gauss_hermite.Integrate();
+            _gauss_hermite->update_integrand(_func_Vmu);
+            Vdmu = _gauss_hermite->Integrate();
 
             Vdmu = _precision * Vdmu;
 
             /// Integrate for E_q{phi(x)}
-            _gauss_hermite.update_integrand(_func_phi);
-            double E_phi = _gauss_hermite.Integrate()(0, 0);
+            _gauss_hermite->update_integrand(_func_phi);
+            double E_phi = _gauss_hermite->Integrate()(0, 0);
             
             /// Integrate for partial V^2 / ddmu_ 
-            _gauss_hermite.update_integrand(_func_Vmumu);
-            MatrixXd E_xxphi{_gauss_hermite.Integrate()};
+            _gauss_hermite->update_integrand(_func_Vmumu);
+            MatrixXd E_xxphi{_gauss_hermite->Integrate()};
 
             MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
             Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
@@ -231,8 +231,8 @@ namespace vimp{
          */
         virtual double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) {
             updateGH(x, Cov);
-            _gauss_hermite.update_integrand(_func_phi);
-            return _gauss_hermite.Integrate()(0, 0);
+            _gauss_hermite->update_integrand(_func_phi);
+            return _gauss_hermite->Integrate()(0, 0);
         }
 
         /**
@@ -240,8 +240,8 @@ namespace vimp{
          */
         virtual double fact_cost_value(){
             updateGH();
-            _gauss_hermite.update_integrand(_func_phi);
-            double E_Phi = _gauss_hermite.Integrate()(0, 0);
+            _gauss_hermite->update_integrand(_func_phi);
+            double E_Phi = _gauss_hermite->Integrate()(0, 0);
             return E_Phi;
         }
 
@@ -305,43 +305,43 @@ namespace vimp{
          * @brief returns the Phi(x) 
          */
         inline MatrixXd Phi(const VectorXd& x) const{
-            return _func_phi(x);
+            return (*_func_phi)(x);
         }
 
         /**
          * @brief returns the (x-mu)*Phi(x) 
          */
         inline MatrixXd xMuPhi(const VectorXd& x) const{
-            return _func_Vmu(x);
+            return (*_func_Vmu)(x);
         }
 
         /**
          * @brief returns the (x-mu)*Phi(x) 
          */
         inline MatrixXd xMuxMuTPhi(const VectorXd& x) const{
-            return _func_Vmumu(x);
+            return (*_func_Vmumu)(x);
         }
 
         /**
          * @brief returns the E_q{phi(x)} = E_q{-log(p(x,z))}
          */
         inline double E_Phi() {
-            _gauss_hermite.update_integrand(_func_phi);
-            return _gauss_hermite.Integrate()(0, 0);
+            _gauss_hermite->update_integrand(_func_phi);
+            return _gauss_hermite->Integrate()(0, 0);
         }
 
         inline MatrixXd E_xMuPhi(){
-            _gauss_hermite.update_integrand(_func_Vmu);
-            return _gauss_hermite.Integrate();
+            _gauss_hermite->update_integrand(_func_Vmu);
+            return _gauss_hermite->Integrate();
         }
 
         inline MatrixXd E_xMuxMuTPhi(){
-            _gauss_hermite.update_integrand(_func_Vmumu);
-            return _gauss_hermite.Integrate();
+            _gauss_hermite->update_integrand(_func_Vmumu);
+            return _gauss_hermite->Integrate();
         }
 
         void set_GH_points(int p){
-            _gauss_hermite.set_polynomial_deg(p);
+            _gauss_hermite->set_polynomial_deg(p);
         }
     };
 

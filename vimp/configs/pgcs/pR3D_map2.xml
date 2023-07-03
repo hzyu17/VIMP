@@ -1,22 +1,22 @@
 <Commons>
+
     <eps> 0.01 </eps>
     <eps_sdf> 0.7 </eps_sdf>
-    <radius> 0.5 </radius>
+    <radius> 0.1 </radius>
     <speed> 0.25 </speed>
-    <nt> 80 </nt>
+    <nt> 50 </nt>
     <sig0> 0.01 </sig0>
     <sigT> 0.01 </sigT>
-    <eta> 1e-5 </eta>
-    <stop_err> 1e-3 </stop_err>
+    <eta> 1e-3 </eta>
+    <stop_err> 1e-5 </stop_err>
     <max_iter> 50 </max_iter>
-    <cost_sigma> 5.6e3 </cost_sigma>
+    <cost_sigma> 5.6e6 </cost_sigma>
     <backtracking_ratio> 0.75 </backtracking_ratio>
     <max_n_backtracking> 10 </max_n_backtracking>
 
 </Commons>
 
 <Experiment1>
-<parameters>
     <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
@@ -37,15 +37,13 @@
         <vz>0.0</vz>
     </goal_pos>
     
-    <cost_sigma> 1e-5 </cost_sigma>
+    <cost_sigma> 1e8 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
 
-</parameters>
 </Experiment1>
 
 <Experiment2>
-<parameters>
     <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
@@ -66,15 +64,13 @@
         <vz>0.0</vz>
     </goal_pos>
     
-    <cost_sigma> 1e-5 </cost_sigma>
+    <cost_sigma> 1e6 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
 
-</parameters>
 </Experiment2>
 
 <Experiment3>
-<parameters>
     <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
@@ -95,15 +91,13 @@
         <vz>0.0</vz>
     </goal_pos>
 
-    <cost_sigma> 1e-5 </cost_sigma>
+    <cost_sigma> 1e6 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
 
-</parameters>
 </Experiment3>
 
 <Experiment4>
-<parameters>
     <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
@@ -124,9 +118,8 @@
         <vz>0.0</vz>
     </goal_pos>
 
-    <cost_sigma> 7e-4 </cost_sigma>
+    <cost_sigma> 1e6 </cost_sigma>
 
     <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
 
-</parameters>
 </Experiment4>

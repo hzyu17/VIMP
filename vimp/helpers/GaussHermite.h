@@ -47,7 +47,7 @@ public:
             _dim{dim},
             _mean{mean},
             _P{P},
-            _f{func},
+            _f{std::make_shared<Function>(func)},
             _W{VectorXd::Zero(_deg)},
             _sigmapts{VectorXd::Zero(_deg)}{}
 
@@ -95,7 +95,9 @@ public:
 
     inline void set_polynomial_deg(const int& deg){ _deg = deg; }
 
-    inline void update_integrand(const Function& fun){ _f = fun; }
+    inline void update_integrand(const Function& fun){ _f = std::make_shared<Function>(fun); }
+
+    inline void update_integrand(const std::shared_ptr<Function>& fun){ _f = fun; }
 
     inline void update_dimension(const int& dim){ _dim = dim; }
 
@@ -103,7 +105,7 @@ public:
 
     inline MatrixXd cov() const{ return _P; }
 
-    inline MatrixXd f(const VectorXd& x){return _f(x);}
+    inline MatrixXd f(const VectorXd& x){return (*_f)(x);}
 
     inline VectorXd weights() { computeWeights(); return _W;}
 
@@ -114,7 +116,7 @@ private:
     int _dim;
     VectorXd _mean;
     MatrixXd _P;
-    Function _f;
+    std::shared_ptr<Function> _f;
     VectorXd _W;
     VectorXd _sigmapts;
 };

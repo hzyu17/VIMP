@@ -29,10 +29,11 @@ namespace vimp{
             Base(dimension, dim_state, num_states, start_indx, true),
             _linear_factor{linear_factor}            
             {
-                Base::_func_phi = [this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor));};
-                Base::_func_Vmu = [this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor);};
-                Base::_func_Vmumu = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};};
-                Base::_gauss_hermite = GaussHermite<GHFunction>{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi};
+                Base::_func_phi = std::make_shared<GHFunction>([this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor));});
+                Base::_func_Vmu = std::make_shared<GHFunction>([this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor);});
+                Base::_func_Vmumu = std::make_shared<GHFunction>([this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};});
+                using GH = GaussHermite<GHFunction>;
+                Base::_gauss_hermite = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, *Base::_func_phi});
 
                 _target_mean = linear_factor.get_mu();
                 _target_precision = linear_factor.get_precision();

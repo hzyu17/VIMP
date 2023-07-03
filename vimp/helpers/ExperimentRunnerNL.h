@@ -23,27 +23,9 @@ public:
 
     ExperimentRunnerNL(int nx, int nu, int num_exp, const std::string & config): 
             PGCSRunner<PGCSOptimizer>(nx, nu, num_exp, config)
-            {
-                rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
-                rapidxml::xml_document<> doc;
-                doc.parse<0>(xmlFile.data());
+            {}
 
-                // Common parameters
-                std::string CommonNodeName = "Commons";
-                char * c_commons = CommonNodeName.data();
-                rapidxml::xml_node<>* CommonNode = doc.first_node(c_commons);
-                rapidxml::xml_node<>* commonParams = CommonNode->first_node("parameters");
-
-                std::string field_file = static_cast<std::string>(commonParams->first_node("field_file")->value());
-
-                MatrixXd field = m_io.load_csv(field_file);
-                gtsam::Point2 origin(-20, -10);
-                double cell_size = 0.1;
-                _sdf = gpmp2::PlanarSDF(origin, cell_size, field);
-
-            }
-
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSExperimentParams& params){
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
         double start_phi = atof(paramNode->first_node("start_pos")->first_node("phi")->value());
@@ -58,59 +40,69 @@ public:
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
         double goal_vphi = atof(paramNode->first_node("goal_pos")->first_node("vphi")->value());
 
-        _m0 << start_x, start_y, start_phi, start_vx, start_vy, start_vphi;
-        _Sig0 = sig0 * Eigen::MatrixXd::Identity(_nx, _nx);
+        VectorXd m0(params.nx()), mT(params.nx());
+        MatrixXd Sig0(params.nx(), params.nx()), SigT(params.nx(), params.nx());
+        m0 << start_x, start_y, start_phi, start_vx, start_vy, start_vphi;
+        mT << goal_x, goal_y, goal_phi, goal_vx, goal_vy, goal_vphi;
 
-        _mT << goal_x, goal_y, goal_phi, goal_vx, goal_vy, goal_vphi;
-        _SigT = sigT * Eigen::MatrixXd::Identity(_nx, _nx);
+        params.set_m0(m0);
+        params.set_mT(mT);
+
     }
 
-    void run() override{
-        rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
+    void run_one_exp(int exp, PGCSExperimentParams& param) override{
+        rapidxml::file<> xmlFile(this->_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());
+        
+        std::string ExpNodeName = "Experiment" + std::to_string(exp);
 
-        for (int i=1; i<_num_exp+1; i++){
-            std::string ExpNodeName = "Experiment" + std::to_string(i);
-            char * c_expname = ExpNodeName.data();
-            rapidxml::xml_node<>* ExpNode = doc.first_node(c_expname);
-            rapidxml::xml_node<>* paramNode = ExpNode->first_node("parameters");            
-            double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
-            
-            double sig = _params.speed * _nt;
+        char * c_expname = ExpNodeName.data();
+        rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
+        
+        this->read_boundary_conditions(paramNode, param);
 
-            // proximal gradient parameters
-            double eps=0.01;
+        MatrixXd A0(param.nx(), param.nx()), B0(param.nx(), param.nu()), a0(param.nx(), 1);
+        A0.setZero(); B0.setZero(); a0.setZero();
+        std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(param.nx(), param.nu(), param.nt())};
+        A0 = pdyn->A0();
+        B0 = pdyn->B0();
+        a0 = pdyn->a0();
+        
+        PGCSOptimizer pgcs_nolinear_sdf(A0, a0, B0, pdyn, param);
 
-            read_boundary_conditions(paramNode);
-            MatrixXd A0(_nx, _nx), B0(_nx, _nu), a0(_nx, 1);
-            A0.setZero(); B0.setZero(); a0.setZero();
-            
-            std::shared_ptr<Dynamics> pdyn{new Dynamics(_nx, _nu, nt)};
-            std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearized_0 = pdyn->linearize_at(_m0, sig, A0, _Sig0);
-            A0  = std::get<0>(linearized_0);
-            B0  = std::get<1>(linearized_0);
-            a0  = std::get<2>(linearized_0);
-            PGCSOptimizer pgcs_nonlin_sdf(A0, a0, B0, _params, pdyn, _sdf);
-            
-            std::tuple<MatrixXd, MatrixXd> res_Kd;
-            res_Kd = pgcs_nonlin_sdf.optimize();
+        using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
+        std::tuple<MatrixXd, MatrixXd, NominalHistory> res_Kd;
+        // res_Kd = pgcs_lin_sdf.optimize();
+        res_Kd = pgcs_nolinear_sdf.backtrack();
 
-            MatrixXd Kt(_nx*_nx, nt), dt(_nx, nt);
-            Kt = std::get<0>(res_Kd);
-            dt = std::get<1>(res_Kd);
-            MatrixXd zk_star(_nx, nt), Sk_star(_nx*_nx, nt);
-            zk_star = pgcs_nonlin_sdf.zkt();
-            Sk_star = pgcs_nonlin_sdf.Sigkt();
+        MatrixXd Kt(param.nx()*param.nx(), param.nt()), dt(param.nx(), param.nt());
+        Kt = std::get<0>(res_Kd);
+        dt = std::get<1>(res_Kd);
 
-            std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
-            m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
-            m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
+        NominalHistory ztSigt;
+        ztSigt = std::get<2>(res_Kd);
+        Matrix3D h_zt, h_Sigt;
+        h_zt = this->_ei.vec2mat3d(std::get<0>(ztSigt));
+        h_Sigt = this->_ei.vec2mat3d(std::get<1>(ztSigt));
 
-            m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
-            m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+        MatrixXd zk_star(param.nx(), param.nt()), Sk_star(param.nx()*param.nx(), param.nt());
+        zk_star = pgcs_nolinear_sdf.zkt();
+        Sk_star = pgcs_nolinear_sdf.Sigkt();
 
-        }
+        std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+
+        this->m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
+        this->m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
+
+        this->m_io.saveData(saving_prefix + std::string{"zk_history.csv"}, h_zt);
+        this->m_io.saveData(saving_prefix + std::string{"Sk_history.csv"}, h_Sigt);
+
+        this->m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
+        this->m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+
+        pgcs_nolinear_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
+
     }
 
 };

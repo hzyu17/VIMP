@@ -47,23 +47,54 @@ public:
                                             _pdyn(pdyn){}
     
     /**
-     * @brief Solving a linear covariance steering at each iteration.
-     * @return none, but inside already compute (K, d).
+     * @brief A step with given local matrices and a given step size;
+     * @return (Kkt, dkt, Akt, akt, zkt, Sigkt) 
      */
-    void step(int indx){
-        std::cout << "----- iter " << indx << " -----" << std::endl;
+    StepResult step(int indx, double step_size, 
+                    const Matrix3D& At, const Matrix3D& at, const Matrix3D& Bt,
+                    const Matrix3D& zt, const Matrix3D& Sigt) override
+    {
         // propagate the mean and the covariance
-        propagate_mean();
-        linearization();
+        
+        std::tuple<Matrix3D, Matrix3D> ztSigt;
+        ztSigt = propagate_mean(At, at, Bt, zt, Sigt);
 
-        MatrixXd A_prior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
-        MatrixXd a_prior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
+        Matrix3D ztnew(_nx, 1, _nt), Sigtnew(_nx, _nx, _nt);
+        ztnew = std::get<0>(ztSigt);
+        Sigtnew = std::get<1>(ztSigt);
+
+        std::tuple<LinearDynamics, Matrix3D> res;
+        res = _pdyn->linearize(ztnew, At, Sigtnew);
+
+        LinearDynamics h_dyn = std::get<0>(res);
+        Matrix3D nTr = std::get<1>(res);
+
+        Matrix3D hAt(_nx, _nx, _nt), hat(_nx, 1, _nt);
+        hAt = h_dyn.At();
+        hat = h_dyn.at();
+        
+        MatrixXd Aprior = At / (1 + step_size) + hAt * step_size / (1 + step_size);
+        MatrixXd aprior = at / (1 + step_size) + hat * step_size / (1 + step_size);
 
         // Update Qkt, rkt
-        update_Qrk();
+        std::tuple<Matrix3D, Matrix3D> Qtrt;
+        Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, hAt, hat, step_size);
+
+        Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
+        Qt.setZero(); rt.setZero();
+        Qt = std::get<0>(Qtrt);
+        rt = std::get<1>(Qtrt);
 
         // solve inner loop linear CS
-        solve_linearCS(A_prior, _Bt, a_prior, _Qkt, _rkt);
+        std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> KtdtAtat;
+        KtdtAtat = solve_linearCS_return(Aprior, Bt, aprior, Qt, rt);
+
+        return std::make_tuple(std::get<0>(KtdtAtat), 
+                               std::get<1>(KtdtAtat), 
+                               std::get<2>(KtdtAtat), 
+                               std::get<3>(KtdtAtat), 
+                               std::get<0>(ztSigt), 
+                               std::get<1>(ztSigt));
     }
 
     /**

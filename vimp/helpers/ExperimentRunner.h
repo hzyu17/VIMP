@@ -2,6 +2,11 @@
  * @file ExperimentRunner.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The template of running a motion planning experiment.
+ * Including reading a configuration file and run an experiment. 
+ * It takes in 
+ * 1. an optimizer class
+ * 2. a parameter class which defines the experiment hyperparameter types.
+ * GVIExperimentRunner and PGCSExperimentRunner are 2 main derived classes.
  * @version 0.1
  * @date 2023-04-14
  * 
@@ -290,7 +295,7 @@ public:
     PGCSRunner3D(int num_exp, const std::string & config):
                         PGCSRunner<PGCSOptimizer>(6, 3, num_exp, config){}
 
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode) override{
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSExperimentParams& params) override{
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
         double start_z = atof(paramNode->first_node("start_pos")->first_node("z")->value());
@@ -310,13 +315,16 @@ public:
         VectorXd m0(this->_nx), mT(this->_nx); 
 
         m0 << start_x, start_y, start_z, start_vx, start_vy, start_vz;
-        // _Sig0 = sig0 * Eigen::MatrixXd::Identity(_nx, _nx);
-
         mT << goal_x, goal_y, goal_z, goal_vx, goal_vy, goal_vz;
-        // _SigT = sigT * Eigen::MatrixXd::Identity(_nx, _nx);
 
-        this->_params.set_m0(m0);
-        this->_params.set_mT(mT);
+        params.set_m0(m0);
+        params.set_mT(mT);
+
+        std::string sdf_file = static_cast<std::string>(paramNode->first_node("sdf_file")->value());
+        params.update_sdf_file(sdf_file);
+
+        double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
+        params.update_sig_obs(sig_obs);
     }
 };
 
