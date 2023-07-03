@@ -25,12 +25,13 @@ public:
     void run_optimization(const GVIMPExperimentParams& params){
         std::cout << "run_optimization " << std::endl;
         /// parameters
-        int N = params.nt() - 1;
+        int n_states = params.nt();
+        int N = n_states - 1;
         const int dim_conf = _robot_sdf.ndof() * _robot_sdf.nlinks();
         // state: theta = [conf, vel_conf]
         const int dim_state = 2 * dim_conf; 
         /// joint dimension
-        const int ndim = dim_state * params.nt();
+        const int ndim = dim_state * n_states;
 
         VectorXd start_theta{ params.m0() };
         VectorXd goal_theta{ params.mT() };
@@ -47,7 +48,13 @@ public:
         /// initial values
         VectorXd joint_init_theta{VectorXd::Zero(ndim)};
 
-        for (int i = 0; i < params.nt(); i++) {
+        auto robot_model = _robot_sdf.RobotModel();
+        auto sdf = _robot_sdf.sdf();
+        double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
+        double temperature = params.temperature();
+
+
+        for (int i = 0; i < n_states; i++) {
             // initial state
             VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
 
@@ -59,38 +66,31 @@ public:
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
-            if (i==0 || i==params.nt()-1){
+            if (i==0 || i==n_states-1){
 
                 // lin GP factor
-                if (i == params.nt()-1){
+                if (i == n_states-1){
                     // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
-                    vec_factors.emplace_back(std::make_shared<LinearGpPrior>(LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, params.nt(), i-1}));
+                    vec_factors.emplace_back(std::make_shared<LinearGpPrior>(LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1}));
                 }
 
                 // Fixed gp factor
                 FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta}};
-                vec_factors.emplace_back(std::make_shared<FixedGpPrior>(FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, params.nt(), i}));
+                vec_factors.emplace_back(std::make_shared<FixedGpPrior>(FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, n_states, i}));
 
             }else{
                 // linear gp factors
-                vec_factors.emplace_back(std::make_shared<LinearGpPrior>(LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, params.nt(), i-1}));
+                vec_factors.emplace_back(std::make_shared<LinearGpPrior>(LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1}));
 
-                gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), _robot_sdf.RobotModel(), _robot_sdf.sdf(), params.sig_obs(), params.eps_sdf()};
-                vec_factors.emplace_back(std::make_shared<PlanarSDFFactorPR>(PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, collision_k, params.nt(), i}));    
-                if (i==1){
-                    std::cout << "fact_cost_value() " << std::endl << vec_factors[2]->fact_cost_value() << std::endl;
-                }
+                gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), robot_model, sdf, sig_obs, eps_sdf};
+                vec_factors.emplace_back(std::make_shared<PlanarSDFFactorPR>(PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, collision_k, n_states, i}));    
 
             }
             
         }
-        auto factor_2 = vec_factors[2];
-        VectorXd conf{VectorXd::Zero(dim_conf)};
-        std::cout << "factor_2->_gauss_hermite->f(conf) " << std::endl << vec_factors[2]->fact_cost_value() << std::endl;
-        std::cout << "factor_2->_gauss_hermite->Integrate() " << std::endl << factor_2->_gauss_hermite->Integrate() << std::endl;
 
         /// The joint optimizer
-        GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, params.nt(), params.temperature()};
+        GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, n_states, temperature};
 
         optimizer.update_file_names(params.saving_prefix() + "mean.csv", 
                                     params.saving_prefix() + "cov.csv", 
@@ -109,9 +109,6 @@ public:
 
         // optimizer.set_GH_degree(3);
         optimizer.set_niterations(params.max_iter());
-
-        std::cout << "factor 2 cost value " << std::endl << vec_factors[2]->_gauss_hermite->Integrate() << std::endl;
-
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.optimize();
 
