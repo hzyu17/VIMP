@@ -10,9 +10,12 @@
  */
 
 #include "../helpers/ExperimentParams.h"
-#include "../instances/PlanarPRFactor.h"
+#include "../instances/PlanarFactorPR.h"
+#include "../robots/PlanarPointRobotSDF_pgcs.h"
 
 namespace vimp{
+
+using SDFPR = gpmp2::ObstaclePlanarSDFFactorPointRobot;
 
 template <typename Robot, typename RobotSDF>
 class GVIMPPlanarRobotSDF{
@@ -23,7 +26,6 @@ public:
     {}
 
     void run_optimization(const GVIMPExperimentParams& params){
-        std::cout << "run_optimization " << std::endl;
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
@@ -41,7 +43,7 @@ public:
 
         VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
         MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*params.coeff_Qc()};
-        MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)*0.0001};
+        MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)*params.initial};
 
         /// Vector of base factored optimizers
         vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
@@ -71,19 +73,18 @@ public:
                 // lin GP factor
                 if (i == n_states-1){
                     // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
-                    vec_factors.emplace_back(std::make_shared<LinearGpPrior>(LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1}));
+                    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1});
                 }
 
                 // Fixed gp factor
                 FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta}};
-                vec_factors.emplace_back(std::make_shared<FixedGpPrior>(FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, n_states, i}));
+                vec_factors.emplace_back(new FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, n_states, i});
 
             }else{
                 // linear gp factors
-                vec_factors.emplace_back(std::make_shared<LinearGpPrior>(LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1}));
+                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1});
 
-                gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', i), robot_model, sdf, sig_obs, eps_sdf};
-                vec_factors.emplace_back(std::make_shared<PlanarSDFFactorPR>(PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, collision_k, n_states, i}));    
+                vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, SDFPR{gtsam::symbol('x', i), robot_model, sdf, sig_obs, eps_sdf}, n_states, i});    
 
             }
             

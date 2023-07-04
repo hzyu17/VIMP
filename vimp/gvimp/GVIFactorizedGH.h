@@ -33,7 +33,7 @@ namespace vimp{
                     OptBase::_func_phi = [this, function_, cost_class_](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function_(x, cost_class_))};};
                     OptBase::_func_Vmu = [this, function_, cost_class_](const VectorXd& x){return (x-OptBase::_mu) * function_(x, cost_class_);};
                     OptBase::_func_Vmumu = [this, function_, cost_class_](const VectorXd& x){return MatrixXd{(x-OptBase::_mu) * (x-OptBase::_mu).transpose().eval() * function_(x, cost_class_)};};
-                    OptBase::_gauss_hermite = GaussHermite<GHFunction>{6, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
+                    OptBase::_gh = GaussHermite<GHFunction>{6, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
                 }
     public:
         typedef std::shared_ptr<GVIFactorizedGaussHermite> shared_ptr;

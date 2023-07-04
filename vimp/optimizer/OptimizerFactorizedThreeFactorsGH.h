@@ -36,7 +36,7 @@ namespace vimp{
                 Base::_func_phi = [this, function_, cost_class_, cost_class1_, cost_class2_](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function_(x, cost_class_, cost_class1_, cost_class2_))};};
                 Base::_func_Vmu = [this, function_, cost_class_, cost_class1_, cost_class2_](const VectorXd& x){return (x-Base::_mu) * function_(x, cost_class_, cost_class1_, cost_class2_);};
                 Base::_func_Vmumu = [this, function_, cost_class_, cost_class1_, cost_class2_](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function_(x, cost_class_, cost_class1_, cost_class2_)};};
-                Base::_gauss_hermite = GaussHermite<GHFunction>{6, Base::_dim, Base::_mu, Base::_covariance, Base::_func_phi};
+                Base::_gh = GaussHermite<GHFunction>{6, Base::_dim, Base::_mu, Base::_covariance, Base::_func_phi};
                 }
     };
 }

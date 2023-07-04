@@ -23,7 +23,7 @@ namespace vimp{
         GVIFactorizedLinear(const int& dimension,
                             int dim_state, 
                             const CostFunction& function, 
-                            CostClass& linear_factor,
+                            const CostClass& linear_factor,
                             int num_states,
                             int start_indx):
             Base(dimension, dim_state, num_states, start_indx, true),
@@ -33,7 +33,7 @@ namespace vimp{
                 Base::_func_Vmu = std::make_shared<GHFunction>([this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor);});
                 Base::_func_Vmumu = std::make_shared<GHFunction>([this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};});
                 using GH = GaussHermite<GHFunction>;
-                Base::_gauss_hermite = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, *Base::_func_phi});
+                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
 
                 _target_mean = linear_factor.get_mu();
                 _target_precision = linear_factor.get_precision();
@@ -42,7 +42,7 @@ namespace vimp{
                 _const_multiplier = linear_factor.get_C();
             }
 
-    private:
+    protected:
         CostClass _linear_factor;
 
         MatrixXd _target_mean, _target_precision, _Lambda, _Psi;
@@ -80,7 +80,6 @@ namespace vimp{
         }
 
         double fact_cost_value() {
-            std::cout << "fact cost linear factor " << std::endl;
             return fact_cost_value(_mu, _covariance);
         }
 

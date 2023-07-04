@@ -21,7 +21,7 @@ public:
     LinearFactor(){}
 
     // virtual VectorXd get_mean() = 0;
-    inline virtual VectorXd get_mu() = 0;
+    inline virtual VectorXd get_mu() const = 0;
     inline virtual MatrixXd get_covariance() const = 0;
     inline virtual MatrixXd get_precision() const = 0;
 

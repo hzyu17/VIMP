@@ -41,7 +41,7 @@ namespace vimp{
             _dim_state{2*_dim},
             _start_index{start_index},
             _m0{mu_0},
-            _mi{VectorXd::Zero(2*_dim_state)},
+            _mui{VectorXd::Zero(2*_dim_state)},
             _delta_t{delta_t}, 
             _Qc{Qc}, 
             _invQc{Qc.inverse()}, 
@@ -60,8 +60,8 @@ namespace vimp{
                 VectorXd mi = Phi_i * _m0;
                 VectorXd mi_next = _Phi * mi;
 
-                _mi.segment(0, _dim_state) = mi;
-                _mi.segment(_dim_state, _dim_state) = mi_next;
+                _mui.segment(0, _dim_state) = mi;
+                _mui.segment(_dim_state, _dim_state) = mi_next;
                 
                 _Q = MatrixXd::Zero(_dim_state, _dim_state);
                 _Q << _Qc*pow(_delta_t, 3)/3, _Qc*pow(_delta_t, 2)/2, _Qc*pow(_delta_t, 2)/2, Qc*_delta_t;
@@ -83,7 +83,7 @@ namespace vimp{
             double _delta_t;
             MatrixXd _Qc, _invQc, _Q, _invQ;
             MatrixXd _Phi, _Lambda, _Psi;
-            VectorXd _m0, _mi;
+            VectorXd _m0, _mui;
             EigenWrapper _ei;
             
         public:
@@ -113,7 +113,7 @@ namespace vimp{
                 _invQ.block(_dim, _dim, _dim, _dim) = 4 * _invQc / _delta_t;
             }
 
-            inline VectorXd get_mu() { return _mi; }
+            inline VectorXd get_mu() const { return _mui; }
 
             inline MatrixXd get_precision() const{ return _invQ; }
 

@@ -24,11 +24,13 @@ namespace vimp{
                                             int num_states,
                                             int start_indx):
                 Base(dimension, dim_state, num_states, start_indx){
+
                 Base::_func_phi = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));});
-                Base::_func_Vmu = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class);});
+                Base::_func_Vmu = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return VectorXd::Ones(this->_dim) * function(x, cost_class);});
                 Base::_func_Vmumu = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class)};});
+                
                 using GH = GaussHermite<GHFunction>;
-                Base::_gauss_hermite = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, *Base::_func_phi});
+                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
                 
             }
 

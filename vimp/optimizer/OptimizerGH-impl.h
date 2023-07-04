@@ -32,7 +32,7 @@ namespace vimp{
             _Vddmu = _Vddmu / _temperature;
             
             SpMat dprecision = -_precision + _Vddmu;
-            VectorXd dmu = _eigen_wrapper.solve_cgd_sp(_Vddmu, -_Vdmu);
+            VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
             int cnt = 1;
             const int MAX_ITER = 20;

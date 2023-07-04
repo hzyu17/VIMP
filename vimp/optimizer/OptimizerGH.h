@@ -58,11 +58,11 @@ public:
                 // fill in the precision matrix to the known sparsity pattern
                 for (int i=0; i<num_states-1; i++){
                     Eigen::MatrixXd block = MatrixXd::Ones(2*_dim_state, 2*_dim_state);
-                    _eigen_wrapper.block_insert_sparse(_precision, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
+                    _ei.block_insert_sparse(_precision, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
                 }
 
                 SpMat lower = _precision.triangularView<Eigen::Lower>();
-                _eigen_wrapper.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
+                _ei.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
                 _nnz = _Rows.rows();
                 
                 _Vdmu.setZero();
@@ -89,7 +89,7 @@ protected:
 
     // sparse matrices
     SpMat _precision, _covariance;
-    EigenWrapper _eigen_wrapper = EigenWrapper();
+    EigenWrapper _ei = EigenWrapper();
     VectorXi _Rows, _Cols; VectorXd _Vals;
     int _nnz = 0;
     SparseLDLT _ldlt;
@@ -109,7 +109,7 @@ protected:
         _ldlt.compute(_precision);
         _L = _ldlt.matrixL();
         _Dinv = _ldlt.vectorD().real().cwiseInverse();
-        _eigen_wrapper.find_nnz_known_ij(_L, _Rows, _Cols, _Vals);
+        _ei.find_nnz_known_ij(_L, _Rows, _Cols, _Vals);
         // _D = ldlt.vectorD().real();
     }
 
@@ -167,12 +167,12 @@ public:
 
     inline void inverse_inplace(){
         ldlt_decompose();
-        _eigen_wrapper.inv_sparse(_precision, _covariance, _Rows, _Cols, _Vals, _Dinv);
+        _ei.inv_sparse(_precision, _covariance, _Rows, _Cols, _Vals, _Dinv);
     }
 
     inline SpMat inverse(SpMat & mat){
         SpMat res(_dim, _dim);
-        _eigen_wrapper.inv_sparse(mat, res, _Rows, _Cols, _nnz);
+        _ei.inv_sparse(mat, res, _Rows, _Cols, _nnz);
         return res;
     }
 

@@ -34,7 +34,7 @@ namespace vimp{
                     OptBase::_func_phi = [this, function](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function(x))};};
                     OptBase::_func_Vmu = [this, function](const VectorXd& x){return (x-OptBase::_mu) * function(x);};
                     OptBase::_func_Vmumu = [this, function](const VectorXd& x){return MatrixXd{(x-OptBase::_mu) * (x-OptBase::_mu).transpose().eval() * function(x)};};
-                    OptBase::_gauss_hermite = GaussHermite<GHFunction>{10, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
+                    OptBase::_gh = GaussHermite<GHFunction>{10, OptBase::_dim, OptBase::_mu, OptBase::_covariance, OptBase::_func_phi};
                 }
 
         

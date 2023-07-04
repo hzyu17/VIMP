@@ -32,7 +32,7 @@ namespace vimp{
 
             // VectorXd get_mean() const{ return _mu; }
 
-            VectorXd get_mu() { return _mu; }
+            VectorXd get_mu() const { return _mu; }
 
             MatrixXd get_precision() const{ return _invK; }
 

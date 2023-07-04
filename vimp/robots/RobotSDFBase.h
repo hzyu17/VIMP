@@ -58,11 +58,11 @@ public:
      */
     virtual std::tuple<VectorXd, MatrixXd> hinge_jacobian_nonlinear_dyn(const VectorXd& pose){}
 
-    inline ROBOT RobotModel() const { return _robot; }
-    inline std::shared_ptr<SDF> psdf() const { return _psdf; }
-    inline SDF sdf() const { return *_psdf; }
-    inline int ndof() const {return _ndof;}
-    inline int nlinks() const {return _nlinks;}
+    virtual inline ROBOT RobotModel() const { return _robot; }
+    virtual inline std::shared_ptr<SDF> psdf() const { return _psdf; }
+    virtual inline SDF sdf() const { return *_psdf; }
+    virtual inline int ndof() const {return _ndof;}
+    virtual inline int nlinks() const {return _nlinks;}
 
 public:
     ROBOT _robot;

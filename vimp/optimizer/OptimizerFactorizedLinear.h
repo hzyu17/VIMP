@@ -32,7 +32,7 @@ namespace vimp{
                 Base::_func_phi = [this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor));};
                 Base::_func_Vmu = [this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor);};
                 Base::_func_Vmumu = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};};
-                Base::_gauss_hermite = GaussHermite<GHFunction>{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi};
+                Base::_gh = GaussHermite<GHFunction>{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi};
 
                 _target_mean = linear_factor.get_mean();
                 _target_precision = linear_factor.get_precision();

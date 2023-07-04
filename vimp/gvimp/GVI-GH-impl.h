@@ -15,9 +15,7 @@ namespace vimp{
             cout << "========= iteration " << i_iter << " ========= "<< endl;
             // ============= Collect results ============= 
             VectorXd fact_costs_iter = factor_costs();
-            std::cout << "debug 0" << std::endl;
             cost_iter = cost_value();
-            cout << "cost: " << cost_iter << endl;
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
 
             // one step
@@ -33,7 +31,7 @@ namespace vimp{
             _Vddmu = _Vddmu / _temperature;
             
             SpMat dprecision = -_precision + _Vddmu;
-            VectorXd dmu = _eigen_wrapper.solve_cgd_sp(_Vddmu, -_Vdmu);
+            VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
             int cnt = 1;
             const int MAX_ITER = 20;
@@ -124,15 +122,12 @@ namespace vimp{
         fac_costs.setZero();
         int cnt = 0;
 
-        std::cout << "_nfactors " << _nfactors << std::endl;
         
         Timer timer;
         for (auto& opt_k : _vec_factors){
-            std::cout << "cnt " << cnt << std::endl;
             fac_costs(cnt) = opt_k->fact_cost_value();
             cnt += 1;
         }
-        std::cout << "len _vec_factors " << _vec_factors.size() << std::endl;
         return fac_costs  / _temperature;
     }
 
