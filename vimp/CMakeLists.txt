@@ -10,6 +10,23 @@ if(NOT DEFINED CMAKE_MACOSX_RPATH)
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
+set(CMAKE_PREFIX "/home/hyu419/.local")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_PREFIX}")
+
+# for unittest scripts
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
+
+# Boost - same requirement as gtsam
+find_package(Boost 1.50 REQUIRED)
+find_package(Boost COMPONENTS filesystem REQUIRED)
+find_package(Boost COMPONENTS system REQUIRED)
+find_package(Boost COMPONENTS thread REQUIRED)
+find_package(Boost REQUIRED COMPONENTS timer)
+find_package(Boost REQUIRED COMPONENTS date_time)
+find_package(Boost COMPONENTS serialization REQUIRED)
+
+include_directories(${Boost_INCLUDE_DIR})
+
 # Find GTSAM components
 find_package(GTSAM REQUIRED) # Uses installed package
 include_directories(${GTSAM_INCLUDE_DIR})
@@ -30,13 +47,26 @@ find_package( Eigen3 3.4.0 REQUIRED
 set(GPMP2_LIBRARIES gpmp2)
 
 # matplotcpp
-find_package(Matplot++ REQUIRED)
+include(FetchContent)
+FetchContent_Declare(matplotplusplus
+        GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus
+        GIT_TAG origin/master) # or whatever tag you want
+
+FetchContent_GetProperties(matplotplusplus)
+if(NOT matplotplusplus_POPULATED)
+    FetchContent_Populate(matplotplusplus)
+    add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
+# set(MATPLOT_ROOT "/home/hyu419/.local/install/include/matplot")
+# list(APPEND CMAKE_PREFIX_PATH "${MATPLOT_ROOT}") 
+# find_package(Matplot++ REQUIRED)
 
 # adept
-find_package(FastAD CONFIG REQUIRED)
+# find_package(FastAD CONFIG REQUIRED)
 
 # argarse
-find_package(argparse REQUIRED)
+# find_package(argparse REQUIRED)
 
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
 
@@ -54,7 +84,7 @@ set(vimp_srcs)
 
 # files want to be excluded
 set(excluded_sources "helpers/matplotlibcpp.h" "helpers/plotPlanarResults.h")
-
+ 
 # Library sources
 foreach(subdir ${vimp_subdirs})
   file(GLOB subdir_srcs "${subdir}/*.cpp" "${subdir}/*.h")

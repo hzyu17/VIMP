@@ -3,6 +3,17 @@
 
 ![Planning using Gaussian variational inference (GVI)](comparison.png)
 VIMP uses Gaussian variational inference to approach the motion planning problem as a probability inference. This project is built upon GTSAM and GPMP2.
+
+**Build Eigen 3.4.0**
+**[Download Eigen source](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
+and 
+```
+cd eigen-3.4.0
+mkdir build && cd build\
+cmake -DCMAKE_INSTALL_PREFIX=prefix_path ..\
+make install 
+
+```
  
 **Build GTSAM**
 **[GTSAM](https://github.com/borglab/gtsam)**

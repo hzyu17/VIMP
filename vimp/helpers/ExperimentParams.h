@@ -79,6 +79,7 @@ public:
     double backtrack_ratio() const { return _backtrack_ratio; }
     double coeff_Qc() const { return _coeff_Qc; }
     double initial_precision_factor() const { return _initial_precision_factor; }
+    double boundary_penalties() const { return _boundary_penalties; }
     int max_n_backtrack() const { return _max_n_backtrack; }
     std::string saving_prefix() const { return _save_prefix; }
 
@@ -94,7 +95,7 @@ public:
     void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
     void set_temperature(double temperature){ _temperature = temperature; }
     void set_high_temperature(double high_temp){ _high_temperature = high_temp; }
-
+    void set_boundary_penalties(double boundary_penalties){ _boundary_penalties = boundary_penalties; }
     void set_saving_prefix(const std::string& save_prefix){ _save_prefix = save_prefix; }
 
 protected:

@@ -43,7 +43,7 @@ public:
 
         VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
         MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*params.coeff_Qc()};
-        MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)*params.initial};
+        MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties()};
 
         /// Vector of base factored optimizers
         vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;

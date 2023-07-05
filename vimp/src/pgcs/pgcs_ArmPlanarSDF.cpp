@@ -11,7 +11,7 @@
  */
 
 #include "covariance_steering/PGCSLinDynArmPlanarSDF.h"
-#include "helpers/experiment_runner.h"
+#include "helpers/ExperimentRunner.h"
 
 using namespace Eigen;
 using namespace vimp;
