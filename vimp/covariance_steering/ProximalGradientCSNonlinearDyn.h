@@ -9,8 +9,8 @@
  * 
  */
 
-#include "ProximalGradientCovarianceSteering.h"
-#include "../dynamics/NonlinearDynamics.h"
+#include "covariance_steering/ProximalGradientCovarianceSteering.h"
+#include "dynamics/NonlinearDynamics.h"
 #include <memory>
 
 using namespace Eigen;

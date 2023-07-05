@@ -10,9 +10,9 @@
  */
 
 #include "ProximalGradientCSLinearDyn.h"
-#include "../robots/PlanarPointRobotSDF_pgcs.h"
-#include "../helpers/hinge2Dhelper.h"
-#include "../helpers/CostHelper.h"
+#include "robots/PlanarPointRobotSDF_pgcs.h"
+#include "helpers/hinge2Dhelper.h"
+#include "helpers/CostHelper.h"
 
 using namespace Eigen;
 
@@ -30,7 +30,7 @@ public:
                         _eps_sdf(params.eps_sdf(), params.radius()),
                         _sdf(sdf),
                         _Sig_obs(params.sig_obs()),
-                        _pRsdf(params.eps_sdf()),
+                        _pRsdf(params.eps_sdf(), params.radius()),
                         _cost_helper(params.max_iter())
                         {
                             _pRsdf.update_sdf(sdf);
@@ -69,14 +69,14 @@ public:
      * @brief The optimization process, including recording the costs.
      * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
      */
-    std::tuple<Matrix3D, Matrix3D> optimize(double stop_err) override{
+    std::tuple<Matrix3D, Matrix3D> optimize() override{
         double err = 1;
 
         int i_step = 0;
 
         double total_cost_prev = this->total_hingeloss() + this->total_control_energy();
         double total_cost = 0.0, hingeloss = 0.0, control_energy=0.0;
-        while ((err > stop_err) && (i_step < _max_iter)){
+        while ((err > _stop_err) && (i_step < _max_iter)){
             step(i_step);
             hingeloss = this->total_hingeloss();
             control_energy = this->total_control_energy();

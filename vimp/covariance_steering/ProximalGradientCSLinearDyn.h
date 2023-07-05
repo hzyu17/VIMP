@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "../dynamics/LinearDynamics.h"
+#include "dynamics/LinearDynamics.h"
 #include "ProximalGradientCovarianceSteering.h"
 
 using namespace Eigen;
@@ -28,7 +28,7 @@ public:
                             const VectorXd& a0, 
                             const MatrixXd& B,
                             const std::shared_ptr<LinearDynamics>& pdyn,
-                            PGCSExperimentParams& params):
+                            const PGCSExperimentParams& params):
                             ProxGradCovSteer(A0, a0, B, params),
                             _pdyn(pdyn){
                                 _hAkt = pdyn->At();

@@ -10,8 +10,8 @@
  */
 
 
-#include "../../gvimp/OptimizerFactorizedSimpleGH.h"
-#include "../../gvimp/GVI-GH.h"
+#include "gvimp/GVIFactorizedSimpleGH.h"
+#include "gvimp/GVI-GH.h"
 
 using namespace Eigen;
 using namespace vimp;
@@ -33,7 +33,7 @@ double cost_function(const VectorXd& vec_x){
 int main(){
 
     typedef std::function<double(const VectorXd&)> Function;
-    typedef VIMPOptimizerFactorizedSimpleGH<Function> OptFact;
+    typedef GVIFactorizedSimpleGH<Function> OptFact;
     
     int dim_state = 1;
     int num_states = 1;
@@ -52,7 +52,7 @@ int main(){
 
     vec_opt_fact.emplace_back(p_opt_fac);
 
-    VIMPOptimizerGH<OptFact> opt{vec_opt_fact, dim_state, num_states};
+    GVIGH<OptFact> opt{vec_opt_fact, dim_state, num_states};
 
     std::string prefix = "data/1d/";
     opt.update_file_names(prefix);

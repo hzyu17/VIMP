@@ -11,10 +11,10 @@
 
 // #pragma once
 
-#include "../instances/CostFunctions.h"
-#include "../gvimp/GVIFactorizedNonlinerOneFactorGH.h"
-#include "../gvimp/GVI-GH.h"
-#include "../gvimp/GVIFactorizedLinear.h"
+#include "instances/CostFunctions.h"
+#include "gvimp/GVIFactorizedNonlinerOneFactorGH.h"
+#include "gvimp/GVI-GH.h"
+#include "gvimp/GVIFactorizedLinear.h"
 
 using namespace Eigen;
 

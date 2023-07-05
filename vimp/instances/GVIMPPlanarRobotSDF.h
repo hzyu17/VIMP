@@ -9,9 +9,9 @@
  * 
  */
 
-#include "../helpers/ExperimentParams.h"
-#include "../instances/PlanarFactorPR.h"
-#include "../robots/PlanarPointRobotSDF_pgcs.h"
+#include "helpers/ExperimentParams.h"
+#include "instances/PlanarFactorPR.h"
+#include "robots/PlanarPointRobotSDF_pgcs.h"
 
 namespace vimp{
 

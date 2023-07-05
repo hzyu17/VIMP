@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "../helpers/eigen_wrapper.h"
+#include "helpers/eigen_wrapper.h"
 
 namespace vimp{
 

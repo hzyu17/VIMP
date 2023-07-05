@@ -18,9 +18,9 @@
 #include <iostream>
 #include <random>
 #include <utility>
-#include <vimp/helpers/SparseMatrixHelper.h>
-#include <vimp/helpers/MVGsampler.h>
-#include <vimp/helpers/GaussHermite.h>
+#include "helpers/SparseMatrixHelper.h"
+#include "helpers/MVGsampler.h"
+#include "gvimp/GaussHermite.h"
 
 using namespace std;
 using namespace Eigen;
@@ -31,6 +31,7 @@ namespace vimp{
     template <typename Function, typename costClass, typename... Args>
 /// Decription: The marginal optimizer using vanilla Mnte Carlo sampling to calculate the expectations
 class GVIFactorized{
+    using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 public:
     ///@param dimension The dimension of the state
     ///@param _function Template function class which calculate the cost
@@ -145,9 +146,10 @@ public:
         update_covariance();
         updateGH();
         /** Integrate for Vdmu_ **/
-        std::function<MatrixXd(const VectorXd&)> func_Vmu_ = [&](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * cost_function_(x, cost_class_)};};
-        gauss_hermite_.update_integrand(func_Vmu_);
-        MatrixXd Vdmu_new = gauss_hermite_.Integrate();
+        // std::function<MatrixXd(const VectorXd&)> func_Vmu_ = [&](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * cost_function_(x, cost_class_)};};
+        // gauss_hermite_.update_integrand(func_Vmu_);
+        auto func_Vmu_ = std::make_shared<GHFunction>([&](const VectorXd& x){return MatrixXd{(x-VectorXd{mu_}) * cost_function_(x, cost_class_)};});
+        MatrixXd Vdmu_new = gauss_hermite_.Integrate(func_Vmu_);
         Vdmu_new = precision_ * Vdmu_new;
 
         Vdmu = precision_ * Vdmu.eval() / double(num_samples);
@@ -161,9 +163,10 @@ public:
         Vddmu = Vddmu.eval() / double(num_samples);
 
         /** Integrate for phi(x) **/
-        std::function<MatrixXd(const VectorXd&)> func_phi_ = [&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};};
-        gauss_hermite_.update_integrand(func_phi_);
-        double avg_phi = gauss_hermite_.Integrate()(0, 0);
+        // std::function<MatrixXd(const VectorXd&)> func_phi_ = [&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};};
+        // gauss_hermite_.update_integrand(func_phi_);
+        auto func_phi_ = make_shared<GHFunction>([&](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, cost_function_(x, cost_class_))};});
+        double avg_phi = gauss_hermite_.Integrate(func_phi_)(0, 0);
 
         double avg_phi1 = accum_phi / double(num_samples);
 

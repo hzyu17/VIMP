@@ -10,8 +10,9 @@ if(NOT DEFINED CMAKE_MACOSX_RPATH)
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
-set(CMAKE_PREFIX "/home/hyu419/.local")
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_PREFIX}")
+set(CMAKE_PREFIX_PATH "/home/huy419/.local" ${CMAKE_PREFIX_PATH})
+include_directories(/home/huy419/.local/include)   # Add the include directory if needed
+link_directories(/home/huy419/.local/lib)
 
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
@@ -72,7 +73,7 @@ endif()
 
 set(vimp_subdirs 
     base
-    optimizer
+    gvimp
     helpers 
     instances
     robots
@@ -81,7 +82,7 @@ set(vimp_subdirs
 )
 
 set(vimp_srcs)
-
+ 
 # files want to be excluded
 set(excluded_sources "helpers/matplotlibcpp.h" "helpers/plotPlanarResults.h")
  
@@ -101,12 +102,20 @@ foreach(subdir ${vimp_subdirs})
   
 endforeach(subdir)
 
+
 # include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
-include_directories(${GPMP2_INCLUDE_DIRS})
-include_directories(${GTSAM_INCLUDE_DIRS})
+include_directories(${gpmp2_INCLUDE_DIRS})
+include_directories(${gtsam_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${ARGPARSE_INCLUDE_DIRS})
+
+message("CMAKE_CURRENT_SOURCE_DIR" ${CMAKE_CURRENT_SOURCE_DIR})
+ 
+set(LOCAL_INCLUDE_DIR "/home/hyu419/.local/include")
+include_directories(LOCAL_INCLUDE_DIR)
+# include_directories(${ARGPARSE_INCLUDE_DIRS})
+
+message("${gpmp2_LIBRARIES}: " ${gpmp2_LIBRARIES})
 
 # Add all the source files in src/vimp as a separate executable
 file(GLOB_RECURSE VIMP_SOURCES src/vimp/*.cpp)
@@ -114,7 +123,7 @@ foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
     add_executable(${vimp_name} ${vimp_source})
     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+    target_link_libraries(${vimp_name} ${eigen3_LIBRARIES} ${gtsam_LIBRARIES} ${gpmp2_LIBRARIES})
 endforeach()
 
 # Add all the source files in src/pgcs as a separate executable
@@ -126,7 +135,7 @@ foreach(pgcs_source ${PGCS_SOURCES})
     target_link_libraries(${pgcs_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} Matplot++::matplot)
     target_include_directories(${pgcs_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 endforeach()
-
+ 
 #% --------------------------------------------------------- Tests files 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})

@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "MatrixIO.h"
-#include "eigen_wrapper.h"
+#include "helpers/MatrixIO.h"
+#include "helpers/eigen_wrapper.h"
 
 namespace vimp{
 

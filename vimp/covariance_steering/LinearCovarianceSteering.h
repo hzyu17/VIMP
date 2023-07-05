@@ -15,7 +15,7 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include "../helpers/eigen_wrapper.h"
+#include "helpers/eigen_wrapper.h"
 using namespace Eigen;
 
 namespace vimp{

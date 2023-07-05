@@ -9,8 +9,8 @@
  * 
  */
 
-#include "ProximalGradientCSLinearDyn.h"
-#include "../helpers/CostHelper.h"
+#include "covariance_steering/ProximalGradientCSLinearDyn.h"
+#include "helpers/CostHelper.h"
 #include <iomanip>
 
 using namespace Eigen;

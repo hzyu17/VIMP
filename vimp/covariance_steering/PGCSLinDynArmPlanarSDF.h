@@ -9,9 +9,9 @@
  * 
  */
 
-#include "ProximalGradientCSLinearDyn.h"
-#include "../robots/PlanarArmSDF_pgcs.h"
-#include "PGCSLinDynRobotSDF.h"
+#include "covariance_steering/ProximalGradientCSLinearDyn.h"
+#include "robots/PlanarArmSDF_pgcs.h"
+#include "covariance_steering/PGCSLinDynRobotSDF.h"
 
 using namespace Eigen;
 

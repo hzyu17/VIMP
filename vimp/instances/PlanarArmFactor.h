@@ -10,7 +10,7 @@
  */
 
 
-#include "PlanarFactor.h"
+#include "instances/PlanarFactor.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorArm.h>
 
 namespace vimp{

@@ -9,9 +9,9 @@
  * 
  */
 
-#include <vimp/gvimp/GVI-GH.h>
-#include <vimp/instances/GaussianPriorUnaryTranslation.h>
-#include <vimp/gvimp/GVIFactorizedGH.h>
+#include "gvimp/GVI-GH.h"
+#include "instances/GaussianPriorUnaryTranslation.h"
+#include "gvimp/GVIFactorizedGH.h"
 
 using namespace vimp;
 using namespace gpmp2;

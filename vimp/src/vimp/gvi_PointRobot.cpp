@@ -11,8 +11,8 @@
  */
 
 
-#include "../../helpers/ExperimentRunner.h"
-#include "../../instances/GVIMPPlanarPRSDF.h"
+#include "helpers/ExperimentRunner.h"
+#include "instances/GVIMPPlanarPRSDF.h"
 using namespace vimp;
 
 int main(){

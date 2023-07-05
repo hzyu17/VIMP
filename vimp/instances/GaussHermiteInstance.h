@@ -10,7 +10,7 @@
  */
 
 #include <functional>
-#include <vimp/helpers/GaussHermite.h>
+#include "gvimp/GaussHermite.h"
 using namespace Eigen;
 
 namespace vimp{

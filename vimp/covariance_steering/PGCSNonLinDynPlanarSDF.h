@@ -10,8 +10,8 @@
  */
 
 #include "ProximalGradientCSNonlinearDyn.h"
-#include "../helpers/CostHelper.h"
-#include "../helpers/hinge2Dhelper.h"
+#include "helpers/CostHelper.h"
+#include "helpers/hinge2Dhelper.h"
 
 using namespace Eigen;
 

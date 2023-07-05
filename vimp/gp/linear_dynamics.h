@@ -9,7 +9,7 @@
  * 
  */
 
-#include "../3rd-part/eigen-3.4.0/unsupported/Eigen/MatrixFunctions"
+#include "../3rdparty/eigen-3.4.0/unsupported/Eigen/MatrixFunctions"
 
 
 using namespace Eigen;

@@ -1,7 +1,7 @@
-#include "../helpers/test_cython.h"
+#include "helpers/test_cython.h"
 #include <gtest/gtest.h>
 #include <gtsam/inference/Symbol.h>
-#include "../robots/PlanarPointRobotSDFExample.h"
+#include "robots/PlanarPointRobotSDFExample.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
 using namespace Eigen;

@@ -3,8 +3,8 @@
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
 
-#include "../3rd-part/rapidxml-1.13/rapidxml.hpp"
-#include "../3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
+#include "../3rdparty/rapidxml-1.13/rapidxml.hpp"
+#include "../3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
 
 /**
  * @brief Fixed cost with a covariance

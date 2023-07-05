@@ -9,8 +9,8 @@
  * 
  */
 
-#include "NonlinearDynamics.h"
-#include "../3rd-part/TinyAD/Scalar.hh"
+#include "dynamics/NonlinearDynamics.h"
+#include "3rdparty/TinyAD/Scalar.hh"
 
 using namespace Eigen;
 

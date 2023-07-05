@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "../helpers/eigen_wrapper.h"
-#include "LinearDynamics.h"
+#include "helpers/eigen_wrapper.h"
+#include "dynamics/LinearDynamics.h"
 
 using namespace Eigen;
 
@@ -26,9 +26,9 @@ public:
     
 
     virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& x, 
-                                                                                    // double sig, 
-                                                                                    const MatrixXd& Ak, 
-                                                                                    const MatrixXd& Sigk){}
+                                                                            // double sig, 
+                                                                            const MatrixXd& Ak, 
+                                                                            const MatrixXd& Sigk){}
     /**
     * @brief Linearization for use in proximal gradient covariance steering.
     * 

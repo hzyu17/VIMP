@@ -1,4 +1,4 @@
-#include <vimp/instances/GaussHermiteInstance.h>
+#include "instances/GaussHermiteInstance.h"
 #include <gtest/gtest.h>
 
 using namespace Eigen;

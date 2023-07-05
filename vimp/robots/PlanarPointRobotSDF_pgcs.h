@@ -15,7 +15,7 @@
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
-#include "RobotSDFBase.h"
+#include "robots/RobotSDFBase.h"
 
 using namespace Eigen;
 

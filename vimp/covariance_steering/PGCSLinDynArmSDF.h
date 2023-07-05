@@ -10,8 +10,8 @@
  */
 
 
-#include "PGCSLinDynRobotSDF.h"
-#include "../robots/WamArmSDFExample.h"
+#include "covariance_steering/PGCSLinDynRobotSDF.h"
+#include "robots/WamArmSDFExample.h"
 
 namespace vimp{
     using PGCSLinDynArmSDF = PGCSLinDynRobotSDF<WamArmSDFExample>;

@@ -11,7 +11,7 @@
 
 // #pragma once
 
-#include "PlanarFactor.h"
+#include "instances/PlanarFactor.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
 namespace vimp{

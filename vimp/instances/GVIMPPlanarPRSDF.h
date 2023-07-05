@@ -9,8 +9,8 @@
  * 
  */
 
-#include "GVIMPPlanarRobotSDF.h"
-#include "../robots/PlanarPointRobotSDF_pgcs.h"
+#include "instances/GVIMPPlanarRobotSDF.h"
+#include "robots/PlanarPointRobotSDF_pgcs.h"
 
 namespace vimp{
     using GVIMPPlanarPRSDF = GVIMPPlanarRobotSDF<gpmp2::PointRobotModel, PlanarPRSDFExample>;

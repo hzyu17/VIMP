@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "../base/Matrix.h"
-#include "Dynamics.h"
+#include "base/Matrix.h"
+#include "dynamics/Dynamics.h"
 #include <Eigen/Dense>
 
 using namespace Eigen;

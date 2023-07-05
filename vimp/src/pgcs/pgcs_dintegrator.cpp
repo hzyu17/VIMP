@@ -10,9 +10,9 @@
  */
 
 #include "dynamics/DoubleIntegratorDraged.h"
-#include "covariance_steering/PGCSNLDynPlanarSDF.h"
-#include "3rd-part/rapidxml-1.13/rapidxml.hpp"
-#include "3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
+#include "covariance_steering/PGCSNonLinDynPlanarSDF.h"
+#include "3rdparty/rapidxml-1.13/rapidxml.hpp"
+#include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
 
 using namespace Eigen;
 using namespace vimp;

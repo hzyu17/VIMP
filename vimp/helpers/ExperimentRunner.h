@@ -14,10 +14,10 @@
  * 
  */
 
-#include "ExperimentParams.h"
-#include "../dynamics/LinearDynamics.h"
-#include "../3rd-part/rapidxml-1.13/rapidxml.hpp"
-#include "../3rd-part/rapidxml-1.13/rapidxml_utils.hpp"
+#include "helpers/ExperimentParams.h"
+#include "dynamics/LinearDynamics.h"
+#include "3rdparty/rapidxml-1.13/rapidxml.hpp"
+#include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
 #include <memory>
 
 using namespace Eigen;

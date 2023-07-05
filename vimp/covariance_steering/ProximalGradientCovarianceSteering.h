@@ -11,11 +11,11 @@
 
 #pragma once
 
-#include "../helpers/ExperimentParams.h"
+#include "helpers/ExperimentParams.h"
 #include "LinearCovarianceSteering.h"
 #include <memory>
 #include <Eigen/QR>
-#include "../helpers/PGCSDataBuffer.h"
+#include "helpers/PGCSDataBuffer.h"
 
 using namespace Eigen;
 
