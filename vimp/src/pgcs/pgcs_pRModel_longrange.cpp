@@ -19,7 +19,7 @@
 
 int main(int argc, char* argv[]){
 
-    // std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_pR_longrange.xml"};
+    // std::string config_file{"/home/hyu419/git/VIMP/vimp/configs/pgcs/planar_pR_longrange.xml"};
     // int nx=4, nu=2;
     // int num_exp = 4;
 
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]){
 
     // int nx=4, nu=2;
     // int num_exp = 4;
-    // std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_pR_longrange.xml"};
+    // std::string config_file{"/home/hyu419/git/VIMP/vimp/configs/pgcs/planar_pR_longrange.xml"};
     // PGCSRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
 
     // runner.read_config_file();

@@ -20,7 +20,7 @@ int main(int argc, char* argv[]){
     int nx = 14, nu=7;
 
     int num_exp = 3;
-    std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/wam_arm.xml"};
+    std::string config_file{"/home/hyu419/git/VIMP/vimp/configs/pgcs/wam_arm.xml"};
     PGCSRunner7D<PGCSLinDynArmSDF> runner(num_exp, config_file);
     // no experiment argument, run the default scripts
     if (argc == 1){

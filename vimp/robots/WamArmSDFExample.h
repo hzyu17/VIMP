@@ -114,7 +114,7 @@ namespace vimp{
 
             void default_sdf(){
                 this->_sdf = SDF();
-                this->_sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin");
+                this->_sdf.loadSDF("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin");
                 this->_psdf = std::make_shared<SDF>(this->_sdf);
             }
 

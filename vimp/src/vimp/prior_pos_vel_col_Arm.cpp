@@ -163,19 +163,19 @@ int main(){
     // optimizer.set_step_size_base(step_size);
 
     // if (replanning==0){
-    //     optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean_base.csv", 
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cov_base.csv", 
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/precisoin_base.csv", 
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cost_base.csv",
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/factor_costs_base.csv",
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/perturbation_statistics_base.csv");
+    //     optimizer.update_file_names("/home/hyu419/git/VIMP/vimp/data/2d_Arm/mean_base.csv", 
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/cov_base.csv", 
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/precisoin_base.csv", 
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/cost_base.csv",
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/factor_costs_base.csv",
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/perturbation_statistics_base.csv");
     // }else{
-    //     optimizer.update_file_names("/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean.csv", 
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cov.csv", 
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/precisoin.csv", 
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/cost.csv",
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/factor_costs.csv",
-    //                             "/home/hongzhe/git/VIMP/vimp/data/2d_Arm/perturbation_statistics.csv");
+    //     optimizer.update_file_names("/home/hyu419/git/VIMP/vimp/data/2d_Arm/mean.csv", 
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/cov.csv", 
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/precisoin.csv", 
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/cost.csv",
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/factor_costs.csv",
+    //                             "/home/hyu419/git/VIMP/vimp/data/2d_Arm/perturbation_statistics.csv");
     // }
 
     // optimizer.optimize();

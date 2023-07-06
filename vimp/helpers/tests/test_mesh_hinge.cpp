@@ -15,10 +15,10 @@
 
 TEST(Test_meshgrid, hinge_mesh){
     vimp::MatrixIO m_io;
-    MatrixXd grid_X = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/sdf_grid_x.csv");
-    MatrixXd grid_Y = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/sdf_grid_y.csv");
+    MatrixXd grid_X = m_io.load_csv("/home/hyu419/git/VIMP/vimp/data/sdf_grid_x.csv");
+    MatrixXd grid_Y = m_io.load_csv("/home/hyu419/git/VIMP/vimp/data/sdf_grid_y.csv");
 
-    MatrixXd field = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv");
+    MatrixXd field = m_io.load_csv("/home/hyu419/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv");
 
     Vector2d origin(-20, -10);
     double cell_size = 0.1;
@@ -28,7 +28,7 @@ TEST(Test_meshgrid, hinge_mesh){
     
     MatrixXd grid_hingeloss = mesh_hingeloss(grid_X, grid_Y, sdf, eps);
 
-    m_io.saveData("/home/hongzhe/git/VIMP/vimp/data/mesh_hingeloss.csv", grid_hingeloss);
+    m_io.saveData("/home/hyu419/git/VIMP/vimp/data/mesh_hingeloss.csv", grid_hingeloss);
 
     ASSERT_EQ(0, 0);
 

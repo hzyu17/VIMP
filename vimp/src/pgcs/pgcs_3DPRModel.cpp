@@ -19,7 +19,7 @@ using namespace vimp;
 int main(){
     int num_exp = 4;
     
-    std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/pR3D_map2.xml"};
+    std::string config_file{"/home/hyu419/git/VIMP/vimp/configs/pgcs/pR3D_map2.xml"};
     PGCSRunner3D<PGCSLinDynPRModelSDF> runner(num_exp, config_file);
     PGCSExperimentParams params;
 
