@@ -94,6 +94,11 @@ public:
         /// The joint optimizer
         GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, n_states, temperature};
 
+        optimizer.set_max_iter_backtrack(params.max_n_backtrack());
+        optimizer.set_high_temperature(params.high_temperature());
+        optimizer.set_niter_low_temperature(params.max_iter_lowtemp());
+        optimizer.set_stop_err(params.stop_err());
+
         optimizer.update_file_names(params.saving_prefix() + "mean.csv", 
                                     params.saving_prefix() + "cov.csv", 
                                     params.saving_prefix() + "precisoin.csv", 

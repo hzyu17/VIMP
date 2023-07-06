@@ -12,6 +12,10 @@ namespace vimp{
         double new_cost = 0.0;
         double cost_iter =  0.0;
         for (int i_iter = 0; i_iter < _niters; i_iter++) {
+            if (i_iter == _niters_lowtemp){
+                cout << "*************** Entering high temperature *************** "<< endl;
+                set_temperature(_high_temperature);
+            }
             cout << "========= iteration " << i_iter << " ========= "<< endl;
             // ============= Collect results ============= 
             VectorXd fact_costs_iter = factor_costs();
@@ -34,7 +38,7 @@ namespace vimp{
             VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
             int cnt = 1;
-            const int MAX_ITER = 20;
+            // const int MAX_ITER = 20;
             double step_size;
 
             SpMat new_precision;
@@ -50,7 +54,7 @@ namespace vimp{
                 new_cost = cost_value(new_mu, new_precision);
                 if (new_cost < cost_iter){ break; }
 
-                if (cnt > MAX_ITER){
+                if (cnt > max_iter_backtrack()){
                     // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
                     cout << "Too many iterations in the backtracking ... Dead" << endl;
                     break;
@@ -64,10 +68,9 @@ namespace vimp{
             set_precision(new_precision);
 
             /// small cost decrease, stop iterations. 
-            double STOP_SIGN = 1e-5;
-            if (cost_iter - new_cost < STOP_SIGN){
+            // double STOP_SIGN = 1e-5;
+            if (cost_iter - new_cost < stop_error()){
                 cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
-                cout << "--- number of backtrackings ---" << endl << cnt << endl;
                 save_data();
                 /// see a purturbed cost
                 cout << "=== final cost ===" << endl << cost_iter << endl;

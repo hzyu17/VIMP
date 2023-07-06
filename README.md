@@ -30,6 +30,7 @@ make install
  -DGTSAM_WITH_TBB:=OFF .. 
  sudo make install
  ```
+
 4. GPMP2
 **Build GPMP2**
 **[GPMP2](https://github.com/gtrll/gpmp2)**
@@ -47,4 +48,28 @@ git clone https://github.com/lucasyu17/VIMP.git
 mkdir build && cd build\
 cmake .. 
 sudo make install 
+```
+
+
+## If build with a customized install location and boost library:
+1. GTSAM
+```
+
+```
+2. GPMP2
+```
+```
+
+## Citation
+If you use this repository in your research, please cite the following publications
+```
+@ARTICLE{10068240,
+  author={Yu, Hongzhe and Chen, Yongxin},
+  journal={IEEE Robotics and Automation Letters}, 
+  title={A Gaussian Variational Inference Approach to Motion Planning}, 
+  year={2023},
+  volume={8},
+  number={5},
+  pages={2518-2525},
+  doi={10.1109/LRA.2023.3256134}}
 ```

@@ -38,21 +38,29 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    GVIGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_state, int num_states, double temperature=1.0):
-                                   _dim_state{dim_state},
-                                   _num_states{num_states},
-                                   _dim{dim_state*num_states},
-                                   _niters{10},
-                                   _temperature{temperature},
-                                   _nfactors{vec_fact_optimizers.size()},
-                                   _vec_factors{std::move(vec_fact_optimizers)},
-                                   _mu{VectorXd::Zero(_dim)},
-                                   _Vdmu{VectorXd::Zero(_dim)},
-                                   _Vddmu{SpMat(_dim, _dim)},
-                                   _precision{SpMat(_dim, _dim)},
-                                   _ldlt{_precision},
-                                   _covariance{SpMat(_dim, _dim)},
-                                   _res_recorder{_niters, _dim}
+    GVIGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, 
+          int dim_state, 
+          int num_states, 
+          double temperature=1.0, 
+          double high_temperature=100.0):
+            _dim_state{dim_state},
+            _num_states{num_states},
+            _dim{dim_state*num_states},
+            _niters{20},
+            _niters_lowtemp{10},
+            _niters_backtrack{10},
+            _stop_err{1e-5},
+            _temperature{temperature},
+            _high_temperature{high_temperature},
+            _nfactors{vec_fact_optimizers.size()},
+            _vec_factors{std::move(vec_fact_optimizers)},
+            _mu{VectorXd::Zero(_dim)},
+            _Vdmu{VectorXd::Zero(_dim)},
+            _Vddmu{SpMat(_dim, _dim)},
+            _precision{SpMat(_dim, _dim)},
+            _ldlt{_precision},
+            _covariance{SpMat(_dim, _dim)},
+            _res_recorder{_niters, _dim}
     {
                 _precision.setZero();
                 // fill in the precision matrix to the known sparsity pattern
@@ -71,7 +79,9 @@ public:
 
 protected:
     /// optimization variables
-    int _dim, _niters, _nfactors, _dim_state, _num_states;
+    int _dim, _niters, _niters_lowtemp, _niters_backtrack, _nfactors, _dim_state, _num_states;
+
+    double _stop_err;
 
     /// @param _vec_factors Vector of marginal optimizers
     vector<std::shared_ptr<FactorizedOptimizer>> _vec_factors;
@@ -81,7 +91,7 @@ protected:
     VectorXd _Vdmu;
     SpMat _Vddmu;
     
-    double _temperature;
+    double _temperature, _high_temperature;
 
     /// Data and result storage
     VIMPResults _res_recorder;
@@ -152,6 +162,8 @@ public:
      */
     VectorXd factor_costs() const;
 
+    inline double stop_error() const { return _stop_err; }
+
 
 /// **************************************************************
 /// Internal data IO
@@ -217,8 +229,12 @@ public:
     /// update the step sizes
     inline void set_step_size(double step_size){ _step_size = step_size; }
 
+    inline void set_stop_err(double stop_err) { _stop_err = stop_err; }
+
     /// The base step size in backtracking
     inline void set_step_size_base(double step_size_base){ _step_size_base = step_size_base; }
+
+    inline void set_max_iter_backtrack(double max_backtrack_iter){ _niters_backtrack = max_backtrack_iter; }
 
     inline void set_mu(const VectorXd& mean){
         _mu = mean; 
@@ -242,6 +258,18 @@ public:
         for (auto & opt_fact : _vec_factors){
             opt_fact->set_GH_points(deg);
         }
+    }
+
+    inline void set_niter_low_temperature(int iters_low_temp){
+        _niters_lowtemp = iters_low_temp;
+    }
+
+    inline void set_temperature(double temperature){
+        _temperature = temperature;
+    }
+
+    inline void set_high_temperature(double high_temp){
+        _high_temperature = high_temp;
     }
 
     
@@ -333,6 +361,10 @@ public:
     inline int dim() const{ return _dim; }   
 
     inline int n_sub_factors() const{ return _nfactors; }
+
+    inline int max_iter() const { return _niters; }
+
+    inline int max_iter_backtrack() const { return _niters_backtrack; }
 
     /**
      * @brief calculate and return the E_q{phi(x)} s for each factorized entity.

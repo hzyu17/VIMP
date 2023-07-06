@@ -49,9 +49,9 @@ namespace vimp{
                         _Akt(_ei.replicate3d(A0, _nt)),
                         _akt(_ei.replicate3d(a0, _nt)),
                         _Bt(_ei.replicate3d(B, _nt)),
-                        _sig(params.sig()),
+                        _total_time(params.total_time()),
                         _eps(params.eps()),
-                        _deltt(params.sig() / (_nt - 1)),
+                        _deltt(params.total_time() / (_nt - 1)),
                         _z0(params.m0()),
                         _Sig0(params.Sig0()),
                         _zT(params.mT()),
@@ -71,7 +71,7 @@ namespace vimp{
                         _Sigkt(_ei.replicate3d(params.Sig0(), _nt)),
                         _Kt(_nu, _nx, _nt),
                         _dt(_nu, 1, _nt),
-                        _linear_cs(_Akt, _Bt, _akt, params.nx(), params.nu(), params.sig(), params.nt(), params.eps(), _Qkt, _rkt, params.m0(), params.Sig0(), params.mT(), params.SigT()),
+                        _linear_cs(_Akt, _Bt, _akt, params.nx(), params.nu(), params.total_time(), params.nt(), params.eps(), _Qkt, _rkt, params.m0(), params.Sig0(), params.mT(), params.SigT()),
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
                         {
                             // Initialize the final time covariance
@@ -109,7 +109,7 @@ namespace vimp{
                         _Akt(_ei.replicate3d(A0, _nt)),
                         _akt(_ei.replicate3d(a0, _nt)),
                         _Bt(_ei.replicate3d(B, _nt)),
-                        _sig(sig),
+                        _total_time(sig),
                         _eps(eps),
                         _deltt(sig / (nt - 1)),
                         _Qkt(Matrix3D(_nx, _nx, _nt)),
@@ -129,7 +129,7 @@ namespace vimp{
                         _dt(_nu, 1, _nt),
                         _max_iter(max_iteration),
                         _stop_err(stop_err),
-                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _sig, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
+                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _total_time, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
         {
             // Initialize the final time covariance
@@ -368,7 +368,7 @@ namespace vimp{
     protected:
         EigenWrapper _ei;
         int _nx, _nu, _nt;
-        double _eta, _sig, _eps, _deltt, _stop_err, _backtrack_ratio;
+        double _eta, _total_time, _eps, _deltt, _stop_err, _backtrack_ratio;
         int _max_iter, _max_n_backtrack;
 
         // All the variables are time variant (3d matrices)
