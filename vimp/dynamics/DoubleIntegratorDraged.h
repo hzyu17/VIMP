@@ -30,11 +30,9 @@ public:
  * @brief Linearization of a double integrator dynamics with drag (time invariant system).
  * 
  * @param x linearization point
- * @param sig time scaling factor
  * @return std::tuple<Matrix4d, MatrixXd, Vector4d, Vector4d> At, Bt, at, nTr
  */
 std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& x, 
-                                                                // double sig, 
                                                                 const MatrixXd& Ak, 
                                                                 const MatrixXd& Sigk) override
 {

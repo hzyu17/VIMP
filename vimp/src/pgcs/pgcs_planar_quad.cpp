@@ -9,22 +9,23 @@
  * 
  */
 
-#include "dynamics/PlanarQuadDynamics.h"
-#include "covariance_steering/PGCSNonLinDynPlanarSDF.h"
-#include "helpers/ExperimentRunnerNL.h"
-#include "robots/PlanarQuadRobotSDF.h"
+// #include "covariance_steering/PGCSNonLinDynPlanarSDF.h"
+// #include "helpers/ExperimentRunnerNL.h"
+// #include "robots/PlanarQuadRobotSDF.h"
 
-using namespace Eigen;
-using namespace vimp;
+// using namespace Eigen;
+// using namespace vimp;
 
 int main(){
 
-    int nx=6, nu=2;
-    int num_exp = 1;
-    std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_quad_map2.xml"};
-    typedef PGCSNonLinDynPlanarSDF<PlanarQuadSDF> PGCSPlanarQuadSDF;
-    ExperimentRunnerNL<PGCSPlanarQuadSDF, PlanarQuadrotor> runner(nx, nu, num_exp, config_file);
+    // int nx=6, nu=2;
+    // int num_exp = 1;
+    // std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/pgcs/planar_quad_map2.xml"};
+    // typedef PGCSNonLinDynPlanarSDF<PlanarQuadSDF> PGCSPlanarQuadSDF;
+    // ExperimentRunnerNL<PGCSPlanarQuadSDF, PlanarQuadrotor> runner(nx, nu, num_exp, config_file);
 
-    runner.run();
+    // runner.run();
+
+    return 0;
     
 }

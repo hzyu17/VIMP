@@ -10,23 +10,26 @@ if(NOT DEFINED CMAKE_MACOSX_RPATH)
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
-set(CMAKE_PREFIX_PATH "/home/huy419/.local" ${CMAKE_PREFIX_PATH})
-include_directories(/home/huy419/.local/include)   # Add the include directory if needed
-link_directories(/home/huy419/.local/lib)
-
+# set(CMAKE_PREFIX_PATH "/home/huy419/.local" ${CMAKE_PREFIX_PATH})
+link_directories(/home/hyu419/.local/bin/boost/lib)
+ 
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 
+set(BOOST_ROOT "/home/hyu419/.local/bin/boost")
+list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
 # Boost - same requirement as gtsam
-find_package(Boost 1.50 REQUIRED)
+find_package(Boost 1.70 REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
 find_package(Boost COMPONENTS system REQUIRED)
 find_package(Boost COMPONENTS thread REQUIRED)
-find_package(Boost REQUIRED COMPONENTS timer)
-find_package(Boost REQUIRED COMPONENTS date_time)
+find_package(Boost COMPONENTS timer REQUIRED)
+find_package(Boost COMPONENTS date_time REQUIRED)
 find_package(Boost COMPONENTS serialization REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIR})
+link_directories(${Boost_LIBRARY_DIRS})
+
 
 # Find GTSAM components
 find_package(GTSAM REQUIRED) # Uses installed package
@@ -36,7 +39,7 @@ set(GTSAM_LIBRARIES gtsam)   # TODO: automatic search libs
 find_package(GTSAMCMakeTools)
 include(GtsamMakeConfigFile)
 include(GtsamBuildTypes)
-include(GtsamTesting)
+# include(GtsamTesting)
 
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
@@ -45,7 +48,14 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 find_package( Eigen3 3.4.0 REQUIRED
               gpmp2 REQUIRED)
 
-set(GPMP2_LIBRARIES gpmp2)
+set(GPMP2_LIBRARIES "/home/hyu419/.local/lib/libgpmp2.so")
+link_directories(/home/hyu419/.local/lib/)
+
+set(GTSAM_LIBRARIES "/home/hyu419/.local/lib/libgtsam.so.4.0.0")
+link_directories(/home/hyu419/.local/lib/)
+
+set(BOOST_LIBRARIES "/home/hyu419/.local/bin/boost/lib/libboost_serialization.so.1.78.0")
+link_directories(/home/hyu419/.local/lib/)
 
 # matplotcpp
 include(FetchContent)
@@ -111,11 +121,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 message("CMAKE_CURRENT_SOURCE_DIR" ${CMAKE_CURRENT_SOURCE_DIR})
  
-set(LOCAL_INCLUDE_DIR "/home/hyu419/.local/include")
-include_directories(LOCAL_INCLUDE_DIR)
+# set(LOCAL_INCLUDE_DIR "/home/hyu419/.local/include")
+# include_directories(LOCAL_INCLUDE_DIR)
 # include_directories(${ARGPARSE_INCLUDE_DIRS})
 
-message("${gpmp2_LIBRARIES}: " ${gpmp2_LIBRARIES})
+message("gpmp2_LIBRARIES: " ${GPMP2_LIBRARIES})
 
 # Add all the source files in src/vimp as a separate executable
 file(GLOB_RECURSE VIMP_SOURCES src/vimp/*.cpp)
@@ -123,7 +133,7 @@ foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
     add_executable(${vimp_name} ${vimp_source})
     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-    target_link_libraries(${vimp_name} ${eigen3_LIBRARIES} ${gtsam_LIBRARIES} ${gpmp2_LIBRARIES})
+    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} ${BOOST_LIBRARIES})
 endforeach()
 
 # Add all the source files in src/pgcs as a separate executable

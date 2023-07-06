@@ -20,6 +20,7 @@ using SDFPR = gpmp2::ObstaclePlanarSDFFactorPointRobot;
 template <typename Robot, typename RobotSDF>
 class GVIMPPlanarRobotSDF{
 public:
+    virtual ~GVIMPPlanarRobotSDF(){}
     GVIMPPlanarRobotSDF(){}
     GVIMPPlanarRobotSDF(GVIMPExperimentParams& params):
     _robot_sdf(params.eps_sdf(), params.radius())

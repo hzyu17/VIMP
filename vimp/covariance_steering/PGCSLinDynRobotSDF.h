@@ -20,6 +20,8 @@ namespace vimp{
 template <typename RobotSDF> 
 class PGCSLinDynRobotSDF: public ProxGradCovSteerLinDyn{
 public:
+    virtual ~PGCSLinDynRobotSDF(){}
+    
     PGCSLinDynRobotSDF(const MatrixXd& A0, 
                         const VectorXd& a0, 
                         const MatrixXd& B, 

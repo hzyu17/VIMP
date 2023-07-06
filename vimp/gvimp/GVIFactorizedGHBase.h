@@ -31,7 +31,7 @@ IOFormat CleanFmt(4, 0, ", ", "\n");
 namespace vimp{
     class GVIFactorizedBase{
     public:
-        
+        virtual ~GVIFactorizedBase(){}
         /**
          * @brief Default Constructor
          */
