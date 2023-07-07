@@ -2,8 +2,8 @@ clear all
 close all
 clc
 addpath('/home/hyu419/.local/gtsam_toolbox')
-import gtsam.*
-import gpmp2.*
+import +gtsam.*
+import +gpmp2.*
 
 %% read map
 sdfmap = csvread("map2/map_multiobs_map2.csv");
