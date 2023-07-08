@@ -171,8 +171,8 @@ public:
                         read_config_file(_params);
                     }
 
-    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
-        read_boundary_conditions(paramNode, _params);
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
+        this->read_boundary_conditions(paramNode, _params);
     }
 
     void run_one_exp(int exp, PGCSExperimentParams& param) override{
