@@ -72,9 +72,10 @@ namespace vimp{
                 _Lambda.block(0, 0, _dim_state, _dim_state) = -_Phi;
                 _Lambda.block(0, _dim_state, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state);
 
+                // When a(t)=0, this part is eliminated.
                 _Psi = MatrixXd::Zero(_dim_state, 2*_dim_state);
-                _Psi.block(0, 0, _dim_state, _dim_state) = _Phi;
-                _Psi.block(0, _dim_state, _dim_state, _dim_state) = -MatrixXd::Identity(_dim_state, _dim_state);
+                // _Psi.block(0, 0, _dim_state, _dim_state) = _Phi;
+                // _Psi.block(0, _dim_state, _dim_state, _dim_state) = -MatrixXd::Identity(_dim_state, _dim_state);
             }
 
         private:

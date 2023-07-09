@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include "../gvimp/GVIFactorizedGHBase.h"
+#include "../gvimp/GVIFactorizedBase.h"
 
 namespace vimp{
     template <typename CostClass>

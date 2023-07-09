@@ -10,7 +10,7 @@
  * 
  */
 
-#include "gvimp/GVIFactorizedGHBase.h"
+#include "gvimp/GVIFactorizedBase.h"
 #include <memory>
 #include "helpers/repeated_includes.h"
 

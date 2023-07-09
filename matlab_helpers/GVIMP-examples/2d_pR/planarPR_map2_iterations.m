@@ -29,7 +29,7 @@ precisions = csvread([prefix + "precisoin.csv"]);
 costs = csvread([prefix + "cost.csv"]);
 factor_costs = csvread([prefix + "factor_costs.csv"]);
 
-tiledlayout(1, niters, 'TileSpacing', 'compact', 'Padding', 'compact')
+tiledlayout(1, niters, 'TileSpacing', 'none', 'Padding', 'none')
 for i = 1:niters % 4 experiments
     nexttile
     output = plot_planarPR_oneiter(means, covs, sdfmap, i);

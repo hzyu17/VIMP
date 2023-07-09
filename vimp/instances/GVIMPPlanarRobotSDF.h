@@ -39,22 +39,23 @@ public:
         VectorXd start_theta{ params.m0() };
         VectorXd goal_theta{ params.mT() };
 
-        /// prior 
-        double delt_t = params.total_time() / N;
-
-        VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
         MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*params.coeff_Qc()};
-        MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties()};
+        MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
         /// Vector of base factored optimizers
         vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
-        /// initial values
-        VectorXd joint_init_theta{VectorXd::Zero(ndim)};
-
+        
         auto robot_model = _robot_sdf.RobotModel();
         auto sdf = _robot_sdf.sdf();
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
+
+        /// initial values
+        VectorXd joint_init_theta{VectorXd::Zero(ndim)};
+        VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
+        
+        /// prior 
+        double delt_t = params.total_time() / N;
 
         for (int i = 0; i < n_states; i++) {
             // initial state
@@ -83,11 +84,8 @@ public:
             }else{
                 // linear gp factors
                 vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1});
-
                 vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, SDFPR{gtsam::symbol('x', i), robot_model, sdf, sig_obs, eps_sdf}, n_states, i});    
-
             }
-            
         }
 
         /// The joint optimizer
@@ -102,9 +100,10 @@ public:
 
         MatrixXd init_precision(ndim, ndim);
         init_precision = MatrixXd::Identity(ndim, ndim)*params.initial_precision_factor();
-
-        init_precision.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*10000;
-        init_precision.block(N*dim_state, N*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*10000;
+        
+        // boundaries
+        init_precision.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
+        init_precision.block(N*dim_state, N*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
         optimizer.set_precision(init_precision.sparseView());
 
         optimizer.set_GH_degree(3);

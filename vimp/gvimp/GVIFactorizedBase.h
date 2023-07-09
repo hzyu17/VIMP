@@ -1,5 +1,5 @@
 /**
- * @file GVIFactorizedGHBase.h
+ * @file GVIFactorizedBase.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief The base class for marginal optimizer.
  * @version 0.1
@@ -55,7 +55,7 @@ namespace vimp{
                 _Vddmu{MatrixXd::Zero(_dim, _dim)},
                 _block{state_dim, num_states, start_index, dimension}
                 {
-                    _joint_size = _state_dim * _num_states;
+                    _joint_size = state_dim * num_states;
                 }        
         
     /// Public members for the inherited classes access
@@ -79,7 +79,6 @@ namespace vimp{
         using GH = GaussHermite<GHFunction> ;
         std::shared_ptr<GH> _gh;
 
-
     protected:
         /// intermediate variables in optimization steps
         VectorXd _Vdmu;
@@ -99,7 +98,6 @@ namespace vimp{
         
         // sparse mapping to sub variables
         TrajectoryBlock _block;
-                
 
     /// public functions
     public:
@@ -120,13 +118,11 @@ namespace vimp{
             _step_size_mu = ss_mean;
             _step_size_Sigma = ss_precision; }
 
-
         /**
          * @brief Update mean
          */
         inline void update_mu(const VectorXd& new_mu){ 
             _mu = new_mu; }
-
 
         /**
          * @brief Update covariance matrix
@@ -135,7 +131,6 @@ namespace vimp{
             _covariance = new_cov; 
             _precision = _covariance.inverse();
         }
-
 
         /**
          * @brief Update the marginal mean.
@@ -162,7 +157,6 @@ namespace vimp{
             _covariance = _block.extract(joint_covariance);
             _precision = _covariance.inverse();
         }
-
 
         /**
          * @brief Calculating phi * (partial V) / (partial mu), and 
