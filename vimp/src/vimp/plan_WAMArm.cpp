@@ -9,9 +9,9 @@
  * 
  */
 
-#include "../../instances/PriorColArm.h"
-#include "../../robots/WamArmSDFExample.h"
-#include "../../gtsam/inference/Symbol.h"
+#include "instances/PriorColArm.h"
+#include "robots/WamArmSDFExample.h"
+#include <gtsam/inference/Symbol.h>
 
 using namespace std;
 using namespace gpmp2;

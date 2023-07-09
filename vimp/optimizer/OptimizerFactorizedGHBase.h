@@ -18,9 +18,9 @@
 #include <assert.h>
 #include <random>
 
-#include "../helpers/GaussHermite.h"
-#include "../helpers/sparse_graph.h"
-#include "../helpers/timer.h"
+#include "helpers/GaussHermite.h"
+#include "helpers/sparse_graph.h"
+#include "helpers/timer.h"
 
 
 using namespace std;

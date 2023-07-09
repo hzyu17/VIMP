@@ -9,11 +9,11 @@
  * 
  */
 
-#include "../../gtsam/base/Vector.h"
+#include <gtsam/base/Vector.h>
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-#include "../../gpmp2/kinematics/PointRobotModel.h"
+#include <gpmp2/kinematics/PointRobotModel.h>
 #include <boost/function.hpp>
 
 
@@ -23,18 +23,18 @@ namespace vimp{
             CythonTest(){};
             CythonTest(const gtsam::Vector& vec, 
                        const UnaryFactorTranslation2D& prior):_vec{vec}, _prior{prior},
-            _func{[this](const MatrixXd& x){return MatrixXd{x - _prior.get_Qc()};}}{};
+            _func{[this](const Eigen::MatrixXd& x){return Eigen::MatrixXd{x - _prior.get_Qc()};}}{};
             
             gtsam::Vector _vec;
             UnaryFactorTranslation2D _prior;
             
-            std::function<MatrixXd(const MatrixXd& x)> _func;
+            std::function<Eigen::MatrixXd(const Eigen::MatrixXd& x)> _func;
             
             gtsam::Vector vec() const{
                 return _vec;
             }
 
-            MatrixXd f(const MatrixXd& x){
+            Eigen::MatrixXd f(const Eigen::MatrixXd& x){
                 return _func(x);
             }
 

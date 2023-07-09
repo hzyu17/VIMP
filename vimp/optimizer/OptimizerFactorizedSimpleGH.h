@@ -10,9 +10,9 @@
  * 
  */
 
-#include "../optimizer/OptimizerFactorizedGHBase.h"
+#include "optimizer/OptimizerFactorizedGHBase.h"
 #include <memory>
-#include "../helpers/repeated_includes.h"
+#include "helpers/repeated_includes.h"
 
 using namespace std;
 using namespace Eigen;

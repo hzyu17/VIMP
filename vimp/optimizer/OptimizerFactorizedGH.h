@@ -10,7 +10,7 @@
  * 
  */
 
-#include "../optimizer/OptimizerFactorizedGHBase.h"
+#include "optimizer/OptimizerFactorizedGHBase.h"
 #include <memory>
 
 using namespace std;

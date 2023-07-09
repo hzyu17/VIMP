@@ -8,8 +8,8 @@
 #include <iostream>
 #include <random>
 
-#include <vimp/helpers/SparseInverseMatrix.h>
-#include <vimp/optimizer/OptimizerFactorized.h>
+#include "helpers/SparseInverseMatrix.h"
+#include "optimizer/OptimizerFactorized.h"
 
 
 using namespace gtsam;

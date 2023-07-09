@@ -6,9 +6,9 @@
 
 #include <iostream>
 #include <random>
-#include <vimp/helpers/SparseInverseMatrix.h>
-#include <vimp/helpers/MVGsampler.h>
-#include <vimp/optimizer/OptimizerFactorizedGH.h>
+#include "helpers/SparseInverseMatrix.h"
+#include "helpers/MVGsampler.h"
+#include "optimizer/OptimizerFactorizedGH.h"
 
 using namespace std;
 using namespace vimp;
@@ -52,7 +52,7 @@ int main(){
         step_size = step_size / pow((i+1), 1/3);
         p_optimizer->set_step_size(step_size, step_size);
 
-        bool decrease = p_optimizer->step();
+        bool decrease = p_optimizer->step(i);
 
         cout << "==== iteration " << i << " ====" << endl
              << "mean " << endl << p_optimizer->mean().format(CleanFmt) << endl

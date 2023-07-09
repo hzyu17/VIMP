@@ -13,8 +13,8 @@
 
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/gp/GPutils.h>
-#include <vimp/helpers/data_io.h>
-#include <vimp/instances/PriorColPlanarPRGPLinear.h>
+#include "helpers/data_io.h"
+#include "instances/PriorColPlanarPRGPLinear.h"
 
 using namespace std;
 using namespace gpmp2;

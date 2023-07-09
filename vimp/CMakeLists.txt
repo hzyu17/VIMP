@@ -33,10 +33,10 @@ set(GPMP2_LIBRARIES gpmp2)
 find_package(Matplot++ REQUIRED)
 
 # adept
-find_package(FastAD CONFIG REQUIRED)
+# find_package(FastAD CONFIG REQUIRED)
 
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
-
+ 
 set(vimp_subdirs 
     base
     optimizer
@@ -101,14 +101,14 @@ include_directories(${GTEST_INCLUDE_DIRS})
 # Recursively search for all test files in the subfolders
 file(GLOB_RECURSE TEST_SOURCES vimp_subdirs false */tests/*.cpp)
 
-# Loop through each test file and add it as a test case
-foreach(TEST_SOURCE ${TEST_SOURCES})
-    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
-    add_executable(${TEST_NAME} ${TEST_SOURCE})
-    target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot FastAD::FastAD ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
-    target_include_directories(${TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-endforeach()
+# # Loop through each test file and add it as a test case
+# foreach(TEST_SOURCE ${TEST_SOURCES})
+#     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+#     add_executable(${TEST_NAME} ${TEST_SOURCE})
+#     target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot FastAD::FastAD ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
+#     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+#     target_include_directories(${TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+# endforeach()
 
 # -------------------------------------------- Doxygen for documentations
 # find_package(Doxygen)

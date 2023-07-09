@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include "../optimizer/OptimizerFactorizedGHBase.h"
+#include "optimizer/OptimizerFactorizedGHBase.h"
 
 namespace vimp{
     template <typename CostClass>

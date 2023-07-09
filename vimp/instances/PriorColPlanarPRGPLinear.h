@@ -10,7 +10,7 @@
  * 
  */
 
-#include <vimp/instances/PriorColGPInter.h>
+#include "instances/PriorColGPInter.h"
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gpmp2/gp/GaussianProcessInterpolatorLinear.h>
 

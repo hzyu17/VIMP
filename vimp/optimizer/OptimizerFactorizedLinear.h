@@ -11,8 +11,8 @@
  * 
  */
 
-#include "../optimizer/OptimizerFactorizedGHBase.h"
-#include "../gp/linear_factor.h"
+#include "optimizer/OptimizerFactorizedGHBase.h"
+#include "gp/linear_factor.h"
 
 namespace vimp{
     template <typename CostClass>
