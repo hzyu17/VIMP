@@ -18,8 +18,8 @@
  */
 
 #include "linear_factor.h"
-#include "../base/Matrix.h"
-#include "../helpers/eigen_wrapper.h"
+#include "base/Matrix.h"
+#include "helpers/eigen_wrapper.h"
 
 namespace vimp{
     class MinimumAccGP : public LinearFactor{
@@ -57,11 +57,11 @@ namespace vimp{
                 Phi_i << MatrixXd::Identity(_dim, _dim), _start_index*delta_t*MatrixXd::Identity(_dim, _dim), 
                          MatrixXd::Zero(_dim, _dim), MatrixXd::Identity(_dim, _dim);
 
-                VectorXd mi = Phi_i * _m0;
-                VectorXd mi_next = _Phi * mi;
+                // VectorXd mi = Phi_i * _m0;
+                // VectorXd mi_next = _Phi * mi;
 
-                _mui.segment(0, _dim_state) = mi;
-                _mui.segment(_dim_state, _dim_state) = mi_next;
+                // _mui.segment(0, _dim_state) = mi;
+                // _mui.segment(_dim_state, _dim_state) = mi_next;
                 
                 _Q = MatrixXd::Zero(_dim_state, _dim_state);
                 _Q << _Qc*pow(_delta_t, 3)/3, _Qc*pow(_delta_t, 2)/2, _Qc*pow(_delta_t, 2)/2, Qc*_delta_t;
