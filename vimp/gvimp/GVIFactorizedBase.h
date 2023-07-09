@@ -193,8 +193,8 @@ namespace vimp{
 
             /// Integrate for E_q{_Vdmu} 
             VectorXd Vdmu{VectorXd::Zero(_dim)};
-            Vdmu = _gh->Integrate(_func_Vmu);
 
+            Vdmu = _gh->Integrate(_func_Vmu);
             Vdmu = _precision * Vdmu;
 
             /// Integrate for E_q{phi(x)}
@@ -208,8 +208,6 @@ namespace vimp{
             Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
 
             // update member variables
-            _ei.print_matrix(Vdmu, "_Vdmu GH");
-            _ei.print_matrix(Vddmu, "Vddmu GH");
             _Vdmu = Vdmu;
             _Vddmu = Vddmu;
         }

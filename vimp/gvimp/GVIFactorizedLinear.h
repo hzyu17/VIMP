@@ -35,7 +35,7 @@ namespace vimp{
                 using GH = GaussHermite<GHFunction>;
                 Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
 
-                _target_mean = linear_factor.get_mu();
+                _target_mean = linear_factor.get_mu(start_indx);
                 _target_precision = linear_factor.get_precision();
                 _Lambda = linear_factor.get_Lambda();
                 _Psi = linear_factor.get_Psi();
@@ -55,7 +55,7 @@ namespace vimp{
          * (partial V) / (partial mu) = Sigma_t{-1} * (mu_k - mu_t)
          * (partial V^2) / (partial mu)(partial mu^T): higher order moments of a Gaussian.
         */
-        void calculate_partial_V(){
+        void calculate_partial_V() override{
             // helper vectors
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 
