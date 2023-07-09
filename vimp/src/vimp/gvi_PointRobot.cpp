@@ -10,7 +10,6 @@
  * 
  */
 
-
 #include "helpers/ExperimentRunner.h"
 #include "instances/GVIMPPlanarPRSDF.h"
 using namespace vimp;

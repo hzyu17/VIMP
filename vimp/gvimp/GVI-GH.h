@@ -14,7 +14,7 @@
 #include <utility>
 #include <memory>
 
-#include "../helpers/result_recorder.h"
+#include "../helpers/DataRecorder.h"
 #include "../helpers/eigen_wrapper.h"
 #include "../helpers/timer.h"
 
@@ -41,12 +41,13 @@ public:
     GVIGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, 
           int dim_state, 
           int num_states, 
+          int niterations=20,
           double temperature=1.0, 
           double high_temperature=100.0):
             _dim_state{dim_state},
             _num_states{num_states},
             _dim{dim_state*num_states},
-            _niters{20},
+            _niters{niterations},
             _niters_lowtemp{10},
             _niters_backtrack{10},
             _stop_err{1e-5},
@@ -60,15 +61,14 @@ public:
             _precision{SpMat(_dim, _dim)},
             _ldlt{_precision},
             _covariance{SpMat(_dim, _dim)},
-            _res_recorder{_niters, _dim}
-    {
+            _res_recorder{niterations, dim_state, num_states, _nfactors}
+    {            
                 _precision.setZero();
                 // fill in the precision matrix to the known sparsity pattern
                 for (int i=0; i<num_states-1; i++){
-                    Eigen::MatrixXd block = MatrixXd::Ones(2*_dim_state, 2*_dim_state);
-                    _ei.block_insert_sparse(_precision, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
+                    Eigen::MatrixXd block = MatrixXd::Ones(2*dim_state, 2*dim_state);
+                    _ei.block_insert_sparse(_precision, i*dim_state, i*dim_state, 2*dim_state, 2*dim_state, block);
                 }
-
                 SpMat lower = _precision.triangularView<Eigen::Lower>();
                 _ei.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
                 _nnz = _Rows.rows();
@@ -81,6 +81,8 @@ protected:
     /// optimization variables
     int _dim, _niters, _niters_lowtemp, _niters_backtrack, _nfactors, _dim_state, _num_states;
 
+    double _temperature, _high_temperature;
+
     double _stop_err;
 
     /// @param _vec_factors Vector of marginal optimizers
@@ -90,8 +92,6 @@ protected:
 
     VectorXd _Vdmu;
     SpMat _Vddmu;
-    
-    double _temperature, _high_temperature;
 
     /// Data and result storage
     VIMPResults _res_recorder;
@@ -244,10 +244,6 @@ public:
     }
 
     inline void set_precision(const SpMat& new_precision);
-    
-    inline void set_niterations(int niters){
-        _niters = niters;
-        _res_recorder.update_niters(niters); }
 
     inline void set_initial_values(const VectorXd& init_mean, const SpMat& init_precision){
         set_mu(init_mean);

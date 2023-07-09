@@ -56,7 +56,6 @@ public:
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
 
-
         for (int i = 0; i < n_states; i++) {
             // initial state
             VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
@@ -92,19 +91,13 @@ public:
         }
 
         /// The joint optimizer
-        GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, n_states, temperature};
+        GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, n_states, params.max_iter(), temperature, params.high_temperature()};
 
         optimizer.set_max_iter_backtrack(params.max_n_backtrack());
-        optimizer.set_high_temperature(params.high_temperature());
         optimizer.set_niter_low_temperature(params.max_iter_lowtemp());
         optimizer.set_stop_err(params.stop_err());
 
-        optimizer.update_file_names(params.saving_prefix() + "mean.csv", 
-                                    params.saving_prefix() + "cov.csv", 
-                                    params.saving_prefix() + "precisoin.csv", 
-                                    params.saving_prefix() + "cost.csv",
-                                    params.saving_prefix() + "factor_costs.csv",
-                                    params.saving_prefix() + "perturbation_statistics.csv");
+        optimizer.update_file_names(params.saving_prefix());
         optimizer.set_mu(joint_init_theta);
 
         MatrixXd init_precision(ndim, ndim);
@@ -114,8 +107,7 @@ public:
         init_precision.block(N*dim_state, N*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*10000;
         optimizer.set_precision(init_precision.sparseView());
 
-        // optimizer.set_GH_degree(3);
-        optimizer.set_niterations(params.max_iter());
+        optimizer.set_GH_degree(3);
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.optimize();
 

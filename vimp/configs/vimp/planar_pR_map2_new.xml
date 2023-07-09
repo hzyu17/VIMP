@@ -8,13 +8,13 @@
     <radius>1.5</radius>
     <step_size>0.45</step_size>
     <init_precision_factor>20.0</init_precision_factor>
-    <boundary_penalties>10000.0</boundary_penalties>
+    <boundary_penalties>0.0001</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>6</low_temp_iterations>
+    <low_temp_iterations>10</low_temp_iterations>
     <stop_err>1e-5</stop_err>
     <max_iterations>15</max_iterations>
-    <max_n_backtracking>10</max_n_backtracking>
+    <max_n_backtracking>20</max_n_backtracking>
 
 </Commons>
 

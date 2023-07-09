@@ -21,7 +21,6 @@ namespace vimp{
             VectorXd fact_costs_iter = factor_costs();
             cost_iter = cost_value();
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
-
             // one step
             _Vdmu.setZero();
             _Vddmu.setZero();
@@ -125,7 +124,6 @@ namespace vimp{
         fac_costs.setZero();
         int cnt = 0;
 
-        
         Timer timer;
         for (auto& opt_k : _vec_factors){
             fac_costs(cnt) = opt_k->fact_cost_value();

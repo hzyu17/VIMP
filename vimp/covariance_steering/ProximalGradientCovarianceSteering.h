@@ -15,7 +15,7 @@
 #include "LinearCovarianceSteering.h"
 #include <memory>
 #include <Eigen/QR>
-#include "helpers/PGCSDataBuffer.h"
+#include "helpers/DataRecorder.h"
 
 using namespace Eigen;
 
@@ -388,11 +388,8 @@ namespace vimp{
         // Final result
         Matrix3D _Kt, _dt;
 
-        // Data buffer
-        DataBuffer _buffer;
-
         // Data recorder for iteration plot
-        DataRecorder _recorder;
+        PGCSDataRecorder _recorder;
 
         // Dynamics class
         LinearCovarianceSteering _linear_cs;
