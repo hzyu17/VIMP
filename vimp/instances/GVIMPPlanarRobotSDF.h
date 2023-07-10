@@ -115,7 +115,7 @@ public:
 protected: 
     RobotSDF _robot_sdf;
     double _eps_sdf;
-    double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
+    double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     EigenWrapper _ei;
 
 };

@@ -12,7 +12,7 @@
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/obstacle/PlanarSDF.h>
-#include "../helpers/MatrixIO.h"
+#include "helpers/MatrixIO.h"
 
 using namespace std;
 using namespace gpmp2;
