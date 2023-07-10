@@ -27,7 +27,7 @@ namespace vimp{
             _Vddmu.setZero();
 
             for (auto& opt_k : _vec_factors){
-                opt_k->calculate_partial_V();
+                opt_k->calculate_partial_V_GH();
                 _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
                 _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
             }

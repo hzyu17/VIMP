@@ -35,7 +35,7 @@ namespace vimp{
                 using GH = GaussHermite<GHFunction>;
                 Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
 
-                _target_mean = linear_factor.get_mu(start_indx);
+                _target_mean = linear_factor.get_mu();
                 _target_precision = linear_factor.get_precision();
                 _Lambda = linear_factor.get_Lambda();
                 _Psi = linear_factor.get_Psi();

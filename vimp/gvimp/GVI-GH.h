@@ -398,7 +398,6 @@ public:
         return res;
     }
 
-
     /**************************** ONLY FOR 1D CASE ***********************/
     /**
      * @brief Draw a heat map for cost function in 1d case
@@ -436,4 +435,4 @@ public:
     }; //class
 } //namespace vimp
 
-#include "../gvimp/GVI-GH-impl.h"
+#include "gvimp/GVI-GH-impl.h"
