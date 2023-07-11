@@ -28,7 +28,7 @@ public:
                             const gpmp2::PlanarSDF& sdf): ProxGradCovSteerNLDyn(A0, a0, B, params, pdyn),
                                             _eps_sdf(params.eps_sdf()),
                                             _sdf(sdf),
-                                            _Sig_obs(params.sig_obs()){}
+                                            _sig_obs(params.sig_obs()){}
 
     PGCSNonLinDynPlanarSDF(const MatrixXd& A0, 
                             const VectorXd& a0, 
@@ -48,7 +48,7 @@ public:
                             int max_iter=20): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iter),
                                                 _eps_sdf(eps_sdf),
                                                 _sdf(sdf),
-                                                _Sig_obs(sig_obs){}
+                                                _sig_obs(sig_obs){}
 
 
     void update_Qrk() override{
@@ -89,7 +89,7 @@ public:
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
             // if (hinge > 0){
-            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
+            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _sig_obs;
             // }
             // Qki
             Qki = temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
@@ -142,7 +142,7 @@ public:
             VectorXd hinge(n_spheres);
             hinge = std::get<0>(hingeloss_gradient);
 
-            MatrixXd Sig_obs{_Sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
+            MatrixXd Sig_obs{_sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             hingeloss += hinge.transpose() * Sig_obs * hinge;
         }
         return hingeloss;
@@ -257,7 +257,7 @@ protected:
     RobotSDF _robot_sdf;
     gpmp2::PlanarSDF _sdf;
     double _eps_sdf;
-    double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
+    double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     CostHelper _cost_helper;
 };
 }

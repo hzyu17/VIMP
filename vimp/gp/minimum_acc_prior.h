@@ -18,8 +18,9 @@
  */
 
 #include "linear_factor.h"
-#include "../base/Matrix.h"
-#include "../helpers/EigenWrapper.h"
+
+#include "base/Matrix.h"
+#include "helpers/eigen_wrapper.h"
 
 namespace vimp{
     class MinimumAccGP : public LinearFactor{
@@ -41,7 +42,7 @@ namespace vimp{
             _dim_state{2*_dim},
             _start_index{start_index},
             _m0{mu_0},
-            _mui{VectorXd::Zero(2*_dim_state)},
+            _target_mu{VectorXd::Zero(2*_dim_state)},
             _delta_t{delta_t}, 
             _Qc{Qc}, 
             _invQc{Qc.inverse()}, 
@@ -60,8 +61,8 @@ namespace vimp{
                 VectorXd mi = Phi_i * _m0;
                 VectorXd mi_next = _Phi * mi;
 
-                _mui.segment(0, _dim_state) = mi;
-                _mui.segment(_dim_state, _dim_state) = mi_next;
+                _target_mu.segment(0, _dim_state) = mi;
+                _target_mu.segment(_dim_state, _dim_state) = mi_next;
                 
                 _Q = MatrixXd::Zero(_dim_state, _dim_state);
                 _Q << _Qc*pow(_delta_t, 3)/3, _Qc*pow(_delta_t, 2)/2, _Qc*pow(_delta_t, 2)/2, Qc*_delta_t;
@@ -72,6 +73,7 @@ namespace vimp{
                 _Lambda.block(0, 0, _dim_state, _dim_state) = -_Phi;
                 _Lambda.block(0, _dim_state, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state);
 
+                // When a(t)=0, this part is eliminated.
                 _Psi = MatrixXd::Zero(_dim_state, 2*_dim_state);
                 _Psi.block(0, 0, _dim_state, _dim_state) = _Phi;
                 _Psi.block(0, _dim_state, _dim_state, _dim_state) = -MatrixXd::Identity(_dim_state, _dim_state);
@@ -83,7 +85,7 @@ namespace vimp{
             double _delta_t;
             MatrixXd _Qc, _invQc, _Q, _invQ;
             MatrixXd _Phi, _Lambda, _Psi;
-            VectorXd _m0, _mui;
+            VectorXd _m0, _target_mu;
             EigenWrapper _ei;
             
         public:
@@ -113,7 +115,7 @@ namespace vimp{
                 _invQ.block(_dim, _dim, _dim, _dim) = 4 * _invQc / _delta_t;
             }
 
-            inline VectorXd get_mu() const { return _mui; }
+            inline VectorXd get_mu() const { return _target_mu; }
 
             inline MatrixXd get_precision() const{ return _invQ; }
 

@@ -26,7 +26,7 @@ TEST(TestPgcsSdf2D, initialization){
     MatrixXd Sig0(4,4), SigT(4,4);
 
     /// reading XML configs
-    rapidxml::file<> xmlFile("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/test_config_dintegrator_map2.xml"); // Default template is char
+    rapidxml::file<> xmlFile("/home/hyu419/git/VIMP/vimp/covariance_steering/tests/data/test_config_dintegrator_map2.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     rapidxml::xml_node<>* paramNode = doc.first_node("parameters");
@@ -87,10 +87,10 @@ TEST(TestPgcsSdf2D, initialization){
     Sk_star = pgcs_sdf.Sigkt();
 
     MatrixXd Kt_gt(4*4, nt), dt_gt(4, nt), zkt_gt(4, nt), Skt_gt(4*4, nt);
-    Kt_gt = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/Kt_sdf.csv");
-    dt_gt = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/dt_sdf.csv");
-    zkt_gt = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/zk_sdf.csv");
-    Skt_gt = m_io.load_csv("/home/hongzhe/git/VIMP/vimp/covariance_steering/tests/data/Sk_sdf.csv");
+    Kt_gt = m_io.load_csv("/home/hyu419/git/VIMP/vimp/covariance_steering/tests/data/Kt_sdf.csv");
+    dt_gt = m_io.load_csv("/home/hyu419/git/VIMP/vimp/covariance_steering/tests/data/dt_sdf.csv");
+    zkt_gt = m_io.load_csv("/home/hyu419/git/VIMP/vimp/covariance_steering/tests/data/zk_sdf.csv");
+    Skt_gt = m_io.load_csv("/home/hyu419/git/VIMP/vimp/covariance_steering/tests/data/Sk_sdf.csv");
 
     ASSERT_LE((Kt-Kt_gt).norm(), 1e-10);
     ASSERT_LE((dt-dt_gt).norm(), 1e-10);

@@ -11,7 +11,7 @@
 
 #include "gp/fixed_prior.h"
 #include "gp/minimum_acc_prior.h"
-#include "gvimp/GVIFactorizedGHBase.h"
+#include "gvimp/GVIFactorizedBase.h"
 #include "robots/PlanarPointRobotSDFExample.h"
 #include "gvimp/GVI-GH.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>

@@ -51,7 +51,7 @@ public:
                         _boundary_penalties(boundary_penalties),
                         _temperature(temperature),
                         _high_temperature(high_temperature),
-                        _low_temp_iterations(low_temp_iterations),
+                        _max_iter_lowtemp(low_temp_iterations),
                         _stop_err(stop_err),
                         _max_n_backtrack(max_n_backtracking),
                         _m0(VectorXd::Zero(nx)),
@@ -80,6 +80,8 @@ public:
     double coeff_Qc() const { return _coeff_Qc; }
     double initial_precision_factor() const { return _initial_precision_factor; }
     double boundary_penalties() const { return _boundary_penalties; }
+    double high_temperature() const { return _high_temperature; }
+    int max_iter_lowtemp() const { return _max_iter_lowtemp; }
     int max_n_backtrack() const { return _max_n_backtrack; }
     std::string saving_prefix() const { return _save_prefix; }
 
@@ -107,7 +109,7 @@ protected:
     std::string _save_prefix;
 
     double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio;
-    int _max_iterations, _low_temp_iterations, _max_n_backtrack;
+    int _max_iterations, _max_iter_lowtemp, _max_n_backtrack;
     int _nt, _nx, _nu;
     double _coeff_Qc, _eps_sdf, _radius, _sig_obs, _initial_precision_factor, _boundary_penalties, _temperature, _high_temperature;
 
@@ -119,7 +121,7 @@ public:
     PGCSExperimentParams(){}
 
     PGCSExperimentParams(int nx, int nu, double eps_sdf, double radius, double eps,
-                    double speed, int nt, double sig0, double sigT, double eta, 
+                    double total_time, int nt, double sig0, double sigT, double eta, 
                     double stop_err, double sig_obs, int max_iterations, double backtracking_ratio, 
                     int max_n_backtracking, std::string sdf_file=""):
                                         _nx(nx),
@@ -132,8 +134,7 @@ public:
                                         _SigT(nx, nx),
                                         _nt(nt),
                                         _max_iterations(max_iterations),
-                                        _speed(speed),
-                                        _sig(nt*speed),
+                                        _total_time(total_time),
                                         _stop_err(stop_err),
                                         _eta(eta),
                                         _eps_sdf(eps_sdf),
@@ -151,7 +152,7 @@ public:
     void set_mT(const VectorXd& mT){ _mT = mT; }
 
     void set_sigobs(double sig_obs){ _sig_obs = sig_obs; }
-    void set_speed(double speed){ _speed = speed; _sig = speed*_nt; }
+    void set_total_time(double total_time){ _total_time = total_time; }
 
     // getters
     int nx() const { return _nx; }
@@ -159,10 +160,9 @@ public:
     int nt() const { return _nt; }
     int max_iter() const { return _max_iterations; }
 
-    double speed() const { return _speed;}
     double eps_sdf() const { return _eps_sdf; }
     double radius() const { return _radius; }
-    double sig() const { return _sig;}
+    double total_time() const { return _total_time;}
     double sig0() const { return _sig0; }
     double sigT() const { return _sigT; }
     double eta() const { return _eta; }
@@ -188,11 +188,11 @@ protected:
     VectorXd _m0, _mT;
     MatrixXd _Sig0, _SigT;
 
-    double _speed, _eps_sdf, _radius, _sig0, _sigT, _eta, _stop_err, _backtrack_ratio;
+    double _eps_sdf, _radius, _sig0, _sigT, _eta, _stop_err, _backtrack_ratio;
     int _nt, _max_iterations, _max_n_backtrack;
     int _nx, _nu;
 
-    double _eps, _sig_obs, _sig;
+    double _eps, _sig_obs, _total_time;
 
     std::string _sdf_file;
 

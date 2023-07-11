@@ -1,7 +1,7 @@
 clear all
 close all
 clc
-addpath('/usr/local/gtsam_toolbox')
+addpath('home/hyu419/.local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
@@ -18,7 +18,7 @@ height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+tiledlayout(2, 2, 'TileSpacing', 'none', 'Padding', 'none')
 for i = 1:4 % 4 experiments
     nexttile
     prefix = ["map2/exp"+num2str(i)+"/"];

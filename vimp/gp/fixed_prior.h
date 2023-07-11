@@ -30,8 +30,6 @@ namespace vimp{
         public:
             double cost(const VectorXd& x) const{ return (x-_mu).transpose() * _invK * (x-_mu); }
 
-            // VectorXd get_mean() const{ return _mu; }
-
             VectorXd get_mu() const { return _mu; }
 
             MatrixXd get_precision() const{ return _invK; }

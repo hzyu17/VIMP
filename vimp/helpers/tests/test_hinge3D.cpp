@@ -23,9 +23,9 @@ EigenWrapper ei;
 
 TEST(TestHinge3D, mesh_hinge_gradient){
     vimp::MatrixIO m_io;
-    VectorXd mesh_X = m_io.load_csv("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/gridX.csv");
-    VectorXd mesh_Y = m_io.load_csv("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/gridY.csv");
-    VectorXd mesh_Z = m_io.load_csv("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/gridZ.csv");
+    VectorXd mesh_X = m_io.load_csv("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/gridX.csv");
+    VectorXd mesh_Y = m_io.load_csv("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/gridY.csv");
+    VectorXd mesh_Z = m_io.load_csv("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/gridZ.csv");
 
     int len_mesh = mesh_X.cols();
     // mesh_X.reshaped(len_mesh, 1);
@@ -33,7 +33,7 @@ TEST(TestHinge3D, mesh_hinge_gradient){
     // mesh_Z.reshaped(len_mesh, 1);
     
     gpmp2::SignedDistanceField sdf = gpmp2::SignedDistanceField();
-    sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
+    sdf.loadSDF("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
     double eps = 0.2;
     using vec_1d = std::vector<double>;
 
@@ -87,7 +87,7 @@ TEST(TestHinge3D, ObstacleFactor3DpR){
     using pRSDF3D = gpmp2::ObstacleSDFFactor<gpmp2::PointRobotModel>;
     using SDF = gpmp2::SignedDistanceField;
     SDF sdf = SDF();
-    sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
+    sdf.loadSDF("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
 
     gpmp2::PointRobot pR(3, 1);
     gpmp2::BodySphereVector body_spheres;

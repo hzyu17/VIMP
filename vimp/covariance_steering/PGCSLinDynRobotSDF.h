@@ -29,7 +29,7 @@ public:
                         PGCSExperimentParams& params):
                         ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params),
                         _eps_sdf(params.eps_sdf()),
-                        _Sig_obs(params.sig_obs()),
+                        _sig_obs(params.sig_obs()),
                         _robot_sdf(params.eps_sdf(), params.radius()),
                         _cost_helper(_max_iter){}
 
@@ -49,7 +49,7 @@ public:
             VectorXd hinge(n_spheres);
             hinge = std::get<0>(hingeloss_gradient);
 
-            MatrixXd Sig_obs{_Sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
+            MatrixXd Sig_obs{_sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             hingeloss += hinge.transpose() * Sig_obs * hinge;
         }
         return hingeloss;
@@ -271,9 +271,10 @@ public:
                 grad_h.block(i_s,0,1,_nx/2) = J_hxy.row(i_s);
                 grad_h.block(i_s,_nx/2,1,_nx/2) = J_hxy.row(i_s).cwiseProduct(velocity);
             }          
-            MatrixXd Sig_obs{_Sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
+            MatrixXd Sig_obs{_sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
+            // Hess = _sig_obs * _sig_obs * MatrixXd::Identity(_nx, _nx);
 
             // Qki
             Qki = Hess * step_size / (1+step_size) + temp * pinvBBTi * (Ai - hAi) * step_size / (1+step_size) / (1+step_size);
@@ -301,7 +302,7 @@ public:
 protected:
     RobotSDF _robot_sdf;
     double _eps_sdf;
-    double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
+    double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     CostHelper _cost_helper;
 };
 }

@@ -17,7 +17,7 @@
 </Commons>
 
 <Experiment1>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
+    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
         <x>-10.0</x>
@@ -39,12 +39,12 @@
     
     <cost_sigma> 1e8 </cost_sigma>
 
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
 
 </Experiment1>
 
 <Experiment2>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
+    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
         <x>-10.0</x>
@@ -66,12 +66,12 @@
     
     <cost_sigma> 1e6 </cost_sigma>
 
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
 
 </Experiment2>
 
 <Experiment3>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
+    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
         <x>30.0</x>
@@ -93,12 +93,12 @@
 
     <cost_sigma> 1e6 </cost_sigma>
 
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
 
 </Experiment3>
 
 <Experiment4>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
+    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
         <x>-10.0</x>
@@ -120,6 +120,6 @@
 
     <cost_sigma> 1e6 </cost_sigma>
 
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
 
 </Experiment4>

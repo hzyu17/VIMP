@@ -152,7 +152,7 @@ int main(){
     // optimizer.set_niterations(num_iter);
     // optimizer.set_step_size_base(step_size);
 
-    // std::string prefix{"/home/hongzhe/git/VIMP/vimp/data/WAM/"};
+    // std::string prefix{"/home/hyu419/git/VIMP/vimp/data/WAM/"};
     // if (replanning==0){
     //     string afterfix{"base"};
     //     optimizer.update_file_names(prefix, afterfix);

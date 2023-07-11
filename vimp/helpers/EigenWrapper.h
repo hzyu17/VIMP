@@ -401,6 +401,12 @@ public:
         mat3d.col(i) = column;
     }
 
+    // void compress3d(Matrix3D mat, Matrix3D& mat3d, int i){
+    //     Eigen::VectorXd column(mat.rows()*mat.cols());
+    //     column = mat.reshaped(mat.rows()*mat.cols(), 1);
+    //     mat3d.col(i) = column;
+    // }
+
     Matrix3D replicate3d(Eigen::MatrixXd mat, const int len){
         int rows = mat.rows(), cols = mat.cols();
         Eigen::MatrixXd mat3(rows*cols, len);

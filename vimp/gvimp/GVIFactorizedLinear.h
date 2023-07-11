@@ -2,7 +2,7 @@
  * @file GVIFactorizedLinear.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Factorized optimization steps for linear gaussian factors 
- * -log(p(x|z)) = ||Ax - B\mu_t||_{\Sigma_t^{-1}},
+ * -log(p(x|z)) = ||\Lambda X - \Psi \mu_t||_{\Sigma_t^{-1}},
  *  which has closed-form expression in computing gradients wrt variables.
  * @version 0.1
  * @date 2023-01-17
@@ -11,19 +11,19 @@
  * 
  */
 
-#include "GVIFactorizedGHBase.h"
-#include "../gp/linear_factor.h"
+#include "GVIFactorizedBase.h"
+#include "gp/linear_factor.h"
 
 namespace vimp{
-    template <typename CostClass>
+    template <typename LinearFactor>
     class GVIFactorizedLinear : public GVIFactorizedBase{
         using Base = GVIFactorizedBase;
-        using CostFunction = std::function<double(const VectorXd&, const CostClass&)>;
+        using CostFunction = std::function<double(const VectorXd&, const LinearFactor&)>;
     public:
         GVIFactorizedLinear(const int& dimension,
                             int dim_state, 
                             const CostFunction& function, 
-                            const CostClass& linear_factor,
+                            const LinearFactor& linear_factor,
                             int num_states,
                             int start_indx):
             Base(dimension, dim_state, num_states, start_indx, true),
@@ -43,7 +43,7 @@ namespace vimp{
             }
 
     protected:
-        CostClass _linear_factor;
+        LinearFactor _linear_factor;
 
         MatrixXd _target_mean, _target_precision, _Lambda, _Psi;
 
@@ -55,7 +55,7 @@ namespace vimp{
          * (partial V) / (partial mu) = Sigma_t{-1} * (mu_k - mu_t)
          * (partial V^2) / (partial mu)(partial mu^T): higher order moments of a Gaussian.
         */
-        void calculate_partial_V(){
+        void calculate_partial_V() override{
             // helper vectors
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 
@@ -83,7 +83,7 @@ namespace vimp{
             return fact_cost_value(_mu, _covariance);
         }
 
-        double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) {
+        double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) override {
             return _const_multiplier * ((_Lambda.transpose()*_target_precision*_Lambda * Cov).trace() + 
                     (_Lambda*x - _Psi*_target_mean).transpose() * _target_precision * (_Lambda*x - _Psi*_target_mean));
         }
