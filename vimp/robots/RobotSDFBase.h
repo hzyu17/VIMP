@@ -25,7 +25,7 @@
  */
 #pragma once
 
-#include "../helpers/MatrixIO.h"
+#include "helpers/MatrixIO.h"
 #include <Eigen/Dense>
 
 using namespace Eigen;

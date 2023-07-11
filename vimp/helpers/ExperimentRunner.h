@@ -171,8 +171,8 @@ public:
                         read_config_file(_params);
                     }
 
-    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
-        read_boundary_conditions(paramNode, _params);
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
+        this->read_boundary_conditions(paramNode, _params);
     }
 
     void run_one_exp(int exp, PGCSExperimentParams& param) override{
@@ -243,7 +243,7 @@ public:
         double eps = atoi(commonParams->first_node("eps")->value());
         double eps_sdf = atof(commonParams->first_node("eps_sdf")->value());
         double radius = atof(commonParams->first_node("radius")->value());
-        double speed = atof(commonParams->first_node("speed")->value());
+        double total_time = atof(commonParams->first_node("total_time")->value());
         _nt = atoi(commonParams->first_node("nt")->value());
 
         double sig0 = atof(commonParams->first_node("sig0")->value());
@@ -257,7 +257,7 @@ public:
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
         // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
-        param = PGCSExperimentParams(_nx, _nu, eps_sdf, radius, eps, speed, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations, backtracking_ratio, max_n_backtracking);
+        param = PGCSExperimentParams(_nx, _nu, eps_sdf, radius, eps, total_time, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations, backtracking_ratio, max_n_backtracking);
 
     }
 

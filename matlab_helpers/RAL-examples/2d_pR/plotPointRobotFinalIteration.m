@@ -1,6 +1,6 @@
 function output = plotPointRobotFinalIteration(means, covs, precisions, costs, factor_costs, sdfmap, niters, nsteps)
 %%
-addpath('/usr/local/gtsam_toolbox')
+addpath('/home/.hyu419/.local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 

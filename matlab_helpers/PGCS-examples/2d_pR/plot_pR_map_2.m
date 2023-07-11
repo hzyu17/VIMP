@@ -1,7 +1,7 @@
 clear all
 close all
 clc
-addpath('/usr/local/gtsam_toolbox')
+addpath('/HOME/HYU419/.local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
@@ -36,10 +36,9 @@ x0 = 500;
 y0 = 500;
 width = 1290.427199;
 height = 800;
-figure
-set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+figure
+tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
 for i = 1:4 % 4 experiments
 %     x0 = 500;

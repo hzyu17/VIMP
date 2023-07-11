@@ -11,7 +11,7 @@
 
 #include <gtest/gtest.h>
 #include "gvimp/GVI-GH.h"
-#include "gvimp/GVIFactorizedGHBase.h"
+#include "gvimp/GVIFactorizedBase.h"
 
 using namespace std;
 using namespace vimp;

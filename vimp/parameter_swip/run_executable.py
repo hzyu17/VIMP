@@ -9,5 +9,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.dof == 2:
         if args.map == 1:
-            subprocess.run("/home/hongzhe/git/VIMP/vimp/build/PlanarPRModel", shell=True, check=True)
+            subprocess.run("/home/hyu419/git/VIMP/vimp/build/PlanarPRModel", shell=True, check=True)
     

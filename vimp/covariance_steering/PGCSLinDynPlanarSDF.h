@@ -29,7 +29,7 @@ public:
                         ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params),
                         _eps_sdf(params.eps_sdf(), params.radius()),
                         _sdf(sdf),
-                        _Sig_obs(params.sig_obs()),
+                        _sig_obs(params.sig_obs()),
                         _pRsdf(params.eps_sdf(), params.radius()),
                         _cost_helper(params.max_iter())
                         {
@@ -135,12 +135,12 @@ public:
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
             // if (hinge > 0){
-            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _Sig_obs;
+            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _sig_obs;
             // }
             // Qki
             Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
-            rki = grad_h * hinge * _Sig_obs * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = grad_h * hinge * _sig_obs * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
@@ -156,7 +156,7 @@ protected:
     PlanarPRSDFExample _pRsdf;
 
     double _eps_sdf;
-    double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
+    double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.
     CostHelper _cost_helper;
 };

@@ -1,10 +1,10 @@
-#include "../gp/fixed_prior.h"
-#include "../gp/minimum_acc_prior.h"
+#include "gp/fixed_prior.h"
+#include "gp/minimum_acc_prior.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
 
-#include "../3rdparty/rapidxml-1.13/rapidxml.hpp"
-#include "../3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
+#include "3rdparty/rapidxml-1.13/rapidxml.hpp"
+#include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
 
 /**
  * @brief Fixed cost with a covariance

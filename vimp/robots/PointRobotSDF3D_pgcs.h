@@ -37,7 +37,7 @@ class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
 
         virtual void default_sdf(){
             SDF sdf = SDF();
-            sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
+            sdf.loadSDF("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
             _psdf = std::make_shared<SDF>(sdf);
         }
 

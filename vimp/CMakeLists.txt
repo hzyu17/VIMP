@@ -56,7 +56,7 @@ link_directories(/home/hyu419/.local/lib/)
 
 set(BOOST_LIBRARIES "/home/hyu419/.local/bin/boost/lib/libboost_serialization.so.1.78.0")
 link_directories(/home/hyu419/.local/lib/)
-
+ 
 # matplotcpp
 include(FetchContent)
 FetchContent_Declare(matplotplusplus

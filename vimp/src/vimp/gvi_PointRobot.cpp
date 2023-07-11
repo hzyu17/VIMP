@@ -10,13 +10,12 @@
  * 
  */
 
-
 #include "helpers/ExperimentRunner.h"
 #include "instances/GVIMPPlanarPRSDF.h"
 using namespace vimp;
 
 int main(){
-    std::string config_file{"/home/hongzhe/git/VIMP/vimp/configs/vimp/planar_pR_map2_new.xml"};
+    std::string config_file{"/home/hyu419/git/VIMP/vimp/configs/vimp/planar_pR_map2_new.xml"};
     int nx = 4, nu = 2, num_exp = 4;
     GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
     GVIMPExperimentParams params;

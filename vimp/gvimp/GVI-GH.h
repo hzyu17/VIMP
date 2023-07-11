@@ -14,7 +14,7 @@
 #include <utility>
 #include <memory>
 
-#include "../helpers/result_recorder.h"
+#include "../helpers/DataRecorder.h"
 #include "../helpers/eigen_wrapper.h"
 #include "../helpers/timer.h"
 
@@ -38,29 +38,37 @@ public:
      * @param _vec_fact_optimizers vector of marginal optimizers
      * @param niters number of iterations
      */
-    GVIGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, int dim_state, int num_states, double temperature=1.0):
-                                   _dim_state{dim_state},
-                                   _num_states{num_states},
-                                   _dim{dim_state*num_states},
-                                   _niters{10},
-                                   _temperature{temperature},
-                                   _nfactors{vec_fact_optimizers.size()},
-                                   _vec_factors{std::move(vec_fact_optimizers)},
-                                   _mu{VectorXd::Zero(_dim)},
-                                   _Vdmu{VectorXd::Zero(_dim)},
-                                   _Vddmu{SpMat(_dim, _dim)},
-                                   _precision{SpMat(_dim, _dim)},
-                                   _ldlt{_precision},
-                                   _covariance{SpMat(_dim, _dim)},
-                                   _res_recorder{_niters, _dim}
-    {
+    GVIGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, 
+          int dim_state, 
+          int num_states, 
+          int niterations=20,
+          double temperature=1.0, 
+          double high_temperature=100.0):
+            _dim_state{dim_state},
+            _num_states{num_states},
+            _dim{dim_state*num_states},
+            _niters{niterations},
+            _niters_lowtemp{10},
+            _niters_backtrack{10},
+            _stop_err{1e-5},
+            _temperature{temperature},
+            _high_temperature{high_temperature},
+            _nfactors{vec_fact_optimizers.size()},
+            _vec_factors{std::move(vec_fact_optimizers)},
+            _mu{VectorXd::Zero(_dim)},
+            _Vdmu{VectorXd::Zero(_dim)},
+            _Vddmu{SpMat(_dim, _dim)},
+            _precision{SpMat(_dim, _dim)},
+            _ldlt{_precision},
+            _covariance{SpMat(_dim, _dim)},
+            _res_recorder{niterations, dim_state, num_states, _nfactors}
+    {            
                 _precision.setZero();
                 // fill in the precision matrix to the known sparsity pattern
                 for (int i=0; i<num_states-1; i++){
-                    Eigen::MatrixXd block = MatrixXd::Ones(2*_dim_state, 2*_dim_state);
-                    _ei.block_insert_sparse(_precision, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
+                    Eigen::MatrixXd block = MatrixXd::Ones(2*dim_state, 2*dim_state);
+                    _ei.block_insert_sparse(_precision, i*dim_state, i*dim_state, 2*dim_state, 2*dim_state, block);
                 }
-
                 SpMat lower = _precision.triangularView<Eigen::Lower>();
                 _ei.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
                 _nnz = _Rows.rows();
@@ -71,7 +79,11 @@ public:
 
 protected:
     /// optimization variables
-    int _dim, _niters, _nfactors, _dim_state, _num_states;
+    int _dim, _niters, _niters_lowtemp, _niters_backtrack, _nfactors, _dim_state, _num_states;
+
+    double _temperature, _high_temperature;
+
+    double _stop_err;
 
     /// @param _vec_factors Vector of marginal optimizers
     vector<std::shared_ptr<FactorizedOptimizer>> _vec_factors;
@@ -80,8 +92,6 @@ protected:
 
     VectorXd _Vdmu;
     SpMat _Vddmu;
-    
-    double _temperature;
 
     /// Data and result storage
     VIMPResults _res_recorder;
@@ -152,6 +162,8 @@ public:
      */
     VectorXd factor_costs() const;
 
+    inline double stop_error() const { return _stop_err; }
+
 
 /// **************************************************************
 /// Internal data IO
@@ -217,8 +229,12 @@ public:
     /// update the step sizes
     inline void set_step_size(double step_size){ _step_size = step_size; }
 
+    inline void set_stop_err(double stop_err) { _stop_err = stop_err; }
+
     /// The base step size in backtracking
     inline void set_step_size_base(double step_size_base){ _step_size_base = step_size_base; }
+
+    inline void set_max_iter_backtrack(double max_backtrack_iter){ _niters_backtrack = max_backtrack_iter; }
 
     inline void set_mu(const VectorXd& mean){
         _mu = mean; 
@@ -228,10 +244,6 @@ public:
     }
 
     inline void set_precision(const SpMat& new_precision);
-    
-    inline void set_niterations(int niters){
-        _niters = niters;
-        _res_recorder.update_niters(niters); }
 
     inline void set_initial_values(const VectorXd& init_mean, const SpMat& init_precision){
         set_mu(init_mean);
@@ -242,6 +254,18 @@ public:
         for (auto & opt_fact : _vec_factors){
             opt_fact->set_GH_points(deg);
         }
+    }
+
+    inline void set_niter_low_temperature(int iters_low_temp){
+        _niters_lowtemp = iters_low_temp;
+    }
+
+    inline void set_temperature(double temperature){
+        _temperature = temperature;
+    }
+
+    inline void set_high_temperature(double high_temp){
+        _high_temperature = high_temp;
     }
 
     
@@ -334,6 +358,10 @@ public:
 
     inline int n_sub_factors() const{ return _nfactors; }
 
+    inline int max_iter() const { return _niters; }
+
+    inline int max_iter_backtrack() const { return _niters_backtrack; }
+
     /**
      * @brief calculate and return the E_q{phi(x)} s for each factorized entity.
      * @return vector<double> 
@@ -369,7 +397,6 @@ public:
         }
         return res;
     }
-
 
     /**************************** ONLY FOR 1D CASE ***********************/
     /**
@@ -408,4 +435,4 @@ public:
     }; //class
 } //namespace vimp
 
-#include "../gvimp/GVI-GH-impl.h"
+#include "gvimp/GVI-GH-impl.h"
