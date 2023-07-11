@@ -20,7 +20,7 @@
 #include "linear_factor.h"
 
 #include "base/Matrix.h"
-#include "helpers/eigen_wrapper.h"
+#include "helpers/EigenWrapper.h"
 
 namespace vimp{
     class MinimumAccGP : public LinearFactor{

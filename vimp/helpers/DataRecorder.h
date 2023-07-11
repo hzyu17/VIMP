@@ -11,7 +11,7 @@
 
 #include "repeated_includes.h"
 #include "base/Matrix.h"
-#include "eigen_wrapper.h"
+#include "EigenWrapper.h"
 #include <vector>
 
 using namespace std;

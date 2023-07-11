@@ -14,14 +14,10 @@
 #include <utility>
 #include <memory>
 
-<<<<<<< HEAD
-#include "../helpers/result_recorder.h"
-#include "../helpers/EigenWrapper.h"
-=======
-#include "../helpers/DataRecorder.h"
-#include "../helpers/eigen_wrapper.h"
->>>>>>> c9ec428f679d527b4ef883b1a47817115577036a
-#include "../helpers/timer.h"
+#include "helpers/DataRecorder.h"
+#include "helpers/EigenWrapper.h"
+
+#include "helpers/timer.h"
 
 using namespace std;
 using namespace Eigen;
