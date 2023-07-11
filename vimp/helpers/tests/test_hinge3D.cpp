@@ -12,7 +12,7 @@
 #include <gtest/gtest.h>
 #include <gpmp2/obstacle/SignedDistanceField.h>
 #include <gpmp2/obstacle/ObstacleCost.h>
-#include "../eigen_wrapper.h"
+#include "../EigenWrapper.h"
 #include "../hinge3Dhelper.h"
 #include <matplot/matplot.h>
 

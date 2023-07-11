@@ -11,7 +11,7 @@
 
 #include "covariance_steering/LinearCovarianceSteering.h"
 #include <gtest/gtest.h>
-#include "helpers/eigen_wrapper.h"
+#include "helpers/EigenWrapper.h"
 #include "helpers/MatrixIO.h"
 
 using namespace vimp;

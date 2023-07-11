@@ -12,7 +12,7 @@
 #include<gtest/gtest.h>
 
 #include "helpers/timer.h"
-#include "helpers/eigen_wrapper.h"
+#include "helpers/EigenWrapper.h"
 #include "helpers/MatrixIO.h"
 
 #include<Eigen/IterativeLinearSolvers>

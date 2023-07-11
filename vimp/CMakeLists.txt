@@ -10,14 +10,11 @@ if(NOT DEFINED CMAKE_MACOSX_RPATH)
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
-# set(CMAKE_PREFIX_PATH "/home/huy419/.local" ${CMAKE_PREFIX_PATH})
-link_directories(/home/hyu419/.local/bin/boost/lib)
- 
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 
-set(BOOST_ROOT "/home/hyu419/.local/bin/boost")
-list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
+# set(BOOST_ROOT "/home/hyu419/.local/bin/boost")
+# list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
 # Boost - same requirement as gtsam
 find_package(Boost 1.70 REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
@@ -48,14 +45,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 find_package( Eigen3 3.4.0 REQUIRED
               gpmp2 REQUIRED)
 
-set(GPMP2_LIBRARIES "/home/hyu419/.local/lib/libgpmp2.so")
-link_directories(/home/hyu419/.local/lib/)
-
-set(GTSAM_LIBRARIES "/home/hyu419/.local/lib/libgtsam.so.4.0.0")
-link_directories(/home/hyu419/.local/lib/)
-
-set(BOOST_LIBRARIES "/home/hyu419/.local/bin/boost/lib/libboost_serialization.so.1.78.0")
-link_directories(/home/hyu419/.local/lib/)
 
 # matplotcpp
 include(FetchContent)
@@ -69,8 +58,6 @@ if(NOT matplotplusplus_POPULATED)
     add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
-# set(MATPLOT_ROOT "/home/hyu419/.local/install/include/matplot")
-# list(APPEND CMAKE_PREFIX_PATH "${MATPLOT_ROOT}") 
 # find_package(Matplot++ REQUIRED)
 
 # adept

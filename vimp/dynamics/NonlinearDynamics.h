@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "helpers/eigen_wrapper.h"
+#include "helpers/EigenWrapper.h"
 #include "dynamics/LinearDynamics.h"
 
 using namespace Eigen;

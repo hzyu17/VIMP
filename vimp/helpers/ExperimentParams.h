@@ -12,7 +12,7 @@
 #pragma once
 
 #include "helpers/MatrixIO.h"
-#include "helpers/eigen_wrapper.h"
+#include "helpers/EigenWrapper.h"
 
 namespace vimp{
 

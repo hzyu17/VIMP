@@ -15,7 +15,7 @@
 #include <memory>
 
 #include "../helpers/result_recorder.h"
-#include "../helpers/eigen_wrapper.h"
+#include "../helpers/EigenWrapper.h"
 #include "../helpers/timer.h"
 
 using namespace std;

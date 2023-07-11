@@ -9,7 +9,7 @@
  * 
  */
 
-#include "../helpers/eigen_wrapper.h"
+#include "../helpers/EigenWrapper.h"
 #include <vector>
 
 using namespace Eigen;

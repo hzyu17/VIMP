@@ -13,7 +13,7 @@
 #include "robots/PlanarPointRobotSDF_pgcs.h"
 #include "3rdparty/rapidxml-1.13/rapidxml.hpp"
 #include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
-#include "../../helpers/eigen_wrapper.h"
+#include "../../helpers/EigenWrapper.h"
 
 using namespace rapidxml;
 using namespace vimp;

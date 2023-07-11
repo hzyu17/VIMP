@@ -1,5 +1,5 @@
 /**
- * @file eigen_wrappers.h
+ * @file EigenWrapper.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Wrappers for Eigen libraries.
  * @version 0.1

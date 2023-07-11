@@ -12,7 +12,7 @@
 #include <gpmp2/obstacle/ObstacleCost.h>
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include "MatrixIO.h"
-#include "eigen_wrapper.h"
+#include "EigenWrapper.h"
 
 using namespace Eigen;
 using namespace vimp;
