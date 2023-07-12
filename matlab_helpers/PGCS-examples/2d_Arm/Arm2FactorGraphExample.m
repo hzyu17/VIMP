@@ -22,7 +22,9 @@ field = signedDistanceField2D(dataset.map, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);
 
 % save field
-csvwrite("/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_one_obs.csv", field);
+csvwrite("map1/field.csv", field);
+% save map
+csvwrite("map1/map.csv", dataset.map);
 
 % plot sdf
 figure(2)

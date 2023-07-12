@@ -6,7 +6,7 @@
     <total_time> 10 </total_time>
     <nt> 50 </nt>
     <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
+    <sigT> 0.01 </sigT>
     <eta> 1e-4 </eta>
     <stop_err> 1e-3 </stop_err>
     <max_iter> 30 </max_iter>
@@ -33,10 +33,10 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <eta> 5e-5 </eta>
-    <cost_sigma> 4.9e4 </cost_sigma>
+    <eta> 1e-4 </eta>
+    <cost_sigma> 3e4 </cost_sigma>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case1/</saving_prefix>
 
 </Experiment1>
 
@@ -60,6 +60,6 @@
     <!-- <cost_sigma> 4.3e-6 </cost_sigma> -->
     <cost_sigma> 4.3e3 </cost_sigma>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case2/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case2/</saving_prefix>
 
 </Experiment2>
