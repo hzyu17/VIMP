@@ -31,10 +31,10 @@ link_directories(${Boost_LIBRARY_DIRS})
 # Find GTSAM components
 find_package(GTSAM REQUIRED) # Uses installed package
 include_directories(${GTSAM_INCLUDE_DIR})
-set(GTSAM_LIBRARIES "/usr/local/lib/libgtsam.so.4.0.0")
-link_directories(/home/hzyu/local/lib/)
-set(GPMP2_LIBRARIES "/usr/local/lib/libgpmp2.so")
-link_directories(/home/hzyu/local/lib/)
+set(GTSAM_LIBRARIES "/home/hyu419/.local/lib/libgtsam.so.4.0.0")
+link_directories(/home/hyu419/.local/lib/)
+set(GPMP2_LIBRARIES "/home/hyu419/.local/lib/libgpmp2.so")
+link_directories(/home/hyu419/.local/lib/)
 
 # set(GTSAM_LIBRARIES gtsam)   # TODO: automatic search libs
 

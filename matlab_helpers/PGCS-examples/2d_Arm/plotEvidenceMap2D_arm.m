@@ -22,7 +22,7 @@ h = image(grid_X, grid_Y, (1-prob_grid)*2+1);
 set(gca,'YDir','normal')
 
 ax = gca; % current axes
-ax.TickDir = 'none';
+% ax.TickDir = 'none';
 
 axis equal
 axis([origin_x-cell_size/2*1.2, grid_corner_x+cell_size/2*1.2, ...

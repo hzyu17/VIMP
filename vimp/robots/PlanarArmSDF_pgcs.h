@@ -21,18 +21,15 @@ using namespace gpmp2;
 using ArmSDF = gpmp2::ObstaclePlanarSDFFactor<gpmp2::ArmModel>;
 
 namespace vimp{
-
-class PlanarArmSDFExample: public RobotSDFBase<gpmp2::ArmModel, gpmp2::PlanarSDF, ArmSDF>{
+using Base = RobotSDFBase<gpmp2::ArmModel, gpmp2::PlanarSDF, ArmSDF>;
+class PlanarArmSDFExample: public Base{
     public:
-        PlanarArmSDFExample(double epsilon):_eps(epsilon){
+        PlanarArmSDFExample(double epsilon, double radius):Base(2, 1), 
+                                                           _eps(epsilon), 
+                                                           _r(radius)
+        {
             default_sdf();
-            generate_arm_sdf(*_psdf, 0.01);
-        }
-
-        PlanarArmSDFExample(double epsilon, double r): _eps(epsilon), _r(r){
-            // default sdf
-            default_sdf();
-            generate_arm_sdf(*_psdf, r);
+            generate_arm_sdf(*(Base::_psdf), radius);
         }
 
         void default_sdf(){
@@ -72,7 +69,7 @@ class PlanarArmSDFExample: public RobotSDFBase<gpmp2::ArmModel, gpmp2::PlanarSDF
 
                 _robot = gpmp2::ArmModel{abs_arm, body_spheres};
 
-            _psdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));
+                _psdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));
         }
 
         inline void update_sdf(const gpmp2::PlanarSDF& sdf){
@@ -83,7 +80,6 @@ class PlanarArmSDFExample: public RobotSDFBase<gpmp2::ArmModel, gpmp2::PlanarSDF
 
         public:       
             double _eps, _r;
-            int _ndof = 2, _nlinks = 1;
 
 };
 }

@@ -7,6 +7,8 @@ addpath('/home/hyu419/.local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
+addpath("../../error_ellipse");
+
 map = 2;
 exp = 1;
 
@@ -37,8 +39,6 @@ end
 means = csvread([prefix+"/zk_sdf.csv"]);
 covs = csvread([prefix+"/Sk_sdf.csv"]);
 
-addpath("../../error_ellipse");
-
 % ----- parameters -----
 [ndim, nt] = size(means);
 dim_theta = 4;
@@ -67,7 +67,7 @@ width = 400;
 height = 350;
 figure(1)
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 % t=title("2-link arm");
 t.FontSize = 16;

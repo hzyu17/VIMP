@@ -2,17 +2,17 @@
 
     <eps> 0.01 </eps>
     <eps_sdf> 0.75 </eps_sdf>
-    <radius> 1.5 </radius>
-    <total_time> 10.5 </total_time>
+    <radius> 0.01 </radius>
+    <total_time> 10 </total_time>
     <nt> 50 </nt>
     <sig0> 0.01 </sig0>
-    <sigT> 0.02 </sigT>
+    <sigT> 0.01 </sigT>
     <eta> 1e-4 </eta>
     <stop_err> 1e-3 </stop_err>
-    <max_iter> 50 </max_iter>
+    <max_iter> 20 </max_iter>
     <cost_sigma> 5.6e3 </cost_sigma>
-    <backtracking_ratio> 0.7 </backtracking_ratio>
-    <max_n_backtracking> 3 </max_n_backtracking>
+    <backtracking_ratio> 0.8 </backtracking_ratio>
+    <max_n_backtracking> 5 </max_n_backtracking>
 
     <!-- <nt> 50 </nt>
     <eps_sdf> 0.75 </eps_sdf>
@@ -43,7 +43,7 @@
     </goal_pos>
 
     <eta> 1e-4 </eta>
-    <cost_sigma> 4.3e-6 </cost_sigma>
+    <cost_sigma> 2.4556e4 </cost_sigma>
 
     <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
 
@@ -67,7 +67,8 @@
     </goal_pos>
 
     <eta> 1e-4 </eta>
-    <cost_sigma> 4.3e-6 </cost_sigma>
+    <!-- <cost_sigma> 4.3e-6 </cost_sigma> -->
+    <cost_sigma> 4.3e3 </cost_sigma>
 
     <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case2/</saving_prefix>
 
