@@ -1,21 +1,21 @@
 <Commons>
     <eps> 0.01 </eps>
 
-    <nt> 200 </nt>
-    <total_time> 9 </total_time>
+    <nt> 100 </nt>
+    <total_time> 20 </total_time>
 
     <sig0> 0.01 </sig0>
-    <sigT> 0.04 </sigT>
+    <sigT> 0.05 </sigT>
 
-    <eps_sdf> 1.0 </eps_sdf>
+    <eps_sdf> 0.7 </eps_sdf>
     <radius> 1.5 </radius>
 
-    <eta> 7e-4 </eta>
+    <eta> 1e-5 </eta>
     <stop_err> 1e-5 </stop_err>
-    <max_iter> 100 </max_iter>
+    <max_iter> 50 </max_iter>
     
-    <backtracking_ratio> 0.5 </backtracking_ratio>
-    <max_n_backtracking> 10 </max_n_backtracking>
+    <backtracking_ratio> 0.7 </backtracking_ratio>
+    <max_n_backtracking> 1 </max_n_backtracking>
 
     <cost_sigma> 2.5e3 </cost_sigma>
 
@@ -39,7 +39,7 @@
         <vy>0.0</vy>
     </goal_pos>
     
-    <cost_sigma> 2.5e3 </cost_sigma>
+    <cost_sigma> 5e3 </cost_sigma>
 
     <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/</saving_prefix>
 
