@@ -22,11 +22,12 @@ make install
 **[GTSAM](https://github.com/borglab/gtsam)**
  Build and installation:
  ```
- git clone https://github.com/borglab/gtsam.git 
+ git clone https://github.com/hzyu17/gtsam.git 
  cd gtsam
- git caheckout wrap-export
  mkdir build && cd build
- cmake -DGTSAM_BUILD_PYTHON:=OFF -DGTSAM_INSTALL_MATLAB_TOOLBOX:=ON -DGTSAM_ALLOW_DEPRECATED_SINCE_V4:=OFF -DGTSAM_INSTALL_CYTHON_TOOLBOX:=OFF  -DGTSAM_USE_SYSTEM_EIGEN:=ON -DGTSAM_BUILD_UNSTABLE:=OFF
+ cmake -DGTSAM_BUILD_PYTHON:=OFF -DGTSAM_INSTALL_MATLAB_TOOLBOX:=ON \
+-DGTSAM_ALLOW_DEPRECATED_SINCE_V4:=OFF -DGTSAM_INSTALL_CYTHON_TOOLBOX:=OFF \
+ -DGTSAM_USE_SYSTEM_EIGEN:=ON -DGTSAM_BUILD_UNSTABLE:=OFF
  -DGTSAM_WITH_TBB:=OFF .. 
  sudo make install
  ```
@@ -36,7 +37,7 @@ make install
 **[GPMP2](https://github.com/gtrll/gpmp2)**
 Build and installation:
  ```
- git clone https://github.com/gtrll/gpmp2.git
+ git clone https://github.com/hzyu17/gpmp2.git
  cd gpmp2 && mkdir build && cd build\
  cmake -DGPMP2_BUILD_PYTHON_TOOLBOX:=OFF -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON .. 
  sudo make install 
@@ -60,7 +61,10 @@ cmake -DCMAKE_INSTALL_PREFIX=/PREFIX -DGTSAM_BUILD_PYTHON:=OFF -DGTSAM_BUILD_MAT
 ```
 2. GPMP2
 ```
-cmake -DCMAKE_INSTALL_PREFIX=/PREFIX -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON -DCMAKE_PREFIX_PATH=/PREFIX -DBOOST_ROOT=/PREFIX/bin/boost -DBOOST_INCLUDEDIR=/PREFIX/bin/boost/include/boost -DBOOST_LIBRARYDIR=/PREFIX/bin/boost/lib -DBoost_NO_BOOST_CMAKE=TRUE ..
+cmake -DCMAKE_INSTALL_PREFIX=/PREFIX -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON \
+-DCMAKE_PREFIX_PATH=/PREFIX -DBOOST_ROOT=/PREFIX/bin/boost \
+-DBOOST_INCLUDEDIR=/PREFIX/bin/boost/include/boost \
+-DBOOST_LIBRARYDIR=/PREFIX/bin/boost/lib -DBoost_NO_BOOST_CMAKE=TRUE ..
 ```
 
 ## Citation
