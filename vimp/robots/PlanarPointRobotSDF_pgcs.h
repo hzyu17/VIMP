@@ -25,17 +25,21 @@ namespace vimp{
 using Base = RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>;
 class PlanarPRSDFExample: public Base{
     public:
-        PlanarPRSDFExample(double epsilon, double radius): Base(2, 1), 
-                                                           _eps(epsilon), 
-                                                           _r(radius)
-        {
+        PlanarPRSDFExample(double epsilon, double radius, const std::string& field_file, const std::string& sdf_file=""): 
+        Base(2, 1, "/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv", ""), 
+        _eps(epsilon), 
+        _r(radius)
+        {   
+            if (!field_file.empty()){
+                Base::update_field_file(field_file);
+            }
             default_sdf();
             generate_pr_sdf(*(Base::_psdf), radius);
         }
 
         void default_sdf(){
             /// map and sdf
-            MatrixXd field{_m_io.load_csv("/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv")};
+            MatrixXd field{_m_io.load_csv(Base::_field_file)};
 
             // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
             Point2 origin(-20, -10);

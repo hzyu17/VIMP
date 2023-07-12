@@ -151,7 +151,7 @@ public:
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
         
-        read_boundary_conditions(paramNode, params);
+        this->read_boundary_conditions(paramNode, params);
                 
         MatrixIO matrix_io;
         // An example pr and sdf
@@ -262,6 +262,16 @@ public:
 
         param = PGCSExperimentParams(_nx, _nu, eps_sdf, radius, eps, total_time, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations, backtracking_ratio, max_n_backtracking);
 
+        if (commonParams->first_node("field_file")){
+            std::string field = static_cast<std::string>(commonParams->first_node("field_file")->value());
+            param.update_field_file(field);
+        }
+
+        if (commonParams->first_node("sdf_file")){
+            std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
+            param.update_sdf_file(sdf_file);
+        }
+
     }
 
     virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSExperimentParams& param){
@@ -283,6 +293,9 @@ public:
 
         param.set_m0(m0);
         param.set_mT(mT);
+
+        double eta = atof(paramNode->first_node("eta")->value());
+        param.update_step_size(eta);
 
         double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
         param.update_sig_obs(cost_sigma);

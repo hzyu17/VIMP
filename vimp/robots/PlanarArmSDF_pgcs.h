@@ -24,17 +24,21 @@ namespace vimp{
 using Base = RobotSDFBase<gpmp2::ArmModel, gpmp2::PlanarSDF, ArmSDF>;
 class PlanarArmSDFExample: public Base{
     public:
-        PlanarArmSDFExample(double epsilon, double radius):Base(2, 1), 
-                                                           _eps(epsilon), 
-                                                           _r(radius)
+        PlanarArmSDFExample(double epsilon, double radius, const std::string& field_file, const std::string& sdf_file=""):
+        Base(2, 1, "/home/hyu419/git/VIMP/vimp/data/pgcs/2d_Arm/field_two_obs.csv", ""), 
+        _eps(epsilon), 
+        _r(radius)
         {
+            if (!field_file.empty()){
+                Base::update_field_file(field_file);
+            }
             default_sdf();
             generate_arm_sdf(*(Base::_psdf), radius);
         }
 
         void default_sdf(){
             /// map and sdf
-            MatrixXd field{_m_io.load_csv("/home/hyu419/git/VIMP/vimp/data/pgcs/2d_Arm/field_two_obs.csv")};
+            MatrixXd field{_m_io.load_csv(Base::_field_file)};
 
             // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
             Point2 origin(-20, -10);
@@ -80,6 +84,5 @@ class PlanarArmSDFExample: public Base{
 
         public:       
             double _eps, _r;
-
 };
 }

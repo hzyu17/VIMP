@@ -14,20 +14,11 @@
     <backtracking_ratio> 0.7 </backtracking_ratio>
     <max_n_backtracking> 5 </max_n_backtracking>
 
-    <!-- <nt> 50 </nt>
-    <eps_sdf> 0.75 </eps_sdf>
-    <speed> 0.3 </speed>
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-    <eta> 1e-6 </eta>
-    <stop_err> 1e-4 </stop_err>
-    <max_iter> 20 </max_iter> -->
+    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_one_obs.csv</field_file>
 
 </Commons>
 
 <Experiment1>
-    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
-    
     <start_pos>
         <x>0.0</x>
         <y>0.0</y>
@@ -50,7 +41,6 @@
 </Experiment1>
 
 <Experiment2>
-    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
     
     <start_pos>
         <x>-1.5707963</x>

@@ -22,22 +22,26 @@ using SDF = gpmp2::SignedDistanceField;
 using pRSDF = gpmp2::ObstacleSDFFactor<PRModel>;
 
 namespace vimp{
-
+using Base = RobotSDFBase<PRModel, SDF, pRSDF>;
 class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
     public:
         virtual ~PointRobot3DSDFExample(){}
         
-        PointRobot3DSDFExample(double epsilon, double radius):RobotSDFBase<PRModel, SDF, pRSDF>(3, 1),
-                                                              _eps(epsilon), 
-                                                              _r(radius)
+        PointRobot3DSDFExample(double epsilon, double radius, const std::string & field, const std::string& sdf_file):
+        Base(3, 1, "", "/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin"),
+        _eps(epsilon), 
+        _r(radius)
         {
+            if (!sdf_file.empty()){
+                Base::update_sdf_file(sdf_file);
+            }
             default_sdf();
             generate_pr_sdf(*_psdf, radius);
         }
 
         virtual void default_sdf(){
             SDF sdf = SDF();
-            sdf.loadSDF("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
+            sdf.loadSDF(Base::_sdf_file);
             _psdf = std::make_shared<SDF>(sdf);
         }
 

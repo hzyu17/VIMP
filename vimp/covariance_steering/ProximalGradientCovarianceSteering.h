@@ -45,7 +45,7 @@ namespace vimp{
                         _nx(params.nx()),
                         _nu(params.nu()),
                         _nt(params.nt()),
-                        _eta(params.eta()),
+                        _eta(params.step_size()),
                         _Akt(_ei.replicate3d(A0, _nt)),
                         _akt(_ei.replicate3d(a0, _nt)),
                         _Bt(_ei.replicate3d(B, _nt)),

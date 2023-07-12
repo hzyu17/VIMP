@@ -67,14 +67,14 @@ width = 400;
 height = 350;
 figure(1)
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+tiledlayout(1, 2, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 % t=title("2-link arm");
 t.FontSize = 16;
 
 hold on 
 plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
-for j = 1:nt
+for j = 1:2:nt
     % gradual changing colors
     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, alpha];
@@ -86,22 +86,17 @@ plotPlanarArm1(arm.fk_model(), end_conf, 'g', 4, true);
 axis off;
 hold off
 
-% % initial and final time covariance
-% covs(1:2, 1:2, 1)
-% covs(1:2, 1:2, 24)
+% ------ configuration space trajectory ------
+nexttile
+hold on 
+t.FontSize = 16;
 
-% % ------ configuration space trajectory ------
-% nexttile
-% hold on 
-% t.FontSize = 16;
-% 
-% nt = size(means, 2);
-% for i=1:nt
-%     scatter(means(1, i), means(2, i), 20, 'k', 'fill');
-%     error_ellipse(covs(1:2,1:2,i), means(1:2, i));
-% end
-% hold off
-
+nt = size(means, 2);
+for i=1:nt
+    scatter(means(1, i), means(2, i), 20, 'k', 'fill');
+    error_ellipse(covs(1:2,1:2,i), means(1:2, i));
+end
+hold off
 
 
 % %% ==== animated motion plan ==== 

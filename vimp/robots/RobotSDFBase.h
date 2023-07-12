@@ -36,10 +36,16 @@ template <typename ROBOT, typename SDF, typename SDFFACTOR>
 class RobotSDFBase{
 
 public:
-    RobotSDFBase(){}
-    RobotSDFBase(int ndof, int nlinks): _ndof(ndof), _nlinks(nlinks){}
-    
     virtual ~RobotSDFBase(){}
+
+    RobotSDFBase(){}
+
+    RobotSDFBase(int ndof, int nlinks): 
+    _ndof(ndof), _nlinks(nlinks){}
+
+    RobotSDFBase(int ndof, int nlinks, const std::string& field_file, const std::string& sdf_file): 
+    _ndof(ndof), _nlinks(nlinks), _field_file(field_file), _sdf_file(sdf_file){}
+    
 
     virtual void update_sdf(const SDF& sdf) = 0;
     virtual void default_sdf() = 0;
@@ -64,6 +70,9 @@ public:
     virtual inline int ndof() const {return _ndof;}
     virtual inline int nlinks() const {return _nlinks;}
 
+    inline void update_sdf_file(const string & sdf_file){ _sdf_file = sdf_file; }
+    inline void update_field_file(const string & field_file){ _field_file = field_file; }
+
 public:
     ROBOT _robot;
     SDF _sdf;
@@ -72,6 +81,8 @@ public:
     int _ndof, _nlinks;
 
     MatrixIO _m_io;
+
+    std::string _field_file, _sdf_file;
 };
 
 }

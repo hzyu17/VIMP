@@ -23,7 +23,7 @@ public:
     virtual ~GVIMPPlanarRobotSDF(){}
     GVIMPPlanarRobotSDF(){}
     GVIMPPlanarRobotSDF(GVIMPExperimentParams& params):
-    _robot_sdf(params.eps_sdf(), params.radius())
+    _robot_sdf(params.eps_sdf(), params.radius(), params.field_file(), params.sdf_file())
     {}
 
     void run_optimization(const GVIMPExperimentParams& params){
