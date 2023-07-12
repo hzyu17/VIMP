@@ -2,10 +2,10 @@
     <eps> 0.01 </eps>
 
     <nt> 200 </nt>
-    <total_time> 9 </total_time>
+    <total_time> 10 </total_time>
 
     <sig0> 0.01 </sig0>
-    <sigT> 0.04 </sigT>
+    <sigT> 0.05 </sigT>
 
     <eps_sdf> 1.0 </eps_sdf>
     <radius> 1.5 </radius>
@@ -39,7 +39,7 @@
         <vy>0.0</vy>
     </goal_pos>
     
-    <cost_sigma> 2.5e3 </cost_sigma>
+    <cost_sigma> 3.5e3 </cost_sigma>
 
     <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/</saving_prefix>
 

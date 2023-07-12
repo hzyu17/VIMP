@@ -95,6 +95,7 @@ public:
     void set_mT(const VectorXd& mT){ _mT = mT; }
 
     void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
+    void update_step_size(double step_size){ _step_size = step_size; }
     void set_temperature(double temperature){ _temperature = temperature; }
     void set_high_temperature(double high_temp){ _high_temperature = high_temp; }
     void set_boundary_penalties(double boundary_penalties){ _boundary_penalties = boundary_penalties; }
