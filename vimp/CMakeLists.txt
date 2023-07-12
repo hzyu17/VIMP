@@ -31,7 +31,12 @@ link_directories(${Boost_LIBRARY_DIRS})
 # Find GTSAM components
 find_package(GTSAM REQUIRED) # Uses installed package
 include_directories(${GTSAM_INCLUDE_DIR})
-set(GTSAM_LIBRARIES gtsam)   # TODO: automatic search libs
+set(GTSAM_LIBRARIES "/usr/local/lib/libgtsam.so.4.0.0")
+link_directories(/home/hzyu/local/lib/)
+set(GPMP2_LIBRARIES "/usr/local/lib/libgpmp2.so")
+link_directories(/home/hzyu/local/lib/)
+
+# set(GTSAM_LIBRARIES gtsam)   # TODO: automatic search libs
 
 find_package(GTSAMCMakeTools)
 include(GtsamMakeConfigFile)
@@ -47,18 +52,18 @@ find_package( Eigen3 3.4.0 REQUIRED
 
 
 # matplotcpp
-# include(FetchContent)
-# FetchContent_Declare(matplotplusplus
-#         GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus
-#         GIT_TAG origin/master) # or whatever tag you want
+include(FetchContent)
+FetchContent_Declare(matplotplusplus
+        GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus
+        GIT_TAG origin/master) # or whatever tag you want
 
-# FetchContent_GetProperties(matplotplusplus)
-# if(NOT matplotplusplus_POPULATED)
-#     FetchContent_Populate(matplotplusplus)
-#     add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
-# endif()
+FetchContent_GetProperties(matplotplusplus)
+if(NOT matplotplusplus_POPULATED)
+    FetchContent_Populate(matplotplusplus)
+    add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
-find_package(Matplot++ REQUIRED)
+# find_package(Matplot++ REQUIRED)
 
 # adept
 # find_package(FastAD CONFIG REQUIRED)
