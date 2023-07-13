@@ -169,5 +169,5 @@ for i=0:total_time_step
     pause(pause_time), hold off
 end
 
-writecsv("map1/gpmp2/case1/zt_gpmp2.csv", confs);
+csvwrite("map1/case1/gpmp2/zt_gpmp2.csv", confs);
 

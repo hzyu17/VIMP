@@ -18,25 +18,10 @@ switch map
     case 1
         prefix = "map1";
         sdfmap = csvread("map1/map.csv");
-        switch exp
-            case 1
-                prefix = "map1/case1";
-                prefix_gpmp2 = "map1/case1/gpmp2";
-                % boundary conditions
-                start_conf = [0, 0]';
-                start_vel = [0, 0]';
-                end_conf = [pi/2, 0]';
-                end_vel = [0, 0]';
-            case 2
-                prefix = "map1/case2";
-                prefix_gpmp2 = "map1/case2/gpmp2";
-                % boundary conditions
-                start_conf = [-pi/2, 0]';
-                start_vel = [0.1, 0]';
-                end_conf = [pi/2, 0]';
-                end_vel = [0, 0]';
-        end
-
+        start_conf = [0, 0]';
+        start_vel = [0, 0]';
+        end_conf = [pi/2, 0]';
+        end_vel = [0, 0]';
     case 2
         sdfmap = csvread("map2/map.csv");
         prefix_gpmp2 = "map2";
@@ -58,13 +43,9 @@ switch map
         end
 end
 
-% read pgcs results
-[prefix+"/zk_sdf.csv"]
+% read results
 means = csvread([prefix+"/zk_sdf.csv"]);
 covs = csvread([prefix+"/Sk_sdf.csv"]);
-
-% read gpmp2 results
-means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
 
 % ----- parameters -----
 [ndim, nt] = size(means);
@@ -119,7 +100,7 @@ nexttile
 hold on 
 
 % read gpmp2 results
-means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
+means_gpmp2 = csvread([prefix_gpmp2+"/gpmp2/zt_gpmp2.csv"]);
 nt_gpmp2 = size(means_gpmp2, 2);
 
 % plot gpmp2 results
@@ -139,7 +120,6 @@ scatter(start_conf(1), start_conf(2), 20, 'r', 'fill');
 scatter(end_conf(1), end_conf(2), 20, 'g', 'fill');
 
 t.FontSize = 16;
-axis off
 hold off
 
 

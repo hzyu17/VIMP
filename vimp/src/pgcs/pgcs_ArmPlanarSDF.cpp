@@ -27,15 +27,12 @@ int main(int argc, char* argv[]){
         return 0;
     }
     // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
-    else if (argc == 18){
+    else if (argc == 15){
 
         int i_exp = std::stoi(argv[1]);
         double eps = std::stof(argv[2]);
         double eps_sdf = std::stof(argv[3]);
         double radius = std::stof(argv[4]);
-        double cell_size = std::stof(argv[5]);
-        double origin_x = std::stof(argv[6]);
-        double origin_y = std::stof(argv[7]);
         double speed = std::stof(argv[8]);
         int nt = std::stof(argv[9]);
         double sig0 = std::stof(argv[10]);

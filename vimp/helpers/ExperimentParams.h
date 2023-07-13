@@ -84,6 +84,8 @@ public:
     inline void update_field_file(const std::string& field){ _field_file = field; }
     inline void update_sdf_file(const std::string& sdf_file){ _sdf_file = sdf_file; }
 
+    virtual inline void print_params() = 0; 
+
 protected:
     double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio;
     int _nt, _nx, _nu;
@@ -160,6 +162,25 @@ public:
     void set_high_temperature(double high_temp){ _high_temperature = high_temp; }
     void set_boundary_penalties(double boundary_penalties){ _boundary_penalties = boundary_penalties; }
     
+    void inline print_params() override {
+        std::cout << "================ Experiment Parameters for GVI-MP ================" << std::endl 
+        << " State dimension:           " << this->nx() << std::endl 
+        << " Control dimension:         " << this->nu() << std::endl 
+        << " Total time span:           " << this->total_time() << std::endl 
+        << " coeff_Qc:                  " << this->coeff_Qc() << std::endl 
+        << " Time discretizations:      " << this->nt() << std::endl 
+        << " Temperature:               " << this->temperature() << std::endl 
+        << " High temperature:          " << this->high_temperature() << std::endl 
+        << " Map eps:                   " << this->eps_sdf() << std::endl 
+        << " Cost sigma:                " << this->sig_obs() << std::endl 
+        << " Robot radius:              " << this->radius() << std::endl 
+        << " boundary_penalties:        " << this->boundary_penalties() << std::endl 
+        << " step size:                 " << this->step_size() << std::endl 
+        << " max iterations:            " << this->max_iter() << std::endl 
+        << " max iterations lowtemp:    " << this->max_iter_lowtemp() << std::endl 
+        << " Backtrack ratio:           " << this->backtrack_ratio() << std::endl 
+        << " backtrack iterations:      " << this->max_n_backtrack() << std::endl;
+    }
 
 protected:    
     int _max_iter_lowtemp;
@@ -202,6 +223,24 @@ public:
     double sig0() const { return _sig0; }
     double sigT() const { return _sigT; }
     inline double eps() const { return _eps; }
+
+    inline void print_params() override { 
+        std::cout << "================ Experiment Parameters for PGCS-MP ================" << std::endl 
+        << " State dimension:           " << this->nx() << std::endl 
+        << " Control dimension:         " << this->nu() << std::endl 
+        << " Total time span:           " << this->total_time() << std::endl 
+        << " Time discretizations:      " << this->nt() << std::endl 
+        << " Noise eps:                 " << this->eps() << std::endl 
+        << " Map eps:                   " << this->eps_sdf() << std::endl 
+        << " Cost sigma:                " << this->sig_obs() << std::endl 
+        << " Robot radius:              " << this->radius() << std::endl 
+        << " sig_0:                     " << this->sig0() << std::endl 
+        << " sig_T:                     " << this->sigT() << std::endl 
+        << " step size:                 " << this->step_size() << std::endl 
+        << " max iterations:            " << this->max_iter() << std::endl 
+        << " Backtrack ratio:           " << this->backtrack_ratio() << std::endl 
+        << " backtrack iterations:      " << this->max_n_backtrack() << std::endl;
+    }
 
 protected:
     double _sig0, _sigT, _eps;
