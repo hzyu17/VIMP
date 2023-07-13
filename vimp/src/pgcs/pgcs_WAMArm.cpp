@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
         double backtrack_ratio = std::stof(argv[13]);
         int backtrack_iterations = std::stoi(argv[14]);
 
-        PGCSExperimentParams params(nx, nu, eps_sdf, radius, eps, speed, 
+        PGCSParams params(nx, nu, eps_sdf, radius, eps, speed, 
                                    nt, sig0, sigT, eta, stop_err, sig_obs, 
                                    max_iter, backtrack_ratio, backtrack_iterations);
         runner.run_one_exp(i_exp, params);

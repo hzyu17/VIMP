@@ -26,7 +26,7 @@ public:
     ProxGradCovSteerNLDyn(const MatrixXd& A0, 
                         const VectorXd& a0, 
                         const MatrixXd& B, 
-                        const PGCSExperimentParams& params,
+                        const PGCSParams& params,
                         std::shared_ptr<NonlinearDynamics> pdyn): 
                                             ProxGradCovSteer(A0, a0, B, params), 
                                             _pdyn(pdyn){}

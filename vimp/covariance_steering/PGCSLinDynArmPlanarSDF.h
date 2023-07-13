@@ -10,7 +10,7 @@
  */
 
 #include "covariance_steering/ProximalGradientCSLinearDyn.h"
-#include "robots/PlanarArmSDF_pgcs.h"
+#include "robots/PlanarArmSDFExamples.h"
 #include "covariance_steering/PGCSLinDynRobotSDF.h"
 
 using namespace Eigen;

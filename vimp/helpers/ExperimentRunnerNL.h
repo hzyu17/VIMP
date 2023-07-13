@@ -25,7 +25,7 @@ public:
             PGCSRunner<PGCSOptimizer>(nx, nu, num_exp, config)
             {}
 
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSExperimentParams& params){
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& params){
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
         double start_phi = atof(paramNode->first_node("start_pos")->first_node("phi")->value());
@@ -50,7 +50,7 @@ public:
 
     }
 
-    void run_one_exp(int exp, PGCSExperimentParams& param) override{
+    void run_one_exp(int exp, PGCSParams& param) override{
         rapidxml::file<> xmlFile(this->_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());

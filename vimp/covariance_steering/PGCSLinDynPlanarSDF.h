@@ -23,7 +23,7 @@ public:
     PGCSLinDynPlanarSDF(const MatrixXd& A0, 
                         const VectorXd& a0, 
                         const MatrixXd& B, 
-                        const PGCSExperimentParams& params,
+                        const PGCSParams& params,
                         const std::shared_ptr<LinearDynamics>& pdyn,
                         const gpmp2::PlanarSDF & sdf):
                         ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params),

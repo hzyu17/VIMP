@@ -22,11 +22,11 @@ class GVIMPPlanarRobotSDF{
 public:
     virtual ~GVIMPPlanarRobotSDF(){}
     GVIMPPlanarRobotSDF(){}
-    GVIMPPlanarRobotSDF(GVIMPExperimentParams& params):
+    GVIMPPlanarRobotSDF(GVIMPParams& params):
     _robot_sdf(params.eps_sdf(), params.radius(), params.field_file(), params.sdf_file())
     {}
 
-    void run_optimization(const GVIMPExperimentParams& params){
+    void run_optimization(const GVIMPParams& params){
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;

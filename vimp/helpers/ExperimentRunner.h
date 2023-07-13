@@ -67,19 +67,19 @@ public:
 };
 
 template <typename GVIMPOptimizer>
-class GVIMPRunner : public ExperimentRunner<GVIMPExperimentParams>{
+class GVIMPRunner : public ExperimentRunner<GVIMPParams>{
 public:
     virtual ~GVIMPRunner(){}
     GVIMPRunner(int nx, 
                 int nu, 
                 int num_exp, 
                 const std::string & config):
-                ExperimentRunner<GVIMPExperimentParams>(nx, nu, num_exp, config)
+                ExperimentRunner<GVIMPParams>(nx, nu, num_exp, config)
                 {
                     read_config_file(_params);
                 }
     
-    void read_config_file(GVIMPExperimentParams& params) override {
+    void read_config_file(GVIMPParams& params) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());
@@ -106,12 +106,12 @@ public:
         int max_iterations = atoi(commonParams->first_node("max_iterations")->value());
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
 
-        params = GVIMPExperimentParams(_nx, _nu, total_time, nt, coeff_Qc, sig_obs, eps_sdf, radius, 
-                                       step_size, max_iterations, init_precision_factor, boundary_penalties, 
-                                       temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking);
+        params = GVIMPParams(_nx, _nu, total_time, nt, coeff_Qc, sig_obs, eps_sdf, radius, 
+                            step_size, max_iterations, init_precision_factor, boundary_penalties, 
+                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking);
     }
 
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPExperimentParams& param) override {
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& param) override {
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
 
@@ -142,7 +142,7 @@ public:
 
     }
 
-    void run_one_exp(int exp, GVIMPExperimentParams& params) override {
+    void run_one_exp(int exp, GVIMPParams& params) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());        
@@ -163,13 +163,13 @@ public:
 };
 
 template <typename PGCSOptimizer>
-class PGCSRunner: public ExperimentRunner<PGCSExperimentParams>{
+class PGCSRunner: public ExperimentRunner<PGCSParams>{
 public:
     // PGCSRunner(){}
     virtual ~PGCSRunner(){}
 
     PGCSRunner(int nx, int nu, int num_exp, const std::string & config): 
-                    ExperimentRunner<PGCSExperimentParams>(nx, nu, num_exp, config)
+                    ExperimentRunner<PGCSParams>(nx, nu, num_exp, config)
                     {
                         read_config_file(_params);
                     }
@@ -178,7 +178,7 @@ public:
         this->read_boundary_conditions(paramNode, _params);
     }
 
-    void run_one_exp(int exp, PGCSExperimentParams& param) override{
+    void run_one_exp(int exp, PGCSParams& param) override{
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());
@@ -233,7 +233,7 @@ public:
 
     }
 
-    void read_config_file(PGCSExperimentParams& param) override {
+    void read_config_file(PGCSParams& param) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());
@@ -246,6 +246,7 @@ public:
         double eps = atoi(commonParams->first_node("eps")->value());
         double eps_sdf = atof(commonParams->first_node("eps_sdf")->value());
         double radius = atof(commonParams->first_node("radius")->value());
+
         double total_time = atof(commonParams->first_node("total_time")->value());
         _nt = atoi(commonParams->first_node("nt")->value());
 
@@ -260,7 +261,9 @@ public:
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
         // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
-        param = PGCSExperimentParams(_nx, _nu, eps_sdf, radius, eps, total_time, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations, backtracking_ratio, max_n_backtracking);
+        param = PGCSParams(_nx, _nu, eps_sdf, radius, eps, total_time, _nt, 
+                            sig0, sigT, eta, stop_err, sig_obs, 
+                            max_iterations, backtracking_ratio, max_n_backtracking);
 
         if (commonParams->first_node("field_file")){
             std::string field = static_cast<std::string>(commonParams->first_node("field_file")->value());
@@ -274,7 +277,7 @@ public:
 
     }
 
-    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSExperimentParams& param){
+    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& param){
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
 
@@ -311,7 +314,7 @@ public:
     PGCSRunner3D(int num_exp, const std::string & config):
                         PGCSRunner<PGCSOptimizer>(6, 3, num_exp, config){}
 
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSExperimentParams& params) override{
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& params) override{
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
         double start_z = atof(paramNode->first_node("start_pos")->first_node("z")->value());
@@ -351,7 +354,7 @@ public:
     PGCSRunner7D(int num_exp, const std::string & config):
                         PGCSRunner<PGCSOptimizer>(14, 7, num_exp, config){}
 
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSExperimentParams& param) override{
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& param) override{
         double start_1 = atof(paramNode->first_node("start_pos")->first_node("1")->value());
         double start_2 = atof(paramNode->first_node("start_pos")->first_node("2")->value());
         double start_3 = atof(paramNode->first_node("start_pos")->first_node("3")->value());

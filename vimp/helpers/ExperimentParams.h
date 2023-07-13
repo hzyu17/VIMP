@@ -20,20 +20,11 @@ class Params{
 public:
     Params(){}
 
-    Params(int nx,
-            int nu,
-            double total_time, 
-            int n_states, 
-            double sigma_obs, 
-            double eps_sdf, 
-            double radius,
-            double step_size,
-            int num_iter,
-            double stop_err,
-            double backtracking_ratio,
-            int max_n_backtracking, 
-            std::string field_file="", 
-            std::string sdf_file=""):
+    Params(int nx, int nu, double total_time, int n_states, 
+            double sigma_obs, double eps_sdf, double radius,
+            double step_size, int num_iter, double stop_err,
+            double backtracking_ratio, int max_n_backtracking, 
+            std::string field_file="", std::string sdf_file=""):
             _nx(nx),
             _nu(nu),
             _total_time(total_time),
@@ -109,11 +100,11 @@ protected:
     std::string _sdf_file, _field_file;
 };
 
-class GVIMPExperimentParams: public Params{
+class GVIMPParams: public Params{
 public:
-    GVIMPExperimentParams(){}
+    GVIMPParams(){}
 
-    GVIMPExperimentParams(int nx,
+    GVIMPParams(int nx,
                         int nu,
                         double total_time, 
                         int n_states, 
@@ -132,7 +123,8 @@ public:
                         int max_n_backtracking,
                         double backtracking_ratio = 1,
                         std::string field="",
-                        std::string sdf_file=""):
+                        std::string sdf_file=""
+                        ):
                         Params(nx,
                                nu,
                                total_time, 
@@ -175,13 +167,13 @@ protected:
 
 };
 
-class PGCSExperimentParams: public Params{
+class PGCSParams: public Params{
 
 public:
-    PGCSExperimentParams(){}
+    PGCSParams(){}
 
-    PGCSExperimentParams(int nx, int nu, double eps_sdf, double radius, double eps,
-                    double total_time, int nt, double sig0, double sigT, double step_size, 
+    PGCSParams(int nx, int nu, double eps_sdf, double radius,
+                    double eps, double total_time, int nt, double sig0, double sigT, double step_size, 
                     double stop_err, double sig_obs, int num_iter, double backtracking_ratio, 
                     int max_n_backtracking, std::string field_file="", std::string sdf_file=""):
                     Params(nx,
@@ -215,5 +207,6 @@ protected:
     double _sig0, _sigT, _eps;
 
 };
+
 
 }// namespace vimp

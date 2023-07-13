@@ -28,7 +28,7 @@ public:
                             const VectorXd& a0, 
                             const MatrixXd& B,
                             const std::shared_ptr<LinearDynamics>& pdyn,
-                            const PGCSExperimentParams& params):
+                            const PGCSParams& params):
                             ProxGradCovSteer(A0, a0, B, params),
                             _pdyn(pdyn){
                                 _hAkt = pdyn->At();

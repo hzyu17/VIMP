@@ -26,7 +26,7 @@ public:
                         const VectorXd& a0, 
                         const MatrixXd& B, 
                         const std::shared_ptr<LinearDynamics>& pdyn,
-                        PGCSExperimentParams& params):
+                        PGCSParams& params):
                         ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params),
                         _eps_sdf(params.eps_sdf()),
                         _sig_obs(params.sig_obs()),

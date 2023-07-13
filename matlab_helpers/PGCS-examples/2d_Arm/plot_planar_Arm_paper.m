@@ -9,13 +9,32 @@ import gpmp2.*
 
 addpath("../../error_ellipse");
 
-map = 2;
+map = 1;
 exp = 1;
 
 prefix = "map1";
 switch map
     case 1
         prefix = "map1";
+        prefix_gpmp2 = "map1/gpmp2";
+        sdfmap = csvread("map1/map.csv");
+        switch exp
+            case 1
+                prefix = "map2/case1";
+                % boundary conditions
+                start_conf = [0, 0]';
+                start_vel = [0, 0]';
+                end_conf = [pi/2, 0]';
+                end_vel = [0, 0]';
+            case 2
+                prefix = "map2/case2";
+                % boundary conditions
+                start_conf = [-pi/2, 0]';
+                start_vel = [0.1, 0]';
+                end_conf = [pi/2, 0]';
+                end_vel = [0, 0]';
+        end
+        
     case 2
         sdfmap = csvread("map2/map.csv");
         switch exp
@@ -36,8 +55,12 @@ switch map
         end
 end
 
+% read pgcs results
 means = csvread([prefix+"/zk_sdf.csv"]);
 covs = csvread([prefix+"/Sk_sdf.csv"]);
+
+% read gpmp2 results
+means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
 
 % ----- parameters -----
 [ndim, nt] = size(means);

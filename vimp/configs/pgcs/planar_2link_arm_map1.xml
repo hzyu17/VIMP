@@ -3,6 +3,13 @@
     <eps> 0.01 </eps>
     <eps_sdf> 0.75 </eps_sdf>
     <radius> 0.01 </radius>
+
+    <!-- <map_origin>
+        <x> -1.0 </x>
+        <y> -1.0 </y>
+    </map_origin>
+    <cell_size> 0.01 </cell_size> -->
+
     <total_time> 10 </total_time>
     <nt> 50 </nt>
     <sig0> 0.01 </sig0>
@@ -14,7 +21,7 @@
     <backtracking_ratio> 0.7 </backtracking_ratio>
     <max_n_backtracking> 5 </max_n_backtracking>
 
-    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_one_obs.csv</field_file>
+    <!-- <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_one_obs.csv</field_file> -->
 
 </Commons>
 
