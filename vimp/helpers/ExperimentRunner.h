@@ -260,7 +260,9 @@ public:
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
         // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
-        param = PGCSExperimentParams(_nx, _nu, eps_sdf, radius, eps, total_time, _nt, sig0, sigT, eta, stop_err, sig_obs, max_iterations, backtracking_ratio, max_n_backtracking);
+        param = PGCSExperimentParams(_nx, _nu, total_time, _nt, eps_sdf, radius, eps, 
+                                     sig0, sigT, eta, stop_err, sig_obs, max_iterations, 
+                                     backtracking_ratio, max_n_backtracking);
 
         if (commonParams->first_node("field_file")){
             std::string field = static_cast<std::string>(commonParams->first_node("field_file")->value());
@@ -299,6 +301,8 @@ public:
 
         double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
         param.update_sig_obs(cost_sigma);
+
+        param.print_params();
        
     }
 

@@ -155,7 +155,7 @@ optimizer.optimize();
 result = optimizer.values();
 % result.print('Final results')
 
-
+confs = zeros(2, total_time_step+1);
 %% plot final values
 for i=0:total_time_step
     figure(4), hold on
@@ -164,8 +164,9 @@ for i=0:total_time_step
     plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
     % plot arm
     conf = result.atVector(symbol('x', i));
+    confs(:, i+1) = conf;
     plotPlanarArm(arm.fk_model(), conf, 'b', 2);
     pause(pause_time), hold off
 end
 
-
+csvwrite("map1/gpmp2/zt_gpmp2.csv", confs);
