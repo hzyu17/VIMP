@@ -10,7 +10,7 @@ import gpmp2.*
 addpath("../../error_ellipse");
 
 map = 1;
-exp = 1;
+exp = 2;
 
 prefix = "map1";
 prefix_gpmp2 = "map1";
@@ -143,7 +143,7 @@ axis off
 hold off
 
 
-%% ==== animated motion plan ==== 
+% %% ==== animated motion plan ==== 
 % x0 = 50;
 % y0 = 50;
 % width = 400;

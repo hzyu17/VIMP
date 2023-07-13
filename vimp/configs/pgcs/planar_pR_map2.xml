@@ -83,7 +83,7 @@
         <vy> 0</vy>
     </goal_pos>
 
-    <eta> 1e-6 </eta>
+    <eta> 1e-4 </eta>
     <cost_sigma> 1e3 </cost_sigma>
 
     <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case3/</saving_prefix>
@@ -108,7 +108,7 @@
         <vy> 0</vy>
     </goal_pos>
 
-    <eta> 1e-6 </eta>
+    <eta> 1e-4 </eta>
     <cost_sigma> 1e3 </cost_sigma>
 
     <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case4/</saving_prefix>

@@ -14,15 +14,6 @@
     <backtracking_ratio> 0.7 </backtracking_ratio>
     <max_n_backtracking> 5 </max_n_backtracking>
 
-    <!-- <nt> 50 </nt>
-    <eps_sdf> 0.75 </eps_sdf>
-    <speed> 0.3 </speed>
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-    <eta> 1e-6 </eta>
-    <stop_err> 1e-4 </stop_err>
-    <max_iter> 20 </max_iter> -->
-
 </Commons>
 
 <Experiment1>
