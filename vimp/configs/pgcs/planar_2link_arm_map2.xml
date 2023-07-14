@@ -1,17 +1,24 @@
 <Commons>
 
     <eps> 0.01 </eps>
-    <eps_sdf> 0.75 </eps_sdf>
+    <eps_sdf> 0.1 </eps_sdf>
     <radius> 0.01 </radius>
+
+    <!-- <map_origin>
+        <x> -1.0 </x>
+        <y> -1.0 </y>
+    </map_origin>
+    <cell_size> 0.01 </cell_size> -->
+
     <total_time> 10 </total_time>
     <nt> 50 </nt>
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
+    <sig0> 0.001 </sig0>
+    <sigT> 0.001 </sigT>
     <eta> 1e-4 </eta>
     <stop_err> 1e-3 </stop_err>
     <max_iter> 30 </max_iter>
     <cost_sigma> 5.6e3 </cost_sigma>
-    <backtracking_ratio> 0.7 </backtracking_ratio>
+    <backtracking_ratio> 0.8 </backtracking_ratio>
     <max_n_backtracking> 5 </max_n_backtracking>
 
 </Commons>
@@ -33,8 +40,8 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <eta> 5e-5 </eta>
-    <cost_sigma> 4.9e4 </cost_sigma>
+    <eta> 1e-4 </eta>
+    <cost_sigma> 5e4 </cost_sigma>
 
     <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
 
@@ -46,7 +53,7 @@
     <start_pos>
         <x>-1.5707963</x>
         <y>0.0</y>
-        <vx>-0.1</vx>
+        <vx>0.0</vx>
         <vy>0.0</vy>
     </start_pos>
 

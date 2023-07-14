@@ -10,7 +10,6 @@
  */
 
 #include "repeated_includes.h"
-#include "base/Matrix.h"
 #include "EigenWrapper.h"
 #include <vector>
 

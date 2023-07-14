@@ -18,8 +18,6 @@
  */
 
 #include "linear_factor.h"
-
-#include "base/Matrix.h"
 #include "helpers/EigenWrapper.h"
 
 namespace vimp{

@@ -9,8 +9,8 @@ import gpmp2.*
 
 addpath("../../error_ellipse");
 
-map = 1;
-exp = 2;
+map = 2;
+exp = 1;
 
 prefix = "map1";
 prefix_gpmp2 = "map1";
@@ -62,9 +62,6 @@ end
 [prefix+"/zk_sdf.csv"]
 means = csvread([prefix+"/zk_sdf.csv"]);
 covs = csvread([prefix+"/Sk_sdf.csv"]);
-
-% read gpmp2 results
-means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
 
 % ----- parameters -----
 [ndim, nt] = size(means);
@@ -118,14 +115,14 @@ hold off
 nexttile
 hold on 
 
-% read gpmp2 results
-means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
-nt_gpmp2 = size(means_gpmp2, 2);
-
-% plot gpmp2 results
-for i = 1:1:nt_gpmp2
-    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 20, 'b', 'fill');
-end
+% % read gpmp2 results
+% means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
+% nt_gpmp2 = size(means_gpmp2, 2);
+% 
+% % plot gpmp2 results
+% for i = 1:1:nt_gpmp2
+%     scatter(means_gpmp2(1, i), means_gpmp2(2, i), 20, 'b', 'fill');
+% end
 
 % plot pgcs results
 nt = size(means, 2);
@@ -139,7 +136,7 @@ scatter(start_conf(1), start_conf(2), 20, 'r', 'fill');
 scatter(end_conf(1), end_conf(2), 20, 'g', 'fill');
 
 t.FontSize = 16;
-axis off
+% axis off
 hold off
 
 
@@ -167,7 +164,7 @@ hold off
 %     color = [0, 0, 1, 1];
 %     % means
 %     plotPlanarArm1(arm.fk_model(), means(1:2,j), color, 2, true);
-%     hold off
+% %     hold off
 %     pause(0.01)
 % end
 

@@ -2,7 +2,7 @@ clear all
 close all
 clc
 addpath('/HOME/HYU419/.local/gtsam_toolbox')
-import gtsam.*
+import gtsam.*6
 import gpmp2.*
 
 addpath("../")

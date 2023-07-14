@@ -10,23 +10,23 @@
     </map_origin>
     <cell_size> 0.01 </cell_size> -->
 
-    <total_time> 20 </total_time>
+    <total_time> 10 </total_time>
 
-    <nt> 100 </nt>
+    <nt> 50 </nt>
     <sig0> 0.001 </sig0>
     <sigT> 0.001 </sigT>
     <eta> 1e-4 </eta>
     <stop_err> 1e-3 </stop_err>
     <max_iter> 30 </max_iter>
     <cost_sigma> 5.6e3 </cost_sigma>
-    <backtracking_ratio> 0.5 </backtracking_ratio>
+    <backtracking_ratio> 0.8 </backtracking_ratio>
     <max_n_backtracking> 5 </max_n_backtracking>
 
 </Commons>
 
 <Experiment1>
     <start_pos>
-        <x>-1.5707963</x>
+        <x>0</x>
         <y>0.0</y>
         <vx>0.0</vx>
         <vy>0.0</vy>
@@ -42,6 +42,7 @@
     <eta> 1e-4 </eta>
     <cost_sigma> 5.1e3 </cost_sigma>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case2/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case1/</saving_prefix>
 
 </Experiment1>
+
