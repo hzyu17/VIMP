@@ -47,7 +47,6 @@ public:
     }
 
     void run(){
-        std::cout << "run " << std::endl;
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());

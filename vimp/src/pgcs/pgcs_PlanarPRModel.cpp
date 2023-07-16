@@ -10,6 +10,9 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 #include "covariance_steering/PGCSLinDynPRModelPlanarSDF.h"
 #include "helpers/ExperimentRunner.h"
 
@@ -17,7 +20,8 @@ using namespace Eigen;
 using namespace vimp;
 
 int main(int argc, char* argv[]){
-    std::string config_file{"/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_pR_map2.xml"};
+    std::string source_root{XSTRING(SOURCE_ROOT)};
+    std::string config_file{source_root+"/configs/pgcs/planar_pR_map2.xml"};
     int nx=4, nu=2;
     int num_exp = 4;
 

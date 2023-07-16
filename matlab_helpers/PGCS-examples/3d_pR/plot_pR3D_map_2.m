@@ -37,7 +37,7 @@ for i = 1:4 % 4 experiments
     i
     figure(i)
     set(gcf,'position',[x0,y0,width,height])
-    tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
+    tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
     t.FontSize = 16;
 
     nexttile

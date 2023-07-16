@@ -3,6 +3,7 @@
 close all
 clear
 
+addpath("/usr/local/gtsam_toolbox")
 import gtsam.*
 import gpmp2.*
 
@@ -56,4 +57,4 @@ csvwrite("gridY.csv", Y);
 csvwrite("gridZ.csv", Z);
 
 %% read mesh hinge 3D
-max(meshhinge3D)
+% max(meshhinge3D)

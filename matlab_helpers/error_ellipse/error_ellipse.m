@@ -118,7 +118,7 @@ if r==3 & c==3
   X(:) = scale*(k*XYZ(:,1)+x0);
   Y(:) = scale*(k*XYZ(:,2)+y0);
   Z(:) = scale*(k*XYZ(:,3)+z0);
-  h4=surf(X,Y,Z,'edgecolor','none','LineStyle','none','facecolor','red', 'FaceAlpha',0.01);
+  h4=surf(X,Y,Z,'edgecolor','none','LineStyle','none','facecolor','red', 'FaceAlpha',0.1);
     hold on
     h1=plot3(x0,y0,z0,prop.style);
   %   colormap summer
