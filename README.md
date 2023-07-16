@@ -17,7 +17,10 @@ cmake -DCMAKE_INSTALL_PREFIX=prefix_path ..\
 make install 
 
 ```
-3. GTSAM 
+3. Matplot++
+**[Matplot++](https://github.com/alandefreitas/matplotplusplus)**
+
+4. GTSAM 
 **Build GTSAM**
 **[GTSAM](https://github.com/borglab/gtsam)**
  Build and installation:
@@ -31,7 +34,7 @@ make install
  sudo make install
  ```
 
-4. GPMP2
+5. GPMP2
 **Build GPMP2**
 **[GPMP2](https://github.com/gtrll/gpmp2)**
 Build and installation:
