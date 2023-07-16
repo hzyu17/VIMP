@@ -106,7 +106,7 @@ public:
         int max_iterations = atoi(commonParams->first_node("max_iterations")->value());
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
 
-        params = GVIMPParams(_nx, _nu, total_time, nt, coeff_Qc, sig_obs, eps_sdf, radius, 
+        params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, sig_obs, eps_sdf, radius, 
                             step_size, max_iterations, init_precision_factor, boundary_penalties, 
                             temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking);
     }
@@ -124,7 +124,7 @@ public:
         double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
 
-        VectorXd m0(_nx), mT(_nx); 
+        VectorXd m0(this->_nx), mT(this->_nx); 
         m0 << start_x, start_y, start_vx, start_vy;
         mT << goal_x, goal_y, goal_vx, goal_vy;
 
@@ -163,12 +163,12 @@ public:
 };
 
 template <typename PGCSOptimizer>
-class PGCSRunner: public ExperimentRunner<PGCSParams>{
+class PGCSRunnerBase: public ExperimentRunner<PGCSParams>{
 public:
     // PGCSRunner(){}
-    virtual ~PGCSRunner(){}
+    virtual ~PGCSRunnerBase(){}
 
-    PGCSRunner(int nx, int nu, int num_exp, const std::string & config): 
+    PGCSRunnerBase(int nx, int nu, int num_exp, const std::string & config): 
                     ExperimentRunner<PGCSParams>(nx, nu, num_exp, config)
                     {
                         read_config_file(_params);
@@ -190,7 +190,7 @@ public:
         
         this->read_boundary_conditions(paramNode, param);
 
-        MatrixXd A0(_nx, _nx), B0(_nx, _nu), a0(_nx, 1);
+        MatrixXd A0(this->_nx, this->_nx), B0(this->_nx, this->_nu), a0(this->_nx, 1);
         A0.setZero(); B0.setZero(); a0.setZero();
         std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(param.nx(), param.nu(), param.nt())};
         A0 = pdyn->A0();
@@ -204,7 +204,7 @@ public:
         // res_Kd = pgcs_lin_sdf.optimize();
         res_Kd = pgcs_lin_sdf.backtrack();
 
-        MatrixXd Kt(_nx*_nx, param.nt()), dt(_nx, param.nt());
+        MatrixXd Kt(this->_nx*this->_nx, param.nt()), dt(this->_nx, param.nt());
         Kt = std::get<0>(res_Kd);
         dt = std::get<1>(res_Kd);
 
@@ -214,7 +214,7 @@ public:
         h_zt = _ei.vec2mat3d(std::get<0>(ztSigt));
         h_Sigt = _ei.vec2mat3d(std::get<1>(ztSigt));
 
-        MatrixXd zk_star(_nx, param.nt()), Sk_star(_nx*_nx, param.nt());
+        MatrixXd zk_star(this->_nx, param.nt()), Sk_star(this->_nx*this->_nx, param.nt());
         zk_star = pgcs_lin_sdf.zkt();
         Sk_star = pgcs_lin_sdf.Sigkt();
 
@@ -261,7 +261,7 @@ public:
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
         // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
-        param = PGCSParams(_nx, _nu, eps_sdf, radius, eps, total_time, _nt, 
+        param = PGCSParams(this->_nx, this->_nu, eps_sdf, radius, eps, total_time, _nt, 
                             sig0, sigT, eta, stop_err, sig_obs, 
                             max_iterations, backtracking_ratio, max_n_backtracking);
 
@@ -277,7 +277,21 @@ public:
 
     }
 
-    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& param){
+    virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& param) = 0;
+
+};
+
+template <typename PGCSOptimizer>
+class PGCSRunner: public PGCSRunnerBase<PGCSOptimizer>{
+public:
+    // PGCSRunner(){}
+    virtual ~PGCSRunner(){}
+
+    PGCSRunner(int nx, int nu, int num_exp, const std::string & config): 
+                    PGCSRunnerBase<PGCSOptimizer>(nx, nu, num_exp, config)
+                    {}
+
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& param) override{
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
         double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
 
@@ -290,7 +304,7 @@ public:
         double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
 
-        VectorXd m0(_nx), mT(_nx); 
+        VectorXd m0(this->_nx), mT(this->_nx); 
         m0 << start_x, start_y, start_vx, start_vy;
         mT << goal_x, goal_y, goal_vx, goal_vy;
 
@@ -306,15 +320,18 @@ public:
         param.print_params();
        
     }
-
 };
 
+
 template <typename PGCSOptimizer>
-class PGCSRunner3D: public PGCSRunner<PGCSOptimizer>{
+class PGCSRunner3D: public PGCSRunnerBase<PGCSOptimizer>{
 public:
-    
+    // PGCSRunner(){}
+    virtual ~PGCSRunner3D(){}
+
     PGCSRunner3D(int num_exp, const std::string & config):
-                        PGCSRunner<PGCSOptimizer>(6, 3, num_exp, config){}
+                        PGCSRunnerBase<PGCSOptimizer>(6, 3, num_exp, config){}
+
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& params) override{
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
@@ -350,11 +367,14 @@ public:
 };
 
 template <typename PGCSOptimizer>
-class PGCSRunner7D: public PGCSRunner<PGCSOptimizer>{
+class PGCSRunner7D: public PGCSRunnerBase<PGCSOptimizer>{
 public:
-    
+    // PGCSRunner(){}
+    virtual ~PGCSRunner7D(){}
+
     PGCSRunner7D(int num_exp, const std::string & config):
-                        PGCSRunner<PGCSOptimizer>(14, 7, num_exp, config){}
+                        PGCSRunnerBase<PGCSOptimizer>(14, 7, num_exp, config){}
+    
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& param) override{
         double start_1 = atof(paramNode->first_node("start_pos")->first_node("1")->value());

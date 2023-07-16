@@ -7,6 +7,10 @@ VIMP uses Gaussian variational inference to approach the motion planning problem
 **Dependencies**
 1. Boost: successful built with Boost1.78.0
 Build Boost in a customized location: **[link](https://github.com/hzyu17/technicals/tree/main/C%2B%2B)**
+Add library path to ld lib path:
+```
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+```
 2. Eigen 3.4.0
 **[Download Eigen source](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
 and 
