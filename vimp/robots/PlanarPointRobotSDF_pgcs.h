@@ -26,7 +26,7 @@ using Base = RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>;
 class PlanarPRSDFExample: public Base{
     public:
         PlanarPRSDFExample(double epsilon, double radius, const std::string& field_file, const std::string& sdf_file=""): 
-        Base(2, 1, "/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv", ""), 
+        Base(2, 1, "/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv", ""), 
         _eps(epsilon), 
         _r(radius)
         {   

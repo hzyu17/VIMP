@@ -23,8 +23,8 @@
 int main(){
     
     // /// reading XML configurations
-    // rapidxml::file<> xmlFile("/home/hyu419/git/VIMP/vimp/configs/planar_pR_map2.xml"); // Default template is char
-    // // rapidxml::file<> xmlFile("/home/hyu419/git/VIMP/vimp/configs/planar_pR_map2.xml");
+    // rapidxml::file<> xmlFile("/home/hzyu/git/VIMP/vimp/configs/planar_pR_map2.xml"); // Default template is char
+    // // rapidxml::file<> xmlFile("/home/hzyu/git/VIMP/vimp/configs/planar_pR_map2.xml");
     // rapidxml::xml_document<> doc;
     // doc.parse<0>(xmlFile.data());
     // rapidxml::xml_node<>* paramNode = doc.first_node("parameters");
@@ -134,23 +134,23 @@ int main(){
     // if (replanning == 1){
     //     MatrixXd means = matrix_io.load_csv(replan_mean_file);
     //     VectorXd good_init_vec = means.row(replan_start);
-    //     optimizer.update_file_names("/home/hyu419/git/VIMP/vimp/data/2d_pR/mean.csv", 
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/cov.csv", 
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/precisoin.csv", 
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/cost.csv",
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/factor_costs.csv",
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/perturbation_statistics.csv");
+    //     optimizer.update_file_names("/home/hzyu/git/VIMP/vimp/data/2d_pR/mean.csv", 
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/cov.csv", 
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/precisoin.csv", 
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/cost.csv",
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/factor_costs.csv",
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/perturbation_statistics.csv");
     //     /// Set initial value to the linear interpolation
     //     optimizer.set_mu(good_init_vec);
     // }else{
-    //     optimizer.update_file_names("/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv", 
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/cov_base.csv", 
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/precisoin_base.csv", 
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/cost_base.csv",
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/factor_costs_base.csv",
-    //                                 "/home/hyu419/git/VIMP/vimp/data/2d_pR/perturbation_statistics_base.csv");
+    //     optimizer.update_file_names("/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv", 
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/cov_base.csv", 
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/precisoin_base.csv", 
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/cost_base.csv",
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/factor_costs_base.csv",
+    //                                 "/home/hzyu/git/VIMP/vimp/data/2d_pR/perturbation_statistics_base.csv");
     //     optimizer.set_mu(joint_init_theta);
-    //     std::cout << "/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv" << std::endl;
+    //     std::cout << "/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/mean_base.csv" << std::endl;
     // }
 
 

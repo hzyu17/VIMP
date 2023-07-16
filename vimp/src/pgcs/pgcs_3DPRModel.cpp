@@ -17,11 +17,11 @@ using namespace Eigen;
 using namespace vimp;
 
 int main(int argc, char* argv[]){
-    std::string config_file{"/home/hyu419/git/VIMP/vimp/configs/pgcs/pR3D_map2.xml"};
-    int nx=6, nu=3;
+    std::string config_file{"/home/hzyu/git/VIMP/vimp/configs/pgcs/pR3D_map2.xml"};
+    
     int num_exp = 4;
 
-    PGCSRunner<PGCSLinDynPRModelSDF> runner(nx, nu, num_exp, config_file);
+    PGCSRunner3D<PGCSLinDynPRModelSDF> runner(num_exp, config_file);
 
     // no experiment argument, run the default scripts
     if (argc == 1){
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
     }
     // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
     else if (argc == 15){
-
+        int nx=6, nu=3;
         int i_exp = std::stoi(argv[1]);
         double eps = std::stof(argv[2]);
         double eps_sdf = std::stof(argv[3]);

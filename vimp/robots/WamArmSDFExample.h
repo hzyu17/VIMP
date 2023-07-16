@@ -125,7 +125,7 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
 
             void default_sdf(){
                 Base::_sdf = SDF();
-                Base::_sdf.loadSDF("/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin");
+                Base::_sdf.loadSDF("/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin");
                 Base::_psdf = std::make_shared<SDF>(Base::_sdf);
             }
 

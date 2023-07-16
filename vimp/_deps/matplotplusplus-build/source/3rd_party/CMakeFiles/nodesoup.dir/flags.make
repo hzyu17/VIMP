@@ -6,5 +6,5 @@ CXX_FLAGS =  -w -std=c++11 -Wall -w -std=c++11 -Wall -O3 -DNDEBUG    -O3 -DNDEBU
 
 CXX_DEFINES = -D_USE_MATH_DEFINES
 
-CXX_INCLUDES = -I/home/hyu419/git/VIMP -I/home/hyu419/git/VIMP/vimp -I/home/hyu419/.local/lib/cmake/GTSAM/../../../include -I/home/hyu419/.local/include/eigen3 -I/home/hyu419/.local/lib/cmake/gpmp2/../../../include -I/home/huy419/.local/include -I/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src/source/3rd_party/nodesoup/include 
+CXX_INCLUDES = -I/home/hzyu/git/VIMP -I/home/hzyu/git/VIMP/vimp -I/home/hzyu/.local/lib/cmake/GTSAM/../../../include -I/home/hzyu/.local/include/eigen3 -I/home/hzyu/.local/lib/cmake/gpmp2/../../../include -I/home/huy419/.local/include -I/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src/source/3rd_party/nodesoup/include 
 

@@ -18,7 +18,7 @@ using namespace vimp;
 
 int main(int argc, char* argv[]){
 
-    std::string config_file{"/home/hyu419/git/VIMP/vimp/configs/pgcs/planar_pR_longrange.xml"};
+    std::string config_file{"/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_pR_longrange.xml"};
     int nx=4, nu=2;
     int num_exp = 1;
 

@@ -42,7 +42,7 @@
     <eta> 1e-4 </eta>
     <cost_sigma> 5.1e3 </cost_sigma>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case1/</saving_prefix>
 
 </Experiment1>
 

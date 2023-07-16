@@ -248,7 +248,7 @@ public:
         double radius = atof(commonParams->first_node("radius")->value());
 
         double total_time = atof(commonParams->first_node("total_time")->value());
-        _nt = atoi(commonParams->first_node("nt")->value());
+        this->_nt = atoi(commonParams->first_node("nt")->value());
 
         double sig0 = atof(commonParams->first_node("sig0")->value());
         double sigT = atof(commonParams->first_node("sigT")->value());
@@ -261,7 +261,7 @@ public:
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
         // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
-        param = PGCSParams(this->_nx, this->_nu, eps_sdf, radius, eps, total_time, _nt, 
+        param = PGCSParams(this->_nx, this->_nu, eps_sdf, radius, eps, total_time, this->_nt, 
                             sig0, sigT, eta, stop_err, sig_obs, 
                             max_iterations, backtracking_ratio, max_n_backtracking);
 

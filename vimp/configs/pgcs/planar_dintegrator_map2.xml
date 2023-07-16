@@ -1,6 +1,6 @@
 <Experiment1>
 <parameters>
-    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>8.0</x>
@@ -32,14 +32,14 @@
 
     <stop_err> 1e-4 </stop_err>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case1/</saving_prefix>
 
 </parameters>
 </Experiment1>
 
 <Experiment2>
 <parameters>
-    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -71,14 +71,14 @@
 
     <stop_err> 1e-4 </stop_err>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case2/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case2/</saving_prefix>
 
 </parameters>
 </Experiment2>
 
 <Experiment3>
 <parameters>
-    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -110,14 +110,14 @@
 
     <stop_err> 1e-4 </stop_err>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case3/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case3/</saving_prefix>
 
 </parameters>
 </Experiment3>
 
 <Experiment4>
 <parameters>
-    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>13.0</x>
@@ -149,7 +149,7 @@
 
     <stop_err> 1e-4 </stop_err>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case4/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case4/</saving_prefix>
 
 </parameters>
 </Experiment4>
