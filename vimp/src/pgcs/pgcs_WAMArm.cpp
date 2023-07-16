@@ -10,6 +10,9 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 #include "covariance_steering/PGCSLinDynArmSDF.h"
 #include "helpers/ExperimentRunner.h"
 
@@ -20,7 +23,8 @@ int main(int argc, char* argv[]){
     int nx = 14, nu=7;
 
     int num_exp = 3;
-    std::string config_file{"/home/hzyu/git/VIMP/vimp/configs/pgcs/wam_arm.xml"};
+    std::string source_root{XSTRING(SOURCE_ROOT)};
+    std::string config_file{source_root+"/configs/pgcs/wam_arm.xml"};
     PGCSRunner7D<PGCSLinDynArmSDF> runner(num_exp, config_file);
     // no experiment argument, run the default scripts
     if (argc == 1){

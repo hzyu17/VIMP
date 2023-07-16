@@ -64,6 +64,6 @@ for i = 1:4 % 4 experiments
     xlabel('Position $x$','Interpreter','latex'),ylabel('Position $y$','Interpreter','latex');
     zlabel('Position $z$','Interpreter','latex');
 
-%     axis off;
+    axis off;
 
 end

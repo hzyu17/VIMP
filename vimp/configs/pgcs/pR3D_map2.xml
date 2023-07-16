@@ -2,17 +2,17 @@
 
     <eps> 0.01 </eps>
     <eps_sdf> 0.7 </eps_sdf>
-    <radius> 0.15 </radius>
-    <total_time> 12 </total_time>
+    <radius> 0.12 </radius>
+    <total_time> 12.3 </total_time>
     <nt> 50 </nt>
     <sig0> 0.01 </sig0>
-    <sigT> 0.02 </sigT>
+    <sigT> 0.04 </sigT>
     <eta> 1e-4 </eta>
     <stop_err> 1e-5 </stop_err>
-    <max_iter> 30 </max_iter>
+    <max_iter> 50 </max_iter>
     <cost_sigma> 5.6e6 </cost_sigma>
-    <backtracking_ratio> 1 </backtracking_ratio>
-    <max_n_backtracking> 1 </max_n_backtracking>
+    <backtracking_ratio> 0.85 </backtracking_ratio>
+    <max_n_backtracking> 3 </max_n_backtracking>
 
 </Commons>
 
@@ -37,7 +37,7 @@
         <vz>0.0</vz>
     </goal_pos>
     
-    <cost_sigma> 5e3 </cost_sigma>
+    <cost_sigma> 8e2 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
 
@@ -47,8 +47,8 @@
     <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
-        <x>-10.0</x>
-        <y>-10.0</y>
+        <x>-11.0</x>
+        <y>-11.0</y>
         <z>0.0</z>
         <vx>0.0</vx>
         <vy>0.0</vy>
@@ -64,7 +64,7 @@
         <vz>0.0</vz>
     </goal_pos>
     
-    <cost_sigma> 2.5e3 </cost_sigma>
+    <cost_sigma> 8e3 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
 
@@ -91,7 +91,7 @@
         <vz>0.0</vz>
     </goal_pos>
 
-    <cost_sigma> 1e3 </cost_sigma>
+    <cost_sigma> 4.5e3 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
 
@@ -118,7 +118,8 @@
         <vz>0.0</vz>
     </goal_pos>
 
-    <cost_sigma> 8e3 </cost_sigma>
+    <eta> 1e-5 </eta>
+    <cost_sigma> 6e2 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
 

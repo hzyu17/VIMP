@@ -310,8 +310,10 @@ public:
         param.set_m0(m0);
         param.set_mT(mT);
 
-        double eta = atof(paramNode->first_node("eta")->value());
+        if (paramNode->first_node("eta")){
+            double eta = atof(paramNode->first_node("eta")->value());
         param.update_step_size(eta);
+        }
 
         double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
         param.update_sig_obs(cost_sigma);
@@ -359,6 +361,11 @@ public:
 
         std::string sdf_file = static_cast<std::string>(paramNode->first_node("sdf_file")->value());
         params.update_sdf_file(sdf_file);
+
+        if (paramNode->first_node("eta")){
+            double eta = atof(paramNode->first_node("eta")->value());
+            params.update_step_size(eta);
+        }
 
         double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
         params.update_sig_obs(sig_obs);
