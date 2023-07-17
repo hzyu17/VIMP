@@ -13,4 +13,3 @@ matlab_helpers/+gtsam/*
 matlab_helpers/+gpmp2/*
 matlab_helpers/PGCS-examples/3dSDFs/*
 vimp/data/WAM/*
-vimp/CMakeLists.txt
