@@ -4,7 +4,7 @@
     <n_states>15</n_states>
     <coeff_Qc>0.8</coeff_Qc>
     <sig_obs>0.0035</sig_obs>
-    <eps_sdf>0.7</eps_sdf>
+    <eps_sdf>0.6</eps_sdf>
     <radius>1.5</radius>
     <step_size>0.45</step_size>
     <init_precision_factor>20.0</init_precision_factor>
@@ -13,8 +13,8 @@
     <high_temperature>100.0</high_temperature>
     <low_temp_iterations>6</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>6</max_iterations>
-    <max_n_backtracking>20</max_n_backtracking>
+    <max_iterations>10</max_iterations>
+    <max_n_backtracking>5</max_n_backtracking>
 
 </Commons>
 

@@ -133,8 +133,6 @@ public:
         double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
         param.update_sig_obs(cost_sigma);
 
-        double eta = atof(paramNode->first_node("eta")->value());
-        param.update_step_size(eta);
 
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         param.set_saving_prefix(saving_prefix);

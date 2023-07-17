@@ -59,8 +59,8 @@ namespace vimp{
                 VectorXd mi = Phi_i * _m0;
                 VectorXd mi_next = _Phi * mi;
 
-                _target_mu.segment(0, _dim_state) = mi;
-                _target_mu.segment(_dim_state, _dim_state) = mi_next;
+                // _target_mu.segment(0, _dim_state) = mi;
+                // _target_mu.segment(_dim_state, _dim_state) = mi_next;
                 
                 _Q = MatrixXd::Zero(_dim_state, _dim_state);
                 _Q << _Qc*pow(_delta_t, 3)/3, _Qc*pow(_delta_t, 2)/2, _Qc*pow(_delta_t, 2)/2, Qc*_delta_t;
@@ -68,13 +68,13 @@ namespace vimp{
 
                 // \Lambda = [-\Phi, I], \Psi = [\Phi, -I]
                 _Lambda = MatrixXd::Zero(_dim_state, 2*_dim_state);
-                _Lambda.block(0, 0, _dim_state, _dim_state) = -_Phi;
-                _Lambda.block(0, _dim_state, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state);
+                _Lambda.block(0, 0, _dim_state, _dim_state) = _Phi;
+                _Lambda.block(0, _dim_state, _dim_state, _dim_state) = -MatrixXd::Identity(_dim_state, _dim_state);
 
                 // When a(t)=0, this part is eliminated.
                 _Psi = MatrixXd::Zero(_dim_state, 2*_dim_state);
-                _Psi.block(0, 0, _dim_state, _dim_state) = _Phi;
-                _Psi.block(0, _dim_state, _dim_state, _dim_state) = -MatrixXd::Identity(_dim_state, _dim_state);
+                // _Psi.block(0, 0, _dim_state, _dim_state) = _Phi;
+                // _Psi.block(0, _dim_state, _dim_state, _dim_state) = -MatrixXd::Identity(_dim_state, _dim_state);
             }
 
         private:
