@@ -174,7 +174,6 @@ namespace vimp{
          */
         inline void update_precision_from_joint(const SpMat& joint_covariance) {
             _covariance = _block.extract(joint_covariance);
-            _ei.print_matrix(_covariance, "_covariance factor");
             _precision = _covariance.inverse();
         }
 
@@ -212,6 +211,12 @@ namespace vimp{
             updateGH();
             double E_phi = _gh->Integrate(_func_phi)(0, 0);
             std::cout << "E_phi " << std::endl << E_phi << std::endl;
+
+            VectorXd Vdmu = _gh->Integrate(_func_Vmu);
+            _ei.print_matrix(Vdmu, "E_xphi");
+
+            MatrixXd E_xxphi = _gh->Integrate(_func_Vmumu);
+            _ei.print_matrix(E_xxphi, "E_xxphi");
         }
 
         void calculate_partial_V_GH(){
