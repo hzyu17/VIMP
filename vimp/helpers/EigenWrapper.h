@@ -255,6 +255,13 @@ public:
         std::cout << m.format(CleanFmt) << _sep;
     }
 
+    void print_matrix(const SpMat& sp_m, std::string header="matrix printed"){  
+        Eigen::IOFormat CleanFmt(6, 0, ",", "\n", "[","]");
+        std::cout << header << std::endl;
+        MatrixXd m(sp_m);
+        std::cout << m.format(CleanFmt) << _sep;
+    }
+
     void print_vectorXi(const Eigen::VectorXi& vec){
         std::cout << vec << _sep;
     }
@@ -282,8 +289,8 @@ public:
      */
     // credit to: https://github.com/libigl/libigl/blob/main/include/igl/find.cpp
     template <typename DerivedI, typename DerivedJ, typename DerivedV>
-    inline void find_nnz(
-    const Eigen::SparseMatrix<double, Eigen::ColMajor>& X,
+    inline int find_nnz(
+    const SpMat& X,
     Eigen::DenseBase<DerivedI> & I,
     Eigen::DenseBase<DerivedJ> & J,
     Eigen::DenseBase<DerivedV> & V)
@@ -298,14 +305,15 @@ public:
     for(int k=0; k<X.outerSize(); ++k)
     {
         // Iterate over inside
-        for(Eigen::SparseMatrix<double, Eigen::ColMajor>::InnerIterator it (X,k); it; ++it)
-        {
-        V(i) = it.value();
-        I(i) = it.row();
-        J(i) = it.col();
-        i++;
+        for(SpMat::InnerIterator it (X,k); it; ++it)
+        {   
+            V(i) = it.value();
+            I(i) = it.row();
+            J(i) = it.col();
+            i++;
         }
     }
+    return I.rows();
     }
 
     void find_nnz_known_ij(const SpMat & mat, const Eigen::VectorXi& Rows, const Eigen::VectorXi& Cols, Eigen::VectorXd& Vals){
@@ -616,6 +624,9 @@ public:
     const Eigen::VectorXd& Dinv)
     {   
         int nnz = Rows.rows();
+        print_matrix(Rows, "Rows");
+        print_matrix(Cols, "Cols");
+        std::cout << "nnz " << nnz << std::endl;
         X_inv.setZero();
         for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
             int j = Rows(index);

@@ -11,85 +11,94 @@ namespace vimp{
     void GVIGH<FactorizedOptimizer>::optimize(){
         double new_cost = 0.0;
         double cost_iter =  0.0;
-        for (int i_iter = 0; i_iter < _niters; i_iter++) {
-            // if (i_iter == _niters_lowtemp){
-            //     cout << "*************** Entering High temperature *************** "<< endl;
-            //     set_temperature(_high_temperature);
+
+        for (auto& opt_k : _vec_factors){
+            opt_k->test_integration();
+        }
+        // for (int i_iter = 0; i_iter < _niters; i_iter++) {
+
+            // // if (i_iter == _niters_lowtemp){
+            // //     cout << "*************** Entering High temperature *************** "<< endl;
+            // //     set_temperature(_high_temperature);
+
+            // // }
+            // cout << "========= iteration " << i_iter << " ========= "<< endl;
+            // // ============= Collect results ============= 
+            // VectorXd fact_costs_iter = factor_costs();
+
+            // _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
+
+            // cost_iter = cost_value();
+
+            // std::cout << "cost_iter " << std::endl << cost_iter << std::endl;
+
+            // _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
+            // // one step
+            // _Vdmu.setZero();
+            // _Vddmu.setZero();
+
+            // for (auto& opt_k : _vec_factors){
+            //     opt_k->calculate_partial_V_GH();
+            //     _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
+            //     _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
+            // }
+            // _Vdmu = _Vdmu ; // / _temperature;
+            // _Vddmu = _Vddmu ; // / _temperature;
+            
+            // SpMat dprecision = -_precision + _Vddmu;
+            // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+
+            // int cnt = 0;
+            // int B = 1;
+            // // const int MAX_ITER = 20;
+            // double step_size;
+
+            // SpMat new_precision;
+            // VectorXd new_mu;
+
+            // while (true){
+                
+            //     step_size = pow(_step_size_base, B);
+
+            //     new_precision = _precision + step_size * dprecision;
+            //     new_mu  = _mu + step_size * dmu;
+                
+            //     new_cost = cost_value(new_mu, new_precision);
+            //     if (new_cost < cost_iter){ 
+            //         std::cout << "breaking " << std::endl;
+            //         break; 
+            //     }
+
+            //     cnt += 1;
+
+            //     if (cnt > _niters_backtrack){
+            //         // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
+            //         cout << "Too many iterations in the backtracking ... Dead" << endl;
+            //         break;
+            //     }
+
+            //     B += 1;
                 
             // }
-            cout << "========= iteration " << i_iter << " ========= "<< endl;
-            // ============= Collect results ============= 
-            VectorXd fact_costs_iter = factor_costs();
+            // cout << "step size " << endl << step_size << endl;
 
-            cost_iter = cost_value();
+            // /// update the variables
+            // set_mu(new_mu);
+            // set_precision(new_precision);
 
-            _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
-            // one step
-            _Vdmu.setZero();
-            _Vddmu.setZero();
+            // if (cost_iter - new_cost < stop_error()){
+            //     cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
+            //     save_data();
+            //     /// see a purturbed cost
+            //     cout << "=== final cost ===" << endl << cost_iter << endl;
+            //     return ;
+            // }
+        // }
 
-            for (auto& opt_k : _vec_factors){
-                opt_k->calculate_partial_V_GH();
-                _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
-                _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
-            }
-            _Vdmu = _Vdmu ; // / _temperature;
-            _Vddmu = _Vddmu ; // / _temperature;
-            
-            SpMat dprecision = -_precision + _Vddmu;
-            VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+        // save_data();
 
-            int cnt = 0;
-            int B = 1;
-            // const int MAX_ITER = 20;
-            double step_size;
-
-            SpMat new_precision;
-            VectorXd new_mu;
-
-            while (true){
-                
-                step_size = pow(_step_size_base, B);
-
-                new_precision = _precision + step_size * dprecision;
-                new_mu  = _mu + step_size * dmu;
-                
-                new_cost = cost_value(new_mu, new_precision);
-                if (new_cost < cost_iter){ 
-                    std::cout << "breaking " << std::endl;
-                    break; 
-                }
-
-                cnt += 1;
-
-                if (cnt > _niters_backtrack){
-                    // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
-                    cout << "Too many iterations in the backtracking ... Dead" << endl;
-                    break;
-                }
-
-                B += 1;
-                
-            }
-            cout << "step size " << endl << step_size << endl;
-
-            /// update the variables
-            set_mu(new_mu);
-            set_precision(new_precision);
-
-            if (cost_iter - new_cost < stop_error()){
-                cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
-                save_data();
-                /// see a purturbed cost
-                cout << "=== final cost ===" << endl << cost_iter << endl;
-                return ;
-            }
-        }
-
-        save_data();
-
-        /// see a purturbed cost
-        cout << "=== final cost ===" << endl << cost_iter << endl;
+        // /// see a purturbed cost
+        // cout << "=== final cost ===" << endl << cost_iter << endl;
     } 
 
 

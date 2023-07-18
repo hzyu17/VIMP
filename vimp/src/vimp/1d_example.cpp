@@ -31,31 +31,30 @@ double cost_function(const VectorXd& vec_x){
 
 int main(){
 
-    typedef std::function<MatrixXd(const VectorXd&)> Function;
+    EigenWrapper _ei;
+    typedef std::function<double(const VectorXd&)> Function;
     typedef GVIFactorizedSimpleGH<Function> OptFact;
     
     int dim_state = 1;
     int num_states = 1;
     int dim_factor = 1;
 
-    MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
-
     std::vector<std::shared_ptr<OptFact>> vec_opt_fact;
-
     std::shared_ptr<OptFact> p_opt_fac{new OptFact(dim_factor, dim_state, num_states, 0, cost_function)};
-    
     VectorXd init_mu{VectorXd::Constant(1, 20.0)};
     SpMat init_prec(1, 1);
     init_prec.setZero();
     init_prec.coeffRef(0, 0) = 1.0/9.0;
 
     vec_opt_fact.emplace_back(p_opt_fac);
-
     GVIGH<OptFact> opt{vec_opt_fact, dim_state, num_states};
 
     std::string prefix = "data/1d/";
+
     opt.update_file_names(prefix);
-    opt.save_costmap("data/1d/costmap.csv");
+
+    // opt.save_costmap("data/1d/costmap.csv");
+
     opt.set_GH_degree(6);
     opt.set_initial_values(init_mu, init_prec);
     opt.set_step_size_base(0.75);

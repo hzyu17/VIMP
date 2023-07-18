@@ -74,9 +74,9 @@ namespace vimp{
         /// Intermediate functions for Gauss-Hermite quadratures, default definition, needed to be overrided by the
         /// derived classes.
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
-        std::shared_ptr<GHFunction> _func_phi;
-        std::shared_ptr<GHFunction> _func_Vmu;
-        std::shared_ptr<GHFunction> _func_Vmumu;
+        GHFunction _func_phi;
+        GHFunction _func_Vmu;
+        GHFunction _func_Vmumu;
 
         std::shared_ptr<GHFunction> _func_phi_T;
         std::shared_ptr<GHFunction> _func_Vmu_T;
@@ -114,11 +114,11 @@ namespace vimp{
 
     /// public functions
     public:
-        void construct_function_T(){
-            _func_phi_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_phi))(x) / this->_temperature;});
-            _func_Vmu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmu))(x) / this->_temperature;});
-            _func_Vmumu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmumu))(x) / this->_temperature;});
-        }
+        // void construct_function_T(){
+        //     _func_phi_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_phi))(x) / this->_temperature;});
+        //     _func_Vmu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmu))(x) / this->_temperature;});
+        //     _func_Vmumu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmumu))(x) / this->_temperature;});
+        // }
 
         /// update the GH approximator
         void updateGH(){
@@ -174,6 +174,7 @@ namespace vimp{
          */
         inline void update_precision_from_joint(const SpMat& joint_covariance) {
             _covariance = _block.extract(joint_covariance);
+            _ei.print_matrix(_covariance, "_covariance factor");
             _precision = _covariance.inverse();
         }
 
@@ -206,6 +207,13 @@ namespace vimp{
             _Vddmu = Vddmu;
         }
 
+        void test_integration(){
+            std::cout << "=========== test_integration ===========" << std::endl;
+            updateGH();
+            double E_phi = _gh->Integrate(_func_phi)(0, 0);
+            std::cout << "E_phi " << std::endl << E_phi << std::endl;
+        }
+
         void calculate_partial_V_GH(){
             // update the mu and sigma inside the gauss-hermite integrator
             updateGH();
@@ -213,18 +221,30 @@ namespace vimp{
             /// Integrate for E_q{_Vdmu} 
             VectorXd Vdmu{VectorXd::Zero(_dim)};
 
+            // _ei.print_matrix(_mu, "_mu");
+
+            VectorXd mu_p1(1);
+            mu_p1(0) = 25.0;
+
+            // VectorXd phi_mu_p1(1);
+            // phi_mu_p1 = (*(_func_Vmu))(mu_p1);
+            // _ei.print_matrix(phi_mu_p1, "phi_mu_p1");
+
             Vdmu = _gh->Integrate(_func_Vmu);
+
+            // _ei.print_matrix(Vdmu, "E_xphi");
+
             Vdmu = _precision * Vdmu;
 
             /// Integrate for E_q{phi(x)}
             double E_phi = _gh->Integrate(_func_phi)(0, 0);
-            std::cout << "E_phi T " << E_phi << std::endl;
+            std::cout << "E_phi " << std::endl << E_phi << std::endl;
 
-            double E_phi_noT = _gh->Integrate(_func_phi)(0, 0);
-            std::cout << "E_phi no T " << E_phi_noT << std::endl;
             
             /// Integrate for partial V^2 / ddmu_ 
             MatrixXd E_xxphi{_gh->Integrate(_func_Vmumu)};
+
+            _ei.print_matrix(E_xxphi, "E_xxphi");
 
             MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
             Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
@@ -312,21 +332,21 @@ namespace vimp{
          * @brief returns the Phi(x) 
          */
         inline MatrixXd Phi(const VectorXd& x) const{
-            return (*_func_phi)(x);
+            return _func_phi(x);
         }
 
         /**
          * @brief returns the (x-mu)*Phi(x) 
          */
         inline MatrixXd xMuPhi(const VectorXd& x) const{
-            return (*_func_Vmu)(x);
+            return _func_Vmu(x);
         }
 
         /**
          * @brief returns the (x-mu)*Phi(x) 
          */
         inline MatrixXd xMuxMuTPhi(const VectorXd& x) const{
-            return (*_func_Vmumu)(x);
+            return _func_Vmumu(x);
         }
 
         /**

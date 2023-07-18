@@ -21,7 +21,7 @@ namespace vimp{
     template <typename Function>
     class GVIFactorizedSimpleGH: public GVIFactorizedBase{
 
-        using OptBase = GVIFactorizedBase;
+        using Base = GVIFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
         using GH = GaussHermite<GHFunction>;
 
@@ -30,15 +30,14 @@ namespace vimp{
         ///@param function Template function class which calculate the cost
         GVIFactorizedSimpleGH(int dimension, int state_dim, int num_states, int start_index, const Function& function, 
                               double temperature=1.0, double high_temperature=10.0):
-                OptBase(dimension, state_dim, num_states, start_index, temperature, high_temperature)
+                Base(dimension, state_dim, num_states, start_index, temperature, high_temperature)
                 {
                     /// Override of the base classes.
-                    OptBase::_func_phi = std::make_shared<GHFunction>([this, function](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function(x))};});
-                    OptBase::_func_Vmu = std::make_shared<GHFunction>([this, function](const VectorXd& x){return (x-OptBase::_mu) * function(x);});
-                    OptBase::_func_Vmumu = std::make_shared<GHFunction>([this, function](const VectorXd& x){return MatrixXd{(x-OptBase::_mu) * (x-OptBase::_mu).transpose().eval() * function(x)};});
-                    OptBase::_gh = std::make_shared<GH>(GH{10, OptBase::_dim, OptBase::_mu, OptBase::_covariance});
+                    Base::_func_phi = [this, function](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function(x))};};
+                    Base::_func_Vmu = [this, function](const VectorXd& x){return (x-Base::_mu) * function(x);};
+                    Base::_func_Vmumu = [this, function](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x)};};
+                    Base::_gh = std::make_shared<GH>(GH{10, Base::_dim, Base::_mu, Base::_covariance});
                 }
-
         
     public:
         typedef std::shared_ptr<GVIFactorizedSimpleGH> shared_ptr;

@@ -80,15 +80,17 @@ namespace vimp{
     }
 
     template <typename Function>
-    MatrixXd GaussHermite<Function>::Integrate(const std::shared_ptr<Function>& function){
+    MatrixXd GaussHermite<Function>::Integrate(const Function& function){
+        std::cout << "============ Integrate ============" << std::endl;
         computeWeights();
+
         LLT<MatrixXd> lltP(_P);
         MatrixXd sig{lltP.matrixL()};
 
         VectorXd pt_0(_dim);
         pt_0.setZero();
 
-        MatrixXd res{MatrixXd::Zero((*function)(pt_0).rows(), (*function)(pt_0).cols())}; 
+        MatrixXd res{MatrixXd::Zero(function(pt_0).rows(), function(pt_0).cols())}; 
 
         /// Compute permutations
         std::vector<int> range_deg;
@@ -110,7 +112,8 @@ namespace vimp{
                 cnt += 1;
             }
             pt_ij = sig * pt_ij + _mean;
-            res += weights * (*function)(pt_ij);
+            res += weights * function(pt_ij);
+
         }
 
         return res;

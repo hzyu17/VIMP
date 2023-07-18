@@ -27,9 +27,9 @@ namespace vimp{
                                             double high_temperature):
                 Base(dimension, dim_state, num_states, start_indx, temperature, high_temperature){
 
-                Base::_func_phi = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));});
-                Base::_func_Vmu = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return VectorXd::Ones(this->_dim) * function(x, cost_class);});
-                Base::_func_Vmumu = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class)};});
+                Base::_func_phi = [this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));};
+                Base::_func_Vmu = [this, function, cost_class](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class);};
+                Base::_func_Vmumu = [this, function, cost_class](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class)};};
                 
                 // Base::construct_function_T();
 

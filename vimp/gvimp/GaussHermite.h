@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "helpers/EigenWrapper.h"
 #include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <boost/math/special_functions/factorials.hpp>
@@ -82,7 +83,7 @@ public:
     /**
      * @brief Compute the approximated integration using Gauss-Hermite.
      */
-    MatrixXd Integrate(const std::shared_ptr<Function>& function);
+    MatrixXd Integrate(const Function& function);
 
     /**
      * Update member variables
@@ -110,6 +111,7 @@ protected:
     MatrixXd _P;
     VectorXd _W;
     VectorXd _sigmapts;
+    EigenWrapper _ei;
 };
 
 }

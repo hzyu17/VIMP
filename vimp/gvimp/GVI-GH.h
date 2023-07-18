@@ -42,7 +42,7 @@ public:
     GVIGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, 
           int dim_state, 
           int num_states, 
-          int niterations=20,
+          int niterations=1,
           double temperature=1.0, 
           double high_temperature=100.0):
             _dim_state{dim_state},
@@ -55,7 +55,7 @@ public:
             _temperature{temperature},
             _high_temperature{high_temperature},
             _nfactors{vec_fact_optimizers.size()},
-            _vec_factors{std::move(vec_fact_optimizers)},
+            _vec_factors{vec_fact_optimizers},
             _mu{VectorXd::Zero(_dim)},
             _Vdmu{VectorXd::Zero(_dim)},
             _Vddmu{SpMat(_dim, _dim)},
@@ -63,19 +63,12 @@ public:
             _ldlt{_precision},
             _covariance{SpMat(_dim, _dim)},
             _res_recorder{niterations, dim_state, num_states, _nfactors}
-    {            
-                _precision.setZero();
-                // fill in the precision matrix to the known sparsity pattern
-                for (int i=0; i<num_states-1; i++){
-                    Eigen::MatrixXd block = MatrixXd::Ones(2*dim_state, 2*dim_state);
-                    _ei.block_insert_sparse(_precision, i*dim_state, i*dim_state, 2*dim_state, 2*dim_state, block);
-                }
-                SpMat lower = _precision.triangularView<Eigen::Lower>();
-                _ei.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
-                _nnz = _Rows.rows();
+    {
+                construct_sparse_precision();
                 
                 _Vdmu.setZero();
                 _Vddmu.setZero();
+
     }
 
 protected:
@@ -100,7 +93,7 @@ protected:
 
     // sparse matrices
     SpMat _precision, _covariance;
-    EigenWrapper _ei = EigenWrapper();
+    EigenWrapper _ei;
     VectorXi _Rows, _Cols; VectorXd _Vals;
     int _nnz = 0;
     SparseLDLT _ldlt;
@@ -122,6 +115,23 @@ protected:
         _Dinv = _ldlt.vectorD().real().cwiseInverse();
         _ei.find_nnz_known_ij(_L, _Rows, _Cols, _Vals);
         // _D = ldlt.vectorD().real();
+    }
+
+    void construct_sparse_precision(){
+        _precision.setZero();
+        // fill in the precision matrix to the known sparsity pattern
+        if (_num_states == 1){
+            Eigen::MatrixXd block = MatrixXd::Ones(_dim_state, _dim_state);
+            _ei.block_insert_sparse(_precision, 0, 0, _dim_state, _dim_state, block);
+        }else{
+            Eigen::MatrixXd block = MatrixXd::Ones(2*_dim_state, 2*_dim_state);
+            for (int i=0; i<_num_states-1; i++){
+                _ei.block_insert_sparse(_precision, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
+            }
+        }
+        
+        SpMat lower = _precision.triangularView<Eigen::Lower>();
+        _nnz = _ei.find_nnz(lower, _Rows, _Cols, _Vals); // the Rows and Cols table are fixed since the initialization.
     }
 
 public:
