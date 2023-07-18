@@ -81,7 +81,6 @@ namespace vimp{
 
     template <typename Function>
     MatrixXd GaussHermite<Function>::Integrate(const Function& function){
-        std::cout << "============ Integrate ============" << std::endl;
         computeWeights();
 
         LLT<MatrixXd> lltP(_P);

@@ -38,8 +38,9 @@ for i_iter = 1:niters
     mu
     sig_sq = 1/prec;
     prec
-    cost = GaussHermitOneDim(phi, p, mu, 1/prec) + log(prec)/2;
-
+    cost = GaussHermitOneDim(phi, p, mu, 1/prec) + log(prec)/2
+    disp("log(prec)")
+    log(prec)
     mus = [mus, mu];
     precs = [precs, prec];
     costs = [costs, cost];
@@ -63,8 +64,8 @@ for i_iter = 1:niters
     Vddmu = prec * GaussHermitOneDim(xmumuT_phi, p, mu, 1/prec) * prec -  prec * GaussHermitOneDim(phi, p, mu, 1/prec);
     
     % ************************ (14) (15) *******************************
-    d_prec = Vddmu - prec;
-    dmu = -Vdmu / Vddmu;
+    d_prec = Vddmu - prec
+    dmu = -Vdmu / Vddmu
     
     % *********************** for backtracking ************************
     new_mu = mu + ss * dmu;
@@ -87,7 +88,6 @@ for i_iter = 1:niters
             disp("Over 500 times shrinking ... ")
             break
         end
-
     end
     % ********************** update step *****************************
     mu = new_mu;
@@ -99,7 +99,7 @@ end
 disp("---- plotting ----")
 
 % ====== reading the cost map data, generated from cpp =======
-cpp_costmap = csvread("../vimp/data/1d/costmap.csv");
+cpp_costmap = csvread("../../vimp/data/vimp/1d/costmap.csv");
 nmesh = 40;
 x_mesh = linspace(18, 25, nmesh);
 y_mesh = linspace(0.05,1,nmesh);
@@ -121,9 +121,9 @@ xlabel("mu")
 ylabel("sig^{-2}")
 
 % ======================= cpp iterations =======================
-cpp_means  = csvread("../vimp/data/1d/mean.csv");
-cpp_covs = csvread("../vimp/data/1d/cov.csv");
-cpp_costs = csvread("../vimp/data/1d/cost.csv");
+cpp_means  = csvread("../../vimp/data/vimp/1d/mean.csv");
+cpp_covs = csvread("../../vimp/data/vimp/1d/cov.csv");
+cpp_costs = csvread("../../vimp/data/vimp/1d/cost.csv");
 cpp_precs = 1./cpp_covs;
 subplot(2,2,2)
 title("iterations cpp")

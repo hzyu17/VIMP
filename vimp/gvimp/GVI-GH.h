@@ -42,7 +42,7 @@ public:
     GVIGH(const std::vector<std::shared_ptr<FactorizedOptimizer>>& vec_fact_optimizers, 
           int dim_state, 
           int num_states, 
-          int niterations=1,
+          int niterations=5,
           double temperature=1.0, 
           double high_temperature=100.0):
             _dim_state{dim_state},

@@ -44,10 +44,6 @@ feval(phi_func, mu_p)
 disp('xmu_phi_func value at mu_p')
 feval(xmu_phi_func, mu_p)
 
-mu_p1 = mu_p + 5.0;
-disp('xmu_phi_func value at mu_p1')
-feval(xmu_phi_func, mu_p1)
-
 disp('xmumuT_phi_func value at mu_p')
 feval(xmumuT_phi_func, mu_p)
 

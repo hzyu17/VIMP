@@ -624,9 +624,6 @@ public:
     const Eigen::VectorXd& Dinv)
     {   
         int nnz = Rows.rows();
-        print_matrix(Rows, "Rows");
-        print_matrix(Cols, "Cols");
-        std::cout << "nnz " << nnz << std::endl;
         X_inv.setZero();
         for (int index=nnz-1; index>=0; index--){ // iterator j, only for nnz in L
             int j = Rows(index);

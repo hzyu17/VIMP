@@ -224,32 +224,14 @@ namespace vimp{
             updateGH();
 
             /// Integrate for E_q{_Vdmu} 
-            VectorXd Vdmu{VectorXd::Zero(_dim)};
-
-            // _ei.print_matrix(_mu, "_mu");
-
-            VectorXd mu_p1(1);
-            mu_p1(0) = 25.0;
-
-            // VectorXd phi_mu_p1(1);
-            // phi_mu_p1 = (*(_func_Vmu))(mu_p1);
-            // _ei.print_matrix(phi_mu_p1, "phi_mu_p1");
-
-            Vdmu = _gh->Integrate(_func_Vmu);
-
-            // _ei.print_matrix(Vdmu, "E_xphi");
-
+            VectorXd Vdmu = _gh->Integrate(_func_Vmu);
             Vdmu = _precision * Vdmu;
 
             /// Integrate for E_q{phi(x)}
             double E_phi = _gh->Integrate(_func_phi)(0, 0);
-            std::cout << "E_phi " << std::endl << E_phi << std::endl;
-
             
             /// Integrate for partial V^2 / ddmu_ 
             MatrixXd E_xxphi{_gh->Integrate(_func_Vmumu)};
-
-            _ei.print_matrix(E_xxphi, "E_xxphi");
 
             MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
             Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();

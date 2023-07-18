@@ -9,6 +9,8 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
 
 #include "gvimp/GVIFactorizedSimpleGH.h"
 #include "gvimp/GVI-GH.h"
@@ -22,7 +24,7 @@ double cost_function(const VectorXd& vec_x){
     double sig_p_sq = 9;
 
     // y should be sampled. for single trial just give it a value.
-    double y = f*b/mu_p + 0.05;
+    double y = f*b/mu_p - 0.8;
 
     return ((x - mu_p)*(x - mu_p) / sig_p_sq / 2 + (y - f*b/x)*(y - f*b/x) / sig_r_sq / 2); 
 
@@ -49,13 +51,14 @@ int main(){
     vec_opt_fact.emplace_back(p_opt_fac);
     GVIGH<OptFact> opt{vec_opt_fact, dim_state, num_states};
 
-    std::string prefix = "data/1d/";
+    std::string source_root{XSTRING(SOURCE_ROOT)};
+    std::string prefix{source_root+"/data/vimp/1d/"};
 
     opt.update_file_names(prefix);
+    std::string costmap_file{source_root+"/data/vimp/1d/costmap.csv"};
+    opt.save_costmap(costmap_file);
 
-    // opt.save_costmap("data/1d/costmap.csv");
-
-    opt.set_GH_degree(6);
+    opt.set_GH_degree(20);
     opt.set_initial_values(init_mu, init_prec);
     opt.set_step_size_base(0.75);
     cout << "opt.mu " << endl << opt.mean() << endl;
