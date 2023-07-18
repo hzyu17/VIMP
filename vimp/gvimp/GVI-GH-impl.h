@@ -20,7 +20,9 @@ namespace vimp{
             cout << "========= iteration " << i_iter << " ========= "<< endl;
             // ============= Collect results ============= 
             VectorXd fact_costs_iter = factor_costs();
+
             cost_iter = cost_value();
+
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
             // one step
             _Vdmu.setZero();
@@ -31,13 +33,14 @@ namespace vimp{
                 _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
                 _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
             }
-            _Vdmu = _Vdmu / _temperature;
-            _Vddmu = _Vddmu / _temperature;
+            _Vdmu = _Vdmu ; // / _temperature;
+            _Vddmu = _Vddmu ; // / _temperature;
             
             SpMat dprecision = -_precision + _Vddmu;
             VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
-            int cnt = 1;
+            int cnt = 0;
+            int B = 1;
             // const int MAX_ITER = 20;
             double step_size;
 
@@ -46,20 +49,27 @@ namespace vimp{
 
             while (true){
                 
-                step_size = pow(_step_size_base, cnt);
+                step_size = pow(_step_size_base, B);
 
                 new_precision = _precision + step_size * dprecision;
                 new_mu  = _mu + step_size * dmu;
                 
                 new_cost = cost_value(new_mu, new_precision);
-                if (new_cost < cost_iter){ break; }
+                if (new_cost < cost_iter){ 
+                    std::cout << "breaking " << std::endl;
+                    break; 
+                }
+
+                cnt += 1;
 
                 if (cnt > _niters_backtrack){
                     // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
                     cout << "Too many iterations in the backtracking ... Dead" << endl;
                     break;
                 }
-                cnt += 1;
+
+                B += 1;
+                
             }
             cout << "step size " << endl << step_size << endl;
 
@@ -107,7 +117,7 @@ namespace vimp{
             VectorXd x_k = opt_k->extract_mu_from_joint(x);
 
             MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
-            fac_costs(cnt) = opt_k->fact_cost_value(x_k, Cov_k) / _temperature;
+            fac_costs(cnt) = opt_k->fact_cost_value(x_k, Cov_k) ; // / _temperature;
             cnt += 1;
         }
         return fac_costs;
@@ -128,7 +138,7 @@ namespace vimp{
             fac_costs(cnt) = opt_k->fact_cost_value();
             cnt += 1;
         }
-        return fac_costs  / _temperature;
+        return fac_costs  ; // / _temperature;
     }
 
     /**
@@ -144,7 +154,7 @@ namespace vimp{
             VectorXd x_k = opt_k->extract_mu_from_joint(x);
             MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
 
-            value += opt_k->fact_cost_value(x_k, Cov_k) / _temperature;
+            value += opt_k->fact_cost_value(x_k, Cov_k) ; // / _temperature;
         }
         SparseLDLT ldlt(Precision);
         double det = ldlt.determinant();
@@ -175,7 +185,7 @@ namespace vimp{
         for (auto& opt_k : _vec_factors){
             value += opt_k->fact_cost_value();
         }
-        return value  / _temperature;
+        return value  ; // / _temperature;
     }
 
 }

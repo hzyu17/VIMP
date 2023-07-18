@@ -1,60 +1,60 @@
-7, nan, nan, nan, nan, nan, nan, nan, nan, nan
--5, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
-5.78571428571429, nan, nan, nan, nan, nan, nan, nan, nan, nan
--3.5, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
-4.57142857142857, nan, nan, nan, nan, nan, nan, nan, nan, nan
--2, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
-3.35714285714286, nan, nan, nan, nan, nan, nan, nan, nan, nan
--0.5, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
-2.14285714285714, nan, nan, nan, nan, nan, nan, nan, nan, nan
-1, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
-0.928571428571429, nan, nan, nan, nan, nan, nan, nan, nan, nan
-2.5, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--0.285714285714286, nan, nan, nan, nan, nan, nan, nan, nan, nan
-4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--1.5, nan, nan, nan, nan, nan, nan, nan, nan, nan
-5.5, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--2.71428571428571, nan, nan, nan, nan, nan, nan, nan, nan, nan
-7, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--3.92857142857143, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.5, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--5.14285714285714, nan, nan, nan, nan, nan, nan, nan, nan, nan
-10, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.35714285714286, nan, nan, nan, nan, nan, nan, nan, nan, nan
-11.5, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--7.57142857142857, nan, nan, nan, nan, nan, nan, nan, nan, nan
-13, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--8.78571428571429, nan, nan, nan, nan, nan, nan, nan, nan, nan
-14.5, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
--10, nan, nan, nan, nan, nan, nan, nan, nan, nan
-16, nan, nan, nan, nan, nan, nan, nan, nan, nan
--6.8, nan, nan, nan, nan, nan, nan, nan, nan, nan
-8.4, nan, nan, nan, nan, nan, nan, nan, nan, nan
+7, 0, 0, 0, 0, 0
+-5, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+5.78571428571429, 0, 0, 0, 0, 0
+-3.5, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+4.57142857142857, 0, 0, 0, 0, 0
+-2, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+3.35714285714286, 0, 0, 0, 0, 0
+-0.5, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+2.14285714285714, 0, 0, 0, 0, 0
+1, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+0.928571428571429, 0, 0, 0, 0, 0
+2.5, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-0.285714285714286, 0, 0, 0, 0, 0
+4, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-1.5, 0, 0, 0, 0, 0
+5.5, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-2.71428571428571, 0, 0, 0, 0, 0
+7, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-3.92857142857143, 0, 0, 0, 0, 0
+8.5, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-5.14285714285714, 0, 0, 0, 0, 0
+10, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-6.35714285714286, 0, 0, 0, 0, 0
+11.5, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-7.57142857142857, 0, 0, 0, 0, 0
+13, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-8.78571428571429, 0, 0, 0, 0, 0
+14.5, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0
+-10, 0, 0, 0, 0, 0
+16, 0, 0, 0, 0, 0
+-6.8, 0, 0, 0, 0, 0
+8.4, 0, 0, 0, 0, 0

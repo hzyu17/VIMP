@@ -10,6 +10,11 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
+std::string source_root{XSTRING(SOURCE_ROOT)};
+
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
@@ -28,7 +33,7 @@ class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
         virtual ~PointRobot3DSDFExample(){}
         
         PointRobot3DSDFExample(double epsilon, double radius, const std::string & field, const std::string& sdf_file):
-        Base(3, 1, "", "/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin"),
+        Base(3, 1, "", source_root+"/../matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin"),
         _eps(epsilon), 
         _r(radius)
         {

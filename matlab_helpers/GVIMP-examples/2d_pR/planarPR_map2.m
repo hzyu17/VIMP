@@ -1,7 +1,7 @@
 clear all
 close all
 clc
-addpath('/usr/local/gtsam_toolbox')
+addpath('/home/hyu419/.local/gtsam_toolbox');
 addpath("error_ellipse");
 addpath("../../../matlab_helpers/");
 import gtsam.*
@@ -17,7 +17,7 @@ height = 800;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
+tiledlayout(2, 2, 'TileSpacing', 'none', 'Padding', 'none')
 for i = 1:4 % 4 experiments
     nexttile
     prefix = ["map2/case" + num2str(i)+"/"];

@@ -74,17 +74,22 @@ public:
                 // lin GP factor
                 if (i == n_states-1){
                     // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
-                    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1});
+                    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, 
+                                                               n_states, i-1, params.temperature(), params.high_temperature()});
                 }
 
                 // Fixed gp factor
                 FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta}};
-                vec_factors.emplace_back(new FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, n_states, i});
+                vec_factors.emplace_back(new FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, 
+                                                          n_states, i, params.temperature(), params.high_temperature()});
 
             }else{
                 // linear gp factors
-                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, n_states, i-1});
-                vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, SDFPR{gtsam::symbol('x', i), robot_model, sdf, sig_obs, eps_sdf}, n_states, i});    
+                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, 
+                                                            n_states, i-1, params.temperature(), params.high_temperature()});
+                vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, SDFPR{gtsam::symbol('x', i), 
+                                                                robot_model, sdf, sig_obs, eps_sdf}, 
+                                                                n_states, i, params.temperature(), params.high_temperature()});    
             }
         }
 

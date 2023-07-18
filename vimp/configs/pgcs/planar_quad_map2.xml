@@ -12,7 +12,7 @@
     <stop_err> 1e-5 </stop_err>
     <max_iter> 20 </max_iter>
 
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
 
 </parameters>
 </Commons>
@@ -40,7 +40,7 @@
 
     <cost_sigma> 1.2e-5 </cost_sigma>
 
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case1/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case1/</saving_prefix>
 
 </parameters>
 </Experiment1>

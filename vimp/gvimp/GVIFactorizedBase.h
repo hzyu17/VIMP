@@ -19,8 +19,8 @@
 #include <random>
 
 #include "GaussHermite.h"
-#include "../helpers/sparse_graph.h"
-#include "../helpers/timer.h"
+#include "helpers/sparse_graph.h"
+#include "helpers/timer.h"
 
 
 using namespace std;
@@ -42,11 +42,14 @@ namespace vimp{
          * 
          * @param dimension The dimension of the state
          */
-        GVIFactorizedBase(int dimension, int state_dim, int num_states, int start_index, bool is_linear=false):
+        GVIFactorizedBase(int dimension, int state_dim, int num_states, int start_index, 
+                          double temperature=1.0, double high_temperature=10.0, bool is_linear=false):
                 _is_linear{is_linear},
                 _dim{dimension},
                 _state_dim{state_dim},
                 _num_states{num_states},
+                _temperature{temperature},
+                _high_temperature{high_temperature},
                 _mu{VectorXd::Zero(_dim)},
                 _covariance{MatrixXd::Identity(_dim, _dim)},
                 _precision{MatrixXd::Identity(_dim, _dim)},
@@ -54,7 +57,7 @@ namespace vimp{
                 _Vdmu{VectorXd::Zero(_dim)},
                 _Vddmu{MatrixXd::Zero(_dim, _dim)},
                 _block{state_dim, num_states, start_index, dimension}
-                {
+                {   
                     _joint_size = state_dim * num_states;
                 }        
         
@@ -74,6 +77,14 @@ namespace vimp{
         std::shared_ptr<GHFunction> _func_phi;
         std::shared_ptr<GHFunction> _func_Vmu;
         std::shared_ptr<GHFunction> _func_Vmumu;
+
+        std::shared_ptr<GHFunction> _func_phi_T;
+        std::shared_ptr<GHFunction> _func_Vmu_T;
+        std::shared_ptr<GHFunction> _func_Vmumu_T;
+
+        // std::shared_ptr<GHFunction> _func_phi_highT;
+        // std::shared_ptr<GHFunction> _func_Vmu_highT;
+        // std::shared_ptr<GHFunction> _func_Vmumu_highT;
 
         /// G-H quadrature class
         using GH = GaussHermite<GHFunction> ;
@@ -95,12 +106,20 @@ namespace vimp{
         /// step sizes
         double _step_size_mu = 0.9;
         double _step_size_Sigma = 0.9;
+
+        double _temperature, _high_temperature;
         
         // sparse mapping to sub variables
         TrajectoryBlock _block;
 
     /// public functions
     public:
+        void construct_function_T(){
+            _func_phi_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_phi))(x) / this->_temperature;});
+            _func_Vmu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmu))(x) / this->_temperature;});
+            _func_Vmumu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmumu))(x) / this->_temperature;});
+        }
+
         /// update the GH approximator
         void updateGH(){
             _gh->update_mean(_mu);
@@ -199,6 +218,10 @@ namespace vimp{
 
             /// Integrate for E_q{phi(x)}
             double E_phi = _gh->Integrate(_func_phi)(0, 0);
+            std::cout << "E_phi T " << E_phi << std::endl;
+
+            double E_phi_noT = _gh->Integrate(_func_phi)(0, 0);
+            std::cout << "E_phi no T " << E_phi_noT << std::endl;
             
             /// Integrate for partial V^2 / ddmu_ 
             MatrixXd E_xxphi{_gh->Integrate(_func_Vmumu)};

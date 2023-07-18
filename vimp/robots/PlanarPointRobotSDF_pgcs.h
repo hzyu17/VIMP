@@ -12,6 +12,11 @@
 
 #pragma once
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
+std::string source_root{XSTRING(SOURCE_ROOT)};
+
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
@@ -26,7 +31,7 @@ using Base = RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>;
 class PlanarPRSDFExample: public Base{
     public:
         PlanarPRSDFExample(double epsilon, double radius, const std::string& field_file, const std::string& sdf_file=""): 
-        Base(2, 1, "/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv", ""), 
+        Base(2, 1, source_root+"/data/vimp/2d_pR/field_multiobs_entropy_map2.csv", ""), 
         _eps(epsilon), 
         _r(radius)
         {   

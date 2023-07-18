@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Experiment1>
 <parameters>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
+    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -35,14 +35,14 @@
 
     <stop_err> 1e-4 </stop_err>
 
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
 
 </parameters>
 </Experiment1>
 
 <Experiment2>
 <parameters>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
+    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
     
     <start_pos>
         <x>-1.5707963</x>
@@ -76,7 +76,7 @@
 
     <stop_err> 1e-4 </stop_err>
 
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case2/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case2/</saving_prefix>
 
 </parameters>
 </Experiment2>

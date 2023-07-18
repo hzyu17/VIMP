@@ -1,8 +1,8 @@
-# Install script for directory: /home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src/source/3rd_party
+# Install script for directory: /home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src/source/3rd_party
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/hzyu/.local")
+  set(CMAKE_INSTALL_PREFIX "/home/hyu419/.local")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

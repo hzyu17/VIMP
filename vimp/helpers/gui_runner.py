@@ -34,11 +34,11 @@ def update_xml():
     root.find('Experiment4/cost_sigma').text = str(new_cost_sigma4_val)
 
     # Save updated XML to a file
-    tree.write('/home/hzyu/git/VIMP/vimp/helpers/example.xml')
+    tree.write('/home/hyu419/git/VIMP/vimp/helpers/example.xml')
     print('XML values updated and saved.')
 
 # Load the XML file
-tree = ET.parse('/home/hzyu/git/VIMP/vimp/helpers/example.xml')
+tree = ET.parse('/home/hyu419/git/VIMP/vimp/helpers/example.xml')
 root = tree.getroot()
 
 # Create tkinter window

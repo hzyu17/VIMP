@@ -28,8 +28,9 @@ namespace vimp{
     public:
         ///@param dimension The dimension of the state
         ///@param function Template function class which calculate the cost
-        GVIFactorizedSimpleGH(int dimension, int state_dim, int num_states, int start_index, const Function& function):
-                OptBase(dimension, state_dim, num_states, start_index)
+        GVIFactorizedSimpleGH(int dimension, int state_dim, int num_states, int start_index, const Function& function, 
+                              double temperature=1.0, double high_temperature=10.0):
+                OptBase(dimension, state_dim, num_states, start_index, temperature, high_temperature)
                 {
                     /// Override of the base classes.
                     OptBase::_func_phi = std::make_shared<GHFunction>([this, function](const VectorXd& x){return MatrixXd{MatrixXd::Constant(1, 1, function(x))};});

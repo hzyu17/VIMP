@@ -20,7 +20,7 @@ int main(){
 
     // int nx=6, nu=2;
     // int num_exp = 1;
-    // std::string config_file{"/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_quad_map2.xml"};
+    // std::string config_file{"/home/hyu419/git/VIMP/vimp/configs/pgcs/planar_quad_map2.xml"};
     // typedef PGCSNonLinDynPlanarSDF<PlanarQuadSDF> PGCSPlanarQuadSDF;
     // ExperimentRunnerNL<PGCSPlanarQuadSDF, PlanarQuadrotor> runner(nx, nu, num_exp, config_file);
 

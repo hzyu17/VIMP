@@ -21,17 +21,22 @@ namespace vimp{
         using CostFunction = std::function<double(const VectorXd&, const LinearFactor&)>;
     public:
         GVIFactorizedLinear(const int& dimension,
-                            int dim_state, 
+                            int dim_state,
                             const CostFunction& function, 
                             const LinearFactor& linear_factor,
                             int num_states,
-                            int start_indx):
-            Base(dimension, dim_state, num_states, start_indx, true),
+                            int start_indx,
+                            double temperature,
+                            double high_temperature):
+            Base(dimension, dim_state, num_states, start_indx, temperature, high_temperature, true),
             _linear_factor{linear_factor}            
             {
                 Base::_func_phi = std::make_shared<GHFunction>([this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor));});
                 Base::_func_Vmu = std::make_shared<GHFunction>([this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor);});
                 Base::_func_Vmumu = std::make_shared<GHFunction>([this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};});
+                
+                // Base::construct_function_T();
+
                 using GH = GaussHermite<GHFunction>;
                 Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
 
@@ -79,14 +84,14 @@ namespace vimp{
             _Vddmu = _const_multiplier * (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace());
         }
 
-        double fact_cost_value() {
-            return fact_cost_value(_mu, _covariance);
-        }
+        // double fact_cost_value() {
+        //     return fact_cost_value(_mu, _covariance);
+        // }
 
-        double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) override {
-            return _const_multiplier * ((_Lambda.transpose()*_target_precision*_Lambda * Cov).trace() + 
-                    (_Lambda*x - _Psi*_target_mean).transpose() * _target_precision * (_Lambda*x - _Psi*_target_mean));
-        }
+        // double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) override {
+        //     return _const_multiplier * ((_Lambda.transpose()*_target_precision*_Lambda * Cov).trace() + 
+        //             (_Lambda*x - _Psi*_target_mean).transpose() * _target_precision * (_Lambda*x - _Psi*_target_mean));
+        // }
 
     };
 }

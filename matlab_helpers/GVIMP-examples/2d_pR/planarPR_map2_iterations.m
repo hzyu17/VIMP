@@ -1,7 +1,7 @@
 clear all
 close all
 clc
-addpath('/home/hyu419/.local/gtsam_toolbox')
+addpath('/home/hyu419/.local/gtsam_toolbox');
 addpath("error_ellipse");
 addpath("../../../matlab_helpers/");
 import gtsam.*
@@ -20,8 +20,8 @@ height = 800;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-niters = 5;
-i_exp = 1;
+niters = 4;
+i_exp = 2;
 prefix = ["map2/case" + num2str(i_exp)+"/"];
 means = csvread([prefix + "mean.csv"]);
 covs = csvread([prefix + "cov.csv"]);

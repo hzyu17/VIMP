@@ -1,6 +1,6 @@
 <!-- Experiemnt 2 -->
 <parameters>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <field_file>/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -26,7 +26,7 @@
 
     <cost_sigma> 5e-6 </cost_sigma>
 
-    <saving_prefix>/home/hzyu/git/VIMP/vimp/data/pgcs/double_integrator/map2/case2/</saving_prefix>
+    <saving_prefix>/home/hyu419/git/VIMP/vimp/data/pgcs/double_integrator/map2/case2/</saving_prefix>
 
 </parameters>
 

@@ -138,7 +138,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <mean_file>/home/hzyu/git/VIMP/vimp/data/WAM/mean_base.csv</mean_file>
+    <mean_file>/home/hyu419/git/VIMP/vimp/data/WAM/mean_base.csv</mean_file>
     <replanning_starting> 3 </replanning_starting>
 
 </parameters>
