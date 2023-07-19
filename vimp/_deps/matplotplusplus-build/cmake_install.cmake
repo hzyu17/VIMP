@@ -1,8 +1,8 @@
-# Install script for directory: /home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src
+# Install script for directory: /home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/hyu419/.local")
+  set(CMAKE_INSTALL_PREFIX "/usr/local")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-build/source/cmake_install.cmake")
+  include("/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-build/source/cmake_install.cmake")
 endif()
 

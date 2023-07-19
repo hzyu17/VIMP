@@ -1,7 +1,7 @@
 
 execute_process(
   COMMAND "/usr/bin/git" rev-list --max-count=1 HEAD
-  WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+  WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
   RESULT_VARIABLE error_code
   OUTPUT_VARIABLE head_sha
   OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -12,7 +12,7 @@ endif()
 
 execute_process(
   COMMAND "/usr/bin/git" show-ref origin/master
-  WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+  WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
   OUTPUT_VARIABLE show_ref_output
   )
 # If a remote ref is asked for, which can possibly move around,
@@ -38,7 +38,7 @@ endif()
 # yet).
 execute_process(
   COMMAND "/usr/bin/git" rev-list --max-count=1 origin/master
-  WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+  WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
   RESULT_VARIABLE error_code
   OUTPUT_VARIABLE tag_sha
   OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -48,7 +48,7 @@ execute_process(
 if(error_code OR is_remote_ref OR NOT ("${tag_sha}" STREQUAL "${head_sha}"))
   execute_process(
     COMMAND "/usr/bin/git" fetch
-    WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+    WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
     RESULT_VARIABLE error_code
     )
   if(error_code)
@@ -59,7 +59,7 @@ if(error_code OR is_remote_ref OR NOT ("${tag_sha}" STREQUAL "${head_sha}"))
     # Check if stash is needed
     execute_process(
       COMMAND "/usr/bin/git" status --porcelain
-      WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+      WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
       RESULT_VARIABLE error_code
       OUTPUT_VARIABLE repo_status
       )
@@ -73,7 +73,7 @@ if(error_code OR is_remote_ref OR NOT ("${tag_sha}" STREQUAL "${head_sha}"))
     if(need_stash)
       execute_process(
         COMMAND "/usr/bin/git" stash save --all;--quiet
-        WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+        WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
         RESULT_VARIABLE error_code
         )
       if(error_code)
@@ -84,60 +84,60 @@ if(error_code OR is_remote_ref OR NOT ("${tag_sha}" STREQUAL "${head_sha}"))
     # Pull changes from the remote branch
     execute_process(
       COMMAND "/usr/bin/git" rebase ${git_remote}/${git_tag}
-      WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+      WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
       RESULT_VARIABLE error_code
       )
     if(error_code)
       # Rebase failed: Restore previous state.
       execute_process(
         COMMAND "/usr/bin/git" rebase --abort
-        WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+        WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
       )
       if(need_stash)
         execute_process(
           COMMAND "/usr/bin/git" stash pop --index --quiet
-          WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+          WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
           )
       endif()
-      message(FATAL_ERROR "\nFailed to rebase in: '/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src/'.\nYou will have to resolve the conflicts manually")
+      message(FATAL_ERROR "\nFailed to rebase in: '/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src/'.\nYou will have to resolve the conflicts manually")
     endif()
 
     if(need_stash)
       execute_process(
         COMMAND "/usr/bin/git" stash pop --index --quiet
-        WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+        WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
         RESULT_VARIABLE error_code
         )
       if(error_code)
         # Stash pop --index failed: Try again dropping the index
         execute_process(
           COMMAND "/usr/bin/git" reset --hard --quiet
-          WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+          WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
           RESULT_VARIABLE error_code
           )
         execute_process(
           COMMAND "/usr/bin/git" stash pop --quiet
-          WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+          WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
           RESULT_VARIABLE error_code
           )
         if(error_code)
           # Stash pop failed: Restore previous state.
           execute_process(
             COMMAND "/usr/bin/git" reset --hard --quiet ${head_sha}
-            WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+            WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
           )
           execute_process(
             COMMAND "/usr/bin/git" stash pop --index --quiet
-            WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+            WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
           )
-          message(FATAL_ERROR "\nFailed to unstash changes in: '/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src/'.\nYou will have to resolve the conflicts manually")
+          message(FATAL_ERROR "\nFailed to unstash changes in: '/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src/'.\nYou will have to resolve the conflicts manually")
         endif()
       endif()
     endif()
   else()
     execute_process(
       COMMAND "/usr/bin/git" checkout origin/master
-      WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
+      WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
       RESULT_VARIABLE error_code
       )
     if(error_code)
@@ -149,12 +149,12 @@ if(error_code OR is_remote_ref OR NOT ("${tag_sha}" STREQUAL "${head_sha}"))
   if(init_submodules)
     execute_process(
       COMMAND "/usr/bin/git" submodule update --recursive --init 
-      WORKING_DIRECTORY "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src/"
+      WORKING_DIRECTORY "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src/"
       RESULT_VARIABLE error_code
       )
   endif()
   if(error_code)
-    message(FATAL_ERROR "Failed to update submodules in: '/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src/'")
+    message(FATAL_ERROR "Failed to update submodules in: '/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src/'")
   endif()
 endif()
 

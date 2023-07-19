@@ -12,8 +12,8 @@ project(matplotplusplus-populate NONE)
 include(ExternalProject)
 ExternalProject_Add(matplotplusplus-populate
                      "UPDATE_DISCONNECTED" "False" "GIT_REPOSITORY" "https://github.com/alandefreitas/matplotplusplus" "GIT_TAG" "origin/master"
-                    SOURCE_DIR          "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-src"
-                    BINARY_DIR          "/home/hyu419/git/VIMP/vimp/_deps/matplotplusplus-build"
+                    SOURCE_DIR          "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-src"
+                    BINARY_DIR          "/home/hzyu/git/VIMP/vimp/_deps/matplotplusplus-build"
                     CONFIGURE_COMMAND   ""
                     BUILD_COMMAND       ""
                     INSTALL_COMMAND     ""

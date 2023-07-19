@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Experiment1>
 <parameters>
-    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
     
     <start_pos>
         <1>-0.8</1>
@@ -41,14 +41,14 @@
 
     <stop_err> 1e-3 </stop_err>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/WAM/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case1/</saving_prefix>
 
 </parameters>
 </Experiment1>
 
 <Experiment2>
 <parameters>
-    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
     
     <start_pos>
         <1>-0.9</1>
@@ -88,7 +88,7 @@
 
     <stop_err> 1e-4 </stop_err>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/WAM/case2/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case2/</saving_prefix>
 
 </parameters>
 </Experiment2>
@@ -96,7 +96,7 @@
 
 <Experiment3>
 <parameters>
-    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
     
     <start_pos>
         <1>-1.8</1>
@@ -136,7 +136,7 @@
 
     <stop_err> 1e-4 </stop_err>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/WAM/case3/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case3/</saving_prefix>
 
 </parameters>
 </Experiment3>

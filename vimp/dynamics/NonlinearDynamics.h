@@ -23,7 +23,6 @@ public:
     NonlinearDynamics(){}
     NonlinearDynamics(int nx, int nu, int nt):Dynamics(nx, nu, nt){}
     virtual ~NonlinearDynamics(){}
-    
 
     virtual std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& x, 
                                                                             const MatrixXd& Ak, 

@@ -26,8 +26,8 @@ class PlanarPointRobotSDFMultiObsExample{
     public:
         PlanarPointRobotSDFMultiObsExample(){
             /// map and sdf
-            MatrixXd map_ground_truth = _matrix_io.load_csv("/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/map_multiobs_entropy_map3.csv");
-            _field = _matrix_io.load_csv("/home/hyu419/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map3.csv");
+            MatrixXd map_ground_truth = _matrix_io.load_csv("/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/map_multiobs_entropy_map3.csv");
+            _field = _matrix_io.load_csv("/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map3.csv");
 
             // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
             Point2 origin(-20, -10);

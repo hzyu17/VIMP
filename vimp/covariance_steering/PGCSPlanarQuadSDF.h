@@ -1,5 +1,5 @@
 /**
- * @file PGCSNonLinDynPlanarSDF.h
+ * @file PGCSPlanarQuadSDF.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Proximal gradient algorithm for nonlinear covariance steering with plannar obstacles. 
  * @version 0.1
@@ -12,94 +12,129 @@
 #include "ProximalGradientCSNonlinearDyn.h"
 #include "helpers/CostHelper.h"
 #include "helpers/hinge2Dhelper.h"
+#include <gpmp2/kinematics/PointRobotModel.h>
+#include "robots/PlanarQuadrotorSDFExample.h"
 
 using namespace Eigen;
 
 namespace vimp{
 
-template <typename RobotSDF> 
-class PGCSNonLinDynPlanarSDF: public ProxGradCovSteerNLDyn{
+class PGCSPlanarQuadSDF: public ProxGradCovSteerNLDyn{
 public:
-    PGCSNonLinDynPlanarSDF(const MatrixXd& A0, 
-                            const VectorXd& a0, 
-                            const MatrixXd& B, 
-                            const PGCSParams& params,
-                            const std::shared_ptr<NonlinearDynamics>& pdyn,
-                            const gpmp2::PlanarSDF& sdf): ProxGradCovSteerNLDyn(A0, a0, B, params, pdyn),
-                                            _eps_sdf(params.eps_sdf()),
-                                            _sdf(sdf),
-                                            _sig_obs(params.sig_obs()){}
 
-    PGCSNonLinDynPlanarSDF(const MatrixXd& A0, 
-                            const VectorXd& a0, 
-                            const MatrixXd& B, 
-                            double sig,
-                            int nt,
-                            double eta,
-                            double eps,
-                            const VectorXd& z0,
-                            const MatrixXd& Sig0,
-                            const VectorXd& zT,
-                            const MatrixXd& SigT,
-                            const std::shared_ptr<NonlinearDynamics>& pdyn,
-                            double eps_sdf,
-                            const gpmp2::PlanarSDF& sdf,
-                            double sig_obs,
-                            int max_iter=20): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iter),
-                                                _eps_sdf(eps_sdf),
-                                                _sdf(sdf),
-                                                _sig_obs(sig_obs){}
+    virtual ~PGCSPlanarQuadSDF(){}
 
+    PGCSPlanarQuadSDF(const MatrixXd& A0, 
+                        const VectorXd& a0, 
+                        const MatrixXd& B, 
+                        const std::shared_ptr<NonlinearDynamics>& pdyn,
+                        const PGCSParams& params): 
 
-    void update_Qrk() override{
-        MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
-                 hAi(_nx, _nx), hai(_nx, 1), nTri(_nx, 1), 
+                        ProxGradCovSteerNLDyn(A0, a0, B, params, pdyn),
+                        _eps_sdf(params.eps_sdf()),
+                        _sig_obs(params.sig_obs()),
+                        _robot_sdf(params.eps_sdf(), params.radius(), params.field_file(), params.sdf_file()),
+                        _cost_helper(_max_iter){}
+
+    PGCSPlanarQuadSDF(const MatrixXd& A0, 
+                        const VectorXd& a0, 
+                        const MatrixXd& B, 
+                        double sig,
+                        int nt,
+                        double eta,
+                        double eps,
+                        const VectorXd& z0,
+                        const MatrixXd& Sig0,
+                        const VectorXd& zT,
+                        const MatrixXd& SigT,
+                        const std::shared_ptr<NonlinearDynamics>& pdyn,
+                        double eps_sdf,
+                        const gpmp2::PlanarSDF& sdf,
+                        double sig_obs,
+                        int max_iter=20): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iter),
+                                        _eps_sdf(eps_sdf),
+                                        _sdf(sdf),
+                                        _sig_obs(sig_obs){}
+
+    std::tuple<Matrix3D, Matrix3D> update_Qrk(const Matrix3D& zt, 
+                                                const Matrix3D& Sigt, 
+                                                const Matrix3D& At, 
+                                                const Matrix3D& at, 
+                                                const Matrix3D& Bt,
+                                                const Matrix3D& hAt,
+                                                const Matrix3D& hat,
+                                                const double step_size) override {}
+
+    std::tuple<Matrix3D, Matrix3D> update_Qrk_NL(const Matrix3D& zt, 
+                                                const Matrix3D& Sigt, 
+                                                const Matrix3D& At, 
+                                                const Matrix3D& at, 
+                                                const Matrix3D& Bt,
+                                                const Matrix3D& hAt,
+                                                const Matrix3D& hat,
+                                                const Matrix3D& nTrt,
+                                                const double step_size) override
+    {
+        MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), ai(_nx, 1), 
+                 hAi(_nx, _nx), hai(_nx, 1), nTri(_nx, 1),
                  Qti(_nx, _nx), Qki(_nx, _nx), rki(_nx, 1), zi(_nx, 1);
         MatrixXd temp(_nx, _nx);
+
+        Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
+        Qt.setZero();
+        rt.setZero();
 
         // for each time step
         _Qkt.setZero();
         _rkt.setZero();
         for (int i=0; i<_nt; i++){
-            Aki = _ei.decomp3d(_Akt, _nx, _nx, i);
-            aki = _ei.decomp3d(_akt, _nx, 1, i);
-            hAi = _ei.decomp3d(_hAkt, _nx, _nx, i);
-            hai = _ei.decomp3d(_hakt, _nx, 1, i);
-            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
+            Ai = _ei.decomp3d(At, _nx, _nx, i);
+            ai = _ei.decomp3d(at, _nx, 1, i);
+            hAi = _ei.decomp3d(hAt, _nx, _nx, i);
+            hai = _ei.decomp3d(hat, _nx, 1, i);
+            Bi = _ei.decomp3d(Bt, _nx, _nu, i);
             Qti = _ei.decomp3d(_Qt, _nx, _nx, i);
             pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
-            nTri = _ei.decomp3d(_nTrt, _nx, 1, i);
-            zi = _ei.decomp3d(_zkt, _nx, 1, i);
-            temp = (Aki - hAi).transpose();
+            zi = _ei.decomp3d(zt, _nx, 1, i);
+            temp = (Ai - hAi).transpose();
+            nTri = _ei.decomp3d(nTrt, _nx, 1, i);
 
             // Compute hinge loss and its gradients
             double zi_x = zi(0), zi_y = zi(1);
-            std::pair<double, VectorXd> hingeloss_gradient;
-            MatrixXd J_hxy(1, _nx/2);
+            std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
 
-            hingeloss_gradient = hingeloss_gradient_point(zi_x, zi_y, _sdf, _eps_sdf, J_hxy);
-            double hinge = std::get<0>(hingeloss_gradient);
+            hingeloss_gradient = _robot_sdf.hinge_jacobian(zi);
+            VectorXd hinge = std::get<0>(hingeloss_gradient);
 
-            MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
-            // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
+            int n_spheres = hinge.rows();
+            // Jacobian w.r.t. the 2D positions (px, pz)
+            MatrixXd J_hxy(n_spheres, 2);
+            J_hxy = std::get<1>(hingeloss_gradient);
 
-            velocity = zi.block(_nx/2, 0,_nx/2,1);
-            grad_h.block(0,0,_nx/2,1) = J_hxy.transpose();
-            grad_h.block(_nx/2,0,_nx/2,1) = J_hxy.transpose().cwiseProduct(velocity);
+            // Jacobian w.r.t. the whole state space
+            MatrixXd grad_h(n_spheres, _nx);
+            
+            for (int i_s=0; i_s<n_spheres; i_s++){
+                grad_h.block(i_s,0,1,2) = J_hxy.row(i_s);
+            }      
+
+            MatrixXd Sig_obs{_sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             MatrixXd Hess(_nx, _nx);
-            Hess.setZero();
-            // if (hinge > 0){
-            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _sig_obs;
-            // }
+            Hess.setZero(); 
+
             // Qki
-            Qki = temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
+            Qki = Hess*step_size/(1+step_size) + temp*pinvBBTi*(Ai - hAi)*step_size/(1+step_size)/(1+step_size);
             // rki
-            rki = nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = grad_h.transpose()*Sig_obs*hinge*step_size/(1+step_size) + 
+                    nTri*step_size/(1+step_size)/2 + 
+                    temp*pinvBBTi*(ai - hai)*step_size/(1+step_size) /(1+step_size);
 
             // update Qkt, rkt
-            _ei.compress3d(Qki, _Qkt, i);
-            _ei.compress3d(rki, _rkt, i);
+            _ei.compress3d(Qki, Qt, i);
+            _ei.compress3d(rki, rt, i);
         }
+
+        return make_tuple(Qt, rt);
         
     }
 
@@ -137,7 +172,7 @@ public:
             int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
             std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
 
-            hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,_nx/2,1));
+            hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,2,1));
 
             VectorXd hinge(n_spheres);
             hinge = std::get<0>(hingeloss_gradient);
@@ -253,8 +288,13 @@ public:
     }
 
 
+    void save_costs(const string& filename){
+        _cost_helper.save_costs(filename);
+    }
+
+
 protected:
-    RobotSDF _robot_sdf;
+    PlanarQuadrotorSDFExample _robot_sdf;
     gpmp2::PlanarSDF _sdf;
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 

@@ -11,12 +11,12 @@ if(NOT DEFINED CMAKE_MACOSX_RPATH)
 endif()
 
 # set(CMAKE_PREFIX_PATH "/home/huy419/.local" ${CMAKE_PREFIX_PATH})
-link_directories(/home/hyu419/.local/bin/boost/lib)
+link_directories(/usr/local/bin/boost/lib)
  
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 
-set(BOOST_ROOT "/home/hyu419/.local/bin/boost")
+set(BOOST_ROOT "/usr/local/bin/boost")
 list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
 # Boost - same requirement as gtsam
 find_package(Boost 1.70 REQUIRED)
@@ -48,14 +48,14 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 find_package( Eigen3 3.4.0 REQUIRED
               gpmp2 REQUIRED)
 
-set(GPMP2_LIBRARIES "/home/hyu419/.local/lib/libgpmp2.so")
-link_directories(/home/hyu419/.local/lib/)
+set(GPMP2_LIBRARIES "/usr/local/lib/libgpmp2.so")
+link_directories(/usr/local/lib/)
 
-set(GTSAM_LIBRARIES "/home/hyu419/.local/lib/libgtsam.so.4.0.0")
-link_directories(/home/hyu419/.local/lib/)
+set(GTSAM_LIBRARIES "/usr/local/lib/libgtsam.so.4.0.0")
+link_directories(/usr/local/lib/)
 
-set(BOOST_LIBRARIES "/home/hyu419/.local/bin/boost/lib/libboost_serialization.so.1.78.0")
-link_directories(/home/hyu419/.local/lib/)
+set(BOOST_LIBRARIES "/usr/local/bin/boost/lib/libboost_serialization.so.1.78.0")
+link_directories(/usr/local/lib/)
  
 # matplotcpp
 include(FetchContent)
@@ -69,7 +69,7 @@ if(NOT matplotplusplus_POPULATED)
     add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
-# set(MATPLOT_ROOT "/home/hyu419/.local/install/include/matplot")
+# set(MATPLOT_ROOT "/usr/local/install/include/matplot")
 # list(APPEND CMAKE_PREFIX_PATH "${MATPLOT_ROOT}") 
 # find_package(Matplot++ REQUIRED)
 
@@ -121,7 +121,7 @@ add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}")
 
 message("CMAKE_CURRENT_SOURCE_DIR" ${CMAKE_CURRENT_SOURCE_DIR})
  
-# set(LOCAL_INCLUDE_DIR "/home/hyu419/.local/include")
+# set(LOCAL_INCLUDE_DIR "/usr/local/include")
 # include_directories(LOCAL_INCLUDE_DIR)
 # include_directories(${ARGPARSE_INCLUDE_DIRS})
 

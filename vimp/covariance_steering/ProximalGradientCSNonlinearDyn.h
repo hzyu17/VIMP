@@ -24,10 +24,10 @@ public:
     virtual ~ProxGradCovSteerNLDyn(){}
 
     ProxGradCovSteerNLDyn(const MatrixXd& A0, 
-                        const VectorXd& a0, 
-                        const MatrixXd& B, 
-                        const PGCSParams& params,
-                        std::shared_ptr<NonlinearDynamics> pdyn): 
+                            const VectorXd& a0, 
+                            const MatrixXd& B, 
+                            const PGCSParams& params,
+                            std::shared_ptr<NonlinearDynamics> pdyn): 
                                             ProxGradCovSteer(A0, a0, B, params), 
                                             _pdyn(pdyn){}
 
@@ -46,11 +46,42 @@ public:
                         int max_iteration=20): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, max_iteration), 
                                             _pdyn(pdyn){}
     
+
+    void step(int indx) override{
+
+        // propagate the mean and the covariance
+        propagate_mean();
+
+        std::tuple<LinearDynamics, Matrix3D> res;
+        res = _pdyn->linearize(_zkt, _Akt, _Sigkt);
+
+        LinearDynamics h_dyn = std::get<0>(res);
+        Matrix3D nTrt = std::get<1>(res);
+
+        // Matrix3D hAt(_nx, _nx, _nt), hat(_nx, 1, _nt);
+        _hAkt = h_dyn.At();
+        _hakt = h_dyn.at();
+
+        MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
+        MatrixXd aprior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
+        
+        // Update Qkt, rkt
+        update_Qrk();
+
+        // solve inner loop linear CS
+        solve_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
+
+    }
+
+    StepResult step(int indx, double step_size, const Matrix3D& At, 
+                    const Matrix3D& at, const Matrix3D& Bt, const Matrix3D& hAt,
+                    const Matrix3D& hat, const Matrix3D& zt, const Matrix3D& Sigt){}
+
     /**
      * @brief A step with given local matrices and a given step size;
      * @return (Kkt, dkt, Akt, akt, zkt, Sigkt) 
      */
-    StepResult step(int indx, double step_size, 
+    StepResult step_nonlinear(int indx, double step_size, 
                     const Matrix3D& At, const Matrix3D& at, const Matrix3D& Bt,
                     const Matrix3D& zt, const Matrix3D& Sigt) override
     {
@@ -67,7 +98,7 @@ public:
         res = _pdyn->linearize(ztnew, At, Sigtnew);
 
         LinearDynamics h_dyn = std::get<0>(res);
-        Matrix3D nTr = std::get<1>(res);
+        Matrix3D nTrt = std::get<1>(res);
 
         Matrix3D hAt(_nx, _nx, _nt), hat(_nx, 1, _nt);
         hAt = h_dyn.At();
@@ -78,7 +109,7 @@ public:
 
         // Update Qkt, rkt
         std::tuple<Matrix3D, Matrix3D> Qtrt;
-        Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, hAt, hat, step_size);
+        Qtrt = update_Qrk_NL(ztnew, Sigtnew, At, at, Bt, hAt, hat, nTrt, step_size);
 
         Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
         Qt.setZero(); rt.setZero();

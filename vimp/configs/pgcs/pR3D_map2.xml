@@ -2,8 +2,8 @@
 
     <eps> 0.01 </eps>
     <eps_sdf> 0.7 </eps_sdf>
-    <radius> 0.12 </radius>
-    <total_time> 12.3 </total_time>
+    <radius> 0.5 </radius>
+    <total_time> 12.5 </total_time>
     <nt> 50 </nt>
     <sig0> 0.01 </sig0>
     <sigT> 0.04 </sigT>
@@ -17,7 +17,7 @@
 </Commons>
 
 <Experiment1>
-    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
         <x>-10.0</x>
@@ -37,14 +37,14 @@
         <vz>0.0</vz>
     </goal_pos>
     
-    <cost_sigma> 8e2 </cost_sigma>
+    <cost_sigma> 3e3 </cost_sigma>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
 
 </Experiment1>
 
 <Experiment2>
-    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
         <x>-11.0</x>
@@ -66,12 +66,12 @@
     
     <cost_sigma> 8e3 </cost_sigma>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
 
 </Experiment2>
 
 <Experiment3>
-    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
         <x>30.0</x>
@@ -91,14 +91,14 @@
         <vz>0.0</vz>
     </goal_pos>
 
-    <cost_sigma> 4.5e3 </cost_sigma>
+    <cost_sigma> 1e3 </cost_sigma>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
 
 </Experiment3>
 
 <Experiment4>
-    <sdf_file>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
         <x>-10.0</x>
@@ -118,9 +118,9 @@
         <vz>0.0</vz>
     </goal_pos>
 
-    <eta> 1e-5 </eta>
-    <cost_sigma> 6e2 </cost_sigma>
+    <!-- <eta> 1e-5 </eta> -->
+    <cost_sigma> 1e3 </cost_sigma>
 
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
 
 </Experiment4>

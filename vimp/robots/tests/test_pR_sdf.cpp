@@ -26,7 +26,7 @@ EigenWrapper ei;
 // global function
 std::tuple<SDF, double, double, double> get_sdf(){  
     MatrixIO m_io;
-    rapidxml::file<> xmlFile("/home/hyu419/git/VIMP/vimp/configs/pgcs/planar_pR_map2.xml"); // Default template is char
+    rapidxml::file<> xmlFile("/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_pR_map2.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     std::string ExpNodeName = "Experiment4";

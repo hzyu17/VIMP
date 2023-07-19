@@ -29,7 +29,6 @@ public:
  * @brief Linearization.
  * 
  * @param x linearization point
-//  * @param sig time scaling factor
  * @return std::tuple<Matrix(3)d, MatrixXd, Vector4d, Vector4d> At, Bt, at, nTr
  */
 std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& x, 

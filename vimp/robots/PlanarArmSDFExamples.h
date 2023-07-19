@@ -27,7 +27,7 @@ class PlanarArmSDFExample: public Base{
         PlanarArmSDFExample(double epsilon, double radius,
                             const std::string& field_file="", const std::string& sdf_file="", 
                             double cell_size=0.01, double ori_x=-1.0, double ori_y=-1.0):
-        Base(2, 1, "/home/hyu419/git/VIMP/vimp/data/pgcs/2d_Arm/field_two_obs.csv", ""), 
+        Base(2, 1, "/home/hzyu/git/VIMP/vimp/data/pgcs/2d_Arm/field_two_obs.csv", ""), 
         _eps(epsilon), 
         _r(radius),
         _cell_size(cell_size)
@@ -100,7 +100,7 @@ class PlanarArmSDFExample: public Base{
 
 // public: 
 // PlanarArmSDFMap1(double epsilon, double radius, 
-//                  const std::string& field_file="/home/hyu419/git/VIMP/vimp/data/vimp/2d_Arm/field_one_obs.csv", 
+//                  const std::string& field_file="/home/hzyu/git/VIMP/vimp/data/vimp/2d_Arm/field_one_obs.csv", 
 //                  const std::string& sdf_file=""):
 //                  PlanarArmSDFExample(epsilon, radius, 0.01, Eigen::Vector2d::Zero(), field_file){
 //                     Eigen::Vector2d new_origin(-1.0, -1.0);

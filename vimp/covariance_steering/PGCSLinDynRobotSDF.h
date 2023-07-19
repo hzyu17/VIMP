@@ -220,6 +220,16 @@ public:
         return std::make_tuple(_Kt, _dt, hnom);      
     }
 
+    std::tuple<Matrix3D, Matrix3D> update_Qrk_NL(const Matrix3D& zt, 
+                                                const Matrix3D& Sigt, 
+                                                const Matrix3D& At, 
+                                                const Matrix3D& at, 
+                                                const Matrix3D& Bt,
+                                                const Matrix3D& hAt,
+                                                const Matrix3D& hat,
+                                                const Matrix3D& nTrt,
+                                                const double step_size) override{}
+
     /**
      * @brief Qrk with given matrices.
      * return: (Qt, rt)
@@ -263,13 +273,11 @@ public:
             J_hxy = std::get<1>(hingeloss_gradient);
 
             // MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
-            MatrixXd grad_h(n_spheres, _nx), velocity(1, _nx/2);
-            // grad_h << J_hxy(0), J_hxy(1), J_hxy(0) * zi(2), J_hxy(1) * zi(3);
-            velocity = zi.block(_nx/2,0,_nx/2,1).transpose();
+            MatrixXd grad_h(n_spheres, _nx);
+            grad_h.setZero();
 
             for (int i_s=0; i_s<n_spheres; i_s++){
                 grad_h.block(i_s,0,1,_nx/2) = J_hxy.row(i_s);
-                grad_h.block(i_s,_nx/2,1,_nx/2) = J_hxy.row(i_s).cwiseProduct(velocity);
             }          
             MatrixXd Sig_obs{_sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             MatrixXd Hess(_nx, _nx);
