@@ -27,7 +27,7 @@ namespace vimp{
             VectorXd fact_costs_iter = factor_costs();
 
             cost_iter = cost_value();
-            std::cout << "cost_iter " << std::endl << cost_iter << std::endl;
+            // std::cout << "cost_iter " << std::endl << cost_iter << std::endl;
 
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
             // one step
@@ -46,8 +46,8 @@ namespace vimp{
             SpMat dprecision = -_precision + _Vddmu;
             VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
-            _ei.print_matrix(dprecision, "dprecision");
-            _ei.print_matrix(dmu, "dmu");
+            // _ei.print_matrix(dprecision, "dprecision");
+            // _ei.print_matrix(dmu, "dmu");
 
             int cnt = 0;
             int B = 1;
@@ -180,7 +180,7 @@ namespace vimp{
             this->save_data();
             std::__throw_out_of_range("precision matrix not psd ...");
         }
-        std::cout << "log(det) " << std::endl << log(det) << std::endl;
+        // std::cout << "log(det) " << std::endl << log(det) << std::endl;
         return cost_value_no_entropy() + log(det) / 2;
     }
 

@@ -89,7 +89,7 @@ public:
                                                             n_states, i-1, params.temperature(), params.high_temperature()});
                 vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, SDFPR{gtsam::symbol('x', i), 
                                                                 robot_model, sdf, sig_obs, eps_sdf}, 
-                                                                n_states, i, params.temperature(), params.high_temperature()});    
+                                                            n_states, i, params.temperature(), params.high_temperature()});    
             }
         }
 
