@@ -40,9 +40,31 @@
     </goal_pos>
 
     <eta> 1e-4 </eta>
-    <cost_sigma> 5.1e3 </cost_sigma>
+    <cost_sigma> 1e4 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case1/</saving_prefix>
 
 </Experiment1>
+
+<Experiment2>
+    <start_pos>
+        <x>-1.5707963</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>1.5707963</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <eta> 1e-4 </eta>
+    <cost_sigma> 2e3 </cost_sigma>
+
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case2/</saving_prefix>
+
+</Experiment2>
 

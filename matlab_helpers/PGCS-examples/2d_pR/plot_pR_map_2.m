@@ -51,10 +51,14 @@ for i = 1:4 % 4 experiments
 
     nexttile
     hold on
-    prefix = ["map2/case"+num2str(i)+"/"];
+    prefix = ["map2/case"+num2str(i)+"/"]
     % % --- read means and covariances ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
+    
+    cov_final = covs(:,50);
+    disp("cov_final_RESHAPED")
+    cov_final_RESHAPED = reshape(cov_final, [4,4])
     
     plot_2d_result(sdfmap, means, covs);
 

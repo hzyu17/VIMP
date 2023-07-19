@@ -7,7 +7,7 @@ addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
-map = 2;
+map = 1;
 
 prefix = "map1";
 switch map

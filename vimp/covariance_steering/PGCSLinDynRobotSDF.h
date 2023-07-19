@@ -147,7 +147,7 @@ public:
 
                 // tentative one step
                 StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
-                KtdtAtatztSigt = step(i_step, step_size, _Akt, _akt, _Bt, _hAkt, _hakt, _zkt, _Sigkt);
+                KtdtAtatztSigt = step(i_step, step_size, _Akt, _Bt, _akt, _hAkt, _hakt, _zkt, _Sigkt);
 
                 // compute the tentative cost
                 Matrix3D zt(_nx, 1, _nt), Sigt(_nx, _nx, _nt), Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);

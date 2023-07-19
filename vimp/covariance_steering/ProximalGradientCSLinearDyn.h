@@ -56,12 +56,16 @@ public:
 
     }
 
+    StepResult step(int indx, double step_size, 
+                    const Matrix3D& At, const Matrix3D& Bt, const Matrix3D& at, 
+                    const Matrix3D& zt, const Matrix3D& Sigt){}
+
     /**
      * @brief A step with given local matrices and a given step size;
      * @return (Kkt, dkt, Akt, akt, zkt, Sigkt) 
      */
     StepResult step(int indx, double step_size, 
-                    const Matrix3D& At, const Matrix3D& at, const Matrix3D& Bt,
+                    const Matrix3D& At, const Matrix3D& Bt, const Matrix3D& at,
                     const Matrix3D& hAt, const Matrix3D& hat, 
                     const Matrix3D& zt, const Matrix3D& Sigt) override
     {

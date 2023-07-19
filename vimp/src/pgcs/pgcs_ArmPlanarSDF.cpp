@@ -22,7 +22,7 @@ using namespace vimp;
 int main(int argc, char* argv[]){
     int nx=4, nu=2, num_exp=2;
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    std::string config_file{source_root+"/configs/pgcs/planar_2link_arm_map2.xml"};
+    std::string config_file{source_root+"/configs/pgcs/planar_2link_arm_map1.xml"};
     PGCSRunner<PGCSLinArmPlanarSDF> runner(nx, nu, num_exp, config_file);
 
     // no experiment argument, run the default scripts

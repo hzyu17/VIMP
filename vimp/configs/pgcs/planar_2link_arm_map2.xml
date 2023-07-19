@@ -41,7 +41,7 @@
     </goal_pos>
 
     <eta> 1e-4 </eta>
-    <cost_sigma> 5e4 </cost_sigma>
+    <cost_sigma> 1e3 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
 

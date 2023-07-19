@@ -37,7 +37,7 @@
         <vz>0.0</vz>
     </goal_pos>
     
-    <cost_sigma> 3e3 </cost_sigma>
+    <cost_sigma> 6e3 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
 
@@ -91,7 +91,7 @@
         <vz>0.0</vz>
     </goal_pos>
 
-    <cost_sigma> 1e3 </cost_sigma>
+    <cost_sigma> 9e3 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
 
@@ -119,7 +119,7 @@
     </goal_pos>
 
     <!-- <eta> 1e-5 </eta> -->
-    <cost_sigma> 1e3 </cost_sigma>
+    <cost_sigma> 5e3 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
 

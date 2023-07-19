@@ -6,7 +6,7 @@
     <total_time> 10.5 </total_time>
     <nt> 50 </nt>
     <sig0> 0.01 </sig0>
-    <sigT> 0.02 </sigT>
+    <sigT> 0.05 </sigT>
     <eta> 1e-4 </eta>
     <stop_err> 1e-3 </stop_err>
     <max_iter> 50 </max_iter>
@@ -34,7 +34,7 @@
     </goal_pos>
     
     <eta> 1e-4 </eta>
-    <cost_sigma> 6e2 </cost_sigma>
+    <cost_sigma> 1e3 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case1/</saving_prefix>
 
