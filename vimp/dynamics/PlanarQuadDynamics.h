@@ -16,14 +16,13 @@ using namespace Eigen;
 
 namespace vimp{
 
-class PlanarQuadrotor : public NonlinearDynamics{
+class PlanarQuadDynamics : public NonlinearDynamics{
 
 public:
-    PlanarQuadrotor(int nx, int nu, int nt):NonlinearDynamics(nx, nu, nt),
-                                             _nx(nx),
-                                             _nu(nu),
-                                             _nt(nt){}
-
+    PlanarQuadDynamics(int nx, int nu, int nt):NonlinearDynamics(nx, nu, nt),
+                                                _nx(nx),
+                                                _nu(nu),
+                                                _nt(nt){}
 
 /**
  * @brief Linearization.
@@ -43,7 +42,7 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& 
     double J = 0.00383;
     double g = 9.81;
     
-    Vector<ADouble6, 6> xad = ADouble6::make_active(x);
+    Eigen::Vector<ADouble6, 6> xad = ADouble6::make_active(x);
 
     // B
     MatrixXd B{MatrixXd::Zero(_nx, _nu)};
@@ -51,17 +50,17 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& 
          0, 0,
          0, 0,
          0, 0,
-         1/sqrt(2), 1/sqrt(2),
-         1/sqrt(2), -1/sqrt(2);
+         10.0/sqrt(2), 10.0/sqrt(2),
+         10.0/sqrt(2), -10.0/sqrt(2);
 
     // BBT
     MatrixXd p_invBBT(_nx,_nx);
-    p_invBBT << 0,0,0,0,0,0,
-                0,0,0,0,0,0,
-                0,0,0,0,0,0,
-                0,0,0,0,0,0,
-                0,0,0,0,1,0,
-                0,0,0,0,0,1;
+    p_invBBT << 0,  0,  0,  0,  0,      0,
+                0,  0,  0,  0,  0,      0,
+                0,  0,  0,  0,  0,      0,
+                0,  0,  0,  0,  0,      0,
+                0,  0,  0,  0,  0.01,   0,
+                0,  0,  0,  0,  0,      0.01;
 
     MatrixXd hAk{MatrixXd::Zero(6, 6)};
     hAk <<  0,    0,     -x(3)*sin(x(2))-x(4)*cos(x(2)),    cos(x(2)),       -sin(x(2)),       0, 
@@ -82,7 +81,7 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& 
     VectorXd hak{VectorXd::Zero(6)};
     hak = f - hAk*x;
 
-    Matrix<ADouble6, 6, 6> grad_f_T;
+    Eigen::Matrix<ADouble6, 6, 6> grad_f_T;
     grad_f_T << 0,    0,         -x(3)*sin(x(2))-x(4)*cos(x(2)),     cos(x(2)),       -sin(x(2)),            0, 
                 0,    0,          x(3)*cos(x(2))-x(4)*sin(x(2)),     sin(x(2)),        cos(x(2)),            0,
                 0,    0,                      0,                        0,                  0,               1,
@@ -90,23 +89,23 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& 
                 0,    0,                g*sin(x(2)),                  -x(5),                0,           -x(3),
                 0,    0,                      0,                        0,                  0,               0;
 
-    Matrix<ADouble6, 6, 6> grad_f;
+    Eigen::Matrix<ADouble6, 6, 6> grad_f;
     grad_f = grad_f_T.transpose();
 
     // // grad(Tr(pinv(BBT)*(grad_f_T - Ak)*Sigk*(grad_f_T' - Ak')))
-    Matrix<ADouble6, 6, 6> Ak_T;
+    Eigen::Matrix<ADouble6, 6, 6> Ak_T;
     Ak_T = Ak.transpose();
 
-    Matrix<ADouble6, 6, 6> temp1;
+    Eigen::Matrix<ADouble6, 6, 6> temp1;
     temp1 = grad_f_T - Ak;
 
-    Matrix<ADouble6, 6, 6> temp2;
+    Eigen::Matrix<ADouble6, 6, 6> temp2;
     temp2 = grad_f - Ak_T;
 
-    Matrix<ADouble6, 6, 6> temp3;
+    Eigen::Matrix<ADouble6, 6, 6> temp3;
     temp3 = p_invBBT*temp1;
 
-    Matrix<ADouble6, 6, 6> temp4;
+    Eigen::Matrix<ADouble6, 6, 6> temp4;
     temp4 = temp3*Sigk;
     
     auto res = temp4*temp2;

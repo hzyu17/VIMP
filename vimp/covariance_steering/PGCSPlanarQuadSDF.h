@@ -14,6 +14,7 @@
 #include "helpers/hinge2Dhelper.h"
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include "robots/PlanarQuadrotorSDFExample.h"
+#include "dynamics/PlanarQuadDynamics.h"
 
 using namespace Eigen;
 
@@ -27,7 +28,7 @@ public:
     PGCSPlanarQuadSDF(const MatrixXd& A0, 
                         const VectorXd& a0, 
                         const MatrixXd& B, 
-                        const std::shared_ptr<NonlinearDynamics>& pdyn,
+                        const std::shared_ptr<PlanarQuadDynamics>& pdyn,
                         const PGCSParams& params): 
 
                         ProxGradCovSteerNLDyn(A0, a0, B, params, pdyn),
@@ -47,7 +48,7 @@ public:
                         const MatrixXd& Sig0,
                         const VectorXd& zT,
                         const MatrixXd& SigT,
-                        const std::shared_ptr<NonlinearDynamics>& pdyn,
+                        const std::shared_ptr<PlanarQuadDynamics>& pdyn,
                         double eps_sdf,
                         const gpmp2::PlanarSDF& sdf,
                         double sig_obs,
@@ -123,11 +124,14 @@ public:
             Hess.setZero(); 
 
             // Qki
-            Qki = Hess*step_size/(1+step_size) + temp*pinvBBTi*(Ai - hAi)*step_size/(1+step_size)/(1+step_size);
+            // Qki = Hess*step_size/(1+step_size) + temp*pinvBBTi*(Ai - hAi)*step_size/(1+step_size)/(1+step_size);
+            Qki = temp*pinvBBTi*(Ai - hAi)*step_size/(1+step_size)/(1+step_size);
             // rki
-            rki = grad_h.transpose()*Sig_obs*hinge*step_size/(1+step_size) + 
-                    nTri*step_size/(1+step_size)/2 + 
-                    temp*pinvBBTi*(ai - hai)*step_size/(1+step_size) /(1+step_size);
+            // rki = grad_h.transpose()*Sig_obs*hinge*step_size/(1+step_size) + 
+            //         nTri*step_size/(1+step_size)/2 + 
+            //         temp*pinvBBTi*(ai - hai)*step_size/(1+step_size) /(1+step_size);
+            
+            rki = nTri*step_size/(1+step_size)/2 + temp*pinvBBTi*(ai - hai)*step_size/(1+step_size) /(1+step_size);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, Qt, i);

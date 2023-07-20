@@ -417,7 +417,7 @@ public:
 
     Matrix3D replicate3d(Eigen::MatrixXd mat, const int len){
         int rows = mat.rows(), cols = mat.cols();
-        Eigen::MatrixXd mat3(rows*cols, len);
+        Eigen::MatrixXd mat3 = Eigen::MatrixXd::Zero(rows*cols, len);
         mat3 = mat.reshaped(rows*cols, 1).replicate(1, len);
         return mat3;
     }

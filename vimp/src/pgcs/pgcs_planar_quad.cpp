@@ -9,6 +9,9 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 #include "covariance_steering/PGCSPlanarQuadSDF.h"
 #include "helpers/ExperimentRunner.h"
 
@@ -19,8 +22,9 @@ int main(){
 
     int nx=6, nu=2;
     int num_exp = 1;
-    std::string config_file{"/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_quad_map2.xml"};
-    PGCSRunnerNonLinear<PGCSPlanarQuadSDF> runner(nx, nu, num_exp, config_file);
+    std::string source_root{XSTRING(SOURCE_ROOT)};
+    std::string config_file{source_root+"/configs/pgcs/planar_quad_map2.xml"};
+    PGCSRunnerNonLinear<PGCSPlanarQuadSDF, PlanarQuadDynamics> runner(nx, nu, num_exp, config_file);
 
     runner.run();
 

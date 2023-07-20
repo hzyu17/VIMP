@@ -124,7 +124,7 @@ end
 % --------------- plotting -----------------
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 t=title('GVI-MP');
 t.FontSize = 26;

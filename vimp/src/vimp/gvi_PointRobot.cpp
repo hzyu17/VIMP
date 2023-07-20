@@ -23,7 +23,7 @@ int main(){
     int nx = 4, nu = 2, num_exp = 4;
     GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
     GVIMPParams params;
-    runner.read_config_file(params);
+    runner.read_config(params);
     runner.run();
     
     return 0;

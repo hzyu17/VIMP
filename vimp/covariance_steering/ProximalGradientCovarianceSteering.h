@@ -46,12 +46,12 @@ namespace vimp{
                         _nu(params.nu()),
                         _nt(params.nt()),
                         _eta(params.step_size()),
-                        _Akt(_ei.replicate3d(A0, _nt)),
-                        _akt(_ei.replicate3d(a0, _nt)),
-                        _Bt(_ei.replicate3d(B, _nt)),
+                        _Akt(_ei.replicate3d(A0, params.nt())),
+                        _akt(_ei.replicate3d(a0, params.nt())),
+                        _Bt(_ei.replicate3d(B, params.nt())),
                         _total_time(params.total_time()),
                         _eps(params.eps()),
-                        _deltt(params.total_time() / (_nt - 1)),
+                        _deltt(params.total_time() / (params.nt() - 1)),
                         _z0(params.m0()),
                         _Sig0(params.Sig0()),
                         _zT(params.mT()),
@@ -60,20 +60,21 @@ namespace vimp{
                         _stop_err(params.stop_err()),
                         _backtrack_ratio(params.backtrack_ratio()),
                         _max_n_backtrack(params.max_n_backtrack()),
-                        _Qkt(Matrix3D(_nx, _nx, _nt)),
-                        _Qt(Matrix3D(_nx, _nx, _nt)),
-                        _rkt(Matrix3D(_nx, 1, _nt)),
-                        _hAkt(Matrix3D(_nx, _nx, _nt)),
-                        _hakt(Matrix3D(_nx, 1, _nt)),
-                        _nTrt(Matrix3D(_nx, 1, _nt)),
-                        _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
-                        _zkt(_ei.replicate3d(params.m0(), _nt)),
-                        _Sigkt(_ei.replicate3d(params.Sig0(), _nt)),
-                        _Kt(_nu, _nx, _nt),
-                        _dt(_nu, 1, _nt),
+                        _Qkt(Matrix3D(params.nx(), params.nx(), params.nt())),
+                        _Qt(Matrix3D(params.nx(), params.nx(), params.nt())),
+                        _rkt(Matrix3D(params.nx(), 1, params.nt())),
+                        _hAkt(Matrix3D(params.nx(), params.nx(), params.nt())),
+                        _hakt(Matrix3D(params.nx(), 1, params.nt())),
+                        _nTrt(Matrix3D(params.nx(), 1, params.nt())),
+                        _pinvBBTt(Matrix3D(params.nx(), params.nx(), params.nt())),
+                        _zkt(_ei.replicate3d(params.m0(), params.nt())),
+                        _Sigkt(_ei.replicate3d(params.Sig0(), params.nt())),
+                        _Kt(params.nu(), params.nx(), params.nt()),
+                        _dt(params.nu(), 1, params.nt()),
                         _linear_cs(_Akt, _Bt, _akt, params.nx(), params.nu(), params.total_time(), params.nt(), params.eps(), _Qkt, _rkt, params.m0(), params.Sig0(), params.mT(), params.SigT()),
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
                         {
+
                             // Initialize the final time covariance
                             _ei.compress3d(_SigT, _Sigkt, _nt - 1);
 
@@ -106,37 +107,37 @@ namespace vimp{
                         _nu(B.cols()),
                         _nt(nt),
                         _eta(eta),
-                        _Akt(_ei.replicate3d(A0, _nt)),
-                        _akt(_ei.replicate3d(a0, _nt)),
-                        _Bt(_ei.replicate3d(B, _nt)),
+                        _Akt(_ei.replicate3d(A0, nt)),
+                        _akt(_ei.replicate3d(a0, nt)),
+                        _Bt(_ei.replicate3d(B, nt)),
                         _total_time(sig),
                         _eps(eps),
                         _deltt(sig / (nt - 1)),
-                        _Qkt(Matrix3D(_nx, _nx, _nt)),
-                        _Qt(Matrix3D(_nx, _nx, _nt)),
-                        _rkt(Matrix3D(_nx, 1, _nt)),
-                        _hAkt(Matrix3D(_nx, _nx, _nt)),
-                        _hakt(Matrix3D(_nx, 1, _nt)),
-                        _nTrt(Matrix3D(_nx, 1, _nt)),
-                        _pinvBBTt(Matrix3D(_nx, _nx, _nt)),
-                        _zkt(_ei.replicate3d(z0, _nt)),
-                        _Sigkt(_ei.replicate3d(Sig0, _nt)),
+                        _Qkt(Matrix3D(_nx, _nx, nt)),
+                        _Qt(Matrix3D(_nx, _nx, nt)),
+                        _rkt(Matrix3D(_nx, 1, nt)),
+                        _hAkt(Matrix3D(_nx, _nx, nt)),
+                        _hakt(Matrix3D(_nx, 1, nt)),
+                        _nTrt(Matrix3D(_nx, 1, nt)),
+                        _pinvBBTt(Matrix3D(_nx, _nx, nt)),
+                        _zkt(_ei.replicate3d(z0, nt)),
+                        _Sigkt(_ei.replicate3d(Sig0, nt)),
                         _z0(z0),
                         _Sig0(Sig0),
                         _zT(zT),
                         _SigT(SigT),
-                        _Kt(_nu, _nx, _nt),
-                        _dt(_nu, 1, _nt),
+                        _Kt(_nu, _nx, nt),
+                        _dt(_nu, 1, nt),
                         _max_iter(max_iteration),
                         _stop_err(stop_err),
-                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _total_time, _nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
+                        _linear_cs(_Akt, _Bt, _akt, _nx, _nu, _total_time, nt, _eps, _Qkt, _rkt, _z0, _Sig0, _zT, _SigT),
                         _recorder(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt)
         {
             // Initialize the final time covariance
-            _ei.compress3d(_SigT, _Sigkt, _nt - 1);
+            _ei.compress3d(_SigT, _Sigkt, nt - 1);
             // compute pinvBBT
             MatrixXd Bi(_nx, _nu), BiT(_nu, _nx), pinvBBTi(_nx, _nx);
-            for (int i = 0; i < _nt; i++)
+            for (int i = 0; i < nt; i++)
             {
                 Bi = Bt_i(i);
                 BiT = Bi.transpose();
@@ -189,14 +190,14 @@ namespace vimp{
         virtual StepResult step(int indx, double step_size, 
                                 const Matrix3D& At, const Matrix3D& Bt, const Matrix3D& at,
                                 const Matrix3D& hAt, const Matrix3D& hat, 
-                                const Matrix3D& zt, const Matrix3D& Sigt) = 0;
+                                const VectorXd& z0, const MatrixXd& Sig0){}
 
         /**
          * @brief step with given matrices, return a total cost of this step.
          */
         virtual StepResult step(int indx, double step_size, 
                                 const Matrix3D& At, const Matrix3D& Bt, const Matrix3D& at, 
-                                const Matrix3D& zt, const Matrix3D& Sigt){}
+                                const VectorXd& z0, const MatrixXd& Sig0){}
 
 
         void update_from_step_res(const StepResult& res){
@@ -249,6 +250,8 @@ namespace vimp{
             Kt = _linear_cs.Kt();
             dt = _linear_cs.dt();
 
+            _ei.print_matrix(dt, "dt");
+
             MatrixXd Ai(_nx, _nx), ai(_nx, 1), Bi(_nx, _nu), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), di(_nx, 1);
             for (int i = 0; i < _nt; i++)
             {
@@ -276,31 +279,39 @@ namespace vimp{
             _Akt = std::get<2>(KtdtAtat); _akt = std::get<3>(KtdtAtat);
         }
 
-        std::tuple<Matrix3D, Matrix3D> propagate_mean(const Matrix3D& At, const Matrix3D& at, 
-                                                      const Matrix3D& Bt, const Matrix3D& zt,
-                                                      const Matrix3D& Sigt){
+        std::tuple<Matrix3D, Matrix3D> propagate_nominal(const Matrix3D& At, 
+                                                         const Matrix3D& at, 
+                                                         const Matrix3D& Bt, 
+                                                         const VectorXd& z0, 
+                                                         const MatrixXd& Sig0)
+        {
             // The i_th matrices
-            Eigen::VectorXd zi(_nx), zt_next(_nx), znew(_nx), ai(_nx), ai_next(_nx);
-            Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx), Si(_nx, _nx), Snew(_nx, _nx);
-            Eigen::MatrixXd Ai_next(_nx, _nx), Bi_next(_nx, _nu), AiT_next(_nx, _nx), BiT_next(_nu, _nx), Si_next(_nx, _nx);
+            Eigen::VectorXd zi(_nx), znew(_nx), zt_next(_nx), ai(_nx), ai_next(_nx);
+            Eigen::MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), AiT(_nx, _nx), BiT(_nu, _nx); 
+            Eigen::MatrixXd Si(_nx, _nx), Snew(_nx, _nx), Si_next(_nx, _nx);
+            Eigen::MatrixXd Ai_next(_nx, _nx), Bi_next(_nx, _nu), AiT_next(_nx, _nx), BiT_next(_nu, _nx);
             Matrix3D zt_new(_nx, 1, _nt), Sigt_new(_nx, _nx, _nt);
 
-            zt_new = zt;
-            Sigt_new = Sigt;
+            zt_new.setZero();
+            Sigt_new.setZero();
+
+            _ei.compress3d(z0, zt_new, 0);
+            _ei.compress3d(Sig0, Sigt_new, 0);
 
             for (int i = 0; i < _nt - 1; i++)
             {
                 Ai = _ei.decomp3d(At, _nx, _nx, i);
                 ai = _ei.decomp3d(at, _nx, 1, i);
                 Bi = _ei.decomp3d(Bt, _nx, _nu, i);
-                Si = _ei.decomp3d(Sigt_new, _nx, _nx, i);
                 AiT = Ai.transpose();
                 BiT = Bi.transpose();
 
                 zi = _ei.decomp3d(zt_new, _nx, 1, i);
-
-                znew = zi + _deltt * (Ai * zi + ai);
-                Snew = Si + _deltt * (Ai * Si + Si * AiT + _eps * (Bi * BiT));
+                Si = _ei.decomp3d(Sigt_new, _nx, _nx, i);
+                
+                // Heun's method
+                zt_next = zi + _deltt * (Ai * zi + ai);
+                Si_next = Si + _deltt * (Ai * Si + Si * AiT + _eps * (Bi * BiT));
 
                 Ai_next = _ei.decomp3d(At, _nx, _nx, i+1);
                 ai_next = _ei.decomp3d(at, _nx, 1, i+1);
@@ -308,21 +319,24 @@ namespace vimp{
                 AiT_next = Ai_next.transpose();
                 BiT_next = Bi_next.transpose();
 
-                zt_next = zi + _deltt * ((Ai * zi + ai) + (Ai_next * znew + ai_next)) / 2.0;
-                Si_next = Si + _deltt * ((Ai * Si + Si * AiT + _eps * (Bi * BiT)) + (Ai_next * Snew + Snew * AiT_next + _eps * (Bi_next * BiT_next))) / 2.0;
+                VectorXd ztnew_i = VectorXd::Zero(_nx);
+                MatrixXd Snew_i = MatrixXd::Zero(_nx, _nx);
 
-                _ei.compress3d(zt_next, zt_new, i + 1);
-                _ei.compress3d(Si_next, Sigt_new, i + 1);
+                ztnew_i = zi + _deltt*((Ai*zi + ai) + (Ai_next*zt_next + ai_next)) / 2.0;
+                Snew_i = Si + _deltt*((Ai*Si + Si*AiT + _eps*(Bi*BiT)) + (Ai_next*Si_next + Si_next*AiT_next + _eps*(Bi_next*BiT_next))) / 2.0;
+
+                _ei.compress3d(ztnew_i, zt_new, i + 1);
+                _ei.compress3d(Snew_i, Sigt_new, i + 1);
 
             }
 
             return std::make_tuple(zt_new, Sigt_new);
         }
 
-        void propagate_mean()
+        void propagate_nominal()
         {   
             std::tuple<Matrix3D, Matrix3D> ztSigt;
-            ztSigt = propagate_mean(_Akt, _akt, _Bt, _zkt, _Sigkt);
+            ztSigt = propagate_nominal(_Akt, _akt, _Bt, _z0, _Sig0);
             _zkt = std::get<0>(ztSigt); _Sigkt = std::get<1>(ztSigt);
         }
 

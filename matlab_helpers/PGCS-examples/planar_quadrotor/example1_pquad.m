@@ -89,7 +89,7 @@ width = 400;
 height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 
 nexttile
 % t.FontSize = 14;
@@ -138,7 +138,7 @@ width = 400;
 height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 
 nexttile
 % t.FontSize = 14;
@@ -194,7 +194,7 @@ width = 400;
 height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 hold on 
 
@@ -288,7 +288,14 @@ n=2;
 x0=zeros(n,n2);
 x1=zeros(n,n2);
 
-figure; hold on;
+x0 = 50;
+y0 = 50;
+width = 400;
+height = 350;
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+hold on
 cstring='grbcmk';
 for j=1:n2
     init = randn(nx,1);

@@ -3,12 +3,12 @@
     <eps> 0.01 </eps>
     <eps_sdf> 0.6 </eps_sdf>
     <radius> 1.5 </radius>
-    <total_time> 10.5 </total_time>
-    <nt> 50 </nt>
-    <sig0> 0.01 </sig0>
-    <sigT> 0.02 </sigT>
-    <eta> 1e-4 </eta>
-    <stop_err> 1e-3 </stop_err>
+    <total_time> 2.0 </total_time>
+    <nt> 500 </nt>
+    <sig0> 0.001 </sig0>
+    <sigT> 0.001 </sigT>
+    <eta> 1e-6 </eta>
+    <stop_err> 1e-5 </stop_err>
     <max_iter> 50 </max_iter>
     <cost_sigma> 5.6e3 </cost_sigma>
     <backtracking_ratio> 0.7 </backtracking_ratio>
@@ -20,23 +20,27 @@
     <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
-        <x>7.0</x>
-        <y>-5.0</y>
-        <vx>0.0</vx>
-        <vy>0.0</vy>
+        <1>4.0</1>
+        <2>4.0</2>
+        <3>0.0</3>
+        <4>0.0</4>
+        <5>0.0</5>
+        <6>0.0</6>
     </start_pos>
 
     <goal_pos>
-        <x>-10.0</x>
-        <y>17.0</y>
-        <vx>0.0</vx>
-        <vy>0.0</vy>
+        <1>2.0</1>
+        <2>2.0</2>
+        <3>0.0</3>
+        <4>0.0</4>
+        <5>0.0</5>
+        <6>0.0</6>
     </goal_pos>
     
     <eta> 1e-4 </eta>
     <cost_sigma> 6e2 </cost_sigma>
 
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/planar_quad/map2/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/planar_quadrotor/map2/case1/</saving_prefix>
 
 </Experiment1>
 

@@ -43,7 +43,7 @@ public:
     void step(int indx) override{
 
         // propagate the mean and the covariance
-        propagate_mean();
+        propagate_nominal();
 
         MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
         MatrixXd aprior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
@@ -67,12 +67,12 @@ public:
     StepResult step(int indx, double step_size, 
                     const Matrix3D& At, const Matrix3D& Bt, const Matrix3D& at,
                     const Matrix3D& hAt, const Matrix3D& hat, 
-                    const Matrix3D& zt, const Matrix3D& Sigt) override
+                    const VectorXd& z0, const MatrixXd& Sig0) override
     {
         // propagate the mean and the covariance
         
         std::tuple<Matrix3D, Matrix3D> ztSigt;
-        ztSigt = propagate_mean(At, at, Bt, zt, Sigt);
+        ztSigt = propagate_nominal(At, at, Bt, z0, Sig0);
 
         Matrix3D ztnew(_nx, 1, _nt), Sigtnew(_nx, _nx, _nt);
         ztnew = std::get<0>(ztSigt);
