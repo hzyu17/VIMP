@@ -24,21 +24,6 @@ while (err>stop_error)
     [Qk, rk] = QrV(As,as,hAk,hak,nTr,eta,B, pinvBBT, Q,zk);
     [K,d] = linearCov(Aprior,aprior,B,epsilon,Qk,rk,m0,Sig0,m1,Sig1,sig);
     
-    Qcpp = csvread("/home/hzyu/git/VIMP/vimp/Qt.csv");
-    rcpp = csvread("/home/hzyu/git/VIMP/vimp/rt.csv");
-    Kcpp = csvread("/home/hzyu/git/VIMP/vimp/Kt.csv");
-    dcpp = csvread("/home/hzyu/git/VIMP/vimp/dt.csv");
-    
-    Qk_reshaped = reshape(Qk, [36, 500]);
-    K_reshaped = reshape(K, [12, 500]);
-    
-    K_diff = Kcpp - K_reshaped;
-    Q_diff = Qk_reshaped - Qcpp;
-    
-    err_norm_K = norm(K_diff)
-    err_norm_Q = norm(Q_diff)
-    
-    
     for i = 1:nt
         As(:,:,i) = Aprior(:,:,i)+B(:,:,i)*K(:,:,i);
         as(:,i) = aprior(:,i)+B(:,:,i)*d(:,i);

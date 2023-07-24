@@ -25,12 +25,12 @@ Sig1 = 0.001 .* eye(6);
 %                          0         0         0         0    0.1181   0;
 %                          0         0         0         0         0    1.173512e-04];
 
-pinvBBT = [   0         0         0         0         0         0;
-                         0         0         0         0         0         0;
-                         0         0         0         0         0         0;
-                         0         0         0         0         0         0;
-                         0         0         0         0        0.01    0;
-                         0         0         0         0         0        0.01];
+pinvBBT = [  0         0         0         0         0         0;
+             0         0         0         0         0         0;
+             0         0         0         0         0         0;
+             0         0         0         0         0         0;
+             0         0         0         0        0.01       0;
+             0         0         0         0         0        0.01];
 
 eta = 1e-6;
 epsilon = 1e-2;
@@ -45,7 +45,7 @@ nt = 500;
 
 % 3D matrices
 A  = A1(:)*ones(1,nt);
-As  = reshape(A,[nx,nx,nt]);
+As = reshape(A,[nx,nx,nt]);
 B  = B1(:)*ones(1,nt);
 B  = reshape(B,[nx,nu,nt]);
 r  = zeros(nx,nt);
@@ -56,7 +56,8 @@ Q  = reshape(Q,[nx,nx,nt]);
 % profile on
 % tic_solving = tic;
 
-[K,d, As, B, as,zk,Sk] = optimize(nt, As, B, pinvBBT, as, Q, epsilon, m0, Sig0, m1, Sig1, eta, sig, stop_err);
+[K,d, As, B, as,zk,Sk] = optimize(nt, As, B, pinvBBT, as, Q, epsilon, ...
+                                  m0, Sig0, m1, Sig1, eta, sig, stop_err);
 
 disp("Are all the covariances PSD?")
 is_all_psd(Sk)

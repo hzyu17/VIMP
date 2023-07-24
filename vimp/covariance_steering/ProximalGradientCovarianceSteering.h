@@ -250,8 +250,6 @@ namespace vimp{
             Kt = _linear_cs.Kt();
             dt = _linear_cs.dt();
 
-            _ei.print_matrix(dt, "dt");
-
             MatrixXd Ai(_nx, _nx), ai(_nx, 1), Bi(_nx, _nu), Aprior_i(_nx, _nx), aprior_i(_nx, 1), Ki(_nu, _nx), di(_nx, 1);
             for (int i = 0; i < _nt; i++)
             {

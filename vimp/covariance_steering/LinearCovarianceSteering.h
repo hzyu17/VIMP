@@ -103,6 +103,16 @@ public:
 
         _Phi11 = _Phi.block(0, 0, _nx, _nx);
         _Phi12 = _Phi.block(0, _nx, _nx, _nx);
+
+        // #define STRING(x) #x
+        // #define XSTRING(x) STRING(x)
+        // std::string source_root{XSTRING(SOURCE_ROOT)};
+
+        // MatrixIO mio;
+        // mio.saveData(source_root+"/Phi11.csv", _Phi11);
+        // mio.saveData(source_root+"/Phi12.csv", _Phi12);
+        // mio.saveData(source_root+"/Mt.csv", _Mt);
+
     }
 
     std::tuple<Matrix3D, Matrix3D> solve_return(){
@@ -120,11 +130,27 @@ public:
             s = s + _delta_t * ((Mi*s + a_r.col(i)) + (Mi_next*s_tild + a_r.col(i+1))) / 2.0;
         }
 
+        // #define STRING(x) #x
+        // #define XSTRING(x) STRING(x)
+        // std::string source_root{XSTRING(SOURCE_ROOT)};
+
+        // MatrixIO mio;
+        // mio.saveData(source_root+"/s.csv", s);
+
         VectorXd rhs{_m1 - _Phi11*_m0-s.block(0,0,_nx,1)};
         VectorXd Lambda_0 = _Phi12.colPivHouseholderQr().solve(rhs);
         MatrixXd Xt(2*_nx, _nt), X_tild(2*_nx, _nt);
         VectorXd X0(2*_nx);
         X0 << _m0, Lambda_0;
+
+        // mio.saveData(source_root+"/Lambda_0.csv", Lambda_0);
+
+        // #define STRING(x) #x
+        // #define XSTRING(x) STRING(x)
+        // std::string source_root{XSTRING(SOURCE_ROOT)};
+
+        // MatrixIO mio;
+        // mio.saveData(source_root+"/X0.csv", X0);
 
         Xt.col(0) = X0;
 
@@ -134,6 +160,10 @@ public:
             X_tild = Xt.col(i) + _delta_t*(Mi*Xt.col(i) + a_r.col(i));
             Xt.col(i+1) = Xt.col(i) + _delta_t* ( (Mi*Xt.col(i) + a_r.col(i)) + (Mi_next*X_tild + a_r.col(i+1)) ) / 2.0;
         }
+
+        // MatrixIO mio;
+        // mio.saveData(source_root+"/Xt.csv", Xt);
+
         MatrixXd xt{Xt.block(0,0,_nx,_nt)};
         MatrixXd lbdt{Xt.block(_nx, 0, _nx, _nt)};
         MatrixXd v(_nu, _nt);
@@ -183,6 +213,8 @@ public:
                                         (AiT_next*Pinew+Pinew*Ai_next-Pinew*Bi_next*BiT_next*Pinew+Qi_next) ) / 2.0;
             _ei.compress3d(Pi_next, _Pit, i+1);
         }
+
+        // mio.saveData(source_root+"/Pit.csv", _Pit);
 
         MatrixXd Ki(_nu, _nx);
         Ki.setZero();

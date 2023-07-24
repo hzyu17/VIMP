@@ -8,7 +8,6 @@ M          = zeros(2*nx,2*nx,nt);
 for i = 1:nt
     M(:,:,i) = [A(:,:,i) -B(:,:,i)*B(:,:,i)';-Q(:,:,i) -A(:,:,i)'];
 end
-
 Phi   = eye(2*nx);
 for i = 1:nt-1
     Phi_tild = Phi+dt.*(M(:,:,i)*Phi);
@@ -17,14 +16,27 @@ end
 Phi12 = Phi(1:nx,nx+1:2*nx);
 Phi11 = Phi(1:nx,1:nx);
 
+Phi11_cpp = csvread("/home/hzyu/git/VIMP/vimp/Phi11.csv");
+Phi12_cpp = csvread("/home/hzyu/git/VIMP/vimp/Phi12.csv");
+
+disp("dif norm Phi11")
+norm(Phi11 - Phi11_cpp)
+
+disp("dif norm Phi12")
+norm(Phi12 - Phi12_cpp)
+
 s     = zeros(2*nx,1);
 for i = 1:nt-1
     s_tild = s+dt.*(M(:,:,i)*s+[a(:,i);-r(:,i)]);
     s = s+dt.*( (M(:,:,i)*s+[a(:,i);-r(:,i)]) + (M(:,:,i+1)*s_tild+[a(:,i+1);-r(:,i+1)]) ) / 2;
 end
 
-lambda0 = Phi12\(m1-Phi11*m0-s(1:nx));
+s_cpp = csvread("/home/hzyu/git/VIMP/vimp/s.csv");
 
+disp("s diff norm");
+norm(s-s_cpp)
+
+lambda0 = Phi12\(m1-Phi11*m0-s(1:nx));
 Xl = zeros(2*nx,nt);
 Xl(:,1) = [m0;lambda0];
 for i = 1:nt-1
@@ -32,6 +44,11 @@ for i = 1:nt-1
     Xtild = temp + dt.*(M(:,:,i)*temp+[a(:,i);-r(:,i)]);
    Xl(:,i+1) = Xl(:,i)+dt.*((M(:,:,i)*temp+[a(:,i);-r(:,i)]) + (M(:,:,i+1)*Xtild+[a(:,i+1);-r(:,i+1)]) ) / 2;
 end
+
+Xl_cpp = csvread("/home/hzyu/git/VIMP/vimp/Xt.csv");
+
+disp("Xt diff norm");
+norm(Xl - Xl_cpp)
 
 bx = Xl(1:nx,:);
 bl = Xl(nx+1:2*nx,:);
@@ -45,6 +62,7 @@ Pi0 = epsilon*inv(Sig0)/2 - Phi12\Phi11-Sig0^(-1/2) * (epsilon^2* I/4+...
     Sig0^0.5*(Phi12\Sig1)*(Phi12'\(Sig0^0.5)))^(1/2) * Sig0^(-1/2);
 Pi(:,:,1) = (Pi0+Pi0')./2;
 
+Pi
 % B1 = zeros(6,6);
 % B1(5,5) = 1;
 % B1(6,6) = 1;
@@ -54,7 +72,6 @@ for i = 1:nt-1
     Pi(:,:,i+1)=temp-dt.*( (A(:,:,i)'*temp+temp*A(:,:,i)-temp*B(:,:,i)*B(:,:,i)'*temp+Q(:,:,i))...
         + (A(:,:,i+1)'*Pi_tild+Pi_tild*A(:,:,i+1)-Pi_tild*B(:,:,i+1)*B(:,:,i+1)'*Pi_tild+Q(:,:,i+1)) ) / 2;
 end
-
 K = zeros(nu,nx,nt);
 d = zeros(nu,nt);
 for i = 1:nt

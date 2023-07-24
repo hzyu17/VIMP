@@ -22,7 +22,12 @@ int main(){
     EigenWrapper _ei;
     VectorXd m_0(6);
     m_0 << 4,4,0,0,0,0;
+
+    VectorXd m_T(6);
+    m_T << 2,2,0,0,0,0;
+
     MatrixXd Sig_0 = MatrixXd::Identity(6,6)*0.001;
+    MatrixXd Sig_T = MatrixXd::Identity(6,6)*0.001;
     MatrixXd A0 = MatrixXd::Identity(6,6);
 
     PlanarQuadDynamics planar_quad(6, 2, nt);
@@ -52,6 +57,12 @@ int main(){
     PGCSParams params;
     runner.read_config(params);
 
+    params.set_m0(m_0);
+    params.set_mT(m_T);
+
+    params.set_Sig0(Sig_0);
+    params.set_SigT(Sig_T);
+
     std::shared_ptr<PlanarQuadDynamics> p_dyn = std::make_shared<PlanarQuadDynamics>(planar_quad);
     PGCSPlanarQuadSDF pgcs_quad(A1, a1, B1, p_dyn, params);
 
@@ -62,13 +73,13 @@ int main(){
     ztnew = std::get<0>(propagate_res);
     Sigt_new = std::get<1>(propagate_res);
     
-    // MatrixIO mio;
+    MatrixIO mio;
     // mio.saveData(source_root+"/At.csv", At);
     // mio.saveData(source_root+"/at.csv", at);
     // mio.saveData(source_root+"/Bt.csv", Bt);
 
-    // mio.saveData(source_root+"/zkt_new.csv", ztnew);
-    // mio.saveData(source_root+"/Sigt_new.csv", Sigt_new);
+    mio.saveData(source_root+"/zkt_new.csv", ztnew);
+    mio.saveData(source_root+"/Sigt_new.csv", Sigt_new);
 
     Matrix3D Qkt(nx, nx, nt), rkt(nx, 1, nt);
 
@@ -98,7 +109,7 @@ int main(){
     Matrix3D Kt = std::get<0>(linearcs_res);
     Matrix3D dt = std::get<1>(linearcs_res);
 
-    MatrixIO mio;
+    // MatrixIO mio;
     mio.saveData(source_root+"/Kt.csv", Kt);
     mio.saveData(source_root+"/dt.csv", dt);
 

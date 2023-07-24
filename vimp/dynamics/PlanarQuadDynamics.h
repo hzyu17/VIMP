@@ -72,11 +72,11 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& 
 
     VectorXd f{VectorXd::Zero(6)};
     f << x(3)*cos(x(2)) - x(4)*sin(x(2)),
-        x(3)*sin(x(2)) + x(4)*cos(x(2)),
-        x(5),
-        x(4)*x(5)-g*sin(x(2)),
-        -x(3)*x(5)-g*cos(x(2)),
-        0;
+         x(3)*sin(x(2)) + x(4)*cos(x(2)),
+         x(5),
+         x(4)*x(5)-g*sin(x(2)),
+         -x(3)*x(5)-g*cos(x(2)),
+         0;
 
     VectorXd hak{VectorXd::Zero(6)};
     hak = f - hAk*x;

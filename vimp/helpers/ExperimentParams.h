@@ -75,6 +75,9 @@ public:
     inline void set_m0(const VectorXd& m0){ _m0 = m0; }
     inline void set_mT(const VectorXd& mT){ _mT = mT; }
 
+    inline void set_Sig0(const MatrixXd& Sig0){ _Sig0 = Sig0; }
+    inline void set_SigT(const MatrixXd& SigT){ _SigT = SigT; }
+
     inline void set_total_time(double total_time){ _total_time = total_time; }
     inline void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
     inline void update_step_size(double step_size){ _step_size = step_size; }
