@@ -94,6 +94,7 @@ public:
         MatrixXd Phi_tild(2*_nx, 2*_nx);
 
         for (int i=0; i<_nt-1; i++){
+            Phi_tild.setZero();
             MatrixXd Mi = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i);
             MatrixXd Mi_next = _ei.decomp3d(_Mt, 2*_nx, 2*_nx, i+1);
             Phi_tild = _Phi + Mi*_Phi*_delta_t;
@@ -175,7 +176,7 @@ public:
             Ai_next = _ei.decomp3d(_At, _nx, _nx, i+1);
             Bi_next = _ei.decomp3d(_Bt, _nx, _nu, i+1);
             BiT_next = Bi_next.transpose();
-            AiT_next = Ai.transpose();
+            AiT_next = Ai_next.transpose();
 
             Pinew = Pii - _delta_t*(AiT*Pii+Pii*Ai-Pii*Bi*BiT*Pii+Qi);
             Pi_next = Pii - _delta_t* ( (AiT*Pii+Pii*Ai-Pii*Bi*BiT*Pii+Qi) + 
