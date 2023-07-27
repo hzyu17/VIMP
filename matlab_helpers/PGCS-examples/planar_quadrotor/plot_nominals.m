@@ -5,7 +5,7 @@ nx = 6;
 %% plotting
 
 % ---------------------------- positions ---------------------------- 
-step_size = 3000;
+step_size = 10;
 Sig0 = Sk(1:end, 1:end, 1);
 Sig0_xy = Sk(1:2, 1:2, 1);
 m0 = zk(1:end, 1);
@@ -41,9 +41,9 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
 hold on 
-step_size = 100;
+% step_size = 100;
 
-for ti=1:30:nt
+for ti=1:step_size:nt
     mean_x = zk(1, ti);
     mean_y = zk(2, ti);
     angle_phi = zk(3, ti) / pi * 180;
@@ -72,7 +72,7 @@ Sig0_vxy = Sig0(3:4, 3:4, 1:end);
 Sk_vxy = Sk(3:4, 3:4, 1:end);
 vzk_2d = zk(3:4, :);
 v0 = m0(4:5);
-plot_marginal(v0, vzk_2d, Sig0_vxy, Sk_vxy, nt, sig, step_size);
+plot_marginal(v0, vzk_2d, Sig0_vxy, Sk_vxy, nt, sig, nt);
 set(gca,'fontsize',16);
 xlabel('Time $t$','Interpreter','latex'),ylabel('Velocity $v_x$','Interpreter','latex');
 zlabel('Velocity $v_y$','Interpreter','latex');

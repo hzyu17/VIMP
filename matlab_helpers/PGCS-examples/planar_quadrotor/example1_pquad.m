@@ -180,7 +180,6 @@ for i=1:nt-1
     acl = hastar(i) + B(:,:,i)*ds(:,i);
     Sigk = Sigk + (Acl*Sigk + Sigk*Acl' + epsilon*B(:,:,i)*B(:,:,i)').*dt;
     Sigs(:,:,i+1) = Sigk;
-%     error_ellipse_easy(Sk, mu(:,i+1),[],t);
 end
 plot_marginal(m0, mus, Sig0(1:2,1:2), Sigs(1:2,1:2,:), nt, sig, 100);
 

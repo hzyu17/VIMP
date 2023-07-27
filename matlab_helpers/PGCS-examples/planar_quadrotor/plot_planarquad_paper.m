@@ -43,12 +43,8 @@ tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
 hold on
 
-% plot map
-cell_size = 0.1;
-origin_x = -20;
-origin_y = -10;
-plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
-plot_nominals(zkt, Skt, Kt, dt, nt, sig, epsilon);
+% plot map and nominals
+plot_nominals_with_sdf(zkt, Skt, Kt, dt, nt, sig, epsilon, sdfmap);
 
 %% ---------------------------- rotation angles ---------------------------- 
 figure
@@ -70,26 +66,3 @@ errorbar(linspace(1,plot_length,plot_length), zk_1d, Sk_phi, 'Linewidth', 1.5)
 
 set(gca,'fontsize',16);
 xlabel('Time $t$','Interpreter','latex'),ylabel('Angle $\phi$','Interpreter','latex');
-
-%% ========== plot the mean quadrotor trajectory ==========
-T = 4.0;
-t  = linspace(0,T,nt);
-figure
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
-nexttile
-hold on 
-step_size = 10;
-
-% plot map
-cell_size = 0.1;
-origin_x = -20;
-origin_y = -10;
-plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
-% plot quadrotor positions and orientations
-for ti=1:step_size:nt
-    mean_x = zkt(1, ti);
-    mean_y = zkt(2, ti);
-    angle_phi = zkt(3, ti) / pi * 180;
-    draw_planarquad([mean_x,mean_y], L, H, angle_phi, [0.1,0.1,0.1]);
-end

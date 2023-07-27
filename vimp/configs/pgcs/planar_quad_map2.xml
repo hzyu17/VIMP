@@ -3,8 +3,8 @@
     <eps> 0.01 </eps>
     <eps_sdf> 0.65 </eps_sdf>
     <radius> 1.5 </radius>
-    <total_time> 4.0 </total_time>
-    <nt> 2000 </nt>
+    <total_time> 4.5 </total_time>
+    <nt> 1500 </nt>
     <sig0> 0.001 </sig0>
     <sigT> 0.001 </sigT>
     <eta> 1e-5 </eta>

@@ -1,4 +1,4 @@
-function [] = plot_marginal(m0, zk, Sig0_xy, Sk_xy, nt, sig, step_size)
+function [] = plot_marginal(m0, zk, Sig0_xy, Sk_xy, nt, sig, num_drawings)
 %PLOT_ELLIP Summary of this function goes here
 %   Detailed explanation goes here
 n  = 2;
@@ -6,24 +6,24 @@ t  = linspace(0,sig,nt);
 n3=100;
 theta=linspace(0,2*pi,n3);
 circlepara=[cos(theta);sin(theta)];
-tellips=zeros(n,n3,step_size);
+tellips=zeros(n,n3,num_drawings);
 tellips(:,:,1)= sqrtm(Sig0_xy)*circlepara+m0(1:2)*ones(1,n3);
-for i=1:step_size-1
-    indx = floor(nt/step_size)*i;
+for i=1:num_drawings-1
+    indx = floor(nt/num_drawings)*i;
     tellips(:,:,i+1)=3*sqrtm(Sk_xy(:,:,1+indx))*circlepara+zk(1:2,1+indx)*ones(1,n3);
 end
-X=zeros(step_size,n3);Y=zeros(step_size,n3);Z=zeros(step_size,n3);
-for i=1:step_size
-    X(i,:)=t(1+floor(nt/step_size)*(i-1))*ones(1,n3);
-    Y(i,:)=tellips(1,:,i);
+X=zeros(num_drawings,n3);Y=zeros(num_drawings,n3);Z=zeros(num_drawings,n3);
+for i=1:num_drawings
     Z(i,:)=tellips(2,:,i);
+    X(i,:)=t(1+floor(nt/num_drawings)*(i-1))*ones(1,n3);
+    Y(i,:)=tellips(1,:,i);
 end
 
 cstring='grbcmk';
-hold on; 
+% hold on; 
 % grid on;
-surf(X,Y,Z,'FaceColor','blue','EdgeColor','none');
-alpha(0.1);
+surf(X,Y,Z,'FaceColor','blue','EdgeColor','none', 'FaceAlpha', 0.1);
+% alpha(0.1);
 view(-30,30);
 end
 
