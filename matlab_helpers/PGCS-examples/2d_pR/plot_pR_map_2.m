@@ -10,7 +10,7 @@ addpath("../error_ellipse");
 addpath("../../../matlab_helpers/");
 
 %% read map
-sdfmap = csvread("../../RAL-examples/2d_pR/map2/map_multiobs_map2.csv");
+sdfmap = csvread("../../../vimp/data/vimp/2d_pR/map_multiobs_map2.csv");
 
 % % hyper parameters
 % i_exp = 1;
@@ -41,14 +41,6 @@ figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
 for i = 1:4 % 4 experiments
-%     x0 = 500;
-%     y0 = 500;
-%     width = 1290.427199;
-%     height = 800;
-%     figure
-%     set(gcf,'position',[x0,y0,width,height])
-%     tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
-
     nexttile
     hold on
     prefix = ["map2/case"+num2str(i)+"/"]

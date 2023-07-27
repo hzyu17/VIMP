@@ -114,6 +114,7 @@ public:
 
             // Jacobian w.r.t. the whole state space
             MatrixXd grad_h(n_spheres, _nx);
+            grad_h.setZero();
             
             for (int i_s=0; i_s<n_spheres; i_s++){
                 grad_h.block(i_s,0,1,2) = J_hxy.row(i_s);
@@ -124,14 +125,14 @@ public:
             Hess.setZero(); 
 
             // Qki
-            // Qki = Hess*step_size/(1+step_size) + temp*pinvBBTi*(Ai - hAi)*step_size/(1+step_size)/(1+step_size);
-            Qki = temp*pinvBBTi*(Ai - hAi)*step_size/(1+step_size)/(1+step_size);
+            Qki = Hess*step_size/(1+step_size) + temp*pinvBBTi*(Ai - hAi)*step_size/(1+step_size)/(1+step_size);
+            // Qki = temp*pinvBBTi*(Ai - hAi)*step_size/(1+step_size)/(1+step_size);
             // rki
-            // rki = grad_h.transpose()*Sig_obs*hinge*step_size/(1+step_size) + 
-            //         nTri*step_size/(1+step_size)/2 + 
-            //         temp*pinvBBTi*(ai - hai)*step_size/(1+step_size) /(1+step_size);
+            rki = grad_h.transpose()*Sig_obs*hinge*step_size/(1+step_size) + 
+                    nTri*step_size/(1+step_size)/2 + 
+                    temp*pinvBBTi*(ai - hai)*step_size/(1+step_size) /(1+step_size);
             
-            rki = nTri*step_size/(1+step_size)/2 + temp*pinvBBTi*(ai - hai)*step_size/(1+step_size) /(1+step_size);
+            // rki = nTri*step_size/(1+step_size)/2 + temp*pinvBBTi*(ai - hai)*step_size/(1+step_size) /(1+step_size);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, Qt, i);
