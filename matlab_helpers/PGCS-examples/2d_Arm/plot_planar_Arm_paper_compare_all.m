@@ -144,6 +144,7 @@ plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
 hold off
+axis off
 
 
 % ==================== plot gpmp2 results ===================
@@ -172,7 +173,7 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-% axis off
+axis off
 
 
 % ==================== plot PGCS-MP results ===================
@@ -197,7 +198,7 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-% axis off;
+axis off;
 hold off
 
 

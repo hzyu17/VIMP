@@ -193,7 +193,7 @@ public:
 
     /**
      * @brief The optimization process, including recording the costs.
-     * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
+     * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt, At, Bt, at, zkt, Skt)
      */
     std::tuple<Matrix3D, Matrix3D, NominalHistory> backtrack() override{
         double err = 1;
@@ -203,6 +203,10 @@ public:
 
         NominalHistory hnom;
         std::vector<Matrix3D> v_zt, v_Sigzt;
+
+        Matrix3D As_prev(_nx, _nx, _nt), as_prev(_nx, 1, _nt);
+        As_prev = _Akt;
+        as_prev = _akt;
 
         while ( ((err<0) || (err>_stop_err)) && (i_step < _max_iter) && (!no_better_stepsize)){
             
@@ -218,7 +222,7 @@ public:
 
                 // tentative one step
                 StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
-                KtdtAtatztSigt = step(i_step, step_size, _Akt, _akt, _Bt, _zkt, _Sigkt);
+                KtdtAtatztSigt = step(i_step, step_size, _Akt, _Bt, _akt, _zkt, _Sigkt);
 
                 // compute the tentative cost
                 Matrix3D zt(_nx, 1, _nt), Sigt(_nx, _nx, _nt), Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
@@ -283,12 +287,52 @@ public:
 
                 std::cout << "step size " << step_size << std::endl;
             }
+            
+            double err = (As_prev - _Akt).norm() / _Akt.norm() / _nt + (as_prev - _akt).norm() / _akt.norm() / _nt;
+            std::cout.precision(7);
+            std::cout << "err:  " << err << std::endl;
+
+            As_prev = _Akt;
+            as_prev = _akt;
+
         }  
 
         // _cost_helper.plot_costs();
-
         hnom = make_tuple(v_zt, v_Sigzt);
-        return std::make_tuple(_Kt, _dt, hnom);      
+
+        // Recover the optimal controller
+        std::tuple<Matrix3D, Matrix3D> ztSigtStar = propagate_nominal(_Akt, _akt, _Bt, _z0, _Sig0);
+        Matrix3D zt_star = std::get<0>(ztSigtStar);
+        Matrix3D Sigt_star = std::get<1>(ztSigtStar);
+
+        std::tuple<LinearDynamics, Matrix3D> linearizing_result = _pdyn->linearize(zt_star, _Akt, Sigt_star);
+        
+        Matrix3D hAt_star = std::get<0>(linearizing_result).At();
+        Matrix3D hat_star = std::get<0>(linearizing_result).at();
+        Matrix3D nTr_star = std::get<1>(linearizing_result);
+
+        Matrix3D r_star(_nx, 1, _nt), Q_star(_nx, _nx, _nt);
+        Q_star.setZero();
+        for (int i=0; i<_nt; i++){
+            MatrixXd ri_star(_nx, 1);
+            ri_star = _ei.decomp3d(nTr_star, _nx, 1, i) / 2;
+            _ei.compress3d(ri_star, r_star, i);
+        }
+
+        std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> LinCSResKtdtAtat;
+        LinCSResKtdtAtat = solve_linearCS_return(hAt_star, _Bt, hat_star, Q_star, r_star);
+
+        std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D, Matrix3D, Matrix3D> final_KtdtAtatztSigt;
+        final_KtdtAtatztSigt = std::make_tuple(std::get<0>(LinCSResKtdtAtat), 
+                                               std::get<1>(LinCSResKtdtAtat),
+                                               std::get<2>(LinCSResKtdtAtat),
+                                               std::get<3>(LinCSResKtdtAtat),
+                                               zt_star,
+                                               Sigt_star);
+
+        update_from_step_res(final_KtdtAtatztSigt);
+
+        return std::make_tuple(std::get<0>(LinCSResKtdtAtat), std::get<1>(LinCSResKtdtAtat), hnom);      
     }
 
 

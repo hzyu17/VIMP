@@ -58,7 +58,7 @@ Q  = reshape(Q,[nx,nx,nt]);
 
 [K,d, As, B, as,zk,Sk] = optimize(nt, As, B, pinvBBT, as, Q, epsilon, ...
                                   m0, Sig0, m1, Sig1, eta, sig, stop_err);
-
+                              
 disp("Are all the covariances PSD?")
 is_all_psd(Sk)
 

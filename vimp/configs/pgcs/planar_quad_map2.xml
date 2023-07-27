@@ -9,10 +9,10 @@
     <sigT> 0.001 </sigT>
     <eta> 1e-6 </eta>
     <stop_err> 1e-5 </stop_err>
-    <max_iter> 50 </max_iter>
+    <max_iter> 30 </max_iter>
     <cost_sigma> 5.6e3 </cost_sigma>
-    <backtracking_ratio> 0.7 </backtracking_ratio>
-    <max_n_backtracking> 3 </max_n_backtracking>
+    <backtracking_ratio> 1 </backtracking_ratio>
+    <max_n_backtracking> 1 </max_n_backtracking>
 
 </Commons>
 

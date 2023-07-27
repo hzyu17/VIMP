@@ -47,31 +47,7 @@ public:
                                             _pdyn(pdyn){}
     
 
-    void step(int indx) override{
-
-        // propagate the mean and the covariance
-        propagate_nominal();
-
-        std::tuple<LinearDynamics, Matrix3D> res;
-        res = _pdyn->linearize(_zkt, _Akt, _Sigkt);
-
-        LinearDynamics h_dyn = std::get<0>(res);
-        Matrix3D nTrt = std::get<1>(res);
-
-        // Matrix3D hAt(_nx, _nx, _nt), hat(_nx, 1, _nt);
-        _hAkt = h_dyn.At();
-        _hakt = h_dyn.at();
-
-        MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
-        MatrixXd aprior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
-        
-        // Update Qkt, rkt
-        update_Qrk();
-
-        // solve inner loop linear CS
-        solve_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
-
-    }
+    void step(int indx) override{}
 
     StepResult step(int indx, double step_size, 
                     const Matrix3D& At, const Matrix3D& at, const Matrix3D& Bt, 
@@ -87,7 +63,6 @@ public:
                     const VectorXd& z0, const MatrixXd& Sig0) override
     {
         // propagate the mean and the covariance
-        
         std::tuple<Matrix3D, Matrix3D> ztSigt;
         ztSigt = propagate_nominal(At, at, Bt, z0, Sig0);
 
