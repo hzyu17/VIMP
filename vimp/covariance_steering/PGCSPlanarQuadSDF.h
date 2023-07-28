@@ -310,7 +310,7 @@ public:
 
         _cost_helper.plot_costs();
         hnom = make_tuple(v_zt, v_Sigzt);
-        
+
         /**
          * Recover the optimal control.
          * */
@@ -332,12 +332,13 @@ public:
         Q_star.setZero();
         r_star.setZero();
 
-        Matrix3D grad_Vx(_nx, 1, _nt);
-        grad_Vx = grad_V(zt_star);
+        Matrix3D par_V_x = grad_V(zt_star);
         MatrixXd r_star_i(_nx, 1);
         r_star_i.setZero();
         for (int i=0; i<_nt; i++){
-            r_star_i = _ei.decomp3d(grad_Vx, _nx, 1, i) + _ei.decomp3d(nTr_star, _nx, 1, i) / 2;
+            VectorXd par_V_x_i = _ei.decomp3d(par_V_x, _nx, 1, i);
+            VectorXd nTri = _ei.decomp3d(nTr_star, _nx, 1, i);
+            r_star_i = par_V_x_i + nTri / 2;
             // r_star_i = _ei.decomp3d(nTr_star, _nx, 1, i) / 2;
             _ei.compress3d(r_star_i, r_star, i);
         }
@@ -355,7 +356,7 @@ public:
 
         update_from_step_res(final_KtdtAtatztSigt);
 
-        return std::make_tuple(std::get<0>(LinCSResKtdtAtat), std::get<1>(LinCSResKtdtAtat), hnom);      
+        return std::make_tuple(this->_Kt, this->_dt, hnom);      
     }
 
 

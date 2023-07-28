@@ -6,7 +6,7 @@
     <total_time> 4.0 </total_time>
     <nt> 2000 </nt>
     <sig0> 0.001 </sig0>
-    <sigT> 0.001 </sigT>
+    <sigT> 0.005 </sigT>
     <eta> 2e-5 </eta>
     <stop_err> 1e-5 </stop_err>
     <max_iter> 50 </max_iter>
