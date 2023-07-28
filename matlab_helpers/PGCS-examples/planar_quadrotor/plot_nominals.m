@@ -2,7 +2,6 @@ function output = plot_nominals(zk, Sk, Ks, ds, nt, sig, epsilon)
 %PLOT_NOMINALS Summary of this function goes here
 output = 1;
 nx = 6;
-%% plotting
 
 % ---------------------------- positions ---------------------------- 
 step_size = 10;
@@ -62,15 +61,9 @@ tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
 hold on 
 
-n1=nt;
-n2=6;
-n=2;
-x0=zeros(n,n2);
-x1=zeros(n,n2);
-
-Sig0_vxy = Sig0(3:4, 3:4, 1:end);
-Sk_vxy = Sk(3:4, 3:4, 1:end);
-vzk_2d = zk(3:4, :);
+Sig0_vxy = Sig0(4:5, 4:5, 1:end);
+Sk_vxy = Sk(4:5, 4:5, 1:end);
+vzk_2d = zk(4:5, :);
 v0 = m0(4:5);
 plot_marginal(v0, vzk_2d, Sig0_vxy, Sk_vxy, nt, sig, nt);
 set(gca,'fontsize',16);
@@ -84,18 +77,10 @@ for j=1:n2
     init = randn(nx,1);
     init = Sig0^(1/2)*init+m0;
     [~,x,u] = planar_quadrotor(Ks,ds,epsilon,init,sig);
-    x0(:,j)=x(1:2,1);
-    x1(:,j)=x(1:2,n1);
-    plot3(t,x(3,:),x(4,:),cstring(mod(j,6)+1),'LineWidth',2);
+    plot3(t,x(4,:),x(5,:),cstring(mod(j,6)+1),'LineWidth',2);
 end
 
 % =================== trajectories and control inputs =================== 
-n1=nt;
-n2=6;
-n=2;
-x0=zeros(n,n2);
-x1=zeros(n,n2);
-
 x0 = 50;
 y0 = 50;
 width = 400;

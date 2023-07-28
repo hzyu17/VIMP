@@ -30,7 +30,7 @@ public:
         Base(2, 1, source_root+"/data/vimp/2d_pR/field_multiobs_entropy_map2.csv", ""), 
         _eps(epsilon), 
         _r(radius)
-        {   
+        {
             if (!field_file.empty()){
                 Base::update_field_file(field_file);
             }

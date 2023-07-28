@@ -14,9 +14,10 @@ for i=1:num_drawings-1
 end
 X=zeros(num_drawings,n3);Y=zeros(num_drawings,n3);Z=zeros(num_drawings,n3);
 for i=1:num_drawings
-    Z(i,:)=tellips(2,:,i);
-    X(i,:)=t(1+floor(nt/num_drawings)*(i-1))*ones(1,n3);
+    indx = floor(nt/num_drawings)*(i-1);
+    X(i,:)=t(1+indx)*ones(1,n3);
     Y(i,:)=tellips(1,:,i);
+    Z(i,:)=tellips(2,:,i);
 end
 
 cstring='grbcmk';

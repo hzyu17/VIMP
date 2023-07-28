@@ -10,14 +10,14 @@ hold on
 
 nx = 6;
 %% plotting
-
+step_size = 100;
 % ---------------------------- positions ---------------------------- 
 Sig0 = Sk(1:end, 1:end, 1);
 Sig0_xy = Sk(1:2, 1:2, 1);
-m0 = zk(1:end, 1);
+m0 = zk(:, 1);
 Sk_xy = Sk(1:2, 1:2, 1:end);
 zk_2d = zk(1:2, :);
-plot_marginal_YZX(m0, zk_2d, Sig0_xy, Sk_xy, nt, sig, nt);
+plot_marginal_YZX(m0, zk_2d, Sig0_xy, Sk_xy, nt, sig, step_size);
 set(gca,'fontsize',16);
 xlabel('Position $x$','Interpreter','latex'),ylabel('Position $y$','Interpreter','latex');
 zlabel('Time $t$','Interpreter','latex');
@@ -26,12 +26,12 @@ zlabel('Time $t$','Interpreter','latex');
 % ---------------------------- sampled trajectories ----------------------------
 n_samples=6;
 
-t  = linspace(0,sig,nt);
+t  = linspace(0, sig, nt);
 cstring='grbcmk';
 for j=1:n_samples
     init = randn(6,1);
     init = Sig0^(1/2)*init+m0;
-    [~,x,u] = planar_quadrotor(Ks,ds,epsilon,init,sig);
+    [~,x,u] = planar_quadrotor(Ks, ds, epsilon, init, sig);
 
     plot3(x(1,:),x(2,:),t,cstring(mod(j,6)+1),'LineWidth',2);
 end
@@ -58,10 +58,6 @@ end
 
 %
 % ---------------------------- velocities ---------------------------- 
-x0 = 50;
-y0 = 50;
-width = 400;
-height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
@@ -70,9 +66,9 @@ hold on
 
 n_samples=6;
 
-Sig0_vxy = Sig0(3:4, 3:4, 1:end);
-Sk_vxy = Sk(3:4, 3:4, 1:end);
-vzk_2d = zk(3:4, :);
+Sig0_vxy = Sig0(4:5, 4:5, 1);
+Sk_vxy = Sk(4:5, 4:5, 1:end);
+vzk_2d = zk(4:5, :);
 v0 = m0(4:5);
 plot_marginal(v0, vzk_2d, Sig0_vxy, Sk_vxy, nt, sig, nt);
 set(gca,'fontsize',16);
@@ -86,20 +82,10 @@ for j=1:n_samples
     init = randn(nx,1);
     init = Sig0^(1/2)*init+m0;
     [~,x,u] = planar_quadrotor(Ks,ds,epsilon,init,sig);
-    plot3(t,x(3,:),x(4,:),cstring(mod(j,6)+1),'LineWidth',2);
+    plot3(t,x(4,:),x(5,:),cstring(mod(j,6)+1),'LineWidth',2);
 end
 
 % =================== trajectories and control inputs =================== 
-n1=nt;
-n_samples=6;
-n=2;
-x0=zeros(n,n_samples);
-x1=zeros(n,n_samples);
-
-x0 = 50;
-y0 = 50;
-width = 400;
-height = 350;
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')

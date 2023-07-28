@@ -41,10 +41,6 @@ int main(){
     VectorXd a1 = std::get<2>(res);
     VectorXd nTr1 = std::get<3>(res);
 
-    // _ei.print_matrix(A1, "At");
-    // _ei.print_matrix(B1, "Bt");
-    // _ei.print_matrix(a1, "at");
-
     Matrix3D At = _ei.replicate3d(A1, nt);
     Matrix3D Bt = _ei.replicate3d(B1, nt);
     Matrix3D at = _ei.replicate3d(a1, nt);
@@ -74,9 +70,6 @@ int main(){
     Sigt_new = std::get<1>(propagate_res);
     
     MatrixIO mio;
-    // mio.saveData(source_root+"/At.csv", At);
-    // mio.saveData(source_root+"/at.csv", at);
-    // mio.saveData(source_root+"/Bt.csv", Bt);
 
     mio.saveData(source_root+"/zkt_new.csv", ztnew);
     mio.saveData(source_root+"/Sigt_new.csv", Sigt_new);

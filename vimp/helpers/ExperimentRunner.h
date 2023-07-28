@@ -191,11 +191,12 @@ public:
         Kt = std::get<0>(res_Kd);
         dt = std::get<1>(res_Kd);
 
-        NominalHistory ztSigt;
-        ztSigt = std::get<2>(res_Kd);
-        Matrix3D h_zt, h_Sigt;
-        h_zt = _ei.vec2mat3d(std::get<0>(ztSigt));
-        h_Sigt = _ei.vec2mat3d(std::get<1>(ztSigt));
+        NominalHistory ztSigt = std::get<2>(res_Kd);
+        // ztSigt 
+        Matrix3D h_zt = _ei.vec2mat3d(std::get<0>(ztSigt));
+        Matrix3D h_Sigt = _ei.vec2mat3d(std::get<1>(ztSigt));
+        // h_zt 
+        // h_Sigt 
 
         MatrixXd zk_star(this->_nx, param.nt()), Sk_star(this->_nx*this->_nx, param.nt());
         zk_star = opt_sdf.zkt();
@@ -211,6 +212,12 @@ public:
 
         m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
         m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+
+        Matrix3D hAkt_star = opt_sdf.hAkt();
+        Matrix3D hakt_star = opt_sdf.hakt();
+
+        m_io.saveData(saving_prefix + std::string{"hAkt_sdf.csv"}, hAkt_star);
+        m_io.saveData(saving_prefix + std::string{"hakt_sdf.csv"}, hakt_star);
 
         opt_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
     }
@@ -276,29 +283,29 @@ public:
                         PGCSRunnerBase<PGCSOptimizer>(nx, nu, num_exp, config){}
 
 void run_one_exp(int exp, PGCSParams& param)
-    {
-        rapidxml::file<> xmlFile(PGCSRunnerBase<PGCSOptimizer>::_config_file.data()); // Default template is char
-        rapidxml::xml_document<> doc;
-        doc.parse<0>(xmlFile.data());
-        
-        std::string ExpNodeName = "Experiment" + std::to_string(exp);
+{
+    rapidxml::file<> xmlFile(PGCSRunnerBase<PGCSOptimizer>::_config_file.data()); // Default template is char
+    rapidxml::xml_document<> doc;
+    doc.parse<0>(xmlFile.data());
+    
+    std::string ExpNodeName = "Experiment" + std::to_string(exp);
 
-        char * c_expname = ExpNodeName.data();
-        rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
-        
-        this->read_boundary_conditions(paramNode, param);
+    char * c_expname = ExpNodeName.data();
+    rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
+    
+    this->read_boundary_conditions(paramNode, param);
 
-        MatrixXd A0(this->_nx, this->_nx), B0(this->_nx, this->_nu), a0(this->_nx, 1);
-        A0.setZero(); B0.setZero(); a0.setZero();
-        std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(param.nx(), param.nu(), param.nt())};
-        A0 = pdyn->A0();
-        B0 = pdyn->B0();
-        a0 = pdyn->a0();
-        
-        PGCSOptimizer opt_sdf(A0, a0, B0, pdyn, param);
+    MatrixXd A0(this->_nx, this->_nx), B0(this->_nx, this->_nu), a0(this->_nx, 1);
+    A0.setZero(); B0.setZero(); a0.setZero();
+    std::shared_ptr<ConstantVelDynamics> pdyn{new ConstantVelDynamics(param.nx(), param.nu(), param.nt())};
+    A0 = pdyn->A0();
+    B0 = pdyn->B0();
+    a0 = pdyn->a0();
+    
+    PGCSOptimizer opt_sdf(A0, a0, B0, pdyn, param);
 
-        this->run_and_save(opt_sdf, param, paramNode);
-    }
+    this->run_and_save(opt_sdf, param, paramNode);
+}
 };
 
 template <typename PGCSOptimizer>

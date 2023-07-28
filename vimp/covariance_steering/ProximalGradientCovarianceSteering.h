@@ -239,7 +239,11 @@ namespace vimp{
          * @brief solve linear CS with local matrix inputs. 
          * @return std::tuple<K, d, A, a> where A, a are close-loop linear system already containing the feedback control. 
          */
-        LinearCSResult solve_linearCS_return(const MatrixXd &A, const MatrixXd &B, const MatrixXd &a, const MatrixXd &Q, const MatrixXd &r)
+        LinearCSResult solve_linearCS_return(const MatrixXd &A, 
+                                             const MatrixXd &B, 
+                                             const MatrixXd &a, 
+                                             const MatrixXd &Q, 
+                                             const MatrixXd &r)
         {
             // solve for the linear covariance steering
             _linear_cs.update_params(A, B, a, Q, r);
@@ -346,6 +350,10 @@ namespace vimp{
         inline Matrix3D Akt() { return _Akt; }
 
         inline Matrix3D akt() { return _akt; }
+
+        inline Matrix3D hAkt() { return _hAkt; }
+
+        inline Matrix3D hakt() { return _hakt; }
 
         inline Matrix3D Qkt() { return _Qkt; }
 

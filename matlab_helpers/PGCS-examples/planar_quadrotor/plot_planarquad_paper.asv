@@ -14,18 +14,29 @@ addpath("../../../matlab_helpers/");
 sdfmap = csvread("../../../vimp/data/vimp/2d_pR/map_multiobs_map2.csv");
 
 %% Read optimization results
-nx = 6; nu = 2;
+nx = 6; nu = 2; sig = 4.5; epsilon=0.01;
 
 prefix = "map2/case1";
-Kt = csvread(prefix+"/Kt_sdf.csv");
-dt = csvread(prefix+"/dt_sdf.csv");
+Ks = csvread(prefix+"/Kt_sdf.csv");
+ds = csvread(prefix+"/dt_sdf.csv");
 zkt = csvread(prefix+"/zk_sdf.csv");
 Skt = csvread(prefix+"/Sk_sdf.csv");
+hAstar_sdf = csvread(prefix+"/hAkt_sdf.csv");
+hastar_sdf = csvread(prefix+"/hakt_sdf.csv");
 
-nt = size(Kt, 2);
-Kt = reshape(Kt, [nu, nx, nt]);
+nt = size(Ks, 2);
+Ks = reshape(Ks, [nu, nx, nt]);
 Skt = reshape(Skt, [nx, nx, nt]);
+hAstar_sdf = reshape(Skt, [nx, nx, nt]);
 
+B1 = 10.*[ 0, 0; 
+            0, 0; 
+            0, 0; 
+            0, 0; 
+            1/sqrt(2), 1/sqrt(2); 
+            1/sqrt(2), -1/sqrt(2)];
+B = B1(:)*ones(1,nt);
+B  = reshape(B,[nx,nu,nt]);
 % quadrotor configurations
 L = 1;
 H = 0.2;
@@ -36,63 +47,57 @@ y0 = 50;
 width = 400;
 height = 350;
 
-% ---------------------------- positions ---------------------------- 
+%% ------------ compute closed-loop linearized systems ----------
+sig = 4.5;
+dt = sig/(nt-1);
+mus = zeros(6, nt);
+m0 = zkt(:,1);
+mus(:,1) = m0;
+mu = m0;
+for i=1:nt-1
+    Acl = hAstar_sdf(:,:,i) + B(:,:,i)*Ks(:,:,i);
+    acl = hastar_sdf(i) + B(:,:,i)*ds(:,i);
+    mu = mu + (Acl*mu + acl) .* dt;
+    mus(:,i+1) = mu;
+end
+
+Sig0 = Skt(:,:,1);
+Sigk = Sig0;
+Sigs(:,:,1) = Sig0;
+for i=1:nt-1
+    Acl = hAstar_sdf(:,:,i) + B(:,:,i)*Ks(:,:,i);
+    acl = hastar_sdf(i) + B(:,:,i)*ds(:,i);
+    Sigk = Sigk + (Acl*Sigk + Sigk*Acl' + epsilon*B(:,:,i)*B(:,:,i)').*dt;
+    Sigs(:,:,i+1) = Sigk;
+end
+
+%% --------- plot nominals ----------
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
 hold on
-% plot_2d_quad_map(sdfmap, zkt, Skt);
 
-% plot map
-cell_size = 0.1;
-origin_x = -20;
-origin_y = -10;
-plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
+% plot map and nominals
+plot_nominals_with_sdf(zkt, Sigs, Ks, ds, nt, sig, epsilon, sdfmap);
 
-step_size = 1000;
-sig = 3.5;
-m0 = zkt(1:2, 1);
-Sig0  =  Skt(1:2, 1:2, 1);
-Sk_xy = Skt(1:2, 1:2, 1:end);
-zk_2d = zkt(1:2, :);
-plot_marginal(m0, zk_2d, Sig0, Sk_xy, nt, sig, step_size);
-set(gca,'fontsize',16);
-xlabel('Time $t$','Interpreter','latex'),ylabel('Position $x$','Interpreter','latex');
-zlabel('Position $y$','Interpreter','latex');
-
-% ---------------------------- rotation angles ---------------------------- 
-step_size = 1000;
-sig = 3.5;
-phi0 = zkt(3, 1);
-Sig0  =  Skt(3, 3, 1);
-Sk_phi = Skt(3, 3, 1:end);
-zk_1d = zkt(3, 1:end);
-
-plot(linspace(step_size
-
-set(gca,'fontsize',16);
-xlabel('Time $t$','Interpreter','latex'),ylabel('Angle $\phi$','Interpreter','latex');
-
-%% ========== plot the mean quadrotor trajectory ==========
-T = 2.0;
-t  = linspace(0,T,nt);
+%% ------------- rotation angles -------------
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
-hold on 
-step_size = 10;
+hold on
+grid minor
 
-% plot map
-cell_size = 0.1;
-origin_x = -20;
-origin_y = -10;
-plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
-% plot quadrotor positions and orientations
-for ti=1:step_size:nt
-    mean_x = zkt(1, ti);
-    mean_y = zkt(2, ti);
-    angle_phi = zkt(3, ti) / pi * 180;
-    draw_planarquad([mean_x,mean_y], L, H, angle_phi, [0.1,0.1,0.1]);
-end
+step_size = 5;
+plot_length = floor(nt / step_size);
+phi0 = zkt(3, 1);
+Sig0  =  Skt(3, 3, 1);
+Sk_phi = Skt(3, 3, 1:step_size:end);
+Sk_phi = reshape(Sk_phi, [1, plot_length]);
+zk_1d = zkt(3, 1:step_size:end);
+
+errorbar(linspace(1,plot_length,plot_length), zk_1d, Sk_phi, 'Linewidth', 1.5)
+
+set(gca,'fontsize',16);
+xlabel('Time $t$','Interpreter','latex'),ylabel('Angle $\phi$','Interpreter','latex');
