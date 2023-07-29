@@ -37,8 +37,8 @@ namespace vimp
             for (auto &opt_k : _vec_factors)
             {
                 opt_k->calculate_partial_V_GH();
-                _Vdmu = _Vdmu + opt_k->joint_Vdmu();
-                _Vddmu = _Vddmu + opt_k->joint_Vddmu();
+                _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
+                _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
             }
 
             // _Vdmu = _Vdmu ; // / _temperature;
@@ -47,12 +47,8 @@ namespace vimp
             SpMat dprecision = -_precision + _Vddmu;
             VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
-            // _ei.print_matrix(dprecision, "dprecision");
-            // _ei.print_matrix(dmu, "dmu");
-
             int cnt = 0;
             int B = 1;
-            // const int MAX_ITER = 20;
             double step_size;
 
             SpMat new_precision;
@@ -84,8 +80,13 @@ namespace vimp
             // cout << "step size " << endl << step_size << endl;
 
             /// update the variables
-            set_mu(new_mu);
-            set_precision(new_precision);
+            _mu = new_mu;
+            _precision = new_precision;
+            inverse_inplace();
+
+            // set_mu(new_mu);
+            // set_precision(new_precision);
+
             B = 0;
             // if (cost_iter - new_cost < stop_error()){
             //     cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;

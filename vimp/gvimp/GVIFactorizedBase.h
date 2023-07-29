@@ -276,13 +276,17 @@ namespace vimp{
          */
         inline VectorXd joint_Vdmu_sp() { 
             VectorXd res(_joint_size);
+            res.setZero();
             _block.fill_vector(res, _Vdmu);
+            // _ei.print_matrix(res, "joint Vdmu");
+            // _ei.print_matrix(_Vdmu, "Vdmu");
+            // _ei.print_matrix(Pk(), "Pk");
             return res;
         }
 
-        inline VectorXd joint_Vdmu() { 
-            return _Vdmu;
-        }
+        // inline VectorXd joint_Vdmu() { 
+        //     return _Vdmu;
+        // }
 
         /**
          * @brief Get the joint Pk.T * V^2 / dmu /dmu * Pk using block insertion
@@ -291,6 +295,13 @@ namespace vimp{
             SpMat res(_joint_size, _joint_size);
             res.setZero();
             _block.fill(_Vddmu, res);
+
+            // _ei.print_matrix(_Vddmu, "_Vddmu");
+            // _ei.print_matrix(Pk(), "Pk");
+            // _ei.print_matrix(Pk()*res*Pk().transpose(), "reconstruct Vddmu");
+            // std::cout << "diff norm local Vddmu" << std::endl <<
+            // (Pk()*res*Pk().transpose() - _Vddmu).norm() << std::endl;
+
             return res;
         }
 
