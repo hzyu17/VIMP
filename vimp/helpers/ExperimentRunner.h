@@ -152,6 +152,8 @@ public:
         rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
         
         this->read_boundary_conditions(paramNode, params);
+
+        params.print_params();
                 
         MatrixIO matrix_io;
         // An example pr and sdf

@@ -50,15 +50,18 @@ namespace vimp{
                 _num_states{num_states},
                 _temperature{temperature},
                 _high_temperature{high_temperature},
-                _mu{VectorXd::Zero(_dim)},
+                _mu(_dim),
                 _covariance{MatrixXd::Identity(_dim, _dim)},
                 _precision{MatrixXd::Identity(_dim, _dim)},
-                _dprecision{MatrixXd::Zero(_dim, _dim)},
-                _Vdmu{VectorXd::Zero(_dim)},
-                _Vddmu{MatrixXd::Zero(_dim, _dim)},
-                _block{state_dim, num_states, start_index, dimension}
+                _dprecision(_dim, _dim),
+                _Vdmu(_dim),
+                _Vddmu(_dim, _dim),
+                _block{state_dim, num_states, start_index, dimension},
+                _Pk(dimension, state_dim*num_states)
                 {   
                     _joint_size = state_dim * num_states;
+                    _Pk.setZero();
+                    _Pk.block(0, start_index*state_dim, dimension, dimension) = Eigen::MatrixXd::Identity(dimension, dimension);
                 }        
         
     /// Public members for the inherited classes access
@@ -112,6 +115,8 @@ namespace vimp{
         // sparse mapping to sub variables
         TrajectoryBlock _block;
 
+        MatrixXd _Pk;
+
     /// public functions
     public:
         // void construct_function_T(){
@@ -119,11 +124,6 @@ namespace vimp{
         //     _func_Vmu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmu))(x) / this->_temperature;});
         //     _func_Vmumu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmumu))(x) / this->_temperature;});
         // }
-
-        /// update the GH approximator
-        void updateGH(){
-            _gh->update_mean(_mu);
-            _gh->update_P(_covariance); }
 
         /// update the GH approximator
         void updateGH(const VectorXd& x, const MatrixXd& P){
@@ -151,6 +151,10 @@ namespace vimp{
             _precision = _covariance.inverse();
         }
 
+        inline MatrixXd Pk(){
+            return _Pk;
+        }
+
         /**
          * @brief Update the marginal mean.
          */
@@ -164,9 +168,9 @@ namespace vimp{
             return res;
         }
 
-        inline MatrixXd extract_cov_from_joint(const SpMat& joint_covariance) {
-            MatrixXd covariance = _block.extract(joint_covariance);
-            return covariance;
+        inline SpMat extract_cov_from_joint(const SpMat& joint_covariance) {
+            return _block.extract(joint_covariance);
+             ;
         }
 
         /**
@@ -183,7 +187,7 @@ namespace vimp{
          */
         virtual void calculate_partial_V(){
             // update the mu and sigma inside the gauss-hermite integrator
-            updateGH();
+            updateGH(_mu, _covariance);
 
             /// Integrate for E_q{_Vdmu} 
             VectorXd Vdmu{VectorXd::Zero(_dim)};
@@ -208,7 +212,7 @@ namespace vimp{
 
         void test_integration(){
             std::cout << "=========== test_integration ===========" << std::endl;
-            updateGH();
+            updateGH(_mu, _covariance);
             double E_phi = _gh->Integrate(_func_phi)(0, 0);
             std::cout << "E_phi " << std::endl << E_phi << std::endl;
 
@@ -221,7 +225,7 @@ namespace vimp{
 
         void calculate_partial_V_GH(){
             // update the mu and sigma inside the gauss-hermite integrator
-            updateGH();
+            updateGH(_mu, _covariance);
 
             /// Integrate for E_q{_Vdmu} 
             VectorXd Vdmu = _gh->Integrate(_func_Vmu);
@@ -254,9 +258,7 @@ namespace vimp{
          * @brief Compute the cost function. V(x) = E_q(\phi(x)) using the current values.
          */
         virtual double fact_cost_value(){
-            updateGH();
-            double E_Phi = _gh->Integrate(_func_phi)(0, 0);
-            return E_Phi;
+            return fact_cost_value(_mu, _covariance);
         }
 
         /**
