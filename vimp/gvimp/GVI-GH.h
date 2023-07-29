@@ -166,12 +166,12 @@ public:
     /**
      * @brief Compute the costs of all factors for a given mean and cov.
      */
-    VectorXd factor_costs(const VectorXd& x, const SpMat& Precision) const;
+    VectorXd factor_costs(const VectorXd& x, SpMat& Precision);
 
     /**
      * @brief Compute the costs of all factors, using current values.
      */
-    VectorXd factor_costs() const;
+    VectorXd factor_costs();
 
     inline double stop_error() const { return _stop_err; }
 
@@ -193,7 +193,7 @@ public:
         _ei.inv_sparse(_precision, _covariance, _Rows, _Cols, _Vals, _Dinv);
     }
 
-    inline SpMat inverse(SpMat & mat){
+    inline SpMat inverse(const SpMat & mat){
         SpMat res(_dim, _dim);
         _ei.inv_sparse(mat, res, _Rows, _Cols, _nnz);
         return res;

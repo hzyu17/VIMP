@@ -278,7 +278,11 @@ namespace vimp{
             VectorXd res(_joint_size);
             _block.fill_vector(res, _Vdmu);
             return res;
-            }
+        }
+
+        inline VectorXd joint_Vdmu() { 
+            return _Vdmu;
+        }
 
         /**
          * @brief Get the joint Pk.T * V^2 / dmu /dmu * Pk using block insertion

@@ -37,8 +37,8 @@ namespace vimp
             for (auto &opt_k : _vec_factors)
             {
                 opt_k->calculate_partial_V_GH();
-                _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
-                _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
+                _Vdmu = _Vdmu + opt_k->joint_Vdmu();
+                _Vddmu = _Vddmu + opt_k->joint_Vddmu();
             }
 
             // _Vdmu = _Vdmu ; // / _temperature;
@@ -120,7 +120,7 @@ namespace vimp
      * @brief Compute the costs of all factors for a given mean and cov.
      */
     template <typename Factor>
-    VectorXd GVIGH<Factor>::factor_costs(const VectorXd &mu, const SpMat &Precision) const
+    VectorXd GVIGH<Factor>::factor_costs(const VectorXd& x, SpMat& Precision)
     {
         VectorXd fac_costs(_nfactors);
         fac_costs.setZero();
@@ -128,7 +128,7 @@ namespace vimp
         SpMat Cov = inverse(Precision);
         for (auto &opt_k : _vec_factors)
         {
-            VectorXd x_k = opt_k->extract_mu_from_joint(mu);
+            VectorXd x_k = opt_k->extract_mu_from_joint(x);
 
             MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
             fac_costs(cnt) = opt_k->fact_cost_value(x_k, Cov_k); // / _temperature;
@@ -141,7 +141,7 @@ namespace vimp
      * @brief Compute the costs of all factors, using current values.
      */
     template <typename Factor>
-    VectorXd GVIGH<Factor>::factor_costs() const
+    VectorXd GVIGH<Factor>::factor_costs()
     {
         return factor_costs(_mu, _precision);
     }
@@ -164,8 +164,11 @@ namespace vimp
         double value = 0.0;
         for (auto &opt_k : _vec_factors)
         {
-            VectorXd mean_k = opt_k->extract_mu_from_joint(mean);
-            MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
+            // VectorXd mean_k = opt_k->extract_mu_from_joint(mean);
+            // MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
+
+            VectorXd mean_k = opt_k->Pk() * mean;
+            MatrixXd Cov_k = opt_k->Pk() * cov_full * opt_k->Pk().transpose();
 
             value += opt_k->fact_cost_value(mean_k, Cov_k); // / _temperature;
         }
