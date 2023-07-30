@@ -23,7 +23,7 @@ if strcmp(plot_experiment, "map1_above")
     sdfmap = csvread("map1/map_multiobs.csv");
     prefix = ["map1/above_case/"];
 elseif strcmp(plot_experiment, "map1_below")
-    sdfmap = csvread("map1/map_multiobs.csv");
+    sdfmap = csvread("map1/map_multiobs_map1.csv");
     prefix = ["map1/below_case/"];
 elseif strcmp(plot_experiment, "map2_exp1")
     sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
@@ -62,10 +62,10 @@ elseif strcmp(plot_temperture, "high")
     costs = csvread([prefix + "cost.csv"]);
     
     factor_costs = csvread([prefix + "factor_costs.csv"]);
-    if ~(contains(plot_experiment, "narrow") || contains(plot_experiment, "map2"))
-        perturb_stat= csvread([prefix + "perturbation_statistics.csv"]);
-    end
-    final_cost = csvread([prefix + "final_cost.csv"]);
+%     if ~(contains(plot_experiment, "narrow") || contains(plot_experiment, "map2"))
+%         perturb_stat= csvread([prefix + "perturbation_statistics.csv"]);
+%     end
+%     final_cost = csvread([prefix + "final_cost.csv"]);
 end
 
 addpath("error_ellipse");

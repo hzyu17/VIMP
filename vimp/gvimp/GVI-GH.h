@@ -65,10 +65,8 @@ public:
             _res_recorder{niterations, dim_state, num_states, _nfactors}
     {
                 construct_sparse_precision();
-                
                 _Vdmu.setZero();
                 _Vddmu.setZero();
-
     }
 
 protected:
@@ -217,8 +215,6 @@ public:
     }   
 
     inline double purturbed_cost(double scale=0.01) const{
-        // VectorXd p_mean = purturb_mean(scale);
-        // MatrixXd p_precision = purturb_precision(scale);
         return cost_value(purturb_mean(scale), purturb_precision(scale).inverse());
     }
 
@@ -352,18 +348,6 @@ public:
     inline void print_result(const int& i_iter){
         _res_recorder.print_data(i_iter);}
 
-    /**
-     * @brief print out a given number of iterations results
-     * @param iters a list of iterations to be printed
-     */
-    inline void print_series_results(const vector<int>& iters) {
-        std::for_each(iters.begin(), iters.end(), [this](int i) { 
-            cout << "--- result at iteration " << i << "---" << endl;
-            print_result(i);
-            }
-        );
-
-    }
 
     inline int dim() const{ return _dim; }   
 

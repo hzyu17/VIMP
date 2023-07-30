@@ -2,6 +2,9 @@ using namespace Eigen;
 using namespace std;
 #include <stdexcept>
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 namespace vimp
 {
 
@@ -12,22 +15,17 @@ namespace vimp
     void GVIGH<Factor>::optimize()
     {
         double new_cost = 0.0;
-        double cost_iter = 0.0;
 
-        // for (auto& opt_k : _vec_factors){
-        //     opt_k->test_integration();
-        // }
         for (int i_iter = 0; i_iter < _niters; i_iter++)
         {
-
-            // if (i_iter == _niters_lowtemp){
-            //     cout << "*************** Entering High temperature *************** "<< endl;
-            //     set_temperature(_high_temperature);
-
-            // }
             cout << "========= iteration " << i_iter << " ========= " << endl;
             // ============= Collect results =============
             VectorXd fact_costs_iter = factor_costs();
+
+            _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
+            double cost_iter = cost_value(_mu, _precision);
+
+            cout << "=== cost_iter ===" << endl << cost_iter << endl;
 
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
             // one step
@@ -41,24 +39,29 @@ namespace vimp
                 _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
             }
 
-            // _Vdmu = _Vdmu ; // / _temperature;
-            // _Vddmu = _Vddmu ; // / _temperature;
-
             SpMat dprecision = -_precision + _Vddmu;
-            VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+            MatrixXd Vddmu_full{_Vddmu};
+            VectorXd Vdmu_full{_Vdmu};
+            VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-Vdmu_full);
+
+            // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
             int cnt = 0;
             int B = 1;
             double step_size;
 
-            SpMat new_precision;
-            VectorXd new_mu;
+            SpMat new_precision; new_precision.setZero();
+            VectorXd new_mu; new_mu.setZero();
+
+            // std::cout << "_step_size_base:   " << _step_size_base << std::endl;
 
             step_size = pow(_step_size_base, B);
             new_mu = _mu + step_size * dmu;
             new_precision = _precision + step_size * dprecision;
 
             new_cost = cost_value(new_mu, new_precision);
+
+            std::cout << "--- new_cost ---" << std::endl << new_cost << std::endl;
 
             while (new_cost > cost_iter)
             {
@@ -67,6 +70,8 @@ namespace vimp
                 new_mu = _mu + step_size * dmu;
                 new_precision = _precision + step_size * dprecision;
                 new_cost = cost_value(new_mu, new_precision);
+
+                std::cout << "new_cost backtrack" << std::endl << new_cost << std::endl;
 
                 cnt += 1;
 
@@ -77,17 +82,14 @@ namespace vimp
                     break;
                 }
             }
-            // cout << "step size " << endl << step_size << endl;
 
-            /// update the variables
-            _mu = new_mu;
-            _precision = new_precision;
-            inverse_inplace();
+            /// update mean and covariance
+            set_mu(new_mu);
+            set_precision(new_precision);
 
-            // set_mu(new_mu);
-            // set_precision(new_precision);
+            cost_iter = new_cost;
 
-            B = 0;
+            B = 1;
             // if (cost_iter - new_cost < stop_error()){
             //     cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
             //     save_data();
@@ -100,8 +102,8 @@ namespace vimp
         save_data();
 
         /// see a purturbed cost
-        cout << "=== final cost ===" << endl
-             << cost_iter << endl;
+        // cout << "=== final cost ===" << endl
+        //      << cost_iter << endl;
     }
 
     template <typename Factor>
@@ -121,18 +123,15 @@ namespace vimp
      * @brief Compute the costs of all factors for a given mean and cov.
      */
     template <typename Factor>
-    VectorXd GVIGH<Factor>::factor_costs(const VectorXd& x, SpMat& Precision)
+    VectorXd GVIGH<Factor>::factor_costs(const VectorXd& joint_mean, SpMat& joint_precision)
     {
         VectorXd fac_costs(_nfactors);
         fac_costs.setZero();
         int cnt = 0;
-        SpMat Cov = inverse(Precision);
+        SpMat joint_cov = inverse(joint_precision);
         for (auto &opt_k : _vec_factors)
         {
-            VectorXd x_k = opt_k->extract_mu_from_joint(x);
-
-            MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
-            fac_costs(cnt) = opt_k->fact_cost_value(x_k, Cov_k); // / _temperature;
+            fac_costs(cnt) = opt_k->fact_cost_value(joint_mean, joint_cov); // / _temperature;
             cnt += 1;
         }
         return fac_costs;
@@ -156,32 +155,24 @@ namespace vimp
 
         SpMat Cov = inverse(Precision);
 
-        // MatrixXd cov_sp{Cov};
+        MatrixXd cov_sp{Cov};
         MatrixXd precision_full{Precision};
         MatrixXd cov_full = precision_full.inverse();
-
-        // std::cout << "sparse inverse error " << std::endl << (cov_sp - cov_full).norm() << std::endl;
 
         double value = 0.0;
         for (auto &opt_k : _vec_factors)
         {
-            // VectorXd mean_k = opt_k->extract_mu_from_joint(mean);
-            // MatrixXd Cov_k = opt_k->extract_cov_from_joint(Cov);
-
-            VectorXd mean_k = opt_k->Pk() * mean;
-            MatrixXd Cov_k = opt_k->Pk() * cov_full * opt_k->Pk().transpose();
-
-            value += opt_k->fact_cost_value(mean_k, Cov_k); // / _temperature;
+            value += opt_k->fact_cost_value(mean, Cov); // / _temperature;
         }
-        // SparseLDLT ldlt(Precision);
-        // double det = ldlt.determinant();
-        double det = precision_full.determinant();
+
+        SparseLDLT ldlt(Precision);
+        double det = ldlt.determinant();
+
         if (det < 0)
         {
             std::runtime_error("Infinity log determinant precision matrix ...");
         }
-        value += log(det) / 2;
-        return value;
+        return value + log(det) / 2;
     }
 
     /**
@@ -200,9 +191,10 @@ namespace vimp
     double GVIGH<Factor>::cost_value_no_entropy() const
     {
         double value = 0.0;
+        SpMat Cov = inverse(_precision);
         for (auto &opt_k : _vec_factors)
         {
-            value += opt_k->fact_cost_value();
+            value += opt_k->fact_cost_value(_mu, Cov);
         }
         return value; // / _temperature;
     }

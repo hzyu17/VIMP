@@ -19,7 +19,7 @@ using namespace vimp;
 
 int main(){
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    std::string config_file{source_root+"/configs/vimp/planar_pR_map2_new.xml"};
+    std::string config_file{source_root+"/configs/vimp/planar_pR_map1_new.xml"};
     int nx = 4, nu = 2, num_exp = 4;
     GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
     GVIMPParams params;

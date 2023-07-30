@@ -64,59 +64,6 @@ namespace vimp{
                     _Pk.block(0, start_index*state_dim, dimension, dimension) = Eigen::MatrixXd::Identity(dimension, dimension);
                 }        
         
-    /// Public members for the inherited classes access
-    public:
-
-        bool _is_linear;
-
-        /// dimension
-        int _dim, _state_dim, _num_states, _joint_size;
-
-        VectorXd _mu;
-        
-        /// Intermediate functions for Gauss-Hermite quadratures, default definition, needed to be overrided by the
-        /// derived classes.
-        using GHFunction = std::function<MatrixXd(const VectorXd&)>;
-        GHFunction _func_phi;
-        GHFunction _func_Vmu;
-        GHFunction _func_Vmumu;
-
-        std::shared_ptr<GHFunction> _func_phi_T;
-        std::shared_ptr<GHFunction> _func_Vmu_T;
-        std::shared_ptr<GHFunction> _func_Vmumu_T;
-
-        // std::shared_ptr<GHFunction> _func_phi_highT;
-        // std::shared_ptr<GHFunction> _func_Vmu_highT;
-        // std::shared_ptr<GHFunction> _func_Vmumu_highT;
-
-        /// G-H quadrature class
-        using GH = GaussHermite<GHFunction> ;
-        std::shared_ptr<GH> _gh;
-
-    protected:
-        /// intermediate variables in optimization steps
-        VectorXd _Vdmu;
-        MatrixXd _Vddmu;
-
-        /// optimization variables
-        MatrixXd _precision, _dprecision;
-        MatrixXd _covariance;
-
-        // Sparse inverser and matrix helpers
-        EigenWrapper _ei;
-
-    private:
-        /// step sizes
-        double _step_size_mu = 0.9;
-        double _step_size_Sigma = 0.9;
-
-        double _temperature, _high_temperature;
-        
-        // sparse mapping to sub variables
-        TrajectoryBlock _block;
-
-        MatrixXd _Pk;
-
     /// public functions
     public:
         // void construct_function_T(){
@@ -128,20 +75,23 @@ namespace vimp{
         /// update the GH approximator
         void updateGH(const VectorXd& x, const MatrixXd& P){
             _gh->update_mean(x);
-            _gh->update_P(P); }
+            _gh->update_P(P); 
+        }
 
         /**
          * @brief Update the step size
          */
         inline void set_step_size(double ss_mean, double ss_precision){
             _step_size_mu = ss_mean;
-            _step_size_Sigma = ss_precision; }
+            _step_size_Sigma = ss_precision; 
+        }
 
         /**
          * @brief Update mean
          */
         inline void update_mu(const VectorXd& new_mu){ 
-            _mu = new_mu; }
+            _mu = new_mu; 
+        }
 
         /**
          * @brief Update covariance matrix
@@ -163,21 +113,18 @@ namespace vimp{
         }
 
         inline VectorXd extract_mu_from_joint(const VectorXd & joint_mean) {
-            VectorXd res(_dim);
-            res = _block.extract_vector(joint_mean);
-            return res;
+            return _block.extract_vector(joint_mean);
         }
 
         inline SpMat extract_cov_from_joint(const SpMat& joint_covariance) {
             return _block.extract(joint_covariance);
-             ;
         }
 
         /**
          * @brief Update the marginal precision matrix.
          */
         inline void update_precision_from_joint(const SpMat& joint_covariance) {
-            _covariance = _block.extract(joint_covariance);
+            _covariance = extract_cov_from_joint(joint_covariance);
             _precision = _covariance.inverse();
         }
 
@@ -249,17 +196,20 @@ namespace vimp{
         /**
          * @brief Compute the cost function. V(x) = E_q(\phi(x))
          */
-        virtual double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) {
-            updateGH(x, Cov);
+        virtual double fact_cost_value(const VectorXd& joint_mean, const SpMat& joint_cov) {
+            VectorXd mean_k = extract_mu_from_joint(joint_mean);
+            MatrixXd Cov_k = extract_cov_from_joint(joint_cov);
+            updateGH(mean_k, Cov_k);
             return _gh->Integrate(_func_phi)(0, 0);
         }
 
-        /**
-         * @brief Compute the cost function. V(x) = E_q(\phi(x)) using the current values.
-         */
-        virtual double fact_cost_value(){
-            return fact_cost_value(_mu, _covariance);
-        }
+        // /**
+        //  * @brief Compute the cost function. V(x) = E_q(\phi(x)) using the current values.
+        //  */
+        // virtual double fact_cost_value(){
+
+        //     return fact_cost_value(_mu, _covariance);
+        // }
 
         /**
          * @brief Get the marginal intermediate variable (partial V^2 / par mu / par mu)
@@ -278,15 +228,8 @@ namespace vimp{
             VectorXd res(_joint_size);
             res.setZero();
             _block.fill_vector(res, _Vdmu);
-            // _ei.print_matrix(res, "joint Vdmu");
-            // _ei.print_matrix(_Vdmu, "Vdmu");
-            // _ei.print_matrix(Pk(), "Pk");
             return res;
         }
-
-        // inline VectorXd joint_Vdmu() { 
-        //     return _Vdmu;
-        // }
 
         /**
          * @brief Get the joint Pk.T * V^2 / dmu /dmu * Pk using block insertion
@@ -295,13 +238,6 @@ namespace vimp{
             SpMat res(_joint_size, _joint_size);
             res.setZero();
             _block.fill(_Vddmu, res);
-
-            // _ei.print_matrix(_Vddmu, "_Vddmu");
-            // _ei.print_matrix(Pk(), "Pk");
-            // _ei.print_matrix(Pk()*res*Pk().transpose(), "reconstruct Vddmu");
-            // std::cout << "diff norm local Vddmu" << std::endl <<
-            // (Pk()*res*Pk().transpose() - _Vddmu).norm() << std::endl;
-
             return res;
         }
 
@@ -371,6 +307,61 @@ namespace vimp{
         void set_GH_points(int p){
             _gh->set_polynomial_deg(p);
         }
+
+
+        /// Public members for the inherited classes access
+    public:
+
+        bool _is_linear;
+
+        /// dimension
+        int _dim, _state_dim, _num_states, _joint_size;
+
+        VectorXd _mu;
+        
+        /// Intermediate functions for Gauss-Hermite quadratures, default definition, needed to be overrided by the
+        /// derived classes.
+        using GHFunction = std::function<MatrixXd(const VectorXd&)>;
+        GHFunction _func_phi;
+        GHFunction _func_Vmu;
+        GHFunction _func_Vmumu;
+
+        std::shared_ptr<GHFunction> _func_phi_T;
+        std::shared_ptr<GHFunction> _func_Vmu_T;
+        std::shared_ptr<GHFunction> _func_Vmumu_T;
+
+        // std::shared_ptr<GHFunction> _func_phi_highT;
+        // std::shared_ptr<GHFunction> _func_Vmu_highT;
+        // std::shared_ptr<GHFunction> _func_Vmumu_highT;
+
+        /// G-H quadrature class
+        using GH = GaussHermite<GHFunction> ;
+        std::shared_ptr<GH> _gh;
+
+    protected:
+        /// intermediate variables in optimization steps
+        VectorXd _Vdmu;
+        MatrixXd _Vddmu;
+
+        /// optimization variables
+        MatrixXd _precision, _dprecision;
+        MatrixXd _covariance;
+
+        // Sparse inverser and matrix helpers
+        EigenWrapper _ei;
+
+    private:
+        /// step sizes
+        double _step_size_mu = 0.9;
+        double _step_size_Sigma = 0.9;
+
+        double _temperature, _high_temperature;
+        
+        // sparse mapping to sub variables
+        TrajectoryBlock _block;
+
+        MatrixXd _Pk;
+        
     };
 
 }

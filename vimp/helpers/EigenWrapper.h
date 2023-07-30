@@ -62,6 +62,13 @@ public:
         mat.setFromTriplets(tripletList.begin(), tripletList.end());
     }
 
+    /**
+     * Print out the norm of the difference between 2 matrces to see if they are equal.
+    */
+    void print_norm_diff(const MatrixXd& m1, const MatrixXd& m2){
+        std::cout << "-------- The norm difference is " << (m1-m2).norm() << " --------" << std::endl;
+    }
+
     SpMat random_sparse_matrix(int m, int n, int nnz){
         if (nnz > m*n){
             throw std::invalid_argument( "received negative value" );
@@ -519,7 +526,6 @@ public:
     SpMat & X_inv, 
     const Eigen::VectorXi& Rows, 
     const Eigen::VectorXi& Cols, 
-    // const Eigen::VectorXd& Vals,
     int nnz){
         // ----------------- sparse ldlt decomposition -----------------
         SparseLDLT ldlt_sp(X);
