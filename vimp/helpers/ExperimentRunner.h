@@ -53,6 +53,7 @@ public:
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());
+        
         for (int i=1; i<_num_exp+1; i++){
             this->run_one_exp(i, _params);
         }
@@ -135,7 +136,6 @@ public:
 
         double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
         param.update_sig_obs(cost_sigma);
-
 
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         param.set_saving_prefix(saving_prefix);

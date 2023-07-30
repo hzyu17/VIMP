@@ -91,7 +91,6 @@ public:
                                                                 robot_model, sdf, sig_obs, eps_sdf}, 
                                                             n_states, i, params.temperature(), params.high_temperature()});    
             }
-            // _ei.print_matrix(vec_factors[i]->Pk(), "_Pk i");
         }
 
         /// The joint optimizer

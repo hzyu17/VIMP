@@ -25,8 +25,8 @@ namespace vimp
 class VIMPResults{
 private:    
         Matrix3D _res_mean;
-        Matrix3D _res_covariances;
-        Matrix3D _res_precisions;
+        Matrix3D _res_covariances, _res_joint_covariances;
+        Matrix3D _res_precisions, _res_joint_precisions;
         int _niters, _dimension, _nfactors, _dim_state, _nstates;
         int _cur_iter = 0;
         VectorXd _res_costs;
@@ -34,7 +34,9 @@ private:
 
         std::string _file_mean{"mean.csv"};
         std::string _file_cov{"cov.csv"};
+        std::string _file_joint_cov{"joint_cov.csv"};
         std::string _file_precision{"precision.csv"};
+        std::string _file_joint_precision{"joint_precision.csv"};
         std::string _file_cost{"cost.csv"};
         std::string _file_factor_costs{"factor_costs.csv"};
 
@@ -56,10 +58,12 @@ public:
         _niters(niters),
         _nfactors(n_factors),
         _res_mean(dim_state*nstates, 1, niters),
+        _res_joint_covariances(dim_state*nstates, dim_state*nstates, niters),
+        _res_joint_precisions(dim_state*nstates, dim_state*nstates, niters),
         _res_covariances(dim_state*dim_state, nstates, niters),
         _res_precisions(dim_state*dim_state, nstates, niters),
         _res_costs(niters),
-        _res_factor_costs(n_factors, 1, niters)            
+        _res_factor_costs(n_factors, 1, niters)
         {}
 
     /**
@@ -81,7 +85,10 @@ public:
             _ei.compress3d(new_mean, _res_mean, _cur_iter);
             _ei.compress3d(marginal_cov, _res_covariances, _cur_iter);    
             _ei.compress3d(marginal_precision, _res_precisions, _cur_iter);   
-            _ei.compress3d(new_factor_costs, _res_factor_costs, _cur_iter);              
+            _ei.compress3d(new_factor_costs, _res_factor_costs, _cur_iter);   
+            _ei.compress3d(new_joint_precision, _res_joint_precisions, _cur_iter);
+            _ei.compress3d(new_joint_cov, _res_joint_covariances, _cur_iter);
+
             _res_costs(_cur_iter) = new_cost;
             _cur_iter += 1;
         }
@@ -126,7 +133,9 @@ public:
      */
     inline void update_file_names(const std::string& file_mean, 
                                     const std::string& file_cov, 
+                                    const std::string& file_joint_cov,
                                     const std::string& file_precision,
+                                    const std::string& file_joint_precision,
                                     const std::string& file_cost,
                                     const std::string& file_factor_costs){
         _file_mean = file_mean;
@@ -134,13 +143,14 @@ public:
         _file_cost = file_cost;
         _file_precision = file_precision;
         _file_factor_costs = file_factor_costs;
+        _file_joint_precision = file_joint_precision;
+        _file_joint_cov = file_joint_cov;
     }
 
     /**
      * @brief save res means and covariances to csv file
      */
     void save_data(){
-        // std::cout << "save data " << std::endl;
         /// save mean
         ofstream file(_file_mean);
         _m_io.saveData(_file_mean, _res_mean);
@@ -152,6 +162,14 @@ public:
         /// save precisions
         ofstream f_prec(_file_precision);
         _m_io.saveData(_file_precision, _res_precisions);
+
+        /// save covariances
+        ofstream f_joint_cov(_file_joint_cov);
+        _m_io.saveData(_file_joint_cov, _res_covariances);
+
+        /// save precisions
+        ofstream f_joint_prec(_file_joint_precision);
+        _m_io.saveData(_file_joint_precision, _res_precisions);
             
         /// save costs
         ofstream f_cost(_file_cost);

@@ -61,6 +61,8 @@ namespace vimp{
          * (partial V^2) / (partial mu)(partial mu^T): higher order moments of a Gaussian.
         */
         void calculate_partial_V() override{
+
+            std::cout << "Linear factor closed form parV " << std::endl;
             // helper vectors
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 

@@ -284,12 +284,14 @@ public:
      * @param file_cov filename for the covariances
      */
     inline void update_file_names(const string& file_mean, 
-                                  const string& file_cov, 
+                                  const string& file_cov,
+                                  const string& file_joint_cov,
                                   const string& file_precision, 
+                                  const string& file_joint_precision, 
                                   const string& file_cost,
                                   const string& file_fac_costs,
                                   const string& file_perturbed_costs){
-        _res_recorder.update_file_names(file_mean, file_cov, file_precision, file_cost, file_fac_costs);
+        _res_recorder.update_file_names(file_mean, file_cov, file_joint_cov, file_precision, file_joint_precision, file_cost, file_fac_costs);
         _file_perturbed_cost = file_perturbed_costs;
     }
 
@@ -297,7 +299,9 @@ public:
         std::vector<string> vec_filenames;
         vec_filenames.emplace_back("mean");
         vec_filenames.emplace_back("cov");
+        vec_filenames.emplace_back("joint_cov");
         vec_filenames.emplace_back("precisoin");
+        vec_filenames.emplace_back("joint_precisoin");
         vec_filenames.emplace_back("cost");
         vec_filenames.emplace_back("factor_costs");
         vec_filenames.emplace_back("perturbation_statistics");
@@ -321,8 +325,14 @@ public:
                 i_file = i_file + file_type;
         }
 
-        _res_recorder.update_file_names(vec_filenames[0], vec_filenames[1], vec_filenames[2], vec_filenames[3], vec_filenames[4]);
-        _file_perturbed_cost = vec_filenames[5];
+        _res_recorder.update_file_names(vec_filenames[0], 
+                                        vec_filenames[1], 
+                                        vec_filenames[2], 
+                                        vec_filenames[3], 
+                                        vec_filenames[4], 
+                                        vec_filenames[5], 
+                                        vec_filenames[6]);
+        _file_perturbed_cost = vec_filenames[7];
     }
 
     /**

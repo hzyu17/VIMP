@@ -182,7 +182,12 @@ public:
         << " max iterations:            " << this->max_iter() << std::endl 
         << " max iterations lowtemp:    " << this->max_iter_lowtemp() << std::endl 
         << " Backtrack ratio:           " << this->backtrack_ratio() << std::endl 
-        << " backtrack iterations:      " << this->max_n_backtrack() << std::endl;
+        << " backtrack iterations:      " << this->max_n_backtrack() << std::endl
+        << " initial conditions:        " << std::endl;
+        _ei.print_matrix(this->m0(), "m0");
+        std::cout << " terminal conditions:       " << std::endl;
+        _ei.print_matrix(this->mT(), "mT");
+        
     }
 
 protected:    
