@@ -35,8 +35,6 @@ namespace vimp{
                 Base::_func_Vmu = [this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor);};
                 Base::_func_Vmumu = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};};
                 
-                // Base::construct_function_T();
-
                 using GH = GaussHermite<GHFunction>;
                 Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
 

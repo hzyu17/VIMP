@@ -20,9 +20,9 @@ if strcmp(plot_experiment, "map1_above")
 end
 
 if strcmp(plot_temperture, "low") && (~contains(plot_experiment, "go_around"))
-    means = csvread([prefix + "mean.csv"]);
-    covs = csvread([prefix + "cov.csv"]);
-    precisions = csvread([prefix + "precisoin.csv"]);
+    means = csvread([prefix + "mean_base.csv"]);
+    covs = csvread([prefix + "cov_base.csv"]);
+    precisions = csvread([prefix + "precisoin_base.csv"]);
     costs = csvread([prefix + "cost.csv"]);
     factor_costs = csvread([prefix + "factor_costs.csv"]);
     
@@ -32,9 +32,21 @@ if strcmp(plot_temperture, "low") && (~contains(plot_experiment, "go_around"))
     costs_cpp = csvread([prefix_debug + "cost.csv"]);
     factor_costs_cpp = csvread([prefix_debug + "factor_costs.csv"]);
     
+    joint_covs_cpp = csvread([prefix_debug + "joint_cov.csv"]);
+    joint_precisions_cpp = csvread([prefix_debug + "joint_precisoin.csv"]);
+    
 end
 
-precisions_1 = precisions(1:40, 1:40);
-precisions_cpp_1 = precisions_cpp();
+for i = 1:10
+    precisions_i = precisions((i-1)*40+1:i*40, 1:40);
+    joint_precisions_cpp_i = joint_precisions_cpp(1:end, i);
+    joint_precisions_cpp_i = reshape(joint_precisions_cpp_i, [40,40]);
+    
+    mean_i = means(i, 1:end)';
+    mean_cpp_i = means_cpp(1:end, i);
+    
+    factor_cost_i = factor_costs(i, 1:end)';
+    factor_cost_cpp_i = factor_costs_cpp(1:end, i);
+end
 
 debug = 1;

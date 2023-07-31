@@ -164,12 +164,12 @@ public:
     /**
      * @brief Compute the costs of all factors for a given mean and cov.
      */
-    VectorXd factor_costs(const VectorXd& x, SpMat& Precision);
+    VectorXd factor_cost_vector(const VectorXd& x, SpMat& Precision);
 
     /**
      * @brief Compute the costs of all factors, using current values.
      */
-    VectorXd factor_costs();
+    VectorXd factor_cost_vector();
 
     inline double stop_error() const { return _stop_err; }
 

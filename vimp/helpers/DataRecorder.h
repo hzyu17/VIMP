@@ -165,12 +165,12 @@ public:
 
         /// save covariances
         ofstream f_joint_cov(_file_joint_cov);
-        _m_io.saveData(_file_joint_cov, _res_covariances);
+        _m_io.saveData(_file_joint_cov, _res_joint_covariances);
 
         /// save precisions
         ofstream f_joint_prec(_file_joint_precision);
-        _m_io.saveData(_file_joint_precision, _res_precisions);
-            
+        _m_io.saveData(_file_joint_precision, _res_joint_precisions);
+
         /// save costs
         ofstream f_cost(_file_cost);
         _m_io.saveData(_file_cost, _res_costs);
@@ -217,15 +217,11 @@ public:
                     _akt.push_back(akt);
                     _Qkt.push_back(Qkt);
                     _rkt.push_back(rkt);
-                    _Kkt.push_back(Kkt),
+                    _Kkt.push_back(Kkt);
                     _dkt.push_back(dkt);
                     _zkt.push_back(zkt);
                     _Sigkt.push_back(Sigkt);
                 }
-
-    void write_records(){
-        
-    }
 
 
 private:

@@ -14,97 +14,104 @@ namespace vimp
     template <typename Factor>
     void GVIGH<Factor>::optimize()
     {
-        double new_cost = 0.0;
-
-        for (int i_iter = 0; i_iter < _niters; i_iter++)
-        {
-            cout << "========= iteration " << i_iter << " ========= " << endl;
-            // ============= Collect results =============
-            VectorXd fact_costs_iter = factor_costs();
-
-            _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
-            double cost_iter = cost_value(_mu, _precision);
-
-            cout << "=== cost_iter ===" << endl << cost_iter << endl;
-
-            _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
-            // one step
-            _Vdmu.setZero();
-            _Vddmu.setZero();
-
-            for (auto &opt_k : _vec_factors)
-            {
-                opt_k->calculate_partial_V_GH();
-                _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
-                _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
-            }
-
-            SpMat dprecision = -_precision + _Vddmu;
-            MatrixXd Vddmu_full{_Vddmu};
-            VectorXd Vdmu_full{_Vdmu};
-            VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-Vdmu_full);
-
-            // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
-
-            int cnt = 0;
-            int B = 1;
-            double step_size;
-
-            SpMat new_precision; new_precision.setZero();
-            VectorXd new_mu; new_mu.setZero();
-
-            // std::cout << "_step_size_base:   " << _step_size_base << std::endl;
-
-            step_size = pow(_step_size_base, B);
-            new_mu = _mu + step_size * dmu;
-            new_precision = _precision + step_size * dprecision;
-
-            new_cost = cost_value(new_mu, new_precision);
-
-            std::cout << "--- new_cost ---" << std::endl << new_cost << std::endl;
-
-            while (new_cost > cost_iter)
-            {
-                B += 1;
-                step_size = pow(_step_size_base, B);
-                new_mu = _mu + step_size * dmu;
-                new_precision = _precision + step_size * dprecision;
-                new_cost = cost_value(new_mu, new_precision);
-
-                std::cout << "new_cost backtrack" << std::endl << new_cost << std::endl;
-
-                cnt += 1;
-
-                if (cnt > _niters_backtrack)
-                {
-                    // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
-                    cout << "Too many iterations in the backtracking ... Dead" << endl;
-                    break;
-                }
-            }
-
-            /// update mean and covariance
-            set_mu(new_mu);
-            set_precision(new_precision);
-
-            cost_iter = new_cost;
-
-            B = 1;
-            // if (cost_iter - new_cost < stop_error()){
-            //     cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
-            //     save_data();
-            //     /// see a purturbed cost
-            //     cout << "=== final cost ===" << endl << cost_iter << endl;
-            //     return ;
-            // }
-        }
-
-        save_data();
-
-        /// see a purturbed cost
-        // cout << "=== final cost ===" << endl
-        //      << cost_iter << endl;
+        std::cout << "debug 1 " << std::endl;
+        SpMat cov = inverse(_precision);
+        // MatrixXd cov_full{cov};
+        double _fixed_linear_cost = _vec_factors[0]->fact_cost_value(_mu, cov);
+        std::cout << "_fixed_linear_cost " << std::endl << _fixed_linear_cost << std::endl;
     }
+    // {
+    //     double new_cost = 0.0;
+
+    //     for (int i_iter = 0; i_iter < _niters; i_iter++)
+    //     {
+    //         cout << "========= iteration " << i_iter << " ========= " << endl;
+    //         // ============= Collect results =============
+    //         VectorXd fact_costs_iter = factor_costs();
+
+    //         _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
+    //         double cost_iter = cost_value(_mu, _precision);
+
+    //         cout << "=== cost_iter ===" << endl << cost_iter << endl;
+
+    //         _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
+    //         // one step
+    //         _Vdmu.setZero();
+    //         _Vddmu.setZero();
+
+    //         for (auto &opt_k : _vec_factors)
+    //         {
+    //             opt_k->calculate_partial_V_GH();
+    //             _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
+    //             _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
+    //         }
+
+    //         SpMat dprecision = -_precision + _Vddmu;
+    //         MatrixXd Vddmu_full{_Vddmu};
+    //         VectorXd Vdmu_full{_Vdmu};
+    //         VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-Vdmu_full);
+
+    //         // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+
+    //         int cnt = 0;
+    //         int B = 1;
+    //         double step_size;
+
+    //         SpMat new_precision; new_precision.setZero();
+    //         VectorXd new_mu; new_mu.setZero();
+
+    //         // std::cout << "_step_size_base:   " << _step_size_base << std::endl;
+
+    //         step_size = pow(_step_size_base, B);
+    //         new_mu = _mu + step_size * dmu;
+    //         new_precision = _precision + step_size * dprecision;
+
+    //         new_cost = cost_value(new_mu, new_precision);
+
+    //         std::cout << "--- new_cost ---" << std::endl << new_cost << std::endl;
+
+    //         while (new_cost > cost_iter)
+    //         {
+    //             B += 1;
+    //             step_size = pow(_step_size_base, B);
+    //             new_mu = _mu + step_size * dmu;
+    //             new_precision = _precision + step_size * dprecision;
+    //             new_cost = cost_value(new_mu, new_precision);
+
+    //             std::cout << "new_cost backtrack" << std::endl << new_cost << std::endl;
+
+    //             cnt += 1;
+
+    //             if (cnt > _niters_backtrack)
+    //             {
+    //                 // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
+    //                 cout << "Too many iterations in the backtracking ... Dead" << endl;
+    //                 break;
+    //             }
+    //         }
+
+    //         /// update mean and covariance
+    //         set_mu(new_mu);
+    //         set_precision(new_precision);
+
+    //         cost_iter = new_cost;
+
+    //         B = 1;
+    //         // if (cost_iter - new_cost < stop_error()){
+    //         //     cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
+    //         //     save_data();
+    //         //     /// see a purturbed cost
+    //         //     cout << "=== final cost ===" << endl << cost_iter << endl;
+    //         //     return ;
+    //         // }
+    //     }
+
+    //     save_data();
+
+    //     /// see a purturbed cost
+    //     // cout << "=== final cost ===" << endl
+    //     //      << cost_iter << endl;
+    // }
 
     template <typename Factor>
     inline void GVIGH<Factor>::set_precision(const SpMat &new_precision)
@@ -123,7 +130,7 @@ namespace vimp
      * @brief Compute the costs of all factors for a given mean and cov.
      */
     template <typename Factor>
-    VectorXd GVIGH<Factor>::factor_costs(const VectorXd& joint_mean, SpMat& joint_precision)
+    VectorXd GVIGH<Factor>::factor_cost_vector(const VectorXd& joint_mean, SpMat& joint_precision)
     {
         VectorXd fac_costs(_nfactors);
         fac_costs.setZero();
@@ -131,6 +138,7 @@ namespace vimp
         SpMat joint_cov = inverse(joint_precision);
         for (auto &opt_k : _vec_factors)
         {
+            std::cout << "----------- factor number cnt -----------" << std::endl << cnt << std::endl;
             fac_costs(cnt) = opt_k->fact_cost_value(joint_mean, joint_cov); // / _temperature;
             cnt += 1;
         }
@@ -141,9 +149,9 @@ namespace vimp
      * @brief Compute the costs of all factors, using current values.
      */
     template <typename Factor>
-    VectorXd GVIGH<Factor>::factor_costs()
-    {
-        return factor_costs(_mu, _precision);
+    VectorXd GVIGH<Factor>::factor_cost_vector()
+    {   
+        return factor_cost_vector(_mu, _precision);
     }
 
     /**

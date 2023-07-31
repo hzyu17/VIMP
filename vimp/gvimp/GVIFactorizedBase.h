@@ -200,6 +200,10 @@ namespace vimp{
             VectorXd mean_k = extract_mu_from_joint(joint_mean);
             MatrixXd Cov_k = extract_cov_from_joint(joint_cov);
             updateGH(mean_k, Cov_k);
+            _ei.print_matrix(joint_mean, "joint_mean");
+            _ei.print_matrix(joint_cov, "joint_cov");
+            _ei.print_matrix(_mu, "_mu");
+
             return _gh->Integrate(_func_phi)(0, 0);
         }
 
@@ -326,9 +330,9 @@ namespace vimp{
         GHFunction _func_Vmu;
         GHFunction _func_Vmumu;
 
-        std::shared_ptr<GHFunction> _func_phi_T;
-        std::shared_ptr<GHFunction> _func_Vmu_T;
-        std::shared_ptr<GHFunction> _func_Vmumu_T;
+        // std::shared_ptr<GHFunction> _func_phi_T;
+        // std::shared_ptr<GHFunction> _func_Vmu_T;
+        // std::shared_ptr<GHFunction> _func_Vmumu_T;
 
         // std::shared_ptr<GHFunction> _func_phi_highT;
         // std::shared_ptr<GHFunction> _func_Vmu_highT;

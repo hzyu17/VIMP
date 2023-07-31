@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Commons>
-    <total_time>1.0</total_time>
+    <total_time>1.5</total_time>
     <n_states>10</n_states>
     <coeff_Qc>0.8</coeff_Qc>
     <sig_obs>0.004</sig_obs>
@@ -11,9 +11,9 @@
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>10</low_temp_iterations>
+    <low_temp_iterations>1</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>10</max_iterations>
+    <max_iterations>1</max_iterations>
     <max_n_backtracking>5</max_n_backtracking>
 
 </Commons>
@@ -22,15 +22,15 @@
     <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map1.csv</field_file>
     
     <start_pos>
-        <x>1.0</x>
-        <y>-5.0</y>
+        <x>0.0</x>
+        <y>0.0</y>
         <vx>0.0</vx>
         <vy>0.0</vy>
     </start_pos>
 
     <goal_pos>
-        <x>3.0</x>
-        <y>15.0</y>
+        <x>17.0</x>
+        <y>14.0</y>
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>

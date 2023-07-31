@@ -21,14 +21,9 @@ namespace vimp{
             _K{Covariance}, 
             _invK{Covariance.inverse()}{}
 
-        private:
-            MatrixXd _K;
-            MatrixXd _invK;
-            int _dim;
-            VectorXd _mu;
-
-        public:
-            double cost(const VectorXd& x) const{ return (x-_mu).transpose() * _invK * (x-_mu); }
+            double fixed_factor_cost(const VectorXd& x) const{ 
+                return (x-_mu).transpose() * _invK * (x-_mu); 
+            }
 
             VectorXd get_mu() const { return _mu; }
 
@@ -41,6 +36,12 @@ namespace vimp{
             MatrixXd get_Psi() const { return MatrixXd::Identity(_dim, _dim);}
 
             double get_C() const {return 1.0;}
+
+        private:
+            MatrixXd _K;
+            MatrixXd _invK;
+            int _dim;
+            VectorXd _mu;
 
     };
 }// namespace vimp

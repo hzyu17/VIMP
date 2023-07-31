@@ -13,7 +13,7 @@
  * @return double cost
  */
 double cost_fixed_gp(const VectorXd& x, const vimp::FixedPriorGP& fixed_gp){
-    return fixed_gp.cost(x);
+    return fixed_gp.fixed_factor_cost(x);
 }
 
 

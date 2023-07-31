@@ -20,7 +20,7 @@ plot_experiment = "map1_above";
 
 prefix = "";
 if strcmp(plot_experiment, "map1_above")
-    sdfmap = csvread("map1/map_multiobs.csv");
+    sdfmap = csvread("map1/map_multiobs_map1.csv");
     prefix = ["map1/above_case/"];
 elseif strcmp(plot_experiment, "map1_below")
     sdfmap = csvread("map1/map_multiobs_map1.csv");

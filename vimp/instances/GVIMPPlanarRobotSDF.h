@@ -58,12 +58,13 @@ public:
         double delt_t = params.total_time() / N;
 
         for (int i = 0; i < n_states; i++) {
+
             // initial state
-            VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
+            VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
 
             // initial velocity: must have initial velocity for the fitst state??
-            theta.segment(dim_conf, dim_conf) = avg_vel;
-            joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta);   
+            theta_i.segment(dim_conf, dim_conf) = avg_vel;
+            joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
 
             MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
 
@@ -71,30 +72,64 @@ public:
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
             if (i==0 || i==n_states-1){
 
-                // lin GP factor
+                // lin GP factor for the first and the last support state
                 if (i == n_states-1){
                     // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
-                    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, 
-                                                               n_states, i-1, params.temperature(), params.high_temperature()});
+                    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+                                                                dim_state, 
+                                                                cost_linear_gp, 
+                                                                lin_gp, 
+                                                                n_states, 
+                                                                i-1, 
+                                                                params.temperature(), 
+                                                                params.high_temperature()});
                 }
 
                 // Fixed gp factor
-                FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta}};
-                vec_factors.emplace_back(new FixedGpPrior{dim_state, dim_state, cost_fixed_gp, fixed_gp, 
-                                                          n_states, i, params.temperature(), params.high_temperature()});
+                FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
+                vec_factors.emplace_back(new FixedGpPrior{dim_state, 
+                                                          dim_state, 
+                                                          cost_fixed_gp, 
+                                                          fixed_gp, 
+                                                          n_states, 
+                                                          i, 
+                                                          params.temperature(), 
+                                                          params.high_temperature()});
 
             }else{
                 // linear gp factors
-                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, dim_state, cost_linear_gp, lin_gp, 
-                                                            n_states, i-1, params.temperature(), params.high_temperature()});
-                vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, dim_state, cost_sdf_pR, SDFPR{gtsam::symbol('x', i), 
-                                                                robot_model, sdf, sig_obs, eps_sdf}, 
-                                                            n_states, i, params.temperature(), params.high_temperature()});    
+                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+                                                            dim_state, 
+                                                            cost_linear_gp, 
+                                                            lin_gp, 
+                                                            n_states, 
+                                                            i-1, 
+                                                            params.temperature(), 
+                                                            params.high_temperature()});
+
+                // collision factor
+                vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, 
+                                                                dim_state, 
+                                                                cost_sdf_pR, 
+                                                                SDFPR{gtsam::symbol('x', i), 
+                                                                robot_model, 
+                                                                sdf, 
+                                                                sig_obs, 
+                                                                eps_sdf}, 
+                                                                n_states, 
+                                                                i, 
+                                                                params.temperature(), 
+                                                                params.high_temperature()});    
             }
         }
 
         /// The joint optimizer
-        GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, n_states, params.max_iter(), temperature, params.high_temperature()};
+        GVIGH<GVIFactorizedBase> optimizer{vec_factors, 
+                                           dim_state, 
+                                           n_states, 
+                                           params.max_iter(), 
+                                           temperature, 
+                                           params.high_temperature()};
 
         optimizer.set_max_iter_backtrack(params.max_n_backtrack());
         optimizer.set_niter_low_temperature(params.max_iter_lowtemp());
@@ -103,6 +138,7 @@ public:
         optimizer.update_file_names(params.saving_prefix());
         optimizer.set_mu(joint_init_theta);
 
+        // initial precision matrix for the optimization
         MatrixXd init_precision(ndim, ndim);
         init_precision = MatrixXd::Identity(ndim, ndim)*params.initial_precision_factor();
         
