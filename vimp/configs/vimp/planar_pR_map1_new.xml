@@ -3,10 +3,10 @@
     <total_time>1.5</total_time>
     <n_states>10</n_states>
     <coeff_Qc>0.8</coeff_Qc>
-    <sig_obs>0.004</sig_obs>
-    <eps_sdf>0.7</eps_sdf>
+    <sig_obs>0.007</sig_obs>
+    <eps_sdf>0.5</eps_sdf>
     <radius>1.0</radius>
-    <step_size>0.25</step_size>
+    <step_size>0.45</step_size>
     <init_precision_factor>10.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
