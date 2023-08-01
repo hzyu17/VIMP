@@ -54,7 +54,7 @@ int main(){
     cov(0, 0) = 9.0;
 
     using Function = std::function<MatrixXd(const VectorXd&)>;    
-    GaussHermite<Function> gh(deg, dim, mean, cov);
+    GaussHermite<Function> gh(deg, dim, mean, cov, phi);
 
     MatrixXd phi_mu = phi(mean);
     MatrixXd phi_mu_GT(1,1);
@@ -71,16 +71,14 @@ int main(){
 
     // Integrations
     // integration of phi
-    std::shared_ptr<Function> p_phi;
-    p_phi = std::make_shared<Function>(phi);
+    std::shared_ptr<Function> p_phi = std::make_shared<Function>(phi);
     MatrixXd E_Phi = gh.Integrate(phi);
     double E_Phi_GT = 1.1129;
     std::cout << "E_Phi" << std::endl << E_Phi(0,0) << std::endl;
     std::cout << "E_Phi Ground Truth" << std::endl << E_Phi_GT << std::endl;
 
     // integration of (x-mu)*phi
-    std::shared_ptr<Function> p_xmu_phi;
-    p_xmu_phi = std::make_shared<Function>(xmu_phi);
+    std::shared_ptr<Function> p_xmu_phi = std::make_shared<Function>(xmu_phi);
     MatrixXd E_xmu_phi = gh.Integrate(xmu_phi);
     double E_xmu_phi_GT = -1.2144;
     std::cout << "E_xmu_phi" << std::endl << E_xmu_phi(0,0) << std::endl;

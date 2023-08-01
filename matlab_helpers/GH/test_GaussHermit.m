@@ -66,3 +66,26 @@ Int3 = GaussHermitOneDim(xmumuT_phi, p, mu, P)
 %% Cost
 % cost value should be E_{phi(x)} + ln(det(sig^{-2}))/2
 cost_value =  GaussHermitOneDim(phi, p, mu, P) + log(1/P)/2
+
+%% Test GaussHermit for a quadratic function
+% ============== two dimension input x = [x_1; x_2], one dimensional output ============== 
+% Cost fn
+x = sym('x', [2,1]);
+prec_cost = 10000.*eye(2);
+phi = transpose(x) * prec_cost * x
+phi_func = matlabFunction(phi);
+
+% Inputs
+m = ones(2,1);
+prec = [1, -0.74; -0.74, 1.0];
+cov = inv(prec);
+
+p_GH = 10;
+Int1 = GaussianHermiteN(2, phi, p_GH, m, cov)
+
+% ============== two dimension input x = [x_1; x_2], two dimensional output ============== 
+x = sym('x', [2,1])
+phi_2 = [3*x(1)*x(1); 2*x(1)*x(2)];
+phi_func = matlabFunction(phi_2);
+
+Int2 = GaussianHermiteN(2, phi_2, p_GH, m, cov)

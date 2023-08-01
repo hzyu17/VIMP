@@ -36,7 +36,7 @@ namespace vimp{
                 Base::_func_Vmumu = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};};
                 
                 using GH = GaussHermite<GHFunction>;
-                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
+                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi});
 
                 _target_mean = linear_factor.get_mu();
                 _target_precision = linear_factor.get_precision();

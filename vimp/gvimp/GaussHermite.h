@@ -87,7 +87,7 @@ public:
      */
     MatrixXd Integrate(const Function& function);
 
-    MatrixXd update_integrand(const Function& function);
+    void update_integrand(const Function& function);
 
     MatrixXd Integrate();
 

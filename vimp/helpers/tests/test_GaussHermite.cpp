@@ -25,6 +25,7 @@ MatrixXd gx_1d(const VectorXd& x){
 
 MatrixXd gx_2d(const VectorXd& x){
     MatrixXd res(2, 1);
+    res.setZero();
     res << 3*x(0)*x(0), 2*x(0)*x(1);
     return MatrixXd{res};
 }
@@ -33,6 +34,7 @@ MatrixXd gx_3d(const VectorXd& x){
     return MatrixXd{x*x.transpose().eval()};
 }
 
+EigenWrapper ei;
 
 /**
  * @brief Test the permute function helper with replacement.
@@ -62,6 +64,8 @@ TEST(GaussHermite, permute){
 }
 
 
+using Function = std::function<MatrixXd(const VectorXd&)>;
+
 /**
  * @brief test the case where the cost function is 1 dimensional.
  */
@@ -69,9 +73,9 @@ TEST(GaussHermite, one_dim){
     int dim = 4;
     VectorXd m = VectorXd::Zero(dim);
     MatrixXd P = MatrixXd::Identity(dim, dim)*0.0001;
-    GaussHermite<std::function<MatrixXd(const VectorXd&)>> gausshermite(3, dim, m, P, gx_1d);
+    GaussHermite<Function> gausshermite(3, dim, m, P, gx_1d);
 
-    MatrixXd integral1{gausshermite.Integrate()};
+    MatrixXd integral1{gausshermite.Integrate()};    
     MatrixXd integral_expected{MatrixXd::Constant(1, 1, 4.0)};
 
     ASSERT_LE((integral1 - integral_expected).norm(), 1e-10);
@@ -85,19 +89,34 @@ TEST(GaussHermite, two_dim){
     prec << 1.0,-0.74,-0.74,1.0;
     MatrixXd cov{prec.inverse()};
 
-    GaussHermite<std::function<MatrixXd(const VectorXd&)>> gausshermite(10, dim, m, cov, gx_1d);
+    GaussHermite<Function> gausshermite(10, dim, m, cov, gx_1d);
     MatrixXd integral1{gausshermite.Integrate()};
+    MatrixXd integral_expected{MatrixXd::Constant(1, 1, 6.420866489831914e+04)};
 
-    MatrixXd integral_expected{MatrixXd::Constant(1, 1, 6.42087)};
+    ASSERT_LE((integral1 - integral_expected).norm(), 1e-5);
 
+}
+
+TEST(GaussHermite, two_dim_input_two_dim_output){
+    int dim = 2;
+    VectorXd m = VectorXd::Ones(dim);
+    MatrixXd prec(dim, dim);
+    prec << 1.0,-0.74,-0.74,1.0;
+    MatrixXd cov{prec.inverse()};
+
+    std::cout << "hello " << std::endl;
+    GaussHermite<Function> gausshermite(10, dim, m, cov, gx_2d);
+
+    std::cout << "hello 1" << std::endl;
     gausshermite.update_integrand(gx_2d);
     MatrixXd integral2{gausshermite.Integrate()};
+
+    ei.print_matrix(integral2, "integral2");
 
     MatrixXd integral2_expected(2, 1);
     integral2_expected << 9.6313, 5.27144;
 
     ASSERT_LE((integral2 - integral2_expected).norm(), 1e-5);
-
 }
 
 TEST(GaussHermite, three_dim){
@@ -105,7 +124,7 @@ TEST(GaussHermite, three_dim){
     VectorXd m = VectorXd::Ones(dim);
     MatrixXd P = MatrixXd::Identity(dim, dim);
 
-    GaussHermite<std::function<MatrixXd(const VectorXd&)>> gausshermite(10, dim, m, P, gx_1d);
+    GaussHermite<Function> gausshermite(10, dim, m, P, gx_1d);
 
     MatrixXd integral1{gausshermite.Integrate()};
     

@@ -58,6 +58,4 @@ TEST(ColCost, change_covariance){
 
     ASSERT_LE(abs(cost_new - cost_expected), 1e-4);
 
-
-
 }

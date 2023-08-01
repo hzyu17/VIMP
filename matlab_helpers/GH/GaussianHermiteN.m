@@ -28,8 +28,8 @@ for i_size = 1:size(gx, 1)
         integral_trues = [integral_trues; integral2(func_hd, -inf, inf, -inf, inf)];
         for i=1:p
             for j = 1:p
-                pts = sig*[ksi(i); ksi(j)] + m
-                integrand = double(subs(gx, x, pts))
+                pts = sig*[ksi(i); ksi(j)] + m;
+                integrand = double(subs(gx, x, pts));
                 integrand = integrand(i_size);
                 i_W = W(i) * W(j);
                 Integral_GH = Integral_GH + integrand * i_W;
@@ -51,5 +51,5 @@ for i_size = 1:size(gx, 1)
     end
 Integral_GHs = [Integral_GHs; Integral_GH];
 end
-integral_trues
+integral_trues;
 end

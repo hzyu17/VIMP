@@ -54,7 +54,7 @@ typedef GVIFactorizedSimpleGH<Function> OptFact;
  */
 TEST(TestFunctional, function_values){
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
-    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, cost_function, Pk)};
+    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, 1, 1, 0, cost_function, 1.0, 10.0)};
     
     VectorXd mean{VectorXd::Constant(1, 20)};
     MatrixXd cov{MatrixXd::Constant(1,1,9)};
@@ -163,15 +163,15 @@ TEST(TestFunctional, GH_integrations){
 TEST(TestFunctional, integrations){
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
 
-    cout << "Pk" << endl << Pk << endl;
-
-    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, cost_function, Pk)};
+    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, 1, 1, 0, cost_function, 1.0, 10.0)};
     
-    p_opt_fac->update_mu(VectorXd::Constant(1, 20.0));
-    p_opt_fac->update_covariance(MatrixXd::Constant(1,1,9.0));
+    VectorXd mean = VectorXd::Constant(1, 20.0);
+    MatrixXd cov = MatrixXd::Constant(1,1,9.0);
+    p_opt_fac->update_mu(mean);
+    p_opt_fac->update_covariance(cov);
 
     p_opt_fac->set_GH_points(6);
-    p_opt_fac->updateGH();
+    p_opt_fac->updateGH(mean, cov);
 
     /// E_Phi
     double E_Phi = p_opt_fac->E_Phi();
@@ -200,13 +200,15 @@ TEST(TestFunctional, cost_value){
 
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
     cout << "Pk" << endl << Pk << endl;
-    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, cost_function, Pk)};
+    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, 1, 1, 0, cost_function, 1.0, 10.0)};
     
-    p_opt_fac->update_mu(VectorXd::Constant(1, 20.0));
-    p_opt_fac->update_covariance(MatrixXd::Constant(1,1,9.0));
+    VectorXd mean = VectorXd::Constant(1, 20.0);
+    MatrixXd cov = MatrixXd::Constant(1,1,9.0);
+    p_opt_fac->update_mu(mean);
+    p_opt_fac->update_covariance(cov);
 
     p_opt_fac->set_GH_points(6);
-    p_opt_fac->updateGH();
+    p_opt_fac->updateGH(mean, cov);
 
     ASSERT_LE(abs(p_opt_fac->precision().determinant() - 1/9.0), 1e-10);
 
@@ -224,18 +226,22 @@ TEST(TestFunctional, cost_value){
 TEST(TestFunctional, joint_cost_value){
     vector<std::shared_ptr<OptFact>> vec_opts;
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
-    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, cost_function, Pk)};
+    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, 1, 1, 0, cost_function, 1.0, 10.0)};
 
     vec_opts.emplace_back(p_opt_fac);
 
-    VIMPOptimizerGH<OptFact> opt{vec_opts, 20.0};
+    GVIGH<OptFact> opt{vec_opts, 1, 1};
 
     VectorXd mu_rd{VectorXd::Random(1)};
     MatrixXd prec_rd{MatrixXd::Random(1,1)};
+
+    SpMat prec_rd_sp = prec_rd.sparseView();
+
     opt.set_mu(mu_rd);
-    opt.set_precision(prec_rd);
+    opt.set_precision(prec_rd_sp);
 
     /// should be equal
-    ASSERT_LE(abs(opt.cost_value() - opt.cost_value(mu_rd, prec_rd.inverse())), 1e-10);
+    SpMat cov_sp = prec_rd.inverse().sparseView();
+    ASSERT_LE(abs(opt.cost_value() - opt.cost_value(mu_rd, cov_sp)), 1e-10);
 
 }

@@ -40,3 +40,8 @@ TEST(TEST_CYTHON, construction){
     ASSERT_EQ((cython_obj.vec()-vec).norm(), 0);
 
 }
+
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

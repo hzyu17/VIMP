@@ -163,7 +163,7 @@ TEST(TESTVectorOpt, integration){
     double delt_t = 0.01;
 
     MatrixXd Qc{MatrixXd::Identity(dim, dim)};
-    MinimumAccGP lin_gp{Qc, delt_t};
+    MinimumAccGP lin_gp{Qc, 0, delt_t, mu};
 
     std::shared_ptr<VIMPFactorizedOneCost<MinimumAccGP>> p_opt_lingp{new VIMPFactorizedOneCost<MinimumAccGP>{
                                                                                             2*dim_theta, 
@@ -177,7 +177,7 @@ TEST(TESTVectorOpt, integration){
                                                                                             P1}};
     vec_opt.emplace_back(p_opt_lingp);
     
-    GVIGH<GVIFactorizedBase> opt{vec_opt, 10};
+    GVIGH<GVIFactorizedBase> opt{vec_opt, dim_theta, 3};
     opt.set_GH_degree(5);
     const double thres = 1e-10;    
 

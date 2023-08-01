@@ -36,7 +36,7 @@ TEST(TestDynamics, linearization){
     LinearDynamics lin_dyn(nx, nu, nt);
 
     std::tuple<LinearDynamics, Matrix3D> res;
-    res = dyn.linearize(zt, 5.0, At, St);
+    res = dyn.linearize(zt, At, St);
 
     hAt = std::get<0>(res).At();
     Bt = std::get<0>(res).Bt();
@@ -67,7 +67,7 @@ TEST(TestPGCS, solution){
 
     MatrixXd A0(nx, nx), B(nx, nu), a0(nx, 1);
     std::shared_ptr<DoubleIntegrator> pdyn{new DoubleIntegrator(nx, nu, nt)};
-    std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearized_0 = pdyn->linearize_at(m0, sig, A0, Sig0);
+    std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearized_0 = pdyn->linearize_at(m0, A0, Sig0);
     A0  = std::get<0>(linearized_0);
     B   = std::get<1>(linearized_0);
     a0  = std::get<2>(linearized_0);
@@ -78,10 +78,9 @@ TEST(TestPGCS, solution){
     Q0 = 0.1*MatrixXd::Identity(nx, nx);
     pgcs.repliacteQt(Q0);
     MatrixXd Kt(nx*nu, nt), dt(nu, nt), Kt_gt(nx*nu, nt), dt_gt(nu, nt);
-    std::tuple<MatrixXd, MatrixXd> res_Kd;
+    std::tuple<MatrixXd, MatrixXd, NominalHistory> res_Kd;
 
-    double stop_err = 1e-4;
-    res_Kd = pgcs.optimize(stop_err);
+    res_Kd = pgcs.optimize();
 
     MatrixXd Qkt(nx*nx, nt), rkt(nx, nt);
     MatrixXd Qkt_gt(nx*nx, nt), rkt_gt(nx, nt);

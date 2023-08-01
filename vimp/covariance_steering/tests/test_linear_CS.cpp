@@ -87,3 +87,9 @@ TEST(LinearCS, initializations){
     ASSERT_LE((linear_cs.dt()-d_gt).norm(), 1e-10);
 
 }
+
+
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
