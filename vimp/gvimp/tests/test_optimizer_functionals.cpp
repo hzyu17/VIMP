@@ -9,7 +9,7 @@
  * 
  */
 
-#include "gvimp/OptimizerFactorizedSimpleGH.h"
+#include "gvimp/GVIFactorizedSimpleGH.h"
 #include "gvimp/GVI-GH.h"
 #include <gtest/gtest.h>
 
@@ -45,7 +45,7 @@ using namespace std;
 using namespace vimp;
 typedef std::function<double(const VectorXd&)> Function;
 typedef std::function<MatrixXd(const VectorXd&)> GHFunction;
-typedef VIMPOptimizerFactorizedSimpleGH<Function> OptFact;
+typedef GVIFactorizedSimpleGH<Function> OptFact;
 
 
 /**

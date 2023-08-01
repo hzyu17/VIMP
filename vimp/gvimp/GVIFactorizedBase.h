@@ -128,6 +128,7 @@ namespace vimp{
             return _block.extract(joint_covariance);
         }
 
+
         /**
          * @brief Calculating phi * (partial V) / (partial mu), and 
          * phi * (partial V^2) / (partial mu * partial mu^T)
@@ -240,6 +241,20 @@ namespace vimp{
             res.setZero();
             _block.fill(_Vddmu, res);
             return res;
+        }
+
+        inline SpMat joint_covariance(){
+            SpMat joint_covariance(_joint_size, _joint_size);
+            joint_covariance.setZero();
+            _block.fill(_covariance, joint_covariance);
+            return joint_covariance;
+        }
+
+        inline VectorXd joint_mean(){
+            VectorXd joint_mean(_joint_size);
+            joint_mean.setZero();
+            _block.fill_vector(_mu, joint_mean);
+            return joint_mean;
         }
 
         /**

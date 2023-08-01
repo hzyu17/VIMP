@@ -42,11 +42,13 @@ public:
         const int& deg, 
         const int& dim, 
         const VectorXd& mean, 
-        const MatrixXd& P): 
+        const MatrixXd& P,
+        const Function& func): 
             _deg{deg},
             _dim{dim},
             _mean{mean},
             _P{P},
+            _f{func},
             _W{VectorXd::Zero(_deg)},
             _sigmapts{VectorXd::Zero(_deg)}{}
 
@@ -85,6 +87,10 @@ public:
      */
     MatrixXd Integrate(const Function& function);
 
+    MatrixXd update_integrand(const Function& function);
+
+    MatrixXd Integrate();
+
     /**
      * Update member variables
      * */
@@ -112,6 +118,7 @@ protected:
     VectorXd _W;
     VectorXd _sigmapts;
     EigenWrapper _ei;
+    Function _f;
 };
 
 }

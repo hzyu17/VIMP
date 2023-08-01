@@ -34,7 +34,7 @@ namespace vimp{
                 // Base::construct_function_T();
 
                 using GH = GaussHermite<GHFunction>;
-                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
+                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi});
                 
             }
 

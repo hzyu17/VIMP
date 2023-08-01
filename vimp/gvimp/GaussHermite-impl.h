@@ -80,6 +80,17 @@ namespace vimp{
     }
 
     template <typename Function>
+    MatrixXd GaussHermite<Function>::update_integrand(const Function& function){
+        _f = function;
+    }
+
+    template <typename Function>
+    MatrixXd GaussHermite<Function>::Integrate(){
+        return Integrate(_f);
+    }
+
+
+    template <typename Function>
     MatrixXd GaussHermite<Function>::Integrate(const Function& function){
 
         // std::cout << "gh mean " << std::endl << _mean << std::endl;

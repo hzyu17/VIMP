@@ -43,13 +43,14 @@ TEST(LinearCS, initializations){
     int nx = 4;
     int nu = 2;
     int nt = 25;
+    double T = 1.0;
 
     MatrixXd Bi = MatrixXd::Zero(nx, nu);
     Matrix3D Bt(nx, nu, nt);
     Bi.block(2,0,2,2) = 5.0*MatrixXd::Identity(2,2);
     Bt = eigen_wrapper.replicate3d(Bi, nt);
 
-    LinearCovarianceSteering linear_cs(At, Bt, at, 4, 2, nt, 0.01, Qt, rt, m0, Sig0, m1, Sig1);
+    LinearCovarianceSteering linear_cs(At, Bt, at, 4, 2, T, nt, 0.01, Qt, rt, m0, Sig0, m1, Sig1);
     linear_cs.solve();
 
     MatrixXd M0{MatrixXd::Zero(8, 8)};

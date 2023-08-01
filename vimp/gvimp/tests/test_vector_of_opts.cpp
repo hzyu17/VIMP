@@ -23,20 +23,26 @@ using namespace Eigen;
 
 namespace vimp{
     template <typename Cl1>
-    class VIMPFactorizedOneCost : public VIMPOptimizerFactorizedBase{
-        using Base = VIMPOptimizerFactorizedBase;
+    class VIMPFactorizedOneCost : public GVIFactorizedBase{
+        using Base = GVIFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
         using Function = std::function<double(const VectorXd&, const Cl1&)>;
+        using GH = GaussHermite<GHFunction>;
         public:
             VIMPFactorizedOneCost(const int& dimension, 
+                                    int state_dim, 
+                                    int num_states,
+                                    int start_indx,
+                                    double temperature,
+                                    double high_temperature,
                                     const Function& function, 
                                     const Cl1& cost_class,
                                     const MatrixXd& Pk_):
-                Base(dimension, Pk_){
-                Base::_func_phi = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));});
-                Base::_func_Vmu = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class);});
-                Base::_func_Vmumu = std::make_shared<GHFunction>([this, function, cost_class](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class)};});
-                Base::_gh = GaussHermite<GHFunction>{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi};
+                Base(dimension, state_dim, num_states, start_indx, temperature, high_temperature){
+                Base::_func_phi = [this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));};
+                Base::_func_Vmu = [this, function, cost_class](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class);};
+                Base::_func_Vmumu = [this, function, cost_class](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class)};};
+                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi});
             }
 
     };
@@ -44,7 +50,7 @@ namespace vimp{
 
 
 double cost_fixed_gp(const VectorXd& x, const FixedPriorGP& fixed_gp){
-    return fixed_gp.cost(x);
+    return fixed_gp.fixed_factor_cost(x);
 }
 
 double cost_linear_gp(const VectorXd& pose, const MinimumAccGP& gp_minacc){
@@ -76,14 +82,19 @@ TEST(TESTVectorOpt, creation){
     MatrixXd K{MatrixXd::Identity(2*dim, 2*dim)};
     VectorXd mu{VectorXd::Ones(2*dim)};
 
-    std::vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_opt;
+    std::vector<std::shared_ptr<GVIFactorizedBase>> vec_opt;
 
     MatrixXd P0{MatrixXd::Zero(2*dim, ndim)};
     P0.block(0, 0, 2*dim, 2*dim) = std::move(MatrixXd::Identity(2*dim, 2*dim));
 
     FixedPriorGP p_fixed_gp{K, mu};
     std::shared_ptr<VIMPFactorizedOneCost<FixedPriorGP>> p_opt_fixedgp{new VIMPFactorizedOneCost<FixedPriorGP>{
+                                                                                                2*dim,
                                                                                                 2*dim, 
+                                                                                                3,
+                                                                                                0,
+                                                                                                1.0,
+                                                                                                10.0,
                                                                                                 cost_fixed_gp, 
                                                                                                 p_fixed_gp, 
                                                                                                 P0}}; 
@@ -96,16 +107,21 @@ TEST(TESTVectorOpt, creation){
     double delt_t = 0.01;
 
     MatrixXd Qc{MatrixXd::Identity(dim, dim)};
-    MinimumAccGP lin_gp{Qc, delt_t};
+    MinimumAccGP lin_gp{Qc, 0, delt_t, mu};
 
     std::shared_ptr<VIMPFactorizedOneCost<MinimumAccGP>> p_opt_lingp{new VIMPFactorizedOneCost<MinimumAccGP>{
                                                                                             4*dim, 
+                                                                                            2*dim,
+                                                                                            3,
+                                                                                            0,
+                                                                                            1.0,
+                                                                                            10.0,
                                                                                             cost_linear_gp, 
                                                                                             lin_gp, 
                                                                                             P1}};
     vec_opt.emplace_back(std::move(p_opt_lingp));
 
-    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> opt{vec_opt, 10};
+    GVIGH<GVIFactorizedBase> opt{vec_opt, 2*dim, 1};
 
     double thres = 1e-10;  
 
@@ -122,14 +138,19 @@ TEST(TESTVectorOpt, integration){
     MatrixXd K{MatrixXd::Identity(dim_theta, dim_theta)};
     VectorXd mu{VectorXd::Ones(dim_theta)};
 
-    std::vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_opt;
+    std::vector<std::shared_ptr<GVIFactorizedBase>> vec_opt;
 
     MatrixXd P0{MatrixXd::Zero(dim_theta, ndim)};
     P0.block(0, 0, dim_theta, dim_theta) = std::move(MatrixXd::Identity(dim_theta, dim_theta));
 
     FixedPriorGP fixed_gp{K, mu};
     std::shared_ptr<VIMPFactorizedOneCost<FixedPriorGP>> p_opt_fixedgp{new VIMPFactorizedOneCost<FixedPriorGP>{
+                                                                                                dim_theta,
                                                                                                 dim_theta, 
+                                                                                                3,
+                                                                                                0,
+                                                                                                1.0,
+                                                                                                10.0,
                                                                                                 cost_fixed_gp, 
                                                                                                 fixed_gp, 
                                                                                                 P0}}; 
@@ -146,12 +167,17 @@ TEST(TESTVectorOpt, integration){
 
     std::shared_ptr<VIMPFactorizedOneCost<MinimumAccGP>> p_opt_lingp{new VIMPFactorizedOneCost<MinimumAccGP>{
                                                                                             2*dim_theta, 
+                                                                                            dim_theta,
+                                                                                            3,
+                                                                                            0,
+                                                                                            1.0,
+                                                                                            10.0,
                                                                                             cost_linear_gp, 
                                                                                             lin_gp, 
                                                                                             P1}};
     vec_opt.emplace_back(p_opt_lingp);
     
-    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> opt{vec_opt, 10};
+    GVIGH<GVIFactorizedBase> opt{vec_opt, 10};
     opt.set_GH_degree(5);
     const double thres = 1e-10;    
 
@@ -183,7 +209,7 @@ TEST(TESTVectorOpt, collision_factor){
     int dim = 4;
     int ndim = 3*dim;
 
-    std::vector<std::shared_ptr<VIMPOptimizerFactorizedBase>> vec_opt;
+    std::vector<std::shared_ptr<GVIFactorizedBase>> vec_opt;
 
     MatrixXd P0{MatrixXd::Zero(dim, ndim)};
     P0.block(0, 0, dim, dim) = std::move(MatrixXd::Identity(dim, dim));
@@ -193,13 +219,18 @@ TEST(TESTVectorOpt, collision_factor){
 
     std::shared_ptr<VIMPFactorizedOneCost<ObstaclePlanarSDFFactorPointRobot>> p_opt_obs{new VIMPFactorizedOneCost<ObstaclePlanarSDFFactorPointRobot>{
                                                                                                 dim, 
+                                                                                                dim,
+                                                                                                3,
+                                                                                                0,
+                                                                                                1.0,
+                                                                                                10.0,
                                                                                                 cost_obstacle, 
                                                                                                 collision_k, 
                                                                                                 P0}}; 
 
     vec_opt.emplace_back(p_opt_obs);
 
-    VIMPOptimizerGH<VIMPOptimizerFactorizedBase> opt{vec_opt, 10};
+    GVIGH<GVIFactorizedBase> opt{vec_opt, 4, 1};
     opt.set_GH_degree(10);
     double thres = 1e-10;    
 
