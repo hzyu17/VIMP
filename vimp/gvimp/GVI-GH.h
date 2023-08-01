@@ -159,7 +159,7 @@ public:
     /**
      * @brief given a state, compute the total cost function value without the entropy term, using current values.
      */
-    double cost_value_no_entropy() const;
+    double cost_value_no_entropy();
 
     /**
      * @brief Compute the costs of all factors for a given mean and cov.

@@ -10,8 +10,8 @@
  */
 
 #include <gtest/gtest.h>
-#include <fastad>
-#include "../hinge2Dhelper.h"
+// #include <fastad>
+#include "helpers/hinge2Dhelper.h"
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include <matplot/matplot.h>
 

@@ -14,10 +14,10 @@
 #include "helpers/hinge2Dhelper.h"
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include <matplot/matplot.h>
-#include <fastad>
+// #include <fastad>
 #include "dynamics/DoubleIntegratorDraged.h"
     
-using namespace ad;
+// using namespace ad;
 using namespace vimp;
 using namespace Eigen;
 
@@ -220,7 +220,7 @@ TEST(SDFHessian, TinyADnTr){
     // // Test function
     vimp::DoubleIntegrator dyn(4, 2, 25);
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_res;
-    linearize_res = dyn.linearize_at(x, sig, Ak, Sigk);
+    linearize_res = dyn.linearize_at(x, Ak, Sigk);
     Eigen::Matrix4d fhAk = std::get<0>(linearize_res);
     Eigen::MatrixXd fB = std::get<1>(linearize_res);
     Eigen::Vector4d fhak = std::get<2>(linearize_res);
@@ -230,120 +230,120 @@ TEST(SDFHessian, TinyADnTr){
     
 }
 
-TEST(SDFHessian, FastADDynamics){
-    Eigen::MatrixXd Sig_obs = ei.random_psd(4);
-    Eigen::Vector4d x;
-    x << 1.4167, 8.0000, 2.0020, 0.0003;
+// TEST(SDFHessian, FastADDynamics){
+//     Eigen::MatrixXd Sig_obs = ei.random_psd(4);
+//     Eigen::Vector4d x;
+//     x << 1.4167, 8.0000, 2.0020, 0.0003;
 
-    Eigen::Vector4d x_adj;
-    x_adj.setZero();
+//     Eigen::Vector4d x_adj;
+//     x_adj.setZero();
 
-    // ei.print_matrix(x, "var x");
+//     // ei.print_matrix(x, "var x");
 
-    // Initialize variable.
-    VarView<double, mat> xad(x.data(), x_adj.data(), 4, 1);
-    // time scaling factor
-    double sig = 5.0;
+//     // Initialize variable.
+//     VarView<double, mat> xad(x.data(), x_adj.data(), 4, 1);
+//     // time scaling factor
+//     double sig = 5.0;
 
-    // drag coefficient
-    double c_d = 0.005;
+//     // drag coefficient
+//     double c_d = 0.005;
 
-    // Create expr. Use a row buffer to store data. Then we only need to manipulate data when
-    // looping.
+//     // Create expr. Use a row buffer to store data. Then we only need to manipulate data when
+//     // looping.
 
-    Eigen::Vector4d a1, a2, a3, a4;
-    a1 << 1,0,0,0;
-    a1 << 0,1,0,0;
-    a3 << 0,0,1,0;
-    a4 << 0,0,0,1;
-    auto cst1 = ad::constant_view(a1.data(), 1, 4);
-    auto cst2 = ad::constant_view(a2.data(), 1, 4);
-    auto cst3 = ad::constant_view(a3.data(), 1, 4);
-    auto cst4 = ad::constant_view(a4.data(), 1, 4);
-    auto f1 = ad::bind(ad::dot(cst1, xad));
-    auto f2 = ad::bind(ad::dot(cst2, xad));
-    auto f3 = ad::bind(ad::dot(cst3, xad) * c_d * ad::sqrt(ad::pow<2>(ad::dot(cst3, xad)) + ad::pow<2>(ad::dot(cst4, xad))));
-    auto f4 = ad::bind(ad::dot(cst4, xad) * c_d * ad::sqrt(ad::pow<2>(ad::dot(cst3, xad)) + ad::pow<2>(ad::dot(cst4, xad))));
+//     Eigen::Vector4d a1, a2, a3, a4;
+//     a1 << 1,0,0,0;
+//     a1 << 0,1,0,0;
+//     a3 << 0,0,1,0;
+//     a4 << 0,0,0,1;
+//     auto cst1 = ad::constant_view(a1.data(), 1, 4);
+//     auto cst2 = ad::constant_view(a2.data(), 1, 4);
+//     auto cst3 = ad::constant_view(a3.data(), 1, 4);
+//     auto cst4 = ad::constant_view(a4.data(), 1, 4);
+//     auto f1 = ad::bind(ad::dot(cst1, xad));
+//     auto f2 = ad::bind(ad::dot(cst2, xad));
+//     auto f3 = ad::bind(ad::dot(cst3, xad) * c_d * ad::sqrt(ad::pow<2>(ad::dot(cst3, xad)) + ad::pow<2>(ad::dot(cst4, xad))));
+//     auto f4 = ad::bind(ad::dot(cst4, xad) * c_d * ad::sqrt(ad::pow<2>(ad::dot(cst3, xad)) + ad::pow<2>(ad::dot(cst4, xad))));
 
-    // Seed
-    Eigen::MatrixXd seed(1, 1);
-    seed.setOnes(); // Usually seed is 1. DONT'T FORGET!
+//     // Seed
+//     Eigen::MatrixXd seed(1, 1);
+//     seed.setOnes(); // Usually seed is 1. DONT'T FORGET!
 
-    auto grad_1 = autodiff(f1, seed.array());
-    // std::cout << xad.get_adj() << std::endl;
-    // std::cout << "f_grad: " << grad_1 << std::endl;
+//     auto grad_1 = autodiff(f1, seed.array());
+//     // std::cout << xad.get_adj() << std::endl;
+//     // std::cout << "f_grad: " << grad_1 << std::endl;
 
-    // auto f_grad = ad::bind(ad::dot(cst1, grad_1));
+//     // auto f_grad = ad::bind(ad::dot(cst1, grad_1));
     
-    // auto grad_grad_1 = autodiff(f_grad, seed.array());
-    // std::cout << xad.get_adj() << std::endl;
+//     // auto grad_grad_1 = autodiff(f_grad, seed.array());
+//     // std::cout << xad.get_adj() << std::endl;
 
-    auto grad_2 = autodiff(f2, seed.array());
-    auto grad_3 = autodiff(f3, seed.array());
-    auto grad_4 = autodiff(f4, seed.array());
+//     auto grad_2 = autodiff(f2, seed.array());
+//     auto grad_3 = autodiff(f3, seed.array());
+//     auto grad_4 = autodiff(f4, seed.array());
     
-}
+// }
 
 // FastAD: https://github.com/JamesYang007/FastAD#installation
 
-TEST(SDFHessian, FastAD_FWD)
-{   
-    ForwardVar<double> w1(0.), w2(1.);
-    w1.set_adjoint(1.); // differentiate w.r.t. w1
-    ForwardVar<double> w3 = w1 * sin(w2);
-    ForwardVar<double> w4 = w3 + w1 * w2;
-    ForwardVar<double> w5 = exp(w4 * w3);
+// TEST(SDFHessian, FastAD_FWD)
+// {   
+//     ForwardVar<double> w1(0.), w2(1.);
+//     w1.set_adjoint(1.); // differentiate w.r.t. w1
+//     ForwardVar<double> w3 = w1 * sin(w2);
+//     ForwardVar<double> w4 = w3 + w1 * w2;
+//     ForwardVar<double> w5 = exp(w4 * w3);
 
-    // std::cout << "f(x, y) = exp((x * sin(y) + x * y) * x * sin(y))\n"
-    //           << "df/dx = " << w5.get_adjoint() << std::endl;
-}
+//     // std::cout << "f(x, y) = exp((x * sin(y) + x * y) * x * sin(y))\n"
+//     //           << "df/dx = " << w5.get_adjoint() << std::endl;
+// }
 
-TEST(SDFHessian, FastAD_BWD){
-    // Create data matrix.
-    Eigen::MatrixXd X(5, 2);
-    X << 1, 10, 2, 20, 3, 30, 4, 40, 5, 50;
-    Eigen::VectorXd y(5);
-    y << 32, 64, 96, 128, 160; // y=2*x1+3*x2
+// TEST(SDFHessian, FastAD_BWD){
+//     // Create data matrix.
+//     Eigen::MatrixXd X(5, 2);
+//     X << 1, 10, 2, 20, 3, 30, 4, 40, 5, 50;
+//     Eigen::VectorXd y(5);
+//     y << 32, 64, 96, 128, 160; // y=2*x1+3*x2
 
-    // Generating buffer.
-    Eigen::MatrixXd theta_data(2, 1);
-    theta_data << 1, 2;
-    Eigen::MatrixXd theta_adj(2, 1);
-    theta_adj.setZero(); // Set adjoints to zeros.
+//     // Generating buffer.
+//     Eigen::MatrixXd theta_data(2, 1);
+//     theta_data << 1, 2;
+//     Eigen::MatrixXd theta_adj(2, 1);
+//     theta_adj.setZero(); // Set adjoints to zeros.
 
-    // Initialize variable.
-    VarView<double, mat> theta(theta_data.data(), theta_adj.data(), 2, 1);
+//     // Initialize variable.
+//     VarView<double, mat> theta(theta_data.data(), theta_adj.data(), 2, 1);
 
-    // Create expr. Use a row buffer to store data. Then we only need to manipulate data when
-    // looping.
-    Eigen::MatrixXd x_row_buffer = X.row(0);
-    auto xi = constant_view(x_row_buffer.data(), 1, X.cols());
-    Eigen::MatrixXd y_row_buffer = y.row(0);
-    auto yi = constant_view(y_row_buffer.data(), 1, y.cols());
-    auto expr = bind(pow<2>(yi - dot(xi, theta)));
+//     // Create expr. Use a row buffer to store data. Then we only need to manipulate data when
+//     // looping.
+//     Eigen::MatrixXd x_row_buffer = X.row(0);
+//     auto xi = constant_view(x_row_buffer.data(), 1, X.cols());
+//     Eigen::MatrixXd y_row_buffer = y.row(0);
+//     auto yi = constant_view(y_row_buffer.data(), 1, y.cols());
+//     auto expr = bind(pow<2>(yi - dot(xi, theta)));
 
-    // Seed
-    Eigen::MatrixXd seed(1, 1);
-    seed.setOnes(); // Usually seed is 1. DONT'T FORGET!
+//     // Seed
+//     Eigen::MatrixXd seed(1, 1);
+//     seed.setOnes(); // Usually seed is 1. DONT'T FORGET!
 
-    // Loop over each row to calulate loss.
-    double loss = 0;
-    for (int i = 0; i < X.rows(); ++i) {
-        x_row_buffer = X.row(i);
-        y_row_buffer = y.row(i);
+//     // Loop over each row to calulate loss.
+//     double loss = 0;
+//     for (int i = 0; i < X.rows(); ++i) {
+//         x_row_buffer = X.row(i);
+//         y_row_buffer = y.row(i);
 
-        auto f = autodiff(expr, seed.array());
-        loss += f.coeff(0);
-    }
+//         auto f = autodiff(expr, seed.array());
+//         loss += f.coeff(0);
+//     }
 
-    // // Print results.
-    // std::cout << "loss: " << loss << std::endl; // 6655
-    // std::cout << theta.get() << std::endl;      //[1, 2]
-    // std::cout << theta.get_adj() << std::endl;  //[-1210, -12100]
+//     // // Print results.
+//     // std::cout << "loss: " << loss << std::endl; // 6655
+//     // std::cout << theta.get() << std::endl;      //[1, 2]
+//     // std::cout << theta.get_adj() << std::endl;  //[-1210, -12100]
 
-    theta_adj.setZero(); // Reset differential to zero after one full pass.
+//     theta_adj.setZero(); // Reset differential to zero after one full pass.
 
-}
+// }
 
 
 TEST(SDFHessian, hinge_loss){

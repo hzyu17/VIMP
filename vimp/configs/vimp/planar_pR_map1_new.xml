@@ -6,15 +6,15 @@
     <sig_obs>0.007</sig_obs>
     <eps_sdf>0.5</eps_sdf>
     <radius>1.0</radius>
-    <step_size>0.45</step_size>
+    <step_size>0.15</step_size>
     <init_precision_factor>10.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>1</low_temp_iterations>
+    <low_temp_iterations>10</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>1</max_iterations>
-    <max_n_backtracking>5</max_n_backtracking>
+    <max_iterations>10</max_iterations>
+    <max_n_backtracking>20</max_n_backtracking>
 
 </Commons>
 

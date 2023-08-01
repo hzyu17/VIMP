@@ -112,20 +112,20 @@ namespace vimp{
             _mu = _block.extract_vector(joint_mean);
         }
 
-        inline VectorXd extract_mu_from_joint(const VectorXd & joint_mean) {
-            return _block.extract_vector(joint_mean);
-        }
-
-        inline SpMat extract_cov_from_joint(const SpMat& joint_covariance) {
-            return _block.extract(joint_covariance);
-        }
-
         /**
          * @brief Update the marginal precision matrix.
          */
         inline void update_precision_from_joint(const SpMat& joint_covariance) {
             _covariance = extract_cov_from_joint(joint_covariance);
             _precision = _covariance.inverse();
+        }
+
+        inline VectorXd extract_mu_from_joint(const VectorXd & joint_mean) {
+            return _block.extract_vector(joint_mean);
+        }
+
+        inline SpMat extract_cov_from_joint(const SpMat& joint_covariance) {
+            return _block.extract(joint_covariance);
         }
 
         /**
@@ -200,9 +200,6 @@ namespace vimp{
             VectorXd mean_k = extract_mu_from_joint(joint_mean);
             MatrixXd Cov_k = extract_cov_from_joint(joint_cov);
             updateGH(mean_k, Cov_k);
-            _ei.print_matrix(joint_mean, "joint_mean");
-            _ei.print_matrix(joint_cov, "joint_cov");
-            _ei.print_matrix(_mu, "_mu");
 
             return _gh->Integrate(_func_phi)(0, 0);
         }
@@ -312,7 +309,6 @@ namespace vimp{
             _gh->set_polynomial_deg(p);
         }
 
-
         /// Public members for the inherited classes access
     public:
 
@@ -329,14 +325,6 @@ namespace vimp{
         GHFunction _func_phi;
         GHFunction _func_Vmu;
         GHFunction _func_Vmumu;
-
-        // std::shared_ptr<GHFunction> _func_phi_T;
-        // std::shared_ptr<GHFunction> _func_Vmu_T;
-        // std::shared_ptr<GHFunction> _func_Vmumu_T;
-
-        // std::shared_ptr<GHFunction> _func_phi_highT;
-        // std::shared_ptr<GHFunction> _func_Vmu_highT;
-        // std::shared_ptr<GHFunction> _func_Vmumu_highT;
 
         /// G-H quadrature class
         using GH = GaussHermite<GHFunction> ;

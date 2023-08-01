@@ -8,18 +8,13 @@ import gpmp2.*
 
 %% choose the experiment and temperature to plot
 plot_temperture = "low";
-% plot_temperture = "high";
-
-plot_experiment = "map1_above";
 
 prefix = "";
-if strcmp(plot_experiment, "map1_above")
-    sdfmap = csvread("map1/map_multiobs_map1.csv");
-    prefix = ["map1/above_case/"];
-    prefix_debug = ["map1/case1/"];
-end
+sdfmap = csvread("map1/map_multiobs_map1.csv");
+prefix = ["map1/above_case/"];
+prefix_debug = ["map1/case1/"];
 
-if strcmp(plot_temperture, "low") && (~contains(plot_experiment, "go_around"))
+if strcmp(plot_temperture, "low")
     means = csvread([prefix + "mean_base.csv"]);
     covs = csvread([prefix + "cov_base.csv"]);
     precisions = csvread([prefix + "precisoin_base.csv"]);
@@ -39,8 +34,13 @@ end
 
 for i = 1:10
     precisions_i = precisions((i-1)*40+1:i*40, 1:40);
+    cov_i = covs((i-1)*40+1:i*40, 1:40);
+
     joint_precisions_cpp_i = joint_precisions_cpp(1:end, i);
     joint_precisions_cpp_i = reshape(joint_precisions_cpp_i, [40,40]);
+    
+    joint_cov_cpp_i = joint_covs_cpp(1:end, i);
+    joint_cov_cpp_i = reshape(joint_cov_cpp_i, [40,40]);
     
     mean_i = means(i, 1:end)';
     mean_cpp_i = means_cpp(1:end, i);

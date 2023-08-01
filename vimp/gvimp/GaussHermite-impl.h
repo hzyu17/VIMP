@@ -82,7 +82,7 @@ namespace vimp{
     template <typename Function>
     MatrixXd GaussHermite<Function>::Integrate(const Function& function){
 
-        std::cout << "gh mean " << std::endl << _mean << std::endl;
+        // std::cout << "gh mean " << std::endl << _mean << std::endl;
         computeWeights();
 
         LLT<MatrixXd> lltP(_P);

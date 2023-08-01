@@ -22,12 +22,12 @@ TEST(LinearCS, initializations){
     MatrixIO m_io;
     EigenWrapper eigen_wrapper;
 
-    MatrixXd At = m_io.load_csv("data/Aprior.csv");
-    MatrixXd at = m_io.load_csv("data/aprior.csv");
-    MatrixXd Qt = m_io.load_csv("data/Qk.csv");
-    MatrixXd rt = m_io.load_csv("data/rk.csv");
-    MatrixXd m0 = m_io.load_csv("data/m0.csv");
-    MatrixXd m1 = m_io.load_csv("data/m1.csv");
+    Matrix3D At = m_io.load_csv("data/Aprior.csv");
+    Matrix3D at = m_io.load_csv("data/aprior.csv");
+    Matrix3D Qt = m_io.load_csv("data/Qk.csv");
+    Matrix3D rt = m_io.load_csv("data/rk.csv");
+    VectorXd m0 = m_io.load_csv("data/m0.csv");
+    VectorXd m1 = m_io.load_csv("data/m1.csv");
     MatrixXd Sig0 = m_io.load_csv("data/Sig0.csv");
     MatrixXd Sig1 = m_io.load_csv("data/Sig1.csv");
 
@@ -45,7 +45,7 @@ TEST(LinearCS, initializations){
     int nt = 25;
 
     MatrixXd Bi = MatrixXd::Zero(nx, nu);
-    MatrixXd Bt(nx*nu, nt);
+    Matrix3D Bt(nx, nu, nt);
     Bi.block(2,0,2,2) = 5.0*MatrixXd::Identity(2,2);
     Bt = eigen_wrapper.replicate3d(Bi, nt);
 

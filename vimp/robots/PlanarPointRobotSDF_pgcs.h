@@ -30,7 +30,7 @@ namespace vimp{
 using Base = RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>;
 class PlanarPRSDFExample: public Base{
     public:
-        PlanarPRSDFExample(double epsilon, double radius, const std::string& field_file, const std::string& sdf_file=""): 
+        PlanarPRSDFExample(double epsilon, double radius, const std::string& field_file="", const std::string& sdf_file=""): 
         Base(2, 1, source_root+"/data/vimp/2d_pR/field_multiobs_entropy_map2.csv", ""), 
         _eps(epsilon), 
         _r(radius)
@@ -94,8 +94,10 @@ class PlanarPRSDFExampleMap1: public Base{
             MatrixXd field{_m_io.load_csv(Base::_field_file)};
 
             // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
-            Point2 origin(0, 0);
-            double cell_size = 1.0;
+            // Point2 origin(0, 0);
+            // double cell_size = 1.0;
+            Point2 origin(-20, -10);
+            double cell_size = 0.1;
 
             Base::_psdf = std::make_shared<gpmp2::PlanarSDF>(gpmp2::PlanarSDF(origin, cell_size, field));
 

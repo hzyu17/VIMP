@@ -19,7 +19,7 @@ using namespace vimp;
 TEST(TestFactorizedOptBase, basicFunctions){
     int dim = 3;
     MatrixXd Pk{MatrixXd::Identity(dim, dim)};
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt{new VIMPOptimizerFactorizedBase{dim, Pk}};
+    std::shared_ptr<GVIFactorizedBase> p_opt{new GVIFactorizedBase{dim, Pk}};
 
     VectorXd mean{VectorXd::Random(dim)};
     MatrixXd precision{MatrixXd::Random(dim, dim)};
@@ -50,8 +50,8 @@ TEST(TestFactorizedOptBase, fromJoint){
 
     ASSERT_LE((P2.transpose() * P2 + P1.transpose() * P1 - MatrixXd::Identity(2*dim, 2*dim)).norm(), tol);
 
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt1{new VIMPOptimizerFactorizedBase{dim, P1}};
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt2{new VIMPOptimizerFactorizedBase{dim, P2}};
+    std::shared_ptr<GVIFactorizedBase> p_opt1{new GVIFactorizedBase{dim, P1}};
+    std::shared_ptr<GVIFactorizedBase> p_opt2{new GVIFactorizedBase{dim, P2}};
 
     ASSERT_LE((p_opt1->Pk()-P1).norm(), tol);
     ASSERT_LE((p_opt2->Pk()-P2).norm(), tol);
@@ -100,8 +100,8 @@ TEST(TestFactorizedOptBase, DECOUPLED_precision){
     P1.block(0, 0, dim, dim) = MatrixXd::Identity(dim, dim);
     P2.block(0, 2, dim, dim) = MatrixXd::Identity(dim, dim);
 
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt1{new VIMPOptimizerFactorizedBase{dim, P1}};
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt2{new VIMPOptimizerFactorizedBase{dim, P2}};
+    std::shared_ptr<GVIFactorizedBase> p_opt1{new GVIFactorizedBase{dim, P1}};
+    std::shared_ptr<GVIFactorizedBase> p_opt2{new GVIFactorizedBase{dim, P2}};
 
     VectorXd j_mean{VectorXd::Random(2*dim)};
     MatrixXd j_precision{MatrixXd::Random(2*dim, 2*dim)};
@@ -144,9 +144,9 @@ TEST(TestFactorizedOptBase, sparse_precision){
     row_sum = row_sum + P2.colwise().sum();
     row_sum = row_sum + P3.colwise().sum();
 
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt1{new VIMPOptimizerFactorizedBase{dim, P1}};
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt2{new VIMPOptimizerFactorizedBase{dim, P2}};
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt3{new VIMPOptimizerFactorizedBase{dim, P3}};
+    std::shared_ptr<GVIFactorizedBase> p_opt1{new GVIFactorizedBase{dim, P1}};
+    std::shared_ptr<GVIFactorizedBase> p_opt2{new GVIFactorizedBase{dim, P2}};
+    std::shared_ptr<GVIFactorizedBase> p_opt3{new GVIFactorizedBase{dim, P3}};
 
     VectorXd j_mean{VectorXd::Random(2*dim)};
     MatrixXd j_precision{MatrixXd::Random(2*dim, 2*dim)};
@@ -214,7 +214,7 @@ TEST(TestFactorizedOptBase, sparse_precision){
 TEST(TestFactorizedOptBase, costValue){
     int dim = 3;
     MatrixXd Pk{MatrixXd::Identity(dim, 2*dim)};
-    std::shared_ptr<VIMPOptimizerFactorizedBase> p_opt{new VIMPOptimizerFactorizedBase{dim, Pk}};
+    std::shared_ptr<GVIFactorizedBase> p_opt{new GVIFactorizedBase{dim, Pk}};
     
     VectorXd j_mean{VectorXd::Random(2*dim)};
     MatrixXd j_precision{MatrixXd::Random(2*dim, 2*dim)};

@@ -56,7 +56,7 @@ TEST(TestPRSDF, initialization){
     double eps_sdf = std::get<2>(res);
     double sphere_r = std::get<3>(res);
     // construct the robot model with sdf
-    PlanarPointRobotSDFPGCS pr_sdf{eps_sdf, sphere_r};
+    PlanarPRSDFExample pr_sdf{eps_sdf, sphere_r};
     pr_sdf.update_sdf(sdf);
 }
 
@@ -68,7 +68,7 @@ TEST(TestPRSDF, pose_cost_jacobian){
     double eps_sdf = std::get<2>(res);
     double sphere_r = std::get<3>(res);
     // construct the robot model with sdf
-    PlanarPointRobotSDFPGCS pr_sdf{eps_sdf, sphere_r};
+    PlanarPRSDFExample pr_sdf{eps_sdf, sphere_r};
     pr_sdf.update_sdf(sdf);
 
     std::cout << "eps_sdf " << eps_sdf << std::endl << "sphere_r " << sphere_r << std::endl; 
@@ -77,15 +77,15 @@ TEST(TestPRSDF, pose_cost_jacobian){
     pose << -6.29201, 9.84276, -4.14218, -1.59315;
     double hinge_gt = 0.04276;
     
-    int num_spheres = pr_sdf.pRmodel().nr_body_spheres();
+    int num_spheres = pr_sdf.RobotModel().nr_body_spheres();
     MatrixXd Jacobian_gt(num_spheres, 2);
     Jacobian_gt << -0, 1;
 
     std::tuple<VectorXd, MatrixXd> hinge_jac;
-    hinge_jac = pr_sdf.hinge_jac(pose.block(0,0,2,1));
+    hinge_jac = pr_sdf.hinge_jacobian(pose.block(0,0,2,1));
     VectorXd hinge = std::get<0>(hinge_jac);
     MatrixXd Jacobian = std::get<1>(hinge_jac);
-    VectorXd sphere_center = pr_sdf.pRmodel().sphereCenter(0, pose);
+    VectorXd sphere_center = pr_sdf.RobotModel().sphereCenter(0, pose);
     ei.print_matrix(sphere_center, "sphere_center");
     ei.print_matrix(hinge, "hinge 1");
     ei.print_matrix(Jacobian, "Jacobian 1");
@@ -99,7 +99,7 @@ TEST(TestPRSDF, pose_cost_jacobian){
     MatrixXd Jacobian_gt1(num_spheres, 2);
     Jacobian_gt1 << -0, -1;
 
-    hinge_jac = pr_sdf.hinge_jac(pose1.block(0,0,2,1));
+    hinge_jac = pr_sdf.hinge_jacobian(pose1.block(0,0,2,1));
     hinge = std::get<0>(hinge_jac);
     Jacobian = std::get<1>(hinge_jac);
 
