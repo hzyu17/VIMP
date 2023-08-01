@@ -98,6 +98,7 @@ namespace vimp{
         VectorXd pt_0(_dim);
         pt_0.setZero();
 
+        // Borrow space for the integration result
         MatrixXd res{MatrixXd::Zero(function(pt_0).rows(), function(pt_0).cols())}; 
 
         /// Compute permutations
