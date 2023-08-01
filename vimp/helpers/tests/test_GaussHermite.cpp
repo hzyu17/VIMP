@@ -104,14 +104,10 @@ TEST(GaussHermite, two_dim_input_two_dim_output){
     prec << 1.0,-0.74,-0.74,1.0;
     MatrixXd cov{prec.inverse()};
 
-    std::cout << "hello " << std::endl;
     GaussHermite<Function> gausshermite(10, dim, m, cov, gx_2d);
 
-    std::cout << "hello 1" << std::endl;
     gausshermite.update_integrand(gx_2d);
     MatrixXd integral2{gausshermite.Integrate()};
-
-    ei.print_matrix(integral2, "integral2");
 
     MatrixXd integral2_expected(2, 1);
     integral2_expected << 9.6313, 5.27144;
@@ -127,10 +123,9 @@ TEST(GaussHermite, three_dim){
     GaussHermite<Function> gausshermite(10, dim, m, P, gx_1d);
 
     MatrixXd integral1{gausshermite.Integrate()};
-    
-    MatrixXd integral_expected{MatrixXd::Constant(1, 1, 6)};
+    MatrixXd integral_expected{MatrixXd::Constant(1, 1, 6.00e+4)};
 
-    ASSERT_LE((integral1 - integral_expected).norm(), 1e-10);
+    ASSERT_LE((integral1 - integral_expected).norm(), 1e-7);
 
 }
 

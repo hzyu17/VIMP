@@ -90,11 +90,7 @@ namespace vimp{
     template <typename Function>
     MatrixXd GaussHermite<Function>::Integrate(const Function& function){
 
-        std::cout << "debug 0" << std::endl;
-
         computeWeights();
-
-        std::cout << "debug 1" << std::endl;
 
         LLT<MatrixXd> lltP(_P);
         MatrixXd sig{lltP.matrixL()};
@@ -103,8 +99,6 @@ namespace vimp{
         pt_0.setZero();
 
         MatrixXd res{MatrixXd::Zero(function(pt_0).rows(), function(pt_0).cols())}; 
-
-        std::cout << "debug 2" << std::endl;
 
         /// Compute permutations
         std::vector<int> range_deg;
@@ -115,8 +109,6 @@ namespace vimp{
         std::vector<std::vector<int>> v_permutations;
 
         permute_replacing(range_deg, _dim, permutation, 0, v_permutations);
-
-        std::cout << "debug 3" << std::endl;
 
         for (std::vector<int>& i_v: v_permutations){
             VectorXd pt_ij(_dim);
@@ -131,8 +123,6 @@ namespace vimp{
             res += weights * function(pt_ij);
 
         }
-
-        std::cout << "debug 4" << std::endl;
 
         return res;
     }
