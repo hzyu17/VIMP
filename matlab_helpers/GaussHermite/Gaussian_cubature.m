@@ -16,7 +16,7 @@ x = sym('x', [n 1]);
 % gx = sum(x.^2);
 gx = [3*x1^2; 2*x2*x1];
 
-Integral = GaussianHermiteN(n, gx, p, m, P)
+Integral = GaussHermiteN(n, gx, p, m, P)
 
 %%
 % target Gaussian -log_prob
@@ -31,7 +31,7 @@ gx = -log(prob);
 % gx = x1^2 + x2^2;
 gx = [3*x1^2; 2*x2*x1];
 
-Integral = GaussianHermiteN(n, gx, p, mean_t, cov_t)
+Integral = GaussHermiteN(n, gx, p, mean_t, cov_t)
 
 %% draft
 getWeight(10)

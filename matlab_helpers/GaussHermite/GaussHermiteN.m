@@ -1,4 +1,4 @@
-function Integral_GHs = GaussianHermiteN(n, gx, p, m, P)
+function Integral_GHs = GaussHermiteN(n, gx, p, m, P)
 % Gaussian-Hermite approximation of the integration of gx w.r.t. a Gaussian
 % distribution
 % Input:

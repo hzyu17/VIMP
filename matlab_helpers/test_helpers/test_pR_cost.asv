@@ -67,12 +67,12 @@ prec = eye(2);
 cov = inv(prec);
 
 x_mean = [11.3321059864421, 9.16117246531728]';
-num_samples = 1000000;
+num_samples = 5000;
 ttl_cost = 0;
 for i = 1:num_samples
-    i_sample = x_mean + randn(2, 1);
+    i_sample = x_mean + randn(2);
     i_err_vec = obs_factor.evaluateError(i_sample);
-    ttl_cost = ttl_cost + i_err_vec * i_err_vec / cost_sigma / 10.0;
+    i_err_vec * i_err_vec / cost_sigma / 10.0
 end
 
-monte_carlo = ttl_cost / num_samples
+Int21_new = GaussHermitOneDim(phi_21, p_GH, m, cov)

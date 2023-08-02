@@ -189,8 +189,10 @@ namespace vimp
     template <typename Factor>
     double GVIGH<Factor>::cost_value_no_entropy()
     {
-        double value = 0.0;
+        
         SpMat Cov = inverse(_precision);
+        
+        double value = 0.0;
         for (auto &opt_k : _vec_factors)
         {
             value += opt_k->fact_cost_value(_mu, Cov);

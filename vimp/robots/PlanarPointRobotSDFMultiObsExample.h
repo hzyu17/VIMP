@@ -9,6 +9,10 @@
  * @copyright Copyright (c) 2022
  * 
  */
+
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/obstacle/PlanarSDF.h>
@@ -26,8 +30,12 @@ class PlanarPointRobotSDFMultiObsExample{
     public:
         PlanarPointRobotSDFMultiObsExample(){
             /// map and sdf
-            MatrixXd map_ground_truth = _matrix_io.load_csv("/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/map_multiobs_entropy_map3.csv");
-            _field = _matrix_io.load_csv("/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map3.csv");
+            std::string source_root{XSTRING(SOURCE_ROOT)};
+            std::string map_file{source_root+"/maps/2dpR/map3/map_multiobs_map3.csv"};
+            std::string field_file{source_root+"/maps/2dpR/map3/field_multiobs_map3.csv"};
+
+            MatrixXd map_ground_truth = _matrix_io.load_csv(map_file);
+            _field = _matrix_io.load_csv(field_file);
 
             // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
             Point2 origin(-20, -10);

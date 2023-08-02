@@ -82,7 +82,7 @@ m = ones(2,1);
 prec = [1, -0.74; -0.74, 1.0];
 cov = inv(prec);
 
-Int1 = GaussianHermiteN(2, phi_21, p_GH, m, cov)
+Int1 = GaussHermiteN(2, phi_21, p_GH, m, cov)
 
 % ============== 2 dim input x = [x_1; x_2], 2 dim output ============== 
 x = sym('x', [2,1]);
@@ -94,7 +94,7 @@ m = ones(2,1);
 prec = [1, -0.74; -0.74, 1.0];
 cov = inv(prec);
 
-Int22 = GaussianHermiteN(2, phi_22, p_GH, m, cov)
+Int22 = GaussHermiteN(2, phi_22, p_GH, m, cov)
 
 % ============== 3 dim input x = [x_1; x_2; x_3], 1 dim output ============== 
 x = sym('x', [3,1]);
@@ -106,7 +106,7 @@ phi_func_31 = matlabFunction(phi_31);
 m = ones(3, 1);
 cov = eye(3);
 
-Int31 = GaussianHermiteN(3, phi_31, p_GH, m, cov)
+Int31 = GaussHermiteN(3, phi_31, p_GH, m, cov)
 
 
 % ============== 3 dim input x = [x_1; x_2; x_3], 3 dim output ============== 
@@ -119,4 +119,4 @@ phi_func_33 = matlabFunction(phi_33);
 m = ones(3, 1);
 cov = eye(3);
 
-Int33 = GaussianHermiteN(3, phi_33, p_GH, m, cov)
+Int33 = GaussHermiteN(3, phi_33, p_GH, m, cov)
