@@ -28,11 +28,30 @@ namespace vimp{
 
 class PlanarPointRobotSDFMultiObsExample{
     public:
-        PlanarPointRobotSDFMultiObsExample(){
+        PlanarPointRobotSDFMultiObsExample(const string& map_name="map0"){
+            std::string map_file;
+            std::string field_file;
             /// map and sdf
             std::string source_root{XSTRING(SOURCE_ROOT)};
-            std::string map_file{source_root+"/maps/2dpR/map3/map_multiobs_map3.csv"};
-            std::string field_file{source_root+"/maps/2dpR/map3/field_multiobs_map3.csv"};
+            if (strcmp(map_name.data(), "map0") == 0){
+                std::string map_file{source_root+"/maps/2dpR/map3/map_multiobs_map3.csv"};
+                std::string field_file{source_root+"/maps/2dpR/map3/field_multiobs_map3.csv"};
+            }
+            else if(strcmp(map_name.data(), "map1") == 0){
+                std::string map_file{source_root+"/maps/2dpR/map1/map_multiobs_map3.csv"};
+                std::string field_file{source_root+"/maps/2dpR/map1/field_multiobs_map3.csv"};
+            }
+            else if(strcmp(map_name.data(), "map2") == 0){
+                std::string map_file{source_root+"/maps/2dpR/map2/map_multiobs_map3.csv"};
+                std::string field_file{source_root+"/maps/2dpR/map2/field_multiobs_map3.csv"};
+            }
+            else if(strcmp(map_name.data(), "map3") == 0){
+                std::string map_file{source_root+"/maps/2dpR/map3/map_multiobs_map3.csv"};
+                std::string field_file{source_root+"/maps/2dpR/map3/field_multiobs_map3.csv"};
+            }
+            else{
+                std::runtime_error("No such map for 2d point robot sdf!");
+            }
 
             MatrixXd map_ground_truth = _matrix_io.load_csv(map_file);
             _field = _matrix_io.load_csv(field_file);
