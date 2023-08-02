@@ -22,8 +22,8 @@ origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
 field = signedDistanceField2D(dataset.map, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);
 
-writematrix(dataset.map, '../../../vimp/maps/2dpR/map_multiobs.csv') 
-writematrix(field, '../../../vimp/maps/2dpR/field_multiobs.csv') 
+writematrix(dataset.map, '../../../vimp/maps/2dpR/map0/map_multiobs_map0.csv') 
+writematrix(field, '../../../vimp/maps/2dpR/map0/field_multiobs_map0.csv') 
 
 figure
 plotEvidenceMap2D_1(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
