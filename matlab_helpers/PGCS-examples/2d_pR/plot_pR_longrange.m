@@ -2,7 +2,7 @@ clear all
 close all
 clc
 addpath('/home/hyu419/.local/gtsam_toolbox')
-addpath("../error_ellipse");
+addpath("../../tools/error_ellipse");
 addpath("../../../matlab_helpers/");
 import gtsam.*
 import gpmp2.*

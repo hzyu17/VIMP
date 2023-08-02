@@ -7,7 +7,7 @@ addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
-addpath("../../error_ellipse");
+addpath("../../tools/error_ellipse");
 
 map = 1;
 exp = 1;

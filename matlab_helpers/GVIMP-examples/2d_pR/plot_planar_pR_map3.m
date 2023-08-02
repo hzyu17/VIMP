@@ -6,7 +6,7 @@ import gtsam.*
 import gpmp2.*
 
 %% read map
-sdfmap = csvread("map3/map_multiobs_map3.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map3/map_multiobs_map3.csv");
 
 v_niters = [30, 30];
 v_nsteps = [6, 6];

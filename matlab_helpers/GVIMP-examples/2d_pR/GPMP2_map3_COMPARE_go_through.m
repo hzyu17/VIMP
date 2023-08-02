@@ -1,6 +1,6 @@
-% @brief    Point Robot 2D example, building factor graph in matlab
-% @author   Mustafa Mukadam
-% @date     July 20, 2016
+% @brief    Point Robot 2D example, comparing the go-through plan with
+% gpmp2.
+% @author   Hongzhe Yu
 
 close all
 clear

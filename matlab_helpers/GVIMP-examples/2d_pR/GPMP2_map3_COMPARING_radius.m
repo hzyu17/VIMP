@@ -1,11 +1,12 @@
-% @brief    Point Robot 2D example, building factor graph in matlab
-% @author   Mustafa Mukadam
-% @date     July 20, 2016
+% @brief    Using gpmp2 code to test the effect of the collision-checking
+% radius.
+% @author   Hongzhe Yu
 
+clc
 close all
 clear
 addpath('/usr/local/gtsam_toolbox')
-addpath('../../tools/2d_pR')
+addpath('../../tools/2dpR')
 %% Load libraries
 import gtsam.*
 import gpmp2.*

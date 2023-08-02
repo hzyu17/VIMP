@@ -5,8 +5,7 @@ addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
-addpath("../")
-addpath("../error_ellipse");
+addpath("../../tools/error_ellipse");
 addpath("../../../matlab_helpers/");
 
 %% read map

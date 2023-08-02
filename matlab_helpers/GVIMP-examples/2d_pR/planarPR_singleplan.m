@@ -2,6 +2,7 @@ clear all
 close all
 clc
 addpath('/usr/local/gtsam_toolbox')
+addpath("../../tools/error_ellipse");
 import gtsam.*
 import gpmp2.*
 
@@ -19,24 +20,26 @@ plot_experiment = "map2_exp1";
 % plot_experiment = "map_narrow_go_around";
 
 prefix = "";
+prefix_map = '../../../vimp/maps/2dpR/';
+
 if strcmp(plot_experiment, "map1_above")
-    sdfmap = csvread("map1/map_multiobs.csv");
+    sdfmap = csvread([prefix_map, 'map1/map_multiobs.csv']);
     prefix = ["map1/above_case/"];
 elseif strcmp(plot_experiment, "map1_below")
-    sdfmap = csvread("map1/map_multiobs.csv");
+    sdfmap = csvread([prefix_map, 'map1/map_multiobs.csv']);
     prefix = ["map1/below_case/"];
 elseif strcmp(plot_experiment, "map2_exp1")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
-    prefix = ["map2/exp1/"];
+    sdfmap = csvread([prefix_map, 'map2/map_multiobs_map2.csv']);
+    prefix = ["map2/case1/"];
 elseif strcmp(plot_experiment, "map2_exp2")
     sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
-    prefix = ["map2/exp2/"];
+    prefix = ["map2/case2/"];
 elseif strcmp(plot_experiment, "map2_exp3")
     sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
-    prefix = ["map2/exp3/"];
+    prefix = ["map2/case3/"];
 elseif strcmp(plot_experiment, "map2_exp4")
     sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
-    prefix = ["map2/exp4/"];
+    prefix = ["map2/case4/"];
 elseif strcmp(plot_experiment, "map_narrow_go_through")
     sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
     prefix = ["map_narrow/shortcut/"];
@@ -44,6 +47,7 @@ elseif strcmp(plot_experiment, "map_narrow_go_around")
     sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
     prefix = ["map_narrow/circumvent/"];
 end
+
 
 if strcmp(plot_temperture, "low") && (~contains(plot_experiment, "go_around"))
     means = csvread([prefix + "mean_base.csv"]);
@@ -67,8 +71,6 @@ elseif strcmp(plot_temperture, "high")
     end
     final_cost = csvread([prefix + "final_cost.csv"]);
 end
-
-addpath("error_ellipse");
 
 output = plotPointRobotAnalysis(means, covs, precisions, costs, factor_costs, sdfmap);
 

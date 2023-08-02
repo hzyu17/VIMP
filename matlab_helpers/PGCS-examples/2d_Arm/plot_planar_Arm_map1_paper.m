@@ -7,7 +7,8 @@ addpath('/home/hyu419/.local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
-addpath("../../error_ellipse");
+addpath("../../tools/error_ellipse");
+addpath("../../tools/2dArm");
 
 map = 1;
 exp = 1;
