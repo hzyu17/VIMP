@@ -3,7 +3,7 @@
 % Introduction: help generate the ground truth for debugging the obs cost estimators
 % corresponding to the test in vimp/instances/tests/test_pR_cost.cpp
 
-addpath('../tools')
+addpath('../tools/2dpR')
 addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
@@ -24,8 +24,8 @@ sdf = PlanarSDF(origin_point2, cell_size, field);
 val1 = field(100, 101)
 val2 = field(300, 400)
 
-writematrix(dataset.map, '../../vimp/data/vimp/2d_pR/map_multiobs.csv') 
-writematrix(field, '../../vimp/data/vimp/2d_pR/field_multiobs.csv') 
+writematrix(dataset.map, '../../vimp/maps/2dpR/map_multiobs.csv') 
+writematrix(field, '../../vimp/maps/2dpR/field_multiobs.csv') 
 
 % point robot model
 pR = PointRobot(2,1);
