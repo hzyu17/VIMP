@@ -23,28 +23,28 @@ prefix = "";
 prefix_map = '../../../vimp/maps/2dpR/';
 
 if strcmp(plot_experiment, "map1_above")
-    sdfmap = csvread([prefix_map, 'map1/map_multiobs.csv']);
+    sdfmap = csvread([prefix_map, 'map1/map_multiobs_map1.csv']);
     prefix = ["map1/above_case/"];
 elseif strcmp(plot_experiment, "map1_below")
-    sdfmap = csvread([prefix_map, 'map1/map_multiobs.csv']);
+    sdfmap = csvread([prefix_map, 'map1/map_multiobs_map1.csv']);
     prefix = ["map1/below_case/"];
 elseif strcmp(plot_experiment, "map2_exp1")
     sdfmap = csvread([prefix_map, 'map2/map_multiobs_map2.csv']);
     prefix = ["map2/case1/"];
 elseif strcmp(plot_experiment, "map2_exp2")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+    sdfmap = csvread("map2/map_multiobs_map2.csv");
     prefix = ["map2/case2/"];
 elseif strcmp(plot_experiment, "map2_exp3")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+    sdfmap = csvread("map2/map_multiobs_map2.csv");
     prefix = ["map2/case3/"];
 elseif strcmp(plot_experiment, "map2_exp4")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+    sdfmap = csvread("map2/map_multiobs_map2.csv");
     prefix = ["map2/case4/"];
 elseif strcmp(plot_experiment, "map_narrow_go_through")
-    sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
-    prefix = ["map_narrow/shortcut/"];
+    sdfmap = csvread("map3/map_multiobs_map3.csv");
+    prefix = ["map3/shortcut/"];
 elseif strcmp(plot_experiment, "map_narrow_go_around")
-    sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
+    sdfmap = csvread("map3/map_multiobs_map3.csv");
     prefix = ["map_narrow/circumvent/"];
 end
 

@@ -18,6 +18,10 @@ cols = dataset.cols;
 cell_size = dataset.cell_size;
 origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
 
+origin_x = dataset.origin_x
+origin_y = dataset.origin_y
+cell_size = dataset.cell_size
+
 % signed distance field
 field = signedDistanceField2D(dataset.map, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);
@@ -36,6 +40,10 @@ rows = dataset.rows;
 cols = dataset.cols;
 cell_size = dataset.cell_size;
 origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
+
+origin_x = dataset.origin_x
+origin_y = dataset.origin_y
+cell_size = dataset.cell_size
 
 % signed distance field
 field = signedDistanceField2D(dataset.map, cell_size);
@@ -56,6 +64,10 @@ cols = dataset.cols;
 cell_size = dataset.cell_size;
 origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
 
+origin_x = dataset.origin_x
+origin_y = dataset.origin_y
+cell_size = dataset.cell_size
+
 % signed distance field
 field = signedDistanceField2D(dataset.map, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);
@@ -74,6 +86,10 @@ rows = dataset.rows;
 cols = dataset.cols;
 cell_size = dataset.cell_size;
 origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
+
+origin_x = dataset.origin_x
+origin_y = dataset.origin_y
+cell_size = dataset.cell_size
 
 % signed distance field
 field = signedDistanceField2D(dataset.map, cell_size);

@@ -24,8 +24,8 @@ sdf = PlanarSDF(origin_point2, cell_size, field);
 val1 = field(100, 101);
 val2 = field(300, 400);
 
-writematrix(dataset.map, '../../vimp/maps/2dpR/map_multiobs.csv') 
-writematrix(field, '../../vimp/maps/2dpR/field_multiobs.csv') 
+writematrix(dataset.map, '../../vimp/maps/2dpR/map0/map_multiobs_map0.csv') 
+writematrix(field, '../../vimp/maps/2dpR/map0/field_multiobs_map0.csv') 
 
 % ========== point robot model ========== 
 pR = PointRobot(2,1);

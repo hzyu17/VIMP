@@ -14,7 +14,7 @@ int dim_state = 4, num_states = 1;
 double cost_sigma = 0.5, epsilon = 4.0;
 
 // An example pr and sdf
-vimp::PlanarPointRobotSDFMultiObsExample planar_pr_sdf;
+vimp::PlanarPointRobotSDFMultiObsExample planar_pr_sdf("map3");
 gpmp2::PointRobotModel pRModel = std::move(planar_pr_sdf.pRmodel());
 gpmp2::PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
 
@@ -93,7 +93,7 @@ TEST(ColCost, change_covariance){
     double cost_new = optimizer.cost_value_no_entropy();
     cout << "cost_new " << endl << cost_new << endl;
 
-    cost_expected = 0.3709;
+    cost_expected = 0.3710;
 
     ASSERT_LE(abs(cost_new - cost_expected), 1e-2);
 
