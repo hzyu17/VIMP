@@ -4,6 +4,7 @@ clc
 
 %% ******************* Read datas ******************
 addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/2dArm')
 import gtsam.*
 import gpmp2.*
 

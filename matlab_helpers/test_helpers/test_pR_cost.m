@@ -3,7 +3,7 @@
 % Introduction: help generate the ground truth for debugging the obs cost estimators
 % corresponding to the test in vimp/instances/tests/test_pR_cost.cpp
 
-
+addpath('../tools')
 addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
@@ -11,7 +11,7 @@ import gpmp2.*
 % debug obs cost and sdf
 clear all
 clc 
-dataset = generate2Ddataset('MultiObstacleDataset');
+dataset = generate2Ddataset_1('MultiObstacleDataset');
 rows = dataset.rows;
 cols = dataset.cols;
 cell_size = dataset.cell_size;

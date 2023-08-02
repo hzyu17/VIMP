@@ -1,4 +1,4 @@
-function h = plotEvidenceMap2D_1(prob_grid, origin_x, origin_y, cell_size)
+function h = plotEvidenceMap2D(prob_grid, origin_x, origin_y, cell_size)
 %PLOTEVIDENCEMAP2D Plot 2D evidence grid map, for 2D dataset visualization
 %
 %   Usage: PLOTEVIDENCEMAP2D(prob_grid, origin_x, origin_y, cell_size)

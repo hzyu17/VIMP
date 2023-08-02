@@ -36,11 +36,7 @@ TEST(ColCost, change_covariance){
     GVIGH<GVIFactorizedBase> optimizer{vec_factor_opts, dim_state, num_states};
 
     /// Set initial value to the linear interpolation
-    VectorXd joint_init_theta{(VectorXd(4) << 11.3321059864421, 9.16117246531728, 0, 0).finished()};
-
-    VectorXd err_vec(1);
-    err_vec = collision_k.evaluateError(joint_init_theta.block(0, 0, 2, 1));
-    VectorXd err_vec_gt(1);
+    VectorXd joint_init_theta{(VectorXd(4) << 11.3321059864421, 9.16117246531728, 0, 0).finished(
     err_vec_gt(0) = 6.9321;
 
     ASSERT_LE((err_vec_gt - err_vec).norm(), 1e-5);
