@@ -100,30 +100,27 @@ dim_state = 4;
 dim = 2*dim_state;
 
 start_indx = 0;
-delta_t = 0.1667;
 
 coeff_Qc = 0.8;
 Qc = eye(dim_conf) .* coeff_Qc;
-invQc = inv(Qc);
+inv_Qc = inv(Qc);
+
+delta_t = 0.1667;
+
+mu_0 = [0, 0, 11.3333333333333, 9.33333333333333]';
  
-inv_Q = [12 .* invQc ./ power(delta_t, 3), -6 .* invQc ./ power(delta_t, 2);
-         -6 .* invQc ./ power(delta_t, 2), 4 .* invQc ./ delta_t];
+inv_Q = [12 .* invQc ./ pow(delta_t, 3), -6 .* invQc ./ pow(delta_t, 2);
+         -6 .* invQc ./ pow(delta_t, 2), 4 .* invQc ./ delta_t];
      
-Phi = [ eye(dim_conf), delta_t.*eye(dim_conf);
-        zeros(dim_conf, dim_conf), eye(dim_conf) ];
+Phi = [ eye(dim), delta_t.*eye(dim);
+        zeros(dim, dim), eye(dim) ];
 
 % Cost function
 x = sym('x', [8,1]);
-phi_81 = transpose(Phi*x(1:4)-x(5:8)) * inv_Q * (Phi*x(1:4)-x(5:8)) / 2.0;
+phi_21 = transpose(Phi*x(1:4)-x(5:8)) * inv_Q * (Phi*x(1:4)-x(5:8)) / 2.0;
 
 p_GH = 6;
 
-% inputs
-mu_0 = [0, 0, 11.3333333333333, 9.33333333333333]';
-mu_1 = [1.88888888888889, 1.55555555555556, 11.3333333333333, 9.33333333333333]';
-mu = [mu_0; mu_1];
-precision = eye(8) .* 10.0;
+precision = eye(2) .* 10.0;
 cov = inv(precision);
-
-% GH
-Int1 = GaussHermiteN(8, phi_81, p_GH, mu, cov)
+Int1 = GaussHermiteN(8, phi_21, p_GH, mu_0, cov)

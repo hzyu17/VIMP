@@ -100,15 +100,15 @@ TEST(ColCost, collision_cost){
 }
 
 // *** Test the prior cost with a fixed Gaussian target
-TEST(PriorCost, dynamics_prior_cost){
+TEST(PriorCost, fixed_cost){
     /// Vector of base factored optimizers
     vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
 
     int dim_state = 2;
     int n_states = 1;
-    double boundary_penalties = 1e-4;
+    double boundary_penalties = 1e4;
 
-    MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state) / boundary_penalties};
+    MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state) * boundary_penalties};
 
     VectorXd theta_0(2);
     theta_0.setZero();
@@ -131,15 +131,68 @@ TEST(PriorCost, dynamics_prior_cost){
     optimizer.set_GH_degree(6);
 
     // initial precision matrix for the optimization
-    MatrixXd precision = MatrixXd::Identity(dim_state, dim_state)*boundary_penalties;
+    MatrixXd precision = MatrixXd::Identity(dim_state, dim_state) * boundary_penalties;
 
     optimizer.set_precision(precision.sparseView());
 
     double cost = optimizer.cost_value_no_entropy();
     cout << "cost " << endl << cost << endl;
 
-    double cost_expected = 2.0000e+07;
+    double cost_expected = 2.0000e-08; 
 
     ASSERT_LE(abs(cost - cost_expected), 1e-6);
 
+}
+
+
+// *** Test linear dynamics prior cost
+TEST(PriorCost, dynamics_prior_cost){
+    /// Vector of base factored optimizers
+    vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
+
+    int dim_conf = 2;
+    int dim_state = 4;
+    int n_states = 2;
+    double initial_precision_factor = 10.0;
+
+    double coeff_Qc = 0.8;
+    double delt_t = 0.1667;
+
+    MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*coeff_Qc};
+
+    VectorXd theta_0(4);
+    theta_0.setZero();
+    theta_0 << 0, 0, 11.3333333333333, 9.33333333333333;
+
+    VectorXd theta_1(4);
+    theta_1.setZero();
+    theta_1 << 1.88888888888889, 1.55555555555556, 11.3333333333333, 9.33333333333333;
+
+    MinimumAccGP lin_gp{Qc, 0, delt_t, theta_0};
+    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+                                                dim_state, 
+                                                cost_linear_gp, 
+                                                lin_gp, 
+                                                n_states, 
+                                                0, 
+                                                10.0, 
+                                                100.0});
+
+    /// The joint optimizer
+    GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, num_states};
+    optimizer.set_mu(theta_0);
+
+    optimizer.set_GH_degree(6);
+
+    // initial precision matrix for the optimization
+    MatrixXd precision = MatrixXd::Identity(dim_state, dim_state) * initial_precision_factor;
+
+    optimizer.set_precision(precision.sparseView());
+
+    double cost = optimizer.cost_value_no_entropy();
+    cout << "cost " << endl << cost << endl;
+
+    double cost_expected = 2.0000e-08; 
+
+    ASSERT_LE(abs(cost - cost_expected), 1e-6);
 }
