@@ -76,3 +76,19 @@ for i = 1:num_samples
 end
 
 monte_carlo = ttl_cost / num_samples
+
+%% Test dynamics prior cost
+% --------------- fixed cost ---------------
+p_GH = 6;
+temperature = 10.0;
+mu_0 = [11.3333333333333, 9.33333333333333]';
+K_0 = eye(2) .* 10000.0;
+
+% Cost fn
+x = sym('x', [2,1]);
+phi_21 = transpose(x-mu_0) * K_0 * (x-mu_0) / temperature
+
+% Inputs
+Int1 = GaussHermiteN(2, phi_21, p_GH, mu_0, K_0)
+
+

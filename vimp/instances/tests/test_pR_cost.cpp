@@ -42,7 +42,7 @@ TEST(ColCost, sdf_map){
 }
 
 
-TEST(ColCost, change_covariance){
+TEST(ColCost, collision_cost){
     
     /// Vector of base factored optimizers
     vector<std::shared_ptr<GVIFactorizedBase>> vec_factor_opts;
@@ -96,5 +96,50 @@ TEST(ColCost, change_covariance){
     cost_expected = 0.3710;
 
     ASSERT_LE(abs(cost_new - cost_expected), 1e-2);
+
+}
+
+// *** Test the prior cost with a fixed Gaussian target
+TEST(PriorCost, dynamics_prior_cost){
+    /// Vector of base factored optimizers
+    vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
+
+    int dim_state = 2;
+    int n_states = 1;
+    double boundary_penalties = 1e-4;
+
+    MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state) / boundary_penalties};
+
+    VectorXd theta_0(2);
+    theta_0.setZero();
+    theta_0 << 11.3333333333333, 9.33333333333333;
+
+    FixedPriorGP fixed_gp{K0_fixed, theta_0};
+    vec_factors.emplace_back(new FixedGpPrior{dim_state, 
+                                              dim_state, 
+                                              cost_fixed_gp, 
+                                              fixed_gp, 
+                                              n_states, 
+                                              0, 
+                                              10.0, 
+                                              100.0});
+
+    /// The joint optimizer
+    GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, num_states};
+    optimizer.set_mu(theta_0);
+
+    optimizer.set_GH_degree(6);
+
+    // initial precision matrix for the optimization
+    MatrixXd precision = MatrixXd::Identity(dim_state, dim_state)*boundary_penalties;
+
+    optimizer.set_precision(precision.sparseView());
+
+    double cost = optimizer.cost_value_no_entropy();
+    cout << "cost " << endl << cost << endl;
+
+    double cost_expected = 2.0000e+07;
+
+    ASSERT_LE(abs(cost - cost_expected), 1e-6);
 
 }
