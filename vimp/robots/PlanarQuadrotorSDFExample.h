@@ -28,7 +28,7 @@ public:
     PlanarQuadrotorSDFExample(){}
     PlanarQuadrotorSDFExample(double epsilon, 
                               double radius, 
-                              const std::string& map_name="2d_map2", 
+                              const std::string& map_name="2dpr_map2", 
                               const std::string& sdf_file=""): 
         Base(2, 1, 2, map_name), 
         _eps(epsilon), 

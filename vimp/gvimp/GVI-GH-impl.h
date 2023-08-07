@@ -22,7 +22,7 @@ namespace vimp
 
             // ============= Cost at current iteration =============
             double cost_iter = cost_value(_mu, _precision);
-            cout << "=== cost_iter ===" << endl << cost_iter << endl;
+            cout << "--- cost_iter ---" << endl << cost_iter << endl;
 
             // ============= Collect factor costs =============
             VectorXd fact_costs_iter = factor_cost_vector();

@@ -57,6 +57,8 @@ public:
         for (int i=1; i<_num_exp+1; i++){
             this->run_one_exp(i, _params);
         }
+
+        std::cout << "========== End of all experiments ==========" << std::endl;
     }
 
 

@@ -32,7 +32,7 @@ class PlanarPRSDFExample: public Base{
     public:
         PlanarPRSDFExample(double epsilon, 
                            double radius, 
-                           const std::string& map_name="2d_map0", 
+                           const std::string& map_name="2dpr_map0", 
                            const std::string& sdf_file=""): 
         Base(2, 1, 2, map_name), 
         _eps(epsilon), 

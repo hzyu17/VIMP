@@ -212,6 +212,7 @@ TEST(PriorCost, dynamics_prior_cost){
     double cost_prior = optimizer.cost_value_no_entropy();
     cout << "cost linear prior" << endl << cost_prior << endl;
 
+    // ground truth from Monte-Carlo estimation
     double cost_prior_expected = 0.6537; 
 
     ASSERT_LE(abs(cost_prior - cost_prior_expected), 1e-4);

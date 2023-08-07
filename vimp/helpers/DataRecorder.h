@@ -179,7 +179,7 @@ public:
         ofstream f_factor_costs(_file_factor_costs);
         _m_io.saveData(_file_factor_costs, _res_factor_costs);
 
-        std::cout << "save data " << std::endl;
+        std::cout << "All data saved" << std::endl;
     }
 };
 

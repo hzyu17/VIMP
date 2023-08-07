@@ -55,25 +55,22 @@ public:
                 _origin << -20, -10;
                 _cell_size = 0.1;
 
-                if (strcmp(map_name.data(), "2d_map0") == 0){
+                if (strcmp(map_name.data(), "2dpr_map0") == 0){
                     _field_file = source_root+"/maps/2dpR/map0/field_multiobs_map0.csv";
                     // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
                     _origin.setZero();
                     _origin << -1, -1;
                     _cell_size = 0.01;
                 }
-                else if(strcmp(map_name.data(), "2d_map1") == 0){
+                else if(strcmp(map_name.data(), "2dpr_map1") == 0){
                     _field_file = source_root+"/maps/2dpR/map1/field_multiobs_map1.csv";
 
                 }
-                else if(strcmp(map_name.data(), "2d_map2") == 0){
+                else if(strcmp(map_name.data(), "2dpr_map2") == 0){
                     _field_file = source_root+"/maps/2dpR/map2/field_multiobs_map2.csv";
 
                 }
-                else if(strcmp(map_name.data(), "2d_map3") == 0){
-                    _field_file = source_root+"/maps/2dpR/map3/field_multiobs_map3.csv";
-                }
-                else if(strcmp(map_name.data(), "2d_map3") == 0){
+                else if(strcmp(map_name.data(), "2dpr_map3") == 0){
                     _field_file = source_root+"/maps/2dpR/map3/field_multiobs_map3.csv";
                 }
                 else if(strcmp(map_name.data(), "2darm_map1") == 0){

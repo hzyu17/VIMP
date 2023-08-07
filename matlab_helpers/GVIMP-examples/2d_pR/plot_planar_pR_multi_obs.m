@@ -20,15 +20,10 @@ plot_experiment = "map1_above";
 % plot_experiment = "map_narrow_go_through";
 % plot_experiment = "map_narrow_go_around";
 
-plot_experiment = "map1_case1";
-
 prefix = "";
 if strcmp(plot_experiment, "map1_above")
     sdfmap = csvread("map1/map_multiobs_map1.csv");
     prefix = ["map1/above_case/"];
-elseif strcmp(plot_experiment, "map1_case1")
-    sdfmap = csvread("map1/map_multiobs_map1.csv");
-    prefix = ["map1/case1/"];
 elseif strcmp(plot_experiment, "map1_below")
     sdfmap = csvread("map1/map_multiobs_map1.csv");
     prefix = ["map1/below_case/"];
@@ -99,7 +94,18 @@ end
 % csvwrite("../vimp/data/2d_pR/mean_map3_circumvent_base.csv", mean)
 
 
-%% plot final iteration results
+%% ================ test data ================
+% plot final iteration results
+sdfmap = csvread("map1/map_multiobs_map1.csv");
+prefix = ["map1/case1/"];
+
+means = csvread([prefix + "mean.csv"]);
+covs = csvread([prefix + "cov.csv"]);
+precisions = csvread([prefix + "precisoin.csv"]);
+costs = csvread([prefix + "cost.csv"]);
+
+factor_costs = csvread([prefix + "factor_costs.csv"]);
+
 niters = 10;
 nt = 10;
 dim_state = 4;
@@ -114,13 +120,18 @@ origin_x = -20;
 origin_y = -10;
 
 figure
+tiledlayout(2, floor(niters/2), 'TileSpacing', 'tight', 'Padding', 'none')
 set(gcf,'position',[x0,y0,width,height])
-hold on
-means_final = means(1:end, niters);
-means_final = reshape(means_final, [4, 10]);
-cov_final = covs(:, niters);
-cov_final = reshape(cov_final, dim_state, dim_state, nt);
-plot_2d_result(sdfmap, means_final, cov_final);
+
+for i_step = 1:niters
+    nexttile
+    hold on
+    means_final = means(1:end, i_step);
+    means_final = reshape(means_final, [4, 10]);
+    cov_final = covs(:, i_step);
+    cov_final = reshape(cov_final, dim_state, dim_state, nt);
+    plot_2d_result(sdfmap, means_final, cov_final);
+end
 
 
 %%
