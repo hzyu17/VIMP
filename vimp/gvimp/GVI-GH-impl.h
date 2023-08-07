@@ -24,11 +24,7 @@ namespace vimp
         }
 
         SpMat dprecision = _Vddmu - _precision;
-        MatrixXd Vddmu_full{_Vddmu};
-        VectorXd Vdmu_full{_Vdmu};
-        VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-Vdmu_full);
-
-        // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+        VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
         return std::make_tuple(dmu, dprecision);
     }
@@ -51,7 +47,6 @@ namespace vimp
 
             // ============= Collect factor costs =============
             VectorXd fact_costs_iter = factor_cost_vector();
-            // _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
 
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
 
@@ -63,20 +58,17 @@ namespace vimp
 
             int cnt = 0;
             int B = 1;
-            double step_size;
+            double step_size = 0.0;
 
-            SpMat new_precision; new_precision.setZero();
-            VectorXd new_mu; new_mu.setZero();
+            SpMat new_precision; 
+            VectorXd new_mu; 
 
-            step_size = pow(_step_size_base, B);
-            new_mu = _mu + step_size * dmu;
-            new_precision = _precision + step_size * dprecision;
+            double new_cost = 1e9;
 
-            new_cost = cost_value(new_mu, new_precision);
-
+            // backtracking 
             while (new_cost > cost_iter)
             {
-                B += 1;
+                new_mu.setZero(); new_precision.setZero();
                 step_size = pow(_step_size_base, B);
                 new_mu = _mu + step_size * dmu;
                 new_precision = _precision + step_size * dprecision;
@@ -92,6 +84,8 @@ namespace vimp
                     cout << "Too many iterations in the backtracking ... Dead" << endl;
                     break;
                 }
+
+                B += 1;
             }
 
             /// update mean and covariance
@@ -110,7 +104,6 @@ namespace vimp
         // cout << "=== final cost ===" << endl
         //      << cost_iter << endl;
     }
-
 
 
     template <typename Factor>
