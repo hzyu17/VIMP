@@ -4,6 +4,7 @@
     <n_states>15</n_states>
     <coeff_Qc>0.8</coeff_Qc>
     <sig_obs>0.0035</sig_obs>
+    <map_name>map2</map_name>
     <eps_sdf>0.7</eps_sdf>
     <radius>1.5</radius>
     <step_size>0.45</step_size>
@@ -19,7 +20,7 @@
 </Commons>
 
 <Experiment1>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
+    <!-- <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file> -->
     
     <start_pos>
         <x>7.0</x>

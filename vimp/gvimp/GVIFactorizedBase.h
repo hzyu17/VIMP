@@ -198,11 +198,9 @@ namespace vimp{
          * @brief Compute the cost function. V(x) = E_q(\phi(x))
          */
         virtual double fact_cost_value(const VectorXd& joint_mean, const SpMat& joint_cov) {
+
             VectorXd mean_k = extract_mu_from_joint(joint_mean);
             MatrixXd Cov_k = extract_cov_from_joint(joint_cov);
-
-            _ei.print_matrix(mean_k, "mean_k");
-            _ei.print_matrix(Cov_k, "Cov_k");
 
             updateGH(mean_k, Cov_k);
 

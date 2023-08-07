@@ -24,7 +24,7 @@ public:
             double sigma_obs, double eps_sdf, double radius,
             double step_size, int num_iter, double stop_err,
             double backtracking_ratio, int max_n_backtracking, 
-            std::string field_file="", std::string sdf_file=""):
+            std::string map_name="map0", std::string sdf_file=""):
             _nx(nx),
             _nu(nu),
             _total_time(total_time),
@@ -40,7 +40,8 @@ public:
             _m0(VectorXd::Zero(nx)),
             _mT(VectorXd::Zero(nx)),
             _Sig0(MatrixXd::Zero(nx, nx)),
-            _SigT(MatrixXd::Zero(nx, nx))
+            _SigT(MatrixXd::Zero(nx, nx)),
+            _map_name(map_name)
             {}
 
 public:
@@ -59,8 +60,9 @@ public:
     inline double step_size() const {return _step_size; }
     inline double backtrack_ratio() const { return _backtrack_ratio; }
 
-    inline std::string field_file() const { return _field_file; }
+    // inline std::string field_file() const { return _field_file; }
     inline std::string sdf_file() const { return _sdf_file; }
+    inline std::string map_name() const { return _map_name;}
 
 
     inline int max_n_backtrack() const { return _max_n_backtrack; }
@@ -84,8 +86,10 @@ public:
 
     inline void set_saving_prefix(const std::string& save_prefix){ _save_prefix = save_prefix; }
 
-    inline void update_field_file(const std::string& field){ _field_file = field; }
+    // inline void update_field_file(const std::string& field){ _field_file = field; }
     inline void update_sdf_file(const std::string& sdf_file){ _sdf_file = sdf_file; }
+    inline void update_map_name(const std::string& map_name){ _map_name = map_name; }
+    
 
     virtual inline void print_params() = 0; 
 
@@ -102,7 +106,7 @@ protected:
     MatrixXd _Sig0, _SigT;
 
     std::string _save_prefix;
-    std::string _sdf_file, _field_file;
+    std::string _sdf_file, _map_name;
 };
 
 class GVIMPParams: public Params{
@@ -110,47 +114,46 @@ public:
     GVIMPParams(){}
 
     GVIMPParams(int nx,
-                        int nu,
-                        double total_time, 
-                        int n_states, 
-                        double coeff_Qc, 
-                        double sig_obs, 
-                        double eps_sdf, 
-                        double radius,
-                        double step_size,
-                        int num_iter,
-                        double initial_precision_factor,
-                        double boundary_penalties,
-                        double temperature,
-                        double high_temperature,
-                        int low_temp_iterations,
-                        double stop_err,
-                        int max_n_backtracking,
-                        double backtracking_ratio = 1,
-                        std::string field="",
-                        std::string sdf_file=""
-                        ):
-                        Params(nx,
-                               nu,
-                               total_time, 
-                               n_states, 
-                               sig_obs, 
-                               eps_sdf, 
-                               radius,
-                               step_size,
-                               num_iter,
-                               stop_err,
-                               backtracking_ratio,
-                               max_n_backtracking,
-                               field,
-                               sdf_file),
-                        _coeff_Qc(coeff_Qc),
-                        _initial_precision_factor(initial_precision_factor),
-                        _boundary_penalties(boundary_penalties),
-                        _temperature(temperature),
-                        _high_temperature(high_temperature),
-                        _max_iter_lowtemp(low_temp_iterations)
-                        { }
+                int nu,
+                double total_time, 
+                int n_states, 
+                double coeff_Qc, 
+                double sig_obs, 
+                double eps_sdf, 
+                double radius,
+                double step_size,
+                int num_iter,
+                double initial_precision_factor,
+                double boundary_penalties,
+                double temperature,
+                double high_temperature,
+                int low_temp_iterations,
+                double stop_err,
+                int max_n_backtracking,
+                std::string map_name="map0",
+                std::string sdf_file=""
+                ):
+                Params(nx,
+                        nu,
+                        total_time, 
+                        n_states, 
+                        sig_obs, 
+                        eps_sdf, 
+                        radius,
+                        step_size,
+                        num_iter,
+                        stop_err,
+                        1,
+                        max_n_backtracking,
+                        map_name,
+                        sdf_file),
+                _coeff_Qc(coeff_Qc),
+                _initial_precision_factor(initial_precision_factor),
+                _boundary_penalties(boundary_penalties),
+                _temperature(temperature),
+                _high_temperature(high_temperature),
+                _max_iter_lowtemp(low_temp_iterations)
+                { }
 
     // getters
     
@@ -174,6 +177,7 @@ public:
         << " Time discretizations:      " << this->nt() << std::endl 
         << " Temperature:               " << this->temperature() << std::endl 
         << " High temperature:          " << this->high_temperature() << std::endl 
+        << " Map name:                  " << this->map_name() << std::endl 
         << " Map eps:                   " << this->eps_sdf() << std::endl 
         << " Cost sigma:                " << this->sig_obs() << std::endl 
         << " Robot radius:              " << this->radius() << std::endl 
@@ -204,7 +208,7 @@ public:
     PGCSParams(int nx, int nu, double eps_sdf, double radius,
                     double eps, double total_time, int nt, double sig0, double sigT, double step_size, 
                     double stop_err, double sig_obs, int num_iter, double backtracking_ratio, 
-                    int max_n_backtracking, std::string field_file="", std::string sdf_file=""):
+                    int max_n_backtracking, std::string map_name="map0", std::string sdf_file=""):
                     Params(nx,
                             nu,
                             total_time, 
@@ -217,7 +221,7 @@ public:
                             stop_err,
                             backtracking_ratio,
                             max_n_backtracking,
-                            field_file,
+                            map_name,
                             sdf_file),
                             _eps(eps),
                             _sig0(sig0),
@@ -239,6 +243,7 @@ public:
         << " Total time span:           " << this->total_time() << std::endl 
         << " Time discretizations:      " << this->nt() << std::endl 
         << " Noise eps:                 " << this->eps() << std::endl 
+        << " Map name:                  " << this->map_name() << std::endl 
         << " Map eps:                   " << this->eps_sdf() << std::endl 
         << " Cost sigma:                " << this->sig_obs() << std::endl 
         << " Robot radius:              " << this->radius() << std::endl 

@@ -26,28 +26,15 @@ class PlanarQuadrotorSDFExample: public Base{
 
 public:
     PlanarQuadrotorSDFExample(){}
-    PlanarQuadrotorSDFExample(double epsilon, double radius, const std::string& field_file, const std::string& sdf_file=""): 
-        Base(2, 1, source_root+"/data/vimp/2d_pR/field_multiobs_entropy_map2.csv", ""), 
+    PlanarQuadrotorSDFExample(double epsilon, 
+                              double radius, 
+                              const std::string& map_name="2d_map2", 
+                              const std::string& sdf_file=""): 
+        Base(2, 1, 2, map_name), 
         _eps(epsilon), 
         _r(radius)
         {
-            if (!field_file.empty()){
-                Base::update_field_file(field_file);
-            }
-            default_sdf();
             generate_pr_sdf(*(Base::_psdf), radius);
-        }
-
-        void default_sdf(){
-            /// map and sdf
-            MatrixXd field{_m_io.load_csv(Base::_field_file)};
-
-            // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
-            Point2 origin(-20, -10);
-            double cell_size = 0.1;
-
-            Base::_psdf = std::make_shared<gpmp2::PlanarSDF>(gpmp2::PlanarSDF(origin, cell_size, field));
-
         }
 
         void generate_pr_sdf(const gpmp2::PlanarSDF& sdf, double r){

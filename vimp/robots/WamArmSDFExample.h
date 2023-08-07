@@ -41,13 +41,19 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 Base::_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), Base::_robot, Base::_sdf, 0.0, _eps));
             }
 
-            WamArmSDFExample(double eps, double radius, const string & field_file, const string & sdf_file): 
-                Base(1, 7, "", ""), _eps(eps), _radius(radius){
+            WamArmSDFExample(double eps, double radius, const string & map_name, const string & sdf_file): 
+                Base(1, 7, 3, map_name), 
+                _eps(eps), 
+                _radius(radius)
+            {
                 if (!sdf_file.empty()){
-                    Base::_sdf_file = sdf_file;
                     Base::_sdf.loadSDF(sdf_file);
+                    Base::_psdf = std::make_shared<SDF>(Base::_sdf);
                 }
-                Base::_psdf = std::make_shared<SDF>(Base::_sdf);
+                else{
+                    std::runtime_error("Empty sdf map file!");
+                }
+
                 generateArm();
                 Base::_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), Base::_robot, Base::_sdf, 0.0, _eps));
             }

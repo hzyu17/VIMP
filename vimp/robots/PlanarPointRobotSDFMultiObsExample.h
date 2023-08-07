@@ -66,9 +66,8 @@ class PlanarPointRobotSDFMultiObsExample{
                 std::runtime_error("No such map for 2d point robot sdf!");
             }
             MatrixXd map_ground_truth = _matrix_io.load_csv(map_file);
-            std::cout << "debug0 " << std::endl;
+
             _field = _matrix_io.load_csv(field_file);            
-            std::cout << "debug0 " << std::endl;
 
             _sdf = gpmp2::PlanarSDF(origin, cell_size, _field);
 

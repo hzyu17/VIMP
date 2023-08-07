@@ -3,6 +3,7 @@ close all
 clc
 addpath('/usr/local/gtsam_toolbox')
 addpath('../../tools/error_ellipse')
+addpath('../../tools/2dpR')
 import gtsam.*
 import gpmp2.*
 
@@ -19,10 +20,15 @@ plot_experiment = "map1_above";
 % plot_experiment = "map_narrow_go_through";
 % plot_experiment = "map_narrow_go_around";
 
+plot_experiment = "map1_case1";
+
 prefix = "";
 if strcmp(plot_experiment, "map1_above")
     sdfmap = csvread("map1/map_multiobs_map1.csv");
     prefix = ["map1/above_case/"];
+elseif strcmp(plot_experiment, "map1_case1")
+    sdfmap = csvread("map1/map_multiobs_map1.csv");
+    prefix = ["map1/case1/"];
 elseif strcmp(plot_experiment, "map1_below")
     sdfmap = csvread("map1/map_multiobs_map1.csv");
     prefix = ["map1/below_case/"];
@@ -69,8 +75,6 @@ elseif strcmp(plot_temperture, "high")
 %     final_cost = csvread([prefix + "final_cost.csv"]);
 end
 
-addpath("error_ellipse");
-
 %% an initilization specially for map3 narrow
 % means = csvread("../vimp/data/2d_pR/mean_base.csv");
 % mean = means(1, 1:end);
@@ -94,6 +98,31 @@ addpath("error_ellipse");
 % end
 % csvwrite("../vimp/data/2d_pR/mean_map3_circumvent_base.csv", mean)
 
+
+%% plot final iteration results
+niters = 10;
+nt = 10;
+dim_state = 4;
+
+x0 = 500;
+y0 = 500;
+width = 600;
+height = 380;
+
+cell_size = 0.1;
+origin_x = -20;
+origin_y = -10;
+
+figure
+set(gcf,'position',[x0,y0,width,height])
+hold on
+means_final = means(1:end, niters);
+means_final = reshape(means_final, [4, 10]);
+cov_final = covs(:, niters);
+cov_final = reshape(cov_final, dim_state, dim_state, nt);
+plot_2d_result(sdfmap, means_final, cov_final);
+
+
 %%
 [~, ttl_dim] = size(means);
 dim_theta = 4;
@@ -115,6 +144,7 @@ n_states = floor(ttl_dim / dim_theta);
 cell_size = 0.1;
 origin_x = -20;
 origin_y = -10;
+
 origin_point2 = Point2(origin_x, origin_y);
 field = signedDistanceField2D(sdfmap, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);

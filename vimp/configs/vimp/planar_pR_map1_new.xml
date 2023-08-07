@@ -3,10 +3,11 @@
     <total_time>1.5</total_time>
     <n_states>10</n_states>
     <coeff_Qc>0.8</coeff_Qc>
-    <sig_obs>0.007</sig_obs>
-    <eps_sdf>0.5</eps_sdf>
-    <radius>1.0</radius>
-    <step_size>0.15</step_size>
+    <sig_obs>0.0035</sig_obs>
+    <map_name>map1</map_name>
+    <eps_sdf>2.0</eps_sdf>
+    <radius>1.5</radius>
+    <step_size>0.45</step_size>
     <init_precision_factor>10.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
@@ -14,12 +15,11 @@
     <low_temp_iterations>10</low_temp_iterations>
     <stop_err>1e-5</stop_err>
     <max_iterations>10</max_iterations>
-    <max_n_backtracking>20</max_n_backtracking>
+    <max_n_backtracking>10</max_n_backtracking>
 
 </Commons>
 
 <Experiment1>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map1.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -35,7 +35,7 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <cost_sigma> 0.004 </cost_sigma>
+    <cost_sigma> 0.005 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map1/case1/</saving_prefix>
 

@@ -109,9 +109,11 @@ public:
         int max_iterations = atoi(commonParams->first_node("max_iterations")->value());
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
 
+        std::string map_name = static_cast<std::string>(commonParams->first_node("map_name")->value());
+
         params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, sig_obs, eps_sdf, radius, 
                             step_size, max_iterations, init_precision_factor, boundary_penalties, 
-                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking);
+                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name);
     }
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& param) override {
@@ -259,10 +261,10 @@ public:
                             sig0, sigT, eta, stop_err, sig_obs, 
                             max_iterations, backtracking_ratio, max_n_backtracking);
 
-        if (commonParams->first_node("field_file")){
-            std::string field = static_cast<std::string>(commonParams->first_node("field_file")->value());
-            param.update_field_file(field);
-        }
+        // if (commonParams->first_node("field_file")){
+        //     std::string field = static_cast<std::string>(commonParams->first_node("field_file")->value());
+        //     param.update_field_file(field);
+        // }
 
         if (commonParams->first_node("sdf_file")){
             std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());

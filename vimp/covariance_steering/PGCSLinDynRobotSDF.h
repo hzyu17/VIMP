@@ -30,7 +30,7 @@ public:
                         ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params),
                         _eps_sdf(params.eps_sdf()),
                         _sig_obs(params.sig_obs()),
-                        _robot_sdf(params.eps_sdf(), params.radius(), params.field_file(), params.sdf_file()),
+                        _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file()),
                         _cost_helper(_max_iter){}
 
     double hingeloss(const Matrix3D& zt, const Matrix3D& Sigt){

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "helpers/MatrixIO.h"
+#include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <Eigen/Dense>
 
 using namespace Eigen;
@@ -43,12 +44,63 @@ public:
     RobotSDFBase(int ndof, int nlinks): 
     _ndof(ndof), _nlinks(nlinks){}
 
-    RobotSDFBase(int ndof, int nlinks, const std::string& field_file, const std::string& sdf_file): 
-    _ndof(ndof), _nlinks(nlinks), _field_file(field_file), _sdf_file(sdf_file){}
+    RobotSDFBase(int ndof, int nlinks, int map_dim, const std::string& map_name): 
+    _ndof(ndof), _nlinks(nlinks), _map_name(map_name), _origin(map_dim)
+    {
+        if (map_dim == 2){
+                /// map and sdf
+                std::string source_root{XSTRING(SOURCE_ROOT)};
+
+                _origin.setZero();
+                _origin << -20, -10;
+                _cell_size = 0.1;
+
+                if (strcmp(map_name.data(), "2d_map0") == 0){
+                    _field_file = source_root+"/maps/2dpR/map0/field_multiobs_map0.csv";
+                    // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
+                    _origin.setZero();
+                    _origin << -1, -1;
+                    _cell_size = 0.01;
+                }
+                else if(strcmp(map_name.data(), "2d_map1") == 0){
+                    _field_file = source_root+"/maps/2dpR/map1/field_multiobs_map1.csv";
+
+                }
+                else if(strcmp(map_name.data(), "2d_map2") == 0){
+                    _field_file = source_root+"/maps/2dpR/map2/field_multiobs_map2.csv";
+
+                }
+                else if(strcmp(map_name.data(), "2d_map3") == 0){
+                    _field_file = source_root+"/maps/2dpR/map3/field_multiobs_map3.csv";
+                }
+                else if(strcmp(map_name.data(), "2d_map3") == 0){
+                    _field_file = source_root+"/maps/2dpR/map3/field_multiobs_map3.csv";
+                }
+                else if(strcmp(map_name.data(), "2darm_map1") == 0){
+                    _cell_size=0.01;
+                    _origin << -1.0, -1.0;
+                    _field_file = source_root+"/maps/2dArm/field_one_obs.csv";
+                }
+                else if(strcmp(map_name.data(), "2darm_map2") == 0){
+                    _cell_size=0.01;
+                    _origin << -1.0, -1.0;
+                    _field_file = source_root+"/maps/2dArm/field_two_obs.csv";
+                }
+                else{
+                    std::runtime_error("No such map for 2d point robot sdf!");
+                }
+
+                // if (!field_file.empty()){
+                //     Base::update_field_file(field_file);
+                // }
+
+            }
+            
+    }
     
 
     virtual void update_sdf(const SDF& sdf) = 0;
-    virtual void default_sdf() = 0;
+    virtual void default_sdf(){};
 
     /**
      * Obstacle Returns the Vector of h(x) and the Jacobian matrix.
@@ -66,23 +118,23 @@ public:
 
     virtual inline ROBOT RobotModel() const { return _robot; }
     virtual inline std::shared_ptr<SDF> psdf() const { return _psdf; }
-    virtual inline SDF sdf() const { return *_psdf; }
+    virtual inline SDF sdf() const { return _sdf; }
     virtual inline int ndof() const {return _ndof;}
     virtual inline int nlinks() const {return _nlinks;}
-
-    inline void update_sdf_file(const string & sdf_file){ _sdf_file = sdf_file; }
-    inline void update_field_file(const string & field_file){ _field_file = field_file; }
 
 public:
     ROBOT _robot;
     SDF _sdf;
+    Eigen::VectorXd _origin;
+    double _cell_size;
+
     std::shared_ptr<SDFFACTOR> _psdf_factor; 
     std::shared_ptr<SDF> _psdf;
     int _ndof, _nlinks;
 
     MatrixIO _m_io;
 
-    std::string _field_file, _sdf_file;
+    std::string _map_name, _field_file;
 };
 
 }

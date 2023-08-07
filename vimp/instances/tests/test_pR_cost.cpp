@@ -21,6 +21,9 @@ gpmp2::PlanarSDF sdf = std::move(planar_pr_sdf.sdf());
 // collision factor
 gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', 0), pRModel, sdf, cost_sigma, epsilon};
 
+// Eigen helper
+EigenWrapper ei;
+
 TEST(ColCost, sdf_map){
 
     // Test point
@@ -136,7 +139,7 @@ TEST(PriorCost, fixed_cost){
     optimizer.set_precision(precision.sparseView());
 
     double cost = optimizer.cost_value_no_entropy();
-    cout << "cost " << endl << cost << endl;
+    cout << "cost fixed linear factor" << endl << cost << endl;
 
     double cost_expected = 2.0000e-08; 
 
@@ -145,54 +148,71 @@ TEST(PriorCost, fixed_cost){
 }
 
 
-// *** Test linear dynamics prior cost
-TEST(PriorCost, dynamics_prior_cost){
-    /// Vector of base factored optimizers
-    vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
+// *** Tests for the linear dynamics prior
+// ======================= global varibles ======================= 
+int dim_conf = 2;
+int state_dim = 4;
+int n_states = 2;
+int joint_state_dim = n_states * state_dim;
+double initial_precision_factor = 1000.0;
 
-    int dim_conf = 2;
-    int dim_state = 4;
-    int n_states = 2;
-    double initial_precision_factor = 10.0;
+double coeff_Qc = 0.8;
+double delt_t = 0.1667;
 
-    double coeff_Qc = 0.8;
-    double delt_t = 0.1667;
+MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*coeff_Qc};
 
-    MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*coeff_Qc};
+VectorXd theta_0{(VectorXd(4) << 0, 0, 11.3333333333333, 9.33333333333333).finished()};
+VectorXd theta_1{(VectorXd(4) << 1.88888888888889, 1.55555555555556, 11.3333333333333, 9.33333333333333).finished()};
 
-    VectorXd theta_0(4);
-    theta_0.setZero();
-    theta_0 << 0, 0, 11.3333333333333, 9.33333333333333;
+MinimumAccGP lin_gp{Qc, 0, delt_t, theta_0};
 
-    VectorXd theta_1(4);
-    theta_1.setZero();
-    theta_1 << 1.88888888888889, 1.55555555555556, 11.3333333333333, 9.33333333333333;
+vector<std::shared_ptr<GVIFactorizedBase>> vec_factors{std::make_shared<GVIFactorizedBase>(
+                                                            LinearGpPrior{joint_state_dim,  state_dim, 
+                                                            cost_linear_gp,  lin_gp, n_states, 0, 10.0, 100.0}
+                                                            )
+                                                       };
 
-    MinimumAccGP lin_gp{Qc, 0, delt_t, theta_0};
-    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
-                                                dim_state, 
-                                                cost_linear_gp, 
-                                                lin_gp, 
-                                                n_states, 
-                                                0, 
-                                                10.0, 
-                                                100.0});
+/// The joint optimizer
+GVIGH<GVIFactorizedBase> optimizer{vec_factors, state_dim, n_states};
 
-    /// The joint optimizer
-    GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, num_states};
-    optimizer.set_mu(theta_0);
+// initial precision matrix for the optimization
+MatrixXd precision{MatrixXd::Identity(joint_state_dim, joint_state_dim) * initial_precision_factor};
 
+VectorXd joint_mean{(VectorXd(8) << theta_0, theta_1).finished()};
+
+
+// ======================= end global varibles ======================= 
+
+// *** Test block extraction of the factors from joint level mean and covariances.
+TEST(PriorCost, factorization){
+    optimizer.set_mu(joint_mean);
     optimizer.set_GH_degree(6);
-
-    // initial precision matrix for the optimization
-    MatrixXd precision = MatrixXd::Identity(dim_state, dim_state) * initial_precision_factor;
-
+    
     optimizer.set_precision(precision.sparseView());
 
-    double cost = optimizer.cost_value_no_entropy();
-    cout << "cost " << endl << cost << endl;
+    SpMat joint_cov = optimizer.covariance();
 
-    double cost_expected = 2.0000e-08; 
+    VectorXd extracted_mean = vec_factors[0]->extract_mu_from_joint(joint_mean);
+    SpMat extracted_covariance = vec_factors[0]->extract_cov_from_joint(joint_cov);
+    // should equal
+    ASSERT_LE((extracted_mean - joint_mean).norm(), 1e-5);
+    ASSERT_LE((extracted_covariance - joint_cov).norm(), 1e-5);
 
-    ASSERT_LE(abs(cost - cost_expected), 1e-6);
+}
+
+
+// *** Test linear dynamics prior cost
+TEST(PriorCost, dynamics_prior_cost){
+    
+    optimizer.set_mu(joint_mean);
+    optimizer.set_GH_degree(6);
+    
+    optimizer.set_precision(precision.sparseView());
+
+    double cost_prior = optimizer.cost_value_no_entropy();
+    cout << "cost linear prior" << endl << cost_prior << endl;
+
+    double cost_prior_expected = 0.6537; 
+
+    ASSERT_LE(abs(cost_prior - cost_prior_expected), 1e-4);
 }

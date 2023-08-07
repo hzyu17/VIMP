@@ -70,7 +70,7 @@ namespace vimp
                 new_precision = _precision + step_size * dprecision;
                 new_cost = cost_value(new_mu, new_precision);
 
-                std::cout << "new_cost backtrack" << std::endl << new_cost << std::endl;
+                // std::cout << "new_cost backtrack" << std::endl << new_cost << std::endl;
 
                 cnt += 1;
 

@@ -43,7 +43,7 @@ elseif strcmp(dataset_str, 'MultiObstacleDataset')
     dataset.map = add_obstacle(get_center(0,-5,dataset), get_dim(10,5,dataset), dataset.map);
 
     
-elseif strcmp(dataset_str, 'MultiObstacleEntropy')
+elseif strcmp(dataset_str, 'MultiObstacleEntropy1')
     % params
     dataset.cols = 400; %x
     dataset.rows = 300; %y
@@ -58,19 +58,19 @@ elseif strcmp(dataset_str, 'MultiObstacleEntropy')
     dataset.map = add_obstacle(get_center(0,-5,dataset), get_dim(10,5,dataset), dataset.map);
 
 
-elseif strcmp(dataset_str, 'MultiObstacleEntropy1')
-    % params
-    dataset.cols = 400; %x
-    dataset.rows = 300; %y
-    dataset.origin_x = -20;
-    dataset.origin_y = -10;
-    dataset.cell_size = 0.1;
-    % map
-    dataset.map = zeros(dataset.rows, dataset.cols);
-    % obstacles
-    dataset.map = add_obstacle(get_center(12,5,dataset), get_dim(5,10,dataset), dataset.map);
-    dataset.map = add_obstacle(get_center(-10,5,dataset), get_dim(7,10,dataset), dataset.map);
-    dataset.map = add_obstacle(get_center(2,5,dataset), get_dim(7,8,dataset), dataset.map);
+% elseif strcmp(dataset_str, 'MultiObstacleEntropy1')
+%     % params
+%     dataset.cols = 400; %x
+%     dataset.rows = 300; %y
+%     dataset.origin_x = -20;
+%     dataset.origin_y = -10;
+%     dataset.cell_size = 0.1;
+%     % map
+%     dataset.map = zeros(dataset.rows, dataset.cols);
+%     % obstacles
+%     dataset.map = add_obstacle(get_center(12,5,dataset), get_dim(5,10,dataset), dataset.map);
+%     dataset.map = add_obstacle(get_center(-10,5,dataset), get_dim(7,10,dataset), dataset.map);
+%     dataset.map = add_obstacle(get_center(2,5,dataset), get_dim(7,8,dataset), dataset.map);
     
 elseif strcmp(dataset_str, 'MultiObstacleEntropy2')
     % params

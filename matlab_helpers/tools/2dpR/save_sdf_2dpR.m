@@ -10,8 +10,7 @@ import gpmp2.*
 
 addpath('../../tools/2dpR')
 
-
-% ========== map0 ========== 
+disp("========== map0 ========== ")
 dataset = generate2Ddataset_1('OneObstacleDataset');
 rows = dataset.rows;
 cols = dataset.cols;
@@ -33,8 +32,7 @@ figure
 plotEvidenceMap2D_1(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
 title("Map0")
 
-
-% ========== map1 ========== 
+disp("========== map1 ========== ")
 dataset = generate2Ddataset_1('MultiObstacleEntropy1');
 rows = dataset.rows;
 cols = dataset.cols;
@@ -57,7 +55,7 @@ plotEvidenceMap2D_1(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
 title("Map1")
 
 
-% ========== map2 ========== 
+disp("========== map2 ========== ")
 dataset = generate2Ddataset_1('MultiObstacleEntropy2');
 rows = dataset.rows;
 cols = dataset.cols;
@@ -80,7 +78,7 @@ plotEvidenceMap2D_1(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
 title("Map2")
 
 
-% ========== map3 ========== 
+disp("========== map3 ========== ")
 dataset = generate2Ddataset_1('MultiObstacleEntropy3');
 rows = dataset.rows;
 cols = dataset.cols;

@@ -32,22 +32,22 @@ class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
     public:
         virtual ~PointRobot3DSDFExample(){}
         
-        PointRobot3DSDFExample(double epsilon, double radius, const std::string & field, const std::string& sdf_file):
-        Base(3, 1, "", source_root+"/../matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin"),
+        PointRobot3DSDFExample(double epsilon, 
+                               double radius, 
+                               const std::string& map_name, 
+                               const std::string& sdf_file=source_root+"/../matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin"):
+        Base(3, 1, 3, ""),
         _eps(epsilon), 
         _r(radius)
         {
             if (!sdf_file.empty()){
-                Base::update_sdf_file(sdf_file);
+                Base::_sdf.loadSDF(sdf_file);
+                Base::_psdf = std::make_shared<SDF>(Base::_sdf);
             }
-            default_sdf();
-            generate_pr_sdf(*_psdf, radius);
-        }
-
-        virtual void default_sdf(){
-            SDF sdf = SDF();
-            sdf.loadSDF(Base::_sdf_file);
-            _psdf = std::make_shared<SDF>(sdf);
+            else{
+                std::runtime_error("Empty sdf map file!");
+            }
+            generate_pr_sdf(Base::_sdf, radius);
         }
 
         void generate_pr_sdf(const SDF& sdf, double r){

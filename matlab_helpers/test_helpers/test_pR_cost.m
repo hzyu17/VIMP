@@ -5,6 +5,7 @@
 
 addpath('../tools/2dpR')
 addpath('/usr/local/gtsam_toolbox')
+addpath('../GaussHermite')
 import gtsam.*
 import gpmp2.*
 
@@ -112,9 +113,10 @@ inv_Q = [12 .* invQc ./ power(delta_t, 3), -6 .* invQc ./ power(delta_t, 2);
 Phi = [ eye(dim_conf), delta_t.*eye(dim_conf);
         zeros(dim_conf, dim_conf), eye(dim_conf) ];
 
-% Cost function
+% dynamics prior cost function
 x = sym('x', [8,1]);
 phi_81 = transpose(Phi*x(1:4)-x(5:8)) * inv_Q * (Phi*x(1:4)-x(5:8)) / 2.0;
+phi_81_func = matlabFunction(phi_81);
 
 p_GH = 6;
 
@@ -122,8 +124,20 @@ p_GH = 6;
 mu_0 = [0, 0, 11.3333333333333, 9.33333333333333]';
 mu_1 = [1.88888888888889, 1.55555555555556, 11.3333333333333, 9.33333333333333]';
 mu = [mu_0; mu_1];
-precision = eye(8) .* 10.0;
-cov = inv(precision);
+precision = eye(8) .* 1000.0;
+cov = inv(precision)
 
-% GH
-Int1 = GaussHermiteN(8, phi_81, p_GH, mu, cov)
+% Monte-Carlo estimaiton of the dynamics prior
+x_mean = [mu_0; mu_1];
+num_samples = 10000000;
+ttl_cost = 0;
+for i = 1:num_samples
+    i_sample = x_mean + randn(8, 1)*sqrt(0.001);
+    i_err_vec = phi_81_func(i_sample(1), i_sample(2), i_sample(3), i_sample(4), ...
+                            i_sample(5), i_sample(6), i_sample(7), i_sample(8));
+    ttl_cost = ttl_cost + i_err_vec;
+end
+monte_carlo = ttl_cost / 10.0 / num_samples
+
+% % GH
+% Int1 = GaussHermiteN(8, phi_81, p_GH, mu, cov)

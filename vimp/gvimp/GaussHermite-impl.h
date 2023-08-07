@@ -89,7 +89,7 @@ namespace vimp{
 
     template <typename Function>
     MatrixXd GaussHermite<Function>::Integrate(const Function& function){
-
+                
         computeWeights();
 
         LLT<MatrixXd> lltP(_P);

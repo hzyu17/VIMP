@@ -126,6 +126,7 @@ protected:
             for (int i=0; i<_num_states-1; i++){
                 _ei.block_insert_sparse(_precision, i*_dim_state, i*_dim_state, 2*_dim_state, 2*_dim_state, block);
             }
+
         }
         
         SpMat lower = _precision.triangularView<Eigen::Lower>();
@@ -188,6 +189,7 @@ public:
 
     inline void inverse_inplace(){
         ldlt_decompose();
+
         _ei.inv_sparse(_precision, _covariance, _Rows, _Cols, _Vals, _Dinv);
     }
 

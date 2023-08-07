@@ -25,36 +25,19 @@ using Base = RobotSDFBase<gpmp2::ArmModel, gpmp2::PlanarSDF, ArmSDF>;
 class PlanarArmSDFExample: public Base{
     public:
         PlanarArmSDFExample(double epsilon, double radius,
-                            const std::string& field_file="", const std::string& sdf_file="", 
-                            double cell_size=0.01, double ori_x=-1.0, double ori_y=-1.0):
-        Base(2, 1, "/home/hzyu/git/VIMP/vimp/data/pgcs/2d_Arm/field_two_obs.csv", ""), 
+                            const std::string& map_name="2darm_map1", 
+                            const std::string& sdf_file=""):
+        Base(2, 1, 2, map_name), 
         _eps(epsilon), 
-        _r(radius),
-        _cell_size(cell_size)
-        {
-            Eigen::Vector2d origin(ori_x, ori_y);
-            _origin = origin;
-            if (!field_file.empty()){
-                Base::update_field_file(field_file);
-            }
-            default_sdf();
-            generate_arm_sdf(*(Base::_psdf), radius);
+        _r(radius)
+        {   
+            MatrixXd field = _m_io.load_csv(Base::_field_file);  
+            Base::_sdf = gpmp2::PlanarSDF(Base::_origin, Base::_cell_size, field);
+            Base::_psdf = std::make_shared<gpmp2::PlanarSDF>(Base::_sdf);
+
+            generate_arm_sdf(Base::_sdf, radius);
         }
 
-        virtual void default_sdf(){
-            /// map and sdf
-            MatrixXd field{_m_io.load_csv(Base::_field_file)};
-
-            // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
-            // Point2 origin(-20, -10);
-            // double cell_size = 0.1;
-
-            // Point2 origin(-1.0, -1.0);
-            // double cell_size = 0.01;
-
-            _psdf = std::make_shared<gpmp2::PlanarSDF>(gpmp2::PlanarSDF(_origin, _cell_size, field));
-
-        }
 
         void generate_arm_sdf(const gpmp2::PlanarSDF& sdf, double r){
             // 2 link simple example
