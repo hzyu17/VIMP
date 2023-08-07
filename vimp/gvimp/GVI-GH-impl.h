@@ -7,6 +7,31 @@ using namespace std;
 
 namespace vimp
 {
+    
+    /**
+     * @brief One step of optimization.
+     */
+    template <typename Factor>
+    std::tuple<VectorXd, SpMat> GVIGH<Factor>::compute_gradients(){
+        _Vdmu.setZero();
+        _Vddmu.setZero();
+
+        for (auto &opt_k : _vec_factors)
+        {
+            opt_k->calculate_partial_V_GH();
+            _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
+            _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
+        }
+
+        SpMat dprecision = _Vddmu - _precision;
+        MatrixXd Vddmu_full{_Vddmu};
+        VectorXd Vdmu_full{_Vdmu};
+        VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-Vdmu_full);
+
+        // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+
+        return std::make_tuple(dmu, dprecision);
+    }
 
     /**
      * @brief optimize with backtracking
@@ -29,23 +54,12 @@ namespace vimp
             // _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
 
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
-            // one step
-            _Vdmu.setZero();
-            _Vddmu.setZero();
 
-            for (auto &opt_k : _vec_factors)
-            {
-                opt_k->calculate_partial_V_GH();
-                _Vdmu = _Vdmu + opt_k->joint_Vdmu_sp();
-                _Vddmu = _Vddmu + opt_k->joint_Vddmu_sp();
-            }
+            // gradients
+            std::tuple<VectorXd, SpMat> dmudprecision = this->compute_gradients();
 
-            SpMat dprecision = _Vddmu - _precision;
-            MatrixXd Vddmu_full{_Vddmu};
-            VectorXd Vdmu_full{_Vdmu};
-            VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-Vdmu_full);
-
-            // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+            VectorXd dmu = std::get<0>(dmudprecision);
+            SpMat dprecision = std::get<1>(dmudprecision);
 
             int cnt = 0;
             int B = 1;
@@ -59,8 +73,6 @@ namespace vimp
             new_precision = _precision + step_size * dprecision;
 
             new_cost = cost_value(new_mu, new_precision);
-
-            std::cout << "--- new_cost ---" << std::endl << new_cost << std::endl;
 
             while (new_cost > cost_iter)
             {
@@ -89,13 +101,7 @@ namespace vimp
             cost_iter = new_cost;
 
             B = 1;
-            // if (cost_iter - new_cost < stop_error()){
-            //     cout << "--- Cost Decrease less than threshold ---" << endl << cost_iter - new_cost << endl;
-            //     save_data();
-            //     /// see a purturbed cost
-            //     cout << "=== final cost ===" << endl << cost_iter << endl;
-            //     return ;
-            // }
+
         }
 
         save_data();
@@ -104,6 +110,8 @@ namespace vimp
         // cout << "=== final cost ===" << endl
         //      << cost_iter << endl;
     }
+
+
 
     template <typename Factor>
     inline void GVIGH<Factor>::set_precision(const SpMat &new_precision)

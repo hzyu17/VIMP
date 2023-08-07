@@ -119,6 +119,10 @@ public:
     virtual inline int ndof() const {return _ndof;}
     virtual inline int nlinks() const {return _nlinks;}
 
+    Eigen::VectorXd map_origin() const { return _origin; }
+    double cell_size() const { return _cell_size; }
+    std::string field_file() const { return _field_file; }
+
 public:
     ROBOT _robot;
     SDF _sdf;

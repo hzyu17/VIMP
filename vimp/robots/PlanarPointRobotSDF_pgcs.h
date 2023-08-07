@@ -30,6 +30,8 @@ namespace vimp{
 using Base = RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>;
 class PlanarPRSDFExample: public Base{
     public:
+        PlanarPRSDFExample(){}
+        
         PlanarPRSDFExample(double epsilon, 
                            double radius, 
                            const std::string& map_name="2dpr_map0", 

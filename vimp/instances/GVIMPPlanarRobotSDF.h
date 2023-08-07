@@ -21,10 +21,17 @@ template <typename Robot, typename RobotSDF>
 class GVIMPPlanarRobotSDF{
 public:
     virtual ~GVIMPPlanarRobotSDF(){}
+
     GVIMPPlanarRobotSDF(){}
+
     GVIMPPlanarRobotSDF(GVIMPParams& params):
     _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file())
     {}
+
+
+    RobotSDF robot_sdf(){
+        return _robot_sdf;
+    }
 
     void run_optimization(const GVIMPParams& params){
         /// parameters
@@ -149,6 +156,7 @@ public:
 
         optimizer.set_GH_degree(3);
         optimizer.set_step_size_base(params.step_size()); // a local optima
+
         optimizer.optimize();
 
     }
@@ -158,6 +166,7 @@ protected:
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     EigenWrapper _ei;
+    std::shared_ptr<GVIGH<GVIFactorizedBase>> _p_opt;
 
 };
 

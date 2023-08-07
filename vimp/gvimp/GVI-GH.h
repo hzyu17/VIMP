@@ -139,7 +139,7 @@ public:
     /**
      * @brief Function which computes one step of update.
      */
-    void step();
+    std::tuple<VectorXd, SpMat> compute_gradients();
 
 
     /**
@@ -180,6 +180,10 @@ public:
     inline VectorXd mean() const{ return _mu; }
 
     inline SpMat precision() const{ return _precision; }
+
+    inline VectorXd Vdmu() const {return _Vdmu; }
+
+    inline SpMat Vddmu() const { return _Vddmu; }
 
     /// returns the covariance matrix
     inline SpMat covariance(){ 

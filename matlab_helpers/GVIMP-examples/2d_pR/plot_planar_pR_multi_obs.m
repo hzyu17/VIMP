@@ -8,11 +8,11 @@ import gtsam.*
 import gpmp2.*
 
 %% choose the experiment and temperature to plot
-% plot_temperture = "low";
-plot_temperture = "high";
+plot_temperture = "low";
+% plot_temperture = "high";
 
-plot_experiment = "map1_above";
-% plot_experiment = "map1_below";
+% plot_experiment = "map1_above";
+plot_experiment = "map1_below";
 % plot_experiment = "map2_exp1";
 % plot_experiment = "map2_exp2";
 % plot_experiment = "map2_exp3";
@@ -54,7 +54,7 @@ if strcmp(plot_temperture, "low") && (~contains(plot_experiment, "go_around"))
     costs = csvread([prefix + "cost_base.csv"]);
     
     factor_costs = csvread([prefix + "factor_costs_base.csv"]);
-    perturb_stat= csvread([prefix + "perturbation_statistics_base.csv"]);
+%     perturb_stat= csvread([prefix + "perturbation_statistics_base.csv"]);
     final_cost = csvread([prefix + "final_cost_base.csv"]);
     
 elseif strcmp(plot_temperture, "high")
@@ -103,10 +103,45 @@ means = csvread([prefix + "mean.csv"]);
 covs = csvread([prefix + "cov.csv"]);
 precisions = csvread([prefix + "precisoin.csv"]);
 costs = csvread([prefix + "cost.csv"]);
-
 factor_costs = csvread([prefix + "factor_costs.csv"]);
 
 niters = 10;
+nt = 10;
+dim_state = 4;
+
+x0 = 500;
+y0 = 500;
+width = 600;
+height = 380;
+
+cell_size = 0.1;
+origin_x = -20;
+origin_y = -10;
+
+figure
+tiledlayout(2, floor(niters/2), 'TileSpacing', 'tight', 'Padding', 'none')
+set(gcf,'position',[x0,y0,width,height])
+
+for i_step = 1:niters
+    nexttile
+    hold on
+    means_final = means(1:end, i_step);
+    means_final = reshape(means_final, [4, 10]);
+    cov_final = covs(:, i_step);
+    cov_final = reshape(cov_final, dim_state, dim_state, nt);
+    plot_2d_result(sdfmap, means_final, cov_final);
+end
+
+%%
+prefix = ["map1/case2/"];
+
+means = csvread([prefix + "mean.csv"]);
+covs = csvread([prefix + "cov.csv"]);
+precisions = csvread([prefix + "precisoin.csv"]);
+costs = csvread([prefix + "cost.csv"]);
+factor_costs = csvread([prefix + "factor_costs.csv"]);
+
+niters = 20;
 nt = 10;
 dim_state = 4;
 
