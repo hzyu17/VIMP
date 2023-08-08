@@ -54,8 +54,12 @@ TEST(ColCost, collision_cost){
     MatrixXd Pk_col{MatrixXd::Zero(2, 4)};
     Pk_col.block(0, 0, 2, 2) = std::move(MatrixXd::Identity(2, 2));
 
+    double temperature = 10.0, high_temperature = 100.0;
+
     /// Factored optimizer
-    std::shared_ptr<PlanarSDFFactorPR> p_obs{new PlanarSDFFactorPR{2, dim_state, cost_sdf_pR, collision_k, num_states, 0, 1.0, 10.0}};
+    std::shared_ptr<PlanarSDFFactorPR> p_obs{new PlanarSDFFactorPR{2, dim_state, cost_sdf_pR, 
+                                                                   collision_k, num_states, 0, 
+                                                                   temperature, high_temperature}};
     vec_factor_opts.emplace_back(p_obs);
 
     /// The joint optimizer
@@ -76,14 +80,14 @@ TEST(ColCost, collision_cost){
 
     optimizer.set_precision(precision_sp);
 
-    double cost = optimizer.cost_value_no_entropy();
+    double cost_collision = optimizer.cost_value_no_entropy();
 
     VectorXd vec_err(1);
     vec_err = collision_k.evaluateError(joint_init_theta.segment(0, 2));  
 
-    double temperature = 10.0;
     double  cost_expected = vec_err(0) * vec_err(0) / cost_sigma / temperature;
-    ASSERT_LE(abs(cost - cost_expected), 1e-5);
+    
+    ASSERT_LE(abs(cost_collision - cost_expected), 1e-5);
 
 
     // *********** In the case of a normal covariance, compared with the ground truth from matlab.
@@ -121,9 +125,7 @@ TEST(PriorCost, fixed_cost){
                                               cost_fixed_gp, 
                                               fixed_gp, 
                                               n_states, 
-                                              0, 
-                                              10.0, 
-                                              100.0});
+                                              0});
 
     /// The joint optimizer
     GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, num_states};
@@ -161,17 +163,6 @@ MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*coeff_Qc};
 VectorXd theta_0{(VectorXd(4) << 0, 0, 11.3333333333333, 9.33333333333333).finished()};
 VectorXd theta_1{(VectorXd(4) << 1.88888888888889, 1.55555555555556, 11.3333333333333, 9.33333333333333).finished()};
 
-MinimumAccGP lin_gp{Qc, 0, delt_t, theta_0};
-
-vector<std::shared_ptr<GVIFactorizedBase>> vec_factors{std::make_shared<GVIFactorizedBase>(
-                                                            LinearGpPrior{joint_state_dim,  state_dim, 
-                                                            cost_linear_gp,  lin_gp, n_states, 0, 10.0, 100.0}
-                                                            )
-                                                       };
-
-/// The joint optimizer
-GVIGH<GVIFactorizedBase> optimizer{vec_factors, state_dim, n_states};
-
 // initial precision matrix for the optimization
 MatrixXd precision{MatrixXd::Identity(joint_state_dim, joint_state_dim) * initial_precision_factor};
 
@@ -182,6 +173,16 @@ VectorXd joint_mean{(VectorXd(8) << theta_0, theta_1).finished()};
 
 // *** Test block extraction of the factors from joint level mean and covariances.
 TEST(PriorCost, factorization){
+    MinimumAccGP lin_gp{Qc, 0, delt_t, theta_0};
+
+    vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
+    vec_factors.emplace_back(new LinearGpPrior{joint_state_dim,  state_dim, 
+                                                cost_linear_gp,  lin_gp, n_states, 
+                                                0, 10.0, 100.0} );
+
+    /// The joint optimizer
+    GVIGH<GVIFactorizedBase> optimizer{vec_factors, state_dim, n_states};
+
     optimizer.set_mu(joint_mean);
     optimizer.set_GH_degree(6);
     
@@ -200,6 +201,16 @@ TEST(PriorCost, factorization){
 
 // *** Test linear dynamics prior cost
 TEST(PriorCost, dynamics_prior_cost){
+
+    MinimumAccGP lin_gp{Qc, 0, delt_t, theta_0};
+
+    vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
+    vec_factors.emplace_back(new LinearGpPrior{joint_state_dim,  state_dim, 
+                                                cost_linear_gp,  lin_gp, n_states, 
+                                                0, 10.0, 100.0} );
+
+    /// The joint optimizer
+    GVIGH<GVIFactorizedBase> optimizer{vec_factors, state_dim, n_states};
     
     optimizer.set_mu(joint_mean);
     optimizer.set_GH_degree(6);

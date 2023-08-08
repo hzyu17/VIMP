@@ -59,7 +59,7 @@ p_GH = 6;
 
 
 % Inputs
-Int21_gt = err_vec*err_vec/cost_sigma/10.0
+collision_cost_expected = err_vec*err_vec/cost_sigma/10.0
 
 
 % smaller covariance: Monte-Carlo estimation
@@ -71,12 +71,12 @@ x_mean = [11.3321059864421, 9.16117246531728]';
 num_samples = 1000000;
 ttl_cost = 0;
 for i = 1:num_samples
-    i_sample = x_mean + randn(2, 1);
+    i_sample = x_mean + sqrt(1e-5)*randn(2, 1);
     i_err_vec = obs_factor.evaluateError(i_sample);
     ttl_cost = ttl_cost + i_err_vec * i_err_vec / cost_sigma / 10.0;
 end
 
-monte_carlo = ttl_cost / num_samples
+monte_carlo_collision_cost = ttl_cost / num_samples
 
 %% Test dynamics prior cost
 % --------------- fixed cost ---------------

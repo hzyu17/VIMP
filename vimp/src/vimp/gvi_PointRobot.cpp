@@ -34,7 +34,6 @@ int main(int argc, char* argv[]){
     else if (argc == 2){
         num_exp = 4;
         std::string config_relative = static_cast<std::string>(argv[1]);
-        std::cout << "config_relative " << std::endl << config_relative << std::endl;
         
         std::string config_file{source_root+"/"+config_relative};
         GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);

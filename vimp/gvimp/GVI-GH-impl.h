@@ -53,9 +53,13 @@ namespace vimp
             // gradients
             std::tuple<VectorXd, SpMat> dmudprecision = this->compute_gradients();
 
+
             VectorXd dmu = std::get<0>(dmudprecision);
             SpMat dprecision = std::get<1>(dmudprecision);
 
+            _ei.print_matrix(dmu, "dmu");
+            _ei.print_matrix(dprecision, "dprecision");
+            
             int cnt = 0;
             int B = 1;
             double step_size = 0.0;
