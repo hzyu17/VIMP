@@ -66,6 +66,9 @@ namespace vimp{
          * (partial V^2) / (partial mu)(partial mu^T): higher order moments of a Gaussian.
         */
         void calculate_partial_V() override{
+            _Vdmu.setZero();
+            _Vddmu.setZero();
+
             // helper vectors
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 

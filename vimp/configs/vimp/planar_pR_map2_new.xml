@@ -5,39 +5,35 @@
     <sig_obs>0.0035</sig_obs>
     <map_name>2dpr_map2</map_name>
     <eps_sdf>0.7</eps_sdf>
-    <radius>1.0</radius>
+    <radius>1.5</radius>
     <step_size>0.45</step_size>
     <init_precision_factor>20.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>10</low_temp_iterations>
+    <low_temp_iterations>2</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>10</max_iterations>
+    <max_iterations>2</max_iterations>
     <max_n_backtracking>10</max_n_backtracking>
 
 </Commons>
 
 <Experiment1>    
     <start_pos>
-        <!-- <x>7.0</x>
-        <y>-5.0</y> -->
-        <x>-7.0</x>
+        <x>7.0</x>
         <y>-5.0</y>
         <vx>0.0</vx>
         <vy>0.0</vy>
     </start_pos>
 
     <goal_pos>
-        <!-- <x>-10.0</x>
-        <y>16.0</y> -->
-        <x>8.0</x>
-        <y>18.0</y>
+        <x>-10.0</x>
+        <y>16.0</y>
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
 
-    <cost_sigma> 0.0045 </cost_sigma>
+    <cost_sigma> 0.0035 </cost_sigma>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case1/</saving_prefix>
 
 </Experiment1>

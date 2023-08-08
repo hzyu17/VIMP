@@ -52,7 +52,7 @@ public:
                 std::string source_root{XSTRING(SOURCE_ROOT)};
 
                 _origin.setZero();
-                _origin << -20, -10;
+                _origin << -20.0, -10.0;
                 _cell_size = 0.1;
 
                 if (strcmp(map_name.data(), "2dpr_map0") == 0){

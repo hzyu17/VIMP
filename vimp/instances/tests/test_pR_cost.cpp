@@ -140,7 +140,7 @@ TEST(PriorCost, fixed_cost){
 
     double cost = optimizer.cost_value_no_entropy();
 
-    double cost_expected = 2.0000e-08; 
+    double cost_expected = 2.0000e-09; 
 
     ASSERT_LE(abs(cost - cost_expected), 1e-6);
 

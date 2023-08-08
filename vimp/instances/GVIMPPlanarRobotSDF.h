@@ -28,7 +28,6 @@ public:
     _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file())
     {}
 
-
     RobotSDF robot_sdf(){
         return _robot_sdf;
     }

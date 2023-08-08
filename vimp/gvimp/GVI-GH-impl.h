@@ -24,7 +24,11 @@ namespace vimp
         }
 
         SpMat dprecision = _Vddmu - _precision;
-        VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+        // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+
+        MatrixXd Vddmu_full{_Vddmu};
+
+        VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-_Vdmu);
 
         return std::make_tuple(dmu, dprecision);
     }
@@ -42,23 +46,28 @@ namespace vimp
             cout << "========= iteration " << i_iter << " ========= " << endl;
 
             // ============= Cost at current iteration =============
+            // _ei.print_matrix(_mu, "_mu");
+            // _ei.print_matrix(_precision, "_precision");
             double cost_iter = cost_value(_mu, _precision);
             cout << "--- cost_iter ---" << endl << cost_iter << endl;
 
             // ============= Collect factor costs =============
             VectorXd fact_costs_iter = factor_cost_vector();
 
+            _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
+
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
+
+            // save_data();
 
             // gradients
             std::tuple<VectorXd, SpMat> dmudprecision = this->compute_gradients();
 
-
             VectorXd dmu = std::get<0>(dmudprecision);
             SpMat dprecision = std::get<1>(dmudprecision);
 
-            _ei.print_matrix(dmu, "dmu");
-            _ei.print_matrix(dprecision, "dprecision");
+            // _ei.print_matrix(dmu, "dmu");
+            // _ei.print_matrix(dprecision, "dprecision");
             
             int cnt = 0;
             int B = 1;
@@ -159,18 +168,18 @@ namespace vimp
 
         SpMat Cov = inverse(Precision);
 
-        MatrixXd cov_sp{Cov};
-        MatrixXd precision_full{Precision};
-        MatrixXd cov_full = precision_full.inverse();
-
         double value = 0.0;
         for (auto &opt_k : _vec_factors)
         {
             value += opt_k->fact_cost_value(mean, Cov); // / _temperature;
         }
 
-        SparseLDLT ldlt(Precision);
-        double det = ldlt.determinant();
+        // SparseLDLT ldlt(Precision);
+        // double det = ldlt.determinant();
+        MatrixXd precision_full{Precision};
+        double det = precision_full.determinant();
+
+        std::cout << "det " << det << std::endl;
 
         if (det < 0)
         {

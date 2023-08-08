@@ -138,9 +138,12 @@ namespace vimp{
             // update the mu and sigma inside the gauss-hermite integrator
             updateGH(_mu, _covariance);
 
+            _Vdmu.setZero();
+            _Vddmu.setZero();
+
             /// Integrate for E_q{_Vdmu} 
-            VectorXd Vdmu = _gh->Integrate(_func_Vmu);
-            Vdmu = _precision * Vdmu;
+            _Vdmu = _gh->Integrate(_func_Vmu);
+            _Vdmu = _precision * _Vdmu;
 
             /// Integrate for E_q{phi(x)}
             double E_phi = _gh->Integrate(_func_phi)(0, 0);
@@ -148,13 +151,10 @@ namespace vimp{
             /// Integrate for partial V^2 / ddmu_ 
             MatrixXd E_xxphi{_gh->Integrate(_func_Vmumu)};
 
-            MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
-            Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
-            Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+            // MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
+            _Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
+            _Vddmu.triangularView<StrictlyLower>() = _Vddmu.triangularView<StrictlyUpper>().transpose();
 
-            // update member variables
-            _Vdmu = Vdmu;
-            _Vddmu = Vddmu;
         }
 
         void test_integration(){
@@ -174,9 +174,12 @@ namespace vimp{
             // update the mu and sigma inside the gauss-hermite integrator
             updateGH(_mu, _covariance);
 
+            _Vdmu.setZero();
+            _Vddmu.setZero();
+
             /// Integrate for E_q{_Vdmu} 
-            VectorXd Vdmu = _gh->Integrate(_func_Vmu);
-            Vdmu = _precision * Vdmu;
+            _Vdmu = _gh->Integrate(_func_Vmu);
+            _Vdmu = _precision * _Vdmu;
 
             /// Integrate for E_q{phi(x)}
             double E_phi = _gh->Integrate(_func_phi)(0, 0);
@@ -184,13 +187,9 @@ namespace vimp{
             /// Integrate for partial V^2 / ddmu_ 
             MatrixXd E_xxphi{_gh->Integrate(_func_Vmumu)};
 
-            MatrixXd Vddmu{MatrixXd::Zero(_dim, _dim)};
-            Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
-            Vddmu.triangularView<StrictlyLower>() = Vddmu.triangularView<StrictlyUpper>().transpose();
+            _Vddmu.triangularView<Upper>() = (_precision * E_xxphi * _precision - _precision * E_phi).triangularView<Upper>();
+            _Vddmu.triangularView<StrictlyLower>() = _Vddmu.triangularView<StrictlyUpper>().transpose();
 
-            // update member variables
-            _Vdmu = Vdmu;
-            _Vddmu = Vddmu;
         }
 
         /**

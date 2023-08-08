@@ -9,7 +9,8 @@ built_dir = pwd + "/build"
 exp = "map2"
 
 if exp == "map1":
-    script = built_dir + "/gvi_PointRobot"
+    config_file = "configs/vimp/planar_pR_map1_new.xml"
+    script = built_dir + "/gvi_PointRobot" + " " + config_file
     os.system(script)
 elif exp == "map2":
     config_file = "configs/vimp/planar_pR_map2_new.xml"

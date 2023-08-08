@@ -28,12 +28,12 @@ namespace vimp{
                                     const LinearFactor& linear_factor,
                                     int num_states,
                                     int start_indx):
-            Base(dimension, dim_state, function, linear_factor, num_states, start_indx, 1.0, 1.0)
+            Base(dimension, dim_state, function, linear_factor, num_states, start_indx, 10.0, 100.0)
             { }
 
     protected:
-        double _temperature = 1.0;
-        double _high_temperature = 1.0;
+        double _temperature = 10.0;
+        double _high_temperature = 100.0;
         double _constant;
 
     public:

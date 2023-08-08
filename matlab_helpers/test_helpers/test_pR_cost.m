@@ -87,13 +87,13 @@ inv_K = inv(K_0);
 
 % Cost fn
 x = sym('x', [2,1]);
-phi_21 = transpose(x-mu_0) * inv_K * (x-mu_0);
+phi_21 = transpose(x-mu_0) * inv_K * (x-mu_0) / 10.0;
 
 % Inputs
 mean = mu_0;
 precision = eye(2) .* 1e4;
 cov = inv(precision);
-Int1 = GaussHermiteN(2, phi_21, p_GH, mean, cov)
+cost_fixed_prior = GaussHermiteN(2, phi_21, p_GH, mean, cov)
 
 %% --------------- linear dynamics prior cost ---------------
 dim_conf = 2;
