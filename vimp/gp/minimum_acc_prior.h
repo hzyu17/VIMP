@@ -122,6 +122,8 @@ namespace vimp{
             inline MatrixXd get_Lambda() const{ return _Lambda; }
 
             inline MatrixXd get_Psi() const{ return _Psi; }
+
+            inline double get_Constant() const { return 0.5; }
             
     };
 

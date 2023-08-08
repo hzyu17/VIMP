@@ -1,7 +1,8 @@
 /**
  * @file fixed_prior.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Fixed Gaussian prior -log(p(x|z)) = ||A*x - B*\mu_t||_{K^{-1}}.
+ * @brief Fixed Gaussian prior -log(p(x|z)) = ||A*x - B*\mu_t||_{K^{-1}}, 
+ * with A = I, B = I.
  * @version 0.1
  * @date 2022-07-31
  * 
@@ -35,7 +36,7 @@ namespace vimp{
 
             MatrixXd get_Psi() const { return MatrixXd::Identity(_dim, _dim);}
 
-            double get_C() const {return 1.0;}
+            inline double get_Constant() const { return 1.0; }
 
         private:
             MatrixXd _K;

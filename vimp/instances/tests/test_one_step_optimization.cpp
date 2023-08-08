@@ -118,10 +118,6 @@ TEST(GVIOnestep, initial_values){
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
 
-        std::cout << "params.temperature() " << std::endl << params.temperature() << std::endl;
-
-        std::cout << "params.temperature() " << std::endl << params.high_temperature() << std::endl;
-
         std::cout << "***** Initialize the optimizer *****" << std::endl;
 
         for (int i = 0; i < n_states; i++) {

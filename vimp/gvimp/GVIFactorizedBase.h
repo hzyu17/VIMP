@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <random>
 
+#include "helpers/EigenWrapper.h"
 #include "GaussHermite.h"
 #include "helpers/sparse_graph.h"
 #include "helpers/timer.h"
@@ -320,9 +321,9 @@ namespace vimp{
             _gh->set_polynomial_deg(p);
         }
 
-        double temperature() const { return _temperature; }
+        virtual double temperature() const { return _temperature; }
 
-        double high_temperature() const { return _high_temperature; }
+        virtual double high_temperature() const { return _high_temperature; }
 
         /// Public members for the inherited classes access
     public:

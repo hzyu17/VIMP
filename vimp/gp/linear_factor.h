@@ -27,6 +27,6 @@ public:
 
     inline virtual MatrixXd get_Lambda() const = 0;
     inline virtual MatrixXd get_Psi() const = 0;
-    // inline virtual double get_C() const = 0; // get the constant
+    inline virtual double get_Constant() const = 0; // get the constant
 };
 }

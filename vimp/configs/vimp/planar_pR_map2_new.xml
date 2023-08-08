@@ -1,10 +1,9 @@
-<!-- <?xml version="1.0" encoding="UTF-8"?> -->
 <Commons>
     <total_time>2.5</total_time>
     <n_states>15</n_states>
     <coeff_Qc>0.8</coeff_Qc>
     <sig_obs>0.0035</sig_obs>
-    <map_name>map2</map_name>
+    <map_name>2dpr_map2</map_name>
     <eps_sdf>0.7</eps_sdf>
     <radius>1.5</radius>
     <step_size>0.45</step_size>
@@ -12,16 +11,14 @@
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>1</low_temp_iterations>
+    <low_temp_iterations>10</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>1</max_iterations>
-    <max_n_backtracking>5</max_n_backtracking>
+    <max_iterations>30</max_iterations>
+    <max_n_backtracking>10</max_n_backtracking>
 
 </Commons>
 
-<Experiment1>
-    <!-- <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file> -->
-    
+<Experiment1>    
     <start_pos>
         <x>7.0</x>
         <y>-5.0</y>
@@ -37,14 +34,11 @@
     </goal_pos>
 
     <cost_sigma> 0.0035 </cost_sigma>
-
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case1/</saving_prefix>
 
 </Experiment1>
 
-<Experiment2>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
-    
+<Experiment2>   
     <start_pos>
         <x>-7.0</x>
         <y>-5.0</y>
@@ -60,14 +54,11 @@
     </goal_pos>
 
     <cost_sigma> 0.0045 </cost_sigma>
-
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case2/</saving_prefix>
 
 </Experiment2>
 
-<Experiment3>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
-    
+<Experiment3>   
     <start_pos>
         <x>-7.0</x>
         <y>-5.0</y>
@@ -83,14 +74,11 @@
     </goal_pos>
 
     <cost_sigma> 0.0045 </cost_sigma>
-
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case3/</saving_prefix>
 
 </Experiment3>
 
-<Experiment4>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
-    
+<Experiment4>   
     <start_pos>
         <x>13.0</x>
         <y>14.0</y>
@@ -106,7 +94,6 @@
     </goal_pos>
 
     <cost_sigma> 0.004 </cost_sigma>
-
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case4/</saving_prefix>
 
 </Experiment4>

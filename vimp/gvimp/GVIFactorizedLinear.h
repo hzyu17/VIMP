@@ -2,7 +2,7 @@
  * @file GVIFactorizedLinear.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief Factorized optimization steps for linear gaussian factors 
- * -log(p(x|z)) = ||\Lambda X - \Psi \mu_t||_{\Sigma_t^{-1}},
+ * -log(p(x|z)) = (1/2)*||\Lambda X - \Psi \mu_t||_{\Sigma_t^{-1}},
  *  which has closed-form expression in computing gradients wrt variables.
  * @version 0.1
  * @date 2023-01-17
@@ -11,7 +11,9 @@
  * 
  */
 
-#include "GVIFactorizedBase.h"
+#pragma once
+
+#include "gvimp/GVIFactorizedBase.h"
 #include "gp/linear_factor.h"
 
 namespace vimp{
@@ -29,15 +31,16 @@ namespace vimp{
                             double temperature,
                             double high_temperature):
             Base(dimension, dim_state, num_states, start_indx, temperature, high_temperature, true),
-            _linear_factor{linear_factor}
+            _linear_factor{linear_factor},
+            _constant(linear_factor.get_Constant())
             {
-                Base::_func_phi = [this, function, linear_factor, temperature](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor) / temperature );};
-                Base::_func_Vmu = [this, function, linear_factor, temperature](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor) / temperature;};
-                Base::_func_Vmumu = [this, function, linear_factor, temperature](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor) / temperature};};
+                Base::_func_phi = [this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor) / this->temperature() );};
+                Base::_func_Vmu = [this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor) / this->temperature();};
+                Base::_func_Vmumu = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor) / this->temperature() };};
                 
-                Base::_func_phi_highT = [this, function, linear_factor, high_temperature](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor) / high_temperature );};
-                Base::_func_Vmu_highT = [this, function, linear_factor, high_temperature](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor) / high_temperature;};
-                Base::_func_Vmumu_highT = [this, function, linear_factor, high_temperature](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor) / high_temperature};};
+                Base::_func_phi_highT = [this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor) / this->high_temperature() );};
+                Base::_func_Vmu_highT = [this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor) / this->high_temperature();};
+                Base::_func_Vmumu_highT = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor) / this->high_temperature()};};
                 
 
                 using GH = GaussHermite<GHFunction>;
@@ -54,6 +57,8 @@ namespace vimp{
 
         MatrixXd _target_mean, _target_precision, _Lambda, _Psi;
 
+        double _constant;
+
     public:
         /*Calculating phi * (partial V) / (partial mu), and 
          * phi * (partial V^2) / (partial mu * partial mu^T) for Gaussian posterior: closed-form expression:
@@ -65,7 +70,7 @@ namespace vimp{
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 
             // partial V / partial mu           
-            _Vdmu = (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean)) / 2.0 / temperature();
+            _Vdmu = (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean)) * _constant / temperature();
             
             MatrixXd AT_precision_A = _Lambda.transpose() * _target_precision * _Lambda;
 
@@ -81,7 +86,7 @@ namespace vimp{
                 }
             }
 
-            _Vddmu = (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace()) / 2.0 / temperature();
+            _Vddmu = (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace()) * _constant / temperature();
         }
 
         double fact_cost_value(const VectorXd& joint_mean, const SpMat& joint_cov) override {
@@ -89,7 +94,7 @@ namespace vimp{
             MatrixXd Cov_k = Base::extract_cov_from_joint(joint_cov);
 
             return ((_Lambda.transpose()*_target_precision*_Lambda * Cov_k).trace() + 
-                    (_Lambda*mean_k).transpose() * _target_precision * _Lambda*mean_k) / 2.0 / temperature();
+                    (_Lambda*mean_k-_Psi*_target_mean).transpose() * _target_precision * (_Lambda*mean_k-_Psi*_target_mean)) * _constant / temperature();
         }
 
     };

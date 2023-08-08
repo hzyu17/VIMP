@@ -17,14 +17,33 @@
 #include "instances/GVIMPPlanarPRSDF.h"
 using namespace vimp;
 
-int main(){
+int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    std::string config_file{source_root+"/configs/vimp/planar_pR_map1_new.xml"};
-    int nx = 4, nu = 2, num_exp = 2;
-    GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
+    int nx = 4, nu = 2, num_exp = 4;
     GVIMPParams params;
-    runner.read_config(params);
-    runner.run();
-    
+    // no experiment argument, run the default scripts
+    if (argc == 1){
+        num_exp = 2;
+        std::string config_file{source_root+"/configs/vimp/planar_pR_map1_new.xml"};
+        GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
+        runner.read_config(params);
+        runner.run();
+        return 0;
+    }
+    // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
+    else if (argc == 2){
+        num_exp = 4;
+        std::string config_relative = static_cast<std::string>(argv[1]);
+        std::cout << "config_relative " << std::endl << config_relative << std::endl;
+        
+        std::string config_file{source_root+"/"+config_relative};
+        GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
+        runner.read_config(params);
+        runner.run();
+        return 0;
+    }
+    else{
+        std::runtime_error("Wrong number of arguments!");
+    }
     return 0;
 }
