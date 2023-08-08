@@ -98,7 +98,9 @@ public:
                                                           cost_fixed_gp, 
                                                           fixed_gp, 
                                                           n_states, 
-                                                          i});
+                                                          i,
+                                                          params.temperature(), 
+                                                          params.high_temperature()});
 
             }else{
                 // linear gp factors

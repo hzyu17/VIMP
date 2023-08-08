@@ -22,38 +22,6 @@ import gpmp2.*
 %     norm(diff)
 % end
 
-%% ground truth
-prefix_gt = ["../../RAL-examples/2d_pR/map2/exp" + num2str(1)+"/"];
-% % --- high temperature ---
-means_gt = csvread([prefix_gt + "mean_base.csv"]);
-covs_gt = csvread([prefix_gt + "cov_base.csv"]);
-precisions_gt = csvread([prefix_gt + "precisoin_base.csv"]);
-costs_gt = csvread([prefix_gt + "cost_base.csv"]);
-
-factor_costs_gt = csvread([prefix_gt + "factor_costs_base.csv"]);
-
-% first iteration
-i_iter = 1;
-mean_gt_1 = means_gt(i_iter, 1:end)';
-precisions_gt_1 = precisions_gt((i_iter-1)*60+1:i_iter*60, 1:60);
-covs_gt_1 = covs_gt((i_iter-1)*60+1:i_iter*60, 1:60);
-factor_costs_gt_1 = factor_costs_gt(i_iter, 1:end);
-
-% debugging code 
-prefix = ["map2/case" + num2str(1)+"/"];
-% % --- high temperature ---
-means = csvread([prefix + "mean.csv"]);
-covs = csvread([prefix + "joint_cov.csv"]);
-precisions = csvread([prefix + "joint_precisoin.csv"]);
-costs = csvread([prefix + "cost.csv"]);
-factor_costs = csvread([prefix + "factor_costs.csv"]);
-
-% first iteration
-means_1 = means;
-precisions_1 = reshape(precisions, 60, 60);
-covs_1 = reshape(covs, 60, 60);
-factor_costs_1 = factor_costs';
-
 %% read map
 sdfmap = csvread("map2/map_multiobs_map2.csv");
 
@@ -67,7 +35,7 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(2, 2, 'TileSpacing', 'none', 'Padding', 'none')
 for i = 1:4 % 4 experiments
     nexttile
-    prefix = ["map2/case" + num2str(i)+"/"];
+    prefix = ["../../RAL-examples/2d_pR/map2/exp" + num2str(1)+"/"];
     % % --- high temperature ---
     means = csvread([prefix + "mean.csv"]);
     covs = csvread([prefix + "cov.csv"]);

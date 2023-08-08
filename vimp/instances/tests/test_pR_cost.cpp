@@ -125,7 +125,9 @@ TEST(PriorCost, fixed_cost){
                                               cost_fixed_gp, 
                                               fixed_gp, 
                                               n_states, 
-                                              0});
+                                              0,
+                                              10.0,
+                                              100.0});
 
     /// The joint optimizer
     GVIGH<GVIFactorizedBase> optimizer{vec_factors, dim_state, num_states};

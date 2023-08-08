@@ -12,8 +12,8 @@ plot_temperture = "low";
 % plot_temperture = "high";
 
 % plot_experiment = "map1_above";
-plot_experiment = "map1_below";
-% plot_experiment = "map2_exp1";
+% plot_experiment = "map1_below";
+plot_experiment = "map2_exp1";
 % plot_experiment = "map2_exp2";
 % plot_experiment = "map2_exp3";
 % plot_experiment = "map2_exp4"; 
@@ -28,7 +28,7 @@ elseif strcmp(plot_experiment, "map1_below")
     sdfmap = csvread("map1/map_multiobs_map1.csv");
     prefix = ["map1/below_case/"];
 elseif strcmp(plot_experiment, "map2_exp1")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+    sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
     prefix = ["map2/exp1/"];
 elseif strcmp(plot_experiment, "map2_exp2")
     sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");

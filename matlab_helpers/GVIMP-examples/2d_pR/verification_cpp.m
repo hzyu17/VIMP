@@ -117,3 +117,36 @@ for i_step = 1:niters
     cov_final = reshape(cov_final, dim_state, dim_state, nt);
     plot_2d_result(sdfmap, means_final, cov_final);
 end
+
+%% ================== map 2 ===================
+%% ground truth
+prefix_gt = ["../../RAL-examples/2d_pR/map2/exp" + num2str(1)+"/"];
+% % --- high temperature ---
+means_gt = csvread([prefix_gt + "mean_base.csv"]);
+covs_gt = csvread([prefix_gt + "cov_base.csv"]);
+precisions_gt = csvread([prefix_gt + "precisoin_base.csv"]);
+costs_gt = csvread([prefix_gt + "cost_base.csv"]);
+
+factor_costs_gt = csvread([prefix_gt + "factor_costs_base.csv"]);
+
+% first iteration
+i_iter = 1;
+mean_gt_1 = means_gt(i_iter, 1:end)';
+precisions_gt_1 = precisions_gt((i_iter-1)*60+1:i_iter*60, 1:60);
+covs_gt_1 = covs_gt((i_iter-1)*60+1:i_iter*60, 1:60);
+factor_costs_gt_1 = factor_costs_gt(i_iter, 1:end);
+
+% debugging code 
+prefix = ["map2/case" + num2str(1)+"/"];
+% % --- high temperature ---
+means = csvread([prefix + "mean.csv"]);
+covs = csvread([prefix + "joint_cov.csv"]);
+precisions = csvread([prefix + "joint_precisoin.csv"]);
+costs = csvread([prefix + "cost.csv"]);
+factor_costs = csvread([prefix + "factor_costs.csv"]);
+
+% first iteration
+means_1 = means;
+precisions_1 = reshape(precisions, 60, 60);
+covs_1 = reshape(covs, 60, 60);
+factor_costs_1 = factor_costs';

@@ -27,19 +27,10 @@ namespace vimp{
                                     const CostFunction& function, 
                                     const LinearFactor& linear_factor,
                                     int num_states,
-                                    int start_indx):
-            Base(dimension, dim_state, function, linear_factor, num_states, start_indx, 10.0, 100.0)
-            { }
-
-    protected:
-        double _temperature = 10.0;
-        double _high_temperature = 100.0;
-        double _constant;
-
-    public:
-        inline double temperature() const override { return _temperature; }
-
-        inline double high_temperature() const override { return _high_temperature; }
-    
+                                    int start_indx,
+                                    double temperature,
+                                    double high_temperature):
+            Base(dimension, dim_state, function, linear_factor, num_states, start_indx, temperature, high_temperature)
+            { }    
     };
 }

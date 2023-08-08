@@ -155,7 +155,9 @@ TEST(GVIOnestep, initial_values){
                                                           cost_fixed_gp, 
                                                           fixed_gp, 
                                                           n_states, 
-                                                          i});
+                                                          i, 
+                                                          params.temperature(), 
+                                                          params.high_temperature()});
 
             }else{
                 // linear gp factors
@@ -191,7 +193,7 @@ TEST(GVIOnestep, initial_values){
                                            dim_state, 
                                            n_states, 
                                            params.max_iter(), 
-                                           temperature, 
+                                           params.temperature(), 
                                            params.high_temperature()};
 
         std::cout << "***** Initialize joint optimizer *****" << std::endl;
@@ -243,18 +245,17 @@ TEST(GVIOnestep, initial_values){
         VectorXd dmu_one_step = std::get<0>(dmudprecision);
         SpMat dprecision_one_step = std::get<1>(dmudprecision);
 
-        MatrixIO mio;
-        mio.saveData("dmu_onestep.csv", dmu_one_step);
-        mio.saveData("dprecision_onestep.csv", MatrixXd{dprecision_one_step});
+        // MatrixIO mio;
+        // mio.saveData("dmu_onestep.csv", dmu_one_step);
+        // mio.saveData("dprecision_onestep.csv", MatrixXd{dprecision_one_step});
 
         VectorXd Vdmu_one_step{optimizer.Vdmu()};
         MatrixXd Vddmu_one_step{optimizer.Vddmu()};
 
         // MatrixIO mio;
-        mio.saveData("Vdmu_one_step.csv", Vdmu_one_step);
-        mio.saveData("Vddmu_one_step.csv", MatrixXd{Vddmu_one_step});
+        // mio.saveData("Vdmu_one_step.csv", Vdmu_one_step);
+        // mio.saveData("Vddmu_one_step.csv", MatrixXd{Vddmu_one_step});
 
- 
         VectorXd Vdmu_gt(ndim);
         Vdmu_gt.setZero();
         Vdmu_gt<< 0, 0, 0, 0, 0, 0, 0,
