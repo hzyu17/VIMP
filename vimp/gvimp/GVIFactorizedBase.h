@@ -43,7 +43,7 @@ namespace vimp{
          * @param dimension The dimension of the state
          */
         GVIFactorizedBase(int dimension, int state_dim, int num_states, int start_index, 
-                          double temperature=1.0, double high_temperature=10.0, bool is_linear=false):
+                          double temperature=10.0, double high_temperature=100.0, bool is_linear=false):
                 _is_linear{is_linear},
                 _dim{dimension},
                 _state_dim{state_dim},
@@ -138,9 +138,7 @@ namespace vimp{
             updateGH(_mu, _covariance);
 
             /// Integrate for E_q{_Vdmu} 
-            VectorXd Vdmu{VectorXd::Zero(_dim)};
-
-            Vdmu = _gh->Integrate(_func_Vmu);
+            VectorXd Vdmu = _gh->Integrate(_func_Vmu);
             Vdmu = _precision * Vdmu;
 
             /// Integrate for E_q{phi(x)}
@@ -210,10 +208,6 @@ namespace vimp{
         // /**
         //  * @brief Compute the cost function. V(x) = E_q(\phi(x)) using the current values.
         //  */
-        // virtual double fact_cost_value(){
-
-        //     return fact_cost_value(_mu, _covariance);
-        // }
 
         /**
          * @brief Get the marginal intermediate variable (partial V^2 / par mu / par mu)
@@ -326,6 +320,10 @@ namespace vimp{
             _gh->set_polynomial_deg(p);
         }
 
+        double temperature() const { return _temperature; }
+
+        double high_temperature() const { return _high_temperature; }
+
         /// Public members for the inherited classes access
     public:
 
@@ -343,6 +341,10 @@ namespace vimp{
         GHFunction _func_Vmu;
         GHFunction _func_Vmumu;
 
+        GHFunction _func_phi_highT;
+        GHFunction _func_Vmu_highT;
+        GHFunction _func_Vmumu_highT;
+
         /// G-H quadrature class
         using GH = GaussHermite<GHFunction> ;
         std::shared_ptr<GH> _gh;
@@ -359,7 +361,7 @@ namespace vimp{
         // Sparse inverser and matrix helpers
         EigenWrapper _ei;
 
-    private:
+    protected:
         /// step sizes
         double _step_size_mu = 0.9;
         double _step_size_Sigma = 0.9;

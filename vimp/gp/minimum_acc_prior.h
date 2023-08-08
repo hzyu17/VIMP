@@ -2,7 +2,7 @@
  * @file minimum_acc.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
  * @brief minimum acceleration gp model, which is a linear model of the form
- * -log(p(x|z)) = C*||A*x - B*\mu_t||_{\Sigma^{-1}}.
+ * -log(p(x|z)) = ||A*x - B*\mu_t||_{\Sigma^{-1}}.
  * @version 0.1
  * @date 2022-07-31
  * 
@@ -66,12 +66,12 @@ namespace vimp{
                 _Q << _Qc*pow(_delta_t, 3)/3, _Qc*pow(_delta_t, 2)/2, _Qc*pow(_delta_t, 2)/2, Qc*_delta_t;
                 compute_invQ();
 
-                // \Lambda = [-\Phi, I], \Psi = [\Phi, -I]
+                // \Lambda = [-\Phi, I]
                 _Lambda = MatrixXd::Zero(_dim_state, 2*_dim_state);
-                _Lambda.block(0, 0, _dim_state, _dim_state) = _Phi;
-                _Lambda.block(0, _dim_state, _dim_state, _dim_state) = -MatrixXd::Identity(_dim_state, _dim_state);
+                _Lambda.block(0, 0, _dim_state, _dim_state) = -_Phi;
+                _Lambda.block(0, _dim_state, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state);
 
-                // When a(t)=0, this part is eliminated.
+                // \Psi = [\Phi, -I]. When a(t)=0, this part is eliminated.
                 _Psi = MatrixXd::Zero(_dim_state, 2*_dim_state);
                 // _Psi.block(0, 0, _dim_state, _dim_state) = _Phi;
                 // _Psi.block(0, _dim_state, _dim_state, _dim_state) = -MatrixXd::Identity(_dim_state, _dim_state);
@@ -122,8 +122,6 @@ namespace vimp{
             inline MatrixXd get_Lambda() const{ return _Lambda; }
 
             inline MatrixXd get_Psi() const{ return _Psi; }
-
-            inline double get_C() const{ return 0.5;}
             
     };
 

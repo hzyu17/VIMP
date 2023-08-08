@@ -25,7 +25,7 @@ double cost_fixed_gp(const VectorXd& x, const vimp::FixedPriorGP& fixed_gp){
  */
 double cost_linear_gp(const VectorXd& pose_cmb, const vimp::MinimumAccGP& gp_minacc){
     int dim = gp_minacc.dim_posvel();
-    return gp_minacc.cost(pose_cmb.segment(0, dim), pose_cmb.segment(dim, dim)) / 10.0;
+    return gp_minacc.cost(pose_cmb.segment(0, dim), pose_cmb.segment(dim, dim));
 }
 
 /**
@@ -41,7 +41,7 @@ double cost_obstacle_planar(const VectorXd& pose,
 
     double cost = vec_err.transpose().eval() * precision_obs * vec_err;
 
-    return cost  / 10.0;
+    return cost;
 
 }
 

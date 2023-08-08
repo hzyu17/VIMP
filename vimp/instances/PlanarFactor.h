@@ -15,14 +15,14 @@
 #include "gvimp/GVIFactorizedNonlinerOneFactorGH.h"
 #include "gvimp/GVI-GH.h"
 #include "gvimp/GVIFactorizedLinear.h"
+#include "gvimp/GVIFactorizedFixedGaussian.h"
 
 using namespace Eigen;
 
 
 namespace vimp{
 
-    // typedef VIMPFactorizedOneCost<FixedPriorGP> FixedGpPriorOneCost;
-    typedef GVIFactorizedLinear<FixedPriorGP> FixedGpPrior;
+    typedef GVIFactorizedFixedGaussian<FixedPriorGP> FixedGpPrior;
     typedef GVIFactorizedLinear<MinimumAccGP> LinearGpPrior;
     template <typename ROBOT>
     using OptPlanarSDFFactor = GVIFactorizedNonlinerOneFactorGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>>;

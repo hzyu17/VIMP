@@ -77,7 +77,6 @@ TEST(ColCost, collision_cost){
     optimizer.set_precision(precision_sp);
 
     double cost = optimizer.cost_value_no_entropy();
-    cout << "cost_w_o_entropy " << endl << cost << endl;
 
     VectorXd vec_err(1);
     vec_err = collision_k.evaluateError(joint_init_theta.segment(0, 2));  
@@ -94,7 +93,6 @@ TEST(ColCost, collision_cost){
     optimizer.set_precision(precision_sp);
 
     double cost_new = optimizer.cost_value_no_entropy();
-    cout << "cost_new " << endl << cost_new << endl;
 
     cost_expected = 0.3710;
 
@@ -139,7 +137,6 @@ TEST(PriorCost, fixed_cost){
     optimizer.set_precision(precision.sparseView());
 
     double cost = optimizer.cost_value_no_entropy();
-    cout << "cost fixed linear factor" << endl << cost << endl;
 
     double cost_expected = 2.0000e-08; 
 
@@ -210,7 +207,6 @@ TEST(PriorCost, dynamics_prior_cost){
     optimizer.set_precision(precision.sparseView());
 
     double cost_prior = optimizer.cost_value_no_entropy();
-    cout << "cost linear prior" << endl << cost_prior << endl;
 
     // ground truth from Monte-Carlo estimation
     double cost_prior_expected = 0.6537; 

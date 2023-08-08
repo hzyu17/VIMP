@@ -19,6 +19,7 @@
 
 </Commons>
 
+<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <Experiment1>
     
     <start_pos>
@@ -42,6 +43,8 @@
 
 </Experiment1>
 
+
+<!-- with linear interpolated initializations and low temperature: go below the obstacles: ENTROPY MAP -->
 <Experiment2>
     
     <start_pos>

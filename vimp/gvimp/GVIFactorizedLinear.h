@@ -29,12 +29,17 @@ namespace vimp{
                             double temperature,
                             double high_temperature):
             Base(dimension, dim_state, num_states, start_indx, temperature, high_temperature, true),
-            _linear_factor{linear_factor}            
+            _linear_factor{linear_factor}
             {
-                Base::_func_phi = [this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor));};
-                Base::_func_Vmu = [this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor);};
-                Base::_func_Vmumu = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor)};};
+                Base::_func_phi = [this, function, linear_factor, temperature](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor) / temperature );};
+                Base::_func_Vmu = [this, function, linear_factor, temperature](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor) / temperature;};
+                Base::_func_Vmumu = [this, function, linear_factor, temperature](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor) / temperature};};
                 
+                Base::_func_phi_highT = [this, function, linear_factor, high_temperature](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor) / high_temperature );};
+                Base::_func_Vmu_highT = [this, function, linear_factor, high_temperature](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor) / high_temperature;};
+                Base::_func_Vmumu_highT = [this, function, linear_factor, high_temperature](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor) / high_temperature};};
+                
+
                 using GH = GaussHermite<GHFunction>;
                 Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi});
 
@@ -42,15 +47,12 @@ namespace vimp{
                 _target_precision = linear_factor.get_precision();
                 _Lambda = linear_factor.get_Lambda();
                 _Psi = linear_factor.get_Psi();
-                _const_multiplier = linear_factor.get_C();
             }
 
     protected:
         LinearFactor _linear_factor;
 
         MatrixXd _target_mean, _target_precision, _Lambda, _Psi;
-
-        double _const_multiplier = 1.0;
 
     public:
         /*Calculating phi * (partial V) / (partial mu), and 
@@ -59,13 +61,11 @@ namespace vimp{
          * (partial V^2) / (partial mu)(partial mu^T): higher order moments of a Gaussian.
         */
         void calculate_partial_V() override{
-
-            std::cout << "Linear factor closed form parV " << std::endl;
             // helper vectors
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 
             // partial V / partial mu           
-            _Vdmu = _const_multiplier * (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean));
+            _Vdmu = (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean)) / 2.0 / temperature();
             
             MatrixXd AT_precision_A = _Lambda.transpose() * _target_precision * _Lambda;
 
@@ -81,17 +81,16 @@ namespace vimp{
                 }
             }
 
-            _Vddmu = _const_multiplier * (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace());
+            _Vddmu = (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace()) / 2.0 / temperature();
         }
 
-        // double fact_cost_value() {
-        //     return fact_cost_value(_mu, _covariance);
-        // }
+        double fact_cost_value(const VectorXd& joint_mean, const SpMat& joint_cov) override {
+            VectorXd mean_k = Base::extract_mu_from_joint(joint_mean);
+            MatrixXd Cov_k = Base::extract_cov_from_joint(joint_cov);
 
-        // double fact_cost_value(const VectorXd& x, const MatrixXd& Cov) override {
-        //     return _const_multiplier * ((_Lambda.transpose()*_target_precision*_Lambda * Cov).trace() + 
-        //             (_Lambda*x - _Psi*_target_mean).transpose() * _target_precision * (_Lambda*x - _Psi*_target_mean));
-        // }
+            return ((_Lambda.transpose()*_target_precision*_Lambda * Cov_k).trace() + 
+                    (_Lambda*mean_k).transpose() * _target_precision * _Lambda*mean_k) / 2.0 / temperature();
+        }
 
     };
 }
