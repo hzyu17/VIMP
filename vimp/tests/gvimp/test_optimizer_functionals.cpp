@@ -63,16 +63,16 @@ TEST(TestFunctional, function_values){
     p_opt_fac->update_covariance(cov);
 
     double Phi_mean_expected = 1810.013888888889;
-    ASSERT_EQ(abs(p_opt_fac->Phi(mean)(0, 0)-Phi_mean_expected), 0);
+    ASSERT_EQ(abs(p_opt_fac->negative_log_probability(mean)(0, 0)-Phi_mean_expected), 0);
     
     /// All below functions evaluated at mu should be 0;
-    ASSERT_EQ(p_opt_fac->xMuPhi(mean).norm(), 0);
-    ASSERT_EQ(p_opt_fac->xMuxMuTPhi(mean).norm(), 0);
+    ASSERT_EQ(p_opt_fac->xMu_negative_log_probability(mean).norm(), 0);
+    ASSERT_EQ(p_opt_fac->xMuxMuT_negative_log_probability(mean).norm(), 0);
 
     /// The following should not be 0.
     VectorXd mean_rd = mean + VectorXd::Random(1);
-    ASSERT_NE(p_opt_fac->xMuPhi(mean_rd).norm(), 0);
-    ASSERT_NE(p_opt_fac->xMuxMuTPhi(mean_rd).norm(), 0);
+    ASSERT_NE(p_opt_fac->xMu_negative_log_probability(mean_rd).norm(), 0);
+    ASSERT_NE(p_opt_fac->xMuxMuT_negative_log_probability(mean_rd).norm(), 0);
 
     /// update of the covariance should not change the results.
     MatrixXd cov_rd = cov + MatrixXd::Random(1,1);
@@ -80,15 +80,15 @@ TEST(TestFunctional, function_values){
 
     ASSERT_EQ((p_opt_fac->covariance()-cov_rd).norm(), 0);
 
-    ASSERT_EQ(abs(p_opt_fac->Phi(mean)(0, 0)-Phi_mean_expected), 0);
+    ASSERT_EQ(abs(p_opt_fac->negative_log_probability(mean)(0, 0)-Phi_mean_expected), 0);
 
     /// All below functions evaluated at mu should be 0;
-    ASSERT_EQ(p_opt_fac->xMuPhi(mean).norm(), 0);
-    ASSERT_EQ(p_opt_fac->xMuxMuTPhi(mean).norm(), 0);
+    ASSERT_EQ(p_opt_fac->xMu_negative_log_probability(mean).norm(), 0);
+    ASSERT_EQ(p_opt_fac->xMuxMuT_negative_log_probability(mean).norm(), 0);
 
     /// The following should not be 0.
-    ASSERT_NE(p_opt_fac->xMuPhi(mean_rd).norm(), 0);
-    ASSERT_NE(p_opt_fac->xMuxMuTPhi(mean_rd).norm(), 0);
+    ASSERT_NE(p_opt_fac->xMu_negative_log_probability(mean_rd).norm(), 0);
+    ASSERT_NE(p_opt_fac->xMuxMuT_negative_log_probability(mean_rd).norm(), 0);
 
 }
 

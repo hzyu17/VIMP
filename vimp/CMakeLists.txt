@@ -9,9 +9,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 if(NOT DEFINED CMAKE_MACOSX_RPATH)
     set(CMAKE_MACOSX_RPATH 0)
 endif()
-
-# set(CMAKE_PREFIX_PATH "/home/huy419/.local" ${CMAKE_PREFIX_PATH})
-# link_directories(/usr/local/bin/boost/lib)
  
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
@@ -30,7 +27,6 @@ find_package(Boost COMPONENTS serialization REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
-
 # Find GTSAM components
 find_package(GTSAM REQUIRED) # Uses installed package
 include_directories(${GTSAM_INCLUDE_DIR})
@@ -39,7 +35,6 @@ set(GTSAM_LIBRARIES gtsam)   # TODO: automatic search libs
 find_package(GTSAMCMakeTools)
 include(GtsamMakeConfigFile)
 include(GtsamBuildTypes)
-# include(GtsamTesting)
 
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
@@ -49,13 +44,7 @@ find_package( Eigen3 3.4.0 REQUIRED
               gpmp2 REQUIRED)
 
 set(GPMP2_LIBRARIES "/usr/local/lib/libgpmp2.so")
-# link_directories(/usr/local/lib/)
-
 set(GTSAM_LIBRARIES "/usr/local/lib/libgtsam.so.4.0.0")
-# link_directories(/usr/local/lib/)
-
-# set(BOOST_LIBRARIES "/usr/local/bin/boost/lib/libboost_serialization.so.1.78.0")
-# link_directories(/usr/local/lib/)
  
 # matplotcpp
 include(FetchContent)
@@ -68,16 +57,6 @@ if(NOT matplotplusplus_POPULATED)
     FetchContent_Populate(matplotplusplus)
     add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
-
-# set(MATPLOT_ROOT "/usr/local/install/include/matplot")
-# list(APPEND CMAKE_PREFIX_PATH "${MATPLOT_ROOT}") 
-# find_package(Matplot++ REQUIRED)
-
-# adept
-# find_package(FastAD CONFIG REQUIRED)
-
-# argarse
-# find_package(argparse REQUIRED)
 
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
 
@@ -111,21 +90,12 @@ foreach(subdir ${vimp_subdirs})
   
 endforeach(subdir)
 
-
 # include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${gpmp2_INCLUDE_DIRS})
 include_directories(${gtsam_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}")
-
-message("CMAKE_CURRENT_SOURCE_DIR" ${CMAKE_CURRENT_SOURCE_DIR})
- 
-# set(LOCAL_INCLUDE_DIR "/usr/local/include")
-# include_directories(LOCAL_INCLUDE_DIR)
-# include_directories(${ARGPARSE_INCLUDE_DIRS})
-
-message("gpmp2_LIBRARIES: " ${GPMP2_LIBRARIES})
 
 # Add all the source files in src/vimp as a separate executable
 file(GLOB_RECURSE VIMP_SOURCES src/vimp/*.cpp)
@@ -151,8 +121,7 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 # Recursively search for all test files in the subfolders
-file(GLOB_RECURSE TEST_SOURCES vimp_subdirs false */tests/*.cpp)
-
+file(GLOB_RECURSE TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR} false tests/*/*.cpp)
 # Loop through each test file and add it as a test case
 foreach(TEST_SOURCE ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)

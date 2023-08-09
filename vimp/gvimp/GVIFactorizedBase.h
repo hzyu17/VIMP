@@ -292,7 +292,7 @@ namespace vimp{
         /**
          * @brief returns the (x-mu)*Phi(x) 
          */
-        inline MatrixXd xMuxMu_negative_log_probability(const VectorXd& x) const{
+        inline MatrixXd xMuxMuT_negative_log_probability(const VectorXd& x) const{
             return _func_Vmumu(x);
         }
 
