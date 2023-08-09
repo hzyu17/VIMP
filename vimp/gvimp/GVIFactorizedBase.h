@@ -67,11 +67,6 @@ namespace vimp{
         
     /// public functions
     public:
-        // void construct_function_T(){
-        //     _func_phi_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_phi))(x) / this->_temperature;});
-        //     _func_Vmu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmu))(x) / this->_temperature;});
-        //     _func_Vmumu_T = std::make_shared<GHFunction>([this](const VectorXd& x){return (*(this->_func_Vmumu))(x) / this->_temperature;});
-        // }
 
         /// update the GH approximator
         void updateGH(const VectorXd& x, const MatrixXd& P){

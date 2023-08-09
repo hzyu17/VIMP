@@ -13,7 +13,7 @@
     <high_temperature>100.0</high_temperature>
     <low_temp_iterations>2</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>2</max_iterations>
+    <max_iterations>10</max_iterations>
     <max_n_backtracking>10</max_n_backtracking>
 
 </Commons>

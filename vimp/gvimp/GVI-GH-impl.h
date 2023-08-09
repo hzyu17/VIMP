@@ -39,7 +39,6 @@ namespace vimp
     template <typename Factor>
     void GVIGH<Factor>::optimize()
     {
-        double new_cost = 0.0;
 
         for (int i_iter = 0; i_iter < _niters; i_iter++)
         {
@@ -76,38 +75,42 @@ namespace vimp
             SpMat new_precision; 
             VectorXd new_mu; 
 
-            double new_cost = 1e9;
-
             // backtracking 
-            while (new_cost > cost_iter)
+            while (true)
             {
                 new_mu.setZero(); new_precision.setZero();
+                // new step size
                 step_size = pow(_step_size_base, B);
+
+                // update mu and precision matrix
                 new_mu = _mu + step_size * dmu;
                 new_precision = _precision + step_size * dprecision;
-                new_cost = cost_value(new_mu, new_precision);
 
-                // std::cout << "new_cost backtrack" << std::endl << new_cost << std::endl;
+                // new cost
+                double new_cost = cost_value(new_mu, new_precision);
+                std::cout << "new_cost backtrack" << std::endl << new_cost << std::endl;
 
-                cnt += 1;
+                // accept new cost and update mu and precision matrix
+                if (new_cost < cost_iter){
+                    /// update mean and covariance
+                    set_mu(new_mu);
+                    set_precision(new_precision);
+                    break;
+                }else{ 
+                    // shrinking the step size
+                    B += 1;
+                    cnt += 1;
+                }
 
                 if (cnt > _niters_backtrack)
                 {
                     // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
                     cout << "Too many iterations in the backtracking ... Dead" << endl;
                     break;
-                }
-
-                B += 1;
+                }                
             }
-
-            /// update mean and covariance
-            set_mu(new_mu);
-            set_precision(new_precision);
-
-            cost_iter = new_cost;
-
-            B = 1;
+            
+            // B = 1;
 
         }
 

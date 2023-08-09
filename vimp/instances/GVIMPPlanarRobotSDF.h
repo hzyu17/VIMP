@@ -134,7 +134,7 @@ public:
                                            dim_state, 
                                            n_states, 
                                            params.max_iter(), 
-                                           temperature, 
+                                           params.temperature(), 
                                            params.high_temperature()};
 
         optimizer.set_max_iter_backtrack(params.max_n_backtrack());
