@@ -83,6 +83,7 @@ public:
     inline void set_total_time(double total_time){ _total_time = total_time; }
     inline void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
     inline void update_step_size(double step_size){ _step_size = step_size; }
+    inline void update_max_iter(int max_iter){ _max_iterations = max_iter; }
 
     inline void set_saving_prefix(const std::string& save_prefix){ _save_prefix = save_prefix; }
 

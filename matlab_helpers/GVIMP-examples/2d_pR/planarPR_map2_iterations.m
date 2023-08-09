@@ -21,8 +21,8 @@ height = 800;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-niters = 4;
-i_exp = 2;
+
+i_exp = 1;
 prefix = ["map2/case" + num2str(i_exp)+"/"];
 means = csvread([prefix + "mean.csv"]);
 covs = csvread([prefix + "cov.csv"]);
@@ -30,7 +30,9 @@ precisions = csvread([prefix + "precisoin.csv"]);
 costs = csvread([prefix + "cost.csv"]);
 factor_costs = csvread([prefix + "factor_costs.csv"]);
 
-tiledlayout(1, niters, 'TileSpacing', 'none', 'Padding', 'none')
+niters = find_niters(means);
+
+tiledlayout(2, floor(niters/2), 'TileSpacing', 'none', 'Padding', 'none')
 for i = 1:niters % 4 experiments
     nexttile
     output = plot_planarPR_oneiter(means, covs, sdfmap, i);

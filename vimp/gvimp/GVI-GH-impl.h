@@ -53,20 +53,13 @@ namespace vimp
             // ============= Collect factor costs =============
             VectorXd fact_costs_iter = factor_cost_vector();
 
-            _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
-
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
-
-            // save_data();
 
             // gradients
             std::tuple<VectorXd, SpMat> dmudprecision = this->compute_gradients();
 
             VectorXd dmu = std::get<0>(dmudprecision);
             SpMat dprecision = std::get<1>(dmudprecision);
-
-            // _ei.print_matrix(dmu, "dmu");
-            // _ei.print_matrix(dprecision, "dprecision");
             
             int cnt = 0;
             int B = 1;
@@ -88,7 +81,6 @@ namespace vimp
 
                 // new cost
                 double new_cost = cost_value(new_mu, new_precision);
-                std::cout << "new_cost backtrack" << std::endl << new_cost << std::endl;
 
                 // accept new cost and update mu and precision matrix
                 if (new_cost < cost_iter){
@@ -106,6 +98,8 @@ namespace vimp
                 {
                     // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
                     cout << "Too many iterations in the backtracking ... Dead" << endl;
+                    set_mu(new_mu);
+                    set_precision(new_precision);
                     break;
                 }                
             }
@@ -181,8 +175,6 @@ namespace vimp
         // double det = ldlt.determinant();
         MatrixXd precision_full{Precision};
         double det = precision_full.determinant();
-
-        std::cout << "det " << det << std::endl;
 
         if (det < 0)
         {

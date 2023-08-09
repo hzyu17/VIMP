@@ -230,7 +230,7 @@ TEST(GVIOnestep, initial_values){
         VectorXd factor_cost_vec_gt(19);
         factor_cost_vec_gt.setZero();
         EigenWrapper ei;
-        ei.print_matrix(factor_cost_vec, "factor_cost_vec");
+        // ei.print_matrix(factor_cost_vec, "factor_cost_vec");
 
         factor_cost_vec_gt <<  0.399999999999981, 32.7327000000002, 0, 65.3999999999997, 0, 
                                65.3999999999997, 0, 65.3999999999997, 0.739105727743422, 65.3999999999997,
