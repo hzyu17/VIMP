@@ -15,6 +15,7 @@
 #include "gvimp/GVIFactorizedNonlinerOneFactorGH.h"
 #include "gvimp/GVI-GH.h"
 #include "gvimp/GVIFactorizedLinear.h"
+#include "gvimp/GVIFactorizedFixedGaussian.h"
 
 using namespace Eigen;
 
@@ -22,7 +23,7 @@ using namespace Eigen;
 namespace vimp{
 
     // typedef VIMPFactorizedOneCost<FixedPriorGP> FixedGpPriorOneCost;
-    typedef VIMPFactorizedLinear<FixedPriorGP> FixedGpPrior;
+    typedef GVIFactorizedFixedGaussian<FixedPriorGP> FixedGpPrior;
     typedef VIMPFactorizedLinear<MinimumAccGP> LinearGpPrior;
     template <typename ROBOT>
     using OptSDFNonlinearFactor = GVIFactorizedNonlinerOneFactorGH<gpmp2::ObstacleSDFFactor<ROBOT>> ;

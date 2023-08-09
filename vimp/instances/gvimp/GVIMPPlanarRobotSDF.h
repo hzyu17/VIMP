@@ -32,7 +32,7 @@ public:
         return _robot_sdf;
     }
 
-    void run_optimization(const GVIMPParams& params){
+    void run_optimization(const GVIMPParams& params, bool verbose=true){
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
@@ -156,7 +156,7 @@ public:
         optimizer.set_GH_degree(3);
         optimizer.set_step_size_base(params.step_size()); // a local optima
 
-        optimizer.optimize();
+        optimizer.optimize(verbose);
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 

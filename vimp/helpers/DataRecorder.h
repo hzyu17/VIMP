@@ -150,36 +150,38 @@ public:
     /**
      * @brief save res means and covariances to csv file
      */
-    void save_data(){
+    void save_data(bool verbose=true){
         /// save mean
         ofstream file(_file_mean);
-        _m_io.saveData(_file_mean, _res_mean);
+        _m_io.saveData(_file_mean, _res_mean, verbose);
 
         /// save covariances
         ofstream f_cov(_file_cov);
-        _m_io.saveData(_file_cov, _res_covariances);
+        _m_io.saveData(_file_cov, _res_covariances, verbose);
 
         /// save precisions
         ofstream f_prec(_file_precision);
-        _m_io.saveData(_file_precision, _res_precisions);
+        _m_io.saveData(_file_precision, _res_precisions, verbose);
 
         /// save covariances
         ofstream f_joint_cov(_file_joint_cov);
-        _m_io.saveData(_file_joint_cov, _res_joint_covariances);
+        _m_io.saveData(_file_joint_cov, _res_joint_covariances, verbose);
 
         /// save precisions
         ofstream f_joint_prec(_file_joint_precision);
-        _m_io.saveData(_file_joint_precision, _res_joint_precisions);
+        _m_io.saveData(_file_joint_precision, _res_joint_precisions, verbose);
 
         /// save costs
         ofstream f_cost(_file_cost);
-        _m_io.saveData(_file_cost, _res_costs);
+        _m_io.saveData(_file_cost, _res_costs, verbose);
 
         /// save factored osts
         ofstream f_factor_costs(_file_factor_costs);
-        _m_io.saveData(_file_factor_costs, _res_factor_costs);
+        _m_io.saveData(_file_factor_costs, _res_factor_costs, verbose);
 
-        std::cout << "All data saved" << std::endl;
+        if (verbose){
+            std::cout << "All data saved" << std::endl;
+        }
     }
 };
 

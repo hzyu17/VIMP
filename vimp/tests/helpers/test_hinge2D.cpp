@@ -15,6 +15,10 @@
 #include <gpmp2/obstacle/PlanarSDF.h>
 #include <matplot/matplot.h>
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+std::string source_root{XSTRING(SOURCE_ROOT)};
+
 using namespace vimp;
 using namespace Eigen;
 
@@ -22,10 +26,10 @@ EigenWrapper ei;
 
 TEST(TestHinge2D, hinge_loss){
     vimp::MatrixIO m_io;
-    MatrixXd grid_X = m_io.load_csv("/home/hzyu/git/VIMP/vimp/data/sdf_grid_x.csv");
-    MatrixXd grid_Y = m_io.load_csv("/home/hzyu/git/VIMP/vimp/data/sdf_grid_y.csv");
+    MatrixXd grid_X = m_io.load_csv(source_root+"/data/sdf_grid_x.csv");
+    MatrixXd grid_Y = m_io.load_csv(source_root+"/data/sdf_grid_y.csv");
 
-    MatrixXd field = m_io.load_csv("/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy.csv");
+    MatrixXd field = m_io.load_csv(source_root+"/data/vimp/maps/2dpR/map0/field_multiobs_map0.csv");
 
     Vector2d origin(-20, -10);
     double cell_size = 0.1;
@@ -34,7 +38,7 @@ TEST(TestHinge2D, hinge_loss){
     gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);  
     
     MatrixXd hinge_loss = mesh_hingeloss(grid_X, grid_Y, sdf, eps);
-    MatrixXd hinge_loss_groundtruth = m_io.load_csv("/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/map_multiobs_entropy_hinge_loss_groundtruth.csv");
+    MatrixXd hinge_loss_groundtruth = m_io.load_csv(source_root+"/data/gvimp/2d_pR/map_multiobs_entropy_hinge_loss_groundtruth.csv");
     ASSERT_LE((hinge_loss - hinge_loss_groundtruth).norm(), 1e-10);
 
 }
@@ -42,10 +46,10 @@ TEST(TestHinge2D, hinge_loss){
 
 TEST(TestHinge2D, hinge_loss_gradients){
     vimp::MatrixIO m_io;
-    MatrixXd grid_X = m_io.load_csv("/home/hzyu/git/VIMP/vimp/data/sdf_grid_x.csv");
-    MatrixXd grid_Y = m_io.load_csv("/home/hzyu/git/VIMP/vimp/data/sdf_grid_y.csv");
+    MatrixXd grid_X = m_io.load_csv(source_root+"/data/sdf_grid_x.csv");
+    MatrixXd grid_Y = m_io.load_csv(source_root+"/data/sdf_grid_y.csv");
 
-    MatrixXd field = m_io.load_csv("/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy.csv");
+    MatrixXd field = m_io.load_csv(source_root+"/maps/2dpR/map0/field_multiobs_map0.csv");
 
     Vector2d origin(-20, -10);
     double cell_size = 0.1;
@@ -83,14 +87,14 @@ TEST(TestHinge2D, hinge_loss_gradients){
     vector_2d hinge_vec = ei.eigen_to_vector(hinge_loss);
     surf(x, y, hinge_vec);
 
-    save("data/hinge_loss", "jpeg");
+    save(source_root+"/data/hinge_loss", "jpeg");
     
     // hinge loss jacobians
     figure();
     vec_2d grad_x_mesh = std::get<1>(results);
     vec_2d grad_y_mesh = std::get<2>(results);
     quiver(x, y, grad_x_mesh, grad_y_mesh, 4.0);
-    save("data/hinge_loss_jacobians", "jpeg");
+    save(source_root+"/data/hinge_loss_jacobians", "jpeg");
 
 
     show();

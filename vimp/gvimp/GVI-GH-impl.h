@@ -27,7 +27,6 @@ namespace vimp
         // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
         MatrixXd Vddmu_full{_Vddmu};
-
         VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-_Vdmu);
 
         return std::make_tuple(dmu, dprecision);
@@ -35,20 +34,19 @@ namespace vimp
 
     /**
      * @brief optimize with backtracking
-     */
+     */ 
     template <typename Factor>
-    void GVIGH<Factor>::optimize()
+    void GVIGH<Factor>::optimize(bool verbose)
     {
 
         for (int i_iter = 0; i_iter < _niters; i_iter++)
         {
-            cout << "========= iteration " << i_iter << " ========= " << endl;
-
             // ============= Cost at current iteration =============
-            // _ei.print_matrix(_mu, "_mu");
-            // _ei.print_matrix(_precision, "_precision");
             double cost_iter = cost_value(_mu, _precision);
-            cout << "--- cost_iter ---" << endl << cost_iter << endl;
+            if (verbose){
+                cout << "========= iteration " << i_iter << " ========= " << endl;
+                cout << "--- cost_iter ---" << endl << cost_iter << endl;
+            }
 
             // ============= Collect factor costs =============
             VectorXd fact_costs_iter = factor_cost_vector();
@@ -97,22 +95,18 @@ namespace vimp
                 if (cnt > _niters_backtrack)
                 {
                     // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
-                    cout << "Too many iterations in the backtracking ... Dead" << endl;
+                    if (verbose){
+                        cout << "Too many iterations in the backtracking ... Dead" << endl;
+                    }
                     set_mu(new_mu);
                     set_precision(new_precision);
                     break;
                 }                
             }
-            
-            // B = 1;
-
         }
 
-        save_data();
+        save_data(verbose);
 
-        /// see a purturbed cost
-        // cout << "=== final cost ===" << endl
-        //      << cost_iter << endl;
     }
 
 

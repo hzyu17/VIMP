@@ -43,7 +43,7 @@ public:
 
     virtual void read_config(ExperimentParams& params) = 0;
     virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, ExperimentParams& params) = 0;
-    virtual void run_one_exp(int exp, ExperimentParams& params) = 0;
+    virtual void run_one_exp(int exp, ExperimentParams& params, bool verbose=true) = 0;
 
     void read_config(){
         read_config(_params);
@@ -157,7 +157,7 @@ public:
 
     }
 
-    void run_one_exp(int exp, GVIMPParams& params) override {
+    void run_one_exp(int exp, GVIMPParams& params, bool verbose=true) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());        
@@ -173,7 +173,7 @@ public:
         MatrixIO matrix_io;
         // An example pr and sdf
         
-        _gvimp_robotsdf.run_optimization(params);
+        _gvimp_robotsdf.run_optimization(params, verbose);
 
     }
 
@@ -246,7 +246,7 @@ public:
         opt_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
     }
 
-    virtual void run_one_exp(int exp, PGCSParams& params) = 0;
+    virtual void run_one_exp(int exp, PGCSParams& params, bool verbose=true) = 0;
 
     void read_config(PGCSParams& params) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
@@ -306,7 +306,7 @@ public:
     PGCSRunnerLinDynBase(int nx, int nu, int num_exp, const std::string & config):
                         PGCSRunnerBase<PGCSOptimizer>(nx, nu, num_exp, config){}
 
-void run_one_exp(int exp, PGCSParams& params)
+void run_one_exp(int exp, PGCSParams& params, bool verbose=true)
 {
     rapidxml::file<> xmlFile(PGCSRunnerBase<PGCSOptimizer>::_config_file.data()); // Default template is char
     rapidxml::xml_document<> doc;
@@ -513,7 +513,7 @@ public:
 
     }
 
-    void run_one_exp(int exp, PGCSParams& params) override{
+    void run_one_exp(int exp, PGCSParams& params, bool verbose=true) override{
 
         rapidxml::file<> xmlFile(this->_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;

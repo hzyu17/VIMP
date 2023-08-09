@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "repeated_includes.h"
+#include "helpers/repeated_includes.h"
 #include <vector>
 
 namespace vimp{
@@ -21,8 +21,10 @@ namespace vimp{
         MatrixIO(){}
 
         template <typename T>
-        void saveData(const std::string& fileName, const T& matrix) const{
-            std::cout << "Saving data to: " << fileName << std::endl;
+        void saveData(const std::string& fileName, const T& matrix, bool verbose=true) const{
+            if (verbose){
+                std::cout << "Saving data to: " << fileName << std::endl;
+            }
             std::ofstream file(fileName);
             if (file.is_open()){
                 file << matrix.format(CSVFormat);

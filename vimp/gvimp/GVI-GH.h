@@ -16,7 +16,6 @@
 
 #include "helpers/DataRecorder.h"
 #include "helpers/EigenWrapper.h"
-
 #include "helpers/timer.h"
 
 using namespace std;
@@ -145,7 +144,9 @@ public:
     /**
      * @brief The optimizing process.
      */
-    void optimize();
+    void optimize(bool verbose);
+
+    void optimize(){ optimize(true); }
 
     /**
      * @brief Compute the total cost function value given a mean and covariace.
@@ -344,7 +345,7 @@ public:
     /**
      * @brief save process data into csv files.
      */
-    inline void save_data() { _res_recorder.save_data();}
+    inline void save_data(bool verbose=true) { _res_recorder.save_data(verbose);}
 
     /**
      * @brief save a matrix to a file. 

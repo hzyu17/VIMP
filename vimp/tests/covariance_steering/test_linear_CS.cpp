@@ -14,6 +14,11 @@
 #include "helpers/EigenWrapper.h"
 #include "helpers/MatrixIO.h"
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
+std::string source_root{XSTRING(SOURCE_ROOT)};
+
 using namespace vimp;
 using namespace Eigen;
 
@@ -22,23 +27,23 @@ TEST(LinearCS, initializations){
     MatrixIO m_io;
     EigenWrapper eigen_wrapper;
 
-    Matrix3D At = m_io.load_csv("data/Aprior.csv");
-    Matrix3D at = m_io.load_csv("data/aprior.csv");
-    Matrix3D Qt = m_io.load_csv("data/Qk.csv");
-    Matrix3D rt = m_io.load_csv("data/rk.csv");
-    VectorXd m0 = m_io.load_csv("data/m0.csv");
-    VectorXd m1 = m_io.load_csv("data/m1.csv");
-    MatrixXd Sig0 = m_io.load_csv("data/Sig0.csv");
-    MatrixXd Sig1 = m_io.load_csv("data/Sig1.csv");
+    Matrix3D At = m_io.load_csv(source_root+"/tests/data/Aprior.csv");
+    Matrix3D at = m_io.load_csv(source_root+"/tests/data/aprior.csv");
+    Matrix3D Qt = m_io.load_csv(source_root+"/tests/data/Qk.csv");
+    Matrix3D rt = m_io.load_csv(source_root+"/tests/data/rk.csv");
+    VectorXd m0 = m_io.load_csv(source_root+"/tests/data/m0.csv");
+    VectorXd m1 = m_io.load_csv(source_root+"/tests/data/m1.csv");
+    MatrixXd Sig0 = m_io.load_csv(source_root+"/tests/data/Sig0.csv");
+    MatrixXd Sig1 = m_io.load_csv(source_root+"/tests/data/Sig1.csv");
 
-    MatrixXd Mt_gt = m_io.load_csv("data/Mt.csv");
-    MatrixXd Phi_gt = m_io.load_csv("data/Phi.csv");
-    MatrixXd Phi11_gt = m_io.load_csv("data/Phi11.csv");
-    MatrixXd Phi12_gt = m_io.load_csv("data/Phi12.csv");
-    MatrixXd Pi_gt = m_io.load_csv("data/Pi.csv");
+    MatrixXd Mt_gt = m_io.load_csv(source_root+"/tests/data/Mt.csv");
+    MatrixXd Phi_gt = m_io.load_csv(source_root+"/tests/data/Phi.csv");
+    MatrixXd Phi11_gt = m_io.load_csv(source_root+"/tests/data/Phi11.csv");
+    MatrixXd Phi12_gt = m_io.load_csv(source_root+"/tests/data/Phi12.csv");
+    MatrixXd Pi_gt = m_io.load_csv(source_root+"/tests/data/Pi.csv");
 
-    MatrixXd K_gt = m_io.load_csv("data/K.csv");
-    MatrixXd d_gt = m_io.load_csv("data/d.csv");
+    MatrixXd K_gt = m_io.load_csv(source_root+"/tests/data/K.csv");
+    MatrixXd d_gt = m_io.load_csv(source_root+"/tests/data/d.csv");
 
     int nx = 4;
     int nu = 2;

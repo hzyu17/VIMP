@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 if(NOT DEFINED CMAKE_MACOSX_RPATH)
     set(CMAKE_MACOSX_RPATH 0)
 endif()
- 
+
 # for unittest scripts
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 
@@ -98,11 +98,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Add all the source files in src/vimp as a separate executable
-file(GLOB_RECURSE VIMP_SOURCES src/vimp/*.cpp)
+file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
 foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
     add_executable(${vimp_name} ${vimp_source})
     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
+    set_target_properties(${vimp_name} PROPERTIES
+                            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+                            )   
     target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} ${BOOST_LIBRARIES})
 endforeach()
 
@@ -112,6 +115,9 @@ foreach(pgcs_source ${PGCS_SOURCES})
     get_filename_component(pgcs_name ${pgcs_source} NAME_WE)
     add_executable(${pgcs_name} ${pgcs_source})
     set_target_properties(${pgcs_name} PROPERTIES LINKER_LANGUAGE CXX)
+    set_target_properties(${pgcs_name} PROPERTIES
+                            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/pgcs"
+                            )   
     target_link_libraries(${pgcs_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} Matplot++::matplot)
     target_include_directories(${pgcs_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 endforeach()
@@ -126,6 +132,10 @@ file(GLOB_RECURSE TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR} false tests/*/*.cpp)
 foreach(TEST_SOURCE ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
     add_executable(${TEST_NAME} ${TEST_SOURCE})
+    set_target_properties(${TEST_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+    set_target_properties(${TEST_NAME} PROPERTIES
+                            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
+                            )
     target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${EIGEN3_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
 endforeach()
 

@@ -10,6 +10,7 @@
  */
 
 #include "gvimp/GaussHermite.h"
+#include <gtest/gtest.h>
 
 using namespace Eigen;
 using namespace vimp;
@@ -43,8 +44,7 @@ MatrixXd xmu_phi(const VectorXd& vec_x){
     return res;
 }
 
-int main(){
-
+TEST(TestGH, gh){
     int deg = 6, dim = 1;
     VectorXd mean(1);
     mean.setZero();
@@ -59,14 +59,16 @@ int main(){
     MatrixXd phi_mu = phi(mean);
     MatrixXd phi_mu_GT(1,1);
     phi_mu_GT(0,0) = 0.013888888888889;
-    std::cout << "phi_func value at mu_p" << std::endl << phi_mu(0,0) << std::endl;
-    std::cout << "phi_func value at mu_p Ground Truth" << std::endl << phi_mu_GT(0,0) << std::endl;
+    ASSERT_LE((phi_mu - phi_mu_GT).norm(), 1e-5);
+    // std::cout << "phi_func value at mu_p" << std::endl << phi_mu(0,0) << std::endl;
+    // std::cout << "phi_func value at mu_p Ground Truth" << std::endl << phi_mu_GT(0,0) << std::endl;
     
     MatrixXd xmu_phi_mu = xmu_phi(mean);
     MatrixXd xmu_phi_mu_GT(1,1);
     xmu_phi_mu_GT(0,0) = 0.0;
-    std::cout << "phi_func value at mu_p" << std::endl << xmu_phi_mu(0,0) << std::endl;
-    std::cout << "phi_func value at mu_p Ground Truth" << std::endl << xmu_phi_mu_GT(0,0) << std::endl;
+    ASSERT_LE((xmu_phi_mu - xmu_phi_mu_GT).norm(), 1e-5);
+    // std::cout << "phi_func value at mu_p" << std::endl << xmu_phi_mu(0,0) << std::endl;
+    // std::cout << "phi_func value at mu_p Ground Truth" << std::endl << xmu_phi_mu_GT(0,0) << std::endl;
 
 
     // Integrations
@@ -74,15 +76,18 @@ int main(){
     std::shared_ptr<Function> p_phi = std::make_shared<Function>(phi);
     MatrixXd E_Phi = gh.Integrate(phi);
     double E_Phi_GT = 1.1129;
-    std::cout << "E_Phi" << std::endl << E_Phi(0,0) << std::endl;
-    std::cout << "E_Phi Ground Truth" << std::endl << E_Phi_GT << std::endl;
+    ASSERT_LE(abs(E_Phi(0,0) - E_Phi_GT), 1e-4);
+
+    // std::cout << "E_Phi" << std::endl << E_Phi(0,0) << std::endl;
+    // std::cout << "E_Phi Ground Truth" << std::endl << E_Phi_GT << std::endl;
 
     // integration of (x-mu)*phi
     std::shared_ptr<Function> p_xmu_phi = std::make_shared<Function>(xmu_phi);
     MatrixXd E_xmu_phi = gh.Integrate(xmu_phi);
     double E_xmu_phi_GT = -1.2144;
-    std::cout << "E_xmu_phi" << std::endl << E_xmu_phi(0,0) << std::endl;
-    std::cout << "E_xmu_phi Ground Truth" << std::endl << E_xmu_phi_GT << std::endl;
+    ASSERT_LE(abs(E_xmu_phi(0,0) - E_xmu_phi_GT), 1e-5);
 
-    return 0;
+    // std::cout << "E_xmu_phi" << std::endl << E_xmu_phi(0,0) << std::endl;
+    // std::cout << "E_xmu_phi Ground Truth" << std::endl << E_xmu_phi_GT << std::endl;
+
 }

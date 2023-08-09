@@ -11,7 +11,7 @@
  */
 
 #include "helpers/ExperimentRunner.h"
-#include "instances/GVIMPPlanarPRSDF.h"
+#include "instances/gvimp/GVIMPPlanarPRSDF.h"
 #include <gtest/gtest.h>
 
 using namespace gpmp2;
@@ -387,7 +387,7 @@ TEST(GVIMP, exp_map2){
     GVIMPParams params{nx, nu, total_time, nt, coeff_Qc, sig_obs, eps_sdf, radius, 
                         step_size, max_iterations, init_precision_factor, boundary_penalties, 
                         temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name};
-    runner.run_one_exp(1, params);
+    runner.run_one_exp(1, params, false);
 
     std::tuple<Eigen::VectorXd, SpMat> mu_precision_optimized = runner.get_mu_precision();
     VectorXd mean = std::get<0>(mu_precision_optimized);

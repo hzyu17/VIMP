@@ -15,8 +15,31 @@
 #include <Eigen/Sparse>
 #include <Eigen/SparseCholesky>
 #include "helpers/MatrixIO.h"
-#include "helpers/random.h"
 #include "helpers/Matrix.h"
+#include <random>
+
+class Random{
+
+public:
+    Random(){};
+
+    int randint(int range_from, int range_to) {
+        std::mt19937                        generator(_rand_dev());
+        std::uniform_int_distribution<>    distr(range_from, range_to);
+        return distr(generator);
+    }
+
+    double rand_double(double range_from, double range_to) {
+        std::mt19937                        generator(_rand_dev());
+        std::uniform_real_distribution<>    distr(range_from, range_to);
+        return distr(generator);
+    }
+
+private:
+    std::random_device  _rand_dev;
+
+};
+
 
 typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a column-major sparse matrix type of double
 typedef Eigen::SparseVector<double> SpVec; 

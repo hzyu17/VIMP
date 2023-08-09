@@ -14,7 +14,7 @@
 #define XSTRING(x) STRING(x)
 
 #include "helpers/ExperimentRunner.h"
-#include "instances/GVIMPPlanarPRSDF.h"
+#include "instances/gvimp/GVIMPPlanarPRSDF.h"
 using namespace vimp;
 
 int main(int argc, char* argv[]){

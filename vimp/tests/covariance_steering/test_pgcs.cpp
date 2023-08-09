@@ -13,6 +13,11 @@
 #include "dynamics/DoubleIntegratorDraged.h"
 #include "covariance_steering/ProximalGradientCSNonlinearDyn.h"
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
+std::string source_root{XSTRING(SOURCE_ROOT)};
+
 using namespace Eigen;
 using namespace vimp;
 
@@ -23,14 +28,14 @@ TEST(TestDynamics, linearization){
     MatrixXd At(nx*nx, nt), Bt(nx*nu, nt), St(nx*nx, nt), zt(nx, nt), hAt(nx*nx, nt), hat(nx, nt), nTr(nx, nt);
     MatrixXd Bt_gt(nx*nu, nt), hAt_gt(nx*nx, nt), hat_gt(nx, nt), nTr_gt(nx, nt);
 
-    At = m_io.load_csv("data/Akt.csv");
-    St = m_io.load_csv("data/Skt.csv");
-    zt = m_io.load_csv("data/zkt.csv");
+    At = m_io.load_csv(source_root+"/tests/data/Akt.csv");
+    St = m_io.load_csv(source_root+"/tests/data/Skt.csv");
+    zt = m_io.load_csv(source_root+"/tests/data/zkt.csv");
 
-    Bt_gt = m_io.load_csv("data/Bt.csv");
-    hAt_gt = m_io.load_csv("data/hAkt.csv");
-    hat_gt = m_io.load_csv("data/hakt.csv");
-    nTr_gt = m_io.load_csv("data/nTrt.csv");
+    Bt_gt = m_io.load_csv(source_root+"/tests/data/Bt.csv");
+    hAt_gt = m_io.load_csv(source_root+"/tests/data/hAkt.csv");
+    hat_gt = m_io.load_csv(source_root+"/tests/data/hakt.csv");
+    nTr_gt = m_io.load_csv(source_root+"/tests/data/nTrt.csv");
 
     DoubleIntegrator dyn(nx, nu, nt);
     LinearDynamics lin_dyn(nx, nu, nt);
@@ -84,8 +89,8 @@ TEST(TestPGCS, solution){
 
     MatrixXd Qkt(nx*nx, nt), rkt(nx, nt);
     MatrixXd Qkt_gt(nx*nx, nt), rkt_gt(nx, nt);
-    Qkt_gt = m_io.load_csv("data/Qkt.csv");
-    rkt_gt = m_io.load_csv("data/rkt.csv");
+    Qkt_gt = m_io.load_csv(source_root+"/tests/data/Qkt.csv");
+    rkt_gt = m_io.load_csv(source_root+"/tests/data/rkt.csv");
     Qkt = pgcs.Qkt();
     rkt = pgcs.rkt();
     
@@ -95,8 +100,8 @@ TEST(TestPGCS, solution){
     Kt = std::get<0>(res_Kd);
     dt = std::get<1>(res_Kd);
 
-    Kt_gt = m_io.load_csv("data/Kt.csv");
-    dt_gt = m_io.load_csv("data/dt.csv");
+    Kt_gt = m_io.load_csv(source_root+"/tests/data/Kt.csv");
+    dt_gt = m_io.load_csv(source_root+"/tests/data/dt.csv");
 
     ASSERT_LE((Kt - Kt_gt).norm(), 1e-10);
     ASSERT_LE((dt - dt_gt).norm(), 1e-10);

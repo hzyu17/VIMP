@@ -9,7 +9,7 @@
  * 
  */
 
-#include "instances/GVIMPPlanarRobotSDF.h"
+#include "instances/gvimp/GVIMPPlanarRobotSDF.h"
 #include "robots/PlanarPointRobotSDF_pgcs.h"
 
 namespace vimp{
