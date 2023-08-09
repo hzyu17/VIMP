@@ -319,6 +319,10 @@ namespace vimp{
 
         virtual double high_temperature() const { return _high_temperature; }
 
+        void switch_to_high_temperature(){
+            _temperature = _high_temperature;
+        }
+
         /// Public members for the inherited classes access
     public:
 
