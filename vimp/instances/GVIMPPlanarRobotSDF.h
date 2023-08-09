@@ -158,6 +158,12 @@ public:
 
         optimizer.optimize();
 
+        _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
+
+    }
+
+    std::tuple<VectorXd, SpMat> get_mu_precision(){
+        return _last_iteration_mean_precision;
     }
 
 protected: 
@@ -167,6 +173,8 @@ protected:
     EigenWrapper _ei;
     std::shared_ptr<GVIGH<GVIFactorizedBase>> _p_opt;
 
+    std::tuple<Eigen::VectorXd, SpMat> _last_iteration_mean_precision;
+
 };
 
-}
+} // namespace vimp

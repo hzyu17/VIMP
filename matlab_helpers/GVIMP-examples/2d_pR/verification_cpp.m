@@ -130,7 +130,7 @@ costs_gt = csvread([prefix_gt + "cost_base.csv"]);
 factor_costs_gt = csvread([prefix_gt + "factor_costs_base.csv"]);
 
 % first iteration
-i_iter = 1;
+i_iter = 6;
 mean_gt_1 = means_gt(i_iter, 1:end)';
 precisions_gt_1 = precisions_gt((i_iter-1)*60+1:i_iter*60, 1:60);
 covs_gt_1 = covs_gt((i_iter-1)*60+1:i_iter*60, 1:60);

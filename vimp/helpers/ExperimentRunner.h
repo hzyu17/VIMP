@@ -177,6 +177,10 @@ public:
 
     }
 
+    std::tuple<VectorXd, SpMat> get_mu_precision() {
+        return  _gvimp_robotsdf.get_mu_precision();
+    }
+
     GVIMPOptimizer optimizer_robot_sdf() const { return _gvimp_robotsdf; }
 
 private:
@@ -206,7 +210,7 @@ public:
                     const rapidxml::xml_node<>* paramNode){
         
         PGCSResultHistory res_Kd;
-        // res_Kd = pgcs_lin_sdf.optimize();
+
         res_Kd = opt_sdf.backtrack();
 
         MatrixXd Kt(this->_nx*this->_nx, params.nt()), dt(this->_nx, params.nt());
@@ -217,8 +221,6 @@ public:
         // ztSigt 
         Matrix3D h_zt = _ei.vec2mat3d(std::get<0>(ztSigt));
         Matrix3D h_Sigt = _ei.vec2mat3d(std::get<1>(ztSigt));
-        // h_zt 
-        // h_Sigt 
 
         MatrixXd zk_star(this->_nx, params.nt()), Sk_star(this->_nx*this->_nx, params.nt());
         zk_star = opt_sdf.zkt();

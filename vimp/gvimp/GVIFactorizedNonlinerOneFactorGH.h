@@ -31,9 +31,9 @@ namespace vimp{
                 Base::_func_Vmu = [this, function, cost_class, temperature](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class) / temperature ;};
                 Base::_func_Vmumu = [this, function, cost_class, temperature](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class) / temperature};};
                 
-                Base::_func_phi_highT = [this, function, cost_class, high_temperature](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class) / high_temperature );};
-                Base::_func_Vmu_highT = [this, function, cost_class, high_temperature](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class) / high_temperature;};
-                Base::_func_Vmumu_highT = [this, function, cost_class, high_temperature](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, cost_class) / high_temperature};};
+                // Base::_func_phi_highT = [this, function, cost_class, high_temperature](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class) / high_temperature );};
+                // Base::_func_Vmu_highT = [this, function, cost_class, high_temperature](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class) / high_temperature;};
+                // Base::_func_Vmumu_highT = [this, function, cost_class, high_temperature](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, cost_class) / high_temperature};};
                 
                 // Base::construct_function_T();
 
