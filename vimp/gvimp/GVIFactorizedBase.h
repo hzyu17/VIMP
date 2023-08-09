@@ -278,21 +278,21 @@ namespace vimp{
         /**
          * @brief returns the Phi(x) 
          */
-        inline MatrixXd Phi(const VectorXd& x) const{
+        inline MatrixXd negative_log_probability(const VectorXd& x) const{
             return _func_phi(x);
         }
 
         /**
          * @brief returns the (x-mu)*Phi(x) 
          */
-        inline MatrixXd xMuPhi(const VectorXd& x) const{
+        inline MatrixXd xMu_negative_log_probability(const VectorXd& x) const{
             return _func_Vmu(x);
         }
 
         /**
          * @brief returns the (x-mu)*Phi(x) 
          */
-        inline MatrixXd xMuxMuTPhi(const VectorXd& x) const{
+        inline MatrixXd xMuxMu_negative_log_probability(const VectorXd& x) const{
             return _func_Vmumu(x);
         }
 
