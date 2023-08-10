@@ -99,7 +99,7 @@
     <step_size> 0.45 </step_size>
     <low_temp_iterations>6</low_temp_iterations>
     <cost_sigma> 0.004 </cost_sigma>
-    <max_iterations>23</max_iterations>
+    <max_iterations>24</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case4/</saving_prefix>
 
 </Experiment4>

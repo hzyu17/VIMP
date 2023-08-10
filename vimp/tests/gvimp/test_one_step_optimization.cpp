@@ -181,7 +181,7 @@ TEST(GVIOnestep, initial_values){
                                                                 eps_sdf}, 
                                                                 n_states, 
                                                                 i, 
-                                                                params.temperature(), 
+                                                                temperature, 
                                                                 params.high_temperature()});    
             }
         }
@@ -229,7 +229,7 @@ TEST(GVIOnestep, initial_values){
 
         EigenWrapper ei;
         ei.print_matrix(factor_cost_vec, "factor_cost_vec");
-        
+
         factor_cost_vec_gt <<  0.399999999999981, 32.7327000000002, 0, 65.3999999999997, 0, 
                                65.3999999999997, 0, 65.3999999999997, 0.739105727743422, 65.3999999999997,
                                58.3163759352287, 65.3999999999997, 222.108617990813, 65.3999999999997, 145.689597500301,

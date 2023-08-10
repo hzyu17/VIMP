@@ -4,8 +4,11 @@
 # Brief: run gvi motion planning algorithm for a given configuration file.
 
 import os
-pwd = os.getcwd()
-built_dir = pwd + "/build/src/gvimp"
+full_path = os.path.realpath(__file__)
+path, filename = os.path.split(full_path)
+vimp_root = os.path.dirname(os.path.dirname(full_path))
+
+built_dir = vimp_root + "/build/src/gvimp"
 exp = "map2"
 
 if exp == "map1":

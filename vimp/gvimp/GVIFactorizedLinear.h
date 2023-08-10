@@ -70,7 +70,7 @@ namespace vimp{
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 
             // partial V / partial mu           
-            _Vdmu = (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean)) * constant() / temperature();
+            _Vdmu = (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean)) * constant() / this->temperature();
             
             MatrixXd AT_precision_A = _Lambda.transpose() * _target_precision * _Lambda;
 
@@ -86,7 +86,7 @@ namespace vimp{
                 }
             }
 
-            _Vddmu = (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace()) * constant() / temperature();
+            _Vddmu = (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace()) * constant() / this->temperature();
         }
 
         double fact_cost_value(const VectorXd& joint_mean, const SpMat& joint_cov) override {
@@ -94,7 +94,7 @@ namespace vimp{
             MatrixXd Cov_k = Base::extract_cov_from_joint(joint_cov);
 
             return ((_Lambda.transpose()*_target_precision*_Lambda * Cov_k).trace() + 
-                    (_Lambda*mean_k-_Psi*_target_mean).transpose() * _target_precision * (_Lambda*mean_k-_Psi*_target_mean)) * constant() / temperature();
+                    (_Lambda*mean_k-_Psi*_target_mean).transpose() * _target_precision * (_Lambda*mean_k-_Psi*_target_mean)) * constant() / this->temperature();
         }
 
     };
