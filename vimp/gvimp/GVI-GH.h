@@ -374,6 +374,8 @@ public:
 
     inline int max_iter_backtrack() const { return _niters_backtrack; }
 
+    void switch_to_high_temperature();
+
     /**
      * @brief calculate and return the E_q{phi(x)} s for each factorized entity.
      * @return vector<double> 

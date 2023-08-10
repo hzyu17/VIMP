@@ -32,6 +32,13 @@ namespace vimp
         return std::make_tuple(dmu, dprecision);
     }
 
+    template <typename Factor>
+    void GVIGH<Factor>::switch_to_high_temperature(){
+        for (auto& i_factor:_vec_factors){
+            i_factor->switch_to_high_temperature();
+        }
+    }
+
     /**
      * @brief optimize with backtracking
      */ 
@@ -41,6 +48,11 @@ namespace vimp
 
         for (int i_iter = 0; i_iter < _niters; i_iter++)
         {
+            // ============= High temperature phase =============
+            if (i_iter == _niters_lowtemp){
+                this->switch_to_high_temperature();
+            }
+
             // ============= Cost at current iteration =============
             double cost_iter = cost_value(_mu, _precision);
             if (verbose){

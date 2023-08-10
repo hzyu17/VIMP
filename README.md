@@ -73,6 +73,13 @@ cmake -DCMAKE_INSTALL_PREFIX=/PREFIX -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON \
 -DBOOST_LIBRARYDIR=/PREFIX/bin/boost/lib -DBoost_NO_BOOST_CMAKE=TRUE ..
 ```
 
+## Run Tests
+All changes to the code should pass the current tests. To run all the tests:
+```
+cd path_to_vimp
+python scripts/run_all_tests.py
+```
+
 ## Citation
 If you use this repository in your research, please cite the following publications
 ```

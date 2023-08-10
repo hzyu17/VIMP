@@ -6,7 +6,7 @@
 import os
 pwd = os.getcwd()
 built_dir = pwd + "/build"
-exp = "map2"
+exp = "map1"
 
 if exp == "map1":
     config_file = "configs/vimp/planar_pR_map1_new.xml"
