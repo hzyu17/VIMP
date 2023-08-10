@@ -9,7 +9,7 @@ path, filename = os.path.split(full_path)
 vimp_root = os.path.dirname(os.path.dirname(full_path))
 
 built_dir = vimp_root + "/build/src/gvimp"
-exp = "map3"
+exp = "map2"
 
 if exp == "map1":
     config_file = "configs/vimp/planar_pR_map1_new.xml"

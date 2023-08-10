@@ -10,6 +10,7 @@
     <eta> 1e-4 </eta>
     <stop_err> 1e-3 </stop_err>
     <max_iter> 50 </max_iter>
+    <map_name>2dpr_map2</map_name>
     <cost_sigma> 5.6e3 </cost_sigma>
     <backtracking_ratio> 0.7 </backtracking_ratio>
     <max_n_backtracking> 3 </max_n_backtracking>
@@ -17,7 +18,6 @@
 </Commons>
 
 <Experiment1>
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>7.0</x>
@@ -41,8 +41,6 @@
 </Experiment1>
 
 <Experiment2>
-
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -66,8 +64,6 @@
 </Experiment2>
 
 <Experiment3>
-
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>-7.0</x>
@@ -91,8 +87,6 @@
 </Experiment3>
 
 <Experiment4>
-
-    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
         <x>13.0</x>

@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
     // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
-    else if (argc == 15){
+    else if (argc == 16){
 
         int i_exp = std::stoi(argv[1]);
         double eps = std::stof(argv[2]);
@@ -49,10 +49,12 @@ int main(int argc, char* argv[]){
         double sig_obs = std::stof(argv[12]);
         double backtrack_ratio = std::stof(argv[13]);
         int backtrack_iterations = std::stoi(argv[14]);
+        std::string saving_prefix = static_cast<std::string>(argv[15]);
 
         PGCSParams params(nx, nu, eps_sdf, radius, eps, speed, 
                                    nt, sig0, sigT, eta, stop_err, sig_obs, 
                                    max_iter, backtrack_ratio, backtrack_iterations);
+        params.set_saving_prefix(saving_prefix);
         runner.run_one_exp(i_exp, params);
         return 0;
     }
