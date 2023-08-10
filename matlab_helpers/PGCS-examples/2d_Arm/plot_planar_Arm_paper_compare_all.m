@@ -202,7 +202,6 @@ axis off;
 hold off
 
 
-
 % =================== configuration space trajectory ===================
 figure
 set(gcf,'position',[x0,y0,width,height])

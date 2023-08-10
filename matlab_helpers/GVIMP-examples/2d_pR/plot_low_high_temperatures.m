@@ -1,3 +1,4 @@
+addpath('../../tools')
 close all
 clear all
 clc
@@ -10,6 +11,7 @@ covs = csvread([prefix + "cov.csv"]);
 precisions = csvread([prefix + "joint_precisoin.csv"]);
 costs = csvread([prefix + "cost.csv"]);
 factor_costs = csvread([prefix + "factor_costs.csv"]);
+
 niters = find_niters(means);
 nt = 15;
 dim_state = 4;
