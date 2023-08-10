@@ -52,7 +52,7 @@ t2=tiledlayout(2, floor(num_iter_hightemp/2), 'TileSpacing', 'none', 'Padding', 
 title(t2,'High temperature for high-entropy robustness','fontweight','bold','fontsize',16)
 % tiledlayout(1, floor(num_figures/2), 'TileSpacing', 'none', 'Padding', 'none')
 set(gcf,'position',[x0,y0,width,height])
-for i_step = niter_lowtemp + 1 : stepsize_hightemp : num_iter_hightemp
+for i_step = niter_lowtemp + 1 : stepsize_hightemp : niters
     nexttile
     hold on
     means_final = means(1:end, i_step);
