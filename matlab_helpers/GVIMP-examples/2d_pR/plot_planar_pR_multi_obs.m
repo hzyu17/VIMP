@@ -181,6 +181,7 @@ grid_X = origin_x : cell_size : grid_corner_x;
 grid_Y = origin_y : cell_size : grid_corner_y;
 
 tiledlayout(2, floor(nsteps/2), 'TileSpacing', 'tight', 'Padding', 'none')
+
 for i_iter = 1: nsteps
     nexttile
     t = title(['Iteration ', num2str(i_iter*step_size)]);

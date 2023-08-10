@@ -144,14 +144,7 @@ public:
         optimizer.update_file_names(params.saving_prefix());
         optimizer.set_mu(joint_init_theta);
 
-        // initial precision matrix for the optimization
-        MatrixXd init_precision(ndim, ndim);
-        init_precision = MatrixXd::Identity(ndim, ndim)*params.initial_precision_factor();
-        
-        // boundaries
-        init_precision.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
-        init_precision.block(N*dim_state, N*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
-        optimizer.set_precision(init_precision.sparseView());
+        optimizer.initilize_precision_matrix(params.initial_precision_factor(), params.boundary_penalties());
 
         optimizer.set_GH_degree(3);
         optimizer.set_step_size_base(params.step_size()); // a local optima

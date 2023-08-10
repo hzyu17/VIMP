@@ -206,20 +206,17 @@ TEST(GVIOnestep, initial_values){
         optimizer.set_mu(joint_init_theta);
 
         // initial precision matrix for the optimization
-        MatrixXd init_precision(ndim, ndim);
-        init_precision = MatrixXd::Identity(ndim, ndim)*params.initial_precision_factor();
-        
-        // boundaries
-        init_precision.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
-        init_precision.block(N*dim_state, N*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
-        optimizer.set_precision(init_precision.sparseView());
-
-        optimizer.set_GH_degree(3);
-        optimizer.set_step_size_base(params.step_size()); // a local optima
+        optimizer.initilize_precision_matrix(params.initial_precision_factor(), params.boundary_penalties());
 
         // ***** Test initial joint mean and covariance *****
         VectorXd joint_mean = optimizer.mean();
         SpMat joint_precision = optimizer.precision();
+
+        MatrixXd init_precision(ndim, ndim);
+        init_precision = MatrixXd::Identity(ndim, ndim)*params.initial_precision_factor();
+        
+        init_precision.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
+        init_precision.block((n_states-1)*dim_state, (n_states-1)*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
 
         ASSERT_LE((joint_mean - joint_init_theta).norm(), 1e-8);
         ASSERT_LE((joint_precision - init_precision).norm(), 1e-8);
@@ -230,6 +227,9 @@ TEST(GVIOnestep, initial_values){
         VectorXd factor_cost_vec_gt(19);
         factor_cost_vec_gt.setZero();
 
+        EigenWrapper ei;
+        ei.print_matrix(factor_cost_vec, "factor_cost_vec");
+        
         factor_cost_vec_gt <<  0.399999999999981, 32.7327000000002, 0, 65.3999999999997, 0, 
                                65.3999999999997, 0, 65.3999999999997, 0.739105727743422, 65.3999999999997,
                                58.3163759352287, 65.3999999999997, 222.108617990813, 65.3999999999997, 145.689597500301,

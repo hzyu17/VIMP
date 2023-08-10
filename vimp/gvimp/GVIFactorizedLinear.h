@@ -31,17 +31,11 @@ namespace vimp{
                             double temperature,
                             double high_temperature):
             Base(dimension, dim_state, num_states, start_indx, temperature, high_temperature, true),
-            _linear_factor{linear_factor},
-            _constant(linear_factor.get_Constant())
+            _linear_factor{linear_factor}
             {
                 Base::_func_phi = [this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor) / this->temperature() );};
                 Base::_func_Vmu = [this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor) / this->temperature();};
                 Base::_func_Vmumu = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor) / this->temperature() };};
-                
-                // Base::_func_phi_highT = [this, function, linear_factor](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, linear_factor) / this->high_temperature() );};
-                // Base::_func_Vmu_highT = [this, function, linear_factor](const VectorXd& x){return (x-Base::_mu) * function(x, linear_factor) / this->high_temperature();};
-                // Base::_func_Vmumu_highT = [this, function, linear_factor](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose() * function(x, linear_factor) / this->high_temperature()};};
-                
 
                 using GH = GaussHermite<GHFunction>;
                 Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi});
@@ -50,6 +44,7 @@ namespace vimp{
                 _target_precision = linear_factor.get_precision();
                 _Lambda = linear_factor.get_Lambda();
                 _Psi = linear_factor.get_Psi();
+                _constant = linear_factor.get_Constant();
             }
 
     protected:
@@ -60,6 +55,8 @@ namespace vimp{
         double _constant;
 
     public:
+        double constant() const { return _constant; }
+
         /*Calculating phi * (partial V) / (partial mu), and 
          * phi * (partial V^2) / (partial mu * partial mu^T) for Gaussian posterior: closed-form expression:
          * (partial V) / (partial mu) = Sigma_t{-1} * (mu_k - mu_t)
@@ -73,7 +70,7 @@ namespace vimp{
             MatrixXd tmp{MatrixXd::Zero(_dim, _dim)};
 
             // partial V / partial mu           
-            _Vdmu = (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean)) * _constant / temperature();
+            _Vdmu = (2 * _Lambda.transpose() * _target_precision * (_Lambda*_mu - _Psi*_target_mean)) * constant() / temperature();
             
             MatrixXd AT_precision_A = _Lambda.transpose() * _target_precision * _Lambda;
 
@@ -89,7 +86,7 @@ namespace vimp{
                 }
             }
 
-            _Vddmu = (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace()) * _constant / temperature();
+            _Vddmu = (_precision * tmp * _precision - _precision * (AT_precision_A*_covariance).trace()) * constant() / temperature();
         }
 
         double fact_cost_value(const VectorXd& joint_mean, const SpMat& joint_cov) override {
@@ -97,7 +94,7 @@ namespace vimp{
             MatrixXd Cov_k = Base::extract_cov_from_joint(joint_cov);
 
             return ((_Lambda.transpose()*_target_precision*_Lambda * Cov_k).trace() + 
-                    (_Lambda*mean_k-_Psi*_target_mean).transpose() * _target_precision * (_Lambda*mean_k-_Psi*_target_mean)) * _constant / temperature();
+                    (_Lambda*mean_k-_Psi*_target_mean).transpose() * _target_precision * (_Lambda*mean_k-_Psi*_target_mean)) * constant() / temperature();
         }
 
     };

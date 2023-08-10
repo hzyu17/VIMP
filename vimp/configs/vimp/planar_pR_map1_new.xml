@@ -14,7 +14,7 @@
     <high_temperature>100.0</high_temperature>
     <low_temp_iterations>10</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>20</max_iterations>
+    <max_iterations>30</max_iterations>
     <max_n_backtracking>10</max_n_backtracking>
 
 </Commons>
@@ -36,7 +36,6 @@
         <vy>0.0</vy>
     </goal_pos>
     
-    <step_size>0.35</step_size>
     <cost_sigma> 0.007 </cost_sigma>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map1/case1/</saving_prefix>

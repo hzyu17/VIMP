@@ -72,7 +72,7 @@ protected:
     /// optimization variables
     int _dim, _niters, _niters_lowtemp, _niters_backtrack, _nfactors, _dim_state, _num_states;
 
-    double _temperature, _high_temperature;
+    double _temperature, _high_temperature, _initial_precision_factor, _boundary_penalties;
 
     double _stop_err;
 
@@ -255,6 +255,31 @@ public:
         for (std::shared_ptr<FactorizedOptimizer> & opt_fact : _vec_factors){
             opt_fact->update_mu_from_joint(_mu);
         }
+    }
+
+    inline void set_initial_precision_factor(double initial_precision_factor){
+        _initial_precision_factor = initial_precision_factor;
+    }
+
+    inline void set_boundary_penalties(double boundary_penalties){
+        _boundary_penalties = boundary_penalties;
+    }
+
+    inline void initilize_precision_matrix(){
+        initilize_precision_matrix(_initial_precision_factor, _boundary_penalties);
+    }
+
+    inline void initilize_precision_matrix(double initial_precision_factor, double boundary_penalties){
+        // boundaries
+        set_initial_precision_factor(initial_precision_factor);
+        set_boundary_penalties(boundary_penalties);
+
+        MatrixXd init_precision(_dim, _dim);
+        init_precision = MatrixXd::Identity(_dim, _dim)*initial_precision_factor;
+        
+        init_precision.block(0, 0, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state)*boundary_penalties;
+        init_precision.block((_num_states-1)*_dim_state, (_num_states-1)*_dim_state, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state)*boundary_penalties;
+        set_precision(init_precision.sparseView());
     }
 
     inline void set_precision(const SpMat& new_precision);

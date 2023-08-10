@@ -23,7 +23,7 @@ int main(int argc, char* argv[]){
     GVIMPParams params;
     // no experiment argument, run the default scripts
     if (argc == 1){
-        num_exp = 1;
+        num_exp = 2;
         std::string config_file{source_root+"/configs/vimp/planar_pR_map1_new.xml"};
         GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
         runner.read_config(params);

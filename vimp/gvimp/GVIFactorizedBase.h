@@ -340,10 +340,6 @@ namespace vimp{
         GHFunction _func_Vmu;
         GHFunction _func_Vmumu;
 
-        // GHFunction _func_phi_highT;
-        // GHFunction _func_Vmu_highT;
-        // GHFunction _func_Vmumu_highT;
-
         /// G-H quadrature class
         using GH = GaussHermite<GHFunction> ;
         std::shared_ptr<GH> _gh;

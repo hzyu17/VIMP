@@ -4,10 +4,11 @@
 # Brief: run all tests after doing changes to the code. Good habit!
 
 import os
-import os
-pwd = os.getcwd()
-built_test_dir = pwd + "/build/tests"
 
+full_path = os.path.realpath(__file__)
+path, filename = os.path.split(full_path)
+vimp_root = os.path.dirname(os.path.dirname(full_path))
+built_test_dir = vimp_root + "/build/tests"
 files_in_directory = os.listdir(built_test_dir)
 
 for test in files_in_directory:

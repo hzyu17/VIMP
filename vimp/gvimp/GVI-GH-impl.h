@@ -24,10 +24,10 @@ namespace vimp
         }
 
         SpMat dprecision = _Vddmu - _precision;
-        // VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
+        VectorXd dmu = _ei.solve_cgd_sp(_Vddmu, -_Vdmu);
 
-        MatrixXd Vddmu_full{_Vddmu};
-        VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-_Vdmu);
+        // MatrixXd Vddmu_full{_Vddmu};
+        // VectorXd dmu = Vddmu_full.colPivHouseholderQr().solve(-_Vdmu);
 
         return std::make_tuple(dmu, dprecision);
     }
@@ -37,6 +37,7 @@ namespace vimp
         for (auto& i_factor:_vec_factors){
             i_factor->switch_to_high_temperature();
         }
+        this->initilize_precision_matrix();
     }
 
     /**

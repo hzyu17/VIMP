@@ -149,6 +149,11 @@ public:
             params.update_max_iter(max_iterations);
         }
 
+        if (paramNode->first_node("low_temp_iterations")){
+            int low_temp_iterations = atoi(paramNode->first_node("low_temp_iterations")->value());
+            params.update_lowtemp_iter(low_temp_iterations);
+        }
+
         double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
         params.update_sig_obs(cost_sigma);
 

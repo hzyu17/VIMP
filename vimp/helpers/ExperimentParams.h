@@ -84,6 +84,7 @@ public:
     inline void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
     inline void update_step_size(double step_size){ _step_size = step_size; }
     inline void update_max_iter(int max_iter){ _max_iterations = max_iter; }
+    inline void update_lowtemp_iter(int low_temp_iter){ _lowtemp_iterations = low_temp_iter; }
 
     inline void set_saving_prefix(const std::string& save_prefix){ _save_prefix = save_prefix; }
 
@@ -99,7 +100,7 @@ protected:
     int _nt, _nx, _nu;
     double _eps_sdf, _radius, _sig_obs;
 
-    int _max_iterations, _max_n_backtrack;
+    int _max_iterations, _max_n_backtrack, _lowtemp_iterations;
 
     MatrixIO _m_io;
     EigenWrapper _ei;
