@@ -17,9 +17,9 @@
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>10</low_temp_iterations>
+    <low_temp_iterations>4</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>40</max_iterations>
+    <max_iterations>50</max_iterations>
     <max_n_backtracking>10</max_n_backtracking>
 </Commons>
 
@@ -42,6 +42,8 @@
 
     <cost_sigma> 0.0055 </cost_sigma>
     <num_iter> 20 </num_iter>
+
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map3/case1/</saving_prefix>
 
 </Experiment1>
 

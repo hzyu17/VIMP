@@ -30,7 +30,7 @@ cost_sigma = 1.5e5;
 args = [num2str(i_exp), ' ', num2str(eps), ' ', num2str(eps_map), ' ', num2str(total_time), ' ', num2str(nt), ' ', num2str(sig0), ' ', num2str(sigT), ' ', ...
             num2str(eta), ' ', num2str(stop_err), ' ', num2str(max_iter), ' ', num2str(cost_sigma)];
 
-command = ['/home/hongzhe/git/VIMP/vimp/build/pgcs_PlanarPRModel', ' ', args];
+command = ['/home/hzyu/git/VIMP/vimp/build/src/pgcs/pgcs_PlanarPRModel', ' ', args];
 num_iter = system(command);
 
 

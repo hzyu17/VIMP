@@ -9,7 +9,7 @@ path, filename = os.path.split(full_path)
 vimp_root = os.path.dirname(os.path.dirname(full_path))
 
 built_dir = vimp_root + "/build/src/gvimp"
-exp = "map2"
+exp = "map3"
 
 if exp == "map1":
     config_file = "configs/vimp/planar_pR_map1_new.xml"
@@ -17,6 +17,13 @@ if exp == "map1":
     os.system(script)
 elif exp == "map2":
     config_file = "configs/vimp/planar_pR_map2_new.xml"
+    script = built_dir + "/gvi_PointRobot" + " " + config_file
+    print("===== script =====")
+    print()
+    print(script)
+    os.system(script)
+elif exp == "map3":
+    config_file = "configs/vimp/planar_pR_map3_new.xml"
     script = built_dir + "/gvi_PointRobot" + " " + config_file
     print("===== script =====")
     print()

@@ -1,7 +1,7 @@
 close all
 clear all
 clc
-%% ================ read data: 2d pr map1 ================
+%% ================ read data ================
 sdfmap = csvread("map2/map_multiobs_map2.csv");
 prefix = ["map2/case4/"];
 
@@ -25,7 +25,7 @@ origin_y = -10;
 
 num_figures = 10;
 step_size = floor(niters / num_figures);
-niter_lowtemp = 6;
+niter_lowtemp = 10;
 
 % --------------------- low temperature planning ---------------------
 figure
@@ -45,10 +45,11 @@ for i_step = 1:2:(num_figures/2)*2
 end
 
 % ---------- high temperature planning ---------- 
+n_figures_hightemp = floor(num_figures/2);
 num_iter_hightemp = niters - niter_lowtemp;
-stepsize_hightemp = 1;
+stepsize_hightemp = floor(num_iter_hightemp / n_figures_hightemp);
 figure
-t2=tiledlayout(2, floor(num_iter_hightemp/2), 'TileSpacing', 'none', 'Padding', 'none');
+t2=tiledlayout(1, n_figures_hightemp, 'TileSpacing', 'none', 'Padding', 'none');
 title(t2,'High temperature for high-entropy robustness','fontweight','bold','fontsize',16)
 % tiledlayout(1, floor(num_figures/2), 'TileSpacing', 'none', 'Padding', 'none')
 set(gcf,'position',[x0,y0,width,height])
