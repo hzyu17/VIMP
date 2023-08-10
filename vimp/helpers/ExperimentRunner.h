@@ -154,7 +154,7 @@ public:
             params.update_lowtemp_iter(low_temp_iterations);
         }
 
-        double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
+        double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
         params.update_sig_obs(cost_sigma);
 
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
@@ -275,7 +275,7 @@ public:
 
         double eta = atof(commonParams->first_node("eta")->value());
         double stop_err = atof(commonParams->first_node("stop_err")->value());
-        double sig_obs = atof(commonParams->first_node("cost_sigma")->value());
+        double sig_obs = atof(commonParams->first_node("sig_obs")->value());
         double backtracking_ratio = atof(commonParams->first_node("backtracking_ratio")->value());
         
         int max_iterations = atoi(commonParams->first_node("max_iter")->value());
@@ -372,7 +372,7 @@ public:
             params.update_step_size(eta);
         }
 
-        double cost_sigma = atof(paramNode->first_node("cost_sigma")->value());
+        double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
         params.update_sig_obs(cost_sigma);
 
         params.print_params();
@@ -425,7 +425,7 @@ public:
             params.update_step_size(eta);
         }
 
-        double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
+        double sig_obs = atof(paramNode->first_node("sig_obs")->value());
         params.update_sig_obs(sig_obs);
     }
 };
@@ -469,7 +469,7 @@ public:
         mT.block(0, 0, 7, 1) = mT_pos;
         mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
-        double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
+        double sig_obs = atof(paramNode->first_node("sig_obs")->value());
 
         params.set_m0(m0);
         params.set_mT(mT);
@@ -510,7 +510,7 @@ public:
         Eigen::VectorXd mT_pos(this->_nx);
         mT_pos << goal_1, goal_2, goal_3, goal_4, goal_5, goal_6;
 
-        double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
+        double sig_obs = atof(paramNode->first_node("sig_obs")->value());
 
         params.set_m0(mo_pos);
         params.set_mT(mT_pos);

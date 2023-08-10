@@ -33,7 +33,7 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <cost_sigma> 0.0035 </cost_sigma>
+    <sig_obs> 0.0035 </sig_obs>
     <!-- <max_iterations>40</max_iterations> -->
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case1/</saving_prefix>
 
@@ -54,7 +54,7 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <cost_sigma> 0.005 </cost_sigma>
+    <sig_obs> 0.005 </sig_obs>
     <max_iterations>40</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case2/</saving_prefix>
 
@@ -75,7 +75,7 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <cost_sigma> 0.0045 </cost_sigma>
+    <sig_obs> 0.0045 </sig_obs>
     <max_iterations>40</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case3/</saving_prefix>
 
@@ -98,7 +98,7 @@
 
     <step_size> 0.45 </step_size>
     <low_temp_iterations>10</low_temp_iterations>
-    <cost_sigma> 0.004 </cost_sigma>
+    <sig_obs> 0.004 </sig_obs>
     <max_iterations>30</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case4/</saving_prefix>
 

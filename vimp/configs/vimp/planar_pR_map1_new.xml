@@ -36,7 +36,7 @@
         <vy>0.0</vy>
     </goal_pos>
     
-    <cost_sigma> 0.007 </cost_sigma>
+    <sig_obs> 0.007 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map1/case1/</saving_prefix>
 

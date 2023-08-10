@@ -10,15 +10,17 @@
  */
 
 #include "helpers/ExperimentParams.h"
-#include "instances/PlanarFactorPR.h"
+#include "instances/PlanarFactor.h"
+#include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include "robots/PlanarPointRobotSDF_pgcs.h"
 
 namespace vimp{
 
-using SDFPR = gpmp2::ObstaclePlanarSDFFactorPointRobot;
-
 template <typename Robot, typename RobotSDF>
 class GVIMPPlanarRobotSDF{
+    using SDFPR = gpmp2::ObstaclePlanarSDFFactor<Robot>;
+    using GVIFactorizedPlanarSDFRobot = GVIFactorizedPlanarSDF<Robot>;
+
 public:
     virtual ~GVIMPPlanarRobotSDF(){}
 
@@ -114,18 +116,19 @@ public:
                                                             params.high_temperature()});
 
                 // collision factor
-                vec_factors.emplace_back(new PlanarSDFFactorPR{dim_conf, 
-                                                                dim_state, 
-                                                                cost_sdf_pR, 
-                                                                SDFPR{gtsam::symbol('x', i), 
-                                                                robot_model, 
-                                                                sdf, 
-                                                                sig_obs, 
-                                                                eps_sdf}, 
-                                                                n_states, 
-                                                                i, 
-                                                                params.temperature(), 
-                                                                params.high_temperature()});    
+                auto cost_sdf_Robot = cost_obstacle_planar<Robot>;
+                vec_factors.emplace_back(new GVIFactorizedPlanarSDFRobot{dim_conf, 
+                                                                        dim_state, 
+                                                                        cost_sdf_Robot, 
+                                                                        SDFPR{gtsam::symbol('x', i), 
+                                                                        robot_model, 
+                                                                        sdf, 
+                                                                        sig_obs, 
+                                                                        eps_sdf}, 
+                                                                        n_states, 
+                                                                        i, 
+                                                                        params.temperature(), 
+                                                                        params.high_temperature()});    
             }
         }
 

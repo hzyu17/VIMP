@@ -25,7 +25,7 @@ namespace vimp{
     typedef GVIFactorizedFixedGaussian<FixedPriorGP> FixedGpPrior;
     typedef GVIFactorizedLinear<MinimumAccGP> LinearGpPrior;
     template <typename ROBOT>
-    using OptPlanarSDFFactor = GVIFactorizedNonlinerOneFactorGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>>;
+    using GVIFactorizedPlanarSDF = GVIFactorizedNonlinerOneFactorGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>>;
 
 }
 
