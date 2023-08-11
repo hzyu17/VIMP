@@ -10,13 +10,13 @@
  */
 
 #include "covariance_steering/ProximalGradientCSLinearDyn.h"
-#include "robots/PlanarArmSDFExamples.h"
+#include "robots/PlanarArm2SDF_pgcs.h"
 #include "covariance_steering/PGCSLinDynRobotSDF.h"
 
 using namespace Eigen;
 
 namespace vimp{
 
-using PGCSLinArmPlanarSDF = PGCSLinDynRobotSDF<PlanarArmSDFExample>;
+using PGCSLinArmPlanarSDF = PGCSLinDynRobotSDF<PlanarArm2SDFExample>;
 
 }
