@@ -29,6 +29,7 @@ int main(int argc, char* argv[]){
 
     // no experiment argument, run the default scripts
     if (argc == 1){
+        std::cout << "run " << std::endl;
         runner.run();
         return 0;
     }

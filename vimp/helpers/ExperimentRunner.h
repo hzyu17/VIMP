@@ -284,11 +284,12 @@ public:
         
         int max_iterations = atoi(commonParams->first_node("max_iter")->value());
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
+        std::string map_name = static_cast<std::string>(commonParams->first_node("map_name")->value());
         // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
         params = PGCSParams(this->_nx, this->_nu, eps_sdf, radius, eps, total_time, this->_nt, 
                             sig0, sigT, eta, stop_err, sig_obs, 
-                            max_iterations, backtracking_ratio, max_n_backtracking);
+                            max_iterations, backtracking_ratio, max_n_backtracking, map_name);
 
         // if (commonParams->first_node("field_file")){
         //     std::string field = static_cast<std::string>(commonParams->first_node("field_file")->value());
@@ -318,8 +319,6 @@ public:
 void run_one_exp(int exp, PGCSParams& params, bool verbose=true)
 {
     rapidxml::file<> xmlFile(this->_config_file.data()); // Default template is char
-
-    std::cout << "debug 1" << std::endl;
 
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());

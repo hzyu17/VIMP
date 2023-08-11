@@ -31,7 +31,10 @@ public:
                         _eps_sdf(params.eps_sdf()),
                         _sig_obs(params.sig_obs()),
                         _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file()),
-                        _cost_helper(_max_iter){}
+                        _cost_helper(_max_iter){
+                            std::cout << "ProxGradCovSteerLinDyn" << std::endl;
+                            std::cout << "debug 2" << std::endl;
+                        }
 
     double hingeloss(const Matrix3D& zt, const Matrix3D& Sigt){
         double hingeloss = 0;

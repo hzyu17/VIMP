@@ -87,6 +87,7 @@ namespace vimp{
                                 pinvBBTi = (Bi * BiT).completeOrthogonalDecomposition().pseudoInverse();
                                 _ei.compress3d(pinvBBTi, _pinvBBTt, i);
                             }
+
                         }
         
         ProxGradCovSteer(const MatrixXd &A0,

@@ -47,6 +47,8 @@ public:
     RobotSDFBase(int ndof, int nlinks, int map_dim, const std::string& map_name): 
     _ndof(ndof), _nlinks(nlinks), _map_name(map_name), _origin(map_dim)
     {
+
+        std::cout << "map_name" << std::endl << map_name << std::endl;
         if (map_dim == 2){
                 /// map and sdf
                 std::string source_root{XSTRING(SOURCE_ROOT)};

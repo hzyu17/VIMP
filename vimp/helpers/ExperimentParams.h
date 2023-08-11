@@ -210,7 +210,7 @@ public:
     PGCSParams(int nx, int nu, double eps_sdf, double radius,
                     double eps, double total_time, int nt, double sig0, double sigT, double step_size, 
                     double stop_err, double sig_obs, int num_iter, double backtracking_ratio, 
-                    int max_n_backtracking, std::string map_name="map0", std::string sdf_file=""):
+                    int max_n_backtracking, std::string map_name="2dpr_map0", std::string sdf_file=""):
                     Params(nx,
                             nu,
                             total_time, 
