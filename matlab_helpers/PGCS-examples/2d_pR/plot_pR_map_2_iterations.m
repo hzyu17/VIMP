@@ -30,15 +30,15 @@ for i = 2:2 % 4 experiments
     
     n_iters = size(m_iters, 2) / nt;
     
-    num_plots = 8;
-    step_size = floor(n_iters / num_plots);
+    num_plots = 4;
+    step_size = floor(n_iters / 2 / num_plots);
     
     % plotting
     figure
     set(gcf,'position',[x0,y0,width,height])
-    tiledlayout(2, floor(num_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+    tiledlayout(1, num_plots, 'TileSpacing', 'none', 'Padding', 'none')
     
-    for i_iter = 2: step_size : n_iters-1
+    for i_iter = 2: step_size : n_iters / 2
         nexttile
         hold on
         % % --- read means and covariances ---
@@ -81,13 +81,14 @@ end
 %% plot costs for exp2
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 2, 'TileSpacing', 'none', 'Padding', 'none')
+tiledlayout(1, 3, 'TileSpacing', 'none', 'Padding', 'none')
 
 prefix = ["map2/case"+num2str(2)+"/"];
 costs_i = csvread([prefix + "costs.csv"]);
 n_steps = size(costs_i, 2);
 control_cost = costs_i(1, 1:end);
 collision_cost = costs_i(2, 1:end);
+total_cost = costs_i(3, 1:end);
 
 nexttile
 grid minor
@@ -102,9 +103,11 @@ hold on
 t = title('Collision Cost');
 t.FontSize = 20;
 plot(linspace(1, n_steps, n_steps), collision_cost, 'LineWidth', 2.5);
-%     plot(linspace(1, n_steps, n_steps), total_cost, 'LineWidth', 2.5);
 
-
-
-
+nexttile
+grid minor
+hold on
+t = title('Total Cost');
+t.FontSize = 20;
+plot(linspace(1, n_steps, n_steps), total_cost, 'LineWidth', 2.5);
 
