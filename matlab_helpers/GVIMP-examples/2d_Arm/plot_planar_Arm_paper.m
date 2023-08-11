@@ -119,11 +119,11 @@ hold off
 %% =============== plot cost for each factor and the total cost ================
 fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
 prior_costs = [];
-for i = 1:n_states-1
+for i = 1:nt-1
     prior_costs = [prior_costs, factor_costs(1:end, 1+(i-1)*2+1)];
 end
 obs_costs = [];
-for i = 1:n_states-2
+for i = 1:nt-2
     obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
 end
 
@@ -209,7 +209,7 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(2, 3, 'TileSpacing', 'tight', 'Padding', 'tight')
 
 n_samples = 50;
-for j = 1:3:n_states
+for j = 1:3:nt
     j
     nexttile
     t = title(['Support State ',num2str(j)]);
@@ -220,7 +220,7 @@ for j = 1:3:n_states
     plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
 
     % gradual changing colors
-%     alpha = (j / n_states)^(1.15);
+%     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, 0.9];
     color_sample = [0.0, 0.0, 0.7, 0.02];
     % mu j
@@ -254,7 +254,7 @@ i_vec_covs_2d = vec_covs{nsteps};
 plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
 
 % gradual changing colors
-%     alpha = (j / n_states)^(1.15);
+%     alpha = (j / nt)^(1.15);
 color = [0, 0, 1, 0.9];
 color_sample = [0.0, 0.0, 0.7, 0.02];
 % mu j
