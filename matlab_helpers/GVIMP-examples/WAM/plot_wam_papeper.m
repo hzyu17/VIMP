@@ -4,31 +4,19 @@ clc
 
 %% ******************* Read datas ******************
 addpath('/usr/local/gtsam_toolbox')
-addpath ('/home/hongzhe/git/VIMP/matlab_helpers/experiments/WAM/utils')
+addpath ('../../tools/WAM/utils')
+addpath("../../error_ellipse");
+
 import gtsam.*
 import gpmp2.*
 
-% import utils.*
+prefix = "map1/case1";
 
-replan = true;
-
-prefix = "../../../vimp/data/WAM/";
-
-if replan
-    means = csvread([prefix+"/mean.csv"]);
-    covs = csvread([prefix+"/cov.csv"]);
-    precisions = csvread([prefix+"/precisoin.csv"]);
-    costs = csvread([prefix+"/cost.csv"]);
-    factor_costs = csvread([prefix+"/factor_costs.csv"]);
-else
-    means = csvread([prefix+"/mean_base.csv"]);
-    covs = csvread([prefix+"/cov_base.csv"]);
-    precisions = csvread([prefix+"/precisoin_base.csv"]);
-    costs = csvread([prefix+"/cost_base.csv"]);
-    factor_costs = csvread([prefix+"/factor_costs_base.csv"]);
-end
-
-addpath("../../error_ellipse");
+means = csvread([prefix+"/mean.csv"]);
+covs = csvread([prefix+"/cov.csv"]);
+precisions = csvread([prefix+"/joint_precisoin.csv"]);
+costs = csvread([prefix+"/cost.csv"]);
+factor_costs = csvread([prefix+"/factor_costs.csv"]);
 
 %% ******************* Define parameters ******************
 % ----- parameters -----
@@ -71,21 +59,29 @@ end_conf = [-0.0,0.94,0,1.6,0,-0.919,1.55]';
 start_vel = zeros(7,1);
 end_vel = zeros(7,1);
 
-% % plot problem setting
-% figure(1), hold on
-% title('Problem Settings')
-% plotMap3D(dataset.corner_idx, origin, cell_size);
-% plotRobotModel(arm, start_conf)
-% plotRobotModel(arm, end_conf)
-% % plot config
-% set3DPlotRange(dataset)
-% grid on, view(3)
-% hold off
-
 % ============= plot sampled states for n iterations =============
-plotArmSamples3D(arm, vec_means, vec_covs, n_states, niters, nsteps, dataset, start_conf, end_conf);
+% plotArmSamples3D(arm, vec_means, vec_covs, n_states, niters, nsteps, dataset, start_conf, end_conf);
 
 %% ================= plot the final iteration, only mean value ===================
+% ----- parameters -----
+niters = find_niters(means);
+dim_state = 14;
+nt = size(means, 1) / dim_state;
+
+% ----- figure settings -----
+x0 = 50;
+y0 = 50;
+width = 400;
+height = 350;
+
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+
+nexttile
+t=title(['Supported state mean values']);
+t.FontSize = 14;
+
 x0 = 50;
 y0 = 50;
 width = 400;
@@ -94,8 +90,30 @@ figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
-t=title(['Supported state mean values']);
-t.FontSize = 14;
+t=title(['Iteration ', num2str(niters)]);
+t.FontSize = 16;
+i_means = means(:, niters);
+i_means = reshape(i_means, [dim_state, nt]);
+i_covs = covs(:, niters);
+i_covs = reshape(i_covs, [dim_state, dim_state, nt]);
+
+hold on 
+view(3)
+plotMap3D(dataset.corner_idx, origin, cell_size);
+for j = 1:nt
+    % gradual changing colors
+    alpha = (j / nt)^(1.15);
+    color = [0, 0, 1, alpha];
+    % means
+    plotArm3D(arm.fk_model(), i_means(1:7, j), color, 2, true);
+end
+plotArm3D(arm.fk_model(), start_conf, 'r', 4, true);
+plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
+plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
+hold off
+
+
+%% ----------------- old code -----------------
 i_vec_means = vec_means{nsteps};
 i_vec_covs = vec_covs{nsteps};
 hold on 

@@ -58,9 +58,8 @@ end_vel = [0, 0]';
 
 figure
 set(gcf,'position',[x0,y0,width,height])
-
 tiledlayout(2, floor(niters/2), 'TileSpacing', 'tight', 'Padding', 'tight')
-for i_iter = 1: niters
+for i_iter = 1: niters-1
     nexttile
     t = title(['Iteration ', num2str(i_iter)]);
     t.FontSize = 16;

@@ -1,33 +1,32 @@
 /**
- * @file GVIMPPlanarRobotSDF.h
+ * @file GVIMPRobotSDF.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The optimizer for planar robots at the joint level.
+ * @brief The optimizer for robots and 3D workspace SDF at the joint level.
  * @version 0.1
- * @date 2023-06-24
+ * @date 2023-08-14
  * 
  * @copyright Copyright (c) 2023
  * 
  */
 
 #include "helpers/ExperimentParams.h"
-#include "instances/FactorizedGVIPlanar.h"
-#include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
+#include "instances/FactorizedGVI.h"
+#include <gpmp2/obstacle/ObstacleSDFFactor.h>
 #include <gtsam/inference/Symbol.h>
-
 
 namespace vimp{
 
 template <typename Robot, typename RobotSDF>
-class GVIMPPlanarRobotSDF{
-    using SDFPR = gpmp2::ObstaclePlanarSDFFactor<Robot>;
-    using GVIFactorizedPlanarSDFRobot = GVIFactorizedPlanarSDF<Robot>;
+class GVIMPRobotSDF{
+    using SDFPR = gpmp2::ObstacleSDFFactor<Robot>;
+    using GVIFactorizedSDFRobot = GVIFactorizedSDF<Robot>;
 
 public:
-    virtual ~GVIMPPlanarRobotSDF(){}
+    virtual ~GVIMPRobotSDF(){}
 
-    GVIMPPlanarRobotSDF(){}
+    GVIMPRobotSDF(){}
 
-    GVIMPPlanarRobotSDF(GVIMPParams& params):
+    GVIMPRobotSDF(GVIMPParams& params):
     _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file())
     {}
 
@@ -121,19 +120,19 @@ public:
                                                             params.high_temperature()});
 
                 // collision factor
-                auto cost_sdf_Robot = cost_obstacle_planar<Robot>;
-                vec_factors.emplace_back(new GVIFactorizedPlanarSDFRobot{dim_conf, 
-                                                                        dim_state, 
-                                                                        cost_sdf_Robot, 
-                                                                        SDFPR{gtsam::symbol('x', i), 
-                                                                        robot_model, 
-                                                                        sdf, 
-                                                                        sig_obs, 
-                                                                        eps_sdf}, 
-                                                                        n_states, 
-                                                                        i, 
-                                                                        params.temperature(), 
-                                                                        params.high_temperature()});    
+                auto cost_sdf_Robot = cost_obstacle<Robot>;
+                vec_factors.emplace_back(new GVIFactorizedSDFRobot{dim_conf, 
+                                                                    dim_state, 
+                                                                    cost_sdf_Robot, 
+                                                                    SDFPR{gtsam::symbol('x', i), 
+                                                                    robot_model, 
+                                                                    sdf, 
+                                                                    sig_obs, 
+                                                                    eps_sdf}, 
+                                                                    n_states, 
+                                                                    i, 
+                                                                    params.temperature(), 
+                                                                    params.high_temperature()});    
             }
         }
 

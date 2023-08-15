@@ -25,6 +25,8 @@ namespace vimp{
 using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
     class WamArmSDFExample:public Base{
         public:
+            WamArmSDFExample(){}
+            
             WamArmSDFExample(const string& sdf_file, double eps): 
                 Base(1, 7),
                 _eps(eps)

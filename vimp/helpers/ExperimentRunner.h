@@ -182,6 +182,14 @@ public:
 
     }
 
+    // Run one experiment, return the optimized means and precision matrices.
+    std::tuple<Eigen::VectorXd, SpMat> run_one_exp_return(GVIMPParams& params, bool verbose=true) 
+    {
+        params.print_params();
+        return _gvimp_robotsdf.run_optimization_return(params, verbose);
+    }
+
+
     std::tuple<VectorXd, SpMat> get_mu_precision() {
         return  _gvimp_robotsdf.get_mu_precision();
     }
@@ -190,6 +198,57 @@ public:
 
 private:
     GVIMPOptimizer _gvimp_robotsdf;
+
+};
+
+template <typename GVIOptimizer>
+class GVIMPRunner7D: public GVIMPRunner<GVIOptimizer>{
+public:
+    // PGCSRunner(){}
+    virtual ~GVIMPRunner7D(){}
+
+    GVIMPRunner7D(int num_exp, const std::string & config):
+                        GVIMPRunner<GVIOptimizer>(14, 7, num_exp, config){}
+    
+
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& params) override{
+        double start_1 = atof(paramNode->first_node("start_pos")->first_node("1")->value());
+        double start_2 = atof(paramNode->first_node("start_pos")->first_node("2")->value());
+        double start_3 = atof(paramNode->first_node("start_pos")->first_node("3")->value());
+        double start_4 = atof(paramNode->first_node("start_pos")->first_node("4")->value());
+        double start_5 = atof(paramNode->first_node("start_pos")->first_node("5")->value());
+        double start_6 = atof(paramNode->first_node("start_pos")->first_node("6")->value());
+        double start_7 = atof(paramNode->first_node("start_pos")->first_node("7")->value());
+
+        double goal_1 = atof(paramNode->first_node("goal_pos")->first_node("1")->value());
+        double goal_2 = atof(paramNode->first_node("goal_pos")->first_node("2")->value());
+        double goal_3 = atof(paramNode->first_node("goal_pos")->first_node("3")->value());
+        double goal_4 = atof(paramNode->first_node("goal_pos")->first_node("4")->value());
+        double goal_5 = atof(paramNode->first_node("goal_pos")->first_node("5")->value());
+        double goal_6 = atof(paramNode->first_node("goal_pos")->first_node("6")->value());
+        double goal_7 = atof(paramNode->first_node("goal_pos")->first_node("7")->value());
+
+        VectorXd m0(this->_nx), mT(this->_nx); 
+
+        Eigen::VectorXd mo_pos(7);
+        mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
+        m0.block(0, 0, 7, 1) = mo_pos;
+        m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
+
+        Eigen::VectorXd mT_pos(7);
+        mT_pos << goal_1, goal_2, goal_3, goal_4, goal_5, goal_6, goal_7;
+        mT.block(0, 0, 7, 1) = mT_pos;
+        mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
+
+        double sig_obs = atof(paramNode->first_node("sig_obs")->value());
+
+        params.set_m0(m0);
+        params.set_mT(mT);
+        params.update_sig_obs(sig_obs);
+
+        std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        params.set_saving_prefix(saving_prefix);
+    }
 
 };
 

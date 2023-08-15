@@ -39,9 +39,7 @@ double cost_obstacle_planar(const VectorXd& pose,
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     precision_obs = precision_obs / obs_factor.get_noiseModel()->sigmas()[0];
 
-    double cost = vec_err.transpose().eval() * precision_obs * vec_err;
-
-    return cost;
+    return vec_err.transpose().eval() * precision_obs * vec_err;
 
 }
 

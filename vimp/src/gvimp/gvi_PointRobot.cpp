@@ -15,6 +15,8 @@
 
 #include "helpers/ExperimentRunner.h"
 #include "instances/gvimp/GVIMPPlanarPRSDF.h"
+// #include "robots/PlanarPointRobotSDF_pgcs.h"
+
 using namespace vimp;
 
 int main(int argc, char* argv[]){

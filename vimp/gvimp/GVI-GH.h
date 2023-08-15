@@ -332,8 +332,8 @@ public:
         vec_filenames.emplace_back("mean");
         vec_filenames.emplace_back("cov");
         vec_filenames.emplace_back("joint_cov");
-        vec_filenames.emplace_back("precisoin");
-        vec_filenames.emplace_back("joint_precisoin");
+        vec_filenames.emplace_back("precision");
+        vec_filenames.emplace_back("joint_precision");
         vec_filenames.emplace_back("cost");
         vec_filenames.emplace_back("factor_costs");
         vec_filenames.emplace_back("perturbation_statistics");
