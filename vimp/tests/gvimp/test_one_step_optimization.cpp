@@ -172,10 +172,11 @@ TEST(GVIOnestep, initial_values){
                                                             params.temperature(), 
                                                             params.high_temperature()});
 
+                auto cost_sdf_pr = cost_obstacle_planar<gpmp2::PointRobotModel>;
                 // collision factor
                 vec_factors.emplace_back(new GVIFactorizedPlanarSDFPR{dim_conf, 
                                                                 dim_state, 
-                                                                cost_sdf_pR, 
+                                                                cost_sdf_pr, 
                                                                 SDFPR{gtsam::symbol('x', i), 
                                                                 robot_model, 
                                                                 sdf, 

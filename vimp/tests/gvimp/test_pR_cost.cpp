@@ -1,6 +1,7 @@
-#include "instances/PlanarFactorPR.h"
+#include "instances/FactorizedGVIPlanar.h"
 #include "robots/PlanarPointRobotSDFMultiObsExample.h"
 #include <gtest/gtest.h>
+#include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
 using namespace gpmp2;
 using namespace Eigen;
@@ -46,7 +47,8 @@ TEST(ColCost, sdf_map){
 
 
 TEST(ColCost, collision_cost){
-    
+    using GVIFactorizedPlanarSDFPR = GVIFactorizedPlanarSDF<gpmp2::PointRobotModel>;
+
     /// Vector of base factored optimizers
     vector<std::shared_ptr<GVIFactorizedBase>> vec_factor_opts;
 
@@ -57,7 +59,8 @@ TEST(ColCost, collision_cost){
     double temperature = 10.0, high_temperature = 100.0;
 
     /// Factored optimizer
-    std::shared_ptr<PlanarSDFFactorPR> p_obs{new PlanarSDFFactorPR{2, dim_state, cost_sdf_pR, 
+    auto cost_sdf_pR = cost_obstacle_planar<gpmp2::PointRobotModel>;
+    std::shared_ptr<GVIFactorizedPlanarSDFPR> p_obs{new GVIFactorizedPlanarSDFPR{2, dim_state, cost_sdf_pR, 
                                                                    collision_k, num_states, 0, 
                                                                    temperature, high_temperature}};
     vec_factor_opts.emplace_back(p_obs);

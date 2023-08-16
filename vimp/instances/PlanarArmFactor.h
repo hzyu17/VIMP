@@ -10,11 +10,11 @@
  */
 
 
-#include "instances/PlanarFactor.h"
+#include "instances/FactorizedGVIPlanar.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorArm.h>
 
 namespace vimp{
 
     auto cost_sdf_Arm = cost_obstacle_planar<gpmp2::ArmModel>;
-    using OptPlanarSDFFactorArm = OptPlanarSDFFactor<gpmp2::ArmModel>;
+    using OptPlanarSDFFactorArm = GVIFactorizedPlanarSDF<gpmp2::ArmModel>;
 }// namespace 

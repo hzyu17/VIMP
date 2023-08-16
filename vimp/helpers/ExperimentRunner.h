@@ -210,6 +210,18 @@ public:
     GVIMPRunner7D(int num_exp, const std::string & config):
                         GVIMPRunner<GVIOptimizer>(14, 7, num_exp, config){}
     
+    
+    void read_boundary_conditions(const std::string& config_file, int i_exp, GVIMPParams& params){
+        rapidxml::file<> xmlFile(config_file.data()); // Default template is char
+        rapidxml::xml_document<> doc;
+        doc.parse<0>(xmlFile.data());        
+        std::string ExpNodeName = "Experiment" + std::to_string(i_exp);
+        char * c_expname = ExpNodeName.data();
+        rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
+
+        this->read_boundary_conditions(paramNode, params);
+
+    }
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& params) override{
         double start_1 = atof(paramNode->first_node("start_pos")->first_node("1")->value());
