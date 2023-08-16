@@ -131,6 +131,11 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## This interface can be used to plan and execute motions:
         group_name = "arm"
         move_group = moveit_commander.MoveGroupCommander(group_name)
+        
+        start_state = [-0.800000000000000, -1.70000000000000, 1.64000000000000, 
+                       1.29000000000000, 1.10000000000000, -0.106000000000000, 2.20000000000000]
+        move_group.go(start_state, wait=True)
+        # move_group.setStartState(start_state);
 
         ## Create a `DisplayTrajectory`_ ROS publisher which is used to display
         ## trajectories in Rviz:
@@ -140,8 +145,6 @@ class MoveGroupPythonInterfaceTutorial(object):
             queue_size=20,
         )
         
-        self.trajectory = self.read_trajectory_from_csv('zk_sdf.csv')
-
         ## END_SUB_TUTORIAL
 
         ## BEGIN_SUB_TUTORIAL basic_info
@@ -211,11 +214,18 @@ class MoveGroupPythonInterfaceTutorial(object):
         # Read the trajectory from a CSV file
         print("Reading planned trajectory from file: ", file_path)
         trajectory = []
+        import pandas as pd
         with open(file_path, 'r') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                trajectory.append([float(val) for val in row[0:7]])
+
+            df = pd.read_csv(file, header=None) 
+            print("df len: ", len(df.columns))
+            for i_col in range(len(df.columns)):
+                col_list = df[df.columns[i_col]].values.tolist()
+                trajectory.append([float(val) for val in col_list[0:7]])
         return trajectory
+    
+    def update_trajectory(self, file_path):
+        self.trajectory = self.read_trajectory_from_csv(file_path)
         
         
     def display_trajectory(self):
@@ -311,42 +321,49 @@ class MoveGroupPythonInterfaceTutorial(object):
 
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) > 2:
         print(
             'Correct usage:: \n"rosrun moveit_tutorials collision_scene_example.py cluttered" OR \n"rosrun moveit_tutorials collision_scene_example.py sparse"'
         )
         sys.exit()
-    else:
-        trj_file = sys.argv[1]
-
-        try:
-            print("")
-            print("----------------------------------------------------------")
-            print("Welcome to the MoveIt MoveGroup Python Interface Tutorial")
-            print("----------------------------------------------------------")
-            print("Press Ctrl-D to exit at any time")
-            print("")
-            input(
-                "============ Press `Enter` to begin the tutorial by setting up the moveit_commander ..."
-            )
-            tutorial = MoveGroupPythonInterfaceTutorial()
-
-            tutorial.read_trajectory_from_csv(trj_file)
-
-            tutorial.go_to_joint_state()
+    try: 
+        print("")
+        print("----------------------------------------------------------")
+        print("VIMP ROS trajectory display")
+        print("----------------------------------------------------------")
+        print("Press Ctrl-D to exit at any time")
+        print("")
+        input(
+            "============ Press `Enter` to begin the tutorial by setting up the moveit_commander ..."
+        )
+        tutorial = MoveGroupPythonInterfaceTutorial()
+        
+        import os
+        
+        if (len(sys.argv) == 1):
             
-            input(
-                "============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ..."
-            )
-            tutorial.display_trajectory()
+            full_path = os.path.realpath(__file__)
+            path, filename = os.path.split(full_path)
+            tutorial.update_trajectory(path+"/zk_sdf.csv")
+        
+        if (len(sys.argv) == 2):
+            trj_file = sys.argv[1]
+            tutorial.update_trajectory(trj_file)
             
+        tutorial.go_to_joint_state()
+            
+        input(
+            "============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ..."
+        )
+        tutorial.display_trajectory()
+        
 
-            print("============ Python tutorial demo complete!")
-        except rospy.ROSInterruptException:
-            return
-        except KeyboardInterrupt:
-            return
-
+        print("============ Python tutorial demo complete!")
+        
+    except rospy.ROSInterruptException:
+        return
+    except KeyboardInterrupt:
+        return
 
 if __name__ == "__main__":
     main()

@@ -8,9 +8,8 @@ addpath ('/home/hongzhe/git/VIMP/matlab_helpers/experiments/WAM/utils')
 import gtsam.*
 import gpmp2.*
 
-addpath("../../../matlab_helpers/PGCS-examples");
-
-% import utils.*
+addpath("..//PGCS-examples");
+addpath("../../tools/error_ellipse");
 
 replan = true;
 exp=1;
@@ -64,8 +63,6 @@ covs = csvread([prefix+"/Sk_sdf.csv"]);
 [nx, nt] = size(means);
 covs = reshape(covs, [nx, nx, nt])
 
-addpath("../../error_ellipse");
-
 %% ******************* Define map dataset ******************
 dataset = generate3Ddataset('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
@@ -92,7 +89,7 @@ end_conf = [-0.0,       0.94,     0,       1.6,     0,       -0.919,     1.55;
                           -0.7,     1.35,     1.2,      1.0,     -0.7,    -0.1,           1.2;
                           -0.0,        0.6,       -0.5,   0.2,    0.2,    0.8,           1.15];
 
-for i_exp = 1:1 % 3 experiments
+for i_exp = 3:3 % 3 experiments
  
     prefix = ["case"+num2str(i_exp)+"/"];
 

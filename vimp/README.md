@@ -14,7 +14,7 @@ python pth_to_vimp/scripts/vimp_rosadd_bookshelf.py bookshelf
 ```
 5. Visualize a planned trajectory from a saved csv file
 ```
-python test_display_trajectory_wam.py
+python trajectory_displayer_ros_WAM.py
 ```
 
 

@@ -5,7 +5,7 @@ clc
 %% ******************* Read datas ******************
 addpath('/usr/local/gtsam_toolbox')
 addpath ('../../tools/WAM/utils')
-addpath("../../error_ellipse");
+addpath("../../tools/error_ellipse");
 
 import gtsam.*
 import gpmp2.*
