@@ -209,6 +209,7 @@ class MoveGroupPythonInterfaceTutorial(object):
     
     def read_trajectory_from_csv(self, file_path):
         # Read the trajectory from a CSV file
+        print("Reading planned trajectory from file: ", file_path)
         trajectory = []
         with open(file_path, 'r') as file:
             reader = csv.reader(file)
@@ -310,31 +311,41 @@ class MoveGroupPythonInterfaceTutorial(object):
 
 
 def main():
-    try:
-        print("")
-        print("----------------------------------------------------------")
-        print("Welcome to the MoveIt MoveGroup Python Interface Tutorial")
-        print("----------------------------------------------------------")
-        print("Press Ctrl-D to exit at any time")
-        print("")
-        input(
-            "============ Press `Enter` to begin the tutorial by setting up the moveit_commander ..."
+    if len(sys.argv) != 2:
+        print(
+            'Correct usage:: \n"rosrun moveit_tutorials collision_scene_example.py cluttered" OR \n"rosrun moveit_tutorials collision_scene_example.py sparse"'
         )
-        tutorial = MoveGroupPythonInterfaceTutorial()
+        sys.exit()
+    else:
+        trj_file = sys.argv[1]
 
-        tutorial.go_to_joint_state()
-        
-        input(
-            "============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ..."
-        )
-        tutorial.display_trajectory()
-        
+        try:
+            print("")
+            print("----------------------------------------------------------")
+            print("Welcome to the MoveIt MoveGroup Python Interface Tutorial")
+            print("----------------------------------------------------------")
+            print("Press Ctrl-D to exit at any time")
+            print("")
+            input(
+                "============ Press `Enter` to begin the tutorial by setting up the moveit_commander ..."
+            )
+            tutorial = MoveGroupPythonInterfaceTutorial()
 
-        print("============ Python tutorial demo complete!")
-    except rospy.ROSInterruptException:
-        return
-    except KeyboardInterrupt:
-        return
+            tutorial.read_trajectory_from_csv(trj_file)
+
+            tutorial.go_to_joint_state()
+            
+            input(
+                "============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ..."
+            )
+            tutorial.display_trajectory()
+            
+
+            print("============ Python tutorial demo complete!")
+        except rospy.ROSInterruptException:
+            return
+        except KeyboardInterrupt:
+            return
 
 
 if __name__ == "__main__":

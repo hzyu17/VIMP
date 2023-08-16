@@ -10,8 +10,7 @@ roslaunch barrett_wam_moveit_config demo.launch
 ```
 4. Insert example obstacles (bookshelf for example)
 ```
-cd vimp/scripts
-python add_bookshelf.py bookshelf
+python pth_to_vimp/scripts/vimp_rosadd_bookshelf.py bookshelf
 ```
 5. Visualize a planned trajectory from a saved csv file
 ```
