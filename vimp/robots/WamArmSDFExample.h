@@ -20,7 +20,7 @@
 
 using namespace gpmp2;
 using ArmModel = gpmp2::ArmModel;
-using ObsArmSDF = gpmp2::ObstacleSDFFactor<gpmp2::ArmModel>;
+using ObsArmSDF = gpmp2::ObstacleSDFFactorArm;
 using SDF = gpmp2::SignedDistanceField;
 using sym = gtsam::Symbol;
 
@@ -62,6 +62,7 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 }
 
                 generateArm();
+                default_sdf();
                 Base::_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), Base::_robot, Base::_sdf, 0.0, _eps));
             }
 
@@ -126,20 +127,10 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 Base::_robot = gpmp2::ArmModel{arm, body_spheres};
             }
 
-            // /**
-            //  * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
-            //  * */
-            // std::tuple<Eigen::VectorXd, Eigen::MatrixXd> hinge_jac(const Eigen::VectorXd& pose){
-            //     Eigen::MatrixXd Jacobian;
-            //     Eigen::VectorXd vec_err = Base::_psdf_factor->evaluateError(pose, Jacobian);
-
-            //     return std::make_tuple(vec_err, Jacobian);
-            // }
-
             void default_sdf(){
                 Base::_sdf = SDF();
                 std::string source_root{XSTRING(SOURCE_ROOT)};
-                std::string sdf_file{source_root+"/../matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin"};
+                std::string sdf_file{source_root+"/maps/WAM/WAMDeskDataset.bin"};
                 Base::_sdf.loadSDF(sdf_file);
                 Base::_psdf = std::make_shared<SDF>(Base::_sdf);
             }

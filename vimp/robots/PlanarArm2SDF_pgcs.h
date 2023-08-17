@@ -65,14 +65,14 @@ class PlanarArm2SDFExample: public BaseClass{
                 body_spheres.push_back(BodySphere(1, r, Point3(-0.1, 0.0,  0.0)));
                 body_spheres.push_back(BodySphere(1, r, Point3( 0.0, 0.0,  0.0)));
 
-                _robot = gpmp2::ArmModel{abs_arm, body_spheres};
+                BaseClass::_robot = gpmp2::ArmModel{abs_arm, body_spheres};
 
-                _psdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), BaseClass::_robot, sdf, 0.0, _eps));
+                BaseClass::_psdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), BaseClass::_robot, sdf, 0.0, _eps));
         }
 
         inline void update_sdf(const gpmp2::PlanarSDF& sdf){
-            _psdf = std::make_shared<gpmp2::PlanarSDF>(sdf);
-            _psdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), BaseClass::_robot, sdf, 0.0, _eps));
+            BaseClass::_psdf = std::make_shared<gpmp2::PlanarSDF>(sdf);
+            BaseClass::_psdf_factor = std::make_shared<ArmSDF>(ArmSDF(gtsam::symbol('x', 0), BaseClass::_robot, sdf, 0.0, _eps));
         }
 
 

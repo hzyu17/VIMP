@@ -2,7 +2,7 @@
     <total_time>2.5</total_time>
     <n_states>15</n_states>
     <map_name>map_bookshelf</map_name>
-    <eps_sdf>0.15</eps_sdf>
+    <eps_sdf>15</eps_sdf>
     <coeff_Qc>0.8</coeff_Qc>
     <sig_obs>0.0003</sig_obs>
     <radius>0.0</radius>

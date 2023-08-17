@@ -87,7 +87,7 @@ foreach(subdir ${vimp_subdirs})
 
   # local and tests
   add_subdirectory(${subdir})
-  
+
 endforeach(subdir)
 
 # include_directories(${PYTHON_INCLUDE_DIRS})

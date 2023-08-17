@@ -41,6 +41,8 @@ double cost_obstacle_planar(const VectorXd& pose,
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     precision_obs = precision_obs / obs_factor.get_noiseModel()->sigmas()[0];
 
+    std::cout << "dddd" << std::endl;
+
     return vec_err.transpose().eval() * precision_obs * vec_err;
 
 }
@@ -54,12 +56,13 @@ double cost_obstacle(const VectorXd& pose,
                     const gpmp2::ObstacleSDFFactor<ROBOT>& obs_factor){
     VectorXd vec_err = obs_factor.evaluateError(pose);
 
+    vimp::EigenWrapper ei;
+    ei.print_matrix(pose, "pose");
+    ei.print_matrix(vec_err, "vec_err");
+
     // MatrixXd precision_obs;
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     precision_obs = precision_obs / obs_factor.get_noiseModel()->sigmas()[0];
-
-    EigenWrapper ei;
-    ei.print_matrix(vec_err, "vec_err");
 
     // std::cout << "obs cost" << std::endl 
     //           << vec_err.transpose().eval() * precision_obs * vec_err << std::endl;

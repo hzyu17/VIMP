@@ -1,20 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <Commons>
     <total_time>1.5</total_time>
     <n_states>10</n_states>
     <coeff_Qc>0.8</coeff_Qc>
     <sig_obs>0.0055</sig_obs>
     <map_name>2darm_map1</map_name>
-    <eps_sdf>0.35</eps_sdf>
+    <eps_sdf>0.45</eps_sdf>
     <radius>0.01</radius>
-    <step_size>0.45</step_size>
+    <step_size>0.35</step_size>
     <init_precision_factor>10.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>15</low_temp_iterations>
+    <low_temp_iterations>10</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>15</max_iterations>
+    <max_iterations>40</max_iterations>
     <max_n_backtracking>10</max_n_backtracking>
 
 </Commons>

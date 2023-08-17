@@ -60,7 +60,7 @@ public:
         auto robot_model = _robot_sdf.RobotModel();
         auto sdf = _robot_sdf.sdf();
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
-        double temperature = params.temperature();
+        double temperature = params.temperature(), high_temperature = params.high_temperature();
 
         /// initial values
         VectorXd joint_init_theta{VectorXd::Zero(ndim)};
@@ -120,10 +120,10 @@ public:
                                                             params.high_temperature()});
 
                 // collision factor
-                auto cost_sdf_Robot = cost_obstacle<Robot>;
+                // auto cost_sdf_Robot = cost_obstacle<Robot>;
                 vec_factors.emplace_back(new GVIFactorizedSDFRobot{dim_conf, 
                                                                     dim_state, 
-                                                                    cost_sdf_Robot, 
+                                                                    cost_obstacle<Robot>, 
                                                                     SDFPR{gtsam::symbol('x', i), 
                                                                     robot_model, 
                                                                     sdf, 
@@ -131,8 +131,8 @@ public:
                                                                     eps_sdf}, 
                                                                     n_states, 
                                                                     i, 
-                                                                    params.temperature(), 
-                                                                    params.high_temperature()});    
+                                                                    temperature, 
+                                                                    high_temperature});    
             }
         }
 
