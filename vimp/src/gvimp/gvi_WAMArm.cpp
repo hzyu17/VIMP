@@ -19,7 +19,7 @@ using namespace vimp;
 
 int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    int nx = 14, nu = 7, num_exp = 1;
+    int nx = 14, nu = 7, num_exp = 2;
     GVIMPParams params;
     if (argc == 1){
         // no experiment argument, run the default scripts

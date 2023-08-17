@@ -113,7 +113,12 @@ namespace vimp
                     }
                     set_mu(new_mu);
                     set_precision(new_precision);
-                    break;
+                    // if (i_iter >= _niters_lowtemp){
+                    //     save_data(verbose);
+                    //     return;
+                    // }else{
+                        break;
+                    // }
                 }                
             }
         }

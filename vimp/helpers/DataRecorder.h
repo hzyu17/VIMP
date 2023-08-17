@@ -24,19 +24,30 @@ namespace vimp
 
 class VIMPResults{
 private:    
-        Matrix3D _res_mean;
-        Matrix3D _res_covariances, _res_joint_covariances;
-        Matrix3D _res_precisions, _res_joint_precisions;
+
         int _niters, _dimension, _nfactors, _dim_state, _nstates;
         int _cur_iter = 0;
+
+        // collection of all iterations
+        Matrix3D _res_mean; 
+        Matrix3D _res_covariances, _res_joint_covariances;
+        Matrix3D _res_precisions, _res_joint_precisions;
+        // last iteration results
+        Matrix3D _zk_sdf, _Sk_sdf;
+
+        // costs
         VectorXd _res_costs;
         Matrix3D _res_factor_costs;
 
+        // file names
         std::string _file_mean{"mean.csv"};
         std::string _file_cov{"cov.csv"};
         std::string _file_joint_cov{"joint_cov.csv"};
         std::string _file_precision{"precision.csv"};
         std::string _file_joint_precision{"joint_precision.csv"};
+        std::string _file_zk_sdf{"zk_sdf.csv"};
+        std::string _file_Sk_sdf{"Sk_sdf.csv"};
+
         std::string _file_cost{"cost.csv"};
         std::string _file_factor_costs{"factor_costs.csv"};
 
@@ -137,7 +148,9 @@ public:
                                     const std::string& file_precision,
                                     const std::string& file_joint_precision,
                                     const std::string& file_cost,
-                                    const std::string& file_factor_costs){
+                                    const std::string& file_factor_costs,
+                                    const std::string& file_zk_sdf,
+                                    const std::string& file_Sk_sdf){
         _file_mean = file_mean;
         _file_cov = file_cov;
         _file_cost = file_cost;
@@ -145,6 +158,8 @@ public:
         _file_factor_costs = file_factor_costs;
         _file_joint_precision = file_joint_precision;
         _file_joint_cov = file_joint_cov;
+        _file_zk_sdf = file_zk_sdf;
+        _file_Sk_sdf = file_Sk_sdf;
     }
 
     /**
@@ -152,32 +167,53 @@ public:
      */
     void save_data(bool verbose=true){
         /// save mean
-        ofstream file(_file_mean);
+        // ofstream file(_file_mean);
         _m_io.saveData(_file_mean, _res_mean, verbose);
 
         /// save covariances
-        ofstream f_cov(_file_cov);
+        // ofstream f_cov(_file_cov);
         _m_io.saveData(_file_cov, _res_covariances, verbose);
 
         /// save precisions
-        ofstream f_prec(_file_precision);
+        // ofstream f_prec(_file_precision);
         _m_io.saveData(_file_precision, _res_precisions, verbose);
 
         /// save covariances
-        ofstream f_joint_cov(_file_joint_cov);
+        // ofstream f_joint_cov(_file_joint_cov);
         _m_io.saveData(_file_joint_cov, _res_joint_covariances, verbose);
 
         /// save precisions
-        ofstream f_joint_prec(_file_joint_precision);
+        // ofstream f_joint_prec(_file_joint_precision);
         _m_io.saveData(_file_joint_precision, _res_joint_precisions, verbose);
 
         /// save costs
-        ofstream f_cost(_file_cost);
+        // ofstream f_cost(_file_cost);
         _m_io.saveData(_file_cost, _res_costs, verbose);
 
         /// save factored osts
-        ofstream f_factor_costs(_file_factor_costs);
+        // ofstream f_factor_costs(_file_factor_costs);
         _m_io.saveData(_file_factor_costs, _res_factor_costs, verbose);
+
+        /// save last iteration results
+        // Last iteration means
+        // MatrixXd l_iter_mean(_nstates*_dim_state, 1);
+        // l_iter_mean.setZero();
+        MatrixXd zk_sdf(_dim_state, _nstates);
+        zk_sdf.setZero();
+        _ei.decomp3d(_res_mean, zk_sdf, _dim_state, _nstates, _niters-1);
+        // zk_sdf = l_iter_mean.reshaped(_dim_state, _nstates);
+
+        // ofstream f_zk_sdf(_file_zk_sdf);
+        _m_io.saveData(_file_zk_sdf, zk_sdf, verbose);
+
+        // Last iteration covariances
+        MatrixXd Sk_sdf(_dim_state*_dim_state, _nstates);
+        Sk_sdf.setZero();
+        _ei.decomp3d(_res_covariances, Sk_sdf, _dim_state*_dim_state, _nstates, _niters-1);
+        // zk_sdf = l_iter_mean.reshaped(_dim_state, _nstates);
+
+        // ofstream f_Sk_sdf(_file_Sk_sdf);
+        _m_io.saveData(_file_Sk_sdf, Sk_sdf, verbose);
 
         if (verbose){
             std::cout << "All data saved" << std::endl;

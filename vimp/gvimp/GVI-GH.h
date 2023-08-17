@@ -322,8 +322,12 @@ public:
                                   const string& file_joint_precision, 
                                   const string& file_cost,
                                   const string& file_fac_costs,
-                                  const string& file_perturbed_costs){
-        _res_recorder.update_file_names(file_mean, file_cov, file_joint_cov, file_precision, file_joint_precision, file_cost, file_fac_costs);
+                                  const string& file_perturbed_costs,
+                                  const std::string& file_zk_sdf,
+                                  const std::string& file_Sk_sdf){
+        _res_recorder.update_file_names(file_mean, file_cov, file_joint_cov, file_precision, 
+                                        file_joint_precision, file_cost, file_fac_costs, 
+                                        file_zk_sdf, file_Sk_sdf);
         _file_perturbed_cost = file_perturbed_costs;
     }
 
@@ -337,6 +341,8 @@ public:
         vec_filenames.emplace_back("cost");
         vec_filenames.emplace_back("factor_costs");
         vec_filenames.emplace_back("perturbation_statistics");
+        vec_filenames.emplace_back("zk_sdf");
+        vec_filenames.emplace_back("Sk_sdf");
 
         string underscore{"_"};
         string file_type{".csv"};
@@ -363,7 +369,9 @@ public:
                                         vec_filenames[3], 
                                         vec_filenames[4], 
                                         vec_filenames[5], 
-                                        vec_filenames[6]);
+                                        vec_filenames[6],
+                                        vec_filenames[8],
+                                        vec_filenames[9]);
         _file_perturbed_cost = vec_filenames[7];
     }
 

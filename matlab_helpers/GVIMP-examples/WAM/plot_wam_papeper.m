@@ -105,11 +105,11 @@ for j = 1:nt
     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, alpha];
     % means
-    plotArm3D(arm.fk_model(), i_means(1:7, j), color, 2, true);
+    plotArm3D(arm.fk_model(), i_means(1:7, j), color, 4, true);
 end
-plotArm3D(arm.fk_model(), start_conf, 'r', 4, true);
-plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
-plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
+plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
+plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
+% plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
 hold off
 
 

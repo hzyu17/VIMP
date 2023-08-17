@@ -3,7 +3,7 @@
     <n_states>15</n_states>
     <map_name>map_bookshelf</map_name>
     <coeff_Qc>0.8</coeff_Qc>
-    <sig_obs>0.003</sig_obs>
+    <sig_obs>0.0035</sig_obs>
     <eps_sdf>0.15</eps_sdf>
     <radius>0.0</radius>
     <step_size>0.35</step_size>
@@ -11,9 +11,9 @@
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>10</low_temp_iterations>
+    <low_temp_iterations>15</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>30</max_iterations>
+    <max_iterations>40</max_iterations>
     <max_n_backtracking>20</max_n_backtracking>
     <sdf_file>/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin</sdf_file>
 </Commons>
@@ -39,11 +39,37 @@
         <7>1.55</7>
     </goal_pos>
 
-    <!-- <sig_obs>0.003</sig_obs> -->
-
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/WAM/map1/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/WAM/case1/</saving_prefix>
 
 </Experiment1>
+
+<Experiment2>    
+    <start_pos>
+        <1>-0.9</1>
+        <2>-1.70</2>
+        <3>1.34</3>
+        <4>1.19</4>
+        <5>0.8</5>
+        <6>-0.126</6>
+        <7>2.5</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>-0.7</1>
+        <2>1.35</2>
+        <3>1.2</3>
+        <4>1.0</4>
+        <5>-0.7</5>
+        <6>-0.1</6>
+        <7>1.2</7>
+    </goal_pos>
+
+    <step_size>0.25</step_size>
+    <sig_obs>0.0055</sig_obs>
+
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/WAM/case2/</saving_prefix>
+
+</Experiment2>
 
 <!-- <parameters>
     <field_file>data/WAM/WAMDeskDataset.bin</field_file>
