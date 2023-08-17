@@ -16,6 +16,10 @@ python pth_to_vimp/scripts/vimp_rosadd_bookshelf.py bookshelf
 ```
 python trajectory_displayer_ros_WAM.py
 ```
+6. Reproduce the figures in the paper:
+```
+python show_trajectories_paper.py --algorithm gpmp2(or)gvi-mp(or)pgcs-mp --exp 1(or)2
+```
 
 
 ## Citation
