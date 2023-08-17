@@ -217,7 +217,8 @@ namespace vimp{
         virtual std::tuple<Matrix3D, Matrix3D> update_Qrk(const Matrix3D& zt, const Matrix3D& Sigt, 
                                                         const Matrix3D& At,  const Matrix3D& at, 
                                                         const Matrix3D& Bt, const Matrix3D& hAt,
-                                                        const Matrix3D& hat, const double step_size){}
+                                                        const Matrix3D& hat, const double step_size)
+                                                        {}
 
         
         /**
@@ -228,7 +229,8 @@ namespace vimp{
                                                             const Matrix3D& At,  const Matrix3D& at, 
                                                             const Matrix3D& Bt, const Matrix3D& hAt,
                                                             const Matrix3D& hat, const Matrix3D& nTrt,
-                                                            const double step_size){}
+                                                            const double step_size)
+                                                            {}
 
 
         /**

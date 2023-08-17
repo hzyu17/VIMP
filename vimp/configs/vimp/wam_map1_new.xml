@@ -1,18 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <Commons>
-    <total_time>5.0</total_time>
+    <total_time>2.5</total_time>
     <n_states>15</n_states>
     <map_name>map_bookshelf</map_name>
     <eps_sdf>0.15</eps_sdf>
     <coeff_Qc>0.8</coeff_Qc>
-    <sig_obs>0.001</sig_obs>
+    <sig_obs>0.0003</sig_obs>
     <radius>0.0</radius>
-    <step_size>0.3</step_size>
+    <step_size>0.25</step_size>
     <init_precision_factor>10.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>
-    <low_temp_iterations>15</low_temp_iterations>
+    <low_temp_iterations>10</low_temp_iterations>
     <stop_err>1e-5</stop_err>
     <max_iterations>20</max_iterations>
     <max_n_backtracking>5</max_n_backtracking>
@@ -39,7 +38,7 @@
         <7>1.55</7>
     </goal_pos>
 
-    <sig_obs>0.0005</sig_obs>
+    <!-- <sig_obs>0.003</sig_obs> -->
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/WAM/map1/case1/</saving_prefix>
 
@@ -142,7 +141,7 @@
 
 <!-- replanning -->
 
-<parameters>
+<!-- <parameters>
     <field_file>data/WAM/WAMDeskDataset.bin</field_file>
     
     <start_pos>
@@ -187,5 +186,5 @@
     <mean_file>/home/hzyu/git/VIMP/vimp/data/WAM/mean_base.csv</mean_file>
     <replanning_starting> 3 </replanning_starting>
 
-</parameters>
+</parameters> -->
 

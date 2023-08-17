@@ -74,6 +74,8 @@ public:
         std::tuple<Matrix3D, Matrix3D> ztSigt;
         ztSigt = propagate_nominal(At, at, Bt, z0, Sig0);
 
+        std::cout << " debug 1" << std::endl;
+
         Matrix3D ztnew(_nx, 1, _nt), Sigtnew(_nx, _nx, _nt);
         ztnew = std::get<0>(ztSigt);
         Sigtnew = std::get<1>(ztSigt);
@@ -85,6 +87,8 @@ public:
         std::tuple<Matrix3D, Matrix3D> Qtrt;
         Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, hAt, hat, step_size);
 
+        std::cout << " debug 1" << std::endl;
+
         Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
         Qt.setZero(); rt.setZero();
         Qt = std::get<0>(Qtrt);
@@ -93,6 +97,8 @@ public:
         // solve inner loop linear CS
         std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> KtdtAtat;
         KtdtAtat = solve_linearCS_return(Aprior, Bt, aprior, Qt, rt);
+
+        std::cout << " debug 1" << std::endl;
 
         return std::make_tuple(std::get<0>(KtdtAtat), 
                                std::get<1>(KtdtAtat), 

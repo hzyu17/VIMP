@@ -28,6 +28,7 @@
 #include "helpers/MatrixIO.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <Eigen/Dense>
+#include "helpers/EigenWrapper.h"
 
 using namespace Eigen;
 
@@ -48,7 +49,7 @@ public:
     _ndof(ndof), _nlinks(nlinks), _map_name(map_name), _origin(map_dim)
     {
 
-        std::cout << "map_name" << std::endl << map_name << std::endl;
+        // std::cout << "map_name" << std::endl << map_name << std::endl;
         if (map_dim == 2){
                 /// map and sdf
                 std::string source_root{XSTRING(SOURCE_ROOT)};
@@ -93,7 +94,9 @@ public:
                 //     Base::update_field_file(field_file);
                 // }
 
-            }
+        }else if (map_dim==3){
+            std::cout << "3-D workspace map" << std::endl;
+        }
             
     }
     
@@ -106,7 +109,12 @@ public:
      * */
     virtual std::tuple<VectorXd, MatrixXd> hinge_jacobian(const VectorXd& pose){
         MatrixXd Jacobian;
-        VectorXd vec_err = _psdf_factor->evaluateError(pose, Jacobian);
+
+        EigenWrapper ei;
+        ei.print_matrix(pose, "pose");
+
+        VectorXd vec_err{_psdf_factor->evaluateError(pose, Jacobian)};
+        std::cout << "ggg" << std::endl;
         return std::make_tuple(vec_err, Jacobian);
     }
 
@@ -115,9 +123,9 @@ public:
      */
     virtual std::tuple<VectorXd, MatrixXd> hinge_jacobian_nonlinear_dyn(const VectorXd& pose){}
 
-    virtual inline ROBOT RobotModel() const { return _robot; }
-    virtual inline std::shared_ptr<SDF> psdf() const { return _psdf; }
-    virtual inline SDF sdf() const { return _sdf; }
+    inline ROBOT RobotModel() const { return _robot; }
+    inline std::shared_ptr<SDF> psdf() const { return _psdf; }
+    inline SDF sdf() const { return _sdf; }
     virtual inline int ndof() const {return _ndof;}
     virtual inline int nlinks() const {return _nlinks;}
 

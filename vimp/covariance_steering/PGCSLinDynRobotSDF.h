@@ -31,10 +31,8 @@ public:
                         _eps_sdf(params.eps_sdf()),
                         _sig_obs(params.sig_obs()),
                         _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file()),
-                        _cost_helper(_max_iter){
-                            std::cout << "ProxGradCovSteerLinDyn" << std::endl;
-                            std::cout << "debug 2" << std::endl;
-                        }
+                        _cost_helper(_max_iter)
+                        {}
 
     double hingeloss(const Matrix3D& zt, const Matrix3D& Sigt){
         double hingeloss = 0;
@@ -152,14 +150,20 @@ public:
                 StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
                 KtdtAtatztSigt = step(i_step, step_size, _Akt, _Bt, _akt, _hAkt, _hakt, _zkt, _Sigkt);
 
+                std::cout << " debug " << std::endl;
+
                 // compute the tentative cost
                 Matrix3D zt(_nx, 1, _nt), Sigt(_nx, _nx, _nt), Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
                 zt.setZero(); Kt.setZero(); dt.setZero(); Sigt.setZero();
 
+                std::cout << " debug " << std::endl;
+                
                 Kt = std::get<0>(KtdtAtatztSigt);
                 dt = std::get<1>(KtdtAtatztSigt);
                 zt = std::get<4>(KtdtAtatztSigt);
                 Sigt = std::get<5>(KtdtAtatztSigt);
+
+                std::cout << " debug " << std::endl;
 
                 double total_cost = control_energy(zt, Sigt, Kt, dt) + hingeloss(zt, Sigt);
                 _cost_helper.add_cost(i_step, hingeloss(zt, Sigt), control_energy(zt, Sigt, Kt, dt));
@@ -237,6 +241,7 @@ public:
      * @brief Qrk with given matrices.
      * return: (Qt, rt)
      */
+    
     std::tuple<Matrix3D, Matrix3D> update_Qrk(const Matrix3D& zt, 
                                               const Matrix3D& Sigt, 
                                               const Matrix3D& At, 
@@ -244,7 +249,7 @@ public:
                                               const Matrix3D& Bt,
                                               const Matrix3D& hAt,
                                               const Matrix3D& hat,
-                                              const double step_size)
+                                              const double step_size) override
     {
         MatrixXd Ai(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), ai(_nx, 1), 
                  hAi(_nx, _nx), hai(_nx, 1),
@@ -265,15 +270,25 @@ public:
             pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
             zi = _ei.decomp3d(zt, _nx, 1, i);
             temp = (Ai - hAi).transpose();
+
+            std::cout << "ddd" << std::endl;
+
             // Compute hinge loss and its gradients
             int n_spheres = _robot_sdf.RobotModel().nr_body_spheres();
+
+            std::cout << "n_spheres " << std::endl << n_spheres << std::endl;
+
             std::tuple<VectorXd, MatrixXd> hingeloss_gradient;
             
             hingeloss_gradient = _robot_sdf.hinge_jacobian(zi.block(0,0,_nx/2,1));
+
+            std::cout << "ddd" << std::endl;
             VectorXd hinge(n_spheres);
             MatrixXd J_hxy(n_spheres, _nx/2);
             hinge = std::get<0>(hingeloss_gradient);
             J_hxy = std::get<1>(hingeloss_gradient);
+
+            std::cout << "ddd" << std::endl;
 
             // MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
             MatrixXd grad_h(n_spheres, _nx);
@@ -285,12 +300,18 @@ public:
             MatrixXd Sig_obs{_sig_obs * MatrixXd::Identity(n_spheres, n_spheres)};
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
+
+            std::cout << "ddd" << std::endl;
+
             // Hess = _sig_obs * _sig_obs * MatrixXd::Identity(_nx, _nx);
 
             // Qki
             Qki = Hess * step_size / (1+step_size) + temp * pinvBBTi * (Ai - hAi) * step_size / (1+step_size) / (1+step_size);
             // rki
             rki = grad_h.transpose() * Sig_obs * hinge * step_size / (1.0 + step_size) +  temp * pinvBBTi * (ai - hai) * step_size / (1+step_size) / (1+step_size);
+            
+            std::cout << "ddd" << std::endl;
+
             // update Qkt, rkt
             _ei.compress3d(Qki, Qt, i);
             _ei.compress3d(rki, rt, i);

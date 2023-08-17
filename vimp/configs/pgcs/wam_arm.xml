@@ -11,11 +11,12 @@
     <eta> 1e-4 </eta>
     <stop_err> 1e-5 </stop_err>
     <max_iter> 50 </max_iter>
-    <cost_sigma> 8e2 </cost_sigma>
+    <map_name>map_bookshelf</map_name>
+    <sig_obs> 8e2 </sig_obs>
     <backtracking_ratio> 0.5 </backtracking_ratio>
     <max_n_backtracking> 8 </max_n_backtracking>
 
-    <!-- <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file> -->
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin</sdf_file>
 </Commons>
 
 <Experiment1>
@@ -39,7 +40,7 @@
         <7>1.55</7>
     </goal_pos>
 
-    <cost_sigma> 5e2 </cost_sigma>
+    <sig_obs> 5e2 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case1/</saving_prefix>
 
@@ -67,7 +68,7 @@
         <7>1.2</7>
     </goal_pos>
 
-    <cost_sigma> 4.5e3 </cost_sigma>
+    <sig_obs> 4.5e3 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case2/</saving_prefix>
 
@@ -96,7 +97,7 @@
         <7>1.15</7>
     </goal_pos>
 
-    <cost_sigma> 5e2 </cost_sigma>
+    <sig_obs> 5e2 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case3/</saving_prefix>
 

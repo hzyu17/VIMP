@@ -154,8 +154,10 @@ public:
             params.update_lowtemp_iter(low_temp_iterations);
         }
 
-        double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
-        params.update_sig_obs(cost_sigma);
+        if (paramNode->first_node("sig_obs")){
+            double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
+            params.update_sig_obs(cost_sigma);
+        }
 
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         params.set_saving_prefix(saving_prefix);
@@ -189,7 +191,6 @@ public:
         return _gvimp_robotsdf.run_optimization_return(params, verbose);
     }
 
-
     std::tuple<VectorXd, SpMat> get_mu_precision() {
         return  _gvimp_robotsdf.get_mu_precision();
     }
@@ -210,7 +211,7 @@ public:
     GVIMPRunner7D(int num_exp, const std::string & config):
                         GVIMPRunner<GVIOptimizer>(14, 7, num_exp, config){}
     
-    
+
     void read_boundary_conditions(const std::string& config_file, int i_exp, GVIMPParams& params){
         rapidxml::file<> xmlFile(config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
@@ -252,11 +253,13 @@ public:
         mT.block(0, 0, 7, 1) = mT_pos;
         mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
-        double sig_obs = atof(paramNode->first_node("sig_obs")->value());
-
         params.set_m0(m0);
         params.set_mT(mT);
-        params.update_sig_obs(sig_obs);
+
+        if (paramNode->first_node("sig_obs")){
+            double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
+            params.update_sig_obs(cost_sigma);
+        }
 
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         params.set_saving_prefix(saving_prefix);

@@ -6,7 +6,7 @@ clear
 import gtsam.*
 import gpmp2.*
 
-addpath("../../tools")                      
+addpath("../../../matlab_helpers/tools")                      
 %% dataset
 dataset = generate3Ddataset_1('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
@@ -44,7 +44,7 @@ zlim([-0, 0.9])
 
 %% save SDF
 disp('saving sdf to .bin file...');
-sdf.saveSDF('../3dSDFs/WAMDeskDataset.bin');
+sdf.saveSDF('WAMDeskDataset.bin');
 
 % %% create the mesh for visualization
 % [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);

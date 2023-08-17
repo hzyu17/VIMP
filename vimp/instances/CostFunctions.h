@@ -56,6 +56,9 @@ double cost_obstacle(const VectorXd& pose,
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     precision_obs = precision_obs / obs_factor.get_noiseModel()->sigmas()[0];
 
+    std::cout << "obs cost" << std::endl 
+              << vec_err.transpose().eval() * precision_obs * vec_err << std::endl;
+
     return vec_err.transpose().eval() * precision_obs * vec_err;
 
 }

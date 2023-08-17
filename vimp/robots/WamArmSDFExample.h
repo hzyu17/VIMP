@@ -15,9 +15,12 @@
 #include <gpmp2/obstacle/SignedDistanceField.h>
 #include <gpmp2/obstacle/ObstacleSDFFactorArm.h>
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 using namespace gpmp2;
 using ArmModel = gpmp2::ArmModel;
-using ObsArmSDF = gpmp2::ObstacleSDFFactorArm;
+using ObsArmSDF = gpmp2::ObstacleSDFFactor<gpmp2::ArmModel>;
 using SDF = gpmp2::SignedDistanceField;
 using sym = gtsam::Symbol;
 
@@ -49,7 +52,9 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 _radius(radius)
             {
                 if (!sdf_file.empty()){
+                    std::cout << "sdf_file.data()" << std::endl << sdf_file.data() << std::endl;
                     Base::_sdf.loadSDF(sdf_file);
+                    
                     Base::_psdf = std::make_shared<SDF>(Base::_sdf);
                 }
                 else{
@@ -121,19 +126,21 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 Base::_robot = gpmp2::ArmModel{arm, body_spheres};
             }
 
-            /**
-             * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
-             * */
-            std::tuple<Eigen::VectorXd, Eigen::MatrixXd> hinge_jac(const Eigen::VectorXd& pose){
-                Eigen::MatrixXd Jacobian;
-                Eigen::VectorXd vec_err = Base::_psdf_factor->evaluateError(pose, Jacobian);
+            // /**
+            //  * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
+            //  * */
+            // std::tuple<Eigen::VectorXd, Eigen::MatrixXd> hinge_jac(const Eigen::VectorXd& pose){
+            //     Eigen::MatrixXd Jacobian;
+            //     Eigen::VectorXd vec_err = Base::_psdf_factor->evaluateError(pose, Jacobian);
 
-                return std::make_tuple(vec_err, Jacobian);
-            }
+            //     return std::make_tuple(vec_err, Jacobian);
+            // }
 
             void default_sdf(){
                 Base::_sdf = SDF();
-                Base::_sdf.loadSDF("/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin");
+                std::string source_root{XSTRING(SOURCE_ROOT)};
+                std::string sdf_file{source_root+"/../matlab_helpers/PGCS-examples/3dSDFs/WAMDeskDataset.bin"};
+                Base::_sdf.loadSDF(sdf_file);
                 Base::_psdf = std::make_shared<SDF>(Base::_sdf);
             }
 

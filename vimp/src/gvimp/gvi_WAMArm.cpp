@@ -54,6 +54,4 @@ int main(int argc, char* argv[]){
         std::runtime_error("Wrong number of arguments!");
     }
     return 0;
-
-    return 0;
 }
