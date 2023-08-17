@@ -15,6 +15,7 @@
     <stop_err>1e-5</stop_err>
     <max_iterations>20</max_iterations>
     <max_n_backtracking>5</max_n_backtracking>
+    <sdf_file>/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin</sdf_file>
 </Commons>
 
 <Experiment1>    

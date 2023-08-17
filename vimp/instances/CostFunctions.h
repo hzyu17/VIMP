@@ -6,6 +6,8 @@
 #include "3rdparty/rapidxml-1.13/rapidxml.hpp"
 #include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
 
+#include "helpers/EigenWrapper.h"
+
 /**
  * @brief Fixed cost with a covariance
  * @param x input
@@ -56,8 +58,11 @@ double cost_obstacle(const VectorXd& pose,
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     precision_obs = precision_obs / obs_factor.get_noiseModel()->sigmas()[0];
 
-    std::cout << "obs cost" << std::endl 
-              << vec_err.transpose().eval() * precision_obs * vec_err << std::endl;
+    EigenWrapper ei;
+    ei.print_matrix(vec_err, "vec_err");
+
+    // std::cout << "obs cost" << std::endl 
+    //           << vec_err.transpose().eval() * precision_obs * vec_err << std::endl;
 
     return vec_err.transpose().eval() * precision_obs * vec_err;
 

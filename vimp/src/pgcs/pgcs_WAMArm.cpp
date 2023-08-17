@@ -13,7 +13,7 @@
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
-#include "covariance_steering/PGCSLinDynArmSDF.h"
+#include "pgcsmp/PGCSLinDynArmSDF.h"
 #include "helpers/ExperimentRunner.h"
 
 using namespace vimp;

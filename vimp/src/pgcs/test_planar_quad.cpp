@@ -7,7 +7,7 @@
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
-#include "covariance_steering/PGCSPlanarQuadSDF.h"
+#include "pgcsmp/PGCSPlanarQuadSDF.h"
 #include "helpers/EigenWrapper.h"
 #include "helpers/ExperimentRunner.h"
 

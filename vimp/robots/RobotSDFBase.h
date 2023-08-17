@@ -28,7 +28,6 @@
 #include "helpers/MatrixIO.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <Eigen/Dense>
-#include "helpers/EigenWrapper.h"
 
 using namespace Eigen;
 
@@ -110,11 +109,7 @@ public:
     virtual std::tuple<VectorXd, MatrixXd> hinge_jacobian(const VectorXd& pose){
         MatrixXd Jacobian;
 
-        EigenWrapper ei;
-        ei.print_matrix(pose, "pose");
-
         VectorXd vec_err{_psdf_factor->evaluateError(pose, Jacobian)};
-        std::cout << "ggg" << std::endl;
         return std::make_tuple(vec_err, Jacobian);
     }
 

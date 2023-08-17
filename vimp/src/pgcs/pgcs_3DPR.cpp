@@ -13,7 +13,7 @@
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
-#include "covariance_steering/PGCSLinDynPRModelSDF.h"
+#include "pgcsmp/PGCSLinDynPRModelSDF.h"
 #include "helpers/ExperimentRunner.h"
 
 using namespace Eigen;

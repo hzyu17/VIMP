@@ -292,8 +292,6 @@ public:
 
         res_Kd = opt_sdf.backtrack();
 
-        std::cout << "debug 2" << std::endl;
-
         MatrixXd Kt(this->_nx*this->_nx, params.nt()), dt(this->_nx, params.nt());
         Kt = std::get<0>(res_Kd);
         dt = std::get<1>(res_Kd);
@@ -306,8 +304,6 @@ public:
         MatrixXd zk_star(this->_nx, params.nt()), Sk_star(this->_nx*this->_nx, params.nt());
         zk_star = opt_sdf.zkt();
         Sk_star = opt_sdf.Sigkt();
-
-        std::cout << "debug 3" << std::endl;
 
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
 

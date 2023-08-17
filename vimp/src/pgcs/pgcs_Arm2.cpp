@@ -13,7 +13,7 @@
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
-#include "covariance_steering/PGCSLinDynArmPlanarSDF.h"
+#include "pgcsmp/PGCSLinDynArmPlanarSDF.h"
 #include "helpers/ExperimentRunner.h"
 
 using namespace Eigen;

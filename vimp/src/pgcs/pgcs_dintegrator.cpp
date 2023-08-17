@@ -10,7 +10,7 @@
  */
 
 // #include "dynamics/DoubleIntegratorDraged.h"
-// #include "covariance_steering/PGCSPlanarQuadSDF.h"
+// #include "pgcsmp/PGCSPlanarQuadSDF.h"
 // #include "3rdparty/rapidxml-1.13/rapidxml.hpp"
 // #include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
 

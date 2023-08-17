@@ -62,10 +62,10 @@ endif()
 
 set(vimp_subdirs 
     gvimp
+    pgcsmp
     helpers 
     instances
     robots
-    covariance_steering
     dynamics
 )
 
