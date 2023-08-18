@@ -1,15 +1,15 @@
 
 # Gaussian variational inference (GVI) motion planning.
 
-<img src="comparison.png" width="600">
+<img src="figures/comparison.png" width="600">
 
 Point Robot Motion Planning.
 
 VIMP uses Gaussian variational inference to approach the motion planning problem as a probability inference. This project is built upon GTSAM and GPMP2.
 
-<img src="WAM_GVI_RVIZ.gif" height="300" ><img src="WAM1_RVIZ.gif" height="300">
+<img src="figures/WAM_GVI_RVIZ.gif" height="300" ><img src="figures/WAM1_RVIZ.gif" height="300">
 
-<img src="WAM1_GVI_RVIZ.gif" height="300"><img src="WAM_RVIZ.gif" height="300">
+<img src="figures/WAM1_GVI_RVIZ.gif" height="300"><img src="figures/WAM_RVIZ.gif" height="300">
 
 Motion planning for a 7-DOF WAM robot arm. The animated trajectory is the mean of the trajectory distribution obtained from PGCS-MP planner.
 
