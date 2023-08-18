@@ -10,42 +10,41 @@
  * 
  */
 
+#pragma once
+
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
+std::string source_root{XSTRING(SOURCE_ROOT)};
+
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
-#include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
-#include "../helpers/data_io.h"
+#include "robots/RobotSDFBase.h"
 
 using namespace Eigen;
 
 using pRSDF = gpmp2::ObstaclePlanarSDFFactor<gpmp2::PointRobotModel>;
 
 namespace vimp{
-
-class PlanarPointRobotSDFPGCS{
+using Base = RobotSDFBase<gpmp2::PointRobotModel, gpmp2::PlanarSDF, pRSDF>;
+class PlanarPRSDFExample: public Base{
     public:
-        PlanarPointRobotSDFPGCS(double epsilon): _eps(epsilon){
-            default_sdf();
-            generate_pr_sdf(*_psdf, 0.0);
-        }
+        PlanarPRSDFExample(){}
+        
+        PlanarPRSDFExample(double epsilon, 
+                           double radius, 
+                           const std::string& map_name="2dpr_map0", 
+                           const std::string& sdf_file=""): 
+        Base(2, 1, 2, map_name), 
+        _eps(epsilon), 
+        _r(radius)
+        { 
+            MatrixXd field = _m_io.load_csv(Base::_field_file);            
 
-        PlanarPointRobotSDFPGCS(double epsilon, double r): _eps(epsilon), _r(r){
-            // default sdf
-            default_sdf();
+            Base::_sdf = gpmp2::PlanarSDF(Base::_origin, Base::_cell_size, field);
+            Base::_psdf = std::make_shared<gpmp2::PlanarSDF>(Base::_sdf);
 
-            // point robot with sdf
-            generate_pr_sdf(*_psdf, r);
-        }
-
-        void default_sdf(){
-            /// map and sdf
-            _field = _matrix_io.load_csv("/home/hongzhe/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv");
-
-            // layout of SDF: Bottom-left is (0,0), length is +/- cell_size per grid.
-            Point2 origin(-20, -10);
-            double cell_size = 0.1;
-
-            _psdf = std::make_shared<gpmp2::PlanarSDF>(gpmp2::PlanarSDF(origin, cell_size, _field));
-
+            generate_pr_sdf(Base::_sdf, radius);
         }
 
         void generate_pr_sdf(const gpmp2::PlanarSDF& sdf, double r){
@@ -53,45 +52,20 @@ class PlanarPointRobotSDFPGCS{
             gpmp2::PointRobot pR(_ndof, _nlinks);
             gpmp2::BodySphereVector body_spheres;
             body_spheres.push_back(gpmp2::BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
-            _pR_model = gpmp2::PointRobotModel(pR, body_spheres);
+            Base::_robot = gpmp2::PointRobotModel(pR, body_spheres);
 
-            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, 0.0, _eps));
+            Base::_psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), Base::_robot, sdf, 0.0, _eps));
         }
-
-        /**
-         * Obstacle factor: planar case, returns the Vector of h(x) and the Jacobian matrix.
-         * */
-        std::tuple<VectorXd, MatrixXd> hinge_jac(const VectorXd& pose){
-            MatrixXd Jacobian;
-            VectorXd vec_err = _p_planar_sdf_factor->evaluateError(pose, Jacobian);
-
-            return std::make_tuple(vec_err, Jacobian);
-        }
-
+        
         inline void update_sdf(const gpmp2::PlanarSDF& sdf){
-            _psdf = std::make_shared<gpmp2::PlanarSDF>(sdf);
-            _p_planar_sdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _pR_model, sdf, 0.0, _eps));
+            Base::_psdf = std::make_shared<gpmp2::PlanarSDF>(sdf);
+            Base::_psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), Base::_robot, sdf, 0.0, _eps));
         }
-
-        inline gpmp2::PointRobotModel pRmodel() const { return _pR_model; }
-        inline std::shared_ptr<gpmp2::PlanarSDF> sdf() const { return _psdf; }
-        inline int ndof() const {return _ndof;}
-        inline int nlinks() const {return _nlinks;}
-        inline MatrixXd field() const {return _field;}
 
         public:
-            gpmp2::PointRobotModel _pR_model;
-            std::shared_ptr<gpmp2::PlanarSDF> _psdf;
-            MatrixXd _field;
-            MatrixIO _matrix_io;
-
-            std::shared_ptr<pRSDF> _p_planar_sdf_factor;
-
-            /// 2D point robot
-            int _ndof = 2;
-            int _nlinks = 1;            
-
+            /// 2D point robot         
             double _eps, _r;
 
 };
+
 }

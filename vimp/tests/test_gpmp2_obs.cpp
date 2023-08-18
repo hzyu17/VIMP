@@ -10,9 +10,9 @@
  */
 
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
-#include "../robots/PlanarPointRobotSDFMultiObsExample.h"
-#include "../helpers/GaussHermite.h"
-#include "../helpers/data_io.h"
+#include "robots/PlanarPointRobotSDFMultiObsExample.h"
+#include "gvimp/GaussHermite.h"
+#include "helpers/MatrixIO.h"
 #include <gtest/gtest.h>
 
 using namespace Eigen;

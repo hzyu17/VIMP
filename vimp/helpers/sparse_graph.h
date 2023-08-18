@@ -9,7 +9,7 @@
  * 
  */
 
-#include "eigen_wrapper.h"
+#include "EigenWrapper.h"
 
 namespace vimp{
 struct Block{

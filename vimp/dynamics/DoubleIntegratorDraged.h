@@ -9,8 +9,8 @@
  * 
  */
 
-#include "NonlinearDynamics.h"
-#include "../3rd-part/TinyAD/Scalar.hh"
+#include "dynamics/NonlinearDynamics.h"
+#include "3rdparty/TinyAD/Scalar.hh"
 
 using namespace Eigen;
 
@@ -30,13 +30,11 @@ public:
  * @brief Linearization of a double integrator dynamics with drag (time invariant system).
  * 
  * @param x linearization point
- * @param sig time scaling factor
  * @return std::tuple<Matrix4d, MatrixXd, Vector4d, Vector4d> At, Bt, at, nTr
  */
-std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const VectorXd& x, 
-                                                                        double sig, 
-                                                                        const MatrixXd& Ak, 
-                                                                        const MatrixXd& Sigk) override
+std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_at(const VectorXd& x, 
+                                                                const MatrixXd& Ak, 
+                                                                const MatrixXd& Sigk) override
 {
     using ADouble4 = TinyAD::Double<4>;
 
@@ -51,7 +49,7 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
          0, 0,
          1, 0,
          0, 1;
-    B = sig*B;
+    // B = sig*B;
 
     // BBT
     MatrixXd p_invBBT(4,4);
@@ -59,21 +57,21 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
                 0,0,0,0,
                 0,0,1,0,
                 0,0,0,1;
-    p_invBBT = p_invBBT/sig/sig;
+    // p_invBBT = p_invBBT/sig/sig;
 
     Matrix4d hAk{MatrixXd::Zero(4, 4)};
     hAk <<  0,  0,                                 1,                                           0,
             0,  0,                                 0,                                           1, 
             0,  0,  -cd*(2*x(2)*x(2)+x(3)*x(3))/sqrt(x(2)*x(2)+x(3)*x(3)),   -cd*x(2)*x(3)/sqrt(x(2)*x(2)+x(3)*x(3)),
             0,  0,  -cd*x(2)*x(3)/sqrt(x(2)*x(2)+x(3)*x(3)),                 -cd*(x(2)*x(2)+2*x(3)*x(3))/sqrt(x(2)*x(2)+x(3)*x(3));
-    hAk = sig * hAk;
+    // hAk = sig * hAk;
 
     Vector4d f{VectorXd::Zero(4)};
     f << x(2), 
          x(3), 
          -cd*x(2)*sqrt(x(2)*x(2) + x(3)*x(3)),
          -cd*x(3)*sqrt(x(2)*x(2) + x(3)*x(3));
-    f = sig * f;
+    // f = sig * f;
 
     Vector4d hak{VectorXd::Zero(4)};
     hak = f - hAk*x;
@@ -83,7 +81,7 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
                 0,  0,                                 0,                                                                1, 
                 0,  0,  -cd*(2*xad(2)*xad(2)+xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),   -cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),
                 0,  0,  -cd*xad(2)*xad(3)/sqrt(xad(2)*xad(2)+xad(3)*xad(3)),                     -cd*(xad(2)*xad(2)+2*xad(3)*xad(3))/sqrt(xad(2)*xad(2)+xad(3)*xad(3));
-    grad_f_T = sig * grad_f_T;
+    // grad_f_T = sig * grad_f_T;
 
     Matrix4<ADouble4> grad_f;
     grad_f = grad_f_T.transpose();
@@ -121,7 +119,7 @@ std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> linearize_timestamp(const Vec
  * @return std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> return (hAt, hBt, hat, nTrt)
  */
 std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt, 
-                                                double sig, 
+                                                // double sig, 
                                                 const Matrix3D& Akt, 
                                                 const Matrix3D& Sigkt) override
 {   
@@ -135,11 +133,12 @@ std::tuple<LinearDynamics, Matrix3D> linearize(const Matrix3D& xt,
     std::tuple<MatrixXd, MatrixXd, VectorXd, VectorXd> resi;
 
     for (int i=0; i<_nt; i++){
-        zki = _ei.decompress3d(xt, _nx, 1, i);
-        Aki = _ei.decompress3d(Akt, _nx, _nx, i);
-        Sigki = _ei.decompress3d(Sigkt, _nx, _nx, i);
+        zki = _ei.decomp3d(xt, _nx, 1, i);
+        Aki = _ei.decomp3d(Akt, _nx, _nx, i);
+        Sigki = _ei.decomp3d(Sigkt, _nx, _nx, i);
         // get the linearization results
-        resi = linearize_timestamp(zki, sig, Aki, Sigki);
+        // resi = linearize_at(zki, sig, Aki, Sigki);
+        resi = linearize_at(zki, Aki, Sigki);
         hAi = std::get<0>(resi);
         Bi = std::get<1>(resi);
         hai = std::get<2>(resi);

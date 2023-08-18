@@ -10,51 +10,65 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
+std::string source_root{XSTRING(SOURCE_ROOT)};
+
 #include <gtsam/inference/Symbol.h>
-#include "../helpers/hinge3Dhelper.h"
-#include "../helpers/data_io.h"
-#include "../helpers/eigen_wrapper.h"
+#include <gpmp2/kinematics/PointRobotModel.h>
+#include <gpmp2/obstacle/ObstacleSDFFactor.h>
+#include "RobotSDFBase.h"
 
 using namespace Eigen;
 
+using PRModel = gpmp2::PointRobotModel;
 using SDF = gpmp2::SignedDistanceField;
+using pRSDF = gpmp2::ObstacleSDFFactor<PRModel>;
 
 namespace vimp{
-
-class PointRobotSDFPGCS{
+using Base = RobotSDFBase<PRModel, SDF, pRSDF>;
+class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
     public:
-        PointRobotSDFPGCS(double epsilon): _eps(epsilon){
-            default_sdf();
+        virtual ~PointRobot3DSDFExample(){}
+        
+        PointRobot3DSDFExample(double epsilon, 
+                               double radius, 
+                               const std::string& map_name, 
+                               const std::string& sdf_file=source_root+"/../matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin"):
+        Base(3, 1, 3, ""),
+        _eps(epsilon), 
+        _r(radius)
+        {
+            if (!sdf_file.empty()){
+                Base::_sdf.loadSDF(sdf_file);
+                Base::_psdf = std::make_shared<SDF>(Base::_sdf);
+            }
+            else{
+                std::runtime_error("Empty sdf map file!");
+            }
+            generate_pr_sdf(Base::_sdf, radius);
         }
 
-        PointRobotSDFPGCS(double epsilon, double r): _eps(epsilon), _r(r){
-            // default sdf
-            default_sdf();
-        }
+        void generate_pr_sdf(const SDF& sdf, double r){
+            /// Robot model
+            gpmp2::PointRobot pR(_ndof, _nlinks);
+            gpmp2::BodySphereVector body_spheres;
+            body_spheres.push_back(gpmp2::BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
+            _robot = PRModel(pR, body_spheres);
 
-        void default_sdf(){
-            SDF sdf = SDF();
-            sdf.loadSDF("/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin");
-            _psdf = std::make_shared<SDF>(sdf);
-        }
-
-        /**
-         * Obstacle factor: case, returns the Vector of h(x) and the Jacobian matrix.
-         * */
-        std::tuple<VectorXd, MatrixXd> hinge_jac(const VectorXd& pose){
-            return hinge_gradient_point(pose, *_psdf, _eps);
+            _psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));
         }
 
         inline void update_sdf(const SDF& sdf){
-            _psdf = std::make_shared<SDF>(sdf);  
+            _psdf = std::make_shared<SDF>(sdf);
+            _psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));
         }
 
-        inline SDF sdf() const { return *_psdf; }
-
         public:
-            EigenWrapper _ei;
-            std::shared_ptr<SDF> _psdf;    
-
+            /// 3D point robot
+            int _ndof = 3;
+            int _nlinks = 1;            
             double _eps, _r;
 
     };

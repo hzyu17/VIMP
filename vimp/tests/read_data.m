@@ -9,7 +9,7 @@ function precision16 = importfile(filename, dataLines)
 %  integers for dis-contiguous row intervals.
 %
 %  Example:
-%  precision16 = importfile("/home/hongzhe/git/VIMP/vimp/tests/precision_16.csv", [1, Inf]);
+%  precision16 = importfile("/home/hzyu/git/VIMP/vimp/tests/precision_16.csv", [1, Inf]);
 %
 %  See also READTABLE.
 %

@@ -1,7 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<Commons>
+
+    <eps> 0.01 </eps>
+    <eps_sdf> 0.1 </eps_sdf>
+    <radius> 0.01 </radius>
+
+    <!-- <map_origin>
+        <x> -1.0 </x>
+        <y> -1.0 </y>
+    </map_origin>
+    <cell_size> 0.01 </cell_size> -->
+
+    <total_time> 10 </total_time>
+    <nt> 50 </nt>
+    <sig0> 0.001 </sig0>
+    <sigT> 0.001 </sigT>
+    <eta> 1e-4 </eta>
+    <stop_err> 1e-3 </stop_err>
+    <max_iter> 30 </max_iter>
+    <cost_sigma> 5.6e3 </cost_sigma>
+    <backtracking_ratio> 0.8 </backtracking_ratio>
+    <max_n_backtracking> 5 </max_n_backtracking>
+
+</Commons>
+
 <Experiment1>
-<parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -17,37 +40,20 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <nt> 25 </nt>
+    <eta> 1e-4 </eta>
+    <cost_sigma> 1e3 </cost_sigma>
 
-    <speed> 0.3 </speed>
-    <state_cost_scale> 1e1 </state_cost_scale>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
 
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1e-5 </eta>
-
-    <eps_sdf> 0.75 </eps_sdf>
-
-    <cost_sigma> 1.48e-5 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
-
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case1/</saving_prefix>
-
-</parameters>
 </Experiment1>
 
 <Experiment2>
-<parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_Arm/field_two_obs.csv</field_file>
     
     <start_pos>
         <x>-1.5707963</x>
         <y>0.0</y>
-        <vx>-0.1</vx>
+        <vx>0.0</vx>
         <vy>0.0</vy>
     </start_pos>
 
@@ -58,25 +64,10 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <nt> 50 </nt>
+    <eta> 1e-4 </eta>
+    <!-- <cost_sigma> 4.3e-6 </cost_sigma> -->
+    <cost_sigma> 4.3e3 </cost_sigma>
 
-    <speed> 0.17 </speed>
-    <state_cost_scale> 1e1 </state_cost_scale>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case2/</saving_prefix>
 
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 2e-6 </eta>
-
-    <eps_sdf> 0.75 </eps_sdf>
-
-    <cost_sigma> 4.3e-6 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
-
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map2/case2/</saving_prefix>
-
-</parameters>
 </Experiment2>

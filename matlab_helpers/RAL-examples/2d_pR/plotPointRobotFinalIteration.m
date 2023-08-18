@@ -1,6 +1,6 @@
 function output = plotPointRobotFinalIteration(means, covs, precisions, costs, factor_costs, sdfmap, niters, nsteps)
 %%
-addpath('/usr/local/gtsam_toolbox')
+addpath('/home/.hyu419/.local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
@@ -70,6 +70,8 @@ end
     end
     xlim([-15, 20])
     ylim([-10, 20])
+
+    axis off
 
 output = 1;
 end

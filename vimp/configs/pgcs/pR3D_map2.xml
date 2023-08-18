@@ -1,177 +1,126 @@
+<Commons>
+
+    <eps> 0.01 </eps>
+    <eps_sdf> 0.7 </eps_sdf>
+    <radius> 0.5 </radius>
+    <total_time> 12.5 </total_time>
+    <nt> 50 </nt>
+    <sig0> 0.01 </sig0>
+    <sigT> 0.04 </sigT>
+    <eta> 1e-4 </eta>
+    <stop_err> 1e-5 </stop_err>
+    <max_iter> 50 </max_iter>
+    <cost_sigma> 5.6e6 </cost_sigma>
+    <backtracking_ratio> 0.85 </backtracking_ratio>
+    <max_n_backtracking> 3 </max_n_backtracking>
+
+</Commons>
+
 <Experiment1>
-<parameters>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
-        <x>-5.0</x>
-        <y>-5.0</y>
-        <z>-5.0</z>
-        <vx>2.0</vx>
-        <vy>2.0</vy>
-        <vz>2.0</vz>
+        <x>-10.0</x>
+        <y>-10.0</y>
+        <z>0.0</z>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vz>0.0</vz>
     </start_pos>
 
     <goal_pos>
-        <x>40.0</x>
-        <y>40.0</y>
-        <z>40.0</z>
+        <x>35.0</x>
+        <y>35.0</y>
+        <z>27.0</z>
         <vx>0.0</vx>
         <vy>0.0</vy>
         <vz>0.0</vz>
     </goal_pos>
     
-    <nt> 80 </nt>
+    <cost_sigma> 6e3 </cost_sigma>
 
-    <speed> 0.03 </speed>
-    <state_cost_scale> 1000.0 </state_cost_scale>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
 
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1e-5 </eta>
-
-    <eps_sdf> 0.7 </eps_sdf>
-
-    <cost_sigma> 1e-6 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
-
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
-
-</parameters>
 </Experiment1>
 
-<!-- <Experiment2>
-<parameters>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
+<Experiment2>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
-        <x>-6.0</x>
-        <y>-6.0</y>
-        <z>-6.0</z>
-        <vx>2.0</vx>
-        <vy>2.0</vy>
-        <vz>2.0</vz>
+        <x>-11.0</x>
+        <y>-11.0</y>
+        <z>0.0</z>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vz>0.0</vz>
     </start_pos>
 
     <goal_pos>
-        <x>4.0</x>
-        <y>4.0</y>
-        <z>4.0</z>
-        <vx>2.0</vx>
-        <vy>2.0</vy>
-        <vz>2.0</vz>
+        <x>30.0</x>
+        <y>35.0</y>
+        <z>30.0</z>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vz>0.0</vz>
     </goal_pos>
+    
+    <cost_sigma> 8e3 </cost_sigma>
 
-    <nt> 50 </nt>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
 
-    <speed> 0.18 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
-
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1e-6 </eta>
-
-    <eps_sdf> 0.73 </eps_sdf>
-
-    <cost_sigma> 7e-6 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
-
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
-
-</parameters>
 </Experiment2>
 
 <Experiment3>
-<parameters>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
-        <x>-4.0</x>
-        <y>-4.0</y>
-        <z>-4.0</z>
-        <vx>2.0</vx>
-        <vy>2.0</vy>
-        <vz>2.0</vz>
+        <x>30.0</x>
+        <y>-10.0</y>
+        <z>-5.0</z>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vz>0.0</vz>
     </start_pos>
 
     <goal_pos>
-        <x>5.0</x>
-        <y>5.0</y>
-        <z>5.0</z>
-        <vx>2.0</vx>
-        <vy>2.0</vy>
-        <vz>2.0</vz>
+        <x>-10.0</x>
+        <y>20.0</y>
+        <z>15.0</z>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vz>0.0</vz>
     </goal_pos>
 
-    <nt> 50 </nt>
+    <cost_sigma> 9e3 </cost_sigma>
 
-    <speed> 0.18 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
 
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1e-6 </eta>
-
-    <eps_sdf> 0.7 </eps_sdf>
-
-    <cost_sigma> 0.5e-6 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 1e-4 </stop_err>
-
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
-
-</parameters>
 </Experiment3>
 
 <Experiment4>
-<parameters>
-    <sdf_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3dSDFs/pRSDF3DMap2.bin</sdf_file>
     
     <start_pos>
-        <x>-3.0</x>
-        <y>-3.0</y>
-        <z>-3.0</z>
-        <vx>2.0</vx>
-        <vy>2.0</vy>
-        <vz>2.0</vz>
+        <x>-10.0</x>
+        <y>25.0</y>
+        <z>0.0</z>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vz>0.0</vz>
     </start_pos>
 
     <goal_pos>
-        <x>6.0</x>
-        <y>6.0</y>
-        <z>6.0</z>
-        <vx>2.0</vx>
-        <vy>2.0</vy>
-        <vz>2.0</vz>
+        <x>30.0</x>
+        <y>-15.0</y>
+        <z>30.0</z>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+        <vz>0.0</vz>
     </goal_pos>
 
-    <nt> 50 </nt>
+    <!-- <eta> 1e-5 </eta> -->
+    <cost_sigma> 5e3 </cost_sigma>
 
-    <speed> 0.18 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
 
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1e-6 </eta>
-
-    <eps_sdf> 0.7 </eps_sdf>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-    <cost_sigma> 1.2e-6 </cost_sigma>
-    <stop_err> 1e-4 </stop_err>
-
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
-
-</parameters>
-</Experiment4> -->
+</Experiment4>

@@ -1,40 +1,46 @@
+<Commons>
+    <eps> 0.01 </eps>
+
+    <nt> 100 </nt>
+    <total_time> 20 </total_time>
+
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
+
+    <eps_sdf> 0.7 </eps_sdf>
+    <radius> 1.5 </radius>
+
+    <eta> 1e-5 </eta>
+    <stop_err> 1e-5 </stop_err>
+    <max_iter> 50 </max_iter>
+    
+    <backtracking_ratio> 0.7 </backtracking_ratio>
+    <max_n_backtracking> 1 </max_n_backtracking>
+
+    <cost_sigma> 2.5e3 </cost_sigma>
+
+    
+</Commons>
+
 <Experiment1>
-<parameters>
-    <field_file>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/field_long_range.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/field_long_range.csv</field_file>
     
     <start_pos>
         <x>-5.0</x>
         <y>-5.0</y>
-        <vx>0.01</vx>
-        <vy>0.1</vy>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
     </start_pos>
 
     <goal_pos>
         <x>55.0</x>
         <y>60.0</y>
-        <vx>0.01</vx>
-        <vy>0.1</vy>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
     </goal_pos>
     
-    <nt> 200 </nt>
+    <cost_sigma> 5e3 </cost_sigma>
 
-    <speed> 0.055 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/</saving_prefix>
 
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <eta> 1.3e-6 </eta>
-
-    <eps_sdf> 0.6 </eps_sdf>
-
-    <cost_sigma> 0.8e-6 </cost_sigma>
-
-    <robot_sphere_r> 0.0 </robot_sphere_r>
-
-    <stop_err> 0.9e-4 </stop_err>
-
-    <saving_prefix>/home/hongzhe/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/long_range/case1/</saving_prefix>
-
-</parameters>
 </Experiment1>

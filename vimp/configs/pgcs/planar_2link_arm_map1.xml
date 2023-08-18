@@ -1,0 +1,63 @@
+<Commons>
+
+    <eps> 0.01 </eps>
+    <eps_sdf> 0.1 </eps_sdf>
+    <radius> 0.01 </radius>
+    <total_time> 10 </total_time>
+    <nt> 50 </nt>
+    <sig0> 0.001 </sig0>
+    <sigT> 0.001 </sigT>
+    <eta> 1e-4 </eta>
+    <stop_err> 1e-3 </stop_err>
+    <map_name>2darm_map1</map_name>
+    <max_iter> 30 </max_iter>
+    <sig_obs> 5.6e3 </sig_obs>
+    <backtracking_ratio> 0.8 </backtracking_ratio>
+    <max_n_backtracking> 5 </max_n_backtracking>
+
+</Commons>
+
+<Experiment1>
+    <start_pos>
+        <x>0</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>1.5707963</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <eta> 1e-4 </eta>
+    <sig_obs> 1e4 </sig_obs>
+
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case1/</saving_prefix>
+
+</Experiment1>
+
+<Experiment2>
+    <start_pos>
+        <x>-1.5707963</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>1.5707963</x>
+        <y>0.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <eta> 1e-4 </eta>
+    <sig_obs> 2e3 </sig_obs>
+
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case2/</saving_prefix>
+
+</Experiment2>
+

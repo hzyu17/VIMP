@@ -23,16 +23,16 @@ if strcmp(dataset_str, 'SmallDemo')
     dataset.cols = 500;
     dataset.rows = 500;
     dataset.z = 500;
-    dataset.origin_x = -1;
-    dataset.origin_y = -1;
-    dataset.origin_z = -1;
+    dataset.origin_x = -10;
+    dataset.origin_y = -10;
+    dataset.origin_z = -10;
     dataset.cell_size = 0.1;
     % map
     dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
     % obstacles
     dataset.corner_idx = [];
-    [dataset.map, dataset.corner_idx] = add_obstacle([150 150 150], [140, 140, 80], dataset.map, dataset.corner_idx);
-    
+    [dataset.map, dataset.corner_idx] = add_obstacle([250 250 250], [140, 100, 200], dataset.map, dataset.corner_idx);
+     
 elseif strcmp(dataset_str, '3dPRMap2')
     % params
     dataset.cols = 500;
@@ -46,8 +46,13 @@ elseif strcmp(dataset_str, '3dPRMap2')
     dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
     % obstacles
     dataset.corner_idx = [];
-    [dataset.map, dataset.corner_idx] = add_obstacle([250 250 250], [140, 100, 200], dataset.map, dataset.corner_idx);
-     
+    [dataset.map, dataset.corner_idx] = add_obstacle([200 100 100], [200, 100, 100], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([250 50 350], [140, 80, 250], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([75 250 300], [100, 120, 200], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([300 400 150], [250, 180, 150], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([250 250 450], [150, 150, 50], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([250 250 250], [80, 80, 80], dataset.map, dataset.corner_idx);
+
 % dataset 2: desk dataset for WAM WAMDeskDataset
 elseif strcmp(dataset_str, 'WAMDeskDataset')
     % params

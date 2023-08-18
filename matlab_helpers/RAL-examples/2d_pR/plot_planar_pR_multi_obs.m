@@ -6,12 +6,12 @@ import gtsam.*
 import gpmp2.*
 
 %% choose the experiment and temperature to plot
-% plot_temperture = "low";
-plot_temperture = "high";
+plot_temperture = "low";
+% plot_temperture = "high";
 
 % plot_experiment = "map1_above";
-plot_experiment = "map1_below";
-% plot_experiment = "map2_exp1";
+% plot_experiment = "map1_below";
+plot_experiment = "map2_exp1";
 % plot_experiment = "map2_exp2";
 % plot_experiment = "map2_exp3";
 % plot_experiment = "map2_exp4"; 
@@ -26,22 +26,22 @@ elseif strcmp(plot_experiment, "map1_below")
     sdfmap = csvread("map1/map_multiobs.csv");
     prefix = ["map1/below_case/"];
 elseif strcmp(plot_experiment, "map2_exp1")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+    sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
     prefix = ["map2/exp1/"];
 elseif strcmp(plot_experiment, "map2_exp2")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+    sdfmap = csvread("map2/map_multiobs_map2.csv");
     prefix = ["map2/exp2/"];
 elseif strcmp(plot_experiment, "map2_exp3")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+    sdfmap = csvread("map2/map_multiobs_map2.csv");
     prefix = ["map2/exp3/"];
 elseif strcmp(plot_experiment, "map2_exp4")
-    sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+    sdfmap = csvread("map2/map_multiobs_map2.csv");
     prefix = ["map2/exp4/"];
 elseif strcmp(plot_experiment, "map_narrow_go_through")
-    sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
+    sdfmap = csvread("map_narrow/map_multiobs_map3.csv");
     prefix = ["map_narrow/shortcut/"];
 elseif strcmp(plot_experiment, "map_narrow_go_around")
-    sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
+    sdfmap = csvread("map_narrow/map_multiobs_map3.csv");
     prefix = ["map_narrow/circumvent/"];
 end
 
@@ -52,8 +52,8 @@ if strcmp(plot_temperture, "low") && (~contains(plot_experiment, "go_around"))
     costs = csvread([prefix + "cost_base.csv"]);
     
     factor_costs = csvread([prefix + "factor_costs_base.csv"]);
-    perturb_stat= csvread([prefix + "perturbation_statistics_base.csv"]);
-    final_cost = csvread([prefix + "final_cost_base.csv"]);
+%     perturb_stat= csvread([prefix + "perturbation_statistics_base.csv"]);
+%     final_cost = csvread([prefix + "final_cost_base.csv"]);
     
 elseif strcmp(plot_temperture, "high")
     means = csvread([prefix + "mean.csv"]);
@@ -362,7 +362,7 @@ costs(niters)
 
 
 %%
-% field = csvread("../vimp/data/2d_pR/field_multiobs_entropy.csv");
+% field = csvread("../vimp/data/2d_pR/field_multiobs.csv");
 % 
 % cell_size = 0.1;
 % origin_x = -20;

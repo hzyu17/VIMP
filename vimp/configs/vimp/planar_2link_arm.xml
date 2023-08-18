@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!-- <parameters>
     <field_file>data/2d_Arm/field.csv</field_file>
     
@@ -67,7 +68,7 @@
     <temperature>100.0</temperature>
 
     <replanning> 1 </replanning>
-    <mean_file>/home/hongzhe/git/VIMP/vimp/data/2d_Arm/mean_base.csv</mean_file>
+    <mean_file>/home/hzyu/git/VIMP/vimp/data/2d_Arm/mean_base.csv</mean_file>
     <replanning_starting> 2 </replanning_starting>
 
 </parameters>

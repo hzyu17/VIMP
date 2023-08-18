@@ -6,19 +6,19 @@ import gtsam.*
 import gpmp2.*
 
 %% read map
-sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
+sdfmap = csvread("map2/map_multiobs_map2.csv");
 
 v_niters = [18, 10, 18, 18];
 v_nsteps = [6, 10, 6, 6];
 
 x0 = 500;
 y0 = 500;
-width = 600;
-height = 350;
+width = 1290.427199;
+height = 800;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+tiledlayout(2, 2, 'TileSpacing', 'none', 'Padding', 'none')
 for i = 1:4 % 4 experiments
     nexttile
     prefix = ["map2/exp"+num2str(i)+"/"];

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -35,7 +35,7 @@
 
 <!-- with linear interpolated initializations and low temperature: go above the obstacles -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -45,8 +45,8 @@
     <goal_pos>
         <x>17.0</x>
         <y>14.0</y>
-    </goal_pos>
-
+    </goal_p17
+    
     <total_time>1.5</total_time>
 
     <n_total_states>10</n_total_states>
@@ -69,7 +69,7 @@
 
 <!-- with linear interpolated initializations and low temperature: go below the obstacles -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -103,7 +103,7 @@
 
 <!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -139,7 +139,7 @@
 
 <!-- with linear interpolated initializations and high temperature: go above the obstacles: ENTROPY MAP -->
 <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -175,7 +175,7 @@
 
 <!-- with linear interpolated initializations and low temperature: go below the obstacles: ENTROPY MAP -->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
@@ -212,7 +212,7 @@
 
 <!-- =========== high temperature: go below the obstacles: ENTROPY MAP ===========-->
 <!-- <parameters>
-    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
+    <field_file>/home/hzyu/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
     
     <start_pos>
         <x>0.0</x>
