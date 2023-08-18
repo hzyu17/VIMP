@@ -66,22 +66,6 @@ cmake ..
 sudo make install 
 ```
 
-
-## If build with a customized install location and boost library:
-1. GTSAM
-```
-cmake -DCMAKE_INSTALL_PREFIX=/PREFIX -DGTSAM_BUILD_PYTHON:=OFF -DGTSAM_BUILD_MATLAB:=ON -DGTSAM_INSTALL_MATLAB_TOOLBOX:=ON -DGTSAM_ALLOW_DEPRECATED_SINCE_V4:=ON \
--DGTSAM_INSTALL_CYTHON_TOOLBOX:=OFF  -DGTSAM_USE_SYSTEM_EIGEN:=ON -DCMAKE_PREFIX_PATH=/PREFIX -DBOOST_ROOT=/PREFIX/bin/boost -DBOOST_INCLUDEDIR=/PREFIX/bin/boost/include \
--DBOOST_LIBRARYDIR=/PREFIX/bin/boost/lib -DBoost_NO_BOOST_CMAKE=TRUE -DGTSAM_WITH_EIGEN_MKL=OFF -DGTSAM_WITH_TBB=OFF ..
-```
-2. GPMP2
-```
-cmake -DCMAKE_INSTALL_PREFIX=/PREFIX -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON \
--DCMAKE_PREFIX_PATH=/PREFIX -DBOOST_ROOT=/PREFIX/bin/boost \
--DBOOST_INCLUDEDIR=/PREFIX/bin/boost/include \
--DBOOST_LIBRARYDIR=/PREFIX/bin/boost/lib -DBoost_NO_BOOST_CMAKE=TRUE ..
-```
-
 ## Run Tests
 All changes to the code should pass the current tests. To run all the tests:
 ```
@@ -89,8 +73,8 @@ cd path_to_vimp
 python scripts/run_all_tests.py
 ```
 
-## Citation
-If you use this repository in your research, please cite the following publications
+## Citing
+If you use this repository in your research, please cite the following publications:
 ```
 @ARTICLE{10068240,
   author={Yu, Hongzhe and Chen, Yongxin},

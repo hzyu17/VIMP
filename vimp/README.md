@@ -21,9 +21,8 @@ python trajectory_displayer_ros_WAM.py
 python show_trajectories_paper.py --algorithm gpmp2(or)gvi-mp(or)pgcs-mp --exp 1(or)2
 ```
 
-
-## Citation
-If you use this repository in your research, please cite the following publications
+## Citing
+If you use this repository in your research, please cite the following publications:
 ```
 @ARTICLE{10068240,
   author={Yu, Hongzhe and Chen, Yongxin},
