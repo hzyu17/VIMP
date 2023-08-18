@@ -47,31 +47,7 @@ def main():
     elif (args.algorithm == "gpmp2"):
         wam_dir = root_VIMP + "/matlab_helpers/PGCS-examples/WAM/case" + args.experiment + "/gpmp2"
         
-    show_one_traj(wam_dir)
-    
-    # if len(sys.argv) != 2:
-    #     print(
-    #         'Correct usage:: \n"python3 show_trajectories_paper.py case_index"\n e.g.: python3 show_trajectories_paper.py 1'
-    #     )
-    #     sys.exit()
-    # try: 
-    #     print("")
-    #     print("----------------------------------------------------------")
-    #     print("VIMP ROS trajectory display")
-    #     print("----------------------------------------------------------")
-    #     print("Press Ctrl-D to exit at any time")
-    #     print("")
-    #     input(
-    #         "============ Press `Enter` to begin the tutorial by setting up the moveit_commander ..."
-    #     )
-        
-    #     show_one_traj(int(sys.argv[1]))
-        
-    # except rospy.ROSInterruptException:
-    #     return
-    # except KeyboardInterrupt:
-    #     return
-    
+    show_one_traj(wam_dir)    
 
 if __name__ == "__main__":
     main()
