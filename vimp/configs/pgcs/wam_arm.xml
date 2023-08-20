@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Commons>
 
-    <eps> 0.01 </eps>
+    <eps> 0.001 </eps>
     <eps_sdf> 0.18 </eps_sdf>
     <radius> 0.0 </radius>
     <total_time> 9.0 </total_time>
