@@ -41,7 +41,7 @@ nx = 14;
 
 %% ================= data reading and plots ===================
 
-for i_exp = 1:2 % 3 experiments
+for i_exp = 2:2 % 3 experiments
     % ====================================================================================== 
     %                                   read data
     % ====================================================================================== 
@@ -51,7 +51,7 @@ for i_exp = 1:2 % 3 experiments
     prefix_gpmp2 = ["case"+num2str(i_exp)+"/gpmp2"];
     
     % ------------ read gpmp2 results ------------ 
-    gpmp2_confs = csvread([prefix+"/zk_sdf.csv"]);
+    gpmp2_confs = csvread([prefix_gpmp2+"/zk_sdf.csv"]);
     [nx_gpmp2, nt_gpmp2] = size(gpmp2_confs);
     
     % ------------  read gvi-mp results ------------ 
@@ -69,7 +69,7 @@ for i_exp = 1:2 % 3 experiments
     
     
     % ====================================================================================== 
-    %                                   plot trajectories
+    %                                   plot mean trajectories
     % ====================================================================================== 
     
     % --------------------------- plot gpmp2 results ---------------------------
@@ -155,6 +155,105 @@ for i_exp = 1:2 % 3 experiments
     xlim([-1, 1.4])
     ylim([-1, 1.0])
     zlim([-0.8, 0.9])
+    
+    %%
+    % ====================================================================================== 
+    %                           plot means and samples
+    % ====================================================================================== 
+    % ------------- pgcs-mp -------------
+    n_plots = 10;
+    n_rows = 2;
+    n_samples = 10;
+
+    figure
+    set(gcf,'position',[x0,y0,width,height])
+    tiledlayout(n_rows, floor(n_plots/n_rows), 'TileSpacing', 'none', 'Padding', 'none')
+
+    stepsize = floor(nt/n_plots);
+
+    for j = 1:stepsize:nt
+        nexttile
+        hold on 
+        view(-14.7458, 9.8376);
+        plotMap3D(dataset.corner_idx, origin, cell_size);
+        % gradual changing colors
+        alpha_samples = 0.3;
+        color = [0, 0, 1, 1];
+        color_samples = [0, 0, 1, alpha_samples];
+        % sample from covariance
+        n_samples = 10;
+        for i_sample = 1:n_samples
+            % mu j
+            mean_j = means(1:7, j);
+            % cov j
+            cov_j = covs(1:7, 1:7, j);
+
+            % means
+            plotArm3D(arm.fk_model(), mean_j, color, 8, true);
+
+            % sampling 
+            rng('default')  % For reproducibility
+            samples = mvnrnd(mean_j, cov_j, n_samples);
+            for k = 1: size(samples, 1)
+                k_sample = samples(k, 1:end)';
+                plotArm3D(arm.fk_model(), k_sample, color_samples, 4, false);
+            end
+        end
+        plotArm3D(arm.fk_model(), start_conf(i_exp,1:end)', 'r', 6, true);
+        plotArm3D(arm.fk_model(), end_conf(i_exp,1:end)', 'g', 6, true);
+        xlim([-1, 1.5])
+        ylim([-0.8, 1.5])
+        hold off
+        axis off
+
+    end
+    
+    % ------------- gvi-mp -------------
+    n_plots = 10;
+    n_samples = 10;
+
+    figure
+    set(gcf,'position',[x0,y0,width,height])
+    tiledlayout(2, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+    stepsize = floor(nt/n_plots);
+
+    for j = 1:stepsize:nt
+        nexttile
+        hold on 
+        view(-14.7458, 9.8376);
+        plotMap3D(dataset.corner_idx, origin, cell_size);
+        % gradual changing colors
+        alpha_samples = 0.3;
+        color = [0, 0, 1, 1];
+        color_samples = [0, 0, 1, alpha_samples];
+        % sample from covariance
+        n_samples = 10;
+        for i_sample = 1:n_samples
+            % mu j
+            mean_j = means_gvi(1:7, j);
+            % cov j
+            cov_j = covs_gvi(1:7, 1:7, j);
+
+            % means
+            plotArm3D(arm.fk_model(), mean_j, color, 8, true);
+
+            % sampling 
+            rng('default')  % For reproducibility
+            samples = mvnrnd(mean_j, cov_j, n_samples);
+            for k = 1: size(samples, 1)
+                k_sample = samples(k, 1:end)';
+                plotArm3D(arm.fk_model(), k_sample, color_samples, 4, false);
+            end
+        end
+        plotArm3D(arm.fk_model(), start_conf(i_exp,1:end)', 'r', 6, true);
+        plotArm3D(arm.fk_model(), end_conf(i_exp,1:end)', 'g', 6, true);
+        xlim([-1, 1.5])
+        ylim([-0.8, 1.5])
+        hold off
+        axis off
+
+    end
     
     
     % ====================================================================================== 
