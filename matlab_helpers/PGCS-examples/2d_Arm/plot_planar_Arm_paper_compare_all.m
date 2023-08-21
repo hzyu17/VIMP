@@ -23,7 +23,7 @@ switch map
             case 1
                 prefix = "map1/case1";
                 prefix_gpmp2 = "map1/case1/gpmp2";
-                prefix_gvimp = "map1/case1/gvimp";
+                prefix_gvimp = "../../GVIMP-examples/2d_Arm/map1/case1";
                 % boundary conditions
                 start_conf = [0, 0]';
                 start_vel = [0, 0]';
@@ -65,9 +65,9 @@ dim_theta = 4;
 means_gvimp = csvread([prefix_gvimp+"/mean.csv"]);
 covs_gvimp = csvread([prefix_gvimp+"/cov.csv"]);
 costs_gvimp = csvread([prefix_gvimp+"/cost.csv"]);
-[niters, ttl_dim] = size(means_gvimp);
-niters = length(costs_gvimp);
-n_states = floor(ttl_dim / dim_theta);
+[ttl_dim, niters] = size(means_gvimp);
+nt_gvimp = floor(ttl_dim/dim_theta);
+% n_states = floor(ttl_dim / dim_theta);
 
 % =================== read pgcs results ====================
 means = csvread([prefix+"/zk_sdf.csv"]);
@@ -97,47 +97,51 @@ width = 400;
 height = 350;
 % ==================== plot gvimp results ===================
 % niters
-nsteps = 6;
-step_size = floor(niters / nsteps);
-n_states = floor(ttl_dim / dim_theta);
+% nsteps = 6;
+% step_size = floor(niters / nsteps);
+% n_states = floor(ttl_dim / dim_theta);
 
-% --------------- containers for all the steps data ---------------
-vec_means = cell(niters, 1);
-vec_covs = cell(niters, 1);
-vec_precisions = cell(niters, 1);
-
-for i_iter = 0: nsteps-1
-        % each time step 
-        i = i_iter * step_size;
-        i_mean = means_gvimp(i+1, 1:end);
-        i_cov = covs_gvimp(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
-        i_vec_means_2d = cell(n_states, 1);
-        i_vec_covs_2d = cell(n_states, 1);
-        for j = 0:n_states-1
-            % each state
-            i_vec_means_2d{j+1} = i_mean(j*dim_theta+1 : j*dim_theta+2);
-            i_vec_covs_2d{j+1} = i_cov(j*dim_theta +1 : j*dim_theta+2,  j*dim_theta+1 : j*dim_theta+2);
-        end
-        vec_means{i_iter+1} = i_vec_means_2d;
-        vec_covs{i_iter+1} = i_vec_covs_2d;
-end
+% % --------------- containers for all the steps data ---------------
+% vec_means = cell(niters, 1);
+% vec_covs = cell(niters, 1);
+% vec_precisions = cell(niters, 1);
+% 
+% for i_iter = 0: nsteps-1
+%         % each time step 
+%         i = i_iter * step_size;
+%         i_mean = means_gvimp(i+1, 1:end);
+%         i_cov = covs_gvimp(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
+%         i_vec_means_2d = cell(n_states, 1);
+%         i_vec_covs_2d = cell(n_states, 1);
+%         for j = 0:n_states-1
+%             % each state
+%             i_vec_means_2d{j+1} = i_mean(j*dim_theta+1 : j*dim_theta+2);
+%             i_vec_covs_2d{j+1} = i_cov(j*dim_theta +1 : j*dim_theta+2,  j*dim_theta+1 : j*dim_theta+2);
+%         end
+%         vec_means{i_iter+1} = i_vec_means_2d;
+%         vec_covs{i_iter+1} = i_vec_covs_2d;
+% end
 % --------------- plotting -----------------
+means_gvimp_lastiter = means_gvimp(:,end);
+means_gvimp_lastiter = reshape(means_gvimp_lastiter, [dim_theta,nt_gvimp]);
+covs_gvimp_lastiter = covs_gvimp(:, end);
+covs_gvimp_lastiter = reshape(covs_gvimp_lastiter, [dim_theta, dim_theta, nt_gvimp]);
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 % t=title('GVI-MP');
 % t.FontSize = 26;
-i_vec_means_2d = vec_means{nsteps};
-i_vec_covs_2d = vec_covs{nsteps};
+% i_vec_means_2d = vec_means{nsteps};
+% i_vec_covs_2d = vec_covs{nsteps};
 hold on 
 plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
-for j = 1:n_states
+for j = 1:nt_gvimp
     % gradual changing colors
-    alpha = (j / n_states)^(1.15);
+    alpha = (j / nt_gvimp)^(1.15);
     color = [0, 0, 1, alpha];
     % means
-    plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 8, true);
+    plotPlanarArm1(arm.fk_model(), means_gvimp_lastiter(1:2, j), color, 8, true);
 end
 plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
 plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
@@ -223,24 +227,26 @@ for i=1:nt
     scatter(means(1, i), means(2, i), 40, 'k', 'fill');
     error_ellipse(covs(1:2,1:2,i), means(1:2, i));
 end
-% plot gvimp results
 
-i_vec_means_2d = vec_means{nsteps};
-i_vec_covs_2d = vec_covs{nsteps};
-nt_gvimp = size(i_vec_means_2d, 1);
-for i=1:nt_gvimp
-    scatter(i_vec_means_2d{i}(1), i_vec_means_2d{i}(2), 40, 'b', 'fill');
-    error_ellipse(i_vec_covs_2d{i}, i_vec_means_2d{i}, 'style', 'm-.');
+% plot gvimp results
+nt_gvi = size(means_gvimp_lastiter, 2);
+for i=1:nt_gvi
+    scatter(means_gvimp_lastiter(1, i), means_gvimp_lastiter(2, i), 40, 'k', 'fill');
+    error_ellipse(covs_gvimp_lastiter(1:2,1:2,i), means_gvimp_lastiter(1:2, i), 'style', 'm-.');
 end
+
+% i_vec_means_2d = vec_means{nsteps};
+% i_vec_covs_2d = vec_covs{nsteps};
+% nt_gvimp = size(i_vec_means_2d, 1);
+% for i=1:nt_gvimp
+%     scatter(i_vec_means_2d{i}(1), i_vec_means_2d{i}(2), 40, 'b', 'fill');
+%     error_ellipse(i_vec_covs_2d{i}, i_vec_means_2d{i}, 'style', 'm-.');
+% end
 
 % plot start and goal conf
 scatter(start_conf(1), start_conf(2), 80, 'r', 'fill');
 scatter(end_conf(1), end_conf(2), 80, 'g', 'fill');
 
-% t = title('Configuration Trajectories');
-% t.FontSize = 26;
-% xlabel('$q_1$','Interpreter','latex', 'FontSize',24),ylabel('$q_2$','Interpreter','latex', 'FontSize',24);
-% axis off
 hold off
 
 

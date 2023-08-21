@@ -67,7 +67,7 @@
         <7>1.2</7>
     </goal_pos>
 
-    <sig_obs> 4.5e3 </sig_obs>
+    <sig_obs> 4.45e3 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case2/</saving_prefix>
 

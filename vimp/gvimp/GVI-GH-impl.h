@@ -56,6 +56,15 @@ namespace vimp
 
             // ============= Cost at current iteration =============
             double cost_iter = cost_value(_mu, _precision);
+
+            // MatrixIO mio;
+            // std::string name = "precision_", follow = ".csv";
+            // std::string full_name = name + to_string(i_iter) + follow;
+            // std::cout << full_name << std::endl;
+            // MatrixXd precision_full{_precision};
+            // mio.saveData(full_name, precision_full);
+
+            // _ei.print_matrix(_precision, "_precision");
             if (verbose){
                 cout << "========= iteration " << i_iter << " ========= " << endl;
                 cout << "--- cost_iter ---" << endl << cost_iter << endl;
@@ -63,6 +72,8 @@ namespace vimp
 
             // ============= Collect factor costs =============
             VectorXd fact_costs_iter = factor_cost_vector();
+
+            _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
 
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
 
@@ -183,16 +194,18 @@ namespace vimp
             value += opt_k->fact_cost_value(mean, Cov); // / _temperature;
         }
 
-        // SparseLDLT ldlt(Precision);
-        // double det = ldlt.determinant();
-        MatrixXd precision_full{Precision};
-        double det = precision_full.determinant();
+        SparseLDLT ldlt(Precision);
+        VectorXd vec_D = ldlt.vectorD();
 
-        if (det < 0)
-        {
-            std::runtime_error("Infinity log determinant precision matrix ...");
+        // MatrixXd precision_full{Precision};
+        double logdet = 0;
+        for (int i_diag=0; i_diag<vec_D.size(); i_diag++){
+            logdet += log(vec_D(i_diag));
         }
-        return value + log(det) / 2;
+
+        // cout << "logdet " << endl << logdet << endl;
+        
+        return value + logdet / 2;
     }
 
     /**

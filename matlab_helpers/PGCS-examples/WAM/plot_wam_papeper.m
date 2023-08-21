@@ -2,16 +2,16 @@ clear all
 close all
 clc
 
-%% ******************* dependencies and includes ******************
+% ******************* dependencies and includes ******************
 addpath('/usr/local/gtsam_toolbox')
 addpath ('/home/hongzhe/git/VIMP/matlab_helpers/experiments/WAM/utils')
 import gtsam.*
 import gpmp2.*
 
-addpath("..//PGCS-examples");
+% addpath("..//PGCS-examples");
 addpath("../../tools/error_ellipse");
 
-%% ******************* Define map dataset ******************
+% ******************* Define map dataset ******************
 dataset = generate3Ddataset('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
@@ -21,10 +21,10 @@ disp('calculating signed distance field ...');
 field = signedDistanceField3D(dataset.map, dataset.cell_size);
 disp('calculating signed distance field done');
 
-%% ******************* WAM Arm and start and end conf ******************
+% ******************* WAM Arm and start and end conf ******************
 arm = generateArm('WAMArm');
 
-%% ================= figure configs and start and goal states ===================
+% ================= figure configs and start and goal states ===================
 x0 = 50;
 y0 = 50;
 width = 400;
@@ -39,7 +39,7 @@ end_conf = [-0.0,    0.94,     0,    1.6,    0,     -0.919,     1.55;
       
 nx = 14;
 
-%% ================= data reading and plots ===================
+% ================= data reading and plots ===================
 
 for i_exp = 2:2 % 3 experiments
     % ====================================================================================== 
@@ -57,6 +57,8 @@ for i_exp = 2:2 % 3 experiments
     % ------------  read gvi-mp results ------------ 
     means_gvi = csvread([prefix_gvi + "zk_sdf.csv"]);
     covs_gvi = csvread([prefix_gvi + "Sk_sdf.csv"]);
+    
+    covs_gvi = reshape(covs_gvi, [14, 14, 15]);
     
     [nx, nt_gvi] = size(means_gvi);
 
@@ -209,16 +211,16 @@ for i_exp = 2:2 % 3 experiments
     end
     
     % ------------- gvi-mp -------------
-    n_plots = 10;
+    n_plots = 15;
     n_samples = 10;
 
     figure
     set(gcf,'position',[x0,y0,width,height])
-    tiledlayout(2, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+    tiledlayout(3, floor(n_plots/3), 'TileSpacing', 'none', 'Padding', 'none')
 
-    stepsize = floor(nt/n_plots);
+    stepsize = floor(nt_gvi/n_plots);
 
-    for j = 1:stepsize:nt
+    for j = 1:stepsize:nt_gvi
         nexttile
         hold on 
         view(-14.7458, 9.8376);
@@ -267,6 +269,9 @@ for i_exp = 2:2 % 3 experiments
     hold on
     grid on
     plot_3d_result(means(1:3,1:end), covs(1:3,1:3,1:end));
+    
+    % ------------- gvimp q1 q2 q3 -------------
+    plot_3d_result(means_gvi(1:3,1:end), covs_gvi(1:3,1:3,1:end));
 
     % ------------- gpmp2 q1 q2 q3 -------------
     for i_gpmp2 = 1:nt_gpmp2
@@ -285,6 +290,9 @@ for i_exp = 2:2 % 3 experiments
     hold on
     plot_2d_result_no_sdf(means(4:5,1:end), covs(4:5,4:5,1:end));
     
+    % ------------- gvimp q4 q5 -------------
+    plot_2d_result_no_sdf(means_gvi(4:5,1:end), covs_gvi(4:5,4:5,1:end));
+    
     for i_gpmp2 = 1:nt_gpmp2
         scatter(gpmp2_confs(4, i_gpmp2), gpmp2_confs(5, i_gpmp2), 20, 'blue', 'filled','d');
     end
@@ -300,6 +308,9 @@ for i_exp = 2:2 % 3 experiments
     grid on
     hold on
     plot_2d_result_no_sdf(means(6:7,1:end), covs(6:7,6:7,1:end));
+    
+    % ------------- gvimp q4 q5 -------------
+    plot_2d_result_no_sdf(means_gvi(6:7,1:end), covs_gvi(6:7,6:7,1:end));
     
     for i_gpmp2 = 1:nt_gpmp2
         scatter(gpmp2_confs(6, i_gpmp2), gpmp2_confs(7, i_gpmp2), 20, 'blue', 'filled','d');
