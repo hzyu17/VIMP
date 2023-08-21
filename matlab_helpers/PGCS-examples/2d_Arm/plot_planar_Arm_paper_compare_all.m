@@ -252,14 +252,14 @@ hold off
 
 %% ================= plot samples ===============
 % ------------------ gvi-mp ------------------
+n_plots = 10;
+stepsize = floor(nt/n_plots);
+
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(2, floor(n_states/2), 'TileSpacing', 'none', 'Padding', 'none')
+tiledlayout(2, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
 
-i_vec_means_2d = vec_means{nsteps};
-i_vec_covs_2d = vec_covs{nsteps};
-
-for j = 1:n_states
+for j = 1:stepsize:nt_gvimp
     nexttile
     hold on 
     plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
@@ -271,11 +271,11 @@ for j = 1:n_states
     n_samples = 10;
     for i_sample = 1:n_samples
         % mu j
-        mean_j = i_vec_means_2d{j}';
+        mean_j = means_gvimp_lastiter(1:2, j);
         % cov j
-        cov_j = i_vec_covs_2d{j};
+        cov_j = covs_gvimp_lastiter(1:2, 1:2, j);
         
-        % means
+        % plot means
         plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
     
         % sampling 
@@ -290,7 +290,7 @@ for j = 1:n_states
     plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
     xlim([-1, 1.5])
     ylim([-0.8, 1.5])
-    hold off
+%     hold off
     axis off
 
 end
@@ -360,7 +360,7 @@ hold on
 plot(costs(3,:), 'LineWidth', 2.5)
 xlabel('Iterations')
 ylabel('Cost')
-
+20
 
 % %% ==== animated motion plan ==== 
 % x0 = 50;
