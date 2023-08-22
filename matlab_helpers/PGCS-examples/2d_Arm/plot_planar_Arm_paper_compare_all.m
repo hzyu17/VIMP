@@ -148,7 +148,7 @@ plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
 hold off
-axis off
+% axis off
 
 
 % ==================== plot gpmp2 results ===================
@@ -177,7 +177,7 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-axis off
+% axis off
 
 
 % ==================== plot PGCS-MP results ===================
@@ -202,15 +202,25 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-axis off;
+% axis off;
 hold off
 
 
 % =================== configuration space trajectory ===================
+% -------------- plot configuration obstacles ----------------
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
+hold on
+
+cell_number = 300;
+configuration_obs = csvread("../../../vimp/maps/2dArm/config_obs.csv");
+origin_x_config = -3.1415926*2;
+origin_y_config = -3.1415926*2;
+cell_size_config = 3.1415926*4/cell_number;
+plotEvidenceMap2D_arm(configuration_obs, origin_x_config, origin_y_config, cell_size_config);
+
 % t=title("2-link arm");
 t.FontSize = 26;
 
@@ -234,14 +244,6 @@ for i=1:nt_gvi
     scatter(means_gvimp_lastiter(1, i), means_gvimp_lastiter(2, i), 40, 'k', 'fill');
     error_ellipse(covs_gvimp_lastiter(1:2,1:2,i), means_gvimp_lastiter(1:2, i), 'style', 'm-.');
 end
-
-% i_vec_means_2d = vec_means{nsteps};
-% i_vec_covs_2d = vec_covs{nsteps};
-% nt_gvimp = size(i_vec_means_2d, 1);
-% for i=1:nt_gvimp
-%     scatter(i_vec_means_2d{i}(1), i_vec_means_2d{i}(2), 40, 'b', 'fill');
-%     error_ellipse(i_vec_covs_2d{i}, i_vec_means_2d{i}, 'style', 'm-.');
-% end
 
 % plot start and goal conf
 scatter(start_conf(1), start_conf(2), 80, 'r', 'fill');
@@ -291,7 +293,7 @@ for j = 1:stepsize:nt_gvimp
     xlim([-1, 1.5])
     ylim([-0.8, 1.5])
 %     hold off
-    axis off
+%     axis off
 
 end
 
@@ -337,7 +339,7 @@ for j = 1:stepsize:nt
     xlim([-1, 1.5])
     ylim([-0.8, 1.5])
     hold off
-    axis off
+%     axis off
 
 end
 
