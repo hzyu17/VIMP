@@ -148,7 +148,7 @@ plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
 hold off
-axis off
+% axis off
 
 
 % ==================== plot gpmp2 results ===================
@@ -177,7 +177,7 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-axis off
+% axis off
 
 
 % ==================== plot PGCS-MP results ===================
@@ -202,15 +202,63 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-axis off;
+% axis off;
 hold off
 
 
 % =================== configuration space trajectory ===================
+% -------------- plot configuration obstacles ----------------
+% sdf_map
+dataset = generate2Ddataset('OneObstacleDataset');
+rows = dataset.rows;
+cols = dataset.cols;
+cell_size = dataset.cell_size;
+origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
+
+% signed distance field
+field = signedDistanceField2D(dataset.map, cell_size);
+sdf = PlanarSDF(origin_point2, cell_size, field);
+
+% arm
+arm = generateArm('SimpleTwoLinksArm');
+
+epsilon = -0.01;
+cost_sigma = 0.1;
+
+% planar collision factor arm
+planar_sdf_arm = ObstaclePlanarSDFFactorArm(symbol('x', 0), arm, sdf, cost_sigma, epsilon);
+
+% swip for joint angles
+
+theta_cell = linspace(-3.1415926, 3.1415926, 1000);
+for theta_1 = theta_cell(1:end)
+    for theta_2 = theta_cell(1:end)
+        config_ij = [theta_1; theta_2];
+        err_vec = planar_sdf_arm.evaluateError(config_ij)
+    end
+end
+
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
+hold on
+
+% read configuration space obstacle mesh
+% meshx = csvread("../../../vimp/maps/2dArm/configuration_obs_meshx.csv");
+% meshy = csvread("../../../vimp/maps/2dArm/configuration_obs_meshy.csv");
+% meshz = ones(size(meshx));
+% figure
+% hold on
+% mesh(meshx, meshy, meshz);
+
+cell_number = 300;
+configuration_obs = csvread("../../../vimp/maps/2dArm/config_obs.csv");
+origin_x_config = -3.1415926;
+origin_y_config = -3.1415926;
+cell_size_config = 3.1415926*2/cell_number;
+plotEvidenceMap2D_arm(configuration_obs, origin_x_config, origin_y_config, cell_size_config);
+
 % t=title("2-link arm");
 t.FontSize = 26;
 
@@ -235,14 +283,6 @@ for i=1:nt_gvi
     error_ellipse(covs_gvimp_lastiter(1:2,1:2,i), means_gvimp_lastiter(1:2, i), 'style', 'm-.');
 end
 
-% i_vec_means_2d = vec_means{nsteps};
-% i_vec_covs_2d = vec_covs{nsteps};
-% nt_gvimp = size(i_vec_means_2d, 1);
-% for i=1:nt_gvimp
-%     scatter(i_vec_means_2d{i}(1), i_vec_means_2d{i}(2), 40, 'b', 'fill');
-%     error_ellipse(i_vec_covs_2d{i}, i_vec_means_2d{i}, 'style', 'm-.');
-% end
-
 % plot start and goal conf
 scatter(start_conf(1), start_conf(2), 80, 'r', 'fill');
 scatter(end_conf(1), end_conf(2), 80, 'g', 'fill');
@@ -252,14 +292,14 @@ hold off
 
 %% ================= plot samples ===============
 % ------------------ gvi-mp ------------------
+n_plots = 10;
+stepsize = floor(nt/n_plots);
+
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(2, floor(nt_gvimp/2), 'TileSpacing', 'none', 'Padding', 'none')
+tiledlayout(2, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
 
-% i_vec_means_2d = vec_means{nsteps};
-% i_vec_covs_2d = vec_covs{nsteps};
-
-for j = 1:n_states
+for j = 1:stepsize:nt_gvimp
     nexttile
     hold on 
     plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
@@ -271,11 +311,11 @@ for j = 1:n_states
     n_samples = 10;
     for i_sample = 1:n_samples
         % mu j
-        mean_j = means_gvimp';
+        mean_j = means_gvimp_lastiter(1:2, j);
         % cov j
-        cov_j = i_vec_covs_2d{j};
+        cov_j = covs_gvimp_lastiter(1:2, 1:2, j);
         
-        % means
+        % plot means
         plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
     
         % sampling 
@@ -290,8 +330,8 @@ for j = 1:n_states
     plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
     xlim([-1, 1.5])
     ylim([-0.8, 1.5])
-    hold off
-    axis off
+%     hold off
+%     axis off
 
 end
 
@@ -336,8 +376,10 @@ for j = 1:stepsize:nt
     plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
     xlim([-1, 1.5])
     ylim([-0.8, 1.5])
+    grid minor
     hold off
-    axis off
+    
+%     axis off
 
 end
 
@@ -360,7 +402,7 @@ hold on
 plot(costs(3,:), 'LineWidth', 2.5)
 xlabel('Iterations')
 ylabel('Cost')
-
+20
 
 % %% ==== animated motion plan ==== 
 % x0 = 50;

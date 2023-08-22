@@ -208,18 +208,27 @@ hold off
 
 % =================== configuration space trajectory ===================
 % -------------- plot configuration obstacles ----------------
+
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 hold on
 
-cell_number = 300;
-configuration_obs = csvread("../../../vimp/maps/2dArm/config_obs.csv");
-origin_x_config = -3.1415926;
-origin_y_config = -3.1415926;
-cell_size_config = 3.1415926*2/cell_number;
-plotEvidenceMap2D_arm(configuration_obs, origin_x_config, origin_y_config, cell_size_config);
+plot_configuration_obstacles()
+
+% read configuration space obstacle mesh
+% meshx = csvread("../../../vimp/maps/2dArm/configuration_obs_meshx.csv");
+% meshy = csvread("../../../vimp/maps/2dArm/configuration_obs_meshy.csv");
+% [meshx, meshy] = meshgrid(v_theta1, v_theta2);
+% meshz = ones(size(meshx));
+
+% cell_number = 300;
+% configuration_obs = csvread("../../../vimp/maps/2dArm/config_obs.csv");
+% origin_x_config = -3.1415926;
+% origin_y_config = -3.1415926;
+% cell_size_config = 3.1415926*2/cell_number;
+% plotEvidenceMap2D_arm(configuration_obs, origin_x_config, origin_y_config, cell_size_config);
 
 % t=title("2-link arm");
 t.FontSize = 26;
@@ -338,7 +347,9 @@ for j = 1:stepsize:nt
     plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
     xlim([-1, 1.5])
     ylim([-0.8, 1.5])
+    grid minor
     hold off
+    
 %     axis off
 
 end

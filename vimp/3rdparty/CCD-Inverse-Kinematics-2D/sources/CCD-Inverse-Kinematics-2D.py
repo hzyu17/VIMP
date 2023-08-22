@@ -1,3 +1,5 @@
+## Forked and modified from https://github.com/ekorudiawan/CCD-Inverse-Kinematics-2D/tree/master
+
 import numpy as np 
 import matplotlib.pyplot as plt 
 import math

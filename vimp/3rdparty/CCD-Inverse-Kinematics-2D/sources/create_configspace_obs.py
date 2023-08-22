@@ -61,7 +61,7 @@ def FK(angle, link):
         P.append(P[-1].dot(R).dot(T))
     return P
 
-def IK(target, angle, link, max_iter = 10000, err_min = 0.1):
+def IK(target, angle, link, max_iter = 10000, err_min = 0.01):
     solved = False
     err_end_to_target = math.inf
     
@@ -92,16 +92,21 @@ def IK(target, angle, link, max_iter = 10000, err_min = 0.1):
 
                 rot_ang = math.acos(max(-1, min(1,cos_rot_ang)))
 
-                if sin_rot_ang < 0.0:
-                    rot_ang = -rot_ang
+                # if sin_rot_ang > 0.0:
+                #     rot_ang = -rot_ang
 
                 # Update current joint angle values
                 angle[i] = angle[i] + (rot_ang * 180 / math.pi)
-
-                if angle[i] >= 360:
+                
+                if angle[i] <= -360:
+                    angle[i] = angle[i] + 360
+                if angle[i] > 0:
                     angle[i] = angle[i] - 360
-                if angle[i] < 0:
-                    angle[i] = 360 + angle[i]
+
+                # if angle[i] >= 360:
+                #     angle[i] = angle[i] - 360
+                # if angle[i] < 0:
+                #     angle[i] = 360 + angle[i]
                   
         if solved:
             break
@@ -113,22 +118,23 @@ import os
 full_path = os.path.realpath(__file__)
 path, filename = os.path.split(full_path)
 root_vimp = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(full_path))))
-map_file = root_vimp+"/maps/2dArm/field.csv"
+map_file = root_vimp+"/maps/2dArm/map.csv"
+
 
 def read_map(file_name=map_file):
     global target, link, angle, ax
     
     df = pd.read_csv(file_name, header=None)
-    map = df.values
+    cell_map = df.values
 
+    rows, cols = cell_map.shape
+    
     cell_size = 0.01
     origin_x = -1
     origin_y = -1
-    rows, cols = map.shape
     
     # find the obstacle elements
-    ones = np.where(map == 1)
-    print(ones)
+    ones = np.where(cell_map == 1)
     
     grid_corner_x = origin_x + (cols-1)*cell_size;
     grid_corner_y = origin_y + (rows-1)*cell_size;
@@ -136,8 +142,8 @@ def read_map(file_name=map_file):
     grid_X = np.linspace(origin_x, grid_corner_x, (cols-1));
     grid_Y = np.linspace(origin_y, grid_corner_y, (rows-1));
     
-    x_obs = grid_X[ones[0]]
-    y_obs = grid_Y[ones[1]]        
+    y_obs = grid_Y[ones[0]]
+    x_obs = grid_X[ones[1]]        
     
     cell_config = np.linspace(-np.pi, np.pi, 300)
     map_config = np.zeros([300, 300])
@@ -149,19 +155,31 @@ def read_map(file_name=map_file):
 
         angle[0] = angle[0]*np.pi/180.0
         angle[1] = angle[1]*np.pi/180.0
-                        
-        while angle[0] > 2*np.pi:
-            angle[0] = angle[0] - 2*np.pi
         
-        while angle[1] > 2*np.pi:
-            angle[1] = angle[1] - 2*np.pi
+        # if angle[0] < -2*np.pi:
+        #     angle[0] = angle[0] + 2*np.pi
+        
+        # if angle[1] < -2*np.pi:
+        #     angle[1] = angle[1] + 2*np.pi
             
-        if angle[0] > np.pi:
-            angle[0] = angle[0] - 2*np.pi
+        # if angle[0] < -np.pi:
+        #     angle[0] = angle[0] + 2*np.pi
             
-        if angle[1] > np.pi:
-            angle[1] = angle[1] - 2*np.pi  
-                        
+        # if angle[1] < -np.pi:
+        #     angle[1] = angle[1] + 2*np.pi  
+        
+        # if angle[0] > 2*np.pi:
+        #     angle[0] = angle[0] - 2*np.pi
+        
+        # if angle[1] > 2*np.pi:
+        #     angle[1] = angle[1] - 2*np.pi
+            
+        # if angle[0] > np.pi:
+        #     angle[0] = angle[0] - 2*np.pi
+            
+        # if angle[1] > np.pi:
+        #     angle[1] = angle[1] - 2*np.pi  
+        
         indx_x = next(x[0] for x in enumerate(cell_config) if x[1] > angle[0])
         indx_y = next(x[0] for x in enumerate(cell_config) if x[1] > angle[1])
                 
@@ -172,6 +190,7 @@ def read_map(file_name=map_file):
             print("Iteration :", iteration)
             print("Angle :", angle)
     
+    # save configuration space obstacles into csv file
     np.savetxt(root_vimp+"/maps/2dArm/config_obs.csv", map_config, delimiter=",")
     
     
@@ -181,60 +200,42 @@ def onclick():
     
 def main():
     
-    fig.canvas.mpl_connect('button_press_event', onclick)
-    fig.suptitle("Cyclic Coordinate Descent - Inverse Kinematics", fontsize=12)
-
-    print("Target Position : ", target)
-    plt.cla()
-    ax.set_xlim(-1, 1.5)
-    ax.set_ylim(-1, 1.5)
+    ## =====================================================================
+    # Read a sdf map and use the IK to map it into the configuration space.
+    ## =====================================================================
     
-    df = pd.read_csv(root_vimp+"/../matlab_helpers/PGCS-examples/2d_Arm/map1/case1/zk_sdf.csv", header=None)
-    trj = df.values
-    nt = trj.shape[1]
+    read_map(map_file)
     
-    for i_t in range(nt):
-        angle[0] = trj[0, i_t] * 180.0 / np.pi
-        angle[1] = trj[1, i_t] * 180.0 / np.pi
-        P = FK(angle, link)
-        for i in range(len(link)):
-            start_point = P[i]
-            end_point = P[i+1]
-            ax.plot([start_point[0,3], end_point[0,3]], [start_point[1,3], end_point[1,3]], linewidth=5)
-
-
-    # # Forward Kinematics
-    # P = FK(angle, link)
-    # # Plot Link
-    # for i in range(len(link)):
-    #     start_point = P[i]
-    #     end_point = P[i+1]
-    #     ax.plot([start_point[0,3], end_point[0,3]], [start_point[1,3], end_point[1,3]], linewidth=5)
-    #     # draw_axis(ax, scale=5, A=P[i+1], draw_2d=True)
-    plt.show()
+    ## ===========================================================================
+    # Show an example configuration space plan in the work space to verify the FK.
+    ## ===========================================================================
     
-    # read_map(map_file)
+    # fig.canvas.mpl_connect('button_press_event', onclick)
+    # fig.suptitle("Cyclic Coordinate Descent - Inverse Kinematics", fontsize=12)
 
+    # print("Target Position : ", target)
+    # plt.cla()
+    # ax.set_xlim(-1, 1.5)
+    # ax.set_ylim(-1, 1.5)
+    
     # df = pd.read_csv(root_vimp+"/../matlab_helpers/PGCS-examples/2d_Arm/map1/case1/zk_sdf.csv", header=None)
     # trj = df.values
     # nt = trj.shape[1]
     
-    # fig.show()
-    return
-    # fig.canvas.mpl_connect('button_press_event', onclick)
-    # fig.suptitle("Cyclic Coordinate Descent - Inverse Kinematics", fontsize=12)
-    # ax.set_xlim(-50, 150)
-    # ax.set_ylim(-50, 150)
+    # for i_t in range(nt):
+    #     angle[0] = trj[0, i_t] * 180.0 / np.pi
+    #     angle[1] = trj[1, i_t] * 180.0 / np.pi
+    #     P = FK(angle, link)
+    #     for i in range(len(link)):
+    #         start_point = P[i]
+    #         end_point = P[i+1]
+    #         ax.plot([start_point[0,3], end_point[0,3]], [start_point[1,3], end_point[1,3]], linewidth=5)
 
-    # # Forward Kinematics
-    # P = FK(angle, link)
-    # # Plot Link
-    # for i in range(len(link)):
-    #     start_point = P[i]
-    #     end_point = P[i+1]
-    #     ax.plot([start_point[0,3], end_point[0,3]], [start_point[1,3], end_point[1,3]], linewidth=5)
-    #     # draw_axis(ax, scale=5, A=P[i+1], draw_2d=True)
     # plt.show()
+    
+    
 
+    return
+    
 if __name__ == "__main__":
     main()
