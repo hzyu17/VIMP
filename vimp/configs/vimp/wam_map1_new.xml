@@ -1,19 +1,19 @@
 <Commons>
     <total_time>4.0</total_time>
-    <n_states>15</n_states>
+    <n_states>20</n_states>
     <map_name>map_bookshelf</map_name>
-    <coeff_Qc>0.8</coeff_Qc>
-    <sig_obs>0.0035</sig_obs>
-    <eps_sdf>0.15</eps_sdf>
+    <coeff_Qc>1.0</coeff_Qc>
+    <sig_obs>0.02</sig_obs>
+    <eps_sdf>0.2</eps_sdf>
     <radius>0.0</radius>
-    <step_size>0.35</step_size>
-    <init_precision_factor>10.0</init_precision_factor>
+    <step_size>0.7</step_size>
+    <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
-    <temperature>10.0</temperature>
-    <high_temperature>100.0</high_temperature>
+    <temperature>0.01</temperature>
+    <high_temperature>0.5</high_temperature>
     <low_temp_iterations>20</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>20</max_iterations>
+    <max_iterations>30</max_iterations>
     <max_n_backtracking>20</max_n_backtracking>
     <sdf_file>/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin</sdf_file>
 </Commons>

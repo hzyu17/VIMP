@@ -5,11 +5,13 @@ clc
 % ******************* dependencies and includes ******************
 addpath('/usr/local/gtsam_toolbox')
 addpath ('/home/hongzhe/git/VIMP/matlab_helpers/experiments/WAM/utils')
+
 import gtsam.*
 import gpmp2.*
 
-% addpath("..//PGCS-examples");
+addpath("../../tools");
 addpath("../../tools/error_ellipse");
+addpath("../../tools/WAM/utils")
 
 % ******************* Define map dataset ******************
 dataset = generate3Ddataset('WAMDeskDataset');
@@ -56,9 +58,10 @@ for i_exp = 2:2 % 3 experiments
     
     % ------------  read gvi-mp results ------------ 
     means_gvi = csvread([prefix_gvi + "zk_sdf.csv"]);
+    [~, nt_gvi] = size(means_gvi);
     covs_gvi = csvread([prefix_gvi + "Sk_sdf.csv"]);
     
-    covs_gvi = reshape(covs_gvi, [14, 14, 15]);
+    covs_gvi = reshape(covs_gvi, [14, 14, nt_gvi]);
     
     [nx, nt_gvi] = size(means_gvi);
 
@@ -164,98 +167,84 @@ for i_exp = 2:2 % 3 experiments
     % ====================================================================================== 
     % ------------- pgcs-mp -------------
     n_plots = 10;
-    n_rows = 2;
+    n_rows = 1;
     n_samples = 10;
-
-    figure
-    set(gcf,'position',[x0,y0,width,height])
-    tiledlayout(n_rows, floor(n_plots/n_rows), 'TileSpacing', 'none', 'Padding', 'none')
-
-    stepsize = floor(nt/n_plots);
-
-    for j = 1:stepsize:nt
-        nexttile
-        hold on 
-        view(-14.7458, 9.8376);
-        plotMap3D(dataset.corner_idx, origin, cell_size);
-        % gradual changing colors
-        alpha_samples = 0.3;
-        color = [0, 0, 1, 1];
-        color_samples = [0, 0, 1, alpha_samples];
-        % sample from covariance
-        n_samples = 10;
-        for i_sample = 1:n_samples
-            % mu j
-            mean_j = means(1:7, j);
-            % cov j
-            cov_j = covs(1:7, 1:7, j);
-
-            % means
-            plotArm3D(arm.fk_model(), mean_j, color, 8, true);
-
-            % sampling 
-            rng('default')  % For reproducibility
-            samples = mvnrnd(mean_j, cov_j, n_samples);
-            for k = 1: size(samples, 1)
-                k_sample = samples(k, 1:end)';
-                plotArm3D(arm.fk_model(), k_sample, color_samples, 4, false);
-            end
-        end
-        plotArm3D(arm.fk_model(), start_conf(i_exp,1:end)', 'r', 6, true);
-        plotArm3D(arm.fk_model(), end_conf(i_exp,1:end)', 'g', 6, true);
-        xlim([-1, 1.5])
-        ylim([-0.8, 1.5])
-        hold off
-        axis off
-
-    end
     
-    % ------------- gvi-mp -------------
-    n_plots = 15;
-    n_samples = 10;
-
+    stepsize = floor(nt/n_plots);
+    
+    pos_figsample = 1.0e+03 .*[0.2026, 1.3822, 1.0276, 0.1828];
+    
+    % ---------- first row -----------
     figure
-    set(gcf,'position',[x0,y0,width,height])
-    tiledlayout(3, floor(n_plots/3), 'TileSpacing', 'none', 'Padding', 'none')
+    set(gcf,'position',pos_figsample)
+    tiledlayout(1, 5, 'TileSpacing', 'none', 'Padding', 'none')
 
+    plot_samples_WAM(dataset, origin, cell_size, arm, means, covs, 1, floor(nt/2), stepsize, ...
+                     start_conf(i_exp,1:end)', end_conf(i_exp,1:end)');
+    % ---------- 2nd row -----------
+    figure
+    set(gcf,'position',pos_figsample)
+    tiledlayout(1, 5, 'TileSpacing', 'none', 'Padding', 'none')
+
+    plot_samples_WAM(dataset, origin, cell_size, arm, means, covs, floor(nt/2)+stepsize, nt, stepsize, ...
+                     start_conf(i_exp,1:end)', end_conf(i_exp,1:end)');
+                 
+    % ------------- gvi-mp -------------
+    n_plots = 10;
+    n_samples = 10;
     stepsize = floor(nt_gvi/n_plots);
+    
+    % ---------- first row -----------
+    figure
+    set(gcf,'position',pos_figsample)
+    tiledlayout(1, 5, 'TileSpacing', 'none', 'Padding', 'none')
 
-    for j = 1:stepsize:nt_gvi
-        nexttile
-        hold on 
-        view(-14.7458, 9.8376);
-        plotMap3D(dataset.corner_idx, origin, cell_size);
-        % gradual changing colors
-        alpha_samples = 0.3;
-        color = [0, 0, 1, 1];
-        color_samples = [0, 0, 1, alpha_samples];
-        % sample from covariance
-        n_samples = 10;
-        for i_sample = 1:n_samples
-            % mu j
-            mean_j = means_gvi(1:7, j);
-            % cov j
-            cov_j = covs_gvi(1:7, 1:7, j);
+    plot_samples_WAM(dataset, origin, cell_size, arm, means_gvi, covs_gvi, 1, floor(nt_gvi/2), stepsize, ...
+                     start_conf(i_exp,1:end)', end_conf(i_exp,1:end)');
+    % ---------- 2nd row -----------     
+    figure
+    set(gcf,'position',pos_figsample)
+    tiledlayout(1, 5, 'TileSpacing', 'none', 'Padding', 'none')
 
-            % means
-            plotArm3D(arm.fk_model(), mean_j, color, 8, true);
+    plot_samples_WAM(dataset, origin, cell_size, arm, means_gvi, covs_gvi, floor(nt_gvi/2)+stepsize, nt_gvi, stepsize, ...
+                     start_conf(i_exp,1:end)', end_conf(i_exp,1:end)');
 
-            % sampling 
-            rng('default')  % For reproducibility
-            samples = mvnrnd(mean_j, cov_j, n_samples);
-            for k = 1: size(samples, 1)
-                k_sample = samples(k, 1:end)';
-                plotArm3D(arm.fk_model(), k_sample, color_samples, 4, false);
-            end
-        end
-        plotArm3D(arm.fk_model(), start_conf(i_exp,1:end)', 'r', 6, true);
-        plotArm3D(arm.fk_model(), end_conf(i_exp,1:end)', 'g', 6, true);
-        xlim([-1, 1.5])
-        ylim([-0.8, 1.5])
-        hold off
-        axis off
-
-    end
+%     for j = 1:stepsize:nt_gvi
+%         nexttile
+%         hold on 
+%         view(-14.7458, 9.8376);
+%         plotMap3D(dataset.corner_idx, origin, cell_size);
+%         % gradual changing colors
+%         alpha_samples = 0.3;
+%         color = [0, 0, 1, 1];
+%         color_samples = [0, 0, 1, alpha_samples];
+%         % sample from covariance
+%         n_samples = 10;
+%         for i_sample = 1:n_samples
+%             % mu j
+%             mean_j = means_gvi(1:7, j);
+%             % cov j
+%             cov_j = covs_gvi(1:7, 1:7, j);
+% 
+%             % means
+%             plotArm3D(arm.fk_model(), mean_j, color, 8, true);
+% 
+%             % sampling 
+%             rng('default')  % For reproducibility
+%             samples = mvnrnd(mean_j, cov_j, n_samples);
+%             for k = 1: size(samples, 1)
+%                 k_sample = samples(k, 1:end)';
+%                 plotArm3D(arm.fk_model(), k_sample, color_samples, 4, false);
+%             end
+%         end
+%         plotArm3D(arm.fk_model(), start_conf(i_exp,1:end)', 'r', 6, true);
+%         plotArm3D(arm.fk_model(), end_conf(i_exp,1:end)', 'g', 6, true);
+%         xlim([-1, 1.5])
+%         ylim([-0.8, 1.5])
+%         hold off
+%         axis off
+% 
+%     end
     
     
     % ====================================================================================== 

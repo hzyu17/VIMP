@@ -73,7 +73,7 @@ namespace vimp
             // ============= Collect factor costs =============
             VectorXd fact_costs_iter = factor_cost_vector();
 
-            _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
+            // _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
 
             _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
 
