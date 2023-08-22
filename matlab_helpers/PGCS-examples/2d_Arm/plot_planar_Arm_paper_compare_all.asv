@@ -148,7 +148,7 @@ plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
 hold off
-% axis off
+axis off
 
 
 % ==================== plot gpmp2 results ===================
@@ -171,13 +171,13 @@ for j = 1:1:nt_gpmp2
 %     alpha = (j / nt)^(1.15);
 %     color = [0, 0, 1, alpha];
     % means
-    plotPlanarArm1(arm.fk_model(), means_gpmp2(1:2,j), 'c', 8, true);
+    plotPlanarArm1(arm.fk_model(), means_gpmp2(1:2,j), 'c', 10, true);
 end
 plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-% axis off
+axis off
 
 
 % ==================== plot PGCS-MP results ===================
@@ -202,41 +202,12 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-% axis off;
+axis off;
 hold off
 
 
 % =================== configuration space trajectory ===================
 % -------------- plot configuration obstacles ----------------
-% sdf_map
-dataset = generate2Ddataset('OneObstacleDataset');
-rows = dataset.rows;
-cols = dataset.cols;
-cell_size = dataset.cell_size;
-origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
-
-% signed distance field
-field = signedDistanceField2D(dataset.map, cell_size);
-sdf = PlanarSDF(origin_point2, cell_size, field);
-
-% arm
-arm = generateArm('SimpleTwoLinksArm');
-
-epsilon = -0.01;
-cost_sigma = 0.1;
-
-% planar collision factor arm
-planar_sdf_arm = ObstaclePlanarSDFFactorArm(symbol('x', 0), arm, sdf, cost_sigma, epsilon);
-
-% swip for joint angles
-
-theta_cell = linspace(-3.1415926, 3.1415926, 1000);
-for theta_1 = theta_cell(1:end)
-    for theta_2 = theta_cell(1:end)
-        config_ij = [theta_1; theta_2];
-        err_vec = planar_sdf_arm.evaluateError(config_ij)
-    end
-end
 
 figure
 set(gcf,'position',[x0,y0,width,height])
@@ -244,20 +215,20 @@ tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 hold on
 
+plot_configuration_obstacles()
+
 % read configuration space obstacle mesh
 % meshx = csvread("../../../vimp/maps/2dArm/configuration_obs_meshx.csv");
 % meshy = csvread("../../../vimp/maps/2dArm/configuration_obs_meshy.csv");
+% [meshx, meshy] = meshgrid(v_theta1, v_theta2);
 % meshz = ones(size(meshx));
-% figure
-% hold on
-% mesh(meshx, meshy, meshz);
 
-cell_number = 300;
-configuration_obs = csvread("../../../vimp/maps/2dArm/config_obs.csv");
-origin_x_config = -3.1415926;
-origin_y_config = -3.1415926;
-cell_size_config = 3.1415926*2/cell_number;
-plotEvidenceMap2D_arm(configuration_obs, origin_x_config, origin_y_config, cell_size_config);
+% cell_number = 300;
+% configuration_obs = csvread("../../../vimp/maps/2dArm/config_obs.csv");
+% origin_x_config = -3.1415926;
+% origin_y_config = -3.1415926;
+% cell_size_config = 3.1415926*2/cell_number;
+% plotEvidenceMap2D_arm(configuration_obs, origin_x_config, origin_y_config, cell_size_config);
 
 % t=title("2-link arm");
 t.FontSize = 26;
@@ -330,8 +301,8 @@ for j = 1:stepsize:nt_gvimp
     plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
     xlim([-1, 1.5])
     ylim([-0.8, 1.5])
-%     hold off
-%     axis off
+    hold off
+    axis off
 
 end
 
@@ -379,7 +350,7 @@ for j = 1:stepsize:nt
     grid minor
     hold off
     
-%     axis off
+    axis off
 
 end
 

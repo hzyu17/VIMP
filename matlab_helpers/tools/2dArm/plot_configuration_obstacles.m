@@ -45,14 +45,14 @@ for theta_1 = theta_cell(1:end)
     end
 end
 
-gca
+gca;
 
 size_theta = size(v_theta1, 2);
 
-htmlGray = [128 128 128]/255;
+htmlGray = [190 190 190]/255;
 
 for i_pt = 1:size_theta
-    scatter(v_theta1(i_pt), v_theta2(i_pt), 30, htmlGray,'fill');
+    scatter(v_theta1(i_pt), v_theta2(i_pt), 20, htmlGray,'fill');
 end
 
 end

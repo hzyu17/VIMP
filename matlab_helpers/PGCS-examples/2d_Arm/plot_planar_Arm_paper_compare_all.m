@@ -8,6 +8,7 @@ import gtsam.*
 import gpmp2.*
 
 addpath("../../tools/error_ellipse");
+addpath('../../tools/2dArm');
 
 map = 1;
 exp = 1;
@@ -89,39 +90,12 @@ field = signedDistanceField2D(sdfmap, cell_size);
 % save field
 sdf = PlanarSDF(origin_point2, cell_size, field);
 
-
 %% ================= plot the final iteration ===================
 x0 = 50;
 y0 = 50;
 width = 400;
 height = 350;
 % ==================== plot gvimp results ===================
-% niters
-% nsteps = 6;
-% step_size = floor(niters / nsteps);
-% n_states = floor(ttl_dim / dim_theta);
-
-% % --------------- containers for all the steps data ---------------
-% vec_means = cell(niters, 1);
-% vec_covs = cell(niters, 1);
-% vec_precisions = cell(niters, 1);
-% 
-% for i_iter = 0: nsteps-1
-%         % each time step 
-%         i = i_iter * step_size;
-%         i_mean = means_gvimp(i+1, 1:end);
-%         i_cov = covs_gvimp(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
-%         i_vec_means_2d = cell(n_states, 1);
-%         i_vec_covs_2d = cell(n_states, 1);
-%         for j = 0:n_states-1
-%             % each state
-%             i_vec_means_2d{j+1} = i_mean(j*dim_theta+1 : j*dim_theta+2);
-%             i_vec_covs_2d{j+1} = i_cov(j*dim_theta +1 : j*dim_theta+2,  j*dim_theta+1 : j*dim_theta+2);
-%         end
-%         vec_means{i_iter+1} = i_vec_means_2d;
-%         vec_covs{i_iter+1} = i_vec_covs_2d;
-% end
-% --------------- plotting -----------------
 means_gvimp_lastiter = means_gvimp(:,end);
 means_gvimp_lastiter = reshape(means_gvimp_lastiter, [dim_theta,nt_gvimp]);
 covs_gvimp_lastiter = covs_gvimp(:, end);
@@ -132,8 +106,6 @@ tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 % t=title('GVI-MP');
 % t.FontSize = 26;
-% i_vec_means_2d = vec_means{nsteps};
-% i_vec_covs_2d = vec_covs{nsteps};
 hold on 
 plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
 for j = 1:nt_gvimp
@@ -148,7 +120,7 @@ plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
 hold off
-% axis off
+axis off
 
 
 % ==================== plot gpmp2 results ===================
@@ -167,9 +139,6 @@ means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
 nt_gpmp2 = size(means_gpmp2, 2);
 % plot gpmp2 results
 for j = 1:1:nt_gpmp2
-    % gradual changing colors
-%     alpha = (j / nt)^(1.15);
-%     color = [0, 0, 1, alpha];
     % means
     plotPlanarArm1(arm.fk_model(), means_gpmp2(1:2,j), 'c', 8, true);
 end
@@ -177,8 +146,7 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-% axis off
-
+axis off
 
 % ==================== plot PGCS-MP results ===================
 figure
@@ -202,7 +170,7 @@ plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
-% axis off;
+axis off;
 hold off
 
 
@@ -235,28 +203,28 @@ t.FontSize = 26;
 
 hold on 
 
-% plot gpmp2 results
-for i = 1:1:nt_gpmp2
-    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 80, 'd', 'c', 'fill');
-end
-
 % plot pgcs results
 nt = size(means, 2);
 for i=1:nt
-    scatter(means(1, i), means(2, i), 40, 'k', 'fill');
+    scatter(means(1, i), means(2, i), 20, 'k', 'fill');
     error_ellipse(covs(1:2,1:2,i), means(1:2, i));
 end
 
 % plot gvimp results
 nt_gvi = size(means_gvimp_lastiter, 2);
 for i=1:nt_gvi
-    scatter(means_gvimp_lastiter(1, i), means_gvimp_lastiter(2, i), 40, 'k', 'fill');
-    error_ellipse(covs_gvimp_lastiter(1:2,1:2,i), means_gvimp_lastiter(1:2, i), 'style', 'm-.');
+    scatter(means_gvimp_lastiter(1, i), means_gvimp_lastiter(2, i), 20, 'k', 'fill');
+    error_ellipse(covs_gvimp_lastiter(1:2,1:2,i), means_gvimp_lastiter(1:2, i), 'style', 'b-.');
+end
+
+% plot gpmp2 results
+for i = 1:1:nt_gpmp2
+    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 100, 'd', 'g', 'fill');
 end
 
 % plot start and goal conf
-scatter(start_conf(1), start_conf(2), 80, 'r', 'fill');
-scatter(end_conf(1), end_conf(2), 80, 'g', 'fill');
+scatter(start_conf(1), start_conf(2), 100, 'r', 'fill');
+scatter(end_conf(1), end_conf(2), 100, 'g', 'fill');
 
 hold off
 
@@ -266,93 +234,79 @@ hold off
 n_plots = 10;
 stepsize = floor(nt/n_plots);
 
+pos_figsample = 1.0e+03 .*[0.2026, 1.3822, 1.0276, 0.1828];
+
 figure
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(2, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+set(gcf,'position',pos_figsample)
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
 
-for j = 1:stepsize:nt_gvimp
-    nexttile
-    hold on 
-    plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
-    % gradual changing colors
-    alpha_samples = 0.02;
-    color = [0, 0, 1, 1];
-    color_samples = [0, 0, 1, alpha_samples];
-    % sample from covariance
-    n_samples = 10;
-    for i_sample = 1:n_samples
-        % mu j
-        mean_j = means_gvimp_lastiter(1:2, j);
-        % cov j
-        cov_j = covs_gvimp_lastiter(1:2, 1:2, j);
-        
-        % plot means
-        plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
-    
-        % sampling 
-        rng('default')  % For reproducibility
-        samples = mvnrnd(mean_j, cov_j, n_samples);
-        for k = 1: size(samples, 1)
-            k_sample = samples(k, 1:end)';
-            plotPlanarArm1(arm.fk_model(), k_sample, color_samples, 4, false);
-        end
-    end
-    plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
-    plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
-    xlim([-1, 1.5])
-    ylim([-0.8, 1.5])
-%     hold off
-%     axis off
+plot_config_samples(sdfmap, arm, means_gvimp_lastiter, covs_gvimp_lastiter, ...
+                     1, floor(nt_gvimp/2), stepsize, start_conf, end_conf);
 
-end
+figure
+set(gcf,'position',pos_figsample)
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+plot_config_samples(sdfmap, arm, means_gvimp_lastiter, covs_gvimp_lastiter, ...
+                     floor(nt_gvimp/2)+stepsize, nt_gvimp, stepsize, start_conf, end_conf);
 
 % ------------------ pgcs-mp ------------------
 n_plots = 10;
 n_samples = 10;
 
-figure
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(2, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
-
 stepsize = floor(nt/n_plots);
 
-for j = 1:stepsize:nt
-    nexttile
-    hold on 
-    plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
-    % gradual changing colors
-    alpha_samples = 0.02;
-    color = [0, 0, 1, 1];
-    color_samples = [0, 0, 1, alpha_samples];
-    % sample from covariance
-    n_samples = 10;
-    for i_sample = 1:n_samples
-        % mu j
-        mean_j = means(1:2, j);
-        % cov j
-        cov_j = covs(1:2, 1:2, j);
-        
-        % means
-        plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
-    
-        % sampling 
-        rng('default')  % For reproducibility
-        samples = mvnrnd(mean_j, cov_j, n_samples);
-        for k = 1: size(samples, 1)
-            k_sample = samples(k, 1:end)';
-            plotPlanarArm1(arm.fk_model(), k_sample, color_samples, 4, false);
-        end
-    end
-    plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
-    plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
-    xlim([-1, 1.5])
-    ylim([-0.8, 1.5])
-    grid minor
-    hold off
-    
-%     axis off
+figure
+set(gcf,'position',pos_figsample)
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
 
-end
+plot_config_samples(sdfmap, arm, means, covs, ...
+                     1, floor(nt/2), stepsize, start_conf, end_conf);
+
+figure
+set(gcf,'position',pos_figsample)
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+plot_config_samples(sdfmap, arm, means, covs, ...
+                     floor(nt/2)+stepsize, nt, stepsize, start_conf, end_conf);
+
+% for j = floor(nt/2)+1:stepsize:nt
+%     nexttile
+%     hold on 
+%     plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+%     % gradual changing colors
+%     alpha_samples = 0.02;
+%     color = [0, 0, 1, 1];
+%     color_samples = [0, 0, 1, alpha_samples];
+%     % sample from covariance
+%     n_samples = 10;
+%     for i_sample = 1:n_samples
+%         % mu j
+%         mean_j = means(1:2, j);
+%         % cov j
+%         cov_j = covs(1:2, 1:2, j);
+%         
+%         % means
+%         plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
+%     
+%         % sampling 
+%         rng('default')  % For reproducibility
+%         samples = mvnrnd(mean_j, cov_j, n_samples);
+%         for k = 1: size(samples, 1)
+%             k_sample = samples(k, 1:end)';
+%             plotPlanarArm1(arm.fk_model(), k_sample, color_samples, 4, false);
+%         end
+%     end
+%     plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
+%     plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
+%     xlim([-1, 1.5])
+%     ylim([-0.8, 1.5])
+%     grid minor
+%     hold off
+%     
+%     axis off
+% 
+% end
 
 %% ================= plot costs =================
 costs = csvread([prefix+"/costs.csv"]);

@@ -2,7 +2,7 @@
     <eps> 0.001 </eps>
     <eps_sdf> 0.1 </eps_sdf>
     <radius> 0.01 </radius>
-    <total_time> 5 </total_time>
+    <total_time> 4.5 </total_time>
     <nt> 50 </nt>
     <sig0> 0.001 </sig0>
     <sigT> 0.001 </sigT>
@@ -32,7 +32,7 @@
     </goal_pos>
 
     <eta> 1e-2 </eta>
-    <sig_obs> 1e3 </sig_obs>
+    <sig_obs> 2e3 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case1/</saving_prefix>
 
@@ -53,8 +53,8 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <eta> 1e-2 </eta>
-    <sig_obs> 1e3 </sig_obs>
+    <eta> 1e-3 </eta>
+    <sig_obs> 2e3 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case2/</saving_prefix>
 
