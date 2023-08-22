@@ -216,9 +216,9 @@ hold on
 
 cell_number = 300;
 configuration_obs = csvread("../../../vimp/maps/2dArm/config_obs.csv");
-origin_x_config = -3.1415926*2;
-origin_y_config = -3.1415926*2;
-cell_size_config = 3.1415926*4/cell_number;
+origin_x_config = -3.1415926;
+origin_y_config = -3.1415926;
+cell_size_config = 3.1415926*2/cell_number;
 plotEvidenceMap2D_arm(configuration_obs, origin_x_config, origin_y_config, cell_size_config);
 
 % t=title("2-link arm");
