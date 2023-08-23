@@ -270,64 +270,25 @@ tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
 plot_config_samples(sdfmap, arm, means, covs, ...
                      floor(nt/2)+stepsize, nt, stepsize, start_conf, end_conf);
 
-% for j = floor(nt/2)+1:stepsize:nt
-%     nexttile
-%     hold on 
-%     plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
-%     % gradual changing colors
-%     alpha_samples = 0.02;
-%     color = [0, 0, 1, 1];
-%     color_samples = [0, 0, 1, alpha_samples];
-%     % sample from covariance
-%     n_samples = 10;
-%     for i_sample = 1:n_samples
-%         % mu j
-%         mean_j = means(1:2, j);
-%         % cov j
-%         cov_j = covs(1:2, 1:2, j);
-%         
-%         % means
-%         plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
-%     
-%         % sampling 
-%         rng('default')  % For reproducibility
-%         samples = mvnrnd(mean_j, cov_j, n_samples);
-%         for k = 1: size(samples, 1)
-%             k_sample = samples(k, 1:end)';
-%             plotPlanarArm1(arm.fk_model(), k_sample, color_samples, 4, false);
-%         end
-%     end
-%     plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
-%     plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
-%     xlim([-1, 1.5])
-%     ylim([-0.8, 1.5])
-%     grid minor
-%     hold off
-%     
-%     axis off
-% 
-% end
-
-%% ================= plot costs =================
-costs = csvread([prefix+"/costs.csv"]);
-x0 = 50;
-y0 = 50;
-width = 400;
-height = 350;
-figure
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-nexttile
-t=title("Total Cost");
-t.FontSize = 26;
-hold on 
-% grid minor
-% plot(costs(1,:), 'LineWidth', 2.5)
-% plot(costs(2,:), 'LineWidth', 2.5)
-plot(costs(3,:), 'LineWidth', 2.5)
-xlabel('Iterations')
-ylabel('Cost')
-20
+% %% ================= plot costs =================
+% costs = csvread([prefix+"/costs.csv"]);
+% x0 = 50;
+% y0 = 50;
+% width = 400;
+% height = 350;
+% figure
+% set(gcf,'position',[x0,y0,width,height])
+% tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+% nexttile
+% t=title("Total Cost");
+% t.FontSize = 26;
+% hold on 
+% % grid minor
+% % plot(costs(1,:), 'LineWidth', 2.5)
+% % plot(costs(2,:), 'LineWidth', 2.5)
+% plot(costs(3,:), 'LineWidth', 2.5)
+% xlabel('Iterations')
+% ylabel('Cost')
 
 % %% ==== animated motion plan ==== 
 % x0 = 50;
