@@ -4,7 +4,7 @@ clc
 
 % ******************* dependencies and includes ******************
 addpath('/usr/local/gtsam_toolbox')
-addpath ('/home/hongzhe/git/VIMP/matlab_helpers/experiments/WAM/utils')
+addpath ('../../tools/WAM/utils')
 
 import gtsam.*
 import gpmp2.*
@@ -42,8 +42,8 @@ end_conf = [-0.0,    0.94,     0,    1.6,    0,     -0.919,     1.55;
 nx = 14;
 
 % ================= data reading and plots ===================
-
-for i_exp = 2:2 % 3 experiments
+% 3 experiments
+for i_exp = 2:2 
     % ====================================================================================== 
     %                                   read data
     % ====================================================================================== 
@@ -59,12 +59,10 @@ for i_exp = 2:2 % 3 experiments
     % ------------  read gvi-mp results ------------ 
     means_gvi = csvread([prefix_gvi + "zk_sdf.csv"]);
     [~, nt_gvi] = size(means_gvi);
-    covs_gvi = csvread([prefix_gvi + "Sk_sdf.csv"]);
     
+    covs_gvi = csvread([prefix_gvi + "Sk_sdf.csv"]);
     covs_gvi = reshape(covs_gvi, [14, 14, nt_gvi]);
     
-    [nx, nt_gvi] = size(means_gvi);
-
     % ------------  read pgcs-mp results ------------ 
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
@@ -247,65 +245,65 @@ for i_exp = 2:2 % 3 experiments
 %     end
     
     
-    % ====================================================================================== 
-    %                           plot configuration space marginals
-    % ====================================================================================== 
-    % ------------- q1 q2 q3 -------------
-    figure
-    set(gcf,'position',[x0,y0,width,height])
-    tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-    nexttile
-    hold on
-    grid on
-    plot_3d_result(means(1:3,1:end), covs(1:3,1:3,1:end));
-    
-    % ------------- gvimp q1 q2 q3 -------------
-    plot_3d_result(means_gvi(1:3,1:end), covs_gvi(1:3,1:3,1:end));
-
-    % ------------- gpmp2 q1 q2 q3 -------------
-    for i_gpmp2 = 1:nt_gpmp2
-        scatter3(gpmp2_confs(1, i_gpmp2), gpmp2_confs(2, i_gpmp2), gpmp2_confs(3, i_gpmp2), 20, 'blue', 'filled','d');
-    end
-    set(gca,'fontsize',16);
-    xlabel('Joint $q_1$','Interpreter','latex'),ylabel('Joint $q_2$','Interpreter','latex');
-    zlabel('Joint $q_3$','Interpreter','latex');
-    
-    % ------------- q4 q5 -------------
-    figure
-    set(gcf,'position',[x0,y0,width,height])
-    tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-    nexttile
-    grid on
-    hold on
-    plot_2d_result_no_sdf(means(4:5,1:end), covs(4:5,4:5,1:end));
-    
-    % ------------- gvimp q4 q5 -------------
-    plot_2d_result_no_sdf(means_gvi(4:5,1:end), covs_gvi(4:5,4:5,1:end));
-    
-    for i_gpmp2 = 1:nt_gpmp2
-        scatter(gpmp2_confs(4, i_gpmp2), gpmp2_confs(5, i_gpmp2), 20, 'blue', 'filled','d');
-    end
-
-    set(gca,'fontsize',16);
-    xlabel('Joint $q_4$','Interpreter','latex'),ylabel('Joint $q_5$','Interpreter','latex');
-
-    % ------------- q6 q7 -------------
-    figure
-    set(gcf,'position',[x0,y0,width,height])
-    tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-    nexttile
-    grid on
-    hold on
-    plot_2d_result_no_sdf(means(6:7,1:end), covs(6:7,6:7,1:end));
-    
-    % ------------- gvimp q4 q5 -------------
-    plot_2d_result_no_sdf(means_gvi(6:7,1:end), covs_gvi(6:7,6:7,1:end));
-    
-    for i_gpmp2 = 1:nt_gpmp2
-        scatter(gpmp2_confs(6, i_gpmp2), gpmp2_confs(7, i_gpmp2), 20, 'blue', 'filled','d');
-    end
-
-    set(gca,'fontsize',16);
-    xlabel('Joint $q_6$','Interpreter','latex'),ylabel('Joint $q_7$','Interpreter','latex');
+%     % ====================================================================================== 
+%     %                           plot configuration space marginals
+%     % ====================================================================================== 
+%     % ------------- q1 q2 q3 -------------
+%     figure
+%     set(gcf,'position',[x0,y0,width,height])
+%     tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+%     nexttile
+%     hold on
+%     grid on
+%     plot_3d_result(means(1:3,1:end), covs(1:3,1:3,1:end));
+%     
+%     % ------------- gvimp q1 q2 q3 -------------
+%     plot_3d_result(means_gvi(1:3,1:end), covs_gvi(1:3,1:3,1:end));
+% 
+%     % ------------- gpmp2 q1 q2 q3 -------------
+%     for i_gpmp2 = 1:nt_gpmp2
+%         scatter3(gpmp2_confs(1, i_gpmp2), gpmp2_confs(2, i_gpmp2), gpmp2_confs(3, i_gpmp2), 20, 'blue', 'filled','d');
+%     end
+%     set(gca,'fontsize',16);
+%     xlabel('Joint $q_1$','Interpreter','latex'),ylabel('Joint $q_2$','Interpreter','latex');
+%     zlabel('Joint $q_3$','Interpreter','latex');
+%     
+%     % ------------- q4 q5 -------------
+%     figure
+%     set(gcf,'position',[x0,y0,width,height])
+%     tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+%     nexttile
+%     grid on
+%     hold on
+%     plot_2d_result_no_sdf(means(4:5,1:end), covs(4:5,4:5,1:end));
+%     
+%     % ------------- gvimp q4 q5 -------------
+%     plot_2d_result_no_sdf(means_gvi(4:5,1:end), covs_gvi(4:5,4:5,1:end));
+%     
+%     for i_gpmp2 = 1:nt_gpmp2
+%         scatter(gpmp2_confs(4, i_gpmp2), gpmp2_confs(5, i_gpmp2), 20, 'blue', 'filled','d');
+%     end
+% 
+%     set(gca,'fontsize',16);
+%     xlabel('Joint $q_4$','Interpreter','latex'),ylabel('Joint $q_5$','Interpreter','latex');
+% 
+%     % ------------- q6 q7 -------------
+%     figure
+%     set(gcf,'position',[x0,y0,width,height])
+%     tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+%     nexttile
+%     grid on
+%     hold on
+%     plot_2d_result_no_sdf(means(6:7,1:end), covs(6:7,6:7,1:end));
+%     
+%     % ------------- gvimp q4 q5 -------------
+%     plot_2d_result_no_sdf(means_gvi(6:7,1:end), covs_gvi(6:7,6:7,1:end));
+%     
+%     for i_gpmp2 = 1:nt_gpmp2
+%         scatter(gpmp2_confs(6, i_gpmp2), gpmp2_confs(7, i_gpmp2), 20, 'blue', 'filled','d');
+%     end
+% 
+%     set(gca,'fontsize',16);
+%     xlabel('Joint $q_6$','Interpreter','latex'),ylabel('Joint $q_7$','Interpreter','latex');
    
 end

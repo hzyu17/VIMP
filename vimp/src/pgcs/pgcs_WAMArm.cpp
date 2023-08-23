@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
     }
     // arguments: i_exp, params:(i_exp, eps, eps_sdf, radius, total_time, nt, sig0, sigT, step_size, stop_err, max_iter, sig_obs, backtrack_ratio, backtrack_iterations)
     else if (argc == 17){
-        std::cout << "========= start running one exp =========" << std::endl;
+        std::cout << "========= start running one exp GVI-MP =========" << std::endl;
         int i_exp = std::stoi(argv[1]);
         double eps = std::stof(argv[2]);
         double eps_sdf = std::stof(argv[3]);

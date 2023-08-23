@@ -57,25 +57,15 @@ namespace vimp
             // ============= Cost at current iteration =============
             double cost_iter = cost_value(_mu, _precision);
 
-            // MatrixIO mio;
-            // std::string name = "precision_", follow = ".csv";
-            // std::string full_name = name + to_string(i_iter) + follow;
-            // std::cout << full_name << std::endl;
-            // MatrixXd precision_full{_precision};
-            // mio.saveData(full_name, precision_full);
-
-            // _ei.print_matrix(_precision, "_precision");
-            if (verbose){
-                cout << "========= iteration " << i_iter << " ========= " << endl;
-                cout << "--- cost_iter ---" << endl << cost_iter << endl;
-            }
+            // if (verbose){
+            //     cout << "========= iteration " << i_iter << " ========= " << endl;
+            //     cout << "--- cost_iter ---" << endl << cost_iter << endl;
+            // }
 
             // ============= Collect factor costs =============
             VectorXd fact_costs_iter = factor_cost_vector();
 
-            // _ei.print_matrix(fact_costs_iter, "fact_costs_iter");
-
-            _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
+            // _res_recorder.update_data(_mu, _covariance, _precision, cost_iter, fact_costs_iter);
 
             // gradients
             std::tuple<VectorXd, SpMat> dmudprecision = this->compute_gradients();
@@ -119,22 +109,17 @@ namespace vimp
                 if (cnt > _niters_backtrack)
                 {
                     // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
-                    if (verbose){
-                        cout << "Too many iterations in the backtracking ... Dead" << endl;
-                    }
+                    // if (verbose){
+                    //     cout << "Too many iterations in the backtracking ... Dead" << endl;
+                    // }
                     set_mu(new_mu);
                     set_precision(new_precision);
-                    // if (i_iter >= _niters_lowtemp){
-                    //     save_data(verbose);
-                    //     return;
-                    // }else{
                         break;
-                    // }
                 }                
             }
         }
 
-        save_data(verbose);
+        // save_data(verbose);
 
     }
 

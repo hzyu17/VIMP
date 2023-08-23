@@ -10,7 +10,7 @@
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>0.01</temperature>
-    <high_temperature>0.5</high_temperature>
+    <high_temperature>0.2</high_temperature>
     <low_temp_iterations>20</low_temp_iterations>
     <stop_err>1e-5</stop_err>
     <max_iterations>30</max_iterations>
@@ -64,8 +64,8 @@
         <7>1.2</7>
     </goal_pos>
 
-    <step_size>0.25</step_size>
-    <sig_obs>0.006</sig_obs>
+    <!-- <step_size>0.7</step_size>
+    <sig_obs>0.02</sig_obs> -->
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/WAM/case2/</saving_prefix>
 
