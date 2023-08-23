@@ -176,9 +176,6 @@ public:
         this->read_boundary_conditions(paramNode, params);
 
         params.print_params();
-                
-        MatrixIO matrix_io;
-        // An example pr and sdf
         
         _gvimp_robotsdf.run_optimization(params, verbose);
 

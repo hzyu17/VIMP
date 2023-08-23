@@ -109,7 +109,7 @@ for i = 1:nt_gpmp2
     err_vec = planar_sdf_arm.evaluateError(conf_i);
     dist_vec = epsilon - err_vec;
     if min(dist_vec) < min_dist_gpmp2
-        min_dist_gpmp2 = min(dist_vec)
+        min_dist_gpmp2 = min(dist_vec);
     end
     avg_dist_gpmp2 = avg_dist_gpmp2 + min(dist_vec);
 end

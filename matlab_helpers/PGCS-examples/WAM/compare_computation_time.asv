@@ -1,0 +1,50 @@
+clear all
+close all
+clc
+
+%% Compute the computation time and compare between gpmp2, gvimp, and pgcsmp.
+i_exp = 1;
+
+% ------------- parameters -------------
+eps = 0.001;
+eps_map = 0.18;
+radius = 0.0;
+total_time = 9.0;
+nt = 50;
+sig0 = 0.001;
+sigT = 0.001;
+step_size = 1e-4;
+stop_err = 1e-5;
+max_iter = 50;
+map_name = 'map_bookshelf';
+sig_obs = 8e2;
+backtrack_ratio = 0.5;
+max_n_backtracking = 8;
+sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
+
+executable = '/home/hzyu/git/VIMP/vimp/build/src/pgcs/pgcs_WAMArm';
+
+args = [num2str(i_exp), ' ', num2str(eps), ' ', num2str(eps_map), ' ',... 
+    num2str(radius), ' ', num2str(total_time), ' ', num2str(nt), ' ', num2str(sig0), ...
+    ' ', num2str(sigT), ' ', num2str(step_size), ' ', num2str(stop_err), ' ', num2str(max_iter), ' ', ...
+    num2str(sig_obs), ' ', num2str(backtrack_ratio), ' ', num2str(max_n_backtracking), ' ', map_name, ' ', sdf_file];
+
+profile on
+for i = 1:50
+    execute_one_exp(executable, args);
+end
+profile viewer
+
+
+% ============================= se
+i_exp = 2;
+args = [num2str(i_exp), ' ', num2str(eps), ' ', num2str(eps_map), ' ',... 
+    num2str(radius), ' ', num2str(total_time), ' ', num2str(nt), ' ', num2str(sig0), ...
+    ' ', num2str(sigT), ' ', num2str(step_size), ' ', num2str(stop_err), ' ', num2str(max_iter), ' ', ...
+    num2str(sig_obs), ' ', num2str(backtrack_ratio), ' ', num2str(max_n_backtracking), ' ', map_name, ' ', sdf_file];
+
+profile on
+for i = 1:50
+    execute_one_exp(executable, args);
+end
+profile viewer
