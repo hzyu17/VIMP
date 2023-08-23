@@ -103,28 +103,49 @@ planar_sdf_arm = ObstaclePlanarSDFFactorArm(symbol('x', 0), arm, sdf, cost_sigma
 % ------- compute average min trj distance -------
 % ------- gpmp2 -------
 avg_dist_gpmp2 = 0;
+min_dist_gpmp2 = 100;
 for i = 1:nt_gpmp2
     conf_i = means_gpmp2(1:2, i);
     err_vec = planar_sdf_arm.evaluateError(conf_i);
     dist_vec = epsilon - err_vec;
+    if min(dist_vec) < min_dist_gpmp2
+        min_dist_gpmp2 = min(dist_vec)
+    end
     avg_dist_gpmp2 = avg_dist_gpmp2 + min(dist_vec);
 end
-avg_dist_gpmp2 = avg_dist_gpmp2 / nt_gpmp2
+
 
 avg_dist_gvimp = 0;
+min_dist_gvimp = 10.0;
 for i = 1:nt_gvimp
     conf_i = means_gvimp(1:2, i);
     err_vec = planar_sdf_arm.evaluateError(conf_i);
     dist_vec = epsilon - err_vec;
+    if min(dist_vec) < min_dist_gvimp
+        min_dist_gvimp = min(dist_vec);
+    end
     avg_dist_gvimp = avg_dist_gvimp + min(dist_vec);
 end
-avg_dist_gvimp = avg_dist_gvimp / nt_gvimp
+
 
 avg_dist_pgcs = 0;
+min_dist_pgcs = 10.0;
 for i = 1:nt_pgcs
     conf_i = means_pgcs(1:2, i);
     err_vec = planar_sdf_arm.evaluateError(conf_i);
     dist_vec = epsilon - err_vec;
+    if min(dist_vec) < min_dist_pgcs
+        min_dist_pgcs = min(dist_vec);
+    end
     avg_dist_pgcs = avg_dist_pgcs + min(dist_vec);
 end
+
+disp('------------- avg min distance ---------------')
+avg_dist_gpmp2 = avg_dist_gpmp2 / nt_gpmp2
+avg_dist_gvimp = avg_dist_gvimp / nt_gvimp
 avg_dist_pgcs = avg_dist_pgcs / nt_pgcs
+
+disp('------------- min distance ---------------')
+min_dist_gpmp2
+min_dist_gvimp
+min_dist_pgcs

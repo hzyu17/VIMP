@@ -1,5 +1,5 @@
 <Commons>
-    <eps> 0.001 </eps>
+    <eps> 0.0001 </eps>
     <eps_sdf> 0.1 </eps_sdf>
     <radius> 0.01 </radius>
     <total_time> 4.5 </total_time>
@@ -9,7 +9,7 @@
     <eta> 1e-4 </eta>
     <stop_err> 1e-3 </stop_err>
     <map_name>2darm_map1</map_name>
-    <max_iter> 50 </max_iter>
+    <max_iter> 1000 </max_iter>
     <sig_obs> 5.6e3 </sig_obs>
     <backtracking_ratio> 0.9 </backtracking_ratio>
     <max_n_backtracking> 5 </max_n_backtracking>
@@ -31,7 +31,7 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <eta> 1e-2 </eta>
+    <eta> 1e-3 </eta>
     <sig_obs> 2e3 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_Arm/map1/case1/</saving_prefix>

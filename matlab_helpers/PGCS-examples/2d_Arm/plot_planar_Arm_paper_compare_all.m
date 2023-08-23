@@ -71,12 +71,12 @@ nt_gvimp = floor(ttl_dim/dim_theta);
 % n_states = floor(ttl_dim / dim_theta);
 
 % =================== read pgcs results ====================
-means = csvread([prefix+"/zk_sdf.csv"]);
-covs = csvread([prefix+"/Sk_sdf.csv"]);
+means_pgcs = csvread([prefix+"/zk_sdf.csv"]);
+covs_pgcs = csvread([prefix+"/Sk_sdf.csv"]);
 
 % ----- parameters -----
-[ndim, nt] = size(means);
-covs = reshape(covs, dim_theta, dim_theta, nt);
+[ndim, nt] = size(means_pgcs);
+covs_pgcs = reshape(covs_pgcs, dim_theta, dim_theta, nt);
 
 %  ------- arm --------
 arm = generateArm('SimpleTwoLinksArm');
@@ -164,7 +164,7 @@ for j = 1:2:nt
     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, alpha];
     % means
-    plotPlanarArm1(arm.fk_model(), means(1:2,j), color, 8, true);
+    plotPlanarArm1(arm.fk_model(), means_pgcs(1:2,j), color, 8, true);
 end
 plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
@@ -204,10 +204,10 @@ t.FontSize = 26;
 hold on 
 
 % plot pgcs results
-nt = size(means, 2);
+nt = size(means_pgcs, 2);
 for i=1:nt
-    scatter(means(1, i), means(2, i), 20, 'k', 'fill');
-    error_ellipse(covs(1:2,1:2,i), means(1:2, i));
+    scatter(means_pgcs(1, i), means_pgcs(2, i), 20, 'k', 'fill');
+    error_ellipse(covs_pgcs(1:2,1:2,i), means_pgcs(1:2, i));
 end
 
 % plot gvimp results
@@ -260,14 +260,14 @@ figure
 set(gcf,'position',pos_figsample)
 tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
 
-plot_config_samples(sdfmap, arm, means, covs, ...
+plot_config_samples(sdfmap, arm, means_pgcs, covs_pgcs, ...
                      1, floor(nt/2), stepsize, start_conf, end_conf);
 
 figure
 set(gcf,'position',pos_figsample)
 tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
 
-plot_config_samples(sdfmap, arm, means, covs, ...
+plot_config_samples(sdfmap, arm, means_pgcs, covs_pgcs, ...
                      floor(nt/2)+stepsize, nt, stepsize, start_conf, end_conf);
 
 % %% ================= plot costs =================

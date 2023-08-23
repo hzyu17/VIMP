@@ -24,7 +24,7 @@ sdf = PlanarSDF(origin_point2, cell_size, field);
 % arm
 arm = generateArm('SimpleTwoLinksArm');
 
-epsilon = -0.01;
+epsilon = 10.0;
 cost_sigma = 0.1;
 
 % planar collision factor arm
@@ -33,12 +33,13 @@ planar_sdf_arm = ObstaclePlanarSDFFactorArm(symbol('x', 0), arm, sdf, cost_sigma
 % swip for joint angles
 v_theta1 = [];
 v_theta2 = [];
-theta_cell = linspace(-3.1415926, 3.1415926, 200);
+theta_cell = linspace(-3.1415926, 3.1415926, 100);
 for theta_1 = theta_cell(1:end)
     for theta_2 = theta_cell(1:end)
         config_ij = [theta_1; theta_2];
         err_vec = planar_sdf_arm.evaluateError(config_ij);
-        if max(err_vec) > 0.0
+        dist_vec = epsilon - err_vec;
+        if min(dist_vec) < 0.0
             v_theta1 = [v_theta1, theta_1];
             v_theta2 = [v_theta2, theta_2];
         end
@@ -52,7 +53,7 @@ size_theta = size(v_theta1, 2);
 htmlGray = [190 190 190]/255;
 
 for i_pt = 1:size_theta
-    scatter(v_theta1(i_pt), v_theta2(i_pt), 20, htmlGray,'fill');
+    scatter(v_theta1(i_pt), v_theta2(i_pt), 10, htmlGray,'fill','Marker', 's');
 end
 
 end
