@@ -159,16 +159,18 @@ public:
 
     // getters
     
-    double coeff_Qc() const { return _coeff_Qc; }
-    double initial_precision_factor() const { return _initial_precision_factor; }
-    double boundary_penalties() const { return _boundary_penalties; }
-    double temperature() const { return _temperature; }
-    double high_temperature() const { return _high_temperature; }
-    int max_iter_lowtemp() const { return _max_iter_lowtemp; }
+    inline double coeff_Qc() const { return _coeff_Qc; }
+    inline double initial_precision_factor() const { return _initial_precision_factor; }
+    inline double boundary_penalties() const { return _boundary_penalties; }
+    inline double temperature() const { return _temperature; }
+    inline double high_temperature() const { return _high_temperature; }
+    inline int max_iter_lowtemp() const { return _max_iter_lowtemp; }
     
-    void set_temperature(double temperature){ _temperature = temperature; }
-    void set_high_temperature(double high_temp){ _high_temperature = high_temp; }
-    void set_boundary_penalties(double boundary_penalties){ _boundary_penalties = boundary_penalties; }
+    inline void set_temperature(double temperature){ _temperature = temperature; }
+    inline void set_high_temperature(double high_temp){ _high_temperature = high_temp; }
+    inline void set_boundary_penalties(double boundary_penalties){ _boundary_penalties = boundary_penalties; }
+    inline void update_initial_precision_factor(double initial_precision_factor){ _initial_precision_factor =  initial_precision_factor; }
+    inline void update_boundary_penalties(double boundary_penalties) { _boundary_penalties = boundary_penalties; }
     
     void inline print_params() override {
         std::cout << "================ Experiment Parameters for GVI-MP ================" << std::endl 
@@ -183,6 +185,7 @@ public:
         << " Map eps:                   " << this->eps_sdf() << std::endl 
         << " Cost sigma:                " << this->sig_obs() << std::endl 
         << " Robot radius:              " << this->radius() << std::endl 
+        << " initial_precision_factor:  " << this->initial_precision_factor() << std::endl
         << " boundary_penalties:        " << this->boundary_penalties() << std::endl 
         << " step size:                 " << this->step_size() << std::endl 
         << " max iterations:            " << this->max_iter() << std::endl 

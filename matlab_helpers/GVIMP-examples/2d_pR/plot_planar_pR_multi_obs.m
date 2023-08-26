@@ -13,10 +13,10 @@ plot_temperture = "low";
 
 % plot_experiment = "map1_above";
 % plot_experiment = "map1_below";
-plot_experiment = "map2_exp1";
-% plot_experiment = "map2_exp2";
-% plot_experiment = "map2_exp3";
-% plot_experiment = "map2_exp4"; 
+plot_experiment = "map2_case1";
+% plot_experiment = "map2_case2";
+% plot_experiment = "map2_case3";
+% plot_experiment = "map2_case4"; 
 % plot_experiment = "map_narrow_go_through";
 % plot_experiment = "map_narrow_go_around";
 
@@ -27,18 +27,18 @@ if strcmp(plot_experiment, "map1_above")
 elseif strcmp(plot_experiment, "map1_below")
     sdfmap = csvread("map1/map_multiobs_map1.csv");
     prefix = ["map1/below_case/"];
-elseif strcmp(plot_experiment, "map2_exp1")
+elseif strcmp(plot_experiment, "map2_case1")
     sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
-    prefix = ["map2/exp1/"];
-elseif strcmp(plot_experiment, "map2_exp2")
+    prefix = ["map2/case1/"];
+elseif strcmp(plot_experiment, "map2_case2")
     sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
-    prefix = ["map2/exp2/"];
-elseif strcmp(plot_experiment, "map2_exp3")
+    prefix = ["map2/case2/"];
+elseif strcmp(plot_experiment, "map2_case3")
     sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
-    prefix = ["map2/exp3/"];
-elseif strcmp(plot_experiment, "map2_exp4")
+    prefix = ["map2/case3/"];
+elseif strcmp(plot_experiment, "map2_case4")
     sdfmap = csvread("map2/map_multiobs_entropy_map2.csv");
-    prefix = ["map2/exp4/"];
+    prefix = ["map2/case4/"];
 elseif strcmp(plot_experiment, "map_narrow_go_through")
     sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
     prefix = ["map_narrow/shortcut/"];
@@ -55,7 +55,7 @@ if strcmp(plot_temperture, "low") && (~contains(plot_experiment, "go_around"))
     
     factor_costs = csvread([prefix + "factor_costs_base.csv"]);
 %     perturb_stat= csvread([prefix + "perturbation_statistics_base.csv"]);
-    final_cost = csvread([prefix + "final_cost_base.csv"]);
+%     final_cost = csvread([prefix + "final_cost_base.csv"]);
     
 elseif strcmp(plot_temperture, "high")
     means = csvread([prefix + "mean.csv"]);

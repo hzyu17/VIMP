@@ -1,11 +1,14 @@
 function output = plot_planarPR_oneiter(means, covs, sdfmap, i_iter)
-%%
+%% plot one iteration of the optimization process.
+% Hongzhe Yu
+
 addpath('/usr/local/gtsam_toolbox')
-addpath("../../../matlab_helpers/");
+addpath("../../");
+addpath("../../tools/2dpR");
+
 import gtsam.*
 import gpmp2.*
 
- %%
 [ttl_dim, ~] = size(means);
 dim_state = 4;
 nt = floor(ttl_dim / dim_state);

@@ -62,6 +62,7 @@ namespace vimp{
          * (partial V) / (partial mu) = Sigma_t{-1} * (mu_k - mu_t)
          * (partial V^2) / (partial mu)(partial mu^T): higher order moments of a Gaussian.
         */
+
         void calculate_partial_V() override{
             _Vdmu.setZero();
             _Vddmu.setZero();

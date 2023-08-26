@@ -152,7 +152,7 @@ public:
         optimizer.update_file_names(params.saving_prefix());
         optimizer.set_mu(joint_init_theta);
 
-        optimizer.initilize_precision_matrix(params.initial_precision_factor(), params.boundary_penalties());
+        optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
         optimizer.set_GH_degree(3);
         optimizer.set_step_size_base(params.step_size()); // a local optima

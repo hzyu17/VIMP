@@ -80,8 +80,26 @@ max_n_backtracking = 20;
 sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
 
 executable = '/home/hzyu/git/VIMP/vimp/build/src/gvimp/gvi_WAMArm';
-% ================= 1st experiment =================
+
+%% ================= 1st experiment =================
 i_exp = 1;
+args = [num2str(i_exp), ' ', num2str(total_time), ' ', num2str(n_states), ' ',... 
+        num2str(coeff_Qc), ' ', num2str(sig_obs), ' ', num2str(eps_sdf), ' ', num2str(radius), ...
+        ' ', num2str(step_size), ' ', num2str(init_precision_factor), ' ', num2str(boundary_penalties), ...
+        ' ', num2str(temperature), ' ', num2str(high_temperature), ...
+        ' ', num2str(low_temp_iterations), ' ', num2str(stop_err), ' ', num2str(num_iter), ...
+        ' ', num2str(max_n_backtracking), ' ', num2str(sdf_file)];
+
+% ================== optimize and count time ======================
+profile on
+for i = 1:50
+    execute_one_exp(executable, args);
+end
+profile viewer
+% =================================================================
+
+%% ================= 2nd experiment =================
+i_exp = 2;
 args = [num2str(i_exp), ' ', num2str(total_time), ' ', num2str(n_states), ' ',... 
         num2str(coeff_Qc), ' ', num2str(sig_obs), ' ', num2str(eps_sdf), ' ', num2str(radius), ...
         ' ', num2str(step_size), ' ', num2str(init_precision_factor), ' ', num2str(boundary_penalties), ...
@@ -130,5 +148,86 @@ sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
 profile on
 for i=1:50
     execute_one_exp_gpmp2(sdf_file, start_conf, end_conf);
+end
+profile viewer
+
+
+%% ============================= sampling time ============================
+% ---------------------- GVI-MP ------------------------------           
+% ----------------------- reading data -----------------------
+clear all
+close all
+clc
+
+i_exp = 2;
+
+prefix_gvi = ["../../GVIMP-examples/WAM/case"+num2str(i_exp)+"/"];
+
+% ------------  read gvi-mp results ------------ 
+means_gvi = csvread([prefix_gvi + "zk_sdf.csv"]);
+[~, nt_gvi] = size(means_gvi);
+
+covs_gvi = csvread([prefix_gvi + "Sk_sdf.csv"]);
+covs_gvi = reshape(covs_gvi, [14, 14, nt_gvi]);
+
+% ------------- sampling --------------
+n_samples = 1000;
+
+% mu j
+mean_j = means_gvi(1:7, nt_gvi);
+% cov j
+cov_j = covs_gvi(1:7, 1:7, nt_gvi);
+
+profile on
+% sampling 
+rng('default')  % For reproducibility
+samples = mvnrnd(mean_j, cov_j, n_samples);
+profile viewer
+
+%% ---------------------- PGCS-MP ------------------------  
+% ----------------------- reading data -----------------------
+clear all
+close all
+clc
+
+i_exp = 1;
+
+prefix_pgcs = ["case"+num2str(i_exp)+"/"];
+
+% ------------  read gvi-mp results ------------ 
+means_pgcs = csvread([prefix_pgcs + "zk_sdf.csv"]);
+[~, nt_pgcs] = size(means_pgcs);
+
+covs_pgcs = csvread([prefix_pgcs + "Sk_sdf.csv"]);
+covs_pgcs = reshape(covs_pgcs, [14, 14, nt_pgcs]);
+
+% ------------- sampling --------------
+n_samples = 1000;
+
+% mu j
+mean_j = means_pgcs(1:7, nt_pgcs);
+% cov j
+cov_j = covs_pgcs(1:7, 1:7, nt_pgcs);
+
+profile on
+% sampling 
+rng('default')  % For reproducibility
+samples = mvnrnd(mean_j, cov_j, n_samples);
+profile viewer
+
+%% ==================== closed-from prior time V.S. G-H estimation ==================== 
+% ------------------------- Arm 2 --------------------------
+profile on
+for i = 1:50
+    executable = '/home/hzyu/git/VIMP/vimp/build/src/gvimp/gvi_Arm2_prior_factors';
+    execute_one_exp(executable, '');
+end
+profile viewer
+
+%% ------------------------- WAM Arm --------------------------
+profile on
+for i = 1:50
+    executable = '/home/hzyu/git/VIMP/vimp/build/src/gvimp/gvi_wam_prior_factors';
+    execute_one_exp(executable, '');
 end
 profile viewer

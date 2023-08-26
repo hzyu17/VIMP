@@ -154,6 +154,11 @@ public:
             params.update_lowtemp_iter(low_temp_iterations);
         }
 
+        if (paramNode->first_node("init_precision_factor")){
+            double init_precision_factor = atof(paramNode->first_node("init_precision_factor")->value());
+            params.update_initial_precision_factor(init_precision_factor);
+        }
+
         if (paramNode->first_node("sig_obs")){
             double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
             params.update_sig_obs(cost_sigma);
@@ -172,6 +177,8 @@ public:
 
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
+
+        std::cout << ExpNodeName.data() << std::endl;
         
         this->read_boundary_conditions(paramNode, params);
 
