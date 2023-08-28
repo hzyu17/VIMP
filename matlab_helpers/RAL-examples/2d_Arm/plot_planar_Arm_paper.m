@@ -7,7 +7,7 @@ addpath('/usr/local/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
-map = 2;
+map = 1;
 
 prefix = "map1";
 switch map
@@ -17,12 +17,12 @@ switch map
         prefix = "map2";
 end
 
-means = csvread([prefix+"/mean.csv"]);
+means = csvread([prefix+"/mean_base.csv"]);
 covs = csvread([prefix+"/cov.csv"]);
 precisions = csvread([prefix+"/precisoin.csv"]);
 costs = csvread([prefix+"/cost.csv"]);
 sdfmap = csvread([prefix+"/map.csv"]);
-factor_costs = csvread([prefix+"/factor_costs.csv"]);
+factor_costs = csvread([prefix+"/factor_costs_base.csv"]);
 addpath("../../error_ellipse");
 
 % means = csvread("../vimp/data/checkpoints/2d_Arm/mean.csv");

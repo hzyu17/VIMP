@@ -136,7 +136,7 @@ public:
 
         while ( ((err<0) || (err>_stop_err)) && (i_step < _max_iter) && (!no_better_stepsize)){
             
-            std::cout << "================ iter " << i_step << " ================" << std::endl;
+            // std::cout << "================ iter " << i_step << " ================" << std::endl;
 
             // backtracking 
             double step_size = _eta; // initial step size
@@ -144,7 +144,7 @@ public:
             StepResult best_KtdtAtatztSigt;
             for (int i_bt=0; i_bt<_max_n_backtrack; i_bt++){
 
-                std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
+                // std::cout << " ----- backtracking " << i_bt << " ----- " << std::endl;
 
                 // tentative one step
                 StepResult KtdtAtatztSigt; // return type of one step: (Kt, dt, At, at, zt, Sigt) 
@@ -162,11 +162,11 @@ public:
                 double total_cost = control_energy(zt, Sigt, Kt, dt) + hingeloss(zt, Sigt);
                 _cost_helper.add_cost(i_step, hingeloss(zt, Sigt), control_energy(zt, Sigt, Kt, dt));
 
-                std::cout << " total cost " << std::fixed << std::setprecision(4) << total_cost << std::endl;
+                // std::cout << " total cost " << std::fixed << std::setprecision(4) << total_cost << std::endl;
     
                 if (total_cost < total_cost_prev){
 
-                    std::cout << "Found better cost " << std::endl;
+                    // std::cout << "Found better cost " << std::endl;
                     
                     // update the internal parameters
                     update_from_step_res(KtdtAtatztSigt);
@@ -211,7 +211,7 @@ public:
                     break;
                 }
 
-                std::cout << "step size " << step_size << std::endl;
+                // std::cout << "step size " << step_size << std::endl;
             }
         }  
 

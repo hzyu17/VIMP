@@ -56,6 +56,7 @@ namespace vimp
 
             // ============= Cost at current iteration =============
             double cost_iter = cost_value(_mu, _precision);
+
             if (verbose){
                 cout << "========= iteration " << i_iter << " ========= " << endl;
                 cout << "--- cost_iter ---" << endl << cost_iter << endl;
@@ -107,18 +108,12 @@ namespace vimp
 
                 if (cnt > _niters_backtrack)
                 {
-                    // throw std::runtime_error(std::string("Too many iterations in the backtracking ... Dead"));
                     if (verbose){
                         cout << "Too many iterations in the backtracking ... Dead" << endl;
                     }
                     set_mu(new_mu);
                     set_precision(new_precision);
-                    // if (i_iter >= _niters_lowtemp){
-                    //     save_data(verbose);
-                    //     return;
-                    // }else{
                         break;
-                    // }
                 }                
             }
         }
@@ -183,16 +178,18 @@ namespace vimp
             value += opt_k->fact_cost_value(mean, Cov); // / _temperature;
         }
 
-        // SparseLDLT ldlt(Precision);
-        // double det = ldlt.determinant();
-        MatrixXd precision_full{Precision};
-        double det = precision_full.determinant();
+        SparseLDLT ldlt(Precision);
+        VectorXd vec_D = ldlt.vectorD();
 
-        if (det < 0)
-        {
-            std::runtime_error("Infinity log determinant precision matrix ...");
+        // MatrixXd precision_full{Precision};
+        double logdet = 0;
+        for (int i_diag=0; i_diag<vec_D.size(); i_diag++){
+            logdet += log(vec_D(i_diag));
         }
-        return value + log(det) / 2;
+
+        // cout << "logdet " << endl << logdet << endl;
+        
+        return value + logdet / 2;
     }
 
     /**

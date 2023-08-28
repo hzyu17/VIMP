@@ -266,19 +266,20 @@ public:
     }
 
     inline void initilize_precision_matrix(){
-        initilize_precision_matrix(_initial_precision_factor, _boundary_penalties);
+        // initilize_precision_matrix(_initial_precision_factor, _boundary_penalties);
+        initilize_precision_matrix(_initial_precision_factor);
     }
 
-    inline void initilize_precision_matrix(double initial_precision_factor, double boundary_penalties){
+    inline void initilize_precision_matrix(double initial_precision_factor){
         // boundaries
         set_initial_precision_factor(initial_precision_factor);
-        set_boundary_penalties(boundary_penalties);
+        // set_boundary_penalties(boundary_penalties);
 
         MatrixXd init_precision(_dim, _dim);
         init_precision = MatrixXd::Identity(_dim, _dim)*initial_precision_factor;
         
-        init_precision.block(0, 0, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state)*boundary_penalties;
-        init_precision.block((_num_states-1)*_dim_state, (_num_states-1)*_dim_state, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state)*boundary_penalties;
+        // init_precision.block(0, 0, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state)*initial_precision_factor;
+        // init_precision.block((_num_states-1)*_dim_state, (_num_states-1)*_dim_state, _dim_state, _dim_state) = MatrixXd::Identity(_dim_state, _dim_state)*initial_precision_factor;
         set_precision(init_precision.sparseView());
     }
 

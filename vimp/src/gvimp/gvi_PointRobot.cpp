@@ -25,20 +25,19 @@ int main(int argc, char* argv[]){
     GVIMPParams params;
     // no experiment argument, run the default scripts
     if (argc == 1){
-        num_exp = 2;
-        std::string config_file{source_root+"/configs/vimp/planar_pR_map1_new.xml"};
+        num_exp = 4;
+        std::string config_file{source_root+"/configs/vimp/planar_pR_map2_new.xml"};
         GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
         runner.read_config(params);
         runner.run();
         return 0;
     }
     // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
-    else if (argc == 2){
-        num_exp = 4;
-        std::string config_relative = static_cast<std::string>(argv[1]);
+    else if (argc == 3){
+        std::string config_abs_path = static_cast<std::string>(argv[1]);
+        num_exp = std::stoi(argv[2]);
         
-        std::string config_file{source_root+"/"+config_relative};
-        GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_file);
+        GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_abs_path);
         runner.read_config(params);
         runner.run();
         return 0;

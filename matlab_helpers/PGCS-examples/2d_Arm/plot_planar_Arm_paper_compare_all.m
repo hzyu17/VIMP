@@ -8,6 +8,7 @@ import gtsam.*
 import gpmp2.*
 
 addpath("../../tools/error_ellipse");
+addpath('../../tools/2dArm');
 
 map = 1;
 exp = 1;
@@ -23,7 +24,7 @@ switch map
             case 1
                 prefix = "map1/case1";
                 prefix_gpmp2 = "map1/case1/gpmp2";
-                prefix_gvimp = "map1/case1/gvimp";
+                prefix_gvimp = "../../GVIMP-examples/2d_Arm/map1/case1";
                 % boundary conditions
                 start_conf = [0, 0]';
                 start_vel = [0, 0]';
@@ -65,17 +66,17 @@ dim_theta = 4;
 means_gvimp = csvread([prefix_gvimp+"/mean.csv"]);
 covs_gvimp = csvread([prefix_gvimp+"/cov.csv"]);
 costs_gvimp = csvread([prefix_gvimp+"/cost.csv"]);
-[niters, ttl_dim] = size(means_gvimp);
-niters = length(costs_gvimp);
-n_states = floor(ttl_dim / dim_theta);
+[ttl_dim, niters] = size(means_gvimp);
+nt_gvimp = floor(ttl_dim/dim_theta);
+% n_states = floor(ttl_dim / dim_theta);
 
 % =================== read pgcs results ====================
-means = csvread([prefix+"/zk_sdf.csv"]);
-covs = csvread([prefix+"/Sk_sdf.csv"]);
+means_pgcs = csvread([prefix+"/zk_sdf.csv"]);
+covs_pgcs = csvread([prefix+"/Sk_sdf.csv"]);
 
 % ----- parameters -----
-[ndim, nt] = size(means);
-covs = reshape(covs, dim_theta, dim_theta, nt);
+[ndim, nt] = size(means_pgcs);
+covs_pgcs = reshape(covs_pgcs, dim_theta, dim_theta, nt);
 
 %  ------- arm --------
 arm = generateArm('SimpleTwoLinksArm');
@@ -89,55 +90,35 @@ field = signedDistanceField2D(sdfmap, cell_size);
 % save field
 sdf = PlanarSDF(origin_point2, cell_size, field);
 
-
 %% ================= plot the final iteration ===================
 x0 = 50;
 y0 = 50;
 width = 400;
 height = 350;
 % ==================== plot gvimp results ===================
-% niters
-nsteps = 6;
-step_size = floor(niters / nsteps);
-n_states = floor(ttl_dim / dim_theta);
-
-% --------------- containers for all the steps data ---------------
-vec_means = cell(niters, 1);
-vec_covs = cell(niters, 1);
-vec_precisions = cell(niters, 1);
-
-for i_iter = 0: nsteps-1
-        % each time step 
-        i = i_iter * step_size;
-        i_mean = means_gvimp(i+1, 1:end);
-        i_cov = covs_gvimp(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
-        i_vec_means_2d = cell(n_states, 1);
-        i_vec_covs_2d = cell(n_states, 1);
-        for j = 0:n_states-1
-            % each state
-            i_vec_means_2d{j+1} = i_mean(j*dim_theta+1 : j*dim_theta+2);
-            i_vec_covs_2d{j+1} = i_cov(j*dim_theta +1 : j*dim_theta+2,  j*dim_theta+1 : j*dim_theta+2);
-        end
-        vec_means{i_iter+1} = i_vec_means_2d;
-        vec_covs{i_iter+1} = i_vec_covs_2d;
-end
-% --------------- plotting -----------------
+means_gvimp_lastiter = means_gvimp(:,end);
+means_gvimp_lastiter = reshape(means_gvimp_lastiter, [dim_theta,nt_gvimp]);
+covs_gvimp_lastiter = covs_gvimp(:, end);
+covs_gvimp_lastiter = reshape(covs_gvimp_lastiter, [dim_theta, dim_theta, nt_gvimp]);
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 % t=title('GVI-MP');
 % t.FontSize = 26;
+<<<<<<< HEAD
 i_vec_means_2d = vec_means{nsteps};
 i_vec_covs_2d = vec_covs{nsteps};
+=======
+>>>>>>> 36108a27f53a60f0b08cab7aaf1059123bedd559
 hold on 
 plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
-for j = 1:n_states
+for j = 1:nt_gvimp
     % gradual changing colors
-    alpha = (j / n_states)^(1.15);
+    alpha = (j / nt_gvimp)^(1.15);
     color = [0, 0, 1, alpha];
     % means
-    plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 8, true);
+    plotPlanarArm1(arm.fk_model(), means_gvimp_lastiter(1:2, j), color, 8, true);
 end
 plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
 plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
@@ -163,9 +144,6 @@ means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
 nt_gpmp2 = size(means_gpmp2, 2);
 % plot gpmp2 results
 for j = 1:1:nt_gpmp2
-    % gradual changing colors
-%     alpha = (j / nt)^(1.15);
-%     color = [0, 0, 1, alpha];
     % means
     plotPlanarArm1(arm.fk_model(), means_gpmp2(1:2,j), 'c', 8, true);
 end
@@ -174,7 +152,6 @@ plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
 xlim([-1, 1.5])
 ylim([-0.8, 1.5])
 axis off
-
 
 % ==================== plot PGCS-MP results ===================
 figure
@@ -192,7 +169,7 @@ for j = 1:2:nt
     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, alpha];
     % means
-    plotPlanarArm1(arm.fk_model(), means(1:2,j), color, 8, true);
+    plotPlanarArm1(arm.fk_model(), means_pgcs(1:2,j), color, 8, true);
 end
 plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
@@ -203,49 +180,70 @@ hold off
 
 
 % =================== configuration space trajectory ===================
+% -------------- plot configuration obstacles ----------------
+
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
+hold on
+
+plot_configuration_obstacles()
+
+% read configuration space obstacle mesh
+% meshx = csvread("../../../vimp/maps/2dArm/configuration_obs_meshx.csv");
+% meshy = csvread("../../../vimp/maps/2dArm/configuration_obs_meshy.csv");
+% [meshx, meshy] = meshgrid(v_theta1, v_theta2);
+% meshz = ones(size(meshx));
+
+% cell_number = 300;
+% configuration_obs = csvread("../../../vimp/maps/2dArm/config_obs.csv");
+% origin_x_config = -3.1415926;
+% origin_y_config = -3.1415926;
+% cell_size_config = 3.1415926*2/cell_number;
+% plotEvidenceMap2D_arm(configuration_obs, origin_x_config, origin_y_config, cell_size_config);
+
 % t=title("2-link arm");
 t.FontSize = 26;
 
 hold on 
 
+% plot pgcs results
+nt = size(means_pgcs, 2);
+for i=1:nt
+    scatter(means_pgcs(1, i), means_pgcs(2, i), 20, 'k', 'fill');
+    error_ellipse(covs_pgcs(1:2,1:2,i), means_pgcs(1:2, i));
+end
+
+% plot gvimp results
+nt_gvi = size(means_gvimp_lastiter, 2);
+for i=1:nt_gvi
+    scatter(means_gvimp_lastiter(1, i), means_gvimp_lastiter(2, i), 20, 'k', 'fill');
+    error_ellipse(covs_gvimp_lastiter(1:2,1:2,i), means_gvimp_lastiter(1:2, i), 'style', 'b-.');
+end
+
 % plot gpmp2 results
 for i = 1:1:nt_gpmp2
-    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 80, 'd', 'c', 'fill');
-end
-
-% plot pgcs results
-nt = size(means, 2);
-for i=1:nt
-    scatter(means(1, i), means(2, i), 40, 'k', 'fill');
-    error_ellipse(covs(1:2,1:2,i), means(1:2, i));
-end
-% plot gvimp results
-
-i_vec_means_2d = vec_means{nsteps};
-i_vec_covs_2d = vec_covs{nsteps};
-nt_gvimp = size(i_vec_means_2d, 1);
-for i=1:nt_gvimp
-    scatter(i_vec_means_2d{i}(1), i_vec_means_2d{i}(2), 40, 'b', 'fill');
-    error_ellipse(i_vec_covs_2d{i}, i_vec_means_2d{i}, 'style', 'm-.');
+    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 100, 'd', 'g', 'fill');
 end
 
 % plot start and goal conf
-scatter(start_conf(1), start_conf(2), 80, 'r', 'fill');
-scatter(end_conf(1), end_conf(2), 80, 'g', 'fill');
+scatter(start_conf(1), start_conf(2), 100, 'r', 'fill');
+scatter(end_conf(1), end_conf(2), 100, 'g', 'fill');
 
+<<<<<<< HEAD
 % t = title('Configuration Trajectories');
 % t.FontSize = 26;
 % xlabel('$q_1$','Interpreter','latex', 'FontSize',24),ylabel('$q_2$','Interpreter','latex', 'FontSize',24);
 % axis off
+=======
+>>>>>>> 36108a27f53a60f0b08cab7aaf1059123bedd559
 hold off
 
 
 %% ================= plot samples ===============
 % ------------------ gvi-mp ------------------
+<<<<<<< HEAD
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(2, floor(n_states/2), 'TileSpacing', 'none', 'Padding', 'none')
@@ -341,20 +339,66 @@ x0 = 50;
 y0 = 50;
 width = 400;
 height = 350;
-figure
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-nexttile
-t=title("Total Cost");
-t.FontSize = 26;
-hold on 
-% grid minor
-% plot(costs(1,:), 'LineWidth', 2.5)
-% plot(costs(2,:), 'LineWidth', 2.5)
-plot(costs(3,:), 'LineWidth', 2.5)
-xlabel('Iterations')
-ylabel('Cost')
+=======
+n_plots = 10;
+stepsize = floor(nt/n_plots);
 
+pos_figsample = 1.0e+03 .*[0.2026, 1.3822, 1.0276, 0.1828];
+
+>>>>>>> 36108a27f53a60f0b08cab7aaf1059123bedd559
+figure
+set(gcf,'position',pos_figsample)
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+plot_config_samples(sdfmap, arm, means_gvimp_lastiter, covs_gvimp_lastiter, ...
+                     1, floor(nt_gvimp/2), stepsize, start_conf, end_conf);
+
+figure
+set(gcf,'position',pos_figsample)
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+plot_config_samples(sdfmap, arm, means_gvimp_lastiter, covs_gvimp_lastiter, ...
+                     floor(nt_gvimp/2)+stepsize, nt_gvimp, stepsize, start_conf, end_conf);
+
+% ------------------ pgcs-mp ------------------
+n_plots = 10;
+n_samples = 10;
+
+stepsize = floor(nt/n_plots);
+
+figure
+set(gcf,'position',pos_figsample)
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+plot_config_samples(sdfmap, arm, means_pgcs, covs_pgcs, ...
+                     1, floor(nt/2), stepsize, start_conf, end_conf);
+
+figure
+set(gcf,'position',pos_figsample)
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+plot_config_samples(sdfmap, arm, means_pgcs, covs_pgcs, ...
+                     floor(nt/2)+stepsize, nt, stepsize, start_conf, end_conf);
+
+% %% ================= plot costs =================
+% costs = csvread([prefix+"/costs.csv"]);
+% x0 = 50;
+% y0 = 50;
+% width = 400;
+% height = 350;
+% figure
+% set(gcf,'position',[x0,y0,width,height])
+% tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+% nexttile
+% t=title("Total Cost");
+% t.FontSize = 26;
+% hold on 
+% % grid minor
+% % plot(costs(1,:), 'LineWidth', 2.5)
+% % plot(costs(2,:), 'LineWidth', 2.5)
+% plot(costs(3,:), 'LineWidth', 2.5)
+% xlabel('Iterations')
+% ylabel('Cost')
 
 % %% ==== animated motion plan ==== 
 % x0 = 50;

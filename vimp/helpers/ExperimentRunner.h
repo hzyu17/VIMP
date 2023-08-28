@@ -154,6 +154,11 @@ public:
             params.update_lowtemp_iter(low_temp_iterations);
         }
 
+        if (paramNode->first_node("init_precision_factor")){
+            double init_precision_factor = atof(paramNode->first_node("init_precision_factor")->value());
+            params.update_initial_precision_factor(init_precision_factor);
+        }
+
         if (paramNode->first_node("sig_obs")){
             double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
             params.update_sig_obs(cost_sigma);
@@ -172,13 +177,12 @@ public:
 
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
+
+        std::cout << ExpNodeName.data() << std::endl;
         
         this->read_boundary_conditions(paramNode, params);
 
         params.print_params();
-                
-        MatrixIO matrix_io;
-        // An example pr and sdf
         
         _gvimp_robotsdf.run_optimization(params, verbose);
 
@@ -544,6 +548,16 @@ public:
         mT_pos << goal_1, goal_2, goal_3, goal_4, goal_5, goal_6, goal_7;
         mT.block(0, 0, 7, 1) = mT_pos;
         mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
+
+        if (paramNode->first_node("total_time")){
+            double total_time = atof(paramNode->first_node("total_time")->value());
+            params.set_total_time(total_time);
+        }
+
+        if (paramNode->first_node("eta")){
+            double eta = atof(paramNode->first_node("eta")->value());
+            params.update_step_size(eta);
+        }
 
         double sig_obs = atof(paramNode->first_node("sig_obs")->value());
 

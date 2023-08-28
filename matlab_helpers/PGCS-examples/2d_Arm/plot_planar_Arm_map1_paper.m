@@ -107,6 +107,9 @@ hold off
 % ------ configuration space trajectory ------
 nexttile
 hold on 
+
+plot_configuration_obstacles()
+
 t.FontSize = 16;
 
 nt = size(means, 2);
