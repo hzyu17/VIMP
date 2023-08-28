@@ -35,7 +35,7 @@ class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
         PointRobot3DSDFExample(double epsilon, 
                                double radius, 
                                const std::string& map_name, 
-                               const std::string& sdf_file=source_root+"/../matlab_helpers/PGCS-examples/3dSDFs/pRSDF3D.bin"):
+                               const std::string& sdf_file=source_root+"/maps/3dpR/pRSDF3D.bin"):
         Base(3, 1, 3, ""),
         _eps(epsilon), 
         _r(radius)

@@ -2,6 +2,7 @@ clear all
 close all
 clc
 addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/error_ellipse')
 import gtsam.*
 import gpmp2.*
 
@@ -32,7 +33,6 @@ for i = 1:2 % 2 experiments
         precisions = csvread([prefix + "precisoin.csv"]);
         costs = csvread([prefix + "cost.csv"]);
         factor_costs = csvread([prefix + "factor_costs.csv"]);
-         addpath("error_ellipse");
 
     else
         t = title('Go Around Plan');
@@ -43,7 +43,6 @@ for i = 1:2 % 2 experiments
         precisions = csvread([prefix + "precisoin.csv"]);
         costs = csvread([prefix + "cost.csv"]);
         factor_costs = csvread([prefix + "factor_costs.csv"]);
-         addpath("error_ellipse");
 
     end
 
@@ -105,6 +104,7 @@ for i = 1:2 % 2 experiments
     end
     % xlim([-15, 20])
     ylim([-10, 20])
+    axis off
 
     %% ====== statistics of the cost distributions ======
     % Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 

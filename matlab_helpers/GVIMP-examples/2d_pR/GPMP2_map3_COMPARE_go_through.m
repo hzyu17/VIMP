@@ -1,11 +1,11 @@
-% @brief    Point Robot 2D example, comparing the go-through plan with
-% gpmp2.
-% @author   Hongzhe Yu
+% @brief    Point Robot 2D example, building factor graph in matlab
+% @author   Mustafa Mukadam
+% @date     July 20, 2016
 
 close all
 clear
 addpath('/usr/local/gtsam_toolbox')
-addpath('../../tools/2dpR')
+addpath('../../tools/2d_pR')
 %% Load libraries
 import gtsam.*
 import gpmp2.*
@@ -98,8 +98,7 @@ covs = csvread([prefix + "cov.csv"]);
 precisions = csvread([prefix + "precisoin.csv"]);
 costs = csvread([prefix + "cost.csv"]);
 factor_costs = csvread([prefix + "factor_costs.csv"]);
-
-sdfmap = csvread("../../../vimp/maps/2dpR/map3/map_multiobs_map3.csv");
+sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
 addpath("error_ellipse");
 
  %%
@@ -166,7 +165,7 @@ addpath("error_ellipse");
 graph = NonlinearFactorGraph;
 init_values = Values;
 
-means = csvread("../../../vimp/data/vimp/2d_pR/mean_map3_circumvent_base.csv");
+means = csvread("../../../vimp/data/2d_pR/mean_map3_circumvent_base.csv");
 for i = 0 : total_time_step
     key_pos = symbol('x', i);
     key_vel = symbol('v', i);
