@@ -9,6 +9,7 @@ vimp/.vscode/*
 vimp_python/vimp/*
 vimp_python/CMakeFiles/*
 vimp/data/debug/*
+matlab_helpers/.vscode/*
 matlab_helpers/+gtsam/*
 matlab_helpers/+gpmp2/*
 vimp/maps/WAM/WAMDeskDataset.bin

@@ -3,6 +3,7 @@
 
     <eps> 0.001 </eps>
     <eps_sdf> 0.18 </eps_sdf>
+
     <radius> 0.0 </radius>
     <total_time> 9.0 </total_time>
     <nt> 50 </nt>
@@ -68,7 +69,16 @@
         <7>1.2</7>
     </goal_pos>
 
+<<<<<<< HEAD
     <sig_obs> 4.45e3 </sig_obs>
+=======
+    <eta> 5e-5 </eta>
+    <sig_obs> 2.5e3 </sig_obs>
+
+    <!-- <eta> 1.2e-4 </eta>
+    <sig_obs> 3.5e3 </sig_obs> -->
+    <!-- <sig_obs> 4.45e3 </sig_obs> -->
+>>>>>>> 0c7dba12fdfd14fd4cd556f5b0f2f544d5195301
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case2/</saving_prefix>
 
