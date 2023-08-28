@@ -106,6 +106,11 @@ tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
 nexttile
 % t=title('GVI-MP');
 % t.FontSize = 26;
+<<<<<<< HEAD
+i_vec_means_2d = vec_means{nsteps};
+i_vec_covs_2d = vec_covs{nsteps};
+=======
+>>>>>>> 36108a27f53a60f0b08cab7aaf1059123bedd559
 hold on 
 plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
 for j = 1:nt_gvimp
@@ -226,16 +231,121 @@ end
 scatter(start_conf(1), start_conf(2), 100, 'r', 'fill');
 scatter(end_conf(1), end_conf(2), 100, 'g', 'fill');
 
+<<<<<<< HEAD
+% t = title('Configuration Trajectories');
+% t.FontSize = 26;
+% xlabel('$q_1$','Interpreter','latex', 'FontSize',24),ylabel('$q_2$','Interpreter','latex', 'FontSize',24);
+% axis off
+=======
+>>>>>>> 36108a27f53a60f0b08cab7aaf1059123bedd559
 hold off
 
 
 %% ================= plot samples ===============
 % ------------------ gvi-mp ------------------
+<<<<<<< HEAD
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(2, floor(n_states/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+i_vec_means_2d = vec_means{nsteps};
+i_vec_covs_2d = vec_covs{nsteps};
+
+for j = 1:n_states
+    nexttile
+    hold on 
+    plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+    % gradual changing colors
+    alpha_samples = 0.02;
+    color = [0, 0, 1, 1];
+    color_samples = [0, 0, 1, alpha_samples];
+    % sample from covariance
+    n_samples = 10;
+    for i_sample = 1:n_samples
+        % mu j
+        mean_j = i_vec_means_2d{j}';
+        % cov j
+        cov_j = i_vec_covs_2d{j};
+        
+        % means
+        plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
+    
+        % sampling 
+        rng('default')  % For reproducibility
+        samples = mvnrnd(mean_j, cov_j, n_samples);
+        for k = 1: size(samples, 1)
+            k_sample = samples(k, 1:end)';
+            plotPlanarArm1(arm.fk_model(), k_sample, color_samples, 4, false);
+        end
+    end
+    plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
+    plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
+    xlim([-1, 1.5])
+    ylim([-0.8, 1.5])
+    hold off
+    axis off
+
+end
+
+% ------------------ pgcs-mp ------------------
+n_plots = 10;
+n_samples = 10;
+
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(2, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
+
+stepsize = floor(nt/n_plots);
+
+for j = 1:stepsize:nt
+    nexttile
+    hold on 
+    plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+    % gradual changing colors
+    alpha_samples = 0.02;
+    color = [0, 0, 1, 1];
+    color_samples = [0, 0, 1, alpha_samples];
+    % sample from covariance
+    n_samples = 10;
+    for i_sample = 1:n_samples
+        % mu j
+        mean_j = means(1:2, j);
+        % cov j
+        cov_j = covs(1:2, 1:2, j);
+        
+        % means
+        plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
+    
+        % sampling 
+        rng('default')  % For reproducibility
+        samples = mvnrnd(mean_j, cov_j, n_samples);
+        for k = 1: size(samples, 1)
+            k_sample = samples(k, 1:end)';
+            plotPlanarArm1(arm.fk_model(), k_sample, color_samples, 4, false);
+        end
+    end
+    plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
+    plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
+    xlim([-1, 1.5])
+    ylim([-0.8, 1.5])
+    hold off
+    axis off
+
+end
+
+%% ================= plot costs =================
+costs = csvread([prefix+"/costs.csv"]);
+x0 = 50;
+y0 = 50;
+width = 400;
+height = 350;
+=======
 n_plots = 10;
 stepsize = floor(nt/n_plots);
 
 pos_figsample = 1.0e+03 .*[0.2026, 1.3822, 1.0276, 0.1828];
 
+>>>>>>> 36108a27f53a60f0b08cab7aaf1059123bedd559
 figure
 set(gcf,'position',pos_figsample)
 tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
