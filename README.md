@@ -6,9 +6,9 @@ This repository is dedicated to the implementation of Gaussian Variational Infer
 
 ### Motion planning for a 7-DOF WAM robot arm. The animated trajectory is the mean of the trajectory distribution obtained from PGCS-MP planner. 
 
-<img src="figures/WAM_GVI_RVIZ_1.gif" height="300" > <img src="figures/WAM_RVIZ_2.gif" height="300">
+<img src="figures/WAM_GVI_RVIZ_1.gif" width="300" > <img src="figures/WAM_RVIZ_2.gif" width="300">
 
-<img src="figures/WAM_GVI_RVIZ_2.gif" height="300"> <img src="figures/WAM_RVIZ_2.gif" height="300">
+<img src="figures/WAM_GVI_RVIZ_2.gif" width="300"> <img src="figures/WAM_RVIZ_2.gif" width="300">
 
 
 **Dependencies**
