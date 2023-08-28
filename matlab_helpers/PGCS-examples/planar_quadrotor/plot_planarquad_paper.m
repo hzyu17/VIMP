@@ -11,7 +11,7 @@ addpath("../error_ellipse");
 addpath("../../../matlab_helpers/");
 
 %% read map
-sdfmap = csvread("../../../vimp/data/vimp/2d_pR/map_multiobs_map2.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 
 %% Read optimization results
 nx = 6; nu = 2; sig = 4.0; epsilon=0.001;

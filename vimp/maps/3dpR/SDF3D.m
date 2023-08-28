@@ -45,7 +45,7 @@ zlim([-10, 40])
 
 %% save SDF
 disp('saving sdf to .bin file...');
-sdf.saveSDF('../3dSDFs/pRSDF3DMap2.bin');
+sdf.saveSDF('pRSDF3D.bin');
 
 %% create the mesh for visualization
 [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);

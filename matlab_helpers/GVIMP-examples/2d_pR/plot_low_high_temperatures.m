@@ -26,8 +26,8 @@ origin_x = -20;
 origin_y = -10;
 
 num_figures = 10;
-step_size = floor(niters / num_figures);
-niter_lowtemp = 10;
+niter_lowtemp = 15;
+step_size_lowtemp = floor(niter_lowtemp / (num_figures/2));
 
 % --------------------- low temperature planning ---------------------
 figure
@@ -36,7 +36,7 @@ t1=tiledlayout(1, floor(num_figures/2), 'TileSpacing', 'none', 'Padding', 'none'
 title(t1,'Low temperature planning for collision avoidance','fontweight','bold','fontsize',16)
 set(gcf,'position',[x0,y0,width,height])
 
-for i_step = 1:2:(num_figures/2)*2
+for i_step = 1:step_size_lowtemp:niter_lowtemp
     nexttile
     hold on
     means_final = means(1:end, i_step);
