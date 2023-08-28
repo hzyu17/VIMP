@@ -19,8 +19,8 @@ for j = start_indx:step_size:end_indx
     
     plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
     
-    plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
-    plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
+    plotPlanarArm(arm.fk_model(), start_conf, 'r', 10);
+    plotPlanarArm(arm.fk_model(), end_conf, 'g', 10);
     
     % gradual changing colors
     alpha_samples = 0.02;
@@ -35,14 +35,14 @@ for j = start_indx:step_size:end_indx
         cov_j = covs(1:2, 1:2, j);
         
         % plot means
-        plotPlanarArm1(arm.fk_model(), mean_j, color, 8, true);
+        plotPlanarArm1(arm.fk_model(), mean_j, color, 10, true);
     
         % sampling 
         rng('default')  % For reproducibility
         samples = mvnrnd(mean_j, cov_j, n_samples);
         for k = 1: size(samples, 1)
             k_sample = samples(k, 1:end)';
-            plotPlanarArm1(arm.fk_model(), k_sample, color_samples, 4, false);
+            plotPlanarArm1(arm.fk_model(), k_sample, color_samples, 6, false);
         end
     end
     

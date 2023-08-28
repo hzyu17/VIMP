@@ -2,7 +2,7 @@
 <Commons>
 
     <eps> 0.001 </eps>
-    <eps_sdf> 0.18 </eps_sdf>
+    <eps_sdf> 0.2 </eps_sdf>
     <radius> 0.0 </radius>
     <total_time> 9.0 </total_time>
     <nt> 50 </nt>
@@ -13,8 +13,8 @@
     <max_iter> 50 </max_iter>
     <map_name>map_bookshelf</map_name>
     <sig_obs> 8e2 </sig_obs>
-    <backtracking_ratio> 0.5 </backtracking_ratio>
-    <max_n_backtracking> 8 </max_n_backtracking>
+    <backtracking_ratio> 0.8 </backtracking_ratio>
+    <max_n_backtracking> 15 </max_n_backtracking>
     <sdf_file>/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin</sdf_file>
 </Commons>
 
@@ -39,7 +39,8 @@
         <7>1.55</7>
     </goal_pos>
 
-    <sig_obs> 5e2 </sig_obs>
+    <eta> 1e-4 </eta>
+    <sig_obs> 4e2 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case1/</saving_prefix>
 
@@ -67,7 +68,12 @@
         <7>1.2</7>
     </goal_pos>
 
-    <sig_obs> 4.45e3 </sig_obs>
+    <eta> 1e-5 </eta>
+    <sig_obs> 2.5e3 </sig_obs>
+
+    <!-- <eta> 1.2e-4 </eta>
+    <sig_obs> 3.5e3 </sig_obs> -->
+    <!-- <sig_obs> 4.45e3 </sig_obs> -->
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case2/</saving_prefix>
 
@@ -96,6 +102,7 @@
         <7>1.15</7>
     </goal_pos>
 
+    <eta> 1e-4 </eta>
     <sig_obs> 5e2 </sig_obs>
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case3/</saving_prefix>

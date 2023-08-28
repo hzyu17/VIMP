@@ -549,6 +549,16 @@ public:
         mT.block(0, 0, 7, 1) = mT_pos;
         mT.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
+        if (paramNode->first_node("total_time")){
+            double total_time = atof(paramNode->first_node("total_time")->value());
+            params.set_total_time(total_time);
+        }
+
+        if (paramNode->first_node("eta")){
+            double eta = atof(paramNode->first_node("eta")->value());
+            params.update_step_size(eta);
+        }
+
         double sig_obs = atof(paramNode->first_node("sig_obs")->value());
 
         params.set_m0(m0);

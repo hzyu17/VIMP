@@ -27,7 +27,7 @@ disp('calculating signed distance field done');
 
 % ******************* WAM Arm and start and end conf ******************
 arm = generateArm('WAMArm');
-for i_exp = 1:3 % 3 experiments
+for i_exp = 2:2 % 3 experiments
     disp(["=========== experiment " + i_exp + " =============="]);
     % ====================================================================================== 
     %                                   read data

@@ -245,65 +245,65 @@ for i_exp = 2:2
 %     end
     
     
-%     % ====================================================================================== 
-%     %                           plot configuration space marginals
-%     % ====================================================================================== 
-%     % ------------- q1 q2 q3 -------------
-%     figure
-%     set(gcf,'position',[x0,y0,width,height])
-%     tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-%     nexttile
-%     hold on
-%     grid on
-%     plot_3d_result(means(1:3,1:end), covs(1:3,1:3,1:end));
-%     
-%     % ------------- gvimp q1 q2 q3 -------------
-%     plot_3d_result(means_gvi(1:3,1:end), covs_gvi(1:3,1:3,1:end));
-% 
-%     % ------------- gpmp2 q1 q2 q3 -------------
-%     for i_gpmp2 = 1:nt_gpmp2
-%         scatter3(gpmp2_confs(1, i_gpmp2), gpmp2_confs(2, i_gpmp2), gpmp2_confs(3, i_gpmp2), 20, 'blue', 'filled','d');
-%     end
-%     set(gca,'fontsize',16);
-%     xlabel('Joint $q_1$','Interpreter','latex'),ylabel('Joint $q_2$','Interpreter','latex');
-%     zlabel('Joint $q_3$','Interpreter','latex');
-%     
-%     % ------------- q4 q5 -------------
-%     figure
-%     set(gcf,'position',[x0,y0,width,height])
-%     tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-%     nexttile
-%     grid on
-%     hold on
-%     plot_2d_result_no_sdf(means(4:5,1:end), covs(4:5,4:5,1:end));
-%     
-%     % ------------- gvimp q4 q5 -------------
-%     plot_2d_result_no_sdf(means_gvi(4:5,1:end), covs_gvi(4:5,4:5,1:end));
-%     
-%     for i_gpmp2 = 1:nt_gpmp2
-%         scatter(gpmp2_confs(4, i_gpmp2), gpmp2_confs(5, i_gpmp2), 20, 'blue', 'filled','d');
-%     end
-% 
-%     set(gca,'fontsize',16);
-%     xlabel('Joint $q_4$','Interpreter','latex'),ylabel('Joint $q_5$','Interpreter','latex');
-% 
-%     % ------------- q6 q7 -------------
-%     figure
-%     set(gcf,'position',[x0,y0,width,height])
-%     tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
-%     nexttile
-%     grid on
-%     hold on
-%     plot_2d_result_no_sdf(means(6:7,1:end), covs(6:7,6:7,1:end));
-%     
-%     % ------------- gvimp q4 q5 -------------
-%     plot_2d_result_no_sdf(means_gvi(6:7,1:end), covs_gvi(6:7,6:7,1:end));
-%     
-%     for i_gpmp2 = 1:nt_gpmp2
-%         scatter(gpmp2_confs(6, i_gpmp2), gpmp2_confs(7, i_gpmp2), 20, 'blue', 'filled','d');
-%     end
-% 
-%     set(gca,'fontsize',16);
-%     xlabel('Joint $q_6$','Interpreter','latex'),ylabel('Joint $q_7$','Interpreter','latex');
+    % ====================================================================================== 
+    %                           plot configuration space marginals
+    % ====================================================================================== 
+    % ------------- q1 q2 q3 -------------
+    figure
+    set(gcf,'position',[x0,y0,width,height])
+    tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+    nexttile
+    hold on
+    grid on
+    plot_3d_result(means(1:3,1:end), covs(1:3,1:3,1:end));
+    
+    % ------------- gvimp q1 q2 q3 -------------
+    plot_3d_result(means_gvi(1:3,1:end), covs_gvi(1:3,1:3,1:end));
+
+    % ------------- gpmp2 q1 q2 q3 -------------
+    for i_gpmp2 = 1:nt_gpmp2
+        scatter3(gpmp2_confs(1, i_gpmp2), gpmp2_confs(2, i_gpmp2), gpmp2_confs(3, i_gpmp2), 20, 'blue', 'filled','d');
+    end
+    set(gca,'fontsize',16);
+    xlabel('Joint $q_1$','Interpreter','latex'),ylabel('Joint $q_2$','Interpreter','latex');
+    zlabel('Joint $q_3$','Interpreter','latex');
+    
+    % ------------- q4 q5 -------------
+    figure
+    set(gcf,'position',[x0,y0,width,height])
+    tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+    nexttile
+    grid on
+    hold on
+    plot_2d_result_no_sdf(means(4:5,1:end), covs(4:5,4:5,1:end));
+    
+    % ------------- gvimp q4 q5 -------------
+    plot_2d_result_no_sdf(means_gvi(4:5,1:end), covs_gvi(4:5,4:5,1:end));
+    
+    for i_gpmp2 = 1:nt_gpmp2
+        scatter(gpmp2_confs(4, i_gpmp2), gpmp2_confs(5, i_gpmp2), 20, 'blue', 'filled','d');
+    end
+
+    set(gca,'fontsize',16);
+    xlabel('Joint $q_4$','Interpreter','latex'),ylabel('Joint $q_5$','Interpreter','latex');
+
+    % ------------- q6 q7 -------------
+    figure
+    set(gcf,'position',[x0,y0,width,height])
+    tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+    nexttile
+    grid on
+    hold on
+    plot_2d_result_no_sdf(means(6:7,1:end), covs(6:7,6:7,1:end));
+    
+    % ------------- gvimp q4 q5 -------------
+    plot_2d_result_no_sdf(means_gvi(6:7,1:end), covs_gvi(6:7,6:7,1:end));
+    
+    for i_gpmp2 = 1:nt_gpmp2
+        scatter(gpmp2_confs(6, i_gpmp2), gpmp2_confs(7, i_gpmp2), 20, 'blue', 'filled','d');
+    end
+
+    set(gca,'fontsize',16);
+    xlabel('Joint $q_6$','Interpreter','latex'),ylabel('Joint $q_7$','Interpreter','latex');
    
 end
