@@ -69,7 +69,7 @@
         <7>1.2</7>
     </goal_pos>
 
-    <eta> 1e-5 </eta>
+    <eta> 5e-5 </eta>
     <sig_obs> 2.5e3 </sig_obs>
 
     <!-- <eta> 1.2e-4 </eta>
