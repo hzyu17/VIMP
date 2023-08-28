@@ -1,15 +1,15 @@
 # Stochastic motion planning as Gaussian Variational Inference.
 This repository is dedicated to the implementation of Gaussian Variational Inference (GVI) Motion Planning algorithms. We present 2 algorithms, namely Gaussian Variational Inference Motion Planning (GVI-MP) and Proximal Gradient Covariance Steering Motion Planning (PGCS-MP). The conection between a discrete GVI and continuous-time stochastic control is detailed in the publications in the citing section below.
 
-<img src="figures/comparison.png" width="600">
+### Point Robot Motion Planning: entropy regularized robust motion planning
+<img src="figures/compare_go_through_go_around.png" width="600">
 
-Point Robot Motion Planning.
+### Motion planning for a 7-DOF WAM robot arm. The animated trajectory is the mean of the trajectory distribution obtained from PGCS-MP planner. 
 
-<img src="figures/WAM_GVI_RVIZ.gif" height="300" ><img src="figures/WAM1_RVIZ.gif" height="300">
+<img src="figures/WAM_GVI_RVIZ_1.gif" width="300" > <img src="figures/WAM_RVIZ_2.gif" width="300">
 
-<img src="figures/WAM1_GVI_RVIZ.gif" height="300"><img src="figures/WAM_RVIZ.gif" height="300">
+<img src="figures/WAM_GVI_RVIZ_2.gif" width="300"> <img src="figures/WAM_RVIZ_2.gif" width="300">
 
-Motion planning for a 7-DOF WAM robot arm. The animated trajectory is the mean of the trajectory distribution obtained from PGCS-MP planner.
 
 **Dependencies**
 1. Boost: successful built with Boost1.78.0
