@@ -1,7 +1,7 @@
 clear all
 close all
 clc
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 

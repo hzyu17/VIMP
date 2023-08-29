@@ -1,8 +1,8 @@
-hinge_mesh = csvread("../vimp/tests/data/mesh_hinge_loss.csv");
+hinge_mesh = csvread("../../vimp/tests/data/mesh_hinge_loss.csv");
 % hinge_mesh_jacobian = csvread("../vimp/tests/data/mesh_hinge_jacobians.csv");
 % mesh hinge jacobian needs to be loaded by hands
-x_mesh = csvread("../vimp/tests/data/sdf_grid_x.csv");
-y_mesh = csvread("../vimp/tests/data/sdf_grid_y.csv");
+x_mesh = csvread("../../vimp/tests/data/sdf_grid_x.csv");
+y_mesh = csvread("../../vimp/tests/data/sdf_grid_y.csv");
 
 xlen = 400;
 ylen = 300;

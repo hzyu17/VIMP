@@ -1,5 +1,5 @@
 function output = plot_3d_result(zk, Sk)
-addpath('error_ellipse')
+% addpath('../error_ellipse')
 output = 1;
 nx = 6;
 

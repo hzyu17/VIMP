@@ -1,7 +1,11 @@
 /**
  * @file conv_1d_example.cpp
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Recover the results of 1d estimation example in the paper.
+ * @brief Recover the results of 1d estimation example in the paper:
+ * Barfoot, Timothy D., James R. Forbes, and David J. Yoon. 
+ * "Exactly sparse Gaussian variational inference with application to 
+ * derivative-free batch nonlinear state estimation." 
+ * The International Journal of Robotics Research 39.13 (2020): 1473-1502.
  * @version 0.1
  * @date 2022-07-25
  * 

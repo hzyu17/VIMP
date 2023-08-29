@@ -4,11 +4,9 @@ clear all
 close all
 clc
 
-addpath('/usr/local/gtsam_toolbox')
+addpath('../gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
-
-addpath('../../tools/2dpR')
 
 disp("========== map0 ========== ")
 dataset = generate2Ddataset_1('OneObstacleDataset');

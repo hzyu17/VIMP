@@ -66,7 +66,7 @@ for i_step = niter_lowtemp + 1 : stepsize_hightemp : niters
 end
 
 %% plot ground truth iterations
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
 addpath("../../tools/error_ellipse");
 import gtsam.*
 import gpmp2.*

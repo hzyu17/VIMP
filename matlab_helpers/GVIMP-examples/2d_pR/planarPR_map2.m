@@ -1,27 +1,14 @@
-clear all
 close all
+clear all
 clc
-addpath('/usr/local/gtsam_toolbox');
-addpath("../../tools/error_ellipse");
-addpath("../../tools");
 
+addpath('../../tools/gtsam_toolbox');
 import gtsam.*
 import gpmp2.*
 
-% %%
-% cov_sp = csvread("../../../vimp/cov_sp.csv");
-% cov_full = csvread("../../../vimp/cov_full.csv");
-% 
-% num_states = 15;
-% state_dim = 4;
-% for i_s = 0:num_states-2
-%     disp("diff norm i block");
-%     start_indx = i_s*state_dim+1
-%     end_indx = (i_s+2)*state_dim
-%     diff = cov_sp(start_indx:end_indx, start_indx:end_indx) - cov_full(start_indx:end_indx, start_indx:end_indx);
-%     diff;
-%     norm(diff)
-% end
+addpath("../../tools/error_ellipse");
+addpath("../../tools");
+
 
 %% read map
 sdfmap = csvread("map2/map_multiobs_map2.csv");

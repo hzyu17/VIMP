@@ -2,15 +2,16 @@
 clear all
 close all
 clc
-addpath('/usr/local/gtsam_toolbox')
+
+addpath('../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
 %% read map
-sdfmap = csvread("../../RAL-examples/2d_pR/map2/map_multiobs_map2.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 addpath("../")
-addpath("../error_ellipse");
-addpath("../../../matlab_helpers/");
+addpath("../../tools/error_ellipse");
+addpath("../../");
 
 x0 = 500;
 y0 = 500;

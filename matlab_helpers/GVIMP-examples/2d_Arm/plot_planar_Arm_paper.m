@@ -3,7 +3,7 @@ close all
 clc
 
 %% ******************* Read datas ******************
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
 addpath('../../tools/2dArm')
 addpath("../../tools/error_ellipse");
 import gtsam.*

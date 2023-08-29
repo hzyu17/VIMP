@@ -5,8 +5,8 @@ function [] = plot_samples_WAM(dataset, origin, cell_size, arm, means, ...
 % Hongzhe Yu
 
 
-addpath('/usr/local/gtsam_toolbox')
-addpath ('/home/hongzhe/git/VIMP/matlab_helpers/experiments/WAM/utils')
+addpath('../../tools/gtsam_toolbox')
+addpath ('../../tools/WAM/utils')
 
 import gtsam.*
 import gpmp2.*

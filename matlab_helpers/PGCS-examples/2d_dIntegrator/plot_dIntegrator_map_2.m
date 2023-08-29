@@ -1,10 +1,14 @@
 clear all
 close all
 clc
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
+
 import gtsam.*
 import gpmp2.*
 
+addpath("../../tools/error_ellipse");
+addpath("../../");
+    
 %% read map
 sdfmap = csvread("../../RAL-examples/2d_pR/map2/map_multiobs_map2.csv");
 addpath("../")
@@ -27,9 +31,6 @@ for i = 1:4 % 4 experiments
     
     disp("final time cov")
     covs(1:2, 1:2, end)
-
-    addpath("../error_ellipse");
-    addpath("../../../matlab_helpers/");
     
     plot_2d_result(sdfmap, means, covs);
 

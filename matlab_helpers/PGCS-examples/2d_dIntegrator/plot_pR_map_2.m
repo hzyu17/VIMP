@@ -1,12 +1,16 @@
 clear all
 close all
 clc
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
+
+addpath("../../tools/error_ellipse");
+addpath("../../");
+
 import gtsam.*
 import gpmp2.*
 
 %% read map
-sdfmap = csvread("../../RAL-examples/2d_pR/map2/map_multiobs_map2.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 addpath("../")
 
 x0 = 500;
@@ -33,9 +37,6 @@ for i = 1:4 % 4 experiments
     % % --- high temperature ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
-   
-    addpath("../error_ellipse");
-    addpath("../../../matlab_helpers/");
     
     plot_2d_result(sdfmap, means, covs);
 %     if i==3
