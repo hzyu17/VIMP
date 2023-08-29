@@ -63,7 +63,7 @@ for i_iter = 0: nsteps-1
 end
 
 %% plot sdf and means and covs
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 x0 = 500;

@@ -3,7 +3,7 @@ close all
 clc
 
 %% ******************* Read datas ******************
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
@@ -245,7 +245,7 @@ plot_config_samples(sdfmap, arm, means_gvimp_lastiter, covs_gvimp_lastiter, ...
 
 figure
 set(gcf,'position',pos_figsample)
-tiledlayout(1, floor(n_plots/2),2-link_arm_gvimp_samples 'TileSpacing', 'none', 'Padding', 'none')
+tiledlayout(1, floor(n_plots/2), 'TileSpacing', 'none', 'Padding', 'none')
 
 plot_config_samples(sdfmap, arm, means_gvimp_lastiter, covs_gvimp_lastiter, ...
                      floor(nt_gvimp/2)+stepsize, nt_gvimp, stepsize, start_conf, end_conf);

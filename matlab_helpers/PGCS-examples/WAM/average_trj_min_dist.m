@@ -4,8 +4,7 @@ clc
 
 %% ******************* Read datas ******************
 % ******************* dependencies and includes ******************
-addpath('/usr/local/gtsam_toolbox')
-addpath ('/home/hongzhe/git/VIMP/matlab_helpers/experiments/WAM/utils')
+addpath('../../tools/gtsam_toolbox')
 
 import gtsam.*
 import gpmp2.*

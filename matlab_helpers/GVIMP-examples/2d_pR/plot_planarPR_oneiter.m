@@ -2,7 +2,7 @@ function output = plot_planarPR_oneiter(means, covs, sdfmap, i_iter)
 %% plot one iteration of the optimization process.
 % Hongzhe Yu
 
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
 addpath("../../");
 addpath("../../tools/2dpR");
 

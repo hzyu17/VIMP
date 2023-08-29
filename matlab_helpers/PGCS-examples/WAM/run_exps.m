@@ -3,12 +3,12 @@ close all
 clc
 
 %% ******************* Read datas ******************
-addpath('/usr/local/gtsam_toolbox')
-addpath ('/home/hongzhe/git/VIMP/matlab_helpers/experiments/WAM/utils')
+addpath('../../tools/gtsam_toolbox')
+addpath ('../../tools/WAM/utils')
 import gtsam.*
 import gpmp2.*
 
-addpath("..//PGCS-examples");
+addpath("../PGCS-examples");
 addpath("../../tools/error_ellipse");
 
 replan = true;

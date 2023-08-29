@@ -1,13 +1,13 @@
 clear all
 close all
 clc
-addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 addpath("../")
-addpath("../../error_ellipse");
-addpath("../../../matlab_helpers/");
-addpath("../../../matlab_helpers/tools");
+addpath("../../tools/error_ellipse");
+addpath("../../");
+addpath("../../tools");
 
 %% generate SDF
 % dataset

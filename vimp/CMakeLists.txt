@@ -5,14 +5,6 @@ project(vimp CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
-# Mac ONLY. Define Relative Path on Mac OS
-if(NOT DEFINED CMAKE_MACOSX_RPATH)
-    set(CMAKE_MACOSX_RPATH 0)
-endif()
-
-# for unittest scripts
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
-
 set(BOOST_ROOT "/usr/local/bin/boost")
 list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
 # Boost - same requirement as gtsam
@@ -58,8 +50,7 @@ if(NOT matplotplusplus_POPULATED)
     add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
-# ----------------------- duplicated contents from the higher level CMakeLists ------------------------
- 
+# ------------- submodules -------------
 set(vimp_subdirs 
     gvimp
     pgcsmp
@@ -71,8 +62,6 @@ set(vimp_subdirs
 
 set(vimp_srcs)
  
-# files want to be excluded
-set(excluded_sources "helpers/matplotlibcpp.h" "helpers/plotPlanarResults.h")
  
 # Library sources
 foreach(subdir ${vimp_subdirs})
@@ -138,9 +127,6 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
                             )
     target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${EIGEN3_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
 endforeach()
-
-# # Register the tests with CTest
-    # gtest_discover_tests(${TEST_NAME})
 
 # -------------------------------------------- Doxygen for documentations
 # find_package(Doxygen)

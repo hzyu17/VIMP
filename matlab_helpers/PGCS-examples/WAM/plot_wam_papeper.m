@@ -3,9 +3,8 @@ close all
 clc
 
 % ******************* dependencies and includes ******************
-addpath('/usr/local/gtsam_toolbox')
-addpath ('../../tools/WAM/utils')
-
+% addpath('/usr/local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
@@ -43,7 +42,7 @@ nx = 14;
 
 % ================= data reading and plots ===================
 % 3 experiments
-for i_exp = 1:1 
+for i_exp = 2:2 
 
     % ====================================================================================== 
     %                                   read data
@@ -275,6 +274,7 @@ for i_exp = 1:1
     nexttile
     grid on
     hold on
+    addpath('../../tools/2dpR')
     plot_2d_result_no_sdf(means(4:5,1:end), covs(4:5,4:5,1:end));
     
     % ------------- gvimp q4 q5 -------------

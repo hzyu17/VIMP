@@ -209,7 +209,7 @@ TEST(GVIOnestep, initial_values){
         optimizer.set_mu(joint_init_theta);
 
         // initial precision matrix for the optimization
-        optimizer.initilize_precision_matrix(params.initial_precision_factor(), params.boundary_penalties());
+        optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
         // ***** Test initial joint mean and covariance *****
         VectorXd joint_mean = optimizer.mean();
@@ -218,8 +218,8 @@ TEST(GVIOnestep, initial_values){
         MatrixXd init_precision(ndim, ndim);
         init_precision = MatrixXd::Identity(ndim, ndim)*params.initial_precision_factor();
         
-        init_precision.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
-        init_precision.block((n_states-1)*dim_state, (n_states-1)*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
+        // init_precision.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
+        // init_precision.block((n_states-1)*dim_state, (n_states-1)*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state)*params.boundary_penalties();
 
         ASSERT_LE((joint_mean - joint_init_theta).norm(), 1e-8);
         ASSERT_LE((joint_precision - init_precision).norm(), 1e-8);
