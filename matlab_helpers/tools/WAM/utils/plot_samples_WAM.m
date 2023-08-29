@@ -19,8 +19,8 @@ for j = start_indx:step_size:end_indx
         view(-14.7458, 9.8376);
         plotMap3D(dataset.corner_idx, origin, cell_size);
         
-        plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
-        plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
+        plotArm3D(arm.fk_model(), start_conf, 'r', 10, true);
+        plotArm3D(arm.fk_model(), end_conf, 'g', 10, true);
         
         % gradual changing colors
         alpha_samples = 0.2;
@@ -35,14 +35,14 @@ for j = start_indx:step_size:end_indx
             cov_j = covs(1:7, 1:7, j);
 
             % means
-            plotArm3D(arm.fk_model(), mean_j, color, 8, true);
+            plotArm3D(arm.fk_model(), mean_j, color, 10, true);
 
             % sampling 
             rng('default')  % For reproducibility
             samples = mvnrnd(mean_j, cov_j, n_samples);
             for k = 1: size(samples, 1)
                 k_sample = samples(k, 1:end)';
-                plotArm3D(arm.fk_model(), k_sample, color_samples, 4, false);
+                plotArm3D(arm.fk_model(), k_sample, color_samples, 8, false);
             end
         end
         

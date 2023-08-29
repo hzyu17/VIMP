@@ -4,7 +4,7 @@ This repository is dedicated to the implementation of Gaussian Variational Infer
 ### Point Robot Motion Planning: entropy regularized robust motion planning
 <img src="figures/compare_go_through_go_around.png" width="600">
 
-### Motion planning for a 7-DOF WAM robot arm. The animated trajectory is the mean of the trajectory distribution obtained from PGCS-MP planner. 
+### Motion planning for a 7-DOF WAM robot arm. The animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively. 
 
 <img src="figures/WAM_GVI_RVIZ_1.gif" width="300" > <img src="figures/WAM_RVIZ_2.gif" width="300">
 
