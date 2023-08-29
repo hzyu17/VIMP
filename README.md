@@ -64,13 +64,6 @@ cmake ..
 sudo make install 
 ```
 
-## Run Tests
-All changes to the code should pass the current tests. To run all the tests:
-```
-cd path_to_vimp
-python scripts/run_all_tests.py
-```
-
 ## Citing
 If you use this repository in your research, please cite the following publications:
 ```
