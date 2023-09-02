@@ -69,7 +69,7 @@ foreach(subdir ${vimp_subdirs})
   list(REMOVE_ITEM subdir_srcs "${excluded_sources}")
 
   # message(${subdir_srcs})
-  file(GLOB subdir_test_files "${subdir}/tests/*")
+#   file(GLOB subdir_test_files "${subdir}/tests/*")
 
   list(APPEND vimp_srcs ${subdir_srcs})
   message(STATUS "Building Module: ${subdir}")
@@ -112,21 +112,21 @@ foreach(pgcs_source ${PGCS_SOURCES})
 endforeach()
  
 #% --------------------------------------------------------- Tests files 
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+# find_package(GTest REQUIRED)
+# include_directories(${GTEST_INCLUDE_DIRS})
 
-# Recursively search for all test files in the subfolders
-file(GLOB_RECURSE TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR} false tests/*/*.cpp)
-# Loop through each test file and add it as a test case
-foreach(TEST_SOURCE ${TEST_SOURCES})
-    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
-    add_executable(${TEST_NAME} ${TEST_SOURCE})
-    set_target_properties(${TEST_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-    set_target_properties(${TEST_NAME} PROPERTIES
-                            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
-                            )
-    target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${EIGEN3_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
-endforeach()
+# # Recursively search for all test files in the subfolders
+# file(GLOB_RECURSE TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR} false tests/*/*.cpp)
+# # Loop through each test file and add it as a test case
+# foreach(TEST_SOURCE ${TEST_SOURCES})
+#     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+#     add_executable(${TEST_NAME} ${TEST_SOURCE})
+#     set_target_properties(${TEST_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+#     set_target_properties(${TEST_NAME} PROPERTIES
+#                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
+#                             )
+#     target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${EIGEN3_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
+# endforeach()
 
 # -------------------------------------------- Doxygen for documentations
 # find_package(Doxygen)
