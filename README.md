@@ -59,6 +59,7 @@ Build and installation:
 **Build and install VIMP**
 ```
 git clone https://github.com/lucasyu17/VIMP.git
+cd VIMP/vimp\
 mkdir build && cd build\
 cmake .. 
 sudo make install 
