@@ -5,6 +5,7 @@
     <radius> 1.5 </radius>
     <total_time> 10.5 </total_time>
     <nt> 50 </nt>
+    <!-- sig0 and sigT still left as default value -->
     <sig0> 0.01 </sig0>
     <sigT> 0.05 </sigT>
     <eta> 1e-4 </eta>
@@ -35,8 +36,10 @@
     
     <eta> 1e-4 </eta>
     <sig_obs> 1e3 </sig_obs>
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case1/</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case1</saving_prefix>
 
 </Experiment1>
 
@@ -58,8 +61,10 @@
 
     <eta> 1e-4 </eta>
     <sig_obs> 2e3 </sig_obs>
+    <sig0> 0.1 </sig0>
+    <sigT> 0.5 </sigT>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case2/</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case2</saving_prefix>
 
 </Experiment2>
 
@@ -81,8 +86,10 @@
 
     <eta> 1e-4 </eta>
     <sig_obs> 2e3 </sig_obs>
+    <sig0> 0.01 </sig0>
+    <sigT> 0.05 </sigT>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case3/</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case3</saving_prefix>
 
 </Experiment3>
 
@@ -104,8 +111,10 @@
 
     <eta> 1e-4 </eta>
     <sig_obs> 1e3 </sig_obs>
+    <sig0> 0.1 </sig0>
+    <sigT> 0.5 </sigT>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case4/</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case4</saving_prefix>
 
 
 </Experiment4>
