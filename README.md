@@ -59,6 +59,7 @@ Build and installation:
 **Build and install VIMP**
 ```
 git clone https://github.com/lucasyu17/VIMP.git
+cd VIMP/vimp\
 mkdir build && cd build\
 cmake .. 
 sudo make install 
@@ -76,4 +77,14 @@ If you use this repository in your research, please cite the following publicati
   number={5},
   pages={2518-2525},
   doi={10.1109/LRA.2023.3256134}}
+```
+```
+@misc{yu2023stochastic,
+      title={Stochastic Motion Planning as Gaussian Variational Inference: Theory and Algorithms}, 
+      author={Hongzhe Yu and Yongxin Chen},
+      year={2023},
+      eprint={2308.14985},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}
 ```
