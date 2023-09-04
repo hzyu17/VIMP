@@ -1,120 +1,284 @@
+
 <Commons>
-
-    <eps> 0.01 </eps>
-    <eps_sdf> 0.6 </eps_sdf>
-    <radius> 1.5 </radius>
-    <total_time> 10.5 </total_time>
-    <nt> 50 </nt>
-    <!-- sig0 and sigT still left as default value -->
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-    <eta> 1e-4 </eta>
-    <stop_err> 1e-3 </stop_err>
-    <max_iter> 50 </max_iter>
+    <eps>0.01</eps>
+    <eps_sdf>0.6</eps_sdf>
+    <radius>1.5</radius>
+    <total_time>2.5</total_time>
+    <nt>100</nt>
+    <sig0>0.01</sig0>
+    <sigT>0.05</sigT>
+    <eta>0.0001</eta>
+    <stop_err>0.001</stop_err>
+    <max_iter>500</max_iter>
     <map_name>2dpr_map2</map_name>
-    <sig_obs> 5.6e3 </sig_obs>  
-    <backtracking_ratio> 0.7 </backtracking_ratio>
-    <max_n_backtracking> 3 </max_n_backtracking>
-
+    <sig_obs>5600</sig_obs>
+    <backtracking_ratio>0.7</backtracking_ratio>
+    <max_n_backtracking>3</max_n_backtracking>
 </Commons>
-
 <Experiment1>
-    
     <start_pos>
-        <x>7.0</x>
-        <y>-5.0</y>
-        <vx>0.0</vx>
-        <vy>0.0</vy>
+        <x>-10</x>
+        <y>6</y>
+        <vx>0</vx>
+        <vy>0</vy>
     </start_pos>
-
     <goal_pos>
-        <x>-10.0</x>
-        <y>17.0</y>
-        <vx>0.0</vx>
-        <vy>0.0</vy>
+        <x>1</x>
+        <y>13</y>
+        <vx>0</vx>
+        <vy>0</vy>
     </goal_pos>
-    
-    <eta> 1e-4 </eta>
-    <sig_obs> 1e3 </sig_obs>
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case1</saving_prefix>
-
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.13474</sig0>
+    <sigT>0.02784</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp1</saving_prefix>
 </Experiment1>
-
 <Experiment2>
-    
     <start_pos>
-        <x>-7.0</x>
-        <y>-5.0</y>
-        <vx> 0</vx>
-        <vy> 0</vy>
+        <x>-10</x>
+        <y>6</y>
+        <vx>0</vx>
+        <vy>0</vy>
     </start_pos>
-
     <goal_pos>
-        <x>8.0</x>
-        <y>18.0</y>
-        <vx> 0</vx>
-        <vy> 0</vy>
+        <x>-16</x>
+        <y>12</y>
+        <vx>0</vx>
+        <vy>0</vy>
     </goal_pos>
-
-    <eta> 1e-4 </eta>
-    <sig_obs> 2e3 </sig_obs>
-    <sig0> 0.1 </sig0>
-    <sigT> 0.5 </sigT>
-
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case2</saving_prefix>
-
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.13474</sig0>
+    <sigT>0.44544</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp2</saving_prefix>
 </Experiment2>
-
 <Experiment3>
-    
     <start_pos>
-        <x>-7.0</x>
-        <y>-5.0</y>
-        <vx> 0</vx>
-        <vy> 0</vy>
+        <x>19</x>
+        <y>3</y>
+        <vx>0</vx>
+        <vy>0</vy>
     </start_pos>
-
     <goal_pos>
-        <x>13.0</x>
-        <y>10.0</y>
-        <vx> 0</vx>
-        <vy> 0</vy>
+        <x>17</x>
+        <y>-4</y>
+        <vx>0</vx>
+        <vy>0</vy>
     </goal_pos>
-
-    <eta> 1e-4 </eta>
-    <sig_obs> 2e3 </sig_obs>
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case3</saving_prefix>
-
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>2.3564</sig0>
+    <sigT>0.75279</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp3</saving_prefix>
 </Experiment3>
-
 <Experiment4>
-    
     <start_pos>
-        <x>13.0</x>
-        <y>14.0</y>
-        <vx> 0</vx>
-        <vy> 0</vy>
+        <x>1</x>
+        <y>13</y>
+        <vx>0</vx>
+        <vy>0</vy>
     </start_pos>
-
     <goal_pos>
-        <x>-12.0</x>
-        <y>7.0</y>
-        <vx> 0</vx>
-        <vy> 0</vy>
+        <x>-10</x>
+        <y>6</y>
+        <vx>0</vx>
+        <vy>0</vy>
     </goal_pos>
-
-    <eta> 1e-4 </eta>
-    <sig_obs> 1e3 </sig_obs>
-    <sig0> 0.1 </sig0>
-    <sigT> 0.5 </sigT>
-
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case4</saving_prefix>
-
-
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.02784</sig0>
+    <sigT>0.13474</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp4</saving_prefix>
 </Experiment4>
+<Experiment5>
+    <start_pos>
+        <x>1</x>
+        <y>13</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-6</x>
+        <y>-1</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.02784</sig0>
+    <sigT>0.44544</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp5</saving_prefix>
+</Experiment5>
+<Experiment6>
+    <start_pos>
+        <x>-5</x>
+        <y>-10</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-18</x>
+        <y>-7</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>4.9327</sig0>
+    <sigT>1.2859</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp6</saving_prefix>
+</Experiment6>
+<Experiment7>
+    <start_pos>
+        <x>-5</x>
+        <y>-10</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-6</x>
+        <y>-1</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>4.9327</sig0>
+    <sigT>0.44544</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp7</saving_prefix>
+</Experiment7>
+<Experiment8>
+    <start_pos>
+        <x>-18</x>
+        <y>-7</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-5</x>
+        <y>-10</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>1.2859</sig0>
+    <sigT>4.9327</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp8</saving_prefix>
+</Experiment8>
+<Experiment9>
+    <start_pos>
+        <x>-18</x>
+        <y>-7</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-16</x>
+        <y>12</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>1.2859</sig0>
+    <sigT>0.44544</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp9</saving_prefix>
+</Experiment9>
+<Experiment10>
+    <start_pos>
+        <x>17</x>
+        <y>-4</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>19</x>
+        <y>3</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.75279</sig0>
+    <sigT>2.3564</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp10</saving_prefix>
+</Experiment10>
+<Experiment11>
+    <start_pos>
+        <x>-16</x>
+        <y>12</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-10</x>
+        <y>6</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.44544</sig0>
+    <sigT>0.13474</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp11</saving_prefix>
+</Experiment11>
+<Experiment12>
+    <start_pos>
+        <x>-16</x>
+        <y>12</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-18</x>
+        <y>-7</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.44544</sig0>
+    <sigT>1.2859</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp12</saving_prefix>
+</Experiment12>
+<Experiment13>
+    <start_pos>
+        <x>-6</x>
+        <y>-1</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>1</x>
+        <y>13</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.44544</sig0>
+    <sigT>0.02784</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp13</saving_prefix>
+</Experiment13>
+<Experiment14>
+    <start_pos>
+        <x>-6</x>
+        <y>-1</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-5</x>
+        <y>-10</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>1000</sig_obs>
+    <sig0>0.44544</sig0>
+    <sigT>4.9327</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp14</saving_prefix>
+</Experiment14>
+

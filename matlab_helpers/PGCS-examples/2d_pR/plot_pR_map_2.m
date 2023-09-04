@@ -2,6 +2,7 @@ clear all
 close all
 clc
 addpath('../../tools/gtsam_toolbox')
+addpath('../../tools/2dpR')
 addpath('/home/zchen927/Downloads/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
@@ -40,12 +41,13 @@ height = 800;
 figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
-for i = 1:4 % 4 experiments
-    nexttile
+% NOTE: change the number of experiments
+for i = 1:14
+    % nexttile
     hold on
     % prefix = ["map2/case"+num2str(i)+"/"]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
-    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/case"+num2str(i)]
+    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
     % % --- read means and covariances ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);

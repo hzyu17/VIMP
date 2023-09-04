@@ -25,10 +25,14 @@ int main(int argc, char* argv[]){
     int nx=4, nu=2;
     int num_exp = 4;
 
+    if (argc == 2){
+        num_exp = std::stoi(argv[1]);
+    }
+
     PGCSRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
 
     // no experiment argument, run the default scripts
-    if (argc == 1){
+    if (argc == 1 || argc == 2){
         std::cout << "run " << std::endl;
         runner.run();
         return 0;
@@ -62,4 +66,6 @@ int main(int argc, char* argv[]){
     else{
         std::runtime_error("Wrong number of arguments!");
     }
+
+    
 }

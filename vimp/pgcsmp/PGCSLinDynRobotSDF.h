@@ -162,7 +162,7 @@ public:
                 double total_cost = control_energy(zt, Sigt, Kt, dt) + hingeloss(zt, Sigt);
                 _cost_helper.add_cost(i_step, hingeloss(zt, Sigt), control_energy(zt, Sigt, Kt, dt));
 
-                // std::cout << " total cost " << std::fixed << std::setprecision(4) << total_cost << std::endl;
+                std::cout << " total cost " << std::fixed << std::setprecision(4) << total_cost << std::endl;
     
                 if (total_cost < total_cost_prev){
 
@@ -215,7 +215,7 @@ public:
             }
         }  
 
-        _cost_helper.plot_costs();
+        // _cost_helper.plot_costs();
 
         hnom = make_tuple(v_zt, v_Sigzt);
         return std::make_tuple(_Kt, _dt, hnom);      
