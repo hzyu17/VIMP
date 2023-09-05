@@ -22,6 +22,7 @@ using namespace vimp;
 int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};
     std::string config_file{source_root+"/configs/pgcs/planar_pR_map2_BRM.xml"};
+    std::cout<<"config file loaded from: "<<config_file<<std::endl;
     int nx=4, nu=2;
     int num_exp = 4;
 
