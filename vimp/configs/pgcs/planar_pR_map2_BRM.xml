@@ -2,15 +2,15 @@
     <eps>0.01</eps>
     <eps_sdf>0.6</eps_sdf>
     <radius>1.5</radius>
-    <total_time>10.5</total_time>
+    <total_time>2.5</total_time>
     <nt>50</nt>
     <sig0>0.01</sig0>
     <sigT>0.05</sigT>
     <eta>0.0001</eta>
     <stop_err>0.001</stop_err>
-    <max_iter>50</max_iter>
+    <max_iter>100</max_iter>
     <map_name>2dpr_map2</map_name>
-    <sig_obs>5600</sig_obs>
+    <sig_obs>9000</sig_obs>
     <backtracking_ratio>0.7</backtracking_ratio>
     <max_n_backtracking>3</max_n_backtracking>
 </Commons>
