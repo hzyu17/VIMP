@@ -3,7 +3,7 @@ close all
 clc
 addpath('../../tools/gtsam_toolbox')
 addpath('../../tools/2dpR')
-addpath('/home/zchen927/Downloads/gtsam_toolbox')
+% addpath('/home/zchen927/Downloads/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
@@ -47,8 +47,10 @@ for i = 1:14
     hold on
     % prefix = ["map2/case"+num2str(i)+"/"]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
-    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
+    % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
+    prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
+    disp([prefix + "zk_sdf.csv"])
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
     
