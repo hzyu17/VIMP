@@ -41,7 +41,7 @@ height = 800;
 figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
-for i = 1:14 % 4 experiments
+for i = 1:8 % 4 experiments
     % nexttile
     hold on
     % prefix = ["map2/case"+num2str(i)+"/"]
@@ -55,7 +55,7 @@ for i = 1:14 % 4 experiments
     cov_final = covs(:,end);
     disp("cov_final_RESHAPED")
     cov_final_RESHAPED = reshape(cov_final, [4,4])
-     
+    
     plot_2d_result(sdfmap, means, covs);
 
 %     % --- read baselines ---
