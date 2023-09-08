@@ -11,6 +11,7 @@
 
 #include "ProximalGradientCSNonlinearDyn.h"
 #include "../helpers/hinge2Dhelper.h"
+#include "../helpers/ExperimentParams.h"
 
 using namespace Eigen;
 
