@@ -12,7 +12,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.36075</sig0>
     <sigT>0.37089</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp12</saving_prefix>
@@ -31,7 +31,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.2354</sig0>
     <sigT>0.77462</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp24</saving_prefix>
@@ -50,7 +50,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.2354</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp23</saving_prefix>
@@ -69,7 +69,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.46213</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp22</saving_prefix>
@@ -88,7 +88,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.46213</sig0>
     <sigT>0.77462</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp21</saving_prefix>
@@ -107,7 +107,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.46213</sig0>
     <sigT>0.77462</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp20</saving_prefix>
@@ -126,7 +126,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.48967</sig0>
     <sigT>0.18628</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp19</saving_prefix>
@@ -145,7 +145,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.77462</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp18</saving_prefix>
@@ -164,7 +164,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.38105</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp17</saving_prefix>
@@ -183,7 +183,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.46213</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp16</saving_prefix>
@@ -202,7 +202,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.77462</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp15</saving_prefix>
@@ -221,7 +221,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.18628</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp14</saving_prefix>
@@ -240,7 +240,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.38105</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp13</saving_prefix>
@@ -275,7 +275,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.18628</sig0>
     <sigT>0.48967</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp11</saving_prefix>
@@ -294,7 +294,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.18628</sig0>
     <sigT>0.77462</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp10</saving_prefix>
@@ -313,7 +313,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.18628</sig0>
     <sigT>0.37089</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp9</saving_prefix>
@@ -332,7 +332,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.37089</sig0>
     <sigT>0.36075</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp8</saving_prefix>
@@ -351,7 +351,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.37089</sig0>
     <sigT>0.18628</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp7</saving_prefix>
@@ -370,7 +370,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.37089</sig0>
     <sigT>0.67634</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp6</saving_prefix>
@@ -389,7 +389,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.38105</sig0>
     <sigT>0.77462</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp5</saving_prefix>
@@ -408,7 +408,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.38105</sig0>
     <sigT>0.77462</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp4</saving_prefix>
@@ -427,7 +427,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.38105</sig0>
     <sigT>0.67634</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp3</saving_prefix>
@@ -446,7 +446,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.67634</sig0>
     <sigT>0.37089</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp2</saving_prefix>
@@ -465,7 +465,7 @@
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
-    <sig_obs>9000</sig_obs>
+    <sig_obs>30000</sig_obs>
     <sig0>0.67634</sig0>
     <sigT>0.38105</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_10nodes/exp1</saving_prefix>
