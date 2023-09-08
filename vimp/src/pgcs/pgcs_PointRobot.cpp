@@ -15,6 +15,7 @@
 
 #include "pgcsmp/PGCSLinDynPRModelPlanarSDF.h"
 #include "helpers/ExperimentRunner.h"
+#include <chrono>
 
 using namespace Eigen;
 using namespace vimp;
@@ -35,10 +36,14 @@ int main(int argc, char* argv[]){
 
     PGCSRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
 
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
     // no experiment argument, run the default scripts
     if (argc == 1 || argc == 3){
         std::cout << "run " << std::endl;
         runner.run();
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << "Run Time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()/1e6 << "s" << std::endl;
         return 0;
     }
     // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
