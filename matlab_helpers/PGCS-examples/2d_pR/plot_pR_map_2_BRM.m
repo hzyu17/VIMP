@@ -41,13 +41,14 @@ height = 800;
 figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
-for i = 1:8 % 4 experiments
+% modify number of experiments accordingly
+for i = 1:20
     % nexttile
     hold on
     % prefix = ["map2/case"+num2str(i)+"/"]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
-    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
+    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_test/exp_demo"+num2str(i)]
     % % --- read means and covariances ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);

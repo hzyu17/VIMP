@@ -20,20 +20,23 @@ using namespace Eigen;
 using namespace vimp;
 
 int main(int argc, char* argv[]){
-    std::string source_root{XSTRING(SOURCE_ROOT)};
-    std::string config_file{source_root+"/configs/pgcs/planar_pR_map2_BRM_demo.xml"};
-    std::cout<<"config file loaded from: "<<config_file<<std::endl;
     int nx=4, nu=2;
     int num_exp = 4;
+    std::string file_name = "planar_pR_map2_BRM_demo";
 
-    if (argc == 2){
+    if (argc == 3){
         num_exp = std::stoi(argv[1]);
+        file_name = static_cast<std::string>(argv[2]);
     }
+
+    std::string source_root{XSTRING(SOURCE_ROOT)};
+    std::string config_file{source_root+"/configs/pgcs/" + file_name + ".xml"};
+    std::cout<<"config file loaded from: "<<config_file<<std::endl;
 
     PGCSRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
 
     // no experiment argument, run the default scripts
-    if (argc == 1 || argc == 2){
+    if (argc == 1 || argc == 3){
         std::cout << "run " << std::endl;
         runner.run();
         return 0;
