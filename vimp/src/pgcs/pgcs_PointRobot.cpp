@@ -25,6 +25,7 @@ int main(int argc, char* argv[]){
     int num_exp = 4;
     std::string file_name = "planar_pR_map2_BRM_demo";
 
+    // arguments: num_exp, file_name
     if (argc == 3){
         num_exp = std::stoi(argv[1]);
         file_name = static_cast<std::string>(argv[2]);
