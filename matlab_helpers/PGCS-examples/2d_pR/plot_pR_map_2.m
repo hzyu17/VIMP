@@ -42,13 +42,14 @@ figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
 % NOTE: change the number of experiments
-for i = 1:14
+for i = 1:24
     % nexttile
     hold on
     % prefix = ["map2/case"+num2str(i)+"/"]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
-    % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
-    prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
+    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
+    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_10nodes/exp"+num2str(i)]
+    % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
     disp([prefix + "zk_sdf.csv"])
     means = csvread([prefix + "zk_sdf.csv"]);
@@ -87,3 +88,7 @@ for i = 1:14
     axis off ; 
 
 end
+
+%%
+saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes.png')
+saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes.pdf')
