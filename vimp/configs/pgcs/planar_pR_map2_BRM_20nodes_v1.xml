@@ -16,7 +16,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.21793</sig0>
     <sigT>0.33448</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp47</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp47</saving_prefix>
 </Experiment47>
 <Experiment32>
     <start_pos>
@@ -35,7 +35,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.35097</sig0>
     <sigT>0.34518</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp32</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp32</saving_prefix>
 </Experiment32>
 <Experiment33>
     <start_pos>
@@ -54,7 +54,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.34647</sig0>
     <sigT>0.67903</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp33</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp33</saving_prefix>
 </Experiment33>
 <Experiment34>
     <start_pos>
@@ -73,7 +73,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.34647</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp34</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp34</saving_prefix>
 </Experiment34>
 <Experiment35>
     <start_pos>
@@ -92,7 +92,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.34647</sig0>
     <sigT>0.40724</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp35</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp35</saving_prefix>
 </Experiment35>
 <Experiment36>
     <start_pos>
@@ -111,7 +111,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.11385</sig0>
     <sigT>0.67634</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp36</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp36</saving_prefix>
 </Experiment36>
 <Experiment37>
     <start_pos>
@@ -130,7 +130,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.11385</sig0>
     <sigT>0.27141</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp37</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp37</saving_prefix>
 </Experiment37>
 <Experiment38>
     <start_pos>
@@ -149,7 +149,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.30536</sig0>
     <sigT>0.24237</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp38</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp38</saving_prefix>
 </Experiment38>
 <Experiment39>
     <start_pos>
@@ -168,7 +168,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.33448</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp39</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp39</saving_prefix>
 </Experiment39>
 <Experiment40>
     <start_pos>
@@ -187,7 +187,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.33448</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp40</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp40</saving_prefix>
 </Experiment40>
 <Experiment41>
     <start_pos>
@@ -206,7 +206,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.33448</sig0>
     <sigT>0.21793</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp41</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp41</saving_prefix>
 </Experiment41>
 <Experiment42>
     <start_pos>
@@ -225,7 +225,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.33448</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp42</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp42</saving_prefix>
 </Experiment42>
 <Experiment43>
     <start_pos>
@@ -244,7 +244,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp43</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp43</saving_prefix>
 </Experiment43>
 <Experiment44>
     <start_pos>
@@ -263,7 +263,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.33448</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp44</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp44</saving_prefix>
 </Experiment44>
 <Experiment45>
     <start_pos>
@@ -282,7 +282,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp45</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp45</saving_prefix>
 </Experiment45>
 <Experiment46>
     <start_pos>
@@ -301,7 +301,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.21793</sig0>
     <sigT>0.2352</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp46</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp46</saving_prefix>
 </Experiment46>
 <Experiment31>
     <start_pos>
@@ -320,7 +320,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.35097</sig0>
     <sigT>0.4889</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp31</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp31</saving_prefix>
 </Experiment31>
 <Experiment48>
     <start_pos>
@@ -339,7 +339,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.21793</sig0>
     <sigT>0.27141</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp48</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp48</saving_prefix>
 </Experiment48>
 <Experiment49>
     <start_pos>
@@ -358,7 +358,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.21793</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp49</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp49</saving_prefix>
 </Experiment49>
 <Experiment50>
     <start_pos>
@@ -377,7 +377,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.34518</sig0>
     <sigT>0.35097</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp50</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp50</saving_prefix>
 </Experiment50>
 <Experiment51>
     <start_pos>
@@ -396,7 +396,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.34518</sig0>
     <sigT>0.40724</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp51</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp51</saving_prefix>
 </Experiment51>
 <Experiment52>
     <start_pos>
@@ -415,7 +415,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.1194</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp52</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp52</saving_prefix>
 </Experiment52>
 <Experiment53>
     <start_pos>
@@ -434,7 +434,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.34647</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp53</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp53</saving_prefix>
 </Experiment53>
 <Experiment54>
     <start_pos>
@@ -453,7 +453,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.27141</sig0>
     <sigT>0.2352</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp54</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp54</saving_prefix>
 </Experiment54>
 <Experiment55>
     <start_pos>
@@ -472,7 +472,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.27141</sig0>
     <sigT>0.11385</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp55</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp55</saving_prefix>
 </Experiment55>
 <Experiment56>
     <start_pos>
@@ -491,7 +491,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.27141</sig0>
     <sigT>0.21793</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp56</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp56</saving_prefix>
 </Experiment56>
 <Experiment57>
     <start_pos>
@@ -510,7 +510,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.40724</sig0>
     <sigT>0.34647</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp57</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp57</saving_prefix>
 </Experiment57>
 <Experiment58>
     <start_pos>
@@ -529,7 +529,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.40724</sig0>
     <sigT>0.34518</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp58</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp58</saving_prefix>
 </Experiment58>
 <Experiment59>
     <start_pos>
@@ -548,7 +548,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp59</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp59</saving_prefix>
 </Experiment59>
 <Experiment60>
     <start_pos>
@@ -567,7 +567,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.33448</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp60</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp60</saving_prefix>
 </Experiment60>
 <Experiment61>
     <start_pos>
@@ -586,7 +586,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp61</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp61</saving_prefix>
 </Experiment61>
 <Experiment62>
     <start_pos>
@@ -605,7 +605,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.21793</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp62</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp62</saving_prefix>
 </Experiment62>
 <Experiment16>
     <start_pos>
@@ -624,7 +624,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.093043</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp16</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp16</saving_prefix>
 </Experiment16>
 <Experiment1>
     <start_pos>
@@ -643,7 +643,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.67634</sig0>
     <sigT>0.3531</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp1</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp1</saving_prefix>
 </Experiment1>
 <Experiment2>
     <start_pos>
@@ -662,7 +662,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.67634</sig0>
     <sigT>0.11385</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp2</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp2</saving_prefix>
 </Experiment2>
 <Experiment3>
     <start_pos>
@@ -681,7 +681,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.3531</sig0>
     <sigT>0.67634</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp3</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp3</saving_prefix>
 </Experiment3>
 <Experiment4>
     <start_pos>
@@ -700,7 +700,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.3531</sig0>
     <sigT>0.4889</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp4</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp4</saving_prefix>
 </Experiment4>
 <Experiment5>
     <start_pos>
@@ -719,7 +719,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.3531</sig0>
     <sigT>0.35097</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp5</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp5</saving_prefix>
 </Experiment5>
 <Experiment6>
     <start_pos>
@@ -738,7 +738,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.4889</sig0>
     <sigT>0.3531</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp6</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp6</saving_prefix>
 </Experiment6>
 <Experiment7>
     <start_pos>
@@ -757,7 +757,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.4889</sig0>
     <sigT>0.67903</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp7</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp7</saving_prefix>
 </Experiment7>
 <Experiment8>
     <start_pos>
@@ -776,7 +776,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.4889</sig0>
     <sigT>0.35097</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp8</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp8</saving_prefix>
 </Experiment8>
 <Experiment9>
     <start_pos>
@@ -795,7 +795,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.67903</sig0>
     <sigT>0.4889</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp9</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp9</saving_prefix>
 </Experiment9>
 <Experiment10>
     <start_pos>
@@ -814,7 +814,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.67903</sig0>
     <sigT>0.25307</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp10</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp10</saving_prefix>
 </Experiment10>
 <Experiment11>
     <start_pos>
@@ -833,7 +833,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.67903</sig0>
     <sigT>0.34647</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp11</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp11</saving_prefix>
 </Experiment11>
 <Experiment12>
     <start_pos>
@@ -852,7 +852,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.25307</sig0>
     <sigT>0.67903</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp12</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp12</saving_prefix>
 </Experiment12>
 <Experiment13>
     <start_pos>
@@ -871,7 +871,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.25307</sig0>
     <sigT>0.093043</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp13</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp13</saving_prefix>
 </Experiment13>
 <Experiment14>
     <start_pos>
@@ -890,7 +890,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.25307</sig0>
     <sigT>0.2352</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp14</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp14</saving_prefix>
 </Experiment14>
 <Experiment15>
     <start_pos>
@@ -909,7 +909,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.093043</sig0>
     <sigT>0.25307</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp15</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp15</saving_prefix>
 </Experiment15>
 <Commons>
     <eps>0.01</eps>
@@ -921,7 +921,7 @@
     <sigT>0.05</sigT>
     <eta>0.0001</eta>
     <stop_err>0.001</stop_err>
-    <max_iter>50</max_iter>
+    <max_iter>500</max_iter>
     <map_name>2dpr_map2</map_name>
     <sig_obs>20000</sig_obs>
     <backtracking_ratio>0.7</backtracking_ratio>
@@ -944,7 +944,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.093043</sig0>
     <sigT>0.1194</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp17</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp17</saving_prefix>
 </Experiment17>
 <Experiment18>
     <start_pos>
@@ -963,7 +963,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.093043</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp18</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp18</saving_prefix>
 </Experiment18>
 <Experiment19>
     <start_pos>
@@ -982,7 +982,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.24237</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp19</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp19</saving_prefix>
 </Experiment19>
 <Experiment20>
     <start_pos>
@@ -1001,7 +1001,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.33448</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp20</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp20</saving_prefix>
 </Experiment20>
 <Experiment21>
     <start_pos>
@@ -1020,7 +1020,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp21</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp21</saving_prefix>
 </Experiment21>
 <Experiment22>
     <start_pos>
@@ -1039,7 +1039,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.77462</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp22</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp22</saving_prefix>
 </Experiment22>
 <Experiment23>
     <start_pos>
@@ -1058,7 +1058,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.24237</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp23</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp23</saving_prefix>
 </Experiment23>
 <Experiment24>
     <start_pos>
@@ -1077,7 +1077,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.24237</sig0>
     <sigT>0.30536</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp24</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp24</saving_prefix>
 </Experiment24>
 <Experiment25>
     <start_pos>
@@ -1096,7 +1096,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.2352</sig0>
     <sigT>0.25307</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp25</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp25</saving_prefix>
 </Experiment25>
 <Experiment26>
     <start_pos>
@@ -1115,7 +1115,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.2352</sig0>
     <sigT>0.21793</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp26</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp26</saving_prefix>
 </Experiment26>
 <Experiment27>
     <start_pos>
@@ -1134,7 +1134,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.2352</sig0>
     <sigT>0.27141</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp27</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp27</saving_prefix>
 </Experiment27>
 <Experiment28>
     <start_pos>
@@ -1153,7 +1153,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.1194</sig0>
     <sigT>0.093043</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp28</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp28</saving_prefix>
 </Experiment28>
 <Experiment29>
     <start_pos>
@@ -1172,7 +1172,7 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.1194</sig0>
     <sigT>0.77462</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp29</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp29</saving_prefix>
 </Experiment29>
 <Experiment30>
     <start_pos>
@@ -1191,6 +1191,6 @@
     <sig_obs>29000</sig_obs>
     <sig0>0.35097</sig0>
     <sigT>0.3531</sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp30</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1_500/exp30</saving_prefix>
 </Experiment30>
 

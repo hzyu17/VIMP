@@ -104,7 +104,7 @@ public:
     void step(int indx) override{
         // std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
-        propagate_mean();
+        propagate_nominal();
 
         linearization();
  
