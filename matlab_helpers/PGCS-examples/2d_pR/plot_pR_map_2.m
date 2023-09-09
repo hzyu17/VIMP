@@ -10,7 +10,7 @@ import gpmp2.*
 addpath("../../tools/error_ellipse");
 addpath("../../../matlab_helpers/");
 
-%% read map
+% read map
 sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 
 % % hyper parameters
@@ -48,7 +48,7 @@ for i = 1:24
     % prefix = ["map2/case"+num2str(i)+"/"]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
     prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
-    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_10nodes/exp"+num2str(i)]
+    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_10nodes_v2/exp"+num2str(i)]
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
     disp([prefix + "zk_sdf.csv"])
@@ -61,34 +61,10 @@ for i = 1:24
     
     plot_2d_result(sdfmap, means, covs);
 
-%     % --- read baselines ---
-%     means_prm = csvread([prefix + "prm_5000.csv"]);
-%     means_rrt = csvread([prefix + "RRTstar_3000.csv"]);
-% 
-%     % --- plot baselines ---
-%     [~, nt_prm] = size(means_prm);
-%     [~, nt_rrt] = size(means_rrt);
-%     
-%     for i_pt = 1:nt_prm-1
-%         plot([means_prm(1, i_pt), means_prm(1, i_pt+1)], ...
-%             [means_prm(2, i_pt), means_prm(2, i_pt+1)], 'LineWidth', 3.0, 'Color', 'b');
-%     end
-%     
-%     hold on
-% 
-%     for i_pt = 1:nt_rrt-1
-%         plot([means_rrt(1, i_pt), means_rrt(1, i_pt+1)], ...
-%             [means_rrt(2, i_pt), means_rrt(2, i_pt+1)], 'LineWidth', 3.0, 'Color', 'g');
-%     end
-    
-%     if i==3
-%         xlim([-20, 25]);
-%         ylim([-15, 22]);
-%     end
     axis off ; 
 
 end
 
 %%
-saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes.png')
-saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes.pdf')
+saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes_v2.png')
+saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes_v2.pdf')
