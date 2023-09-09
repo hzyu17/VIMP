@@ -42,13 +42,13 @@ figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
 % NOTE: change the number of experiments
-for i = 1:24
+for i = 1:60
     % nexttile
     hold on
     % prefix = ["map2/case"+num2str(i)+"/"]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
-    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)]
-    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_10nodes_v2/exp"+num2str(i)]
+    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)];
+    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_20nodes_v1/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
     disp([prefix + "zk_sdf.csv"])
@@ -56,15 +56,14 @@ for i = 1:24
     covs = csvread([prefix + "Sk_sdf.csv"]);
     
     cov_final = covs(:,end);
-    disp("cov_final_RESHAPED")
-    cov_final_RESHAPED = reshape(cov_final, [4,4])
+    cov_final_RESHAPED = reshape(cov_final, [4,4]);
     
-    plot_2d_result(sdfmap, means, covs);
+    plot_2d_result(sdfmap, means, covs, 3);
 
     axis off ; 
 
 end
 
 %%
-saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes_v2.png')
-saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes_v2.pdf')
+saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_20nodes_v2.png')
+saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_20nodes_v2.pdf')
