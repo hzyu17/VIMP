@@ -41,14 +41,23 @@ height = 800;
 figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
+plotColors.lightBlue = [0.301 0.745 0.933];
+plotColors.blue = [0.15 0.25 0.8];
+plotColors.green = [0.85 0.325 0.098];
+plotColors.red = [0.9, 0 ,0];
+
+args = {'LineStyle', '-', ...
+        'LineWidth',0.7, ...
+        'Color', plotColors.lightBlue};
+
 % NOTE: change the number of experiments
-for i = 1:60
+for i = 1:92
     % nexttile
     hold on
     % prefix = ["map2/case"+num2str(i)+"/"]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
     prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)];
-    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_20nodes_v1/exp"+num2str(i)];
+    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_20/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
     disp([prefix + "zk_sdf.csv"])
@@ -58,12 +67,13 @@ for i = 1:60
     cov_final = covs(:,end);
     cov_final_RESHAPED = reshape(cov_final, [4,4]);
     
-    plot_2d_result(sdfmap, means, covs, 3);
+    plot_2d_result(sdfmap, means, covs, 3, args);
 
     axis off ; 
 
 end
 
 %%
-saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_20nodes_v2.png')
-saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_20nodes_v2.pdf')
+xlim([-20 20]); ylim([-10, 20]);
+saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_30nodes_v1_20.png')
+saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_30nodes_v1_20.pdf')
