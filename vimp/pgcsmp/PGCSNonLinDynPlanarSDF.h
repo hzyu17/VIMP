@@ -22,7 +22,7 @@ public:
     PGCSNonLinDynPlanarSDF(const MatrixXd& A0, 
                         const VectorXd& a0, 
                         const MatrixXd& B, 
-                        const ExperimentParams& params,
+                        const PGCSParams& params,
                         const std::shared_ptr<NonlinearDynamics>& pdyn,
                         const gpmp2::PlanarSDF& sdf): ProxGradCovSteerNLDyn(A0, a0, B, params, pdyn),
                                             _eps_sdf(params.eps_sdf()),
