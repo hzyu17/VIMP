@@ -13,8 +13,7 @@ if size(Sk, 1) ~= 2 && size(Sk, 1) ~= 4
     Sk = reshape(Sk, 4,4,nt);
 end
 
-hold on
-plot(zk_pos(1,:), zk_pos(2,:), '-', 'Color','k', 'LineWidth', 3);
+plot(zk_pos(1,:), zk_pos(2,:), '-', 'Color',[0.301 0.745 0.933], 'LineWidth', 0.6);
 for i=1:step:nt
     % scatter(zk_pos(1, i), zk_pos(2, i), 20, 'k', 'fill');
     error_ellipse(Sk(1:2,1:2,i), zk_pos(1:2, i),'style',args);
