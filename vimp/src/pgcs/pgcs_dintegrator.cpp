@@ -9,13 +9,15 @@
  * 
  */
 
-// #include "dynamics/DoubleIntegratorDraged.h"
+#include "dynamics/DoubleIntegratorDraged.h"
 // #include "pgcsmp/PGCSPlanarQuadSDF.h"
-// #include "3rdparty/rapidxml-1.13/rapidxml.hpp"
-// #include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
+#include "3rdparty/rapidxml-1.13/rapidxml.hpp"
+#include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
+// #include "helpers/ExperimentRunner.h"
+#include "pgcsmp/PGCSNonLinDynPlanarSDF.h"
 
-// using namespace Eigen;
-// using namespace vimp;
+using namespace Eigen;
+using namespace vimp;
 
 int main(){
 
@@ -90,12 +92,13 @@ int main(){
     //     double eta = atof(paramNode->first_node("eta")->value());
     //     double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
     //     double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
-    //     PGCSNLDynPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
+    //     PGCSNonLinDynPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
         
     //     std::tuple<MatrixXd, MatrixXd> res_Kd;
 
     //     double stop_err = 1e-4;
-    //     res_Kd = pgcs_sdf.optimize(stop_err);
+    //     // res_Kd = pgcs_sdf.optimize(stop_err);
+    //     res_Kd = pgcs_sdf.optimize();
 
     //     MatrixXd Kt(4*4, nt), dt(4, nt);
     //     Kt = std::get<0>(res_Kd);
@@ -114,6 +117,6 @@ int main(){
     //     m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
     // }
 
-    return 0;
+    // return 0;
 
 }

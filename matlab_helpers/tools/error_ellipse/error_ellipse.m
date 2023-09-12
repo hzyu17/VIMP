@@ -133,7 +133,7 @@ elseif r==2 & c==2
   end
 
   [x,y,z] = getpoints(C,prop.clip);
-  h1=plot(scale*(x0+k*x),scale*(y0+k*y),prop.style, 'LineWidth', 1.5);
+  h1=plot(scale*(x0+k*x),scale*(y0+k*y),prop.style{:}); %, 'LineWidth', 1.5);
   set(h1,'zdata',z+1)
   if nargout
     h=h1;
