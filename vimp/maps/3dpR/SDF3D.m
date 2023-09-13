@@ -3,11 +3,12 @@
 close all
 clear
 
-addpath("/usr/local/gtsam_toolbox")
+% addpath("/usr/local/gtsam_toolbox")
+addpath("/home/czy/Downloads/gtsam_toolbox")
 import gtsam.*
 import gpmp2.*
 
-addpath("../../tools")                      
+addpath("../../../matlab_helpers/tools")                      
 %% dataset
 dataset = generate3Ddataset_1('3dPRMap2');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
@@ -44,8 +45,8 @@ ylim([-20, 40])
 zlim([-10, 40])
 
 %% save SDF
-disp('saving sdf to .bin file...');
-sdf.saveSDF('pRSDF3D.bin');
+disp('not saving sdf to .bin file...');
+% sdf.saveSDF('pRSDF3D.bin');
 
 %% create the mesh for visualization
 [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);

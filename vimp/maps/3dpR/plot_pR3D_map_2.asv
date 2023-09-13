@@ -43,7 +43,7 @@ for i = 1:1 % 4 experiments
     nexttile
     grid on
     hold on 
-    prefix = ["../../save/3d_pR/"] % case"] %+num2str(i)+"/"];
+    prefix = ["../../save/3d/case"+num2str(i)+"/"];
     % % --- high temperature ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
