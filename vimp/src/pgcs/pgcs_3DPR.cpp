@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
     }
     
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    std::string config_file{source_root+"/configs/pgcs/pR3D_map2.xml"};
+    std::string config_file{source_root+"/configs/pgcs/" + file_name + ".xml"};
     std::cout<<"config file loaded from: "<<config_file<<std::endl;
 
     PGCSRunner3D<PGCSLinDynPRModelSDF> runner(num_exp, config_file);

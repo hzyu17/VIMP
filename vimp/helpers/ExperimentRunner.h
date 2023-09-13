@@ -496,6 +496,9 @@ public:
         double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
         double goal_vz = atof(paramNode->first_node("goal_pos")->first_node("vz")->value());
+
+        double sig0 = atof(paramNode->first_node("sig0")->value());
+        double sigT = atof(paramNode->first_node("sigT")->value());
         
         VectorXd m0(this->_nx), mT(this->_nx); 
 
@@ -504,6 +507,10 @@ public:
 
         params.set_m0(m0);
         params.set_mT(mT);
+
+        auto nx = params.nx();
+        params.set_Sig0(sig0*MatrixXd::Identity(nx, nx));
+        params.set_SigT(sigT*MatrixXd::Identity(nx, nx));
 
         std::string sdf_file = static_cast<std::string>(paramNode->first_node("sdf_file")->value());
         params.update_sdf_file(sdf_file);
