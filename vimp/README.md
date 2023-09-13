@@ -34,3 +34,13 @@ If you use this repository in your research, please cite the following publicati
   pages={2518-2525},
   doi={10.1109/LRA.2023.3256134}}
 ```
+```
+@misc{yu2023stochastic,
+      title={Stochastic Motion Planning as Gaussian Variational Inference: Theory and Algorithms}, 
+      author={Hongzhe Yu and Yongxin Chen},
+      year={2023},
+      eprint={2308.14985},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}
+```
