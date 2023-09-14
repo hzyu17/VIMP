@@ -23048,7 +23048,7 @@
     <sigT>0.05</sigT>
     <eta>0.0001</eta>
     <stop_err>0.001</stop_err>
-    <max_iter>50</max_iter>
+    <max_iter>100</max_iter>
     <map_name>map_3dpR</map_name>
     <sig_obs>20000</sig_obs>
     <backtracking_ratio>0.7</backtracking_ratio>
