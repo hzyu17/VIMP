@@ -28,7 +28,7 @@
 
     <eps_sdf> 0.7 </eps_sdf>
 
-    <cost_sigma> 1.2e-5 </cost_sigma>
+    <cost_sigma> 1.2e5 </cost_sigma>
 
     <stop_err> 1e-4 </stop_err>
 

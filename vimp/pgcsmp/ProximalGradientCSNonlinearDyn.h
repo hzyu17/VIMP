@@ -44,11 +44,11 @@ public:
                         const VectorXd& zT,
                         const MatrixXd& SigT,
                         std::shared_ptr<NonlinearDynamics> pdyn,
-                        int max_iteration=20): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, max_iteration), 
+                        double stop_err=1e-4,
+                        int max_iteration=20): ProxGradCovSteer(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, stop_err, max_iteration), 
                                             _pdyn(pdyn){}
     
-
-    void step(int indx) override{}
+    virtual void step(int indx) {}
 
     StepResult step(int indx, double step_size, 
                     const Matrix3D& At, const Matrix3D& at, const Matrix3D& Bt, 

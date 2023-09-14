@@ -91,16 +91,16 @@ int main(){
 
         double eta = atof(paramNode->first_node("eta")->value());
         double sig_obs = atof(paramNode->first_node("cost_sigma")->value());
-        double Vscale = atof(paramNode->first_node("state_cost_scale")->value());
-        PGCSNonLinDynPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, Vscale);
+        double stop_err = atof(paramNode->first_node("stop_err")->value());
+        PGCSNonLinDynPlanarSDF* p_pgcs_sdf = new PGCSNonLinDynPlanarSDF(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, stop_err);
         using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
         std::tuple<MatrixXd, MatrixXd, NominalHistory> res_Kd;
 
-        double stop_err = 1e-4;
+        // double stop_err = 1e-4;
         // res_Kd = pgcs_sdf.optimize(stop_err);
         
         // res_Kd = pgcs_sdf.backtrack();
-        res_Kd = pgcs_sdf.optimize();
+        res_Kd = p_pgcs_sdf->optimize();
          std::cout << "speed " << speed << std::endl <<
         "nt " << nt << std::endl << 
         "sig " << sig << std::endl;
@@ -110,8 +110,8 @@ int main(){
         dt = std::get<1>(res_Kd);
 
         MatrixXd zk_star(4, nt), Sk_star(4*4, nt);
-        zk_star = pgcs_sdf.zkt();
-        Sk_star = pgcs_sdf.Sigkt();
+        zk_star = p_pgcs_sdf->zkt();
+        Sk_star = p_pgcs_sdf->Sigkt();
 
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
 

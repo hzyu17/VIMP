@@ -44,7 +44,8 @@ public:
                     double eps_sdf,
                     const gpmp2::PlanarSDF& sdf,
                     double sig_obs,
-                    int max_iter=20): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, max_iter),
+                    double stop_err=1e-4,
+                    int max_iter=20): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, stop_err, max_iter),
                                         _eps_sdf(eps_sdf),
                                         _sdf(sdf),
                                         _Sig_obs(sig_obs){}
@@ -92,6 +93,10 @@ public:
             // Qki
             Qki = temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
+            _ei.print_matrix(grad_h, "grad_h");
+            std::cout << "_Sig_obs: " << _Sig_obs << std::endl;
+            // _ei.print_matrix(_Sig_obs, "_Sig_obs");
+
             rki = grad_h.transpose() * _Sig_obs * hinge * _eta / (1.0 + _eta) +   nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
@@ -101,7 +106,42 @@ public:
         
     }
 
+    std::tuple<Matrix3D, Matrix3D, NominalHistory> optimize() override
+    {
+        double err = 1;
+        MatrixXd Ak_prev(_nx * _nx, _nt), ak_prev(_nx, _nt);
+        Ak_prev = _Akt;
+        ak_prev = _akt;
+        int i_step = 1;
+        NominalHistory hnom;
+        std::vector<Matrix3D> hzt, hSigzt;
+
+        std::cout << "optimize" << std::endl;
+
+        std::cout << "err  " << err << std::endl;
+        std::cout << "_max_iter  " << _max_iter << std::endl;
+        std::cout << "_stop_err  " << _stop_err << std::endl;
+        
+        while ((err > _stop_err) && (i_step <= _max_iter))
+        {
+            step(i_step);
+            err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
+            Ak_prev = _Akt;
+            ak_prev = _akt;
+            i_step++;
+
+            hzt.push_back(_zkt);
+            hSigzt.push_back(_Sigkt);
+            // _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
+        }
+
+        hnom = make_tuple(hzt, hSigzt);
+
+        return std::make_tuple(_Kt, _dt, hnom);
+    }
+
     void step(int indx) override{
+        std::cout << "hello" << std::endl;
         // std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_nominal();
