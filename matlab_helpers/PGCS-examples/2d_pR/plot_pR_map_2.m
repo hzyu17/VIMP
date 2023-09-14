@@ -18,12 +18,12 @@ addpath("../../../matlab_helpers/");
 
 % read map
 sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
-sdfmap = csvread("../../../vimp/maps/2dpR/map4/map_multiobs_map4.csv");
-sdfmap = csvread("../../../vimp/maps/2dpR/map5/map_multiobs_map5.csv");
+% sdfmap = csvread("../../../vimp/maps/2dpR/map4/map_multiobs_map4.csv");
+% sdfmap = csvread("../../../vimp/maps/2dpR/map5/map_multiobs_map5.csv");
 
 % NOTE: change the number of experiments
 % 148 for 40 nodes
-num_exp = 148; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
+num_exp = 1; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
 mean_all = zeros(4,50,num_exp);
 cov_all  = zeros(16,50,num_exp);
 for i = 1:num_exp
@@ -34,6 +34,7 @@ for i = 1:num_exp
     prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)];
     prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_80nodes_v1/exp"+num2str(i)];
     prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
+    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/casetest/"];
     % prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_50/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
