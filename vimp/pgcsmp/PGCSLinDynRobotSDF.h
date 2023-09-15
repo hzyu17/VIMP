@@ -215,7 +215,7 @@ public:
             }
         }  
 
-        // _cost_helper.plot_costs();
+        _cost_helper.plot_costs();
 
         hnom = make_tuple(v_zt, v_Sigzt);
         return std::make_tuple(_Kt, _dt, hnom);      

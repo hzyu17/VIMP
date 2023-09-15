@@ -1,44 +1,5 @@
 <Experiment1>
 <parameters>
-    <field_file>/home/hzyu/git/VIMP/vimp/maps/2dpR/map2/field_multiobs_map2.csv</field_file>
-    
-    <start_pos>
-        <x>8.0</x>
-        <y>-5.0</y>
-        <vx>0.0</vx>
-        <vy>2.0</vy>
-    </start_pos>
-
-    <goal_pos>
-        <x>-10.0</x>
-        <y>17.0</y>
-        <vx>-2.0</vx>
-        <vy>0.0</vy>
-    </goal_pos>
-    <sig0> 0.01 </sig0>
-    <sigT> 0.05 </sigT>
-    <saving_prefix>/home/zchen927/Documents/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/casetest/</saving_prefix>
-    <cost_sigma> 1.2e5 </cost_sigma>
-    <!-- sigobs -->
-
-
-<!-- special things, put in Commons for now -->
-    <speed> 0.18 </speed>
-    <state_cost_scale> 10.0 </state_cost_scale>
-    <field_file>/home/zchen927/Documents/VIMP/vimp/maps/2dpR/map2/field_multiobs_map2.csv</field_file>
-<!-- original things in the common -->
-    <nt> 50 </nt>
-    <eta> 1e-6 </eta>
-    <eps_sdf> 0.7 </eps_sdf>
-    <stop_err> 1e-4 </stop_err>
-
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/casetest/</saving_prefix>
-
-</parameters>
-</Experiment1>
-
-<!-- <Experiment1>
-<parameters>
     <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
     <start_pos>
@@ -74,9 +35,9 @@
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case1/</saving_prefix>
 
 </parameters>
-</Experiment1> -->
+</Experiment1>
 
-<!-- <Experiment2>
+<Experiment2>
 <parameters>
     <field_file>/home/hzyu/git/VIMP/vimp/data/vimp/2d_pR/field_multiobs_entropy_map2.csv</field_file>
     
@@ -191,4 +152,4 @@
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/case4/</saving_prefix>
 
 </parameters>
-</Experiment4> -->
+</Experiment4>

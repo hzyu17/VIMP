@@ -310,7 +310,6 @@ public:
         Sk_star = opt_sdf.Sigkt();
 
         std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
-        std::cout<<"saving location: " << saving_prefix << std::endl;
 
         m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
         m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
@@ -326,12 +325,6 @@ public:
 
         m_io.saveData(saving_prefix + std::string{"hAkt_sdf.csv"}, hAkt_star);
         m_io.saveData(saving_prefix + std::string{"hakt_sdf.csv"}, hakt_star);
-
-        Matrix3D Akt_star = opt_sdf.Akt();
-        Matrix3D akt_star = opt_sdf.akt();
-
-        m_io.saveData(saving_prefix + std::string{"Akt_sdf.csv"}, Akt_star);
-        m_io.saveData(saving_prefix + std::string{"akt_sdf.csv"}, akt_star);
 
         opt_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
     }
@@ -447,19 +440,12 @@ public:
         double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
 
-        double sig0 = atof(paramNode->first_node("sig0")->value());
-        double sigT = atof(paramNode->first_node("sigT")->value());
-
         VectorXd m0(this->_nx), mT(this->_nx); 
         m0 << start_x, start_y, start_vx, start_vy;
         mT << goal_x, goal_y, goal_vx, goal_vy;
 
         params.set_m0(m0);
         params.set_mT(mT);
-
-        auto nx = params.nx();
-        params.set_Sig0(sig0*MatrixXd::Identity(nx, nx));
-        params.set_SigT(sigT*MatrixXd::Identity(nx, nx));
 
         if (paramNode->first_node("eta")){
             double eta = atof(paramNode->first_node("eta")->value());
@@ -502,9 +488,6 @@ public:
         double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
         double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
         double goal_vz = atof(paramNode->first_node("goal_pos")->first_node("vz")->value());
-
-        double sig0 = atof(paramNode->first_node("sig0")->value());
-        double sigT = atof(paramNode->first_node("sigT")->value());
         
         VectorXd m0(this->_nx), mT(this->_nx); 
 
@@ -513,10 +496,6 @@ public:
 
         params.set_m0(m0);
         params.set_mT(mT);
-
-        auto nx = params.nx();
-        params.set_Sig0(sig0*MatrixXd::Identity(nx, nx));
-        params.set_SigT(sigT*MatrixXd::Identity(nx, nx));
 
         std::string sdf_file = static_cast<std::string>(paramNode->first_node("sdf_file")->value());
         params.update_sdf_file(sdf_file);

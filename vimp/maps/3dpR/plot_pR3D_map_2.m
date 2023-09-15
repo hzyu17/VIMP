@@ -33,7 +33,7 @@ y0 = 550;
 width = 600;
 height = 550;
 
-for i = 1:1 % 4 experiments
+for i = 1:4 % 4 experiments
     i
     figure(i)
     set(gcf,'position',[x0,y0,width,height])
@@ -43,7 +43,7 @@ for i = 1:1 % 4 experiments
     nexttile
     grid on
     hold on 
-    prefix = ["../../save/3d_pR/"] % case"] %+num2str(i)+"/"];
+    prefix = ["map2/case"+num2str(i)+"/"];
     % % --- high temperature ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);

@@ -8,6 +8,7 @@
  * @copyright Copyright (c) 2023
  * 
  */
+
 #include "ProximalGradientCSNonlinearDyn.h"
 #include "helpers/CostHelper.h"
 #include "helpers/hinge2Dhelper.h"

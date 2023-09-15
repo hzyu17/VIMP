@@ -18,7 +18,7 @@
 </Commons>
 
 <Experiment1>
-    <sdf_file>/home/zchen927/Documents/VIMP/vimp/maps/3dpR/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/vimp/maps/3dpR/pRSDF3D.bin</sdf_file>
     
     <start_pos>
         <x>-10.0</x>
@@ -40,12 +40,12 @@
     
     <sig_obs> 7.5e3 </sig_obs>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/3d_pR/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case1/</saving_prefix>
 
 </Experiment1>
 
 <Experiment2>
-    <sdf_file>/home/zchen927/Documents/VIMP/vimp/maps/3dpR/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/vimp/maps/3dpR/pRSDF3D.bin</sdf_file>
     
     <start_pos>
         <x>-11.0</x>
@@ -67,12 +67,12 @@
     
     <sig_obs> 8e3 </sig_obs>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/3d_pR/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case2/</saving_prefix>
 
 </Experiment2>
 
 <Experiment3>
-    <sdf_file>/home/zchen927/Documents/VIMP/vimp/maps/3dpR/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/vimp/maps/3dpR/pRSDF3D.bin</sdf_file>
     
     <start_pos>
         <x>30.0</x>
@@ -94,12 +94,12 @@
 
     <sig_obs> 7e3 </sig_obs>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/3d_pR/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case3/</saving_prefix>
 
 </Experiment3>
 
 <Experiment4>
-    <sdf_file>/home/zchen927/Documents/VIMP/vimp/maps/3dpR/pRSDF3D.bin</sdf_file>
+    <sdf_file>/home/hzyu/git/VIMP/vimp/maps/3dpR/pRSDF3D.bin</sdf_file>
     
     <start_pos>
         <x>-10.0</x>
@@ -122,6 +122,6 @@
     <!-- <eta> 1e-5 </eta> -->
     <sig_obs> 8e3 </sig_obs>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/3d_pR/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/3d_pR/map2/case4/</saving_prefix>
 
 </Experiment4>

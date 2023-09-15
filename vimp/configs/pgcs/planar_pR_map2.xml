@@ -11,7 +11,7 @@
     <stop_err> 1e-3 </stop_err>
     <max_iter> 50 </max_iter>
     <map_name>2dpr_map2</map_name>
-    <sig_obs> 5.6e3 </sig_obs>  
+    <sig_obs> 5.6e3 </sig_obs>
     <backtracking_ratio> 0.7 </backtracking_ratio>
     <max_n_backtracking> 3 </max_n_backtracking>
 
@@ -36,7 +36,7 @@
     <eta> 1e-4 </eta>
     <sig_obs> 1e3 </sig_obs>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case1/</saving_prefix>
 
 </Experiment1>
 
@@ -59,7 +59,7 @@
     <eta> 1e-4 </eta>
     <sig_obs> 2e3 </sig_obs>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case2/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case2/</saving_prefix>
 
 </Experiment2>
 
@@ -82,7 +82,7 @@
     <eta> 1e-4 </eta>
     <sig_obs> 2e3 </sig_obs>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case3/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case3/</saving_prefix>
 
 </Experiment3>
 
@@ -105,7 +105,7 @@
     <eta> 1e-4 </eta>
     <sig_obs> 1e3 </sig_obs>
 
-    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case4/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_pR/map2/case4/</saving_prefix>
 
 
 </Experiment4>
