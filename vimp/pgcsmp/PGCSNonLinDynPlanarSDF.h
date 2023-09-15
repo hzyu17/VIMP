@@ -132,7 +132,7 @@ public:
     }
 
     void step(int indx) override{
-        std::cout << "hello" << std::endl;
+        // std::cout << "hello" << std::endl;
         // std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_nominal();
