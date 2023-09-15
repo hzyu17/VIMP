@@ -2,13 +2,13 @@
     <start_pos>
         <x>14.9405</x>
         <y>17.8934</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>13</x>
         <y>16</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -21,13 +21,13 @@
     <start_pos>
         <x>18.8058</x>
         <y>13.5449</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>12.6864</x>
         <y>7.2933</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -40,13 +40,13 @@
     <start_pos>
         <x>18.8058</x>
         <y>13.5449</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>14.9405</x>
         <y>17.8934</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -59,13 +59,13 @@
     <start_pos>
         <x>18.8058</x>
         <y>13.5449</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>16.9074</x>
         <y>3.6056</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -78,13 +78,13 @@
     <start_pos>
         <x>18.8058</x>
         <y>13.5449</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>13</x>
         <y>16</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -97,13 +97,13 @@
     <start_pos>
         <x>16.2063</x>
         <y>-6.2905</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>6.8645</x>
         <y>-3.9192</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -116,13 +116,13 @@
     <start_pos>
         <x>16.2063</x>
         <y>-6.2905</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>16.9074</x>
         <y>3.6056</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -135,13 +135,13 @@
     <start_pos>
         <x>14.9405</x>
         <y>17.8934</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>12.6864</x>
         <y>7.2933</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -154,13 +154,13 @@
     <start_pos>
         <x>14.9405</x>
         <y>17.8934</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>18.8058</x>
         <y>13.5449</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -173,13 +173,13 @@
     <start_pos>
         <x>6.8645</x>
         <y>-3.9192</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>16.2063</x>
         <y>-6.2905</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -192,13 +192,13 @@
     <start_pos>
         <x>-6.4862</x>
         <y>-1.6217</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>-6.871</x>
         <y>5.8077</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -211,13 +211,13 @@
     <start_pos>
         <x>16.9074</x>
         <y>3.6056</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>12.6864</x>
         <y>7.2933</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -230,13 +230,13 @@
     <start_pos>
         <x>16.9074</x>
         <y>3.6056</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>18.8058</x>
         <y>13.5449</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -249,13 +249,13 @@
     <start_pos>
         <x>16.9074</x>
         <y>3.6056</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>16.2063</x>
         <y>-6.2905</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -268,13 +268,13 @@
     <start_pos>
         <x>13</x>
         <y>16</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>12.6864</x>
         <y>7.2933</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -287,13 +287,13 @@
     <start_pos>
         <x>13</x>
         <y>16</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>18.8058</x>
         <y>13.5449</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -306,13 +306,13 @@
     <start_pos>
         <x>13</x>
         <y>16</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>14.9405</x>
         <y>17.8934</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -326,7 +326,7 @@
     <eps_sdf> 0.7 </eps_sdf>
     <radius>1.5</radius>
     <total_time>1.5</total_time>
-    <nt>100</nt>
+    <nt>50</nt>
     <sig0>0.01</sig0>
     <sigT>0.05</sigT>
     <eta> 1e-5 </eta>
@@ -337,7 +337,7 @@
     <backtracking_ratio>0.7</backtracking_ratio>
     <max_n_backtracking>3</max_n_backtracking>
 <!-- designed for double 2d_dIntegrator -->
-    <speed> 0.18 </speed>
+    <speed> 0.03 </speed>
     <state_cost_scale> 10.0 </state_cost_scale>
     <field_file>/home/hzyu/git/VIMP/vimp/maps/2dpR/map2/field_multiobs_map2.csv</field_file>
 </Commons>
@@ -345,13 +345,13 @@
     <start_pos>
         <x>6.8645</x>
         <y>-3.9192</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>3.0103</x>
         <y>5.1998</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -364,13 +364,13 @@
     <start_pos>
         <x>12.6864</x>
         <y>7.2933</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>13</x>
         <y>16</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -383,13 +383,13 @@
     <start_pos>
         <x>12.6864</x>
         <y>7.2933</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>16.9074</x>
         <y>3.6056</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -402,13 +402,13 @@
     <start_pos>
         <x>12.6864</x>
         <y>7.2933</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>14.9405</x>
         <y>17.8934</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -421,13 +421,13 @@
     <start_pos>
         <x>12.6864</x>
         <y>7.2933</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>18.8058</x>
         <y>13.5449</y>
-        <vx>0</vx>
+        <vx>0.1</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>

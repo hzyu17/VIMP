@@ -23,9 +23,9 @@ sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 
 % NOTE: change the number of experiments
 % 148 for 40 nodes
-num_exp = 1; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
-mean_all = zeros(4,50,num_exp);
-cov_all  = zeros(16,50,num_exp);
+num_exp = 20; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
+mean_all = zeros(4,50,num_exp); % 50
+cov_all  = zeros(16,50,num_exp); % 50
 for i = 1:num_exp
     % nexttile
     hold on
@@ -35,6 +35,8 @@ for i = 1:num_exp
     prefix = ["../../../vimp/save/BRM_80nodes_v1/exp"+num2str(i)];
     prefix = ["../../../vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
     prefix = ["../2d_dIntegrator/map2/casetest/"];
+    prefix = ["../2d_dIntegrator/map2/casetest/"];
+    prefix = ["/home/hzyu/git/VIMP/vimp/save/BRM_10nodes_v1_test/exp"+num2str(i)];
     % prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_50/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
