@@ -20,12 +20,13 @@ addpath("../../../matlab_helpers/");
 sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 % sdfmap = csvread("../../../vimp/maps/2dpR/map4/map_multiobs_map4.csv");
 % sdfmap = csvread("../../../vimp/maps/2dpR/map5/map_multiobs_map5.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map6/map_multiobs_map6.csv");
 
 % NOTE: change the number of experiments
 % 148 for 40 nodes
-num_exp = 1; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
-mean_all = zeros(4,50,num_exp);
-cov_all  = zeros(16,50,num_exp);
+num_exp = 500; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
+mean_all = zeros(4,40,num_exp); %50 originallay
+cov_all  = zeros(16,40,num_exp);
 for i = 1:num_exp
     % nexttile
     hold on
@@ -35,6 +36,7 @@ for i = 1:num_exp
     prefix = ["../../../vimp/save/BRM_80nodes_v1/exp"+num2str(i)];
     prefix = ["../../../vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
     prefix = ["../2d_dIntegrator/map2/casetest/"];
+    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_map6_100nodes_v1/exp"+num2str(i)];
     % prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_50/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
@@ -58,10 +60,14 @@ args = {'LineStyle', '-', ...
         'LineWidth',0.7, ...
         'Color', plotColors.lightBlue};
 hold on
+
+plotpath = true;
+if plotpath == true
 % plot path
 for i = 1:num_exp
-    plot_2d_result(sdfmap, mean_all(:,:,i), cov_all(:,:,i), 3, args);
+    plot_2d_result(sdfmap, mean_all(:,:,i), cov_all(:,:,i), 15, args);
     % axis off ;
+end
 end
 
 plotColors.lightBlue = [0.301 0.745 0.933 0.8];  % transparent 1
@@ -78,6 +84,7 @@ end
 xlim([-20 20]); ylim([-10, 20]); % demo map2
 % xlim([-20, 70]); ylim([-10, 62]); % map 4
 xlim([-20,26.4]); ylim([-10,30]);
+xlim([-20,31]); ylim([-10,35]);
 
 %% save files
 % saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes_v1_50iters.png')
