@@ -1,0 +1,38 @@
+# CMake generated Testfile for 
+# Source directory: /home/hzyu/git/gtsam/gtsam/linear/tests
+# Build directory: /home/hzyu/git/gtsam/build/gtsam/linear/tests
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(testErrors "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testErrors")
+set_tests_properties(testErrors PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testGaussianBayesNet "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testGaussianBayesNet")
+set_tests_properties(testGaussianBayesNet PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testGaussianBayesTree "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testGaussianBayesTree")
+set_tests_properties(testGaussianBayesTree PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testGaussianConditional "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testGaussianConditional")
+set_tests_properties(testGaussianConditional PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testGaussianDensity "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testGaussianDensity")
+set_tests_properties(testGaussianDensity PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testGaussianFactorGraph "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testGaussianFactorGraph")
+set_tests_properties(testGaussianFactorGraph PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testHessianFactor "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testHessianFactor")
+set_tests_properties(testHessianFactor PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testJacobianFactor "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testJacobianFactor")
+set_tests_properties(testJacobianFactor PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testKalmanFilter "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testKalmanFilter")
+set_tests_properties(testKalmanFilter PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testNoiseModel "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testNoiseModel")
+set_tests_properties(testNoiseModel PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testRegularHessianFactor "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testRegularHessianFactor")
+set_tests_properties(testRegularHessianFactor PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testRegularJacobianFactor "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testRegularJacobianFactor")
+set_tests_properties(testRegularJacobianFactor PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testSampler "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testSampler")
+set_tests_properties(testSampler PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testScatter "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testScatter")
+set_tests_properties(testScatter PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testSerializationLinear "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testSerializationLinear")
+set_tests_properties(testSerializationLinear PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
+add_test(testVectorValues "/home/hzyu/git/gtsam/build/gtsam/linear/tests/testVectorValues")
+set_tests_properties(testVectorValues PROPERTIES  _BACKTRACE_TRIPLES "/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;165;add_test;/home/hzyu/git/gtsam/cmake/GtsamTesting.cmake;30;gtsamAddTestsGlob_impl;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;1;gtsamAddTestsGlob;/home/hzyu/git/gtsam/gtsam/linear/tests/CMakeLists.txt;0;")
