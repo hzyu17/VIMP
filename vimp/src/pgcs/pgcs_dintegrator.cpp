@@ -123,6 +123,10 @@ int main(int argc, char* argv[]){
         zk_star = pgcs_sdf.zkt();
         Sk_star = pgcs_sdf.Sigkt();
 
+        MatrixXd Ak_star(4*4, nt), ak_star(4, nt), Bk_star(4*2, nt);
+        Ak_star = pgcs_sdf.Akt();
+        ak_star = pgcs_sdf.akt();
+
         std::string saving_prefix = static_cast<std::string>(ExpNode->first_node("saving_prefix")->value());
 
         m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
@@ -130,6 +134,9 @@ int main(int argc, char* argv[]){
 
         m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
         m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+
+        m_io.saveData(saving_prefix + std::string{"Akt_sdf.csv"}, Ak_star);
+        m_io.saveData(saving_prefix + std::string{"akt_sdf.csv"}, ak_star);
     }
 
     return 0;
