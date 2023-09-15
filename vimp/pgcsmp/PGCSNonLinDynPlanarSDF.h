@@ -93,9 +93,6 @@ public:
             // Qki
             Qki = temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
-            _ei.print_matrix(grad_h, "grad_h");
-            std::cout << "_Sig_obs: " << _Sig_obs << std::endl;
-            // _ei.print_matrix(_Sig_obs, "_Sig_obs");
 
             rki = grad_h.transpose() * _Sig_obs * hinge * _eta / (1.0 + _eta) +   nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
@@ -115,12 +112,6 @@ public:
         int i_step = 1;
         NominalHistory hnom;
         std::vector<Matrix3D> hzt, hSigzt;
-
-        std::cout << "optimize" << std::endl;
-
-        std::cout << "err  " << err << std::endl;
-        std::cout << "_max_iter  " << _max_iter << std::endl;
-        std::cout << "_stop_err  " << _stop_err << std::endl;
         
         while ((err > _stop_err) && (i_step <= _max_iter))
         {
@@ -141,7 +132,7 @@ public:
     }
 
     void step(int indx) override{
-        std::cout << "hello" << std::endl;
+        // std::cout << "hello" << std::endl;
         // std::cout << "----- iter " << indx << " -----" << std::endl;
         // propagate the mean and the covariance
         propagate_nominal();

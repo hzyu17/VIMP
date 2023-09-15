@@ -1,5 +1,9 @@
 <Experiment1>
 <parameters>
+<<<<<<< HEAD
+=======
+    <field_file>/home/hzyu/git/VIMP/vimp/maps/2dpR/map2/field_multiobs_map2.csv</field_file>
+>>>>>>> e3dd27a74b4d6022f29c831ecde75e1c4f000e38
     
     <start_pos>
         <x>8.0</x>
@@ -31,6 +35,11 @@
     <eps_sdf> 0.7 </eps_sdf>
     <stop_err> 1e-4 </stop_err>
 
+<<<<<<< HEAD
+=======
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/casetest/</saving_prefix>
+
+>>>>>>> e3dd27a74b4d6022f29c831ecde75e1c4f000e38
 </parameters>
 </Experiment1>
 
