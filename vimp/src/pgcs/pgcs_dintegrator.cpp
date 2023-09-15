@@ -92,28 +92,11 @@ int main(int argc, char* argv[]){
         double sig0 = atof(ExpNode->first_node("sig0")->value());
         double sigT = atof(ExpNode->first_node("sigT")->value());
 
-        cout << "eta " << eta << endl;
-        cout << "stop_err " << stop_err << endl;
-        cout << "eps_sdf " << eps_sdf << endl;
-        cout << "speed " << speed << endl;
-        cout << "nt " << nt << endl;
-
-        cout << "sig_obs " << nt << endl;
-        cout << "sig " << nt << endl;
-
-        cout << "sig0 " << sig0 << endl;
-        cout << "sigT " << sigT << endl;
-
         m0 << start_x, start_y, start_vx, start_vy;
         Sig0 = sig0 * Eigen::MatrixXd::Identity(nx, nx);
 
-        EigenWrapper ei;
-        ei.print_matrix(m0, "m0");
-
         mT << goal_x, goal_y, goal_vx, goal_vy;
         SigT = sigT * Eigen::Matrix4d::Identity(nx, nx);
-
-        ei.print_matrix(mT, "mT");
 
         MatrixXd A0(nx, nx), B(nx, nu), a0(nx, 1);
         std::shared_ptr<DoubleIntegrator> pdyn{new DoubleIntegrator(nx, nu, nt)};
@@ -131,9 +114,6 @@ int main(int argc, char* argv[]){
         
         // res_Kd = pgcs_sdf.backtrack();
         res_Kd = pgcs_sdf.optimize();
-         std::cout << "speed " << speed << std::endl <<
-        "nt " << nt << std::endl << 
-        "sig " << sig << std::endl;
 
         MatrixXd Kt(4*4, nt), dt(4, nt);
         Kt = std::get<0>(res_Kd);
