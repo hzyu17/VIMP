@@ -3061,13 +3061,13 @@
     <start_pos>
         <x>-6</x>
         <y>3</y>
-        <vx>0.01</vx>
+        <vx>0.0</vx>
         <vy>0</vy>
     </start_pos>
     <goal_pos>
         <x>-8.5787</x>
         <y>1.508</y>
-        <vx>0.01</vx>
+        <vx>0.0</vx>
         <vy>0</vy>
     </goal_pos>
     <eta>0.0001</eta>
@@ -3680,7 +3680,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.0013943</sig0>
+    <sig0>0.13943</sig0>
     <sigT>0.27886</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp414</saving_prefix>
 </Experiment414>
@@ -3699,7 +3699,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.0013943</sig0>
+    <sig0>0.13943</sig0>
     <sigT>0.044618</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp413</saving_prefix>
 </Experiment413>
@@ -3718,7 +3718,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.0013943</sig0>
+    <sig0>0.13943</sig0>
     <sigT>0.059259</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp412</saving_prefix>
 </Experiment412>
@@ -3737,7 +3737,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.0013943</sig0>
+    <sig0>0.13943</sig0>
     <sigT>0.27886</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp411</saving_prefix>
 </Experiment411>
@@ -3756,7 +3756,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.0013943</sig0>
+    <sig0>0.13943</sig0>
     <sigT>0.27886</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp410</saving_prefix>
 </Experiment410>
@@ -3775,7 +3775,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.0013943</sig0>
+    <sig0>0.13943</sig0>
     <sigT>0.2691</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp409</saving_prefix>
 </Experiment409>
@@ -3794,7 +3794,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.0013943</sig0>
+    <sig0>0.13943</sig0>
     <sigT>0.12409</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp408</saving_prefix>
 </Experiment408>
@@ -3965,7 +3965,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.0013943</sig0>
+    <sig0>0.13943</sig0>
     <sigT>0.10109</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp415</saving_prefix>
 </Experiment415>
@@ -9426,7 +9426,7 @@
     <eps>0.01</eps>
     <eps_sdf>0.6</eps_sdf>
     <radius>1.5</radius>
-    <total_time>0.5</total_time>
+    <total_time>0.8</total_time>
     <nt>40</nt>
     <sig0>0.01</sig0>
     <sigT>0.05</sigT>
