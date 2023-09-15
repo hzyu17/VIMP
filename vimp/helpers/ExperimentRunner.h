@@ -327,6 +327,12 @@ public:
         m_io.saveData(saving_prefix + std::string{"hAkt_sdf.csv"}, hAkt_star);
         m_io.saveData(saving_prefix + std::string{"hakt_sdf.csv"}, hakt_star);
 
+        Matrix3D Akt_star = opt_sdf.Akt();
+        Matrix3D akt_star = opt_sdf.akt();
+
+        m_io.saveData(saving_prefix + std::string{"Akt_sdf.csv"}, Akt_star);
+        m_io.saveData(saving_prefix + std::string{"akt_sdf.csv"}, akt_star);
+
         opt_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
     }
 
