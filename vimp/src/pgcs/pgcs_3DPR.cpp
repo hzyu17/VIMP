@@ -15,36 +15,21 @@
 
 #include "pgcsmp/PGCSLinDynPRModelSDF.h"
 #include "helpers/ExperimentRunner.h"
-#include <chrono>
 
 using namespace Eigen;
 using namespace vimp;
 
 int main(int argc, char* argv[]){
-    int nx=6, nu=3; // TODO: double check nu
-    int num_exp = 4;
-    std::string file_name = "pR3D_map2";
-    
-    // arguments: num_exp, file_name
-    if (argc == 3){
-        num_exp = std::stoi(argv[1]);
-        file_name = static_cast<std::string>(argv[2]);
-    }
-    
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    std::string config_file{source_root+"/configs/pgcs/" + file_name + ".xml"};
-    std::cout<<"config file loaded from: "<<config_file<<std::endl;
+    std::string config_file{source_root+"/configs/pgcs/pR3D_map2.xml"};
+    
+    int num_exp = 4;
 
     PGCSRunner3D<PGCSLinDynPRModelSDF> runner(num_exp, config_file);
 
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
     // no experiment argument, run the default scripts
-    if (argc == 1 || argc == 3){
-        std::cout << "run " << std::endl;
+    if (argc == 1){
         runner.run();
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Run Time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()/1e6 << "s" << std::endl;
         return 0;
     }
     // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)

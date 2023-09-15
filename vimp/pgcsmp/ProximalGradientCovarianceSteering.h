@@ -101,7 +101,7 @@ namespace vimp{
                          const MatrixXd &Sig0,
                          const VectorXd &zT,
                          const MatrixXd &SigT,
-                         double stop_err=1e-4,
+                         double stop_err,
                          int max_iteration = 30) : 
                          _ei(),
                         _nx(A0.rows()),
@@ -152,34 +152,32 @@ namespace vimp{
          * sovling a linear CS, and push forward the mean and covariances.
          * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
          */
-        virtual std::tuple<Matrix3D, Matrix3D, NominalHistory> optimize(){}
-        // virtual std::tuple<Matrix3D, Matrix3D, NominalHistory> optimize()
-        // {
-        //     double err = 1;
-        //     MatrixXd Ak_prev(_nx * _nx, _nt), ak_prev(_nx, _nt);
-        //     Ak_prev = _Akt;
-        //     ak_prev = _akt;
-        //     int i_step = 1;
-        //     NominalHistory hnom;
-        //     std::vector<Matrix3D> hzt, hSigzt;
-            
-        //     while ((err > _stop_err) && (i_step <= _max_iter))
-        //     {
-        //         this->step(i_step);
-        //         err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
-        //         Ak_prev = _Akt;
-        //         ak_prev = _akt;
-        //         i_step++;
+        virtual std::tuple<Matrix3D, Matrix3D, NominalHistory> optimize()
+        {
+            double err = 1;
+            MatrixXd Ak_prev(_nx * _nx, _nt), ak_prev(_nx, _nt);
+            Ak_prev = _Akt;
+            ak_prev = _akt;
+            int i_step = 1;
+            NominalHistory hnom;
+            std::vector<Matrix3D> hzt, hSigzt;
+            while ((err > _stop_err) && (i_step <= _max_iter))
+            {
+                step(i_step);
+                err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
+                Ak_prev = _Akt;
+                ak_prev = _akt;
+                i_step++;
 
-        //         hzt.push_back(_zkt);
-        //         hSigzt.push_back(_Sigkt);
-        //         // _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
-        //     }
+                hzt.push_back(_zkt);
+                hSigzt.push_back(_Sigkt);
+                // _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
+            }
 
-        //     hnom = make_tuple(hzt, hSigzt);
+            hnom = make_tuple(hzt, hSigzt);
 
-        //     return std::make_tuple(_Kt, _dt, hnom);
-        // }
+            return std::make_tuple(_Kt, _dt, hnom);
+        }
 
         /**
          * @brief Backtracking to select step sizes in optimization.
@@ -210,7 +208,7 @@ namespace vimp{
             _zkt = std::get<4>(res); _Sigkt = std::get<5>(res);
         }
 
-        virtual void step(int indx) {};
+        virtual void step(int indx) = 0;
 
         /**
          * @brief Qrk with given matrices.

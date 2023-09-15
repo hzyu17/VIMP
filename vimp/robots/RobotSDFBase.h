@@ -72,18 +72,6 @@ public:
                     _field_file = source_root+"/maps/2dpR/map2/field_multiobs_map2.csv";
 
                 }
-                else if(strcmp(map_name.data(), "2dpr_map4") == 0){
-                    _field_file = source_root+"/maps/2dpR/map4/field_multiobs_map4.csv";
-
-                }
-                else if(strcmp(map_name.data(), "2dpr_map5") == 0){
-                    _field_file = source_root+"/maps/2dpR/map5/field_multiobs_map5.csv";
-
-                }
-                else if(strcmp(map_name.data(), "2dpr_map6") == 0){
-                    _field_file = source_root+"/maps/2dpR/map6/field_multiobs_map6.csv";
-
-                }
                 else if(strcmp(map_name.data(), "2dpr_map3") == 0){
                     _field_file = source_root+"/maps/2dpR/map3/field_multiobs_map3.csv";
                 }
