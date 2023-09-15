@@ -40,6 +40,7 @@ public:
     void save_costs(const string& filename){
         int cost_size = _control_energy_costs.size();
         MatrixXd total_costs(3, cost_size);
+        total_costs.setZero();
         for (int i=0; i<cost_size; i++){
             total_costs(0, i) = _control_energy_costs[i];
             total_costs(1, i) = _collision_costs[i];
