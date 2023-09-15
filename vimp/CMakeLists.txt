@@ -19,31 +19,16 @@ find_package(Boost COMPONENTS serialization REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
-# Find GTSAM components
-# find_package(GTSAM REQUIRED) # Uses installed package
-# include_directories(${GTSAM_INCLUDE_DIR})
-# set(GTSAM_LIBRARIES gtsam)   # TODO: automatic search libs
-
-# find_package(GTSAMCMakeTools)
-# include(GtsamMakeConfigFile)
-# include(GtsamBuildTypes)
-
-# for unittest scripts
-# set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
-
-# GPMP2 
+# Eigen
 find_package( Eigen3 3.4.0 REQUIRED)
 
 set(GPMP2_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/gpmp2")
 set(GTSAM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/gtsam")
-# set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/boost")
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include")
-# include_directories("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/boost/include")
 
 set(GPMP2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/gpmp2/gpmp2/libgpmp2.so")
 set(GTSAM_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/gtsam/gtsam/libgtsam.so.4.0.0")
-# set(BOOST_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/boost/lib/libboost   .so.4.0.0")
 
  
 # matplotcpp
@@ -86,10 +71,7 @@ foreach(subdir ${vimp_subdirs})
 
 endforeach(subdir)
 
-# include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
-# include_directories(${gpmp2_INCLUDE_DIRS})
-# include_directories(${gtsam_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}")
 
