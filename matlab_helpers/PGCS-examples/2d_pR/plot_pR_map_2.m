@@ -19,13 +19,14 @@ addpath("../../../matlab_helpers/");
 % read map
 sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 % sdfmap = csvread("../../../vimp/maps/2dpR/map4/map_multiobs_map4.csv");
-% sdfmap = csvread("../../../vimp/maps/2dpR/map5/map_multiobs_map5.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map5/map_multiobs_map5.csv");
 
 % NOTE: change the number of experiments
 % 148 for 40 nodes
-num_exp = 20; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
+num_exp = 148; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
 mean_all = zeros(4,50,num_exp); % 50
 cov_all  = zeros(16,50,num_exp); % 50
+cov_est_all = zeros(16,50,num_exp); % 50
 for i = 1:num_exp
     % nexttile
     hold on
@@ -37,12 +38,15 @@ for i = 1:num_exp
     prefix = ["../2d_dIntegrator/map2/casetest/"];
     prefix = ["../2d_dIntegrator/map2/casetest/"];
     prefix = ["/home/hzyu/git/VIMP/vimp/save/BRM_10nodes_v1_test/exp"+num2str(i)];
+    prefix = ["/home/hzyu/git/VIMP/vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
     % prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_50/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
     disp([prefix + "zk_sdf.csv"])
     mean_all(:,:,i) = csvread([prefix + "zk_sdf.csv"]);
     cov_all(:,:,i) = csvread([prefix + "Sk_sdf.csv"]);
+    cov_est_all(:,:,i) = csvread([prefix + "est_cov_sdf.csv"]);
+    
 end
 
 %%  Plotting
@@ -62,7 +66,9 @@ args = {'LineStyle', '-', ...
 hold on
 % plot path
 for i = 1:num_exp
-    plot_2d_result(sdfmap, mean_all(:,:,i), cov_all(:,:,i), 3, args);
+    plot_2d_result(sdfmap, mean_all(:,:,i), cov_all(:,:,i), 10, args);
+    cov_est_all(:,:,i)
+    plot_2d_result(sdfmap, mean_all(:,:,i), cov_est_all(:,:,i), 10, args);
     % axis off ;
 end
 
@@ -72,7 +78,7 @@ args = {'LineStyle', '-', ...
         'Color', plotColors.lightBlue};
 % hightlight the sampled points
 for i=1:num_exp
-    plot_2d_result(sdfmap, mean_all(:,1,i), cov_all(:,1,i), 3, args);
+    plot_2d_result(sdfmap, mean_all(:,1,i), cov_all(:,1,i), 10, args);
     plot(mean_all(1,1,i), mean_all(2,1,i), '.', 'MarkerSize', 6, 'Color', 'k'); %25 orignally
     axis off;
 end
