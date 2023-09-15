@@ -84924,6 +84924,11 @@
     <sig_obs>20000</sig_obs>
     <backtracking_ratio>0.7</backtracking_ratio>
     <max_n_backtracking>3</max_n_backtracking>
+
+    <speed> 0.02 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+    <field_file>/home/zchen927/Documents/VIMP/vimp/maps/2dpR/map6/field_multiobs_map6.csv</field_file>
+
 </Commons>
 <Experiment1493>
     <start_pos>
