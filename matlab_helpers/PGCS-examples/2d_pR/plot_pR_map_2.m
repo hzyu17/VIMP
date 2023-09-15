@@ -19,6 +19,7 @@ addpath("../../../matlab_helpers/");
 % read map
 sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 % sdfmap = csvread("../../../vimp/maps/2dpR/map4/map_multiobs_map4.csv");
+
 sdfmap = csvread("../../../vimp/maps/2dpR/map5/map_multiobs_map5.csv");
 
 % NOTE: change the number of experiments
@@ -27,6 +28,7 @@ num_exp = 148; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
 mean_all = zeros(4,50,num_exp); % 50
 cov_all  = zeros(16,50,num_exp); % 50
 cov_est_all = zeros(16,50,num_exp); % 50
+
 for i = 1:num_exp
     % nexttile
     hold on
@@ -36,9 +38,11 @@ for i = 1:num_exp
     prefix = ["../../../vimp/save/BRM_80nodes_v1/exp"+num2str(i)];
     prefix = ["../../../vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
     prefix = ["../2d_dIntegrator/map2/casetest/"];
+
     prefix = ["../2d_dIntegrator/map2/casetest/"];
     prefix = ["/home/hzyu/git/VIMP/vimp/save/BRM_10nodes_v1_test/exp"+num2str(i)];
     prefix = ["/home/hzyu/git/VIMP/vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
+
     % prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_50/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
@@ -53,7 +57,7 @@ end
 % figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
-plotColors.lightBlue = [0.301 0.745 0.933 0.4]; % transparent 0.6
+plotColors.lightBlue = [0.301 0.745 0.933 0.0]; % transparent 0.6
 plotColors.blue = [0.15 0.25 0.8];
 plotColors.green = [0.85 0.325 0.098];
 plotColors.red = [0.9, 0 ,0];
@@ -64,12 +68,16 @@ args = {'LineStyle', '-', ...
         'LineWidth',0.7, ...
         'Color', plotColors.lightBlue};
 hold on
+
+plotpath = true;
+if plotpath == true
 % plot path
 for i = 1:num_exp
     plot_2d_result(sdfmap, mean_all(:,:,i), cov_all(:,:,i), 10, args);
     cov_est_all(:,:,i)
     plot_2d_result(sdfmap, mean_all(:,:,i), cov_est_all(:,:,i), 10, args);
     % axis off ;
+end
 end
 
 plotColors.lightBlue = [0.301 0.745 0.933 0.8];  % transparent 1
@@ -86,6 +94,7 @@ end
 xlim([-20 20]); ylim([-10, 20]); % demo map2
 % xlim([-20, 70]); ylim([-10, 62]); % map 4
 xlim([-20,26.4]); ylim([-10,30]);
+xlim([-20,31]); ylim([-10,35]);
 
 %% save files
 % saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes_v1_50iters.png')

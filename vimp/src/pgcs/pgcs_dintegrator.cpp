@@ -43,9 +43,6 @@ int main(int argc, char* argv[]){
 
     /// reading XML configs
     rapidxml::file<> xmlFile(config_file.data()); // Default template is char
-
-//     rapidxml::file<> xmlFile("/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_dintegrator_map2.xml"); // Default template is char
-// >>>>>>> BRM
     // rapidxml::file<> xmlFile("/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_dintegrator_map1.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
@@ -56,6 +53,7 @@ int main(int argc, char* argv[]){
     double eta = atof(CommonNode->first_node("eta")->value());
     double stop_err = atof(CommonNode->first_node("stop_err")->value());
     double eps_sdf = atof(CommonNode->first_node("eps_sdf")->value());
+    int max_iter = atoi(CommonNode->first_node("max_iter")->value());
     // TODO: Need to add in the Commons in xml file
     double speed = atof(CommonNode->first_node("speed")->value());
     std::string field_file = static_cast<std::string>(CommonNode->first_node("field_file")->value());
@@ -105,6 +103,7 @@ int main(int argc, char* argv[]){
         B   = std::get<1>(linearized_0);
         a0  = std::get<2>(linearized_0);
 
+
         PGCSNonLinDynPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, stop_err);
         
         std::tuple<MatrixXd, MatrixXd, NominalHistory> res_Kd;
@@ -132,11 +131,15 @@ int main(int argc, char* argv[]){
         m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
         m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
 
+        // m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
+        // m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
         m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
-        m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+
+        pgcs_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
 
         m_io.saveData(saving_prefix + std::string{"Akt_sdf.csv"}, Ak_star);
         m_io.saveData(saving_prefix + std::string{"akt_sdf.csv"}, ak_star);
+
     }
 
     return 0;

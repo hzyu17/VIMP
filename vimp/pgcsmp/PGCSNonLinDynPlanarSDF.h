@@ -10,8 +10,9 @@
  */
 
 #include "ProximalGradientCSNonlinearDyn.h"
-#include "../helpers/hinge2Dhelper.h"
-#include "../helpers/ExperimentParams.h"
+#include "helpers/hinge2Dhelper.h"
+#include "helpers/ExperimentParams.h"
+#include "helpers/CostHelper.h"
 
 using namespace Eigen;
 
@@ -45,10 +46,11 @@ public:
                     const gpmp2::PlanarSDF& sdf,
                     double sig_obs,
                     double stop_err=1e-4,
-                    int max_iter=20): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, stop_err, max_iter),
+                    int max_iter=50): ProxGradCovSteerNLDyn(A0, a0, B, sig, nt, eta, eps, z0, Sig0, zT, SigT, pdyn, stop_err, max_iter),
                                         _eps_sdf(eps_sdf),
                                         _sdf(sdf),
-                                        _Sig_obs(sig_obs){}
+                                        _Sig_obs(sig_obs),
+                                        _cost_helper(max_iter){}
 
 
     void update_Qrk() override{
@@ -94,7 +96,8 @@ public:
             Qki = temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
 
-            rki = grad_h.transpose() * _Sig_obs * hinge * _eta / (1.0 + _eta) +   nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            rki = grad_h * _Sig_obs * hinge * _eta / (1.0 + _eta);
+            rki += nTri * _eta / (1+_eta) / 2 +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
 
             // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
@@ -112,17 +115,32 @@ public:
         int i_step = 1;
         NominalHistory hnom;
         std::vector<Matrix3D> hzt, hSigzt;
-        
-        while ((err > _stop_err) && (i_step <= _max_iter))
+
+        double total_cost_prev = 1e6;
+        double total_cost = 1e9;
+
+        std::cout << "_max_iter " << _max_iter << std::endl;
+        while (((err<0) || (err>_stop_err)) && (i_step < _max_iter))
         {
             step(i_step);
             err = (Ak_prev - _Akt).norm() / _Akt.norm() / _nt + (ak_prev - _akt).norm() / _akt.norm() / _nt;
             Ak_prev = _Akt;
             ak_prev = _akt;
+
             i_step++;
 
             hzt.push_back(_zkt);
             hSigzt.push_back(_Sigkt);
+
+            double total_hingeloss = hingeloss();
+            double Eu = control_energy();
+            total_cost = total_hingeloss + Eu;
+
+            _cost_helper.add_cost(i_step, total_hingeloss, Eu);
+
+            err = total_cost_prev - total_cost;
+            total_cost_prev = total_cost;
+
             // _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
         }
 
@@ -173,10 +191,61 @@ public:
         }
     }
 
+    double control_energy(const Matrix3D& zt, const Matrix3D& Sigt, const Matrix3D& Kt, const Matrix3D& dt){
+        double total_Eu = 0;
+        MatrixXd zi(_nx, 1), Ki(_nu, _nx), di(_nu, 1);
+
+        for (int i=0; i<_nt; i++){
+            zi = _ei.decomp3d(zt, _nx, 1, i);
+            Ki = _ei.decomp3d(Kt, _nu, _nx, i);
+            di = _ei.decomp3d(dt, _nu, 1, i);
+
+            VectorXd u_i(_nu, 1);
+            u_i = Ki * zi + di;
+
+            double E_ui = u_i.dot(u_i) * _deltt;
+
+            total_Eu += E_ui;
+        }
+        // std::cout << "total_Eu " << total_Eu << std::endl;
+        return total_Eu;
+    }
+
+    double control_energy(){
+        return control_energy(_zkt, _Sigkt, _Kt, _dt);
+    }
+
+    double hingeloss(){
+        return hingeloss(_zkt, _Sigkt);
+    }
+
+    double hingeloss(const Matrix3D& zt, const Matrix3D& Sigt){
+        double hingeloss = 0;
+        std::pair<double, VectorXd> hingeloss_gradient;
+        MatrixXd zi(_nx, 1);
+        for (int i=0; i<_nt; i++){
+            zi = _ei.decomp3d(zt, _nx, 1, i);
+
+            MatrixXd J_hxy(1, _nx/2);
+
+            hingeloss_gradient = hingeloss_gradient_point(zi(0), zi(1), _sdf, _eps_sdf, J_hxy);
+            double hinge = std::get<0>(hingeloss_gradient);
+
+            hingeloss += hinge * _Sig_obs * hinge;
+        }
+        return hingeloss;
+    }
+
+    void save_costs(const string& filename){
+        _cost_helper.save_costs(filename);
+    }
+    
+
 protected:
     gpmp2::PlanarSDF _sdf;
     double _eps_sdf;
     double _Sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.
+    CostHelper _cost_helper;
 };
 }
