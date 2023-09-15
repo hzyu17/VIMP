@@ -129,8 +129,10 @@ int main(int argc, char* argv[]){
         m_io.saveData(saving_prefix + std::string{"zk_sdf.csv"}, zk_star);
         m_io.saveData(saving_prefix + std::string{"Sk_sdf.csv"}, Sk_star);
 
+        // m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
+        // m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
         m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
-        m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
+
     }
 
     return 0;
