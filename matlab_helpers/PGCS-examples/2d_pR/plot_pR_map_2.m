@@ -24,7 +24,7 @@ sdfmap = csvread("../../../vimp/maps/2dpR/map6/map_multiobs_map6.csv");
 
 % NOTE: change the number of experiments
 % 148 for 40 nodes
-num_exp = 10; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
+num_exp = 1; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
 mean_all = zeros(4,50,num_exp); %50 originallay
 cov_all  = zeros(16,50,num_exp);
 for i = 1:num_exp
@@ -38,6 +38,9 @@ for i = 1:num_exp
     prefix = ["../2d_dIntegrator/map2/casetest/"];
     prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_map6_100nodes_v1_0915/exp"+num2str(i)];
     prefix = ["/home/czy/Documents/BRM_map6_1000nodes_v1/exp"+num2str(i)];
+
+
+    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_300nodes_v2/exp"+num2str(i)];
     % prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_50/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
@@ -50,7 +53,7 @@ end
 % figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
-plotColors.lightBlue = [0.301 0.745 0.933 0.4]; % transparent 0.6
+plotColors.lightBlue = [0.301 0.745 0.933 0.0]; % transparent 0.6
 plotColors.blue = [0.15 0.25 0.8];
 plotColors.green = [0.85 0.325 0.098];
 plotColors.red = [0.9, 0 ,0];
@@ -62,7 +65,7 @@ args = {'LineStyle', '-', ...
         'Color', plotColors.lightBlue};
 hold on
 
-plotpath = false;
+plotpath = true;
 if plotpath == true
 % plot path
 for i = 1:num_exp
@@ -77,7 +80,7 @@ args = {'LineStyle', '-', ...
         'Color', plotColors.lightBlue};
 % hightlight the sampled points
 for i=1:num_exp
-    plot_2d_result(sdfmap, mean_all(:,1,i), cov_all(:,1,i), 3, args);
+    % plot_2d_result(sdfmap, mean_all(:,1,i), cov_all(:,1,i), 3, args);
     % plot(mean_all(1,1,i), mean_all(2,1,i), '.', 'MarkerSize', 6, 'Color', 'k'); %25 orignally
     axis off;
 end
