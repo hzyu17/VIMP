@@ -31,10 +31,10 @@ for i = 1:num_exp
     hold on
     % prefix = ["map2/case"+num2str(i)+"/"]
     % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
-    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_test/exp"+num2str(i)];
-    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_80nodes_v1/exp"+num2str(i)];
-    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
-    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/matlab_helpers/PGCS-examples/2d_dIntegrator/map2/casetest/"];
+    prefix = ["../../../vimp/save/BRM_test/exp"+num2str(i)];
+    prefix = ["../../../vimp/save/BRM_80nodes_v1/exp"+num2str(i)];
+    prefix = ["../../../vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
+    prefix = ["../2d_dIntegrator/map2/casetest/"];
     % prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_50/exp"+num2str(i)];
     % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
     % % --- read means and covariances ---
