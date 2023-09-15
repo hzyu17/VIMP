@@ -43,9 +43,6 @@ int main(int argc, char* argv[]){
 
     /// reading XML configs
     rapidxml::file<> xmlFile(config_file.data()); // Default template is char
-
-//     rapidxml::file<> xmlFile("/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_dintegrator_map2.xml"); // Default template is char
-// >>>>>>> BRM
     // rapidxml::file<> xmlFile("/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_dintegrator_map1.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());
@@ -60,6 +57,14 @@ int main(int argc, char* argv[]){
     // TODO: Need to add in the Commons in xml file
     double speed = atof(CommonNode->first_node("speed")->value());
     std::string field_file = static_cast<std::string>(CommonNode->first_node("field_file")->value());
+
+    using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
+
+    // construct sdf
+    MatrixXd field = m_io.load_csv(field_file);
+    gtsam::Point2 origin(-20, -10);
+    double cell_size = 0.1;
+    gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);
     
     // loop for 4 cases
     for (int i=1; i<= num_exp; i++){
@@ -69,12 +74,6 @@ int main(int argc, char* argv[]){
         
         double sig_obs = atof(ExpNode->first_node("sig_obs")->value());
         double sig = speed * nt;
-
-        // construct sdf
-        MatrixXd field = m_io.load_csv(field_file);
-        gtsam::Point2 origin(-20, -10);
-        double cell_size = 0.1;
-        gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);
 
         // proximal gradient parameters
         double eps=0.01;
@@ -104,26 +103,28 @@ int main(int argc, char* argv[]){
         B   = std::get<1>(linearized_0);
         a0  = std::get<2>(linearized_0);
 
-        PGCSNonLinDynPlanarSDF* p_pgcs_sdf = new PGCSNonLinDynPlanarSDF(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, stop_err, max_iter);
-        using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
+
+        PGCSNonLinDynPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, stop_err);
+        
         std::tuple<MatrixXd, MatrixXd, NominalHistory> res_Kd;
 
         // double stop_err = 1e-4;
         // res_Kd = pgcs_sdf.optimize(stop_err);
         
         // res_Kd = pgcs_sdf.backtrack();
-        res_Kd = p_pgcs_sdf->optimize();
-         std::cout << "speed " << speed << std::endl <<
-        "nt " << nt << std::endl << 
-        "sig " << sig << std::endl;
+        res_Kd = pgcs_sdf.optimize();
 
         MatrixXd Kt(4*4, nt), dt(4, nt);
         Kt = std::get<0>(res_Kd);
         dt = std::get<1>(res_Kd);
 
         MatrixXd zk_star(4, nt), Sk_star(4*4, nt);
-        zk_star = p_pgcs_sdf->zkt();
-        Sk_star = p_pgcs_sdf->Sigkt();
+        zk_star = pgcs_sdf.zkt();
+        Sk_star = pgcs_sdf.Sigkt();
+
+        MatrixXd Ak_star(4*4, nt), ak_star(4, nt), Bk_star(4*2, nt);
+        Ak_star = pgcs_sdf.Akt();
+        ak_star = pgcs_sdf.akt();
 
         std::string saving_prefix = static_cast<std::string>(ExpNode->first_node("saving_prefix")->value());
 
@@ -134,7 +135,10 @@ int main(int argc, char* argv[]){
         // m_io.saveData(saving_prefix + std::string{"dt_sdf.csv"}, dt);
         m_io.saveData(saving_prefix + std::string{"Kt_sdf.csv"}, Kt);
 
-        p_pgcs_sdf->save_costs(saving_prefix + std::string{"costs.csv"});
+        pgcs_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
+
+        m_io.saveData(saving_prefix + std::string{"Akt_sdf.csv"}, Ak_star);
+        m_io.saveData(saving_prefix + std::string{"akt_sdf.csv"}, ak_star);
 
     }
 
