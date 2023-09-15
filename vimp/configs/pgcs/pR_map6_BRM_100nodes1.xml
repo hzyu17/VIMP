@@ -9323,7 +9323,7 @@
     </goal_pos>
     <eta>0.0001</eta>
     <sig_obs>29000</sig_obs>
-    <sig0>0.00069716</sig0>
+    <sig0>0.069716</sig0>
     <sigT>0.27886</sigT>
     <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_100nodes_v1/exp181</saving_prefix>
 </Experiment181>
