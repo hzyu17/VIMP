@@ -59,6 +59,14 @@ int main(int argc, char* argv[]){
     // TODO: Need to add in the Commons in xml file
     double speed = atof(CommonNode->first_node("speed")->value());
     std::string field_file = static_cast<std::string>(CommonNode->first_node("field_file")->value());
+
+    using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
+
+    // construct sdf
+    MatrixXd field = m_io.load_csv(field_file);
+    gtsam::Point2 origin(-20, -10);
+    double cell_size = 0.1;
+    gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);
     
     // loop for 4 cases
     for (int i=1; i<= num_exp; i++){
@@ -68,12 +76,6 @@ int main(int argc, char* argv[]){
         
         double sig_obs = atof(ExpNode->first_node("sig_obs")->value());
         double sig = speed * nt;
-
-        // construct sdf
-        MatrixXd field = m_io.load_csv(field_file);
-        gtsam::Point2 origin(-20, -10);
-        double cell_size = 0.1;
-        gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);
 
         // proximal gradient parameters
         double eps=0.01;
@@ -90,11 +92,28 @@ int main(int argc, char* argv[]){
         double sig0 = atof(ExpNode->first_node("sig0")->value());
         double sigT = atof(ExpNode->first_node("sigT")->value());
 
+        cout << "eta " << eta << endl;
+        cout << "stop_err " << stop_err << endl;
+        cout << "eps_sdf " << eps_sdf << endl;
+        cout << "speed " << speed << endl;
+        cout << "nt " << nt << endl;
+
+        cout << "sig_obs " << nt << endl;
+        cout << "sig " << nt << endl;
+
+        cout << "sig0 " << sig0 << endl;
+        cout << "sigT " << sigT << endl;
+
         m0 << start_x, start_y, start_vx, start_vy;
         Sig0 = sig0 * Eigen::MatrixXd::Identity(nx, nx);
 
+        EigenWrapper ei;
+        ei.print_matrix(m0, "m0");
+
         mT << goal_x, goal_y, goal_vx, goal_vy;
         SigT = sigT * Eigen::Matrix4d::Identity(nx, nx);
+
+        ei.print_matrix(mT, "mT");
 
         MatrixXd A0(nx, nx), B(nx, nu), a0(nx, 1);
         std::shared_ptr<DoubleIntegrator> pdyn{new DoubleIntegrator(nx, nu, nt)};
@@ -103,15 +122,15 @@ int main(int argc, char* argv[]){
         B   = std::get<1>(linearized_0);
         a0  = std::get<2>(linearized_0);
 
-        PGCSNonLinDynPlanarSDF* p_pgcs_sdf = new PGCSNonLinDynPlanarSDF(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, stop_err);
-        using NominalHistory = std::tuple<std::vector<Matrix3D>, std::vector<Matrix3D>>;
+        PGCSNonLinDynPlanarSDF pgcs_sdf(A0, a0, B, sig, nt, eta, eps, m0, Sig0, mT, SigT, pdyn, eps_sdf, sdf, sig_obs, stop_err);
+        
         std::tuple<MatrixXd, MatrixXd, NominalHistory> res_Kd;
 
         // double stop_err = 1e-4;
         // res_Kd = pgcs_sdf.optimize(stop_err);
         
         // res_Kd = pgcs_sdf.backtrack();
-        res_Kd = p_pgcs_sdf->optimize();
+        res_Kd = pgcs_sdf.optimize();
          std::cout << "speed " << speed << std::endl <<
         "nt " << nt << std::endl << 
         "sig " << sig << std::endl;
@@ -121,8 +140,8 @@ int main(int argc, char* argv[]){
         dt = std::get<1>(res_Kd);
 
         MatrixXd zk_star(4, nt), Sk_star(4*4, nt);
-        zk_star = p_pgcs_sdf->zkt();
-        Sk_star = p_pgcs_sdf->Sigkt();
+        zk_star = pgcs_sdf.zkt();
+        Sk_star = pgcs_sdf.Sigkt();
 
         std::string saving_prefix = static_cast<std::string>(ExpNode->first_node("saving_prefix")->value());
 
