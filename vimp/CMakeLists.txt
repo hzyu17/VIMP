@@ -35,8 +35,9 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 find_package( Eigen3 3.4.0 REQUIRED
               gpmp2 REQUIRED)
 
-set(GPMP2_LIBRARIES "/usr/local/lib/libgpmp2.so")
-set(GTSAM_LIBRARIES "/usr/local/lib/libgtsam.so.4.0.0")
+set(GPMP2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/gpmp2/libgpmp2.so")
+set(GTSAM_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/gtsam/libgtsam.so.4.0.0")
+# set(gpmp2_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include")
  
 # matplotcpp
 include(FetchContent)
