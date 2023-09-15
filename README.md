@@ -1,6 +1,7 @@
 # Stochastic motion planning as Gaussian Variational Inference.
 This repository is dedicated to the implementation of Gaussian Variational Inference (GVI) Motion Planning algorithms. We present 2 algorithms, namely Gaussian Variational Inference Motion Planning (GVI-MP) and Proximal Gradient Covariance Steering Motion Planning (PGCS-MP). The conection between a discrete GVI and continuous-time stochastic control is detailed in the publications in the citing section below.
 
+
 ### Point Robot Motion Planning: entropy regularized robust motion planning
 <img src="figures/compare_go_through_go_around.png" width="600">
 
@@ -31,35 +32,10 @@ make install
 3. Matplot++
 **[Matplot++](https://github.com/alandefreitas/matplotplusplus)**
 
-4. GTSAM 
-**Build GTSAM**
-**[GTSAM](https://github.com/borglab/gtsam)**
- Build and installation:
- ```
- git clone https://github.com/hzyu17/gtsam.git 
- cd gtsam
- mkdir build && cd build
- cmake -DGTSAM_BUILD_PYTHON:=OFF -DGTSAM_INSTALL_MATLAB_TOOLBOX:=ON \
--DGTSAM_ALLOW_DEPRECATED_SINCE_V4:=OFF -DGTSAM_INSTALL_CYTHON_TOOLBOX:=OFF \
- -DGTSAM_USE_SYSTEM_EIGEN:=ON -DGTSAM_BUILD_UNSTABLE:=OFF -DGTSAM_WITH_TBB:=OFF .. 
- sudo make install
- ```
-
-5. GPMP2
-**Build GPMP2**
-**[GPMP2](https://github.com/gtrll/gpmp2)**
-Build and installation:
- ```
- git clone https://github.com/hzyu17/gpmp2.git
- cd gpmp2 && mkdir build && cd build\
- cmake -DGPMP2_BUILD_PYTHON_TOOLBOX:=OFF -DGPMP2_BUILD_MATLAB_TOOLBOX:=ON .. 
- sudo make install 
- ```
-
 **Build and install VIMP**
 ```
 git clone https://github.com/lucasyu17/VIMP.git
-cd VIMP/vimp\
+cd VIMP/vimp
 mkdir build && cd build\
 cmake .. 
 sudo make install 
