@@ -9427,16 +9427,20 @@
     <eps_sdf>0.6</eps_sdf>
     <radius>1.5</radius>
     <total_time>0.8</total_time>
-    <nt>40</nt>
+    <nt>50</nt>
     <sig0>0.01</sig0>
     <sigT>0.05</sigT>
     <eta>0.0001</eta>
     <stop_err>0.001</stop_err>
-    <max_iter>40</max_iter>
+    <max_iter>50</max_iter>
     <map_name>2dpr_map6</map_name>
     <sig_obs>20000</sig_obs>
     <backtracking_ratio>0.7</backtracking_ratio>
     <max_n_backtracking>3</max_n_backtracking>
+    <speed> 0.03 </speed>
+    <state_cost_scale> 10.0 </state_cost_scale>
+    <field_file>/home/zchen927/Documents/VIMP/vimp/maps/2dpR/map6/field_multiobs_map6.csv</field_file>
+    
 </Commons>
 <Experiment174>
     <start_pos>
