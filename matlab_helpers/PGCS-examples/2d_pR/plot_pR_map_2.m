@@ -2,81 +2,94 @@ clear all
 close all
 clc
 addpath('../../tools/gtsam_toolbox')
+addpath('../../tools/2dpR')
+% addpath('/home/zchen927/Downloads/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
 addpath("../../tools/error_ellipse");
 addpath("../../../matlab_helpers/");
 
-%% read map
+% RUNNING GUIDE:
+% change map loaded position
+% change data position
+% set num_exp from number of experiments
+% set ylim and xlim according to transformed coordinates
+
+% read map
 sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
+% sdfmap = csvread("../../../vimp/maps/2dpR/map4/map_multiobs_map4.csv");
+% sdfmap = csvread("../../../vimp/maps/2dpR/map5/map_multiobs_map5.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map6/map_multiobs_map6.csv");
 
-% % hyper parameters
-% i_exp = 1;
-% eps = 0.01;
-% eps_map = 0.6;
-% speed = 0.23;
-% nt = 50;
-% sig0 = 0.001;
-% sigT = 0.001;
-% eta = 1e-1;
-% stop_err = 1e-5;
-% max_iter = 50;
-% cost_sigma = 1.5e5;
-% 
-% args = [num2str(i_exp), ' ', num2str(eps), ' ', num2str(eps_map), ' ', num2str(speed), ' ', num2str(nt), ' ', num2str(sig0), ' ', num2str(sigT), ' ', ...
-%             num2str(eta), ' ', num2str(stop_err), ' ', num2str(max_iter), ' ', num2str(cost_sigma)];
-%     
-% command = ['/home/hongzhe/git/VIMP/vimp/build/pgcs_PlanarPRModel', ' ', args];
-% num_iter = system(command);
+% NOTE: change the number of experiments
+% 148 for 40 nodes
+num_exp = 1; % 250 for 80 nodes, 92 for 30 nodes, 62, 24
+mean_all = zeros(4,50,num_exp); %50 originallay
+cov_all  = zeros(16,50,num_exp);
+for i = 1:num_exp
+    % nexttile
+    hold on
+    % prefix = ["map2/case"+num2str(i)+"/"]
+    % prefix = ["/home/zchen927/Documents/VIMP/vimp/save/case"+num2str(i)]
+    prefix = ["../../../vimp/save/BRM_test/exp"+num2str(i)];
+    prefix = ["../../../vimp/save/BRM_80nodes_v1/exp"+num2str(i)];
+    prefix = ["../../../vimp/save/BRM_map5_40nodes_v2/exp"+num2str(i)];
+    prefix = ["../2d_dIntegrator/map2/casetest/"];
+    prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_map6_100nodes_v1_0915/exp"+num2str(i)];
+    prefix = ["/home/czy/Documents/BRM_map6_1000nodes_v1/exp"+num2str(i)];
 
-% plotting
-x0 = 500;
-y0 = 500;
-width = 1290.427199;
-height = 800;
 
-figure
+    prefix = ["/home/zchen927/Documents/VIMP/vimp/save/BRM_map6_300nodes_v2/exp"+num2str(i)];
+    % prefix = ["/home/czy/Documents/VIMP_CZY/VIMP/vimp/save/BRM_30nodes_v1_50/exp"+num2str(i)];
+    % prefix = ["C:\Users\CZY-Yoga\Documents\Code\VIMP\vimp\save\BRM_test\exp"+num2str(i)]
+    % % --- read means and covariances ---
+    disp([prefix + "zk_sdf.csv"])
+    mean_all(:,:,i) = csvread([prefix + "zk_sdf.csv"]);
+    cov_all(:,:,i) = csvread([prefix + "Sk_sdf.csv"]);
+end
+
+%%  Plotting
+% figure
 tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
 
-for i = 1:4 % 4 experiments
-    nexttile
-    hold on
-    prefix = ["map2/case"+num2str(i)+"/"]
-    % % --- read means and covariances ---
-    means = csvread([prefix + "zk_sdf.csv"]);
-    covs = csvread([prefix + "Sk_sdf.csv"]);
-    
-    cov_final = covs(:,50);
-    disp("cov_final_RESHAPED")
-    cov_final_RESHAPED = reshape(cov_final, [4,4])
-    
-    plot_2d_result(sdfmap, means, covs);
+plotColors.lightBlue = [0.301 0.745 0.933 0.0]; % transparent 0.6
+plotColors.blue = [0.15 0.25 0.8];
+plotColors.green = [0.85 0.325 0.098];
+plotColors.red = [0.9, 0 ,0];
+plotColors.purple = [0.4940 0.1840 0.5560];
+plotColors.brown  = [0.8500 0.3250 0.0980];
 
-%     % --- read baselines ---
-%     means_prm = csvread([prefix + "prm_5000.csv"]);
-%     means_rrt = csvread([prefix + "RRTstar_3000.csv"]);
-% 
-%     % --- plot baselines ---
-%     [~, nt_prm] = size(means_prm);
-%     [~, nt_rrt] = size(means_rrt);
-%     
-%     for i_pt = 1:nt_prm-1
-%         plot([means_prm(1, i_pt), means_prm(1, i_pt+1)], ...
-%             [means_prm(2, i_pt), means_prm(2, i_pt+1)], 'LineWidth', 3.0, 'Color', 'b');
-%     end
-%     
-%     hold on
-% 
-%     for i_pt = 1:nt_rrt-1
-%         plot([means_rrt(1, i_pt), means_rrt(1, i_pt+1)], ...
-%             [means_rrt(2, i_pt), means_rrt(2, i_pt+1)], 'LineWidth', 3.0, 'Color', 'g');
-%     end
-    
-%     if i==3
-%         xlim([-20, 25]);
-%         ylim([-15, 22]);
-%     end
-    axis off ; 
+args = {'LineStyle', '-', ...
+        'LineWidth',0.7, ...
+        'Color', plotColors.lightBlue};
+hold on
 
+plotpath = true;
+if plotpath == true
+% plot path
+for i = 1:num_exp
+    plot_2d_result(sdfmap, mean_all(:,:,i), cov_all(:,:,i), 15, args);
+    % axis off ;
 end
+end
+
+plotColors.lightBlue = [0.301 0.745 0.933 0.8];  % transparent 1
+args = {'LineStyle', '-', ...
+        'LineWidth',1.2, ...
+        'Color', plotColors.lightBlue};
+% hightlight the sampled points
+for i=1:num_exp
+    % plot_2d_result(sdfmap, mean_all(:,1,i), cov_all(:,1,i), 3, args);
+    % plot(mean_all(1,1,i), mean_all(2,1,i), '.', 'MarkerSize', 6, 'Color', 'k'); %25 orignally
+    axis off;
+end
+
+xlim([-20 20]); ylim([-10, 20]); % demo map2
+% xlim([-20, 70]); ylim([-10, 62]); % map 4
+xlim([-20,26.4]); ylim([-10,30]);
+xlim([-20,31]); ylim([-10,35]);
+
+%% save files
+% saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes_v1_50iters.png')
+% saveas(gcf, '~/Pictures/MP_Paper/CSBRM_comp/BRM_path_10nodes_v1_50iters.pdf')

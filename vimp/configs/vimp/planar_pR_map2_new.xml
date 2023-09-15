@@ -37,7 +37,7 @@
     <low_temp_iterations>15</low_temp_iterations>
     <sig_obs> 0.0005 </sig_obs>
     <max_iterations>100</max_iterations>
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case1/</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case1/</saving_prefix>
 
 </Experiment1>
 
@@ -59,7 +59,7 @@
     <!-- <init_precision_factor>20.0</init_precision_factor> -->
     <sig_obs>0.0045</sig_obs>
     <max_iterations>40</max_iterations>
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case2/</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case2/</saving_prefix>
 
 </Experiment2>
 
@@ -81,7 +81,7 @@
     <!-- <init_precision_factor>20.0</init_precision_factor> -->
     <sig_obs>0.005</sig_obs>
     <max_iterations>40</max_iterations>
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case3/</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case3/</saving_prefix>
 
 </Experiment3>
 
@@ -105,6 +105,6 @@
     <low_temp_iterations>15</low_temp_iterations>
     <sig_obs>0.004</sig_obs>
     <max_iterations>40</max_iterations>
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case4/</saving_prefix>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/case4/</saving_prefix>
 
 </Experiment4>
