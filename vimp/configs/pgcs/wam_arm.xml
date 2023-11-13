@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
 <Commons>
 
     <eps> 0.001 </eps>
@@ -69,16 +69,16 @@
         <7>1.2</7>
     </goal_pos>
 
-<<<<<<< HEAD
+<!-- <<<<<<< HEAD
     <sig_obs> 4.45e3 </sig_obs>
-=======
+======= -->
     <eta> 5e-5 </eta>
     <sig_obs> 2.5e3 </sig_obs>
-
+<!-- 
     <!-- <eta> 1.2e-4 </eta>
     <sig_obs> 3.5e3 </sig_obs> -->
     <!-- <sig_obs> 4.45e3 </sig_obs> -->
->>>>>>> 0c7dba12fdfd14fd4cd556f5b0f2f544d5195301
+>>>>>>> 0c7dba12fdfd14fd4cd556f5b0f2f544d5195301 -->
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/PGCS-examples/WAM/case2/</saving_prefix>
 
