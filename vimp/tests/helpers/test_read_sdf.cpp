@@ -9,15 +9,24 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 #include "helpers/MatrixIO.h"
 #include <gtest/gtest.h>
+#include <string>
+
+std::string source_root{XSTRING(SOURCE_ROOT)};
 
 using namespace vimp;
 using namespace Eigen;
 
 TEST(SDFReader, read_csv){
+
+    
+
     MatrixIO loader;
-    MatrixXd sdf = loader.load_csv("data/map_ground_truth.csv");
+    MatrixXd sdf = loader.load_csv(source_root+"/data/map_ground_truth.csv");
 
     MatrixXd map_ground_truth = (MatrixXd(7, 7) <<
                 0, 0, 0, 0, 0, 0, 0,
@@ -40,9 +49,9 @@ TEST(SDFReader, read_write){
     int dim = 300;
     MatrixXd m = MatrixXd::Random(dim, dim);
     
-    m_io.saveData("tests/example.csv", m);
+    m_io.saveData(source_root+"/tests/example.csv", m);
 
-    MatrixXd m_read = m_io.load_csv("tests/example.csv");
+    MatrixXd m_read = m_io.load_csv(source_root+"/tests/example.csv");
 
     ASSERT_LE((m - m_read).norm(), 1e-10);
 }
