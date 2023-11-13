@@ -62,7 +62,6 @@ set(vimp_subdirs
 
 set(vimp_srcs)
  
- 
 # Library sources
 foreach(subdir ${vimp_subdirs})
   file(GLOB subdir_srcs "${subdir}/*.cpp" "${subdir}/*.h")

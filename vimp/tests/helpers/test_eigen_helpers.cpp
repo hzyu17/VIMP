@@ -238,17 +238,6 @@ TEST(TestSparse, sparse_permute){
 
 }
 
-// TEST(TestSparse, masked_equality){
-//     SpMat spm = eigen_wrapper.random_sparse_matrix(40, 40, 50);
-//     Eigen::VectorXi I, J;
-//     Eigen::VectorXd K;
-//     eigen_wrapper.find_nnz(spm, I, J, K);
-
-//     SpMat disturbed_spm = spm;
-//     disturbed_spm.coeffRef(I(0), J(0)) = 0;
-//     ASSERT_TRUE(eigen_wrapper.masked_equal(spm, spm, I, J));
-//     ASSERT_FALSE(eigen_wrapper.masked_equal(disturbed_spm, spm, I, J));
-// }
 
 TEST(TestSparse, compare_block_operations){
     Eigen::MatrixXd precision = m_io.load_csv("data/precision_large.csv");
@@ -339,23 +328,11 @@ TEST(TestSparse, sparse_inverse){
         eigen_wrapper.inv_sparse(precision_sp, precision_inv_sp1, I, J, V, Dinv);
     }
     timer.end();
-
-    std::cout << "sparse inverse_1 time: " << std::endl;
     
     eigen_wrapper.construct_iteration_order(precision_sp, I, J, StartIndx, nnz);
-    timer.start();
-    for (int i=0; i<100; i++){
-        eigen_wrapper.inv_sparse_1(precision_sp, precision_inv_1_sp, I, J, V, StartIndx, nnz);
-    }
-    timer.end();
 
     std::cout << "sparse inverse trj time" << std::endl;
     SpMat precision_inv_trj(size, size);
-    timer.start();
-    for (int i=0; i<100; i++){
-        eigen_wrapper.inv_sparse_trj(precision_sp, precision_inv_trj, nnz, 4);
-    }
-    timer.end();
 
     std::cout << "full inverse time" << std::endl;
     timer.start();
@@ -374,10 +351,6 @@ TEST(TestSparse, sparse_inverse){
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_1));
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_trj));
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_2));
-    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_trj, inv_full, I, J));
-    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed, inv_full, I, J));
-    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_1, inv_full, I, J));
-    ASSERT_TRUE(eigen_wrapper.masked_equal(inv_computed_trj, inv_full, I, J));
     
 }
 
