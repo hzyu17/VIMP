@@ -171,7 +171,6 @@ namespace vimp{
 
                 hzt.push_back(_zkt);
                 hSigzt.push_back(_Sigkt);
-                // _recorder.add_iteration(_Akt, _Bt, _akt, _Qkt, _rkt, _Kt, _dt, _zkt, _Sigkt);
             }
 
             hnom = make_tuple(hzt, hSigzt);
@@ -366,40 +365,12 @@ namespace vimp{
          * @brief get the matrices at specific time point i.
          */
 
-        inline MatrixXd Akt_i(int i){ return _ei.decomp3d(_Akt, _nx, _nx, i);}
-
-        inline MatrixXd akt_i(int i){ return _ei.decomp3d(_akt, _nx, 1, i);}
-
-        inline MatrixXd hAkt_i(int i){ return _ei.decomp3d(_hAkt, _nx, _nx, i);}
-
-        inline MatrixXd hakt_i(int i){ return _ei.decomp3d(_hakt, _nx, 1, i);}
-
         inline MatrixXd Bt_i(int i){ return _ei.decomp3d(_Bt, _nx, _nu, i);}
-
-        inline MatrixXd Qt_i(int i){ return _ei.decomp3d(_Qt, _nx, _nx, i);}
-
-        inline MatrixXd Qkt_i(int i){ return _ei.decomp3d(_Qkt, _nx, _nx, i);}
-
-        inline MatrixXd pinvBBTt_i(int i){ return _ei.decomp3d(_pinvBBTt, _nx, _nx, i);}
-
-        inline MatrixXd nTrt_i(int i){ return _ei.decomp3d(_nTrt, _nx, 1, i);}
-        
-        inline MatrixXd zkt_i(int i){ return _ei.decomp3d(_zkt, _nx, 1, i);}
-
-        inline MatrixXd Kt_i(int i){ return _ei.decomp3d(_Kt, _nu, _nx, i);}
-
-        inline MatrixXd dt_i(int i){ return _ei.decomp3d(_dt, _nu, 1, i);}
-
-        inline MatrixXd Sigkt_i(int i){ return _ei.decomp3d(_Sigkt, _nx, _nx, i);}
 
         /**
          * @brief replicating a fixed state cost
          */
         void repliacteQt(MatrixXd Q0) { _Qt = _ei.replicate3d(Q0, _nt); }
-
-        void initialize_zk() { _zkt = _ei.linspace(_z0, _zT, _nt); }
-
-        void set_max_iter(int max_iter) { _max_iter = max_iter; }
 
     protected:
         EigenWrapper _ei;

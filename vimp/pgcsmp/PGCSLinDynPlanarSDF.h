@@ -134,9 +134,7 @@ public:
 
             MatrixXd Hess(_nx, _nx);
             Hess.setZero();
-            // if (hinge > 0){
-            //     Hess.block(0, 0, _nx / 2, _nx / 2) = MatrixXd::Identity(_nx / 2, _nx / 2) * _sig_obs;
-            // }
+
             // Qki
             Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
             // rki
