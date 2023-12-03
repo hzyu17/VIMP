@@ -401,7 +401,5 @@ namespace vimp{
         // Dynamics class
         LinearCovarianceSteering _linear_cs;
 
-        
-
     };
 }
