@@ -66,6 +66,7 @@ sudo make install
 ```
 
 **Repository structure**
+```
 ./vimp
 ├── 3rdparty : dependencies (gpmp2, Eigen, etc.)
 ├── CMakeLists_customize.txt (A CMakeLists.txt that allows to install to customized location)
@@ -86,6 +87,7 @@ sudo make install
 ├── scripts (ROS related python scripts)
 ├── src (Experiment executables)
 └── tests
+```
 
 ## Citing
 If you use this repository in your research, please cite the following publications:
