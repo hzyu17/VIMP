@@ -12,7 +12,7 @@
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
-#include "helpers/MatrixIO.h"
+#include "helpers/MatrixHelper.h"
 #include <gtest/gtest.h>
 #include <string>
 

@@ -11,7 +11,7 @@
 
 #include <gpmp2/obstacle/ObstacleCost.h>
 #include <gpmp2/obstacle/PlanarSDF.h>
-#include "MatrixIO.h"
+#include "MatrixHelper.h"
 #include "EigenWrapper.h"
 
 using namespace Eigen;

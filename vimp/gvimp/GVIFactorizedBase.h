@@ -20,7 +20,7 @@
 
 #include "helpers/EigenWrapper.h"
 #include "GaussHermite.h"
-#include "helpers/sparse_graph.h"
+#include "helpers/MatrixHelper.h"
 #include "helpers/timer.h"
 
 

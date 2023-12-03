@@ -11,12 +11,11 @@
 
 #pragma once
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-#include <Eigen/SparseCholesky>
-#include "helpers/MatrixIO.h"
-#include "helpers/Matrix.h"
+// #include "common_includes.h"
+
+#include "helpers/MatrixHelper.h"
 #include <random>
+
 
 class Random{
 
@@ -39,12 +38,6 @@ private:
     std::random_device  _rand_dev;
 
 };
-
-
-typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a column-major sparse matrix type of double
-typedef Eigen::SparseVector<double> SpVec; 
-typedef Eigen::Triplet<double> Trip;
-typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
 
 using namespace Eigen;
 

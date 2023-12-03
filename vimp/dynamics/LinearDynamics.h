@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "helpers/Matrix.h"
+#include "helpers/MatrixHelper.h"
 #include "dynamics/Dynamics.h"
 #include <Eigen/Dense>
 
