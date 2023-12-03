@@ -13,7 +13,7 @@
 
 #include "helpers/timer.h"
 #include "helpers/EigenWrapper.h"
-#include "helpers/MatrixIO.h"
+#include "helpers/MatrixHelper.h"
 
 #include<Eigen/IterativeLinearSolvers>
 
@@ -34,66 +34,6 @@ SpMat cov_sp = cov.sparseView();
 Eigen::MatrixXd D_true = m_io.load_csv("data/D_cpp.csv");
 Eigen::MatrixXd L_true = m_io.load_csv("data/L_cpp.csv");
 
-// SpMat precision16_sp = precision.sparseView();
-
-/**
- * @brief Test initialization of a sparse matrix.
- */
-TEST(TestSparse, initialization){
-    int m = 4; // number of rows and cols
-    int n = m*m; // the matrix dimension
-
-    // SparseLDLT ldlt_sp(precision_sp);
-    // SpMat Lsp = ldlt_sp.matrixL();
-    // Eigen::MatrixXd D_cpp = ldlt_sp.vectorD().real().asDiagonal();
-    // Eigen::MatrixXd L_cpp{Lsp};
-    // // Eigen::MatrixXd D_cpp{Dsp};
-    // m_io.saveData("L_cpp.csv", L_cpp);
-    // m_io.saveData("D_cpp.csv", D_cpp);
-
-    timer.start();
-    Eigen::MatrixXd rand_mat = eigen_wrapper.random_matrix(n, n);
-    std::cout << "full matrix init" << std::endl;
-    timer.end();
-
-    // by copy
-    timer.start();
-    SpMat rand_spmat = eigen_wrapper.random_sparse_matrix(n, n, 10);
-    std::cout << "sparse matrix init by copy" << std::endl;
-    timer.end();
-
-    // by reference
-    SpMat rand_spm_ref(n, n);
-    timer.start();
-    eigen_wrapper.random_sparse_matrix(rand_spm_ref, n, n, 10);
-    std::cout << "sparse matrix init by reference" << std::endl;
-    timer.end();
-
-}
-
-
-TEST(TestSparse, computation_time){
-    int m=4;
-    int n=m*m;
-
-    SpMat spm1 = eigen_wrapper.random_sparse_matrix(n, n, 4);
-    SpMat spm2 = eigen_wrapper.random_sparse_matrix(n, n, 4);
-    SpMat spm3 = eigen_wrapper.random_sparse_matrix(n, n, 4);
-
-    Eigen::MatrixXd m1(spm1);
-    Eigen::MatrixXd m2(spm2);
-    Eigen::MatrixXd m3(n, n);
-
-    timer.start();
-    spm3 = spm1 * spm2;
-    std::cout << "sparse multiplication " << std::endl;
-    timer.end();
-    
-    timer.start();
-    m3 = m1 * m2;
-    std::cout << "full multiplication " << std::endl;
-    timer.end();
-}
 
 /**
  * @brief test the time of solving equations
@@ -238,54 +178,6 @@ TEST(TestSparse, sparse_permute){
 
 }
 
-
-TEST(TestSparse, compare_block_operations){
-    Eigen::MatrixXd precision = m_io.load_csv("data/precision_large.csv");
-    SpMat precision_sp = precision.sparseView();
-    int ndim = precision.rows();
-    int dim_state = 4;
-
-    // Pk
-    Eigen::MatrixXd Pk{Eigen::MatrixXd::Zero(2*dim_state, ndim)};
-    Pk.block(0, 3*dim_state, 2*dim_state, 2*dim_state) = std::move(Eigen::MatrixXd::Identity(2*dim_state, 2*dim_state));
-
-    // results
-    Eigen::MatrixXd Block_Pk(2*dim_state, 2*dim_state);
-    Eigen::MatrixXd Block(2*dim_state, 2*dim_state);
-
-    // compare the time between Pk*M*Pk^T and M.block(i,j,h,l);
-    std::cout << "time elapsed: block by eigen" << std::endl;
-    timer.start();
-    Block = precision.block(3*dim_state-1, 3*dim_state-1, 2*dim_state, 2*dim_state);
-    timer.end();
-
-    std::cout << "time elapsed: block by Pk" << std::endl;
-    timer.start();
-    Block_Pk = Pk * precision * Pk.transpose();
-    timer.end();
-
-    ASSERT_TRUE(eigen_wrapper.matrix_equal(Block, Block_Pk));
-
-    // compare the time between the two for block insertion
-    Eigen::MatrixXd precision_inserted_Pk(ndim, ndim);
-    precision_inserted_Pk.setZero();
-
-    SpMat precision_inserted_block(ndim, ndim);
-    precision_inserted_block.setZero();
-
-    std::cout << "insertion time for block operations" << std::endl;
-    timer.start();
-    eigen_wrapper.block_insert_sparse(precision_inserted_block, 3*dim_state-1, 3*dim_state-1, 2*dim_state, 2*dim_state, Block);
-    timer.end();
-
-    std::cout << "insertion time for Pk" << std::endl;
-    timer.start();
-    precision_inserted_Pk = Pk.transpose() * Block_Pk * Pk;
-    timer.end();
-
-    ASSERT_TRUE(eigen_wrapper.matrix_equal(precision_inserted_block, precision_inserted_Pk));
-}
-
 /**
  * @brief Test for the sparse inverse function
  */
@@ -401,17 +293,6 @@ TEST(TestSparse, determinant){
     ASSERT_LE(abs(logdet_sp - logdet_origin), 1e-10);
 }
 
-
-TEST(TestSparse, sqrtm){
-    Eigen::MatrixXd m = eigen_wrapper.random_psd(5);
-    Eigen::MatrixXd m_inv = m.inverse();
-
-    Eigen::MatrixXd sqrtm = eigen_wrapper.psd_sqrtm(m);
-    Eigen::MatrixXd inv_sqrtm = eigen_wrapper.psd_invsqrtm(m);
-
-    ASSERT_LE((sqrtm*sqrtm - m).norm(), 1e-10);
-    ASSERT_LE((inv_sqrtm*inv_sqrtm - m_inv).norm(), 1e-10);
-}
 
 TEST(TestMatrix3D, compress3d){
     Eigen::MatrixXd mat(3, 3);

@@ -9,7 +9,7 @@
  * 
  */
 
-#include "repeated_includes.h"
+#include "common_includes.h"
 #include "EigenWrapper.h"
 #include <vector>
 

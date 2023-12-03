@@ -41,6 +41,30 @@ cmake ..
 sudo make install 
 ```
 
+**Repository structure**
+```
+./vimp
+├── 3rdparty : dependencies (gpmp2, Eigen, etc.)
+├── CMakeLists_customize.txt (A CMakeLists.txt that allows to install to customized location)
+├── CMakeLists.txt 
+├── configs (Experiment configurations)
+├── data 
+├── dynamics (Abstract definition of dynamics)
+├── gp (Gaussian process related code and definitions)
+├── gvimp (Gaussian Variational Inference Motion Planning, abstract definitions)
+├── helpers (Some helper classes and functions)
+├── instances (Instances of the abstract algorithm definitions with specific Robot Model, Map, and Forward Kinematics)
+├── maps (Predefined different maps, mostly borrowed from GPMP2, for the purpose of comparison)
+├── pgcsmp (Proximal gradient Covariance Steering Motion Planning, abstract definitions)
+├── README.md
+├── robots (Robot with Map definitions, for the purpose of instantiate the abstract algorithms.)
+├── scripts (ROS related python scripts)
+├── src (Experiment executables)
+└── tests
+
+./matlab_helpers: This directory reads the results from the ./vimp/src experiment executables, analyze and plot the results.
+```
+
 ## Citing
 If you use this repository in your research, please cite the following publications:
 ```

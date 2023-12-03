@@ -25,7 +25,7 @@
  */
 #pragma once
 
-#include "helpers/MatrixIO.h"
+#include "helpers/MatrixHelper.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <Eigen/Dense>
 

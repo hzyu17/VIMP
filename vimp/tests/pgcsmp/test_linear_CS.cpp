@@ -12,7 +12,7 @@
 #include "pgcsmp/LinearCovarianceSteering.h"
 #include <gtest/gtest.h>
 #include "helpers/EigenWrapper.h"
-#include "helpers/MatrixIO.h"
+#include "helpers/MatrixHelper.h"
 
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
