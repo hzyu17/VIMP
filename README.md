@@ -73,8 +73,6 @@ sudo make install
 ├── CMakeLists.txt 
 ├── configs (Experiment configurations)
 ├── data 
-├── _deps
-├── Doxyfile.in
 ├── dynamics (Abstract definition of dynamics)
 ├── gp (Gaussian process related code and definitions)
 ├── gvimp (Gaussian Variational Inference Motion Planning, abstract definitions)
