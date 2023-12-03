@@ -85,6 +85,8 @@ sudo make install
 ├── scripts (ROS related python scripts)
 ├── src (Experiment executables)
 └── tests
+
+./matlab_helpers: This directory reads the results from the ./vimp/src experiment executables, analyze and plot the results.
 ```
 
 ## Citing
