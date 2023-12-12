@@ -145,7 +145,7 @@ public:
     inline void update_file_names(const std::string& file_mean, 
                                     const std::string& file_cov, 
                                     const std::string& file_joint_cov,
-                                    const std::string& file_precision,
+                                    const std::string& file_precision, 
                                     const std::string& file_joint_precision,
                                     const std::string& file_cost,
                                     const std::string& file_factor_costs,
