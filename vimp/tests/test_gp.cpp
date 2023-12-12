@@ -12,9 +12,9 @@
 
 #include <gtest/gtest.h>
 #include "instances/PlanarPRFactor.h"
-#include <gpmp2/gp/GaussianProcessPriorLinear.h>
+#include <gpmp2/gpmp2/gp/GaussianProcessPriorLinear.h>
 #include <gtsam/inference/Symbol.h>
-#include <gpmp2/gp/GPutils.h>
+#include <gpmp2/gpmp2/gp/GPutils.h>
 
 
 using namespace vimp;
