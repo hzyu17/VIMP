@@ -1,4 +1,5 @@
-# Stochastic motion planning as Gaussian Variational Inference.
+# Stochastic motion planning as Gaussian Variational Inference
+
 This repository is dedicated to implementing Gaussian Variational Inference Motion Planning algorithms (GVIMP). GVIMP was introduced in the following work: 
 **[A Gaussian Variational Inference Motion Planning](https://arxiv.org/abs/2209.05655)**, 
 and the details and complete proofs are included in the work 
@@ -9,14 +10,20 @@ The latter work also showed the equivalence between the GVI-MP and a classical s
 
 **Safe and robust motion planning: Entropy maximization formulation**
 
-In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $J(q)$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is $\mathbb{E}_q [J(q) + H(q)].$ A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
+
+In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $\mathbb{E}_q [J(q)]$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is
+$$\mathbb{E}_q [J(q)] + H(q).$$
+
+A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
 
 <img src="https://github.com/hzyu17/VIMP/blob/master/figures/compare_go_through_go_around.png" width="600">
 
 
 **Variational Mmotion planning for a 7-DOF WAM robot arm**
 
-Our method leverages the factor graph structure of the probabilistic motion planning formulation, and the closed-form expressions for Gaussian posterior expectation computations that does not need other expectation techniques such as Gauss-Hermite quadratures. These structures helped our method to be scalable to higher DOF system such as a industrial robot arm. In the bookshelf senario, the animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively.
+Our method leverages the factor graph structure of the probabilistic motion planning formulation, and the closed-form expressions for Gaussian posterior expectation computations that does not need other expectation techniques such as Gauss-Hermite quadratures. These structures helped our method to be scalable to higher DOF system such as a industrial robot arm. 
+
+In a bookshelf senario below, the animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively.
 
 <img src="figures/WAM_GVI_RVIZ_1.gif" width="300" > <img src="figures/WAM_RVIZ_2.gif" width="300">
 
@@ -27,17 +34,9 @@ Our method leverages the factor graph structure of the probabilistic motion plan
 1. Boost \
 Download **[Boost1.78.0](https://github.com/boostorg/boost/releases/tag/boost-1.78.0)**, install, and change the **BOOST_ROOT** variable in the root **[CMakeLists.txt](https://github.com/hzyu17/VIMP/blob/master/CMakeLists.txt)** file. \
 To build Boost in a customized location: **[check this link](https://github.com/hzyu17/technicals/tree/main/C%2B%2B)**
-2. Eigen 3.4.0\
-**[Download Eigen source](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
-and 
-```
-cd eigen-3.4.0
-mkdir build && cd build\
-cmake -DCMAKE_INSTALL_PREFIX=prefix_path ..\
-make install 
 
-```
-3. **[Matplot++](https://github.com/alandefreitas/matplotplusplus)**
+2. **[Eigen 3.4.0](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
+
 
 ## Build and install VIMP
 ```
@@ -48,7 +47,7 @@ cmake ..
 sudo make install 
 ```
 
-**Repository structure**
+## Repository structure
 ```
 ./vimp
 ├── 3rdparty : dependencies (gpmp2, Eigen, etc.)
