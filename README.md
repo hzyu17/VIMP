@@ -34,17 +34,9 @@ In a bookshelf senario below, the animated trajectory is the mean of the traject
 1. Boost \
 Download **[Boost1.78.0](https://github.com/boostorg/boost/releases/tag/boost-1.78.0)**, install, and change the **BOOST_ROOT** variable in the root **[CMakeLists.txt](https://github.com/hzyu17/VIMP/blob/master/CMakeLists.txt)** file. \
 To build Boost in a customized location: **[check this link](https://github.com/hzyu17/technicals/tree/main/C%2B%2B)**
-2. Eigen 3.4.0\
-**[Download Eigen source](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
-and 
-```
-cd eigen-3.4.0
-mkdir build && cd build\
-cmake -DCMAKE_INSTALL_PREFIX=prefix_path ..\
-make install 
 
-```
-3. **[Matplot++](https://github.com/alandefreitas/matplotplusplus)**
+2. **[Eigen 3.4.0](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
+
 
 ## Build and install VIMP
 ```
