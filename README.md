@@ -8,8 +8,8 @@ The latter work also showed the equivalence between the GVI-MP and a classical s
 ## Examples
 **Safe and robust motion planning: Entropy maximization formulation**
 
-In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $J(q)$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is
-$$ \mathbb{E}_q [J(q) + H(q)].$$
+In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $J(q)$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is$$\mathbb{E}_q [J(q) + H(q)].$$
+
 A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
 
 <img src="https://github.com/hzyu17/VIMP/blob/master/figures/compare_go_through_go_around.png" width="600">
