@@ -13,6 +13,7 @@ The latter work also showed the equivalence between the GVI-MP and a classical s
 
 In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $\mathbb{E}_q [J(q)]$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is
 $$\mathbb{E}_q [J(q)] + H(q).$$
+
 A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
 
 <img src="https://github.com/hzyu17/VIMP/blob/master/figures/compare_go_through_go_around.png" width="600">
@@ -22,7 +23,7 @@ A higher entropy will trade off the short distance risky plan, and gives a longe
 
 Our method leverages the factor graph structure of the probabilistic motion planning formulation, and the closed-form expressions for Gaussian posterior expectation computations that does not need other expectation techniques such as Gauss-Hermite quadratures. These structures helped our method to be scalable to higher DOF system such as a industrial robot arm. 
 
-     In a bookshelf senario below, the animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively.
+In a bookshelf senario below, the animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively.
 
 <img src="figures/WAM_GVI_RVIZ_1.gif" width="300" > <img src="figures/WAM_RVIZ_2.gif" width="300">
 
