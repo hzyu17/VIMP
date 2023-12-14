@@ -6,14 +6,18 @@ and the details and complete proofs are included in the work
 The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Gradient Covariance Steering Motion Planning (PGCS-MP). 
 
 ## Examples
-**Point Robot Motion Planning: entropy regularized robust motion planning**
-In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently an entropy-maximized motion planning, where the objective in the optimal control problem, $J$, is regularized by the entropy of the trajectory joint distribution, $H$. As a result, a higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
-\
+**Safe and robust motion planning: Entropy maximization formulation**
+
+In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $J(q)$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is
+$$ \mathbb{E}_q [J(q) + H(q)].$$
+A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
+
 <img src="figures/compare_go_through_go_around.png" width="600">
 
-**Motion planning for a 7-DOF WAM robot arm**
 
-In the bookshelf senario, the animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively.
+**Variational Mmotion planning for a 7-DOF WAM robot arm**
+
+Our method leverages the factor graph structure of the probabilistic motion planning formulation, and the closed-form expressions for Gaussian posterior expectation computations that does not need other expectation techniques such as Gauss-Hermite quadratures. These structures helped our method to be scalable to higher DOF system such as a industrial robot arm. In the bookshelf senario, the animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively.
 
 <img src="figures/WAM_GVI_RVIZ_1.gif" width="300" > <img src="figures/WAM_RVIZ_2.gif" width="300">
 
