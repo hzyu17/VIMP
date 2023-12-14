@@ -47,7 +47,7 @@ cmake ..
 sudo make install 
 ```
 
-**Repository structure**
+## Repository structure
 ```
 ./vimp
 ├── 3rdparty : dependencies (gpmp2, Eigen, etc.)
