@@ -8,7 +8,6 @@ The latter work also showed the equivalence between the GVI-MP and a classical s
 ## Examples
 **Point Robot Motion Planning: entropy regularized robust motion planning**
 In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently an entropy-maximized motion planning, where the objective in the optimal control problem, $J$, is regularized by the entropy of the trajectory joint distribution, $H$. As a result, a higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
-\
 <img src="figures/compare_go_through_go_around.png" width="600">
 
 **Motion planning for a 7-DOF WAM robot arm**
