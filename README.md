@@ -12,7 +12,7 @@ In a senario with a narrow gap existed between 2 obstacles, classical determinis
 $$ \mathbb{E}_q [J(q) + H(q)].$$
 A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
 
-<img src="figures/compare_go_through_go_around.png" width="600">
+<img src="https://github.com/hzyu17/VIMP/blob/master/figures/compare_go_through_go_around.png" width="600">
 
 
 **Variational Mmotion planning for a 7-DOF WAM robot arm**
