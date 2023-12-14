@@ -1,4 +1,5 @@
-# Stochastic motion planning as Gaussian Variational Inference.
+# Stochastic motion planning as Gaussian Variational Inference
+
 This repository is dedicated to implementing Gaussian Variational Inference Motion Planning algorithms (GVIMP). GVIMP was introduced in the following work: 
 **[A Gaussian Variational Inference Motion Planning](https://arxiv.org/abs/2209.05655)**, 
 and the details and complete proofs are included in the work 
