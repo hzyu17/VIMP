@@ -6,7 +6,9 @@ and the details and complete proofs are included in the work
 The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Gradient Covariance Steering Motion Planning (PGCS-MP). 
 
 ## Examples
+
 **Safe and robust motion planning: Entropy maximization formulation**
+
 
 In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $J(q)$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is
 $$\mathbb{E}_q [J(q)] + H(q).$$
