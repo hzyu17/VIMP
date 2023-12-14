@@ -5,25 +5,24 @@ and the details and complete proofs are included in the work
 **[Stochastic Motion Planning as Gaussian Variational Inference: Theory and Algorithms](https://arxiv.org/abs/2308.14985)**. 
 The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Gradient Covariance Steering Motion Planning (PGCS-MP). 
 
-
-### Point Robot Motion Planning: entropy regularized robust motion planning
+## Examples
+**Point Robot Motion Planning: entropy regularized robust motion planning**
 <img src="figures/compare_go_through_go_around.png" width="600">
 
-### Motion planning for a 7-DOF WAM robot arm. The animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively. 
+**Motion planning for a 7-DOF WAM robot arm**
+
+In the bookshelf senario, the animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively.
 
 <img src="figures/WAM_GVI_RVIZ_1.gif" width="300" > <img src="figures/WAM_RVIZ_2.gif" width="300">
 
 <img src="figures/WAM_GVI_RVIZ_2.gif" width="300"> <img src="figures/WAM_RVIZ_2.gif" width="300">
 
 
-**Dependencies**
-1. Boost: successful built with Boost1.78.0
-Build Boost in a customized location: **[link](https://github.com/hzyu17/technicals/tree/main/C%2B%2B)**
-Add library path to ld lib path:
-```
-export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-```
-2. Eigen 3.4.0
+## Dependencies
+1. Boost \
+Download **[Boost1.78.0](https://github.com/boostorg/boost/releases/tag/boost-1.78.0)**, install, and change the **BOOST_ROOT** variable in the root **[CMakeLists.txt](https://github.com/hzyu17/VIMP/blob/master/CMakeLists.txt)** file. \
+To build Boost in a customized location: **[check this link](https://github.com/hzyu17/technicals/tree/main/C%2B%2B)**
+2. Eigen 3.4.0\
 **[Download Eigen source](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
 and 
 ```
@@ -33,14 +32,13 @@ cmake -DCMAKE_INSTALL_PREFIX=prefix_path ..\
 make install 
 
 ```
-3. Matplot++
-**[Matplot++](https://github.com/alandefreitas/matplotplusplus)**
+3. **[Matplot++](https://github.com/alandefreitas/matplotplusplus)**
 
-**Build and install VIMP**
+## Build and install VIMP
 ```
 git clone https://github.com/lucasyu17/VIMP.git
-cd VIMP/vimp
-mkdir build && cd build\
+cd VIMP
+mkdir build && cd build
 cmake .. 
 sudo make install 
 ```
