@@ -15,7 +15,6 @@ foreach(subdir ${vimp_subdirs})
   file(GLOB subdir_srcs "${subdir}/*.cpp" "${subdir}/*.h")
   list(REMOVE_ITEM subdir_srcs "${excluded_sources}")
 
-  # message(${subdir_srcs})
   file(GLOB subdir_test_files "${subdir}/tests/*")
 
   list(APPEND vimp_srcs ${subdir_srcs})
@@ -25,10 +24,6 @@ foreach(subdir ${vimp_subdirs})
   add_subdirectory(${subdir})
 
 endforeach(subdir)
-
-include_directories(${EIGEN3_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/vimp)
-add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}/vimp")
 
 # Add all the source files in src/vimp as a separate executable
 file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
@@ -52,7 +47,7 @@ foreach(pgcs_source ${PGCS_SOURCES})
                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/pgcs"
                             )   
     target_link_libraries(${pgcs_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} Matplot++::matplot)
-    target_include_directories(${pgcs_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vimp)
+    target_include_directories(${pgcs_name} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/vimp")
 endforeach()
  
 #% --------------------------------------------------------- Tests files 
