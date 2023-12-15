@@ -15,3 +15,4 @@ matlab_helpers/+gpmp2/*
 vimp/maps/WAM/WAMDeskDataset.bin
 vimp/maps/3dpR/pRSDF3D.bin
 vimp/data/WAM/*
+matlab_helpers/*
