@@ -9,7 +9,7 @@
  * 
  */
 
-#include "gvimp/GaussHermite.h"
+#include "GaussianVI/GaussHermite.h"
 #include <gtest/gtest.h>
 
 using namespace Eigen;

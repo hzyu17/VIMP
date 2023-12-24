@@ -1,6 +1,6 @@
 # ------------- submodules -------------
 set(vimp_subdirs 
-    gvimp
+    GaussianVI
     pgcsmp
     helpers 
     instances
@@ -26,7 +26,7 @@ foreach(subdir ${vimp_subdirs})
 endforeach(subdir)
 
 # Add all the source files in src/vimp as a separate executable
-file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
+file(GLOB_RECURSE VIMP_SOURCES src/GaussianVI/*.cpp)
 foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
     add_executable(${vimp_name} ${vimp_source})

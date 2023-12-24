@@ -9,7 +9,7 @@
  * 
  */
 
-#include "gvimp/GaussHermite.h"
+#include "GaussianVI/GaussHermite.h"
 #include <functional>
 #include <gtest/gtest.h>
 

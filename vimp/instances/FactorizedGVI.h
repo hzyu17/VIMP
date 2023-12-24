@@ -12,10 +12,10 @@
 // #pragma once
 
 #include "instances/CostFunctions.h"
-#include "gvimp/GVIFactorizedNonlinerGH.h"
-#include "gvimp/GVI-GH.h"
-#include "gvimp/GVIFactorizedLinear.h"
-#include "gvimp/GVIFactorizedFixedGaussian.h"
+#include "GaussianVI/GVIFactorizedNonlinerGH.h"
+#include "GaussianVI/GVI-GH.h"
+#include "GaussianVI/GVIFactorizedLinear.h"
+#include "GaussianVI/GVIFactorizedFixedGaussian.h"
 
 using namespace Eigen;
 

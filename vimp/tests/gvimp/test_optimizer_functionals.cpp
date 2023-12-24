@@ -9,8 +9,8 @@
  * 
  */
 
-#include "gvimp/GVIFactorizedSimpleGH.h"
-#include "gvimp/GVI-GH.h"
+#include "GaussianVI/GVIFactorizedSimpleGH.h"
+#include "GaussianVI/GVI-GH.h"
 #include <gtest/gtest.h>
 
 
