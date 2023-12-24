@@ -6,10 +6,12 @@ and the details and complete proofs are included in the work
 **[Stochastic Motion Planning as Gaussian Variational Inference: Theory and Algorithms](https://arxiv.org/abs/2308.14985)**. 
 The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Gradient Covariance Steering Motion Planning (PGCS-MP). 
 
+## Planning-as-inferencec
+The motion planning problem can be formulated as a probability inference, and the (sub-) optimal trajectory is modeled as a posterior probability $p(X|Z)$, $X$ being the trajecotry, and $Z$ is the environment, often represented by the joint space with obstacles. In this thread of research we use **[GaussianVI](vimp/gvimp/README.md)** to find a Gaussian distribution that is closest to the posterior. We can then sample from the solved Gaussian distribution.
+
 ## Examples
 
 **Safe and robust motion planning: Entropy maximization formulation**
-
 
 In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $\mathbb{E}_q [J(q)]$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is
 $$\mathbb{E}_q [J(q)] + H(q).$$
