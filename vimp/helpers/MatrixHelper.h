@@ -11,11 +11,15 @@
 
 #pragma once
 
+#ifndef MATRIX_HELPER_H
+#define MATRIX_HELPER_H
+
 #include "CommonDefinitions.h"
+#include <Eigen/Dense>
 
 using namespace Eigen;
 
-namespace vimp{
+namespace vimp {
 
 class Matrix3D : public MatrixXd{
 public:
@@ -31,13 +35,6 @@ public:
         return *this;
     }
     
-};
-
-class Vector3D : public VectorXd{
-public:
-    Vector3D(){}
-    Vector3D(int row, int nt):VectorXd(row, nt){}   
-
 };
 
 class MatrixIO{
@@ -89,10 +86,10 @@ class MatrixIO{
     };
 
 
-struct Block{
+struct GVIBlock{
 public:
-    Block(){}
-    Block(int start_row, int start_col, int nrows, int ncols):
+    GVIBlock(){}
+    GVIBlock(int start_row, int start_col, int nrows, int ncols):
     _start_row(start_row),
     _start_col(start_col),
     _nrows(nrows),
@@ -111,7 +108,7 @@ public:
     int _nrows;
     int _ncols;
     
-}; // struct Block
+}; // struct GVIBlock
 
 class TrajectoryBlock{
 
@@ -123,7 +120,7 @@ public:
     _num_states(num_states),
     _start_index(start_index),
     _block_length(block_length){
-        _block = Block{_start_index*state_dim, _start_index*state_dim, _block_length, _block_length};
+        _block = GVIBlock{_start_index*state_dim, _start_index*state_dim, _block_length, _block_length};
     };
 
     SpMat extract(const SpMat & m){
@@ -153,8 +150,11 @@ private:
     int _state_dim;
     int _num_states;
     int _start_index, _block_length;
-    Block _block = Block();
+    GVIBlock _block = GVIBlock();
 
 }; // class TrajectoryBlock
 
+
 }
+
+#endif // MATRIX_HELPER_H

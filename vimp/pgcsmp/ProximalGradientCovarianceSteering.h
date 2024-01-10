@@ -15,7 +15,7 @@
 #include "LinearCovarianceSteering.h"
 #include <memory>
 #include <Eigen/QR>
-#include "helpers/DataRecorder.h"
+#include "PGCSDataRecorder.h"
 
 using namespace Eigen;
 
