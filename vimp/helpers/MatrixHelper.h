@@ -11,9 +11,7 @@
 
 #pragma once
 
-#include "common_includes.h"
-// #include "EigenWrapper.h"
-
+#include "CommonDefinitions.h"
 
 using namespace Eigen;
 

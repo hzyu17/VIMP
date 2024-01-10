@@ -23,7 +23,7 @@ using namespace std;
 #define XSTRING(x) STRING(x)
 
 using SDFPR = gpmp2::ObstaclePlanarSDFFactor<gpmp2::PointRobotModel>;
-using GVIFactorizedPlanarSDFPR = GVIFactorizedPlanarSDF<gpmp2::PointRobotModel>;
+using NGDFactorizedPlanarSDFPR = NGDFactorizedPlanarSDF<gpmp2::PointRobotModel>;
 
 std::string config_file{source_root+"/configs/vimp/planar_pR_map1_new.xml"};
 int nx = 4, nu = 2, num_exp = 2;
@@ -174,7 +174,7 @@ TEST(GVIOnestep, initial_values){
 
                 auto cost_sdf_pr = cost_obstacle_planar<gpmp2::PointRobotModel>;
                 // collision factor
-                vec_factors.emplace_back(new GVIFactorizedPlanarSDFPR{dim_conf, 
+                vec_factors.emplace_back(new NGDFactorizedPlanarSDFPR{dim_conf, 
                                                                 dim_state, 
                                                                 cost_sdf_pr, 
                                                                 SDFPR{gtsam::symbol('x', i), 

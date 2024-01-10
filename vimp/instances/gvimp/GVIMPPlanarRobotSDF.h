@@ -10,7 +10,7 @@
  */
 
 #include "helpers/ExperimentParams.h"
-#include "instances/FactorizedGVIPlanar.h"
+#include "instances/FactorizedGVIPlanarNGD.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <gtsam/inference/Symbol.h>
 
@@ -20,7 +20,7 @@ namespace vimp{
 template <typename Robot, typename RobotSDF>
 class GVIMPPlanarRobotSDF{
     using SDFPR = gpmp2::ObstaclePlanarSDFFactor<Robot>;
-    using GVIFactorizedPlanarSDFRobot = GVIFactorizedPlanarSDF<Robot>;
+    using NGDFactorizedPlanarSDFRobot = NGDFactorizedPlanarSDF<Robot>;
 
 public:
     virtual ~GVIMPPlanarRobotSDF(){}
@@ -122,7 +122,7 @@ public:
 
                 // collision factor
                 auto cost_sdf_Robot = cost_obstacle_planar<Robot>;
-                vec_factors.emplace_back(new GVIFactorizedPlanarSDFRobot{dim_conf, 
+                vec_factors.emplace_back(new NGDFactorizedPlanarSDFRobot{dim_conf, 
                                                                         dim_state, 
                                                                         cost_sdf_Robot, 
                                                                         SDFPR{gtsam::symbol('x', i), 

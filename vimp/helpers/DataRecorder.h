@@ -9,7 +9,7 @@
  * 
  */
 
-#include "common_includes.h"
+#include "CommonDefinitions.h"
 #include "EigenWrapper.h"
 #include <vector>
 
@@ -19,9 +19,8 @@ using namespace std;
 using namespace Eigen;
 using namespace std;
 
-namespace vimp
-{
 
+namespace vimp{
 class VIMPResults{
 private:    
 
@@ -278,4 +277,4 @@ private:
 
 };
 
-} // namespace vimp
+}

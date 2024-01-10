@@ -11,12 +11,12 @@
 
 #pragma once
 
-// #include "common_includes.h"
-
-#include "helpers/MatrixHelper.h"
+#include "MatrixHelper.h"
 #include <random>
 
+using namespace Eigen;
 
+namespace vimp{
 class Random{
 
 public:
@@ -39,9 +39,6 @@ private:
 
 };
 
-using namespace Eigen;
-
-namespace vimp{
 class EigenWrapper{
 public:
     EigenWrapper(){};
@@ -259,7 +256,7 @@ public:
         X.setFromTriplets(tripletList.begin(), tripletList.end());
     }
 
-    // ================= Block operations ================= 
+    // ================= GVIBlock operations ================= 
     SpMat block_extract_sparse(SpMat & mat, int start_row, int start_col, int nrows, int ncols){
         return mat.middleRows(start_row, nrows).middleCols(start_col, ncols);
     }
@@ -521,4 +518,5 @@ private:
     std::string _sep = "\n----------------------------------------\n";
     
 };
+
 }
