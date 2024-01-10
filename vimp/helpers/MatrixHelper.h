@@ -145,14 +145,6 @@ public:
         vec.block(_block.row(), 0, _block.nrows(), 1) = vec_block;
     }
 
-    double start_element(){
-        return _start_index*_state_dim;
-    }
-
-    double block_length(){
-        return _block_length;
-    }
-
     void print(){
         std::cout << "(starting index, block length): " << "(" << _start_index << ", " << _block_length << ")" << std::endl;
     }
