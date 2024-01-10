@@ -12,20 +12,17 @@
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
-#include "helpers/MatrixHelper.h"
+#include "GaussianVI/helpers/MatrixHelper.h"
 #include <gtest/gtest.h>
 #include <string>
 
 std::string source_root{XSTRING(SOURCE_ROOT)};
 
-using namespace vimp;
 using namespace Eigen;
 
 TEST(SDFReader, read_csv){
 
-    
-
-    MatrixIO loader;
+    gvi::MatrixIO loader;
     MatrixXd sdf = loader.load_csv(source_root+"/data/map_ground_truth.csv");
 
     MatrixXd map_ground_truth = (MatrixXd(7, 7) <<
@@ -44,7 +41,7 @@ TEST(SDFReader, read_csv){
 
 
 TEST(SDFReader, read_write){
-    MatrixIO m_io;
+    gvi::MatrixIO m_io;
     
     int dim = 300;
     MatrixXd m = MatrixXd::Random(dim, dim);

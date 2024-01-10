@@ -19,13 +19,12 @@
 #define XSTRING(x) STRING(x)
 std::string source_root{XSTRING(SOURCE_ROOT)};
 
-using namespace vimp;
 using namespace Eigen;
 
 EigenWrapper ei;
 
 TEST(TestHinge2D, hinge_loss){
-    vimp::MatrixIO m_io;
+    gvi::MatrixIO m_io;
     MatrixXd grid_X = m_io.load_csv(source_root+"/data/sdf_grid_x.csv");
     MatrixXd grid_Y = m_io.load_csv(source_root+"/data/sdf_grid_y.csv");
 
@@ -45,7 +44,7 @@ TEST(TestHinge2D, hinge_loss){
 
 
 TEST(TestHinge2D, hinge_loss_gradients){
-    vimp::MatrixIO m_io;
+    gvi::MatrixIO m_io;
     MatrixXd grid_X = m_io.load_csv(source_root+"/data/sdf_grid_x.csv");
     MatrixXd grid_Y = m_io.load_csv(source_root+"/data/sdf_grid_y.csv");
 

@@ -23,7 +23,7 @@ namespace vimp{
 
     // typedef VIMPFactorizedOneCost<FixedPriorGP> FixedGpPriorOneCost;
     typedef VIMPFactorizedLinear<FixedPriorGP> FixedGpPrior;
-    typedef VIMPFactorizedLinear<MinimumAccGP> LinearGpPrior;
+    typedef VIMPFactorizedLinear<MinimumAccGP> gvi::LinearGpPrior;
     template <typename ROBOT>
     using OptPlanarSDFFactor = OptimizerFactorizedNonlinerOneFactorGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>> ;
 

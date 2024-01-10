@@ -12,19 +12,19 @@
 #include<gtest/gtest.h>
 
 #include "helpers/timer.h"
-#include "helpers/EigenWrapper.h"
-#include "helpers/MatrixHelper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/MatrixHelper.h"
 
 #include<Eigen/IterativeLinearSolvers>
 
 
 typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a col-major sparse matrix type of double
 typedef Eigen::Triplet<double> T;
+typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
 
-using namespace vimp;
-EigenWrapper eigen_wrapper;
+gvi::EigenWrapper eigen_wrapper;
 Timer timer;
-MatrixIO m_io;
+gvi::MatrixIO m_io;
 
 // ================== read ground truth matrices ==================
 Eigen::MatrixXd precision = m_io.load_csv("data/precision_16.csv");
@@ -42,13 +42,13 @@ TEST(TestSparse, solve_psd_eqn){
     int m=4;
     int n=m*m;
 
-    SpMat eye(n, n);
+    gvi::SpMat eye(n, n);
     eye.setIdentity();
 
-    SpMat spm = eigen_wrapper.randomd_sparse_psd(n, 10) + eye;
+    gvi::SpMat spm = eigen_wrapper.randomd_sparse_psd(n, 10) + eye;
     
-    Eigen::MatrixXd m{spm};
-    Eigen::LDLT<Eigen::MatrixXd> ldlt(m);        
+    Eigen::MatrixXd mat{spm};
+    Eigen::LDLT<Eigen::MatrixXd> ldlt(mat);        
 
     ASSERT_TRUE(ldlt.isPositive());
 
@@ -127,7 +127,7 @@ TEST(TestSparse, ldlt_decomp){
 }
 
 TEST(TestSparse, manipulation_sparse){
-    typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
+    
     SparseLDLT ldlt_sp(precision_sp);
     SpMat Lsp = ldlt_sp.matrixL();
 
@@ -281,7 +281,7 @@ TEST(TestMatrix3D, compress3d){
     Eigen::MatrixXd mat(3, 3);
     mat << 1,2,3,4,5,6,7,8,9;
     
-    Matrix3D mat3d(3,3,2);
+    gvi::Matrix3D mat3d(3,3,2);
     mat3d.setZero();
     eigen_wrapper.compress3d(mat, mat3d, 0);
 

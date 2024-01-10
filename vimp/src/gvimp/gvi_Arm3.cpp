@@ -96,22 +96,22 @@ int main(){
     //     joint_init_theta.segment(i*dim_theta, dim_theta) = std::move(theta);  
 
     //     // linear gp_i
-    //     MinimumAccGP lin_gp{Qc, delta_t}; 
+    //     gvi::MinimumAccGP lin_gp{Qc, delta_t}; 
 
     //     // fixed start and goal priors
     //     if (i==0 || i==n_total_states-1){
     //         /// lin GP factor for the N th state
     //         if (i == n_total_states-1){
-    //             vec_factor_opts.emplace_back(new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1});
+    //             vec_factor_opts.emplace_back(new gvi::LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1});
     //         }
 
     //         /// Fixed GP
-    //         FixedPriorGP fixed_gp{MatrixXd::Identity(dim_theta, dim_theta)*0.0001, MatrixXd{theta}};
-    //         vec_factor_opts.emplace_back(new FixedGpPrior{dim_theta, dim_theta, cost_fixed_gp, fixed_gp, n_total_states, i});
+    //         gvi::FixedPriorGP fixed_gp{MatrixXd::Identity(dim_theta, dim_theta)*0.0001, MatrixXd{theta}};
+    //         vec_factor_opts.emplace_back(new gvi::FixedGpPrior{dim_theta, dim_theta, cost_fixed_gp, fixed_gp, n_total_states, i});
 
     //     }else{
     //         // linear gp factor
-    //         vec_factor_opts.emplace_back(new LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1});
+    //         vec_factor_opts.emplace_back(new gvi::LinearGpPrior{2*dim_theta, dim_theta, cost_linear_gp, lin_gp, n_total_states, i-1});
 
     //         // collision factor
     //         gpmp2::ObstaclePlanarSDFFactorArm collision_k{gtsam::symbol('x', i), arm_model, sdf, cost_sigma, epsilon};

@@ -63,7 +63,7 @@ public:
 
 
 public:
-    MatrixIO m_io;
+    gvi::MatrixIO m_io;
     EigenWrapper _ei;
     std::string _config_file;
     int _num_exp, _nx, _nu, _nt;

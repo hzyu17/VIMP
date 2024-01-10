@@ -17,7 +17,6 @@
 using namespace std;
 using namespace gpmp2;
 using namespace Eigen;
-using namespace vimp;
 using namespace gtsam;
 
 namespace vimp{
@@ -68,7 +67,7 @@ class PlanarPointRobotSDFExample{
         public:
             PointRobotModel _pR_model = PointRobotModel();
             PlanarSDF _sdf = PlanarSDF();
-            MatrixIO _matrix_io = MatrixIO();
+            gvi::MatrixIO _matrix_io = gvi::MatrixIO();
 
             /// 2D point robot
             int _ndof = 2;

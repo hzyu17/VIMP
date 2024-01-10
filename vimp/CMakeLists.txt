@@ -26,7 +26,7 @@ foreach(subdir ${vimp_subdirs})
 endforeach(subdir)
 
 # Add all the source files in src/vimp as a separate executable
-file(GLOB_RECURSE VIMP_SOURCES src/GaussianVI/*.cpp)
+file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
 foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
     add_executable(${vimp_name} ${vimp_source})
@@ -64,5 +64,5 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
     set_target_properties(${TEST_NAME} PROPERTIES
                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
                             )
-    target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${EIGEN3_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES})
+    target_link_libraries(${TEST_NAME} ${GTEST_LIBRARIES} ${EIGEN3_LIBRARIES} ${GTEST_MAIN_LIBRARIES} Matplot++::matplot ${GPMP2_LIBRARIES} ${GTSAM_LIBRARIES} gtest)
 endforeach()

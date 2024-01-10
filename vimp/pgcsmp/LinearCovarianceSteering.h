@@ -15,8 +15,9 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include "helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
 using namespace Eigen;
+using namespace gvi;
 
 namespace vimp{
 class LinearCovarianceSteering{
@@ -28,16 +29,16 @@ public:
  * @brief Construct a new Linear Covariance Steering object
  * All time varying matrices should be in the shape (m*n, nt)
  */
-    LinearCovarianceSteering(const Matrix3D& At, 
-                             const Matrix3D& Bt,
-                             const Matrix3D& at, 
+    LinearCovarianceSteering(const gvi::Matrix3D& At, 
+                             const gvi::Matrix3D& Bt,
+                             const gvi::Matrix3D& at, 
                              const int nx,
                              const int nu,
                              const double T,
                              const int nt,
                              const double epsilon,
-                             const Matrix3D& Qt,
-                             const Matrix3D& rt,
+                             const gvi::Matrix3D& Qt,
+                             const gvi::Matrix3D& rt,
                              const VectorXd& m0,
                              const MatrixXd& Sig0,
                              const VectorXd& m1,
@@ -54,8 +55,8 @@ public:
                              _Phi(MatrixXd::Identity(2*_nx, 2*_nx)),
                              _Phi11(MatrixXd::Zero(_nx, _nx)),
                              _Phi12(MatrixXd::Zero(_nx, _nx)),
-                             _Mt(Matrix3D(2*_nx, 2*_nx, _nt)),
-                             _Pit(Matrix3D(_nx, _nx, _nt)),
+                             _Mt(gvi::Matrix3D(2*_nx, 2*_nx, _nt)),
+                             _Pit(gvi::Matrix3D(_nx, _nx, _nt)),
                              _m0(m0),
                              _m1(m1),
                              _Sig0(Sig0),
@@ -107,7 +108,7 @@ public:
     }
 
     std::tuple<Matrix3D, Matrix3D> solve_return(){
-        Matrix3D Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
+        gvi::Matrix3D Kt(_nu, _nx, _nt), dt(_nu, 1, _nt);
         VectorXd s{VectorXd::Zero(2*_nx)}, s_tild{VectorXd::Zero(2*_nx)};
         MatrixXd a_r{MatrixXd::Zero(2*_nx, _nt)};
         a_r << _at, 
@@ -202,7 +203,7 @@ public:
     }
 
     void solve(){
-        std::tuple<Matrix3D, Matrix3D> Ktdt;
+        std::tuple<gvi::Matrix3D, gvi::Matrix3D> Ktdt;
         Ktdt = solve_return();
         _Kt = std::get<0>(Ktdt);
         _dt = std::get<1>(Ktdt);
@@ -263,25 +264,25 @@ public:
 
 
 private:
-    Matrix3D _At, _Bt, _at;
-    Matrix3D _Qt, _rt;
+    gvi::Matrix3D _At, _Bt, _at;
+    gvi::Matrix3D _Qt, _rt;
 
     int _nx, _nu, _nt;
 
     MatrixXd _Phi, _Phi11, _Phi12;
 
-    Matrix3D _Mt, _Pit;
+    gvi::Matrix3D _Mt, _Pit;
     VectorXd _m0, _m1;
     MatrixXd _Sig0, _Sig1;
 
     double _eps, _T, _delta_t;
 
     // feedback gains
-    Matrix3D _Kt;
-    Matrix3D _dt;
+    gvi::Matrix3D _Kt;
+    gvi::Matrix3D _dt;
 
     // helper
-    vimp::EigenWrapper _ei;
+    gvi::EigenWrapper _ei;
 
 };
 }

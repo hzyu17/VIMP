@@ -4,7 +4,7 @@
  * Date: 08/25/2023
 */
 
-#include "helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
 #include "helpers/ExperimentParams.h"
 #include "instances/FactorizedGVI.h"
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
@@ -59,7 +59,7 @@ int main(){
     MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
     /// Vector of base factored optimizers
-    vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
+    vector<std::shared_ptr<gvi::NGDFactorizedBase>> vec_factors;
 
     auto robot_model = _robot_sdf.RobotModel();
     auto sdf = _robot_sdf.sdf();
@@ -82,7 +82,7 @@ int main(){
         theta_i.segment(dim_conf, dim_conf) = avg_vel;
         joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
 
-        MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
+        gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
 
         // fixed start and goal priors
         // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -90,10 +90,10 @@ int main(){
 
             // lin GP factor for the first and the last support state
             if (i == n_states-1){
-                // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
-                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+                // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
+                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
-                                                            cost_linear_gp, 
+                                                            gvi::cost_linear_gp, 
                                                             lin_gp, 
                                                             n_states, 
                                                             i-1, 
@@ -102,10 +102,10 @@ int main(){
             }
 
         //     // Fixed gp factor
-            FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
-            vec_factors.emplace_back(new FixedGpPrior{dim_state, 
+            gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
+            vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
                                                         dim_state, 
-                                                        cost_fixed_gp, 
+                                                        gvi::cost_fixed_gp, 
                                                         fixed_gp, 
                                                         n_states, 
                                                         i,
@@ -114,9 +114,9 @@ int main(){
 
         }else{
             // linear gp factors
-            vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+            vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                         dim_state, 
-                                                        cost_linear_gp, 
+                                                        gvi::cost_linear_gp, 
                                                         lin_gp, 
                                                         n_states, 
                                                         i-1, 
@@ -128,12 +128,12 @@ int main(){
     }
 
     /// The joint optimizer
-    GVIGH<GVIFactorizedBase> optimizer{vec_factors, 
-                                        dim_state, 
-                                        n_states, 
-                                        params.max_iter(), 
-                                        params.temperature(), 
-                                        params.high_temperature()};
+    gvi::NGDGH<gvi::NGDFactorizedBase> optimizer{vec_factors, 
+                                                dim_state, 
+                                                n_states, 
+                                                params.max_iter(), 
+                                                params.temperature(), 
+                                                params.high_temperature()};
 
     optimizer.set_max_iter_backtrack(params.max_n_backtrack());
     optimizer.set_niter_low_temperature(params.max_iter_lowtemp());

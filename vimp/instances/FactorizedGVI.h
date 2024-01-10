@@ -12,21 +12,16 @@
 // #pragma once
 
 #include "instances/CostFunctions.h"
-#include "GaussianVI/GVIFactorizedNonlinerGH.h"
-#include "GaussianVI/GVI-GH.h"
-#include "GaussianVI/GVIFactorizedLinear.h"
-#include "GaussianVI/GVIFactorizedFixedGaussian.h"
+#include "GaussianVI/ngd/NGDFactorizedNonlinerGH.h"
+#include "GaussianVI/gp/factorized_opts_linear.h"
+#include "GaussianVI/ngd/NGD-GH.h"
 
 using namespace Eigen;
 
 
 namespace vimp{
-
-    // typedef VIMPFactorizedOneCost<FixedPriorGP> FixedGpPriorOneCost;
-    typedef GVIFactorizedFixedGaussian<FixedPriorGP> FixedGpPrior;
-    typedef GVIFactorizedLinear<MinimumAccGP> LinearGpPrior;
     template <typename ROBOT>
-    using GVIFactorizedSDF = GVIFactorizedNonlinerGH<gpmp2::ObstacleSDFFactor<ROBOT>> ;
+    using GVIFactorizedSDF = gvi::NGDFactorizedNonlinerGH<gpmp2::ObstacleSDFFactor<ROBOT>> ;
 
 }
 

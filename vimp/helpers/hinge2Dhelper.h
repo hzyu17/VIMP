@@ -11,11 +11,11 @@
 
 #include <gpmp2/obstacle/ObstacleCost.h>
 #include <gpmp2/obstacle/PlanarSDF.h>
-#include "MatrixHelper.h"
-#include "EigenWrapper.h"
+#include "GaussianVI/helpers/MatrixHelper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
 
 using namespace Eigen;
-using namespace vimp;
+using namespace gvi;
 
 /**
  * @brief given a collection of states (length N*4), returns a vector of hingelosses (length N)
@@ -133,6 +133,6 @@ std::tuple<MatrixXd, vec_2d, vec_2d> hingeloss_gradient_mesh(const MatrixXd& mes
  * The data is in shape (n_iters, N*dim)
  */
 inline void hinge_loss_io(const std::string& filename){
-    vimp::MatrixIO m_io;
+    gvi::MatrixIO m_io;
     
 }

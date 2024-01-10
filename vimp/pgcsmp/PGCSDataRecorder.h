@@ -5,7 +5,9 @@
 #define PGCS_DATARECORDER_H
 
 #include <vector>
-#include "helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
+
+using namespace gvi;
 
 namespace vimp{
 
