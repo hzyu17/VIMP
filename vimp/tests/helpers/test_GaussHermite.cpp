@@ -9,12 +9,14 @@
  * 
  */
 
-#include "gvimp/GaussHermite.h"
+#include "GaussianVI/quadrature/GaussHermite.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
 #include <functional>
 #include <gtest/gtest.h>
 
 using namespace Eigen;
-using namespace vimp;
+// using namespace vimp;
+using namespace gvi;
 
 /// integrands used for testing
 MatrixXd gx_1d(const VectorXd& x){
@@ -58,7 +60,7 @@ TEST(GaussHermite, permute){
 
     for (std::vector<int>& i_res: v_res){
         for (int& j:i_res){
-            cout << "--j--" << endl << j << endl;
+            std::cout << "--j--" << std::endl << j << std::endl;
         }
     }
 }

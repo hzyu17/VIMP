@@ -12,19 +12,19 @@
 #include<gtest/gtest.h>
 
 #include "helpers/timer.h"
-#include "helpers/EigenWrapper.h"
-#include "helpers/MatrixHelper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/MatrixHelper.h"
 
 #include<Eigen/IterativeLinearSolvers>
 
 
 typedef Eigen::SparseMatrix<double, Eigen::ColMajor> SpMat; // declares a col-major sparse matrix type of double
 typedef Eigen::Triplet<double> T;
+typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
 
-using namespace vimp;
-EigenWrapper eigen_wrapper;
+gvi::EigenWrapper eigen_wrapper;
 Timer timer;
-MatrixIO m_io;
+gvi::MatrixIO m_io;
 
 // ================== read ground truth matrices ==================
 Eigen::MatrixXd precision = m_io.load_csv("data/precision_16.csv");
@@ -42,23 +42,32 @@ TEST(TestSparse, solve_psd_eqn){
     int m=4;
     int n=m*m;
 
-    SpMat spm = eigen_wrapper.randomd_sparse_psd(n, 10) + eigen_wrapper.sp_eye(n);
+    gvi::SpMat eye(n, n);
+    eye.setIdentity();
+
+    gvi::SpMat spm = eigen_wrapper.randomd_sparse_psd(n, 10) + eye;
     
-    ASSERT_TRUE(eigen_wrapper.is_sparse_positive(spm));
+    Eigen::MatrixXd mat{spm};
+    Eigen::LDLT<Eigen::MatrixXd> ldlt(mat);        
+
+    ASSERT_TRUE(ldlt.isPositive());
 
     // RHS
-    Eigen::VectorXd b(eigen_wrapper.random_vector(n));
+    Eigen::VectorXd b(Eigen::VectorXd::Random(n));
 
     // solve full
     Eigen::MatrixXd fullm(spm);
     timer.start();
-    Eigen::VectorXd x = eigen_wrapper.solve_llt(fullm, b);
+    Eigen::VectorXd x = fullm.llt().solve(b); 
     std::cout << "solving time full matrix " << std::endl;
     timer.end();
 
     // solve sparse
     timer.start();
-    Eigen::VectorXd spx = eigen_wrapper.solve_cgd_sp(spm, b);
+    
+    Eigen::ConjugateGradient<SpMat, Eigen::Upper> solver;
+    Eigen::VectorXd spx =  solver.compute(spm).solve(b);
+
     std::cout << "solving time sparse matrix " << std::endl;
     timer.end();
 
@@ -79,7 +88,7 @@ TEST(TestSparse, ldlt_decomp){
     ASSERT_LE((precision - precision_sp).norm(), 1e-10);
 
     // ================== full ldlt decomposition ==================
-    auto ldlt_full = eigen_wrapper.ldlt_full(precision);
+    auto ldlt_full = precision.ldlt();
     Eigen::MatrixXd Lf = ldlt_full.matrixL();
     Eigen::MatrixXd Uf = ldlt_full.matrixU();
     Eigen::MatrixXd Df = ldlt_full.vectorD().real().asDiagonal();
@@ -118,7 +127,7 @@ TEST(TestSparse, ldlt_decomp){
 }
 
 TEST(TestSparse, manipulation_sparse){
-    typedef Eigen::SimplicialLDLT<SpMat, Eigen::Lower, Eigen::NaturalOrdering<int>> SparseLDLT;
+    
     SparseLDLT ldlt_sp(precision_sp);
     SpMat Lsp = ldlt_sp.matrixL();
 
@@ -129,12 +138,6 @@ TEST(TestSparse, manipulation_sparse){
     // Lsp is in column fist order.
     eigen_wrapper.find_nnz(Lsp, I, J, V);
     ASSERT_EQ(Lsp.coeff(I(1), J(1)), Lsp.coeff(1, 0));
-
-    // assemble the matrix from nnz elements.
-    int size = Lsp.rows();
-    SpMat assemblied(size, size);
-    eigen_wrapper.assemble(assemblied, I, J, V);
-    ASSERT_TRUE(eigen_wrapper.matrix_equal(assemblied, Lsp));
 
 }
 
@@ -169,8 +172,8 @@ TEST(TestSparse, sparse_permute){
     ASSERT_TRUE(eigen_wrapper.matrix_equal(block_extracted, block_true));
 
     // block for vector
-    Eigen::VectorXd vec = eigen_wrapper.random_matrix(10, 1);
-    Eigen::VectorXd v_blk = eigen_wrapper.random_matrix(4, 1);
+    Eigen::VectorXd vec = Eigen::MatrixXd::Random(10 ,1);
+    Eigen::VectorXd v_blk = Eigen::MatrixXd::Random(4 ,1);
 
     eigen_wrapper.block_insert(vec, 0, 0, 4, 1, v_blk);
     Eigen::VectorXd v_block_extract = eigen_wrapper.block_extract(vec, 0, 0, 4, 1);
@@ -198,7 +201,6 @@ TEST(TestSparse, sparse_inverse){
     Eigen::MatrixXd inv_full(size, size);
 
     SpMat precision_inv_1_sp(size, size);
-    Eigen::VectorXi StartIndx(nnz);
     eigen_wrapper.find_nnz_known_ij(Lsp, I, J, V);
 
     // compare time
@@ -221,8 +223,6 @@ TEST(TestSparse, sparse_inverse){
     }
     timer.end();
     
-    eigen_wrapper.construct_iteration_order(precision_sp, I, J, StartIndx, nnz);
-
     std::cout << "sparse inverse trj time" << std::endl;
     SpMat precision_inv_trj(size, size);
 
@@ -243,23 +243,6 @@ TEST(TestSparse, sparse_inverse){
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_1));
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_trj));
     ASSERT_TRUE(eigen_wrapper.matrix_equal(inv_computed, inv_computed_2));
-    
-}
-
-TEST(TestSparse, sparse_view){
-    int size = 10;
-    int nnz = 20;
-    Eigen::MatrixXd m{eigen_wrapper.random_sparse_matrix(size, size, nnz)};
-    SpMat spm = m.sparseView();
-
-    Eigen::VectorXd I,J,V;
-    eigen_wrapper.find_nnz(spm, I, J, V);
-    
-    ASSERT_LE((spm - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
-
-    SpMat spm_1 = spm + eigen_wrapper.random_sparse_matrix(size, size, nnz);
-
-    ASSERT_GE((spm_1 - eigen_wrapper.sparse_view(m, I, J)).norm(), 1e-10);
     
 }
 
@@ -298,7 +281,7 @@ TEST(TestMatrix3D, compress3d){
     Eigen::MatrixXd mat(3, 3);
     mat << 1,2,3,4,5,6,7,8,9;
     
-    Matrix3D mat3d(3,3,2);
+    gvi::Matrix3D mat3d(3,3,2);
     mat3d.setZero();
     eigen_wrapper.compress3d(mat, mat3d, 0);
 
@@ -343,7 +326,20 @@ TEST(TestMatrix3D, repmat){
     }
 }
 
-TEST(TestMatrix3D, linspace){
+MatrixXd linspace(const Eigen::VectorXd & x0, const Eigen::VectorXd & xT, int nt){
+        int rows = x0.rows();
+        Eigen::VectorXd step_vec(rows);
+        step_vec.setZero();
+        step_vec = (xT-x0)/(nt-1);
+        Eigen::MatrixXd res(rows, nt);
+        res.setZero();
+        for (int i=0; i<nt; i++){
+            res.col(i) = x0 + step_vec*i;
+        }
+        return res;
+    }
+
+TEST(TestMatrix3D, test_linspace){
     int nt = 5;
     Eigen::VectorXd x0(4), xT(4);
     MatrixXd linspaced_gt(4, nt), linspaced(4, nt);
@@ -355,7 +351,7 @@ TEST(TestMatrix3D, linspace){
                     2, 3.2, 4.4, 5.6, 6.8,
                     3, 4.2, 5.4, 6.6, 7.8;
                     
-    linspaced = eigen_wrapper.linspace(x0, xT, nt);
+    linspaced = linspace(x0, xT, nt);
     ASSERT_LE((linspaced_gt - linspaced).norm(), 1e-10);
 
 }

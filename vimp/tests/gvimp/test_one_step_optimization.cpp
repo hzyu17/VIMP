@@ -13,17 +13,20 @@
 #include "helpers/ExperimentRunner.h"
 #include "instances/gvimp/GVIMPPlanarPRSDF.h"
 #include <gtest/gtest.h>
+#include "GaussianVI/ngd/NGD-GH.h"
+#include "GaussianVI/ngd/NGDFactorizedBase.h"
 
-using namespace gpmp2;
+// using namespace gpmp2;
 using namespace Eigen;
 using namespace vimp;
 using namespace std;
+// using namespace gvi;
 
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
 using SDFPR = gpmp2::ObstaclePlanarSDFFactor<gpmp2::PointRobotModel>;
-using GVIFactorizedPlanarSDFPR = GVIFactorizedPlanarSDF<gpmp2::PointRobotModel>;
+using NGDFactorizedPlanarSDFPR = NGDFactorizedPlanarSDF<gpmp2::PointRobotModel>;
 
 std::string config_file{source_root+"/configs/vimp/planar_pR_map1_new.xml"};
 int nx = 4, nu = 2, num_exp = 2;
@@ -106,7 +109,7 @@ TEST(GVIOnestep, initial_values){
         MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
         /// Vector of base factored optimizers
-        vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
+        vector<std::shared_ptr<gvi::NGDFactorizedBase>> vec_factors;
 
         /// initial values
         VectorXd joint_init_theta{VectorXd::Zero(ndim)};
@@ -139,8 +142,8 @@ TEST(GVIOnestep, initial_values){
 
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
-                    // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
-                    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+                    // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
+                    vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                                 dim_state, 
                                                                 cost_linear_gp, 
                                                                 lin_gp, 
@@ -163,7 +166,7 @@ TEST(GVIOnestep, initial_values){
 
             }else{
                 // linear gp factors
-                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
                                                             cost_linear_gp, 
                                                             lin_gp, 
@@ -174,7 +177,7 @@ TEST(GVIOnestep, initial_values){
 
                 auto cost_sdf_pr = cost_obstacle_planar<gpmp2::PointRobotModel>;
                 // collision factor
-                vec_factors.emplace_back(new GVIFactorizedPlanarSDFPR{dim_conf, 
+                vec_factors.emplace_back(new NGDFactorizedPlanarSDFPR{dim_conf, 
                                                                 dim_state, 
                                                                 cost_sdf_pr, 
                                                                 SDFPR{gtsam::symbol('x', i), 
@@ -192,12 +195,12 @@ TEST(GVIOnestep, initial_values){
         std::cout << "***** Declare joint optimizer *****" << std::endl;
 
         /// The joint optimizer
-        GVIGH<GVIFactorizedBase> optimizer{vec_factors, 
-                                           dim_state, 
-                                           n_states, 
-                                           params.max_iter(), 
-                                           params.temperature(), 
-                                           params.high_temperature()};
+        gvi::NGDGH<gvi::NGDFactorizedBase> optimizer{vec_factors, 
+                                                    dim_state, 
+                                                    n_states, 
+                                                    params.max_iter(), 
+                                                    params.temperature(), 
+                                                    params.high_temperature()};
 
         std::cout << "***** Initialize joint optimizer *****" << std::endl;
 

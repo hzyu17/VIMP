@@ -26,6 +26,7 @@ set(GPMP2_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gpmp2")
 set(GTSAM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gtsam")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/GaussianVI")
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}/vimp")

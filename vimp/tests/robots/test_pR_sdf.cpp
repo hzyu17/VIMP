@@ -13,7 +13,7 @@
 #include "robots/PlanarPointRobotSDF_pgcs.h"
 #include "3rdparty/rapidxml-1.13/rapidxml.hpp"
 #include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
-#include "helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
 
 using namespace rapidxml;
 using namespace vimp;
@@ -21,11 +21,11 @@ using namespace Eigen;
 
 using SDF = gpmp2::PlanarSDF;
 
-EigenWrapper ei;
+gvi::EigenWrapper ei;
 
 // global function
 std::tuple<SDF, double, double, double> get_sdf(){  
-    MatrixIO m_io;
+    gvi::MatrixIO m_io;
     rapidxml::file<> xmlFile("/home/hzyu/git/VIMP/vimp/configs/pgcs/planar_pR_map2.xml"); // Default template is char
     rapidxml::xml_document<> doc;
     doc.parse<0>(xmlFile.data());

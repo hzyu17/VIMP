@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "helpers/MatrixHelper.h"
-#include "helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/MatrixHelper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
 
 namespace vimp{
 
@@ -102,8 +102,8 @@ protected:
 
     int _max_iterations, _max_n_backtrack, _lowtemp_iterations;
 
-    MatrixIO _m_io;
-    EigenWrapper _ei;
+    gvi::MatrixIO _m_io;
+    gvi::EigenWrapper _ei;
     VectorXd _m0, _mT;
     MatrixXd _Sig0, _SigT;
 

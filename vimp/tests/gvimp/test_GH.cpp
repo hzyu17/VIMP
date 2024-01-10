@@ -9,11 +9,11 @@
  * 
  */
 
-#include "gvimp/GaussHermite.h"
+#include "GaussianVI/quadrature/GaussHermite.h"
 #include <gtest/gtest.h>
 
 using namespace Eigen;
-using namespace vimp;
+using namespace gvi;
 
 MatrixXd phi(const VectorXd& vec_x){
     double x = vec_x(0);

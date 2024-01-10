@@ -10,17 +10,16 @@
  */
 
 #include "helpers/ExperimentParams.h"
-#include "instances/FactorizedGVIPlanar.h"
+#include "instances/FactorizedGVIPlanarNGD.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <gtsam/inference/Symbol.h>
-
 
 namespace vimp{
 
 template <typename Robot, typename RobotSDF>
 class GVIMPPlanarRobotSDF{
     using SDFPR = gpmp2::ObstaclePlanarSDFFactor<Robot>;
-    using GVIFactorizedPlanarSDFRobot = GVIFactorizedPlanarSDF<Robot>;
+    using NGDFactorizedPlanarSDFRobot = NGDFactorizedPlanarSDF<Robot>;
 
 public:
     virtual ~GVIMPPlanarRobotSDF(){}
@@ -56,7 +55,7 @@ public:
         MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
         /// Vector of base factored optimizers
-        vector<std::shared_ptr<GVIFactorizedBase>> vec_factors;
+        vector<std::shared_ptr<gvi::NGDFactorizedBase>> vec_factors;
         
         auto robot_model = _robot_sdf.RobotModel();
         auto sdf = _robot_sdf.sdf();
@@ -87,8 +86,8 @@ public:
 
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
-                    // std::shared_ptr<LinearGpPrior> p_lin_gp{}; 
-                    vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+                    // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
+                    vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                                 dim_state, 
                                                                 cost_linear_gp, 
                                                                 lin_gp, 
@@ -111,7 +110,7 @@ public:
 
             }else{
                 // linear gp factors
-                vec_factors.emplace_back(new LinearGpPrior{2*dim_state, 
+                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
                                                             cost_linear_gp, 
                                                             lin_gp, 
@@ -122,7 +121,7 @@ public:
 
                 // collision factor
                 auto cost_sdf_Robot = cost_obstacle_planar<Robot>;
-                vec_factors.emplace_back(new GVIFactorizedPlanarSDFRobot{dim_conf, 
+                vec_factors.emplace_back(new NGDFactorizedPlanarSDFRobot{dim_conf, 
                                                                         dim_state, 
                                                                         cost_sdf_Robot, 
                                                                         SDFPR{gtsam::symbol('x', i), 
@@ -138,7 +137,7 @@ public:
         }
 
         /// The joint optimizer
-        GVIGH<GVIFactorizedBase> optimizer{vec_factors, 
+        gvi::NGDGH<gvi::NGDFactorizedBase> optimizer{vec_factors, 
                                            dim_state, 
                                            n_states, 
                                            params.max_iter(), 
@@ -174,7 +173,7 @@ protected:
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     EigenWrapper _ei;
-    std::shared_ptr<GVIGH<GVIFactorizedBase>> _p_opt;
+    std::shared_ptr<gvi::NGDGH<gvi::NGDFactorizedBase>> _p_opt;
 
     std::tuple<Eigen::VectorXd, SpMat> _last_iteration_mean_precision;
 

@@ -11,8 +11,8 @@
 
 #include "pgcsmp/LinearCovarianceSteering.h"
 #include <gtest/gtest.h>
-#include "helpers/EigenWrapper.h"
-#include "helpers/MatrixHelper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/MatrixHelper.h"
 
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
@@ -21,10 +21,11 @@ std::string source_root{XSTRING(SOURCE_ROOT)};
 
 using namespace vimp;
 using namespace Eigen;
+using namespace gvi;
 
 TEST(LinearCS, initializations){
     // reading data
-    MatrixIO m_io;
+    gvi::MatrixIO m_io;
     EigenWrapper eigen_wrapper;
 
     Matrix3D At = m_io.load_csv(source_root+"/tests/data/Aprior.csv");

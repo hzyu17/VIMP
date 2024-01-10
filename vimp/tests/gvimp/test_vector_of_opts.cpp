@@ -9,11 +9,11 @@
  * 
  */
 
-#include "gp/fixed_prior.h"
-#include "gp/minimum_acc_prior.h"
-#include "gvimp/GVIFactorizedBase.h"
+#include "GaussianVI/gp/fixed_prior.h"
+#include "GaussianVI/gp/minimum_acc_prior.h"
+#include "GaussianVI/ngd/NGDFactorizedBase.h"
 #include "robots/PlanarPointRobotSDFExample.h"
-#include "gvimp/GVI-GH.h"
+#include "GaussianVI/ngd/NGD-GH.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 
 #include <gtest/gtest.h>
@@ -23,11 +23,11 @@ using namespace Eigen;
 
 namespace vimp{
     template <typename Cl1>
-    class VIMPFactorizedOneCost : public GVIFactorizedBase{
-        using Base = GVIFactorizedBase;
+    class VIMPFactorizedOneCost : public gvi::NGDFactorizedBase{
+        using Base = gvi::NGDFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
         using Function = std::function<double(const VectorXd&, const Cl1&)>;
-        using GH = GaussHermite<GHFunction>;
+        using GH = gvi::GaussHermite<GHFunction>;
         public:
             VIMPFactorizedOneCost(const int& dimension, 
                                     int state_dim, 
@@ -49,11 +49,11 @@ namespace vimp{
 }
 
 
-double cost_fixed_gp(const VectorXd& x, const FixedPriorGP& fixed_gp){
+double cost_fixed_gp(const VectorXd& x, const gvi::FixedPriorGP& fixed_gp){
     return fixed_gp.fixed_factor_cost(x);
 }
 
-double cost_linear_gp(const VectorXd& pose, const MinimumAccGP& gp_minacc){
+double cost_linear_gp(const VectorXd& pose, const gvi::MinimumAccGP& gp_minacc){
     int dim = gp_minacc.dim_posvel();
     VectorXd x1 = pose.segment(0, dim);
     VectorXd x2 = pose.segment(dim, dim);
@@ -82,22 +82,22 @@ TEST(TESTVectorOpt, creation){
     MatrixXd K{MatrixXd::Identity(2*dim, 2*dim)};
     VectorXd mu{VectorXd::Ones(2*dim)};
 
-    std::vector<std::shared_ptr<GVIFactorizedBase>> vec_opt;
+    std::vector<std::shared_ptr<gvi::GVIFactorizedBase>> vec_opt;
 
     MatrixXd P0{MatrixXd::Zero(2*dim, ndim)};
     P0.block(0, 0, 2*dim, 2*dim) = std::move(MatrixXd::Identity(2*dim, 2*dim));
 
-    FixedPriorGP p_fixed_gp{K, mu};
-    std::shared_ptr<VIMPFactorizedOneCost<FixedPriorGP>> p_opt_fixedgp{new VIMPFactorizedOneCost<FixedPriorGP>{
-                                                                                                2*dim,
-                                                                                                2*dim, 
-                                                                                                3,
-                                                                                                0,
-                                                                                                1.0,
-                                                                                                10.0,
-                                                                                                cost_fixed_gp, 
-                                                                                                p_fixed_gp, 
-                                                                                                P0}}; 
+    gvi::FixedPriorGP p_fixed_gp{K, mu};
+    std::shared_ptr<VIMPFactorizedOneCost<gvi::FixedPriorGP>> p_opt_fixedgp{new VIMPFactorizedOneCost<gvi::FixedPriorGP>{
+                                                                                                        2*dim,
+                                                                                                        2*dim, 
+                                                                                                        3,
+                                                                                                        0,
+                                                                                                        1.0,
+                                                                                                        10.0,
+                                                                                                        cost_fixed_gp, 
+                                                                                                        p_fixed_gp, 
+                                                                                                        P0}}; 
 
     vec_opt.emplace_back(std::move(p_opt_fixedgp));
 
@@ -107,9 +107,9 @@ TEST(TESTVectorOpt, creation){
     double delt_t = 0.01;
 
     MatrixXd Qc{MatrixXd::Identity(dim, dim)};
-    MinimumAccGP lin_gp{Qc, 0, delt_t, mu};
+    gvi::MinimumAccGP lin_gp{Qc, 0, delt_t, mu};
 
-    std::shared_ptr<VIMPFactorizedOneCost<MinimumAccGP>> p_opt_lingp{new VIMPFactorizedOneCost<MinimumAccGP>{
+    std::shared_ptr<VIMPFactorizedOneCost<gvi::MinimumAccGP>> p_opt_lingp{new VIMPFactorizedOneCost<gvi::MinimumAccGP>{
                                                                                             4*dim, 
                                                                                             2*dim,
                                                                                             3,
@@ -121,7 +121,7 @@ TEST(TESTVectorOpt, creation){
                                                                                             P1}};
     vec_opt.emplace_back(std::move(p_opt_lingp));
 
-    GVIGH<GVIFactorizedBase> opt{vec_opt, 2*dim, 1};
+    gvi::GVIGH<gvi::GVIFactorizedBase> opt{vec_opt, 2*dim, 1};
 
     double thres = 1e-10;  
 
@@ -138,13 +138,13 @@ TEST(TESTVectorOpt, integration){
     MatrixXd K{MatrixXd::Identity(dim_theta, dim_theta)};
     VectorXd mu{VectorXd::Ones(dim_theta)};
 
-    std::vector<std::shared_ptr<GVIFactorizedBase>> vec_opt;
+    std::vector<std::shared_ptr<gvi::GVIFactorizedBase>> vec_opt;
 
     MatrixXd P0{MatrixXd::Zero(dim_theta, ndim)};
     P0.block(0, 0, dim_theta, dim_theta) = std::move(MatrixXd::Identity(dim_theta, dim_theta));
 
-    FixedPriorGP fixed_gp{K, mu};
-    std::shared_ptr<VIMPFactorizedOneCost<FixedPriorGP>> p_opt_fixedgp{new VIMPFactorizedOneCost<FixedPriorGP>{
+    gvi::FixedPriorGP fixed_gp{K, mu};
+    std::shared_ptr<VIMPFactorizedOneCost<gvi::FixedPriorGP>> p_opt_fixedgp{new VIMPFactorizedOneCost<gvi::FixedPriorGP>{
                                                                                                 dim_theta,
                                                                                                 dim_theta, 
                                                                                                 3,
@@ -163,9 +163,9 @@ TEST(TESTVectorOpt, integration){
     double delt_t = 0.01;
 
     MatrixXd Qc{MatrixXd::Identity(dim, dim)};
-    MinimumAccGP lin_gp{Qc, 0, delt_t, mu};
+    gvi::MinimumAccGP lin_gp{Qc, 0, delt_t, mu};
 
-    std::shared_ptr<VIMPFactorizedOneCost<MinimumAccGP>> p_opt_lingp{new VIMPFactorizedOneCost<MinimumAccGP>{
+    std::shared_ptr<VIMPFactorizedOneCost<gvi::MinimumAccGP>> p_opt_lingp{new VIMPFactorizedOneCost<gvi::MinimumAccGP>{
                                                                                             2*dim_theta, 
                                                                                             dim_theta,
                                                                                             3,
@@ -177,7 +177,7 @@ TEST(TESTVectorOpt, integration){
                                                                                             P1}};
     vec_opt.emplace_back(p_opt_lingp);
     
-    GVIGH<GVIFactorizedBase> opt{vec_opt, dim_theta, 3};
+    gvi::GVIGH<gvi::GVIFactorizedBase> opt{vec_opt, dim_theta, 3};
     opt.set_GH_degree(5);
     const double thres = 1e-10;    
 
@@ -209,7 +209,7 @@ TEST(TESTVectorOpt, collision_factor){
     int dim = 4;
     int ndim = 3*dim;
 
-    std::vector<std::shared_ptr<GVIFactorizedBase>> vec_opt;
+    std::vector<std::shared_ptr<gvi::GVIFactorizedBase>> vec_opt;
 
     MatrixXd P0{MatrixXd::Zero(dim, ndim)};
     P0.block(0, 0, dim, dim) = std::move(MatrixXd::Identity(dim, dim));
@@ -230,7 +230,7 @@ TEST(TESTVectorOpt, collision_factor){
 
     vec_opt.emplace_back(p_opt_obs);
 
-    GVIGH<GVIFactorizedBase> opt{vec_opt, 4, 1};
+    gvi::GVIGH<gvi::GVIFactorizedBase> opt{vec_opt, 4, 1};
     opt.set_GH_degree(10);
     double thres = 1e-10;    
 

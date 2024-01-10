@@ -30,7 +30,7 @@ namespace vimp{
                 _sdf = PlanarSDF(origin, cell_size, _field);
 
                 // 2 link simple example
-                gtsam::Pose3 arm_base(Rot3(), Point3(0.0, 0.0, 0.0));
+                gtsam::Pose3 arm_base(gtsam::Rot3(), gtsam::Point3(0.0, 0.0, 0.0));
                 Vector2d a(0.5, 0.5), alpha(0, 0), d(0, 0);
                 Arm abs_arm(2, a, alpha, d, arm_base);
 
@@ -69,7 +69,7 @@ namespace vimp{
             ArmModel _arm;
             PlanarSDF _sdf;
             MatrixXd _field;
-            MatrixIO _matrix_io;
+            gvi::MatrixIO _matrix_io;
 
             /// Arm robot
             int _ndof = 1;

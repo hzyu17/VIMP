@@ -19,13 +19,12 @@
 #define XSTRING(x) STRING(x)
 std::string source_root{XSTRING(SOURCE_ROOT)};
 
-using namespace vimp;
 using namespace Eigen;
 
 EigenWrapper ei;
 
 TEST(TestHinge2D, hinge_loss){
-    vimp::MatrixIO m_io;
+    gvi::MatrixIO m_io;
     MatrixXd grid_X = m_io.load_csv(source_root+"/data/sdf_grid_x.csv");
     MatrixXd grid_Y = m_io.load_csv(source_root+"/data/sdf_grid_y.csv");
 
@@ -38,14 +37,14 @@ TEST(TestHinge2D, hinge_loss){
     gpmp2::PlanarSDF sdf = gpmp2::PlanarSDF(origin, cell_size, field);  
     
     MatrixXd hinge_loss = mesh_hingeloss(grid_X, grid_Y, sdf, eps);
-    MatrixXd hinge_loss_groundtruth = m_io.load_csv(source_root+"/data/gvimp/2d_pR/map_multiobs_entropy_hinge_loss_groundtruth.csv");
+    MatrixXd hinge_loss_groundtruth = m_io.load_csv(source_root+"/data/GaussianVI/2d_pR/map_multiobs_entropy_hinge_loss_groundtruth.csv");
     ASSERT_LE((hinge_loss - hinge_loss_groundtruth).norm(), 1e-10);
 
 }
 
 
 TEST(TestHinge2D, hinge_loss_gradients){
-    vimp::MatrixIO m_io;
+    gvi::MatrixIO m_io;
     MatrixXd grid_X = m_io.load_csv(source_root+"/data/sdf_grid_x.csv");
     MatrixXd grid_Y = m_io.load_csv(source_root+"/data/sdf_grid_y.csv");
 

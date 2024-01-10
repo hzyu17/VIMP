@@ -12,11 +12,12 @@
 
 #pragma once
 
-#include "helpers/MatrixHelper.h"
+#include "GaussianVI/helpers/MatrixHelper.h"
 #include "dynamics/Dynamics.h"
 #include <Eigen/Dense>
 
 using namespace Eigen;
+using namespace gvi;
 
 namespace vimp{
 

@@ -14,8 +14,9 @@
 
 #include "helpers/ExperimentRunner.h"
 #include "instances/gvimp/GVIMPWAMArm.h"
-using namespace vimp;
+#include "GaussianVI/ngd/NGD-GH.h"
 
+using namespace vimp;
 
 int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};

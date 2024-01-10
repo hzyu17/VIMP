@@ -25,7 +25,10 @@
  */
 #pragma once
 
-#include "helpers/MatrixHelper.h"
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
+#include "GaussianVI/helpers/MatrixHelper.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <Eigen/Dense>
 
@@ -138,7 +141,7 @@ public:
     std::shared_ptr<SDF> _psdf;
     int _ndof, _nlinks;
 
-    MatrixIO _m_io;
+    gvi::MatrixIO _m_io;
 
     std::string _map_name, _field_file;
 };

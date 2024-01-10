@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "helpers/EigenWrapper.h"
+#include "GaussianVI/helpers/EigenWrapper.h"
 
 namespace vimp{
 
@@ -24,7 +24,7 @@ public:
 
 protected:
     int _nx, _nu, _nt;
-    EigenWrapper _ei;
+    gvi::EigenWrapper _ei;
 };
 
 }

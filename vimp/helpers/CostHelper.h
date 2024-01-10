@@ -9,6 +9,11 @@
  * 
  */
 
+#pragma once
+
+#ifndef COST_HELPER_H
+#define COST_HELPER_H
+
 #include <matplot/matplot.h>
 
 using namespace std;
@@ -67,3 +72,5 @@ private:
     MatrixIO _mio;
 };
 }
+
+#endif

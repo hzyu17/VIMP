@@ -1,0 +1,3 @@
+[submodule "vimp/GaussianVI"]
+	path = vimp/GaussianVI
+	url = https://github.com/hzyu17/GaussianVI.git

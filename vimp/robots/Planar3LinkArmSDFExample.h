@@ -22,7 +22,7 @@ namespace vimp{
         public:
             Planar3LinkArmSDFExample(const string& field_file){
                 
-                Point2 origin(-1, -1);
+                gtsam::Point2 origin(-1, -1);
                 double cell_size = 0.01;
 
                 _field = _matrix_io.load_csv(field_file);
@@ -30,7 +30,7 @@ namespace vimp{
                 _sdf = PlanarSDF(origin, cell_size, _field);
 
                 // 2 link simple example
-                Pose3 arm_base(Rot3(), Point3(0.0, 0.0, 0.0));
+                gtsam::Pose3 arm_base(gtsam::Rot3(), gtsam::Point3(0.0, 0.0, 0.0));
                 Vector3d a(0.5, 0.5, 0.5), alpha(0, 0, 0), d(0, 0, 0);
                 Arm abs_arm(3, a, alpha, d, arm_base);
 
@@ -74,7 +74,7 @@ namespace vimp{
             ArmModel _arm;
             PlanarSDF _sdf;
             MatrixXd _field;
-            MatrixIO _matrix_io;
+            gvi::MatrixIO _matrix_io;
 
             /// Arm robot
             int _ndof = 1;

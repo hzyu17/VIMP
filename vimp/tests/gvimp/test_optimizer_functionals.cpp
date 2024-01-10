@@ -9,8 +9,8 @@
  * 
  */
 
-#include "gvimp/GVIFactorizedSimpleGH.h"
-#include "gvimp/GVI-GH.h"
+#include "GaussianVI/ngd/NGDFactorizedSimpleGH.h"
+#include "GaussianVI/gvibase/GVI-GH.h"
 #include <gtest/gtest.h>
 
 
@@ -42,10 +42,10 @@ MatrixXd x_minus_mu_x_minus_muT_phi(const VectorXd& x){
 }
 
 using namespace std;
-using namespace vimp;
+
 typedef std::function<double(const VectorXd&)> Function;
 typedef std::function<MatrixXd(const VectorXd&)> GHFunction;
-typedef GVIFactorizedSimpleGH<Function> OptFact;
+typedef gvi::NGDFactorizedSimpleGH<Function> OptFact;
 
 
 /**
@@ -103,7 +103,7 @@ TEST(TestFunctional, GH_weights){
 
     int deg = 10;
     int dim = 1;
-    typedef GaussHermite<GHFunction> GH;
+    typedef gvi::GaussHermite<GHFunction> GH;
     
     GH gh_inst{deg, dim, mean, cov, Phix};
     
@@ -138,7 +138,7 @@ TEST(TestFunctional, GH_integrations){
 
     int deg = 6;
     int dim = 1;
-    typedef GaussHermite<GHFunction> GH;
+    typedef gvi::GaussHermite<GHFunction> GH;
     
     GH gh_inst{deg, dim, mean, cov, Phix};
 
@@ -230,18 +230,18 @@ TEST(TestFunctional, joint_cost_value){
 
     vec_opts.emplace_back(p_opt_fac);
 
-    GVIGH<OptFact> opt{vec_opts, 1, 1};
+    gvi::GVIGH<OptFact> opt{vec_opts, 1, 1};
 
     VectorXd mu_rd{VectorXd::Random(1)};
     MatrixXd prec_rd{MatrixXd::Random(1,1)};
 
-    SpMat prec_rd_sp = prec_rd.sparseView();
+    gvi::SpMat prec_rd_sp = prec_rd.sparseView();
 
     opt.set_mu(mu_rd);
     opt.set_precision(prec_rd_sp);
 
     /// should be equal
-    SpMat cov_sp = prec_rd.inverse().sparseView();
+    gvi::SpMat cov_sp = prec_rd.inverse().sparseView();
     ASSERT_LE(abs(opt.cost_value() - opt.cost_value(mu_rd, cov_sp)), 1e-10);
 
 }
