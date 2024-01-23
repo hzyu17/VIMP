@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.0</x>
+        <y>14.0</y>
+    </goal_pos>
+
+    <total_time>1.5</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.005 </cost_sigma>
+
+    <epsilon> 2.0 </epsilon>
+
+    <step_size> 0.15 </step_size>
+
+    <num_iter> 10 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+</parameters> -->
+
+<!-- with linear interpolated initializations and low temperature: go above the obstacles -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.0</x>
+        <y>14.0</y>
+    </goal_pos>
+
+    <total_time>1.5</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.007 </cost_sigma>
+
+    <epsilon> 0.5 </epsilon>
+
+    <step_size> 0.45 </step_size>
+
+    <num_iter> 10 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+</parameters> -->
+
+<!-- with linear interpolated initializations and low temperature: go below the obstacles -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.0</x>
+        <y>14.0</y>
+    </goal_pos>
+
+    <total_time>1.5</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.005 </cost_sigma>
+
+    <epsilon> 0.5 </epsilon>
+
+    <step_size> 0.45 </step_size>
+
+    <num_iter> 40 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+</parameters> -->
+
+<!-- with linear interpolated initializations and low temperature: go above the obstacles: ENTROPY MAP -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.0</x>
+        <y>14.0</y>
+    </goal_pos>
+
+    <total_time>1.5</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.007 </cost_sigma>
+
+    <epsilon> 0.5 </epsilon>
+
+    <step_size> 0.35 </step_size>
+
+    <num_iter> 10 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+    <replanning> 0 </replanning>
+
+</parameters> -->
+
+<!-- with linear interpolated initializations and high temperature: go above the obstacles: ENTROPY MAP -->
+<parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.0</x>
+        <y>14.0</y>
+    </goal_pos>
+
+    <total_time>1.5</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.007 </cost_sigma>
+
+    <epsilon> 0.5 </epsilon>
+
+    <step_size> 0.35 </step_size>
+
+    <num_iter> 30 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>100.0</temperature>
+
+    <replanning> 1 </replanning>
+
+</parameters>
+
+<!-- with linear interpolated initializations and low temperature: go below the obstacles: ENTROPY MAP -->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.0</x>
+        <y>14.0</y>
+    </goal_pos>
+
+    <total_time>1.5</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.005 </cost_sigma>
+
+    <epsilon> 0.5 </epsilon>
+
+    <step_size> 0.45 </step_size>
+
+    <num_iter> 18 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>10.0</temperature>
+
+    <replanning> 0 </replanning>
+
+</parameters> -->
+
+
+<!-- =========== high temperature: go below the obstacles: ENTROPY MAP ===========-->
+<!-- <parameters>
+    <field_file>/home/hongzhe/git/VIMP/vimp/data/2d_pR/field_multiobs_entropy.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.0</x>
+        <y>14.0</y>
+    </goal_pos>
+
+    <total_time>1.5</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.8 </coeff_Qc>
+
+    <cost_sigma> 0.005 </cost_sigma>
+
+    <epsilon> 0.5 </epsilon>
+
+    <step_size> 0.35 </step_size>
+
+    <num_iter> 30 </num_iter>
+
+    <init_precision_factor>10.0</init_precision_factor>
+
+    <temperature>100.0</temperature>
+
+    <replanning> 1 </replanning>
+
+</parameters> -->
+
+<!--============================ entropy map less risky case ===================================-->
+
+<!-- <parameters>
+    <field_file>data/2d_pR/field_multiobs_entropy.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>16.0</x>
+        <y>15.0</y>
+    </goal_pos>
+
+    <total_time>2.0</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 1.0 </coeff_Qc>
+
+    <cost_sigma> 0.035 </cost_sigma>
+
+    <epsilon> 1.2 </epsilon>
+
+    <step_size> 0.45 </step_size>
+
+    <num_iter> 10 </num_iter>
+
+    <init_precision_factor>100.0</init_precision_factor>
+
+    <temperature>5.0</temperature>
+
+</parameters> -->
+
+<!--========================== entropy map risky case =====================================-->
+
+<!-- <parameters>
+    <field_file>data/2d_pR/field_multiobs_entropy.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>14.0</x>
+        <y>16.0</y>
+    </goal_pos>
+
+    <total_time>2.0</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 1.0 </coeff_Qc>
+
+    <cost_sigma> 0.05 </cost_sigma>
+
+    <epsilon> 1.2 </epsilon>
+
+    <step_size> 0.3 </step_size>
+
+    <num_iter> 10 </num_iter>
+
+    <init_precision_factor>20.0</init_precision_factor>
+
+    <temperature>1.0</temperature>
+
+</parameters> -->
+
+<!--===============================================================-->
+
+<!-- <parameters>
+    <field_file>data/2d_pR/field_multiobs_entropy.csv</field_file>
+    
+    <start_pos>
+        <x>0.0</x>
+        <y>0.0</y>
+    </start_pos>
+
+    <goal_pos>
+        <x>16.0</x>
+        <y>15.0</y>
+    </goal_pos>
+
+    <total_time>2.5</total_time>
+
+    <n_total_states>10</n_total_states>
+
+    <coeff_Qc> 0.1 </coeff_Qc>
+
+    <cost_sigma> 0.025 </cost_sigma>
+
+    <epsilon> 1.2 </epsilon>
+
+    <step_size> 0.15 </step_size>
+
+    <num_iter> 10 </num_iter>
+
+    <init_precision_factor>20.0</init_precision_factor>
+
+    <temperature> 2.0 </temperature>
+
+</parameters> -->
+
+
+<!--notes>
+    // T = 1: (0.45, 20), (0.75, 200), ()
+    // T = 2: (0.45, 20), (0.4, 10)
+    // T = 5: (0.3, 10), 
+    // T = 10, Qc = 0.8eye: (ss=0.15, init_prec=10)
+    // T = 20, Qc = 0.8eye: 
+<notes-->
