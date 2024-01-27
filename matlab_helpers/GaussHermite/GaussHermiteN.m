@@ -49,7 +49,7 @@ for i_size = 1:size(gx, 1)
             end
         end
     end
-Integral_GHs = [Integral_GHs; Integral_GH];
+    Integral_GHs = [Integral_GHs; Integral_GH];
 end
 integral_trues;
 end
