@@ -29,7 +29,7 @@ set(MATLAB_ROOT_DIR "/usr/local/MATLAB/R2020b")
 set(Matlab_INCLUDE_DIRS "${MATLAB_ROOT_DIR}/extern/include")
 set(Matlab_MEX_LIBRARY "${MATLAB_ROOT_DIR}/bin/glnxa64/libmex.so")  # Adjust the path accordingly
 set(MCR_LIBRARY_PATH "${MATLAB_ROOT_DIR}/runtime/glnxa64") 
-find_library(Matlab_MX_LIBRARY NAMES libmx.so PATHS "{MATLAB_ROOT_DIR}/bin/glnxa64")
+find_library(Matlab_MX_LIBRARY NAMES libmx.so PATHS "${MATLAB_ROOT_DIR}/bin/glnxa64")
 
 # Sparse GH library
 message("Finding Sparse GH Library")
