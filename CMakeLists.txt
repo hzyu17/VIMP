@@ -33,7 +33,7 @@ find_library(Matlab_MX_LIBRARY NAMES libmx.so PATHS "{MATLAB_ROOT_DIR}/bin/glnxa
 
 # Sparse GH library
 message("Finding Sparse GH Library")
-set(libSpGH_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/vimp/GaussianVI/quadrature/SparseGH/libSpGH/for_testing/libSpGH.so")
+set(libSpGH_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/vimp/GaussianVI/quadrature/libSpGH/for_testing/libSpGH.so")
 
 # GPMP2
 message("Finding GPMP2 Library")
