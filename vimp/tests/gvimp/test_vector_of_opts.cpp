@@ -27,7 +27,7 @@ namespace vimp{
         using Base = gvi::NGDFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
         using Function = std::function<double(const VectorXd&, const Cl1&)>;
-        using GH = gvi::GaussHermite<GHFunction>;
+        using GH = gvi::SparseGaussHermite<GHFunction>;
         public:
             VIMPFactorizedOneCost(const int& dimension, 
                                     int state_dim, 
@@ -42,7 +42,7 @@ namespace vimp{
                 Base::_func_phi = [this, function, cost_class](const VectorXd& x){return MatrixXd::Constant(1, 1, function(x, cost_class));};
                 Base::_func_Vmu = [this, function, cost_class](const VectorXd& x){return (x-Base::_mu) * function(x, cost_class);};
                 Base::_func_Vmumu = [this, function, cost_class](const VectorXd& x){return MatrixXd{(x-Base::_mu) * (x-Base::_mu).transpose().eval() * function(x, cost_class)};};
-                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance, Base::_func_phi});
+                Base::_gh = std::make_shared<GH>(GH{6, dimension, Base::_mu, Base::_covariance});
             }
 
     };

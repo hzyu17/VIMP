@@ -14,10 +14,10 @@
 #ifndef COST_HELPER_H
 #define COST_HELPER_H
 
-#include <matplot/matplot.h>
+// #include <matplot/matplot.h>
 
 using namespace std;
-using namespace matplot;
+// using namespace matplot;
 
 namespace vimp{
 class CostHelper{
@@ -53,16 +53,16 @@ public:
         _mio.saveData(filename, total_costs);
     }
 
-    void plot_costs(){
+    // void plot_costs(){
         
-        figure();
-        std::vector<double> x = linspace(0, _max_iter, _max_iter);
-        plot(x, _control_energy_costs, "r");
-        hold(on);
-        plot(x, _collision_costs, "b");
-        plot(x, _total_costs, "k");
-        show();
-    }
+    //     figure();
+    //     std::vector<double> x = linspace(0, _max_iter, _max_iter);
+    //     plot(x, _control_energy_costs, "r");
+    //     hold(on);
+    //     plot(x, _collision_costs, "b");
+    //     plot(x, _total_costs, "k");
+    //     show();
+    // }
 
 private:
     int _max_iter;

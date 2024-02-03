@@ -12,6 +12,7 @@
 #include "GaussianVI/ngd/NGDFactorizedSimpleGH.h"
 #include "GaussianVI/gvibase/GVI-GH.h"
 #include <gtest/gtest.h>
+#include "GaussianVI/quadrature/GaussHermite.h"
 
 
 double cost_function(const VectorXd& vec_x){
@@ -92,41 +93,6 @@ TEST(TestFunctional, function_values){
 
 }
 
-
-/**
- * @brief Test the weights got from Gauss Hermite integrator
- */
-TEST(TestFunctional, GH_weights){
-
-    VectorXd mean{VectorXd::Constant(1, 20)};
-    MatrixXd cov{MatrixXd::Constant(1,1,9)};
-
-    int deg = 10;
-    int dim = 1;
-    typedef gvi::GaussHermite<GHFunction> GH;
-    
-    GH gh_inst{deg, dim, mean, cov, Phix};
-    
-    VectorXd weights{gh_inst.weights()};
-    VectorXd sigmapoints{gh_inst.sigmapts()};
-
-    VectorXd weights_expected(10);
-    weights_expected << 4.310652630718227e-06, 4.310652630718376e-06, 7.580709343122321e-04, 
-                        7.580709343121815e-04, 0.344642334932012, 0.344642334932016, 0.135483702980275, 
-                        0.135483702980267, 0.019111580500769, 0.019111580500770;
-
-    VectorXd sigmapoints_expected(10);
-    sigmapoints_expected << 4.859462828332310, -4.859462828332314, 3.581823483551924, 
-                            -3.581823483551934, 0.484935707515505, -0.484935707515517,
-                            1.465989094391161, -1.465989094391140, 2.484325841638960, 
-                            -2.484325841638965;
-    
-    ASSERT_LE((sigmapoints - sigmapoints_expected).norm(), 1e-10);
-    ASSERT_LE((weights - weights_expected).norm(), 1e-10);
-
-}
-
-
 /**
  * @brief Test the integration process
  * 
@@ -140,18 +106,18 @@ TEST(TestFunctional, GH_integrations){
     int dim = 1;
     typedef gvi::GaussHermite<GHFunction> GH;
     
-    GH gh_inst{deg, dim, mean, cov, Phix};
+    GH gh_inst{deg, dim, mean, cov};
 
     double IntPhix_expected = 1.801423462172827e+03;
-    ASSERT_LE(abs(gh_inst.Integrate()(0,0) - IntPhix_expected), 1e-10);
+    ASSERT_LE(abs(gh_inst.Integrate(Phix)(0,0) - IntPhix_expected), 1e-10);
 
-    gh_inst.update_integrand(x_minus_mu_phi);
+    // gh_inst.update_integrand(x_minus_mu_phi);
     double IntxMuPhix_expected = 1.925745912968216e+02;
-    ASSERT_LE(abs(gh_inst.Integrate()(0,0) - IntxMuPhix_expected), 1e-10);
+    ASSERT_LE(abs(gh_inst.Integrate(x_minus_mu_phi)(0,0) - IntxMuPhix_expected), 1e-10);
 
-    gh_inst.update_integrand(x_minus_mu_x_minus_muT_phi);
+    // gh_inst.update_integrand(x_minus_mu_x_minus_muT_phi);
     double IntxMuxMuTPhix_expected = 1.604681203455295e+04;
-    ASSERT_LE(abs(gh_inst.Integrate()(0,0) - IntxMuxMuTPhix_expected), 1e-10);
+    ASSERT_LE(abs(gh_inst.Integrate(x_minus_mu_x_minus_muT_phi)(0,0) - IntxMuxMuTPhix_expected), 1e-10);
 
 }
 

@@ -13,7 +13,7 @@
 // #include <fastad>
 #include "helpers/hinge2Dhelper.h"
 #include <gpmp2/obstacle/PlanarSDF.h>
-#include <matplot/matplot.h>
+// #include <matplot/matplot.h>
 
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
@@ -65,37 +65,37 @@ TEST(TestHinge2D, hinge_loss_gradients){
     results = hingeloss_gradient_mesh(grid_X, grid_Y, sdf, eps, Jacobians);
 
     // plot mesh hinge loss and gradients
-    using namespace matplot;
-    int xlen = 400;
-    int ylen = 300;
-    MatrixXd x_mesh = grid_X.transpose().replicate(1, ylen);
-    MatrixXd y_mesh = grid_Y.replicate(xlen, 1);
+    // using namespace matplot;
+    // int xlen = 400;
+    // int ylen = 300;
+    // MatrixXd x_mesh = grid_X.transpose().replicate(1, ylen);
+    // MatrixXd y_mesh = grid_Y.replicate(xlen, 1);
     
-    vector_2d x = ei.eigen_to_vector(x_mesh);
-    vector_2d y = ei.eigen_to_vector(y_mesh);
+    // vector_2d x = ei.eigen_to_vector(x_mesh);
+    // vector_2d y = ei.eigen_to_vector(y_mesh);
 
-    // hinge loss at a point
-    MatrixXd Jacobian = MatrixXd::Zero(1, 2);
-    std::pair<double, MatrixXd> hinge_jacobian_point = hingeloss_gradient_point(-15.0, 0.0, sdf, eps, Jacobian);
+    // // hinge loss at a point
+    // MatrixXd Jacobian = MatrixXd::Zero(1, 2);
+    // std::pair<double, MatrixXd> hinge_jacobian_point = hingeloss_gradient_point(-15.0, 0.0, sdf, eps, Jacobian);
 
     // ei.print_matrix(hinge_jacobian_point.second, "hinge loss jacobian at (-15.0, 0.0)");
 
-    // plot hinge loss
-    figure();
-    MatrixXd hinge_loss = std::get<0>(results);
-    vector_2d hinge_vec = ei.eigen_to_vector(hinge_loss);
-    surf(x, y, hinge_vec);
+    // // plot hinge loss
+    // figure();
+    // MatrixXd hinge_loss = std::get<0>(results);
+    // vector_2d hinge_vec = ei.eigen_to_vector(hinge_loss);
+    // surf(x, y, hinge_vec);
 
-    save(source_root+"/data/hinge_loss", "jpeg");
+    // save(source_root+"/data/hinge_loss", "jpeg");
     
-    // hinge loss jacobians
-    figure();
-    vec_2d grad_x_mesh = std::get<1>(results);
-    vec_2d grad_y_mesh = std::get<2>(results);
-    quiver(x, y, grad_x_mesh, grad_y_mesh, 4.0);
-    save(source_root+"/data/hinge_loss_jacobians", "jpeg");
+    // // hinge loss jacobians
+    // figure();
+    // vec_2d grad_x_mesh = std::get<1>(results);
+    // vec_2d grad_y_mesh = std::get<2>(results);
+    // quiver(x, y, grad_x_mesh, grad_y_mesh, 4.0);
+    // save(source_root+"/data/hinge_loss_jacobians", "jpeg");
 
 
-    show();
+    // show();
     
 }

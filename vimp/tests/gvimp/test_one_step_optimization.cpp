@@ -43,7 +43,7 @@ int nt = 10;
 Eigen::Vector2d map_origin{(VectorXd(2) << -20, -10).finished()};
 double cell_size = 0.1;
 
-string map_name{"2dpr_map1"};
+std::string map_name{"2dpr_map1"};
 
 // robot and sdf 
 GVIMPPlanarPRSDF opt_robot_sdf = runner.optimizer_robot_sdf();

@@ -43,8 +43,8 @@ class PlanarPointRobotSDFExample{
                 2.2361, 1.4142, 1.0000, 1.0000, 1.0000, 1.4142, 2.2361,
                 2.8284, 2.2361, 2.0000, 2.0000, 2.0000, 2.2361, 2.8284).finished();
 
-        string filename_map{"/home/hzyu/git/VIMP/vimp/data/2d_pR/map_ground_truth.csv"};
-        string filename_sdf{"/home/hzyu/git/VIMP/vimp/data/2d_pR/map_sdf.csv"};
+        std::string filename_map{"/home/hzyu/git/VIMP/vimp/data/2d_pR/map_ground_truth.csv"};
+        std::string filename_sdf{"/home/hzyu/git/VIMP/vimp/data/2d_pR/map_sdf.csv"};
 
         _matrix_io.saveData<MatrixXd>(filename_map, map_ground_truth);
         _matrix_io.saveData<MatrixXd>(filename_sdf, field);
