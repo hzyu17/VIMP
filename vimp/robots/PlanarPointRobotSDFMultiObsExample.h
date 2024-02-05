@@ -12,8 +12,9 @@
 
 #pragma once
 
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
+// #define STRING(x) #x
+// #define XSTRING(x) STRING(x)
+// std::string source_root{XSTRING(SOURCE_ROOT)};
 
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gtsam/inference/Symbol.h>
@@ -33,8 +34,9 @@ class PlanarPointRobotSDFMultiObsExample{
             gtsam::Point2 origin(-20, -10);
             double cell_size = 0.1;
 
+            std::cout << "source_root " << std::endl << source_root << std::endl;
+
             /// map and sdf
-            std::string source_root{XSTRING(SOURCE_ROOT)};
             if (std::strcmp(map_name.data(), "map0") == 0){
                 map_file = source_root+"/maps/2dpR/map0/map_multiobs_map0.csv";
                 field_file = source_root+"/maps/2dpR/map0/field_multiobs_map0.csv";

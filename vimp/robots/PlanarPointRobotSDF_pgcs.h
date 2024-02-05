@@ -12,11 +12,6 @@
 
 #pragma once
 
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
-
-std::string source_root{XSTRING(SOURCE_ROOT)};
-
 #include <gtsam/inference/Symbol.h>
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include "robots/RobotSDFBase.h"

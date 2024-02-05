@@ -83,7 +83,7 @@ public:
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
             if (i==0 || i==n_states-1){
-
+                std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
                     // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 

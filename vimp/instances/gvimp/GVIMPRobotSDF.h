@@ -136,6 +136,7 @@ public:
             }
         }
 
+        std::cout << "debug 1" << std::endl;
         /// The joint optimizer
         gvi::NGDGH<gvi::NGDFactorizedBase> optimizer{vec_factors, 
                                            dim_state, 

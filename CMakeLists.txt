@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
 set(BOOST_ROOT "/usr/local/bin/boost")
 list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
-# Boost - same requirement as gtsam
+# Boost
 find_package(Boost 1.70 REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
 find_package(Boost COMPONENTS system REQUIRED)
@@ -45,6 +45,10 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/GaussianVI")
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}/vimp")
+
+# To avoid some conflicts and re-definitions that are already existed in GTSAM.
+add_compile_definitions(GTSAM_ENV)
+add_compile_definitions(GVI_SUBDUR_ENV)
 
 set(GPMP2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gpmp2/gpmp2/libgpmp2.so")
 set(GTSAM_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gtsam/gtsam/libgtsam.so.4.0.0")

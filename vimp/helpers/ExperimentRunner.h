@@ -180,6 +180,8 @@ public:
 
         std::cout << ExpNodeName.data() << std::endl;
         
+        std::cout << "----- Reading Boundary Conditions -----" << std::endl;
+        
         this->read_boundary_conditions(paramNode, params);
 
         params.print_params();
