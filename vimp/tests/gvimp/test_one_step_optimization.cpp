@@ -16,14 +16,15 @@
 #include "GaussianVI/ngd/NGD-GH.h"
 #include "GaussianVI/ngd/NGDFactorizedBase.h"
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+std::string source_root{XSTRING(SOURCE_ROOT)};
+
 // using namespace gpmp2;
 using namespace Eigen;
 using namespace vimp;
 using namespace std;
 // using namespace gvi;
-
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
 
 using SDFPR = gpmp2::ObstaclePlanarSDFFactor<gpmp2::PointRobotModel>;
 using NGDFactorizedPlanarSDFPR = NGDFactorizedPlanarSDF<gpmp2::PointRobotModel>;

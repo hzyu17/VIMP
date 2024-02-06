@@ -27,7 +27,8 @@ namespace vimp{
         using Base = gvi::NGDFactorizedBase;
         using GHFunction = std::function<MatrixXd(const VectorXd&)>;
         using Function = std::function<double(const VectorXd&, const Cl1&)>;
-        using GH = gvi::SparseGaussHermite<GHFunction>;
+        // using GH = gvi::SparseGaussHermite<GHFunction>;
+        using GH = gvi::GaussHermite<GHFunction>;
         public:
             VIMPFactorizedOneCost(const int& dimension, 
                                     int state_dim, 
