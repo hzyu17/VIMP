@@ -2,19 +2,22 @@
     <total_time>6.0</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1</coeff_Qc>
-    <sig_obs>0.05</sig_obs>
+    <!-- <sig_obs>0.05</sig_obs> -->
+    <sig_obs>80.0</sig_obs>
     <map_name>2darm_map1</map_name>
     <eps_sdf>0.1</eps_sdf>
     <radius>0.01</radius>
-    <step_size>0.75</step_size>
+    <step_size>0.3</step_size>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
-    <temperature>0.0001</temperature>
-    <high_temperature>0.05</high_temperature>
-    <max_iterations>40</max_iterations>
-    <low_temp_iterations>30</low_temp_iterations>
+    <!-- <temperature>0.0001</temperature> -->
+    <temperature>0.1</temperature>
+    <high_temperature>0.2</high_temperature>
+    <max_iterations>30</max_iterations>
+    <low_temp_iterations>15</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_n_backtracking>10</max_n_backtracking>
+    <max_n_backtracking>8</max_n_backtracking>
+    <GH_deg>3</GH_deg>
 
 </Commons>
 
@@ -34,7 +37,7 @@
     </goal_pos>
 
     <!-- <sig_obs> 0.0055 </sig_obs> -->
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_Arm/map1/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_Arm/sparse_gh/map1/case1/</saving_prefix>
 
 </Experiment1>
 

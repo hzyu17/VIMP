@@ -11,17 +11,20 @@ import gpmp2.*
 
 map = 1;
 
-prefix = "map1/case1";
+% prefix = "map1/case1";
+prefix = "sparse_gh/map1/case1";
+
 switch map
     case 1
-        prefix = "map1/case1";
+%         prefix = "map1/case1";
+        prefix = "sparse_gh/map1/case1";
     case 2
         prefix = "map2";
 end
 
 means = csvread([prefix+"/mean.csv"]);
 covs = csvread([prefix+"/cov.csv"]);
-precisions = csvread([prefix+"/joint_precisoin.csv"]);
+precisions = csvread([prefix+"/joint_precision.csv"]);
 costs = csvread([prefix+"/cost.csv"]);
 sdfmap = csvread("../../../vimp/maps/2dArm/map.csv");
 factor_costs = csvread([prefix+"/factor_costs.csv"]);
