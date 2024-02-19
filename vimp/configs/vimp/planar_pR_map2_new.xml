@@ -82,7 +82,8 @@
     </goal_pos>
 
     <!-- <init_precision_factor>20.0</init_precision_factor> -->
-    <sig_obs>0.005</sig_obs>
+    <!-- <sig_obs>0.005</sig_obs> -->
+    <sig_obs> 200.0 </sig_obs>
     <max_iterations>40</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case3/</saving_prefix>
 
@@ -106,7 +107,8 @@
     <!-- <init_precision_factor>20.0</init_precision_factor> -->
     <step_size>0.45</step_size>
     <low_temp_iterations>15</low_temp_iterations>
-    <sig_obs>0.004</sig_obs>
+    <!-- <sig_obs>0.004</sig_obs> -->
+    <sig_obs> 250.0 </sig_obs>
     <max_iterations>40</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case4/</saving_prefix>
 
