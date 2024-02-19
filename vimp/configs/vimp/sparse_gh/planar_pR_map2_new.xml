@@ -60,7 +60,7 @@
 
     <!-- <init_precision_factor>20.0</init_precision_factor> -->
     <!-- <sig_obs>0.0045</sig_obs> -->
-    <sig_obs>222.2</sig_obs>
+    <sig_obs>250.0</sig_obs>
     <max_iterations>40</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2/</saving_prefix>
 
