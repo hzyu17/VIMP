@@ -7,6 +7,7 @@
  * for nonlinear likelihood estimation.
 */
 
+#include "GaussianVI/helpers/MatrixHelper.h"
 #include "GaussianVI/quadrature/GaussHermite.h"
 #include "GaussianVI/quadrature/SparseGaussHermite.h"
 #include "instances/gvimp/GVIMPPlanarPRSDF.h"

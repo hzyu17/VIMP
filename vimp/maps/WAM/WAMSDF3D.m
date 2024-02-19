@@ -5,8 +5,9 @@ clear
 
 import gtsam.*
 import gpmp2.*
+addpath("/usr/local/gtsam_toolbox")
+addpath("../../../matlab_helpers/tools")        
 
-addpath("../../../matlab_helpers/tools")                      
 %% dataset
 dataset = generate3Ddataset_1('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];

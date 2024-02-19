@@ -120,6 +120,7 @@ public:
                 double total_time, 
                 int n_states, 
                 double coeff_Qc, 
+                int GH_degree,
                 double sig_obs, 
                 double eps_sdf, 
                 double radius,
@@ -154,7 +155,8 @@ public:
                 _boundary_penalties(boundary_penalties),
                 _temperature(temperature),
                 _high_temperature(high_temperature),
-                _max_iter_lowtemp(low_temp_iterations)
+                _max_iter_lowtemp(low_temp_iterations),
+                _GH_degree(GH_degree)
                 { }
 
     // getters
@@ -165,6 +167,7 @@ public:
     inline double temperature() const { return _temperature; }
     inline double high_temperature() const { return _high_temperature; }
     inline int max_iter_lowtemp() const { return _max_iter_lowtemp; }
+    inline int GH_degree() const {return _GH_degree; }
     
     inline void set_temperature(double temperature){ _temperature = temperature; }
     inline void set_high_temperature(double high_temp){ _high_temperature = high_temp; }
@@ -178,6 +181,7 @@ public:
         << " Control dimension:         " << this->nu() << std::endl 
         << " Total time span:           " << this->total_time() << std::endl 
         << " coeff_Qc:                  " << this->coeff_Qc() << std::endl 
+        << " GH_degree:                 " << this->GH_degree() << std::endl 
         << " Time discretizations:      " << this->nt() << std::endl 
         << " Temperature:               " << this->temperature() << std::endl 
         << " High temperature:          " << this->high_temperature() << std::endl 
@@ -202,6 +206,7 @@ public:
 protected:    
     int _max_iter_lowtemp;
     double _coeff_Qc, _initial_precision_factor, _boundary_penalties, _temperature, _high_temperature;
+    int _GH_degree;
 
 };
 

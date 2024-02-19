@@ -2,6 +2,7 @@
     <total_time>2.5</total_time>
     <n_states>15</n_states>
     <coeff_Qc>0.8</coeff_Qc>
+    <GH_deg>13</GH_deg>
     <sig_obs>0.0035</sig_obs>
     <map_name>2dpr_map2</map_name>
     <eps_sdf>0.7</eps_sdf>

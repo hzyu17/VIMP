@@ -89,6 +89,7 @@ public:
                     // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
                     vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                                 dim_state, 
+                                                                params.GH_degree(),
                                                                 gvi::cost_linear_gp, 
                                                                 lin_gp, 
                                                                 n_states, 
@@ -101,6 +102,7 @@ public:
                 gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
                 vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
                                                           dim_state, 
+                                                          params.GH_degree(),
                                                           gvi::cost_fixed_gp, 
                                                           fixed_gp, 
                                                           n_states, 
@@ -112,6 +114,7 @@ public:
                 // linear gp factors
                 vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
+                                                            params.GH_degree(),
                                                             gvi::cost_linear_gp, 
                                                             lin_gp, 
                                                             n_states, 
@@ -123,6 +126,7 @@ public:
                 auto cost_sdf_Robot = cost_obstacle_planar<Robot>;
                 vec_factors.emplace_back(new NGDFactorizedPlanarSDFRobot{dim_conf, 
                                                                         dim_state, 
+                                                                        params.GH_degree(),
                                                                         cost_sdf_Robot, 
                                                                         SDFPR{gtsam::symbol('x', i), 
                                                                         robot_model, 
@@ -153,7 +157,7 @@ public:
 
         optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
-        optimizer.set_GH_degree(3);
+        optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
 
         optimizer.optimize(verbose);

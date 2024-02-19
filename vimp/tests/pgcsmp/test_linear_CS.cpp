@@ -14,10 +14,6 @@
 #include "GaussianVI/helpers/EigenWrapper.h"
 #include "GaussianVI/helpers/MatrixHelper.h"
 
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
-
-std::string source_root{XSTRING(SOURCE_ROOT)};
 
 using namespace vimp;
 using namespace Eigen;

@@ -9,9 +9,6 @@
  * 
  */
 
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
-
 #include "helpers/ExperimentRunner.h"
 #include "instances/gvimp/GVIMPWAMArm.h"
 #include "GaussianVI/ngd/NGD-GH.h"
@@ -19,7 +16,6 @@
 using namespace vimp;
 
 int main(int argc, char* argv[]){
-    std::string source_root{XSTRING(SOURCE_ROOT)};
     int nx = 14, nu = 7, num_exp = 2;
     GVIMPParams params;
     if (argc == 1){
@@ -75,10 +71,10 @@ int main(int argc, char* argv[]){
         int num_iter = std::stoi(argv[15]);
         int max_n_backtracking = std::stoi(argv[16]);
         std::string sdf_file{argv[17]};
-
+        int GH_deg = 3;
         int nx = 14, nu = 7;
 
-        params = GVIMPParams(nx, nu, total_time, n_states, coeff_Qc, sig_obs, 
+        params = GVIMPParams(nx, nu, total_time, n_states, coeff_Qc, GH_deg, sig_obs, 
                             eps_sdf, radius, step_size, num_iter, init_precision_factor, 
                             boundary_penalties, temperature, high_temperature, low_temp_iterations, 
                             stop_err, max_n_backtracking, "map_bookshelf", sdf_file);

@@ -12,9 +12,6 @@
 #include "helpers/hinge2Dhelper.h"
 #include <gtest/gtest.h>
 
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
-std::string source_root{XSTRING(SOURCE_ROOT)};
 
 TEST(Test_meshgrid, hinge_mesh){
     gvi::MatrixIO m_io;

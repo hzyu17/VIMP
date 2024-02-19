@@ -107,6 +107,7 @@ public:
         double temperature = atof(commonParams->first_node("temperature")->value());
         double high_temperature = atof(commonParams->first_node("high_temperature")->value());
         
+        int gh_degree = atoi(commonParams->first_node("GH_deg")->value());
         int nt = atoi(commonParams->first_node("n_states")->value());
         int low_temp_iterations = atoi(commonParams->first_node("low_temp_iterations")->value());
         int max_iterations = atoi(commonParams->first_node("max_iterations")->value());
@@ -114,7 +115,7 @@ public:
 
         std::string map_name = static_cast<std::string>(commonParams->first_node("map_name")->value());
 
-        params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, sig_obs, eps_sdf, radius, 
+        params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, gh_degree, sig_obs, eps_sdf, radius, 
                             step_size, max_iterations, init_precision_factor, boundary_penalties, 
                             temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name);
     }

@@ -12,9 +12,9 @@
 
 #pragma once
 
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
-std::string source_root{XSTRING(SOURCE_ROOT)};
+// #define STRING(x) #x
+// #define XSTRING(x) STRING(x)
+// std::string source_root{XSTRING(SOURCE_ROOT)};
 
 #include <gpmp2/kinematics/PointRobotModel.h>
 #include <gtsam/inference/Symbol.h>

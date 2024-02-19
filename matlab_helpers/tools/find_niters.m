@@ -4,7 +4,7 @@ function niters = find_niters(means_3d)
 
 [nstate, nt] = size(means_3d);
 for i = 1:nt
-    sum(means_3d(:,i))
+%     sum(means_3d(:,i));
     if sum(means_3d(:,i)) == 0
         niters = i-1;
         return;

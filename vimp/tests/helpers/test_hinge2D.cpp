@@ -15,10 +15,6 @@
 #include <gpmp2/obstacle/PlanarSDF.h>
 // #include <matplot/matplot.h>
 
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
-std::string source_root{XSTRING(SOURCE_ROOT)};
-
 using namespace Eigen;
 
 EigenWrapper ei;

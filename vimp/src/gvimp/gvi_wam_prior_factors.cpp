@@ -19,6 +19,7 @@ int main(){
     double total_time = 4.0;
     int nt = 50;
     double coeff_Qc = 1.0;
+    int GH_deg = 3;
     double sig_obs = 0.02;
     double eps_sdf = 0.2;
     double radius = 0.0;
@@ -35,7 +36,7 @@ int main(){
 
     int nx = 14, nu = 7;
 
-    GVIMPParams params(nx, nu, total_time, nt, coeff_Qc, sig_obs, 
+    GVIMPParams params(nx, nu, total_time, nt, coeff_Qc, GH_deg, sig_obs, 
                         eps_sdf, radius, step_size, num_iter, init_precision_factor, 
                         boundary_penalties, temperature, high_temperature, low_temp_iterations, 
                         stop_err, max_n_backtracking, "map_bookshelf", sdf_file);
@@ -93,6 +94,7 @@ int main(){
                 // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
                 vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
+                                                            params.GH_degree(),
                                                             gvi::cost_linear_gp, 
                                                             lin_gp, 
                                                             n_states, 
@@ -105,6 +107,7 @@ int main(){
             gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
             vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
                                                         dim_state, 
+                                                        params.GH_degree(),
                                                         gvi::cost_fixed_gp, 
                                                         fixed_gp, 
                                                         n_states, 
@@ -116,6 +119,7 @@ int main(){
             // linear gp factors
             vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                         dim_state, 
+                                                        params.GH_degree(),
                                                         gvi::cost_linear_gp, 
                                                         lin_gp, 
                                                         n_states, 
