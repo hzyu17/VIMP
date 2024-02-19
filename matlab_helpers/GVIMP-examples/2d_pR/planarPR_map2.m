@@ -23,12 +23,14 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(2, 2, 'TileSpacing', 'none', 'Padding', 'none')
 for i = 1:4 % 4 experiments
     nexttile
-    prefix = ["map2/case" + num2str(i)+"/"];
+%     prefix = ["map2/case" + num2str(i)+"/"];
+
+    prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];
     
     % % --- high temperature ---
     means = csvread([prefix + "mean.csv"]);
     covs = csvread([prefix + "cov.csv"]);
-    precisions = csvread([prefix + "precisoin.csv"]);
+    precisions = csvread([prefix + "precision.csv"]);
     costs = csvread([prefix + "cost.csv"]);
     
     factor_costs = csvread([prefix + "factor_costs.csv"]);

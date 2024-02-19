@@ -131,7 +131,7 @@ public:
                                                                         SDFPR{gtsam::symbol('x', i), 
                                                                         robot_model, 
                                                                         sdf, 
-                                                                        sig_obs, 
+                                                                        1.0/sig_obs, 
                                                                         eps_sdf}, 
                                                                         n_states, 
                                                                         i, 
