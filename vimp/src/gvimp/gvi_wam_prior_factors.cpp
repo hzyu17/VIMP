@@ -94,7 +94,7 @@ int main(){
                 // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
                 vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
-                                                            params.GH_degree(),
+                                                            // params.GH_degree(),
                                                             gvi::cost_linear_gp, 
                                                             lin_gp, 
                                                             n_states, 
@@ -107,7 +107,7 @@ int main(){
             gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
             vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
                                                         dim_state, 
-                                                        params.GH_degree(),
+                                                        // params.GH_degree(),
                                                         gvi::cost_fixed_gp, 
                                                         fixed_gp, 
                                                         n_states, 
@@ -119,7 +119,7 @@ int main(){
             // linear gp factors
             vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                         dim_state, 
-                                                        params.GH_degree(),
+                                                        // params.GH_degree(),
                                                         gvi::cost_linear_gp, 
                                                         lin_gp, 
                                                         n_states, 
