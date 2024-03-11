@@ -60,7 +60,7 @@ int main(){
     MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
     /// Vector of base factored optimizers
-    vector<std::shared_ptr<gvi::NGDFactorizedBase>> vec_factors;
+    vector<std::shared_ptr<gvi::GVIFactorizedBase>> vec_factors;
 
     auto robot_model = _robot_sdf.RobotModel();
     auto sdf = _robot_sdf.sdf();
@@ -132,7 +132,7 @@ int main(){
     }
 
     /// The joint optimizer
-    gvi::NGDGH<gvi::NGDFactorizedBase> optimizer{vec_factors, 
+    gvi::NGDGH<gvi::GVIFactorizedBase> optimizer{vec_factors, 
                                                 dim_state, 
                                                 n_states, 
                                                 params.max_iter(), 
@@ -148,7 +148,7 @@ int main(){
 
     optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
-    optimizer.set_GH_degree(3);
+    // optimizer.set_GH_degree(3);
     optimizer.set_step_size_base(params.step_size()); // a local optima
 
     VectorXd factor_cost_vector = optimizer.factor_cost_vector();

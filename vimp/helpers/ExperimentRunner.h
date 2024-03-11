@@ -250,9 +250,9 @@ public:
 
         VectorXd m0(this->_nx), mT(this->_nx); 
 
-        Eigen::VectorXd mo_pos(7);
-        mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
-        m0.block(0, 0, 7, 1) = mo_pos;
+        Eigen::VectorXd m0_pos(7);
+        m0_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
+        m0.block(0, 0, 7, 1) = m0_pos;
         m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
         Eigen::VectorXd mT_pos(7);
@@ -542,9 +542,9 @@ public:
 
         VectorXd m0(this->_nx), mT(this->_nx); 
 
-        Eigen::VectorXd mo_pos(7);
-        mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
-        m0.block(0, 0, 7, 1) = mo_pos;
+        Eigen::VectorXd m0_pos(7);
+        m0_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
+        m0.block(0, 0, 7, 1) = m0_pos;
         m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
         Eigen::VectorXd mT_pos(7);

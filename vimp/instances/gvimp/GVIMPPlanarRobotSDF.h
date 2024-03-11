@@ -55,7 +55,7 @@ public:
         MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
         /// Vector of base factored optimizers
-        vector<std::shared_ptr<gvi::NGDFactorizedBase>> vec_factors;
+        vector<std::shared_ptr<gvi::GVIFactorizedBase>> vec_factors;
         
         auto robot_model = _robot_sdf.RobotModel();
         auto sdf = _robot_sdf.sdf();
@@ -141,7 +141,7 @@ public:
         }
 
         /// The joint optimizer
-        gvi::NGDGH<gvi::NGDFactorizedBase> optimizer{vec_factors, 
+        gvi::NGDGH<gvi::GVIFactorizedBase> optimizer{vec_factors, 
                                            dim_state, 
                                            n_states, 
                                            params.max_iter(), 
@@ -177,7 +177,7 @@ protected:
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     gvi::EigenWrapper _ei;
-    std::shared_ptr<gvi::NGDGH<gvi::NGDFactorizedBase>> _p_opt;
+    std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase>> _p_opt;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 
