@@ -131,7 +131,7 @@ public:
                                                                     SDFPR{gtsam::symbol('x', i), 
                                                                     robot_model, 
                                                                     sdf, 
-                                                                    sig_obs, 
+                                                                    1.0/sig_obs, 
                                                                     eps_sdf}, 
                                                                     n_states, 
                                                                     i, 
@@ -157,7 +157,7 @@ public:
 
         optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
-        optimizer.set_GH_degree(3);
+        // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
 
         optimizer.optimize(verbose);

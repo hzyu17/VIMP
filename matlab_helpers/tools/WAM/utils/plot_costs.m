@@ -3,11 +3,11 @@ function output = plot_costs(costs, factor_costs, precisions, niters, n_states)
 fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
 prior_costs = [];
 for i = 1:n_states-1
-    prior_costs = [prior_costs, factor_costs(1:end, 1+(i-1)*2+1)];
+    prior_costs = [prior_costs, factor_costs(1+(i-1)*2+1, 1:end)'];
 end
 obs_costs = [];
 for i = 1:n_states-2
-    obs_costs = [obs_costs, factor_costs(1:end, 1+(i-1)*2+2)];
+    obs_costs = [obs_costs, factor_costs(1+(i-1)*2+2, 1:end)'];
 end
 
 x0 = 50;
@@ -25,7 +25,9 @@ t.FontSize = 16;
 hold on
 grid on
 plot(prior_costs, 'LineWidth', 1.5)
-scatter(linspace(1,niters, niters), prior_costs(1:niters, 1:end), 30, 'filled')
+for j = 1:size(prior_costs, 2)
+    scatter(linspace(1, niters, niters), prior_costs(1:niters, j), 30, 'filled')
+end
 xl = xlabel('Iterations','fontweight','bold');
 xl.FontSize = 16;
 yl = ylabel('-log(p(x_k))','fontweight','bold');
@@ -37,7 +39,9 @@ t.FontSize = 16;
 hold on
 grid on
 plot(obs_costs, 'LineWidth', 1.5)
-scatter(linspace(1,niters, niters), obs_costs(1:niters, 1:end), 30, 'filled')
+for j = 1:size(obs_costs, 2)
+    scatter(linspace(1, niters, niters), obs_costs(1:niters, j), 30, 'filled')
+end
 xl = xlabel('Iterations','fontweight','bold');
 xl.FontSize = 16;
 yl = ylabel('-log(p(z|x_k))','fontweight','bold');

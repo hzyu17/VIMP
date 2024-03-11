@@ -10,17 +10,21 @@ addpath("../../tools/error_ellipse");
 import gtsam.*
 import gpmp2.*
 
-prefix = "map1/case1";
+% ============== full grid GH quadrature results =================
+% prefix = "case1";
+
+% ============== sparse GH quadrature results =================
+prefix = "sparse_gh/case1";
 
 means = csvread([prefix+"/mean.csv"]);
 covs = csvread([prefix+"/cov.csv"]);
-precisions = csvread([prefix+"/joint_precisoin.csv"]);
+precisions = csvread([prefix+"/joint_precision.csv"]);
 costs = csvread([prefix+"/cost.csv"]);
 factor_costs = csvread([prefix+"/factor_costs.csv"]);
 
 %% ******************* Define parameters ******************
 % ----- parameters -----
-[niters, ttl_dim] = size(means);
+[ttl_dim, niters] = size(means);
 dim_theta = 14;
 dim_conf = 14 / 2;
 
@@ -113,22 +117,22 @@ plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
 hold off
 
 
-%% ----------------- old code -----------------
-i_vec_means = vec_means{nsteps};
-i_vec_covs = vec_covs{nsteps};
-hold on 
-view(3)
-plotMap3D(dataset.corner_idx, origin, cell_size);
-for j = 1:n_states
-    % gradual changing colors
-    alpha = (j / n_states)^(1.15);
-    color = [0, 0, 1, alpha];
-    % means
-    plotArm3D(arm.fk_model(), i_vec_means{j}', color, 4, true);
-end
-plotArm3D(arm.fk_model(), start_conf, 'r', 4, true);
-plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
-plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
+% %% ----------------- old code -----------------
+% i_vec_means = vec_means{nsteps};
+% i_vec_covs = vec_covs{nsteps};
+% hold on 
+% view(3)
+% plotMap3D(dataset.corner_idx, origin, cell_size);
+% for j = 1:n_states
+%     % gradual changing colors
+%     alpha = (j / n_states)^(1.15);
+%     color = [0, 0, 1, alpha];
+%     % means
+%     plotArm3D(arm.fk_model(), i_vec_means{j}', color, 4, true);
+% end
+% plotArm3D(arm.fk_model(), start_conf, 'r', 4, true);
+% plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
+% plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
 
 %% ================= plot costs ===================
 output = plot_costs(costs, factor_costs, precisions, niters, n_states);
@@ -161,11 +165,11 @@ for j = 1:1:n_states
     i_vec_means = vec_means{nsteps};
     i_vec_covs = vec_covs{nsteps};
     % mu j
-    mean_j = i_vec_means{j}';
+    mean_j = i_vec_means{j};
     % cov j
     cov_j = i_vec_covs{j};
     rng('default')  % For reproducibility
-    samples = mvnrnd(mean_j, cov_j, n_samples);
+    samples = mvnrnd(mean_j, cov_j(1:7, 1:7), n_samples);
     plotArm3D(arm.fk_model(), mean_j, color, 4, true);
     for k = 1: size(samples, 1)
         k_sample = samples(k, 1:end)';

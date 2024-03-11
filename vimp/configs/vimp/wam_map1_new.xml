@@ -3,6 +3,7 @@
     <n_states>20</n_states>
     <map_name>map_bookshelf</map_name>
     <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>3</GH_deg>
     <sig_obs>0.02</sig_obs>
     <eps_sdf>0.2</eps_sdf>
     <radius>0.0</radius>
