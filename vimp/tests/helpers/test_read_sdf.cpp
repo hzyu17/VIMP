@@ -9,14 +9,10 @@
  * 
  */
 
-#define STRING(x) #x
-#define XSTRING(x) STRING(x)
 
 #include "GaussianVI/helpers/MatrixHelper.h"
 #include <gtest/gtest.h>
 #include <string>
-
-std::string source_root{XSTRING(SOURCE_ROOT)};
 
 using namespace Eigen;
 

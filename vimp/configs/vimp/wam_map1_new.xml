@@ -3,6 +3,7 @@
     <n_states>20</n_states>
     <map_name>map_bookshelf</map_name>
     <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>3</GH_deg>
     <sig_obs>0.02</sig_obs>
     <eps_sdf>0.2</eps_sdf>
     <radius>0.0</radius>
@@ -14,7 +15,7 @@
     <low_temp_iterations>20</low_temp_iterations>
     <stop_err>1e-5</stop_err>
     <max_iterations>30</max_iterations>
-    <max_n_backtracking>20</max_n_backtracking>
+    <max_n_backtracking>5</max_n_backtracking>
     <sdf_file>/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin</sdf_file>
 </Commons>
 

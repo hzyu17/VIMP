@@ -24,7 +24,10 @@ int main(){
     // no experiment argument, run the default scripts
     std::string config_file{source_root+"/configs/vimp/planar_2link_arm_new.xml"};
     GVIMPRunner<GVIMPArm2SDF> runner(nx, nu, num_exp, config_file);
+    std::cout << "----- Reading Configurations -----" << std::endl;
     runner.read_config(params);
+
+    std::cout << "----- Run Experiment -----" << std::endl;
     runner.run();
 
     return 0;

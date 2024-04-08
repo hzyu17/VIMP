@@ -9,7 +9,7 @@
  * 
  */
 
-#pragma once
+// #pragma once
 #include "GaussianVI/gp/factorized_opts_linear.h"
 #include "instances/CostFunctions.h"
 #include "GaussianVI/ngd/NGDFactorizedNonlinerGH.h"

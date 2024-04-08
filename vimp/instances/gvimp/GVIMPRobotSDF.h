@@ -55,7 +55,7 @@ public:
         MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
         /// Vector of base factored optimizers
-        vector<std::shared_ptr<gvi::NGDFactorizedBase>> vec_factors;
+        vector<std::shared_ptr<gvi::GVIFactorizedBase>> vec_factors;
         
         auto robot_model = _robot_sdf.RobotModel();
         auto sdf = _robot_sdf.sdf();
@@ -89,6 +89,7 @@ public:
                     // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
                     vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                                 dim_state, 
+                                                                // params.GH_degree(),
                                                                 cost_linear_gp, 
                                                                 lin_gp, 
                                                                 n_states, 
@@ -101,6 +102,7 @@ public:
                 FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
                 vec_factors.emplace_back(new FixedGpPrior{dim_state, 
                                                           dim_state, 
+                                                        //   params.GH_degree(),
                                                           cost_fixed_gp, 
                                                           fixed_gp, 
                                                           n_states, 
@@ -112,6 +114,7 @@ public:
                 // linear gp factors
                 vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
+                                                            // params.GH_degree(),
                                                             cost_linear_gp, 
                                                             lin_gp, 
                                                             n_states, 
@@ -123,11 +126,12 @@ public:
                 // auto cost_sdf_Robot = cost_obstacle<Robot>;
                 vec_factors.emplace_back(new GVIFactorizedSDFRobot{dim_conf, 
                                                                     dim_state, 
+                                                                    params.GH_degree(),
                                                                     cost_obstacle<Robot>, 
                                                                     SDFPR{gtsam::symbol('x', i), 
                                                                     robot_model, 
                                                                     sdf, 
-                                                                    sig_obs, 
+                                                                    1.0/sig_obs, 
                                                                     eps_sdf}, 
                                                                     n_states, 
                                                                     i, 
@@ -137,7 +141,7 @@ public:
         }
 
         /// The joint optimizer
-        gvi::NGDGH<gvi::NGDFactorizedBase> optimizer{vec_factors, 
+        gvi::NGDGH<gvi::GVIFactorizedBase> optimizer{vec_factors, 
                                            dim_state, 
                                            n_states, 
                                            params.max_iter(), 
@@ -153,11 +157,15 @@ public:
 
         optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
-        optimizer.set_GH_degree(3);
+        // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
 
+        #include "helpers/timer.h"
+        Timer timer;
+        timer.start();
         optimizer.optimize(verbose);
-
+        std::cout << "========== Optimization time: " << std::endl;
+        timer.end_mus();
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
         return _last_iteration_mean_precision;
@@ -173,7 +181,7 @@ protected:
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     EigenWrapper _ei;
-    std::shared_ptr<gvi::NGDGH<gvi::NGDFactorizedBase>> _p_opt;
+    std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase>> _p_opt;
 
     std::tuple<Eigen::VectorXd, SpMat> _last_iteration_mean_precision;
 

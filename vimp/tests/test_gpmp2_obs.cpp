@@ -11,7 +11,7 @@
 
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactorPointRobot.h>
 #include "robots/PlanarPointRobotSDFMultiObsExample.h"
-#include "GaussianVI/GaussHermite.h"
+#include "GaussianVI/quadrature/SparseGaussHermite.h"
 #include "helpers/MatrixHelper.h"
 #include <gtest/gtest.h>
 
@@ -91,41 +91,46 @@ TEST(GPMP2_OBS, inegration){
 
 
     // Gauss Hermite
-    GaussHermite<GHFunction> gh{deg, dim, mean, cov, [&](const VectorXd& x){
-        return MatrixXd::Constant(1,1,cost_obstacle(x, collision_k));}};
+    gvi::SparseGaussHermite<GHFunction> gh{deg, dim, mean, cov};
 
-    MatrixXd inte1 = gh.Integrate();
+    MatrixXd inte1 = gh.Integrate([&](const VectorXd& x){
+        return MatrixXd::Constant(1,1,cost_obstacle(x, collision_k));});
     cout << "inte1 " << endl << inte1 << endl;
 
-    gh.update_integrand([&](const VectorXd& x){
-        return MatrixXd{(x-mean)*cost_obstacle(x, collision_k)};}
-    );
-    MatrixXd inte2 = gh.Integrate();
+    // gh.update_integrand([&](const VectorXd& x){
+    //     return MatrixXd{(x-mean)*cost_obstacle(x, collision_k)};}
+    // );
+    MatrixXd inte2 = gh.Integrate([&](const VectorXd& x){
+        return MatrixXd{(x-mean)*cost_obstacle(x, collision_k)};});
     cout << "inte2 " << endl << inte2 << endl;
 
-    gh.update_integrand([&](const VectorXd& x){
-        return MatrixXd{(x-mean)*(x-mean).transpose()*cost_obstacle(x, collision_k)};}
-    );
-    MatrixXd inte3 = gh.Integrate();
+    // gh.update_integrand([&](const VectorXd& x){
+    //     return MatrixXd{(x-mean)*(x-mean).transpose()*cost_obstacle(x, collision_k)};}
+    // );
+    MatrixXd inte3 = gh.Integrate([&](const VectorXd& x){
+        return MatrixXd{(x-mean)*(x-mean).transpose()*cost_obstacle(x, collision_k)};});
     cout << "inte3 " << endl << inte3 << endl;
 
     MatrixXd d_precision = precision * inte3 * precision - precision * inte1(0, 0) - precision;
     cout << "d_precision " << endl << d_precision << endl;
 
     /// scale 3 times
-    gh.update_integrand([&](const VectorXd& x){
-        return MatrixXd::Constant(1,1,3.0*cost_obstacle(x, collision_k));});
+    // gh.update_integrand([&](const VectorXd& x){
+    //     return MatrixXd::Constant(1,1,3.0*cost_obstacle(x, collision_k));});
     MatrixXd inte1_scale = inte1 * 3.0;
-    ASSERT_LE((gh.Integrate() - inte1_scale).norm(), 1e-10);
+    ASSERT_LE((gh.Integrate([&](const VectorXd& x){
+        return MatrixXd::Constant(1,1,3.0*cost_obstacle(x, collision_k));}) - inte1_scale).norm(), 1e-10);
 
-    gh.update_integrand([&](const VectorXd& x){
-        return MatrixXd{(x-mean)*3.0*cost_obstacle(x, collision_k)};});
+    // gh.update_integrand([&](const VectorXd& x){
+    //     return MatrixXd{(x-mean)*3.0*cost_obstacle(x, collision_k)};});
     MatrixXd inte2_scale = inte2 * 3.0;
-    ASSERT_LE((gh.Integrate() - inte2_scale).norm(), 1e-10);
+    ASSERT_LE((gh.Integrate([&](const VectorXd& x){
+        return MatrixXd{(x-mean)*3.0*cost_obstacle(x, collision_k)};}) - inte2_scale).norm(), 1e-10);
 
-    gh.update_integrand([&](const VectorXd& x){
-        return MatrixXd{(x-mean)*(x-mean).transpose()*3.0*cost_obstacle(x, collision_k)};});
+    // gh.update_integrand([&](const VectorXd& x){
+    //     return MatrixXd{(x-mean)*(x-mean).transpose()*3.0*cost_obstacle(x, collision_k)};});
     MatrixXd inte3_scale = inte3 * 3.0;
-    ASSERT_LE((gh.Integrate() - inte3_scale).norm(), 1e-10);
+    ASSERT_LE((gh.Integrate([&](const VectorXd& x){
+        return MatrixXd{(x-mean)*(x-mean).transpose()*3.0*cost_obstacle(x, collision_k)};}) - inte3_scale).norm(), 1e-10);
 
 }

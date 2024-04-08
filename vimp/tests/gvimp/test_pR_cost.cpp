@@ -22,25 +22,25 @@ gpmp2::ObstaclePlanarSDFFactorPointRobot collision_k{gtsam::symbol('x', 0), pRMo
 // Eigen helper
 gvi::EigenWrapper ei;
 
-// TEST(ColCost, sdf_map){
+TEST(ColCost, sdf_map){
 
-//     // Test point
-//     VectorXd conf_test(2);
-//     conf_test.setZero();
-//     conf_test << 11.3321059864421, 9.16117246531728;
+    // Test point
+    VectorXd conf_test(2);
+    conf_test.setZero();
+    conf_test << 11.3321059864421, 9.16117246531728;
 
-//     // signed distance ground truth
-//     double signed_distance = planar_pr_sdf.sdf().getSignedDistance(conf_test);
-//     double signed_distance_gt = 4.5321;
-//     ASSERT_LE(abs(signed_distance - signed_distance_gt), 1e-5);
+    // signed distance ground truth
+    double signed_distance = planar_pr_sdf.sdf().getSignedDistance(conf_test);
+    double signed_distance_gt = 4.5321;
+    ASSERT_LE(abs(signed_distance - signed_distance_gt), 1e-5);
 
-//     // error vector ground truth
-//     VectorXd vec_err = collision_k.evaluateError(conf_test);  
-//     VectorXd err_vec_gt(1);
-//     err_vec_gt(0) = 0.9679;
-//     ASSERT_LE((err_vec_gt - vec_err).norm(), 1e-5);
+    // error vector ground truth
+    VectorXd vec_err = collision_k.evaluateError(conf_test);  
+    VectorXd err_vec_gt(1);
+    err_vec_gt(0) = 0.9679;
+    ASSERT_LE((err_vec_gt - vec_err).norm(), 1e-5);
 
-// }
+}
 
 
 // TEST(ColCost, collision_cost){

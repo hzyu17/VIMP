@@ -10,8 +10,8 @@
 #include <gpmp2/obstacle/SDFexception.h>
 #include <gpmp2/config.h>
 
-#include <gtsam/base/Matrix.h>
-#include <gtsam/base/Vector.h>
+// #include <gtsam/base/Matrix.h>
+// #include <gtsam/base/Vector.h>
 #include <gtsam/geometry/Point2.h>
 
 #include <iostream>
@@ -32,18 +32,18 @@ public:
   typedef boost::shared_ptr<PlanarSDF> shared_ptr;
 
 private:
-  gtsam::Point2 origin_;
+  Eigen::Vector2d origin_;
   // geometry setting of signed distance field
   size_t field_rows_, field_cols_;
   double cell_size_;
-  gtsam::Matrix data_;
+  Eigen::MatrixXd data_;
 
 public:
   /// constructor
   PlanarSDF() : field_rows_(0), field_cols_(0), cell_size_(0.0) {}
 
   /// constructor with data
-  PlanarSDF(const gtsam::Point2& origin, double cell_size, const gtsam::Matrix& data) :
+  PlanarSDF(const Eigen::Vector2d& origin, double cell_size, const Eigen::MatrixXd& data) :
       origin_(origin), field_rows_(data.rows()), field_cols_(data.cols()),
       cell_size_(cell_size), data_(data) {}
 
@@ -52,22 +52,22 @@ public:
 
   /// give a point, search for signed distance field and (optional) gradient
   /// return signed distance
-  inline double getSignedDistance(const gtsam::Point2& point) const {
+  inline double getSignedDistance(const Eigen::Vector2d& point) const {
     const float_index pidx = convertPoint2toCell(point);
     return signed_distance(pidx);
   }
 
-  inline double getSignedDistance(const gtsam::Point2& point, gtsam::Vector2& g) const {
+  inline double getSignedDistance(const Eigen::Vector2d& point, Eigen::Vector2d& g) const {
     const float_index pidx = convertPoint2toCell(point);
-    const gtsam::Vector2 g_idx = gradient(pidx);
+    const Eigen::Vector2d g_idx = gradient(pidx);
     // convert gradient of index to gradient of metric unit
-    g = gtsam::Vector2(g_idx(1), g_idx(0)) / cell_size_;
+    g = Eigen::Vector2d(g_idx(1), g_idx(0)) / cell_size_;
     return signed_distance(pidx);
   }
 
 
   /// convert between point and cell corrdinate
-  inline float_index convertPoint2toCell(const gtsam::Point2& point) const {
+  inline float_index convertPoint2toCell(const Eigen::Vector2d& point) const {
     // check point range
     if (point.x() < origin_.x() || point.x() > (origin_.x() + (field_cols_-1.0)*cell_size_) ||
         point.y() < origin_.y() || point.y() > (origin_.y() + (field_rows_-1.0)*cell_size_)) {
@@ -80,8 +80,8 @@ public:
     return boost::make_tuple(row, col);
   }
 
-  inline gtsam::Point2 convertCelltoPoint2(const float_index& cell) const {
-    return origin_ + gtsam::Point2(
+  inline Eigen::Vector2d convertCelltoPoint2(const float_index& cell) const {
+    return origin_ + Eigen::Vector2d(
         cell.get<1>() * cell_size_,
         cell.get<0>() * cell_size_);
   }
@@ -103,12 +103,12 @@ public:
   /// gradient operator for bilinear interpolation
   /// gradient regrads to float_index
   /// not numerical differentiable at index point
-  inline gtsam::Vector2 gradient(const float_index& idx) const {
+  inline Eigen::Vector2d gradient(const float_index& idx) const {
     const double lr = floor(idx.get<0>()), lc = floor(idx.get<1>());
     const double hr = lr + 1.0, hc = lc + 1.0;
     const size_t lri = static_cast<size_t>(lr), lci = static_cast<size_t>(lc),
         hri = static_cast<size_t>(hr), hci = static_cast<size_t>(hc);
-    return gtsam::Vector2(
+    return Eigen::Vector2d(
         (hc-idx.get<1>()) * (signed_distance(hri, lci)-signed_distance(lri, lci)) +
         (idx.get<1>()-lc) * (signed_distance(hri, hci)-signed_distance(lri, hci)),
 
@@ -121,11 +121,11 @@ public:
     return data_(r, c);
   }
 
-  const gtsam::Point2& origin() const { return origin_; }
+  const Eigen::Vector2d& origin() const { return origin_; }
   size_t x_count() const { return field_cols_; }
   size_t y_count() const { return field_rows_; }
   double cell_size() const { return cell_size_; }
-  const gtsam::Matrix& raw_data() const { return data_; }
+  const Eigen::MatrixXd& raw_data() const { return data_; }
 
   /// print
   void print(const std::string& str = "") const {

@@ -107,6 +107,7 @@ public:
         double temperature = atof(commonParams->first_node("temperature")->value());
         double high_temperature = atof(commonParams->first_node("high_temperature")->value());
         
+        int gh_degree = atoi(commonParams->first_node("GH_deg")->value());
         int nt = atoi(commonParams->first_node("n_states")->value());
         int low_temp_iterations = atoi(commonParams->first_node("low_temp_iterations")->value());
         int max_iterations = atoi(commonParams->first_node("max_iterations")->value());
@@ -114,7 +115,7 @@ public:
 
         std::string map_name = static_cast<std::string>(commonParams->first_node("map_name")->value());
 
-        params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, sig_obs, eps_sdf, radius, 
+        params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, gh_degree, sig_obs, eps_sdf, radius, 
                             step_size, max_iterations, init_precision_factor, boundary_penalties, 
                             temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name);
     }
@@ -179,6 +180,8 @@ public:
         rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
 
         std::cout << ExpNodeName.data() << std::endl;
+        
+        std::cout << "----- Reading Boundary Conditions -----" << std::endl;
         
         this->read_boundary_conditions(paramNode, params);
 
@@ -247,9 +250,9 @@ public:
 
         VectorXd m0(this->_nx), mT(this->_nx); 
 
-        Eigen::VectorXd mo_pos(7);
-        mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
-        m0.block(0, 0, 7, 1) = mo_pos;
+        Eigen::VectorXd m0_pos(7);
+        m0_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
+        m0.block(0, 0, 7, 1) = m0_pos;
         m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
         Eigen::VectorXd mT_pos(7);
@@ -539,9 +542,9 @@ public:
 
         VectorXd m0(this->_nx), mT(this->_nx); 
 
-        Eigen::VectorXd mo_pos(7);
-        mo_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
-        m0.block(0, 0, 7, 1) = mo_pos;
+        Eigen::VectorXd m0_pos(7);
+        m0_pos << start_1, start_2, start_3, start_4, start_5, start_6, start_7;
+        m0.block(0, 0, 7, 1) = m0_pos;
         m0.block(7, 0, 7, 1) = Eigen::VectorXd::Zero(7);
 
         Eigen::VectorXd mT_pos(7);

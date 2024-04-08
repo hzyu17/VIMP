@@ -30,7 +30,7 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
         public:
             WamArmSDFExample(){}
             
-            WamArmSDFExample(const string& sdf_file, double eps): 
+            WamArmSDFExample(const std::string& sdf_file, double eps): 
                 Base(1, 7),
                 _eps(eps)
             {
@@ -46,7 +46,7 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 Base::_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), Base::_robot, Base::_sdf, 0.0, _eps));
             }
 
-            WamArmSDFExample(double eps, double radius, const string & map_name, const string & sdf_file): 
+            WamArmSDFExample(double eps, double radius, const std::string & map_name, const std::string & sdf_file): 
                 Base(1, 7, 3, map_name), 
                 _eps(eps), 
                 _radius(radius)
