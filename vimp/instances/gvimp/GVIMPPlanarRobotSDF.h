@@ -160,6 +160,7 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
 
+        std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());

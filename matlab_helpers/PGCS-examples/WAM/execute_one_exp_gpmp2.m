@@ -2,6 +2,8 @@ function [] = execute_one_exp_gpmp2(sdf_file, start_conf, end_conf)
 %EXECUTE_ONE_EXP_GPMP2 Run gpmp2 for one experiment given the start and goal
 % Hongzhe Yu
 
+addpath('../../tools/WAM/utils')
+
 import gtsam.*
 import gpmp2.*
 

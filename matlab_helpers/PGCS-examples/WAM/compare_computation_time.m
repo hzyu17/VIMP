@@ -79,7 +79,7 @@ num_iter = 30;
 max_n_backtracking = 20;
 sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
 
-executable = '/home/hzyu/git/VIMP/vimp/build/src/gvimp/gvi_WAMArm';
+executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_WAMArm';
 
 %% ================= 1st experiment =================
 i_exp = 1;
@@ -219,7 +219,7 @@ profile viewer
 % ------------------------- Arm 2 --------------------------
 profile on
 for i = 1:50
-    executable = '/home/hzyu/git/VIMP/vimp/build/src/gvimp/gvi_Arm2_prior_factors';
+    executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_Arm2_prior_factors';
     execute_one_exp(executable, '');
 end
 profile viewer
@@ -227,7 +227,7 @@ profile viewer
 %% ------------------------- WAM Arm --------------------------
 profile on
 for i = 1:50
-    executable = '/home/hzyu/git/VIMP/vimp/build/src/gvimp/gvi_wam_prior_factors';
+    executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_wam_prior_factors';
     execute_one_exp(executable, '');
 end
 profile viewer
