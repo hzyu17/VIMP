@@ -9,6 +9,7 @@ import gpmp2.*
 addpath("../../tools/error_ellipse");
 addpath("../../tools");
 
+is_sparse = 1;
 
 %% read map
 sdfmap = csvread("map2/map_multiobs_map2.csv");
@@ -23,9 +24,11 @@ set(gcf,'position',[x0,y0,width,height])
 tiledlayout(2, 2, 'TileSpacing', 'none', 'Padding', 'none')
 for i = 1:4 % 4 experiments
     nexttile
-%     prefix = ["map2/case" + num2str(i)+"/"];
-
-    prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];
+    if is_sparse
+        prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];
+    else
+        prefix = ["map2/case" + num2str(i)+"/"];
+    end
     
     % % --- high temperature ---
     means = csvread([prefix + "mean.csv"]);

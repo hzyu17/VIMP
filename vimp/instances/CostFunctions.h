@@ -10,7 +10,7 @@
  * */
 template <typename ROBOT>
 double cost_obstacle_planar(const VectorXd& pose, 
-                    const gpmp2::ObstaclePlanarSDFFactor<ROBOT>& obs_factor){
+                            const gpmp2::ObstaclePlanarSDFFactor<ROBOT>& obs_factor){
     VectorXd vec_err = obs_factor.evaluateError(pose);
 
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};

@@ -15,7 +15,7 @@
 #include "GaussianVI/quadrature/GaussHermite.h"
 
 
-double cost_function(const VectorXd& vec_x){
+double cost_function(const VectorXd& vec_x, const gvi::NoneType& none_type){
     double x = vec_x(0);
     double mu_p = 20, f = 400, b = 0.1, sig_r_sq = 0.09;
     double sig_p_sq = 9;
@@ -27,26 +27,27 @@ double cost_function(const VectorXd& vec_x){
 
 }
 
+gvi::NoneType none_type;
 
 MatrixXd Phix(const VectorXd& x){
-    return MatrixXd{MatrixXd::Constant(1,1,cost_function(x))};
+    return MatrixXd{MatrixXd::Constant(1,1,cost_function(x, none_type))};
 }
 
 MatrixXd x_minus_mu_phi(const VectorXd& x){
     VectorXd mu{VectorXd::Constant(1, 20)};
-    return MatrixXd{(x-mu)*cost_function(x)};
+    return MatrixXd{(x-mu)*cost_function(x, none_type)};
 }
 
 MatrixXd x_minus_mu_x_minus_muT_phi(const VectorXd& x){
     VectorXd mu{VectorXd::Constant(1, 20)};
-    return MatrixXd{(x-mu)*(x-mu).transpose().eval()*cost_function(x)};
+    return MatrixXd{(x-mu)*(x-mu).transpose().eval()*cost_function(x, none_type)};
 }
 
 using namespace std;
 
 typedef std::function<double(const VectorXd&)> Function;
 typedef std::function<MatrixXd(const VectorXd&)> GHFunction;
-typedef gvi::NGDFactorizedSimpleGH<Function> OptFact;
+// typedef gvi::NGDFactorizedSimpleGH<Function> OptFact;
 
 
 /**
@@ -55,7 +56,7 @@ typedef gvi::NGDFactorizedSimpleGH<Function> OptFact;
  */
 TEST(TestFunctional, function_values){
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
-    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, 1, 1, 0, cost_function, 1.0, 10.0)};
+    std::shared_ptr<NGDFactorizedSimpleGH> p_opt_fac{new NGDFactorizedSimpleGH(1, 1, 10, cost_function, none_type, 1, 0, 1.0, 10.0)};
     
     VectorXd mean{VectorXd::Constant(1, 20)};
     MatrixXd cov{MatrixXd::Constant(1,1,9)};
@@ -129,7 +130,7 @@ TEST(TestFunctional, GH_integrations){
 TEST(TestFunctional, integrations){
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
 
-    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, 1, 1, 0, cost_function, 1.0, 10.0)};
+    std::shared_ptr<NGDFactorizedSimpleGH> p_opt_fac{new NGDFactorizedSimpleGH(1, 1, 10, cost_function, none_type, 1, 0, 1.0, 10.0)};
     
     VectorXd mean = VectorXd::Constant(1, 20.0);
     MatrixXd cov = MatrixXd::Constant(1,1,9.0);
@@ -166,7 +167,7 @@ TEST(TestFunctional, cost_value){
 
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
     cout << "Pk" << endl << Pk << endl;
-    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, 1, 1, 0, cost_function, 1.0, 10.0)};
+    std::shared_ptr<NGDFactorizedSimpleGH> p_opt_fac{new NGDFactorizedSimpleGH(1, 1, 10, cost_function, none_type, 1, 0, 1.0, 10.0)};
     
     VectorXd mean = VectorXd::Constant(1, 20.0);
     MatrixXd cov = MatrixXd::Constant(1,1,9.0);
@@ -190,13 +191,14 @@ TEST(TestFunctional, cost_value){
  * @brief Test the cost value function
  */
 TEST(TestFunctional, joint_cost_value){
-    vector<std::shared_ptr<OptFact>> vec_opts;
+    vector<std::shared_ptr<NGDFactorizedSimpleGH>> vec_opts;
     MatrixXd Pk{MatrixXd::Constant(1, 1, 1)}; 
-    std::shared_ptr<OptFact> p_opt_fac{new OptFact(1, 1, 1, 0, cost_function, 1.0, 10.0)};
+
+    std::shared_ptr<NGDFactorizedSimpleGH> p_opt_fac{new NGDFactorizedSimpleGH(1, 1, 10, cost_function, none_type, 1, 0, 1.0, 10.0)};
 
     vec_opts.emplace_back(p_opt_fac);
 
-    gvi::GVIGH<OptFact> opt{vec_opts, 1, 1};
+    gvi::GVIGH<NGDFactorizedSimpleGH> opt{vec_opts, 1, 1};
 
     VectorXd mu_rd{VectorXd::Random(1)};
     MatrixXd prec_rd{MatrixXd::Random(1,1)};
