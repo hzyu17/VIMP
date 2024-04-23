@@ -49,6 +49,21 @@ cmake ..
 sudo make install 
 ```
 
+## 2D point robot example
+To recover the 2D Point robot example in [1, 2], run the following:
+```
+cd VIMP
+git checkout paper_experiment_results
+mkdir build && cd build
+cmake .. 
+make
+./src/gvimp/gvi_PointRobot_spgh 
+```
+The result can be visualized in matlab by running
+```
+/PathToVIMP/matlab_helpers/GVIMP-examples/2d_pR/planarPR_map2.m
+```
+
 ## Repository structure
 ```
 ./vimp
