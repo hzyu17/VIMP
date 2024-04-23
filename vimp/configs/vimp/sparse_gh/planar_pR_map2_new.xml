@@ -33,7 +33,7 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-
+ 
     <!-- <init_precision_factor>20.0</init_precision_factor> -->
     <low_temp_iterations>15</low_temp_iterations>
     <step_size>0.4</step_size>
