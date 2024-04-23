@@ -1,13 +1,13 @@
 <Commons>
     <total_time>2.5</total_time>
     <n_states>15</n_states>
-    <coeff_Qc>0.8</coeff_Qc>
-    <GH_deg>10</GH_deg>
-    <sig_obs>0.0035</sig_obs>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>14</GH_deg>
+    <sig_obs>100</sig_obs>
     <map_name>2dpr_map2</map_name>
-    <eps_sdf>0.7</eps_sdf>
-    <radius>1.5</radius>
-    <step_size>0.4</step_size>
+    <eps_sdf>0.5</eps_sdf>
+    <radius>1.0</radius>
+    <step_size>0.45</step_size>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
@@ -15,7 +15,7 @@
     <low_temp_iterations>10</low_temp_iterations>
     <stop_err>1e-5</stop_err>
     <max_iterations>40</max_iterations>
-    <max_n_backtracking>10</max_n_backtracking>
+    <max_n_backtracking>20</max_n_backtracking>
 
 </Commons>
 
@@ -33,11 +33,11 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-
+ 
     <!-- <init_precision_factor>20.0</init_precision_factor> -->
     <low_temp_iterations>15</low_temp_iterations>
-    <!-- <sig_obs> 0.0005 </sig_obs> -->
-    <sig_obs> 250.0 </sig_obs>
+    <step_size>0.4</step_size>
+    <sig_obs> 100 </sig_obs>
     <max_iterations>40</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case1/</saving_prefix>
 
@@ -57,10 +57,8 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-
-    <!-- <init_precision_factor>20.0</init_precision_factor> -->
-    <!-- <sig_obs>0.0045</sig_obs> -->
-    <sig_obs>250.0</sig_obs>
+    <step_size>0.45</step_size>
+    <sig_obs>100</sig_obs>
     <max_iterations>40</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2/</saving_prefix>
 
@@ -80,10 +78,8 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-
-    <!-- <init_precision_factor>20.0</init_precision_factor> -->
-    <!-- <sig_obs>0.005</sig_obs> -->
-    <sig_obs>200.0</sig_obs>
+    <step_size>0.4</step_size>
+    <sig_obs>80</sig_obs>
     <max_iterations>40</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case3/</saving_prefix>
 
@@ -104,12 +100,10 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <!-- <init_precision_factor>20.0</init_precision_factor> -->
     <step_size>0.45</step_size>
     <low_temp_iterations>15</low_temp_iterations>
-    <!-- <sig_obs>0.004</sig_obs> -->
-    <sig_obs>250.0</sig_obs>
-    <max_iterations>40</max_iterations>
+    <sig_obs>100</sig_obs>
+    <max_iterations>50</max_iterations>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case4/</saving_prefix>
 
 </Experiment4>

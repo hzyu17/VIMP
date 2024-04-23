@@ -12,12 +12,12 @@
 // #pragma once
 #include "GaussianVI/gp/factorized_opts_linear.h"
 #include "instances/CostFunctions.h"
-#include "GaussianVI/ngd/NGDFactorizedNonlinerGH.h"
+#include "GaussianVI/ngd/NGDFactorizedBaseGH.h"
 #include "GaussianVI/ngd/NGD-GH.h"
 
 namespace vimp{
     template <typename ROBOT>
-    using NGDFactorizedPlanarSDF = gvi::NGDFactorizedNonlinerGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>>;
+    using NGDFactorizedPlanarSDF = gvi::NGDFactorizedBaseGH<gpmp2::ObstaclePlanarSDFFactor<ROBOT>>;
 
 }
 
