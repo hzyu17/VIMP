@@ -9,7 +9,7 @@ import gpmp2.*
 addpath("../../tools/error_ellipse");
 addpath("../../tools");
 
-is_sparse = 1;
+is_sparse = 0;
 
 %% read map
 sdfmap = csvread("map2/map_multiobs_map2.csv");
