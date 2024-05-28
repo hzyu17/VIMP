@@ -20,4 +20,6 @@ x = r * cos(theta) + body_points(1,:);
 y = r * sin(theta) + body_points(2,:);
 h = plot(x, y, 'Color', color_rgb);
 
+h = scatter(body_points(1,:), body_points(2,:), 'k.');
+
 end

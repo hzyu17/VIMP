@@ -1,4 +1,4 @@
-function h = plotEvidenceMap2D_1(prob_grid, origin_x, origin_y, cell_size)
+function h = plotEvidenceMap2D_noisy(prob_grid, origin_x, origin_y, cell_size)
 %PLOTEVIDENCEMAP2D Plot 2D evidence grid map, for 2D dataset visualization
 %
 %   Usage: PLOTEVIDENCEMAP2D(prob_grid, origin_x, origin_y, cell_size)
@@ -7,11 +7,10 @@ function h = plotEvidenceMap2D_1(prob_grid, origin_x, origin_y, cell_size)
 %   @cell_size              cell size
 
 % map display setting
-colormap([0.6 0.6 0.6; 0.7 0.7 0.7; 1 1 1]);
+colormap([0 0 0; 
+          0.0 0.0 0.0; 
+          1 1 1]);
 % axes('Color', 'none'); % Ensures that the axes background is transparent
-% colormap([0.1 0.1 0.1; 
-%           0.0 0.0 0.0; 
-%           1 1 1]);
 
 % get X-Y coordinates
 grid_rows = size(prob_grid, 1);
@@ -20,12 +19,11 @@ grid_corner_x = origin_x + (grid_cols-1)*cell_size;
 grid_corner_y = origin_y + (grid_rows-1)*cell_size;
 grid_X = origin_x : cell_size : grid_corner_x;
 grid_Y = origin_y : cell_size : grid_corner_y;
-
 grid_Z = (1-prob_grid)*2+1;
-alphaData = 0.5 * ones(grid_rows, grid_cols);  % Uniform transparency layer
-alphaData(grid_Z(:, :) == 3) = 0;  % Set transparent where color is white
 
 h = image(grid_X, grid_Y, grid_Z);
+alphaData = 1 * ones(grid_rows, grid_cols);  % Uniform transparency layer
+alphaData(grid_Z(:, :) == 3) = 0;  % Set transparent where color is white
 set(h, 'AlphaData', alphaData);
 
 set(gca,'YDir','normal')
@@ -39,5 +37,6 @@ axis equal
 axis([-18, 18, -10, 25])
 
 % set(gcf, 'Color', 'none');
+
 end
 

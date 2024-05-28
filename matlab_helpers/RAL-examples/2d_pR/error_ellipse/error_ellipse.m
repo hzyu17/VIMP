@@ -121,7 +121,7 @@ if r==3 & c==3
   Z(:) = scale*(k*XYZ(:,3)+z0);
   h4=surf(X,Y,Z);
   colormap gray
-  alpha(0.3)
+  alpha(0.01)
   camlight
   if nargout
     h=[h1 h2 h3 h4];
@@ -135,6 +135,11 @@ elseif r==2 & c==2
   [x,y,z] = getpoints(C,prop.clip);
   h1=plot(scale*(x0+k*x),scale*(y0+k*y),prop.style, 'LineWidth', 1.5);
   set(h1,'zdata',z+1)
+%   patch('XData', [x NaN*ones(size(x))], 'YData', [y NaN*ones(size(y))], 'ZData', [z NaN*ones(size(z))], 'EdgeColor', 'red', 'LineWidth', 1.5, 'EdgeAlpha', 0.5);
+%   h1=plot(scale*(x0+k*x),scale*(y0+k*y),prop.style, 'LineWidth', 1.5);
+%   set(h1,'zdata',z+1)
+%     set(gca, 'Color', 'none');  % Makes axes background transparent
+%     set(gcf, 'Color', 'none');  % Makes figure background transparent
   if nargout
     h=h1;
   end

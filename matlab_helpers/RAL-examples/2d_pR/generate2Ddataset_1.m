@@ -101,6 +101,38 @@ elseif strcmp(dataset_str, 'MultiObstacleEntropy3')
     dataset.map = add_obstacle(get_center(-4,5,dataset), get_dim(6,15,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(4,5,dataset), get_dim(6,15,dataset), dataset.map);
 
+elseif strcmp(dataset_str, 'MultiObstacleEntropy3Noisy')
+    % The obstacle's y positions are sampled from a Gaussian distribution.
+    % params
+    dataset.cols = 400; %x
+    dataset.rows = 300; %y
+    dataset.origin_x = -20;
+    dataset.origin_y = -10;
+    dataset.cell_size = 0.1;
+    % map
+    dataset.map = zeros(dataset.rows, dataset.cols);
+    % sample the obstacle location
+    randN = randn();
+    
+    center_1 = get_center(-4,5,dataset);
+    center_2 = get_center(4,5,dataset);
+    
+    center_1(2) = center_1(2) + randN*10;
+    center_2(2) = center_2(2) + randN*10;
+    
+    dim_1 = get_dim(6,15,dataset);
+    dim_2 = get_dim(6,15,dataset);
+%     
+%     obs_origin_x1 = -4;
+%     obs_origin_y1 = 5;
+%     obs_origin_x2 = 4;
+%     obs_origin_y2 = 5+randN
+    
+    % obstacles
+    dataset.map = add_obstacle(center_1, dim_1, dataset.map);
+    dataset.map = add_obstacle(center_2, dim_2, dataset.map);
+
+    
 % no such dataset
 else
     error('No such dataset exist');

@@ -1,6 +1,6 @@
-% @brief    Point Robot 2D example, building factor graph in matlab
-% @author   Mustafa Mukadam
-% @date     July 20, 2016
+% @brief    Comparison of robustness in the go around plan example, with sensor noise.
+% @author   Hongzhe Yu
+% @date     May 01 2024
 
 close all
 clear
@@ -20,12 +20,6 @@ origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
 % signed distance field
 field = signedDistanceField2D(dataset.map, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);
-
-% % plot sdf
-% figure(2)
-% plotSignedDistanceField2D(field, dataset.origin_x, dataset.origin_y, dataset.cell_size);
-% title('Signed Distance Field')
-
 
 %% settings
 total_time_sec = 2.5;
@@ -68,14 +62,6 @@ avg_vel = (end_conf / total_time_step) / delta_t;
 % plot param
 pause_time = total_time_sec / total_time_step;
 
-% % plot start / end configuration
-% figure(1), hold on
-% plotEvidenceMap2D(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
-% plotPointRobot2D(pR_model, start_conf);
-% plotPointRobot2D(pR_model, end_conf);
-% title('Layout')
-% hold off
-
 x0 = 500;
 y0 = 500;
 width = 650;
@@ -88,11 +74,11 @@ tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
 graph = NonlinearFactorGraph;
 init_values = Values;
 
-%% ================== go around initialization for the GVI ===================
+%% ================== go around result for the GVIMP ===================
 nexttile
-t = title('Go around initialization, GVI');
+t = title('GVIMP, r = 1.5');
 t.FontSize = 20;
-prefix = ["map3/circumvent_gpmp2_comparisons/"];
+prefix = ["map3/circumvent/"];
 means = csvread([prefix + "mean.csv"]);
 covs = csvread([prefix + "cov.csv"]);
 precisions = csvread([prefix + "precisoin.csv"]);
@@ -145,7 +131,7 @@ addpath("error_ellipse");
             vec_means{i_iter+1} = i_vec_means_2d;
             vec_covs{i_iter+1} = i_vec_covs_2d;
     end
-
+    
     %% ================ plot the last iteration ================ 
     hold on 
     plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
@@ -159,21 +145,7 @@ addpath("error_ellipse");
     end
     % xlim([-15, 20])
     ylim([-10, 20])
-
-    %% ================ plot the initialization =================
-    hold on
-    i_vec_means_2d = vec_means{1};
-    i_vec_covs_2d = vec_covs{1};
-    for j = 1:n_states
-        % means
-        scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 20, 'b');
-        % covariance
-        error_ellipse('C', i_vec_covs_2d{j}, 'mu', i_vec_means_2d{j}, 'conf', 0.997, 'scale', 1, 'style', 'b-.','clip', inf);
-    end
-    % xlim([-15, 20])
-    ylim([-10, 20])
-    
-
+axis off
 %%  -------------------------------- go around initialization GPMP2 --------------------------------
 %% init optimization
 graph = NonlinearFactorGraph;
@@ -246,7 +218,7 @@ result = optimizer.values();
 %% plot final values
 nexttile
 hold on
-t1 = title('Go around initialization, GPMP2');
+t1 = title('GPMP2, r = 0.5');
 t1.FontSize = 20;
 % plot world
 plotEvidenceMap2D_1(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
@@ -257,16 +229,4 @@ for i=0:total_time_step
 %     pause(pause_time), hold off
 end
 ylim([-10, 20])
-
-%% ================ plot the initialization =================
-hold on
-i_vec_means_2d = vec_means{1};
-i_vec_covs_2d = vec_covs{1};
-for j = 1:n_states
-    % means
-    scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 20, 'b', 'filled');
-    % covariance
-%     error_ellipse('C', i_vec_covs_2d{j}, 'mu', i_vec_means_2d{j}, 'conf', 0.997, 'scale', 1, 'style', 'b-.','clip', inf);
-end
-% xlim([-15, 20])
-ylim([-10, 20])
+axis off

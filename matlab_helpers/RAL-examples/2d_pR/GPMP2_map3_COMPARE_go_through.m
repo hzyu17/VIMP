@@ -1,6 +1,6 @@
-% @brief    Point Robot 2D example, building factor graph in matlab
-% @author   Mustafa Mukadam
-% @date     July 20, 2016
+% @brief    Compare the optimization result for r = 1.5.
+% @author   Hongzhe Yu
+% @date     May 01 2024
 
 close all
 clear
@@ -39,7 +39,7 @@ use_GP_inter = false;
 
 % point robot model
 pR = PointRobot(2,1);
-spheres_data = [0  0.0  0.0  0.0  0.5];
+spheres_data = [0  0.0  0.0  0.0  1.5];
 nr_body = size(spheres_data, 1);
 sphere_vec = BodySphereVector;
 sphere_vec.push_back(BodySphere(spheres_data(1,1), spheres_data(1,5), ...
@@ -88,90 +88,14 @@ tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
 graph = NonlinearFactorGraph;
 init_values = Values;
 
-%% ================== go around initialization for the GVI ===================
-nexttile
-t = title('GVI, r = 1.5');
-t.FontSize = 20;
-prefix = ["map_narrow/shortcut_gpmp2_comparisons/"];
-means = csvread([prefix + "mean.csv"]);
-covs = csvread([prefix + "cov.csv"]);
-precisions = csvread([prefix + "precisoin.csv"]);
-costs = csvread([prefix + "cost.csv"]);
-factor_costs = csvread([prefix + "factor_costs.csv"]);
-sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
-addpath("error_ellipse");
-
- %%
-    [niters, ttl_dim] = size(means);
-    dim_conf = 2;
-    dim_theta = 2*dim_conf;
-    niters = length(costs);
-    for i=niters:-1:1
-        if costs(i) ~= 0
-            niters=i;
-            break
-        end
-    end
-    nsteps = 6;
-    step_size = floor(niters / nsteps);
-    n_states = floor(ttl_dim / dim_theta);
-    
-    cell_size = 0.1;
-    origin_x = -20;
-    origin_y = -10;
-    origin_point2 = Point2(origin_x, origin_y);
-    field = signedDistanceField2D(sdfmap, cell_size);
-    sdf = PlanarSDF(origin_point2, cell_size, field);
-    
-    % containers for all the steps data
-    vec_means = cell(niters, 1);
-    vec_covs = cell(niters, 1);
-    vec_precisions = cell(niters, 1);
-    
-    for i_iter = 0: nsteps-1
-            % each time step 
-            i = i_iter * step_size;
-            i_mean = means(i+1, 1:end);
-            i_cov = covs(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
-            i_prec = precisions(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
-            i_vec_means_2d = cell(n_states, 1);
-            i_vec_covs_2d = cell(n_states, 1);
-            vec_precisions{i_iter+1} = i_prec;
-            for j = 0:n_states-1
-                % each state
-                i_vec_means_2d{j+1} = i_mean(j*dim_theta+1 : j*dim_theta+2);
-                i_vec_covs_2d{j+1} = i_cov(j*dim_theta +1 : j*dim_theta+2,  j*dim_theta+1 : j*dim_theta+2);
-            end
-            vec_means{i_iter+1} = i_vec_means_2d;
-            vec_covs{i_iter+1} = i_vec_covs_2d;
-    end
-    
-    %% ================ plot the last iteration ================ 
-    hold on 
-    plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
-    i_vec_means_2d = vec_means{nsteps};
-    i_vec_covs_2d = vec_covs{nsteps};
-    for j = 1:n_states
-        % means
-        scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 20, 'k', 'fill');
-        % covariance
-        error_ellipse(i_vec_covs_2d{j}, i_vec_means_2d{j});
-    end
-    % xlim([-15, 20])
-    ylim([-10, 20])
-
-%%  -------------------------------- go around initialization GPMP2 --------------------------------
-%% init optimization
-graph = NonlinearFactorGraph;
-init_values = Values;
-
-means = csvread("../../../vimp/data/2d_pR/mean_map3_circumvent_base.csv");
+%% ================== go through initialization for the GPMP2 ===================
+% -------------------------------- linear initialized pose --------------------------------
 for i = 0 : total_time_step
     key_pos = symbol('x', i);
     key_vel = symbol('v', i);
     
     % initial values: straght line
-    pose = means(i*4+1: i*4+2)';
+    pose = start_conf * (total_time_step-i)/total_time_step + end_conf * i/total_time_step;
     vel = avg_vel;
     init_values.insert(key_pos, pose);
     init_values.insert(key_vel, vel);
@@ -229,10 +153,84 @@ toc
 result = optimizer.values();
 % result.print('Final results')
 
-%% plot final values
+%% ================== go through initialization for the GVI ===================
+nexttile
+t = title('GVIMP, r = 1.5');
+t.FontSize = 20;
+prefix = ["map3/shortcut_gpmp2_comparisons/"];
+means = csvread([prefix + "mean.csv"]);
+covs = csvread([prefix + "cov.csv"]);
+precisions = csvread([prefix + "precisoin.csv"]);
+costs = csvread([prefix + "cost.csv"]);
+factor_costs = csvread([prefix + "factor_costs.csv"]);
+sdfmap = csvread("map3/map_multiobs_map3.csv");
+addpath("error_ellipse");
+
+ %%
+    [niters, ttl_dim] = size(means);
+    dim_conf = 2;
+    dim_theta = 2*dim_conf;
+    niters = length(costs);
+    for i=niters:-1:1
+        if costs(i) ~= 0
+            niters=i;
+            break
+        end
+    end
+    nsteps = 6;
+    step_size = floor(niters / nsteps);
+    n_states = floor(ttl_dim / dim_theta);
+    
+    cell_size = 0.1;
+    origin_x = -20;
+    origin_y = -10;
+    origin_point2 = Point2(origin_x, origin_y);
+    field = signedDistanceField2D(sdfmap, cell_size);
+    sdf = PlanarSDF(origin_point2, cell_size, field);
+    
+    % containers for all the steps data
+    vec_means = cell(niters, 1);
+    vec_covs = cell(niters, 1);
+    vec_precisions = cell(niters, 1);
+    
+    for i_iter = 0: nsteps-1
+            % each time step 
+            i = i_iter * step_size;
+            i_mean = means(i+1, 1:end);
+            i_cov = covs(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
+            i_prec = precisions(i*ttl_dim+1 : (i+1)*ttl_dim, 1:ttl_dim);
+            i_vec_means_2d = cell(n_states, 1);
+            i_vec_covs_2d = cell(n_states, 1);
+            vec_precisions{i_iter+1} = i_prec;
+            for j = 0:n_states-1
+                % each state
+                i_vec_means_2d{j+1} = i_mean(j*dim_theta+1 : j*dim_theta+2);
+                i_vec_covs_2d{j+1} = i_cov(j*dim_theta +1 : j*dim_theta+2,  j*dim_theta+1 : j*dim_theta+2);
+            end
+            vec_means{i_iter+1} = i_vec_means_2d;
+            vec_covs{i_iter+1} = i_vec_covs_2d;
+    end
+    
+    %% ================ plot the last iteration ================ 
+    hold on 
+    plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
+    i_vec_means_2d = vec_means{nsteps};
+    i_vec_covs_2d = vec_covs{nsteps};
+    for j = 1:n_states
+        % means
+        scatter(i_vec_means_2d{j}(1), i_vec_means_2d{j}(2), 20, 'k', 'fill');
+        % covariance
+        error_ellipse(i_vec_covs_2d{j}, i_vec_means_2d{j});
+        
+    end
+    % xlim([-15, 20])
+    ylim([-10, 20])
+axis off
+
+%% plot final values gpmp2
 nexttile
 hold on
-t1 = title('GPMP2, r = 0.5');
+t1 = title('GPMP2, r = 1.5');
 t1.FontSize = 20;
 % plot world
 plotEvidenceMap2D_1(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
@@ -243,3 +241,5 @@ for i=0:total_time_step
 %     pause(pause_time), hold off
 end
 ylim([-10, 20])
+
+axis off

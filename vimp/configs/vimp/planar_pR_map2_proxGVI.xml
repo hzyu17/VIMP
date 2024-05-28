@@ -1,14 +1,14 @@
 <Commons>
     <total_time>2.5</total_time>
-    <n_states>15</n_states>
+    <n_states>4</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>15</GH_deg>
     <sig_obs>0.0035</sig_obs>
     <map_name>2dpr_map2</map_name>
     <eps_sdf>0.5</eps_sdf>
     <radius>1.0</radius>
-    <step_size>0.15</step_size>
-    <init_precision_factor>10000.0</init_precision_factor>
+    <step_size>0.5</step_size>
+    <init_precision_factor>100.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>100.0</high_temperature>

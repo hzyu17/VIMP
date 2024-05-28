@@ -1,3 +1,7 @@
+% @brief    Comparison of the go-through and the go-around plan.
+% @author   Hongzhe Yu
+% @date     May 01 2024
+
 clear all
 close all
 clc
@@ -6,7 +10,7 @@ import gtsam.*
 import gpmp2.*
 
 %% read map
-sdfmap = csvread("map_narrow/map_multiobs_entropy_map3.csv");
+sdfmap = csvread("map3/map_multiobs_map3.csv");
 
 v_niters = [30, 30];
 v_nsteps = [6, 6];
@@ -26,7 +30,7 @@ for i = 1:2 % 2 experiments
     if i == 1
         t = title('Go Through Plan');
         t.FontSize = 20;
-        prefix = ["map_narrow/shortcut/"];
+        prefix = ["map3/shortcut/"];
         means = csvread([prefix + "mean.csv"]);
         covs = csvread([prefix + "cov.csv"]);
         precisions = csvread([prefix + "precisoin.csv"]);
@@ -37,7 +41,7 @@ for i = 1:2 % 2 experiments
     else
         t = title('Go Around Plan');
         t.FontSize = 20;
-        prefix = ["map_narrow/circumvent/"];
+        prefix = ["map3/circumvent/"];
         means = csvread([prefix + "mean.csv"]);
         covs = csvread([prefix + "cov.csv"]);
         precisions = csvread([prefix + "precisoin.csv"]);

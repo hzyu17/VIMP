@@ -165,7 +165,7 @@ end
 graph = NonlinearFactorGraph;
 init_values = Values;
 
-means = csvread("../../../vimp/data/2d_pR/mean_map3_circumvent_base.csv");
+means = csvread("../../../vimp/data/gvimp/2d_pR/mean_map3_circumvent_base.csv");
 for i = 0 : total_time_step
     key_pos = symbol('x', i);
     key_vel = symbol('v', i);
