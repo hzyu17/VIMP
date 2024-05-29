@@ -35,9 +35,10 @@ x0 = 500;
 y0 = 500;
 width = 1290.427199;
 height = 800;
-
 figure
-tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact')
+set(gcf,'position',[x0,y0,width,height])
+
+tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
 
 for i = 1:4 % 4 experiments
     nexttile
@@ -77,6 +78,9 @@ for i = 1:4 % 4 experiments
 %         xlim([-20, 25]);
 %         ylim([-15, 22]);
 %     end
-    axis off ; 
+%     axis off ; 
+
+    xlim([-15, 20])
+    ylim([-10, 20])
 
 end

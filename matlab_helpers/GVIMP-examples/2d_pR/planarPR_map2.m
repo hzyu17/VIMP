@@ -9,7 +9,7 @@ import gpmp2.*
 addpath("../../tools/error_ellipse");
 addpath("../../tools");
 
-is_sparse = 0;
+is_sparse = 1;
 
 %% read map
 sdfmap = csvread("map2/map_multiobs_map2.csv");
@@ -21,7 +21,7 @@ height = 800;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(2, 2, 'TileSpacing', 'none', 'Padding', 'none')
+tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
 for i = 1:4 % 4 experiments
     nexttile
     if is_sparse
@@ -42,4 +42,8 @@ for i = 1:4 % 4 experiments
     nsteps = 1;
     
     output = plot_planarPR_oneiter(means, covs, sdfmap, niters);
+    
+    xlim([-15, 20])
+    ylim([-10, 20])
+
 end

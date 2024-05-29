@@ -16,5 +16,5 @@ for i=1:nt
     scatter(zk_pos(1, i), zk_pos(2, i), 20, 'k', 'fill');
     error_ellipse(Sk(1:2,1:2,i), zk_pos(1:2, i));
 end
-axis off
+% axis off
 end

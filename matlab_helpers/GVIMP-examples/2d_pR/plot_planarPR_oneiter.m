@@ -25,7 +25,7 @@ plot_2d_result(sdfmap, mean_final_iter, cov_final_iter);
 xlim([-15, 20])
 ylim([-10, 20])
 
-axis off
+% axis off
 
 output = 1;
 end
