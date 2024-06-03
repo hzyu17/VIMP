@@ -49,7 +49,7 @@ for i_exp = 2:2
     % ====================================================================================== 
 
     prefix = ["case"+num2str(i_exp)+"/"];
-    prefix_gvi = ["../../GVIMP-examples/WAM/case"+num2str(i_exp)+"/"];
+    prefix_gvi = ["../../GVIMP-examples/WAM/sparse_gh/case"+num2str(i_exp)+"/"];
     prefix_gpmp2 = ["case"+num2str(i_exp)+"/gpmp2"];
     
     % ------------ read gpmp2 results ------------ 

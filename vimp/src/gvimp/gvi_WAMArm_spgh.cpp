@@ -20,7 +20,7 @@ int main(int argc, char* argv[]){
     GVIMPParams params;
     if (argc == 1){
         // no experiment argument, run the default scripts
-        std::string config_file{source_root+"/configs/vimp/wam_map1_new.xml"};
+        std::string config_file{source_root+"/configs/vimp/sparse_gh/wam_map1_new.xml"};
         GVIMPRunner7D<GVIMPWAMArm> runner(num_exp, config_file);
         runner.read_config(params);
         runner.run();
