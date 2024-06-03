@@ -46,7 +46,7 @@ tiledlayout(1, 4, 'TileSpacing', 'none', 'Padding', 'none')
 for i = [1, 5, 15, 25]
     nexttile
     output = plot_planarPR_oneiter(means, covs, sdfmap, i);
-    title(['Iteration ', num2str(i)])
+    title(['Iteration ', num2str(i), ', $\hat{T} = 10$'], 'Interpreter', 'latex')
     axis off
 end
 
@@ -61,6 +61,6 @@ tiledlayout(1, 4, 'TileSpacing', 'none', 'Padding', 'none')
 for i = [ 30, 35, 40, 45]
     nexttile
     output = plot_planarPR_oneiter(means, covs, sdfmap, i);
-    title(['Iteration ', num2str(i)])
+    title(['Iteration ', num2str(i), ', $\hat{T} = 200$'], 'Interpreter', 'latex')
     axis off
 end
