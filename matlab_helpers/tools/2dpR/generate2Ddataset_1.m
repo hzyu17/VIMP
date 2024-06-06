@@ -14,7 +14,7 @@ function dataset = generate2Ddataset_1(dataset_str)
 %   dataset.cell_size  cell size
 
 
-% dataset 5: 1 obs dataset for 2D Arm obs avoid
+% dataset: 1 obs dataset for 2D Arm obs avoid
 if strcmp(dataset_str, 'OneObstacleDataset')
     % params
     dataset.cols = 300;
