@@ -39,6 +39,10 @@ To build Boost in a customized location: **[check this link](https://github.com/
 
 2. **[Eigen 3.4.0](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
 
+3. **[OpenMP](https://www.openmp.org/)**
+```
+sudo apt-get install libomp-dev
+```
 
 ## Build and install VIMP
 ```

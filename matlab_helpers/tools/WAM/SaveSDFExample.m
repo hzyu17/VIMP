@@ -8,7 +8,7 @@ clear
 import gtsam.*
 import gpmp2.*
 
-
+addpath('utils')
 %% dataset
 dataset = generate3Ddataset('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
