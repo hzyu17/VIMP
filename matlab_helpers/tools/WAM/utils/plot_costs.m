@@ -1,9 +1,10 @@
-function output = plot_costs(costs, factor_costs, precisions, niters, n_states)
+function output = plot_costs(costs, factor_costs, precisions, niters, n_states, dim_state)
 %% =============== plot cost for each factor and the total cost ================
-fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
+fixed_prior_costs = [factor_costs(1, 1:end), factor_costs(end, 1:end)];
+
 prior_costs = [];
 for i = 1:n_states-1
-    prior_costs = [prior_costs, factor_costs(1+(i-1)*2+1, 1:end)'];
+    prior_costs = [prior_costs; factor_costs(1+(i-1)*2+1, 1:end)]; % in shape: (n_prior_costs, niters)
 end
 obs_costs = [];
 for i = 1:n_states-2
@@ -24,9 +25,9 @@ t = title('Factored Prior Costs');
 t.FontSize = 16;
 hold on
 grid on
-plot(prior_costs, 'LineWidth', 1.5)
-for j = 1:size(prior_costs, 2)
-    scatter(linspace(1, niters, niters), prior_costs(1:niters, j), 30, 'filled')
+plot(prior_costs', 'LineWidth', 1.5) % in shape: (n_prior_costs, niters)
+for j = 1:size(prior_costs, 1)
+    scatter(linspace(1, niters, niters), prior_costs(j, 1:niters), 30, 'filled')
 end
 xl = xlabel('Iterations','fontweight','bold');
 xl.FontSize = 16;
@@ -47,12 +48,16 @@ xl.FontSize = 16;
 yl = ylabel('-log(p(z|x_k))','fontweight','bold');
 yl.FontSize = 16;
 
-% --- entropy
+% --------- 
+% entropy
+% ---------
 entropy_costs = [];
-n_dim = size(precisions, 2);
-for i = 1:niters
-    precision_i  = precisions((i-1)*n_dim+1: i*n_dim, 1:end);
-    entropy_costs = [entropy_costs, log(det(precision_i))/2];
+% n_dim = size(precisions, 2);
+for i_iter = 1:niters
+%     precision_i  = precisions((i-1)*n_dim+1: i*n_dim, 1:end);
+    precision_i  = reshape(precisions(:, i_iter), [n_states*dim_state, n_states*dim_state]);
+    eig_val_i = eig(precision_i);
+    entropy_costs = [entropy_costs; sum(log(eig_val_i))/2];
 end
 
 nexttile
@@ -68,8 +73,9 @@ yl = ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold');
 yl.FontSize = 16;
 
 % verify that the sum of the factored costs is the same as the total cost
-sum_fact_costs = sum(factor_costs(1:niters, 1:end), 2);
-diff = sum_fact_costs + entropy_costs' - costs(1:niters);
+sum_fact_costs = sum(factor_costs, 1)';
+disp('verify that the sum of the factored costs is the same as the total cost')
+diff = sum(sum_fact_costs + entropy_costs - costs)
 
 % ================ plot the total costs ================
 nexttile([1 3])

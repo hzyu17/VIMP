@@ -3,6 +3,7 @@ close all
 clc
 
 %% ******************* Read datas ******************
+addpath('../../tools')
 addpath('../../tools/gtsam_toolbox')
 addpath ('../../tools/WAM/utils')
 addpath("../../tools/error_ellipse");
@@ -10,10 +11,15 @@ addpath("../../tools/error_ellipse");
 import gtsam.*
 import gpmp2.*
 
-% ============== full grid GH quadrature results =================
+% =====================================  
+% full grid GH quadrature results 
+% ===================================== 
 % prefix = "case1";
 
-% ============== sparse GH quadrature results =================
+
+% =================================== 
+% sparse GH quadrature results 0.5
+% ===================================
 prefix = "sparse_gh/case1";
 
 means = csvread([prefix+"/mean.csv"]);
@@ -117,66 +123,82 @@ plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
 hold off
 
 
-% %% ----------------- old code -----------------
-% i_vec_means = vec_means{nsteps};
-% i_vec_covs = vec_covs{nsteps};
-% hold on 
-% view(3)
-% plotMap3D(dataset.corner_idx, origin, cell_size);
-% for j = 1:n_states
-%     % gradual changing colors
-%     alpha = (j / n_states)^(1.15);
-%     color = [0, 0, 1, alpha];
-%     % means
-%     plotArm3D(arm.fk_model(), i_vec_means{j}', color, 4, true);
-% end
-% plotArm3D(arm.fk_model(), start_conf, 'r', 4, true);
-% plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
-% plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
-
 %% ================= plot costs ===================
-output = plot_costs(costs, factor_costs, precisions, niters, n_states);
+output = plot_costs(costs, factor_costs, precisions, niters, n_states, dim_state);
 
-%% ==== plot sampled covariance for the supported states seperately ==== 
+%% ==== plot iterations ==== 
 x0 = 500;
 y0 = 500;
-width = 600;
-height = 350;
+width = 1000;
+height = 550;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(3, 5, 'TileSpacing', 'tight', 'Padding', 'tight')
-
-n_samples = 50;
-for j = 1:1:n_states
+tiledlayout(floor(niters/5), 5, 'TileSpacing', 'tight', 'Padding', 'tight')
+for i_iter = 1:niters
     nexttile
-    t = title(['Support State ',num2str(j)]);
+    t=title(['Iteration ', num2str(i_iter)]);
     t.FontSize = 16;
+    i_means = means(:, i_iter);
+    i_means = reshape(i_means, [dim_state, nt]);
+    i_covs = covs(:, i_iter);
+    i_covs = reshape(i_covs, [dim_state, dim_state, nt]);
+
     hold on 
     view(3)
-    % plot map
     plotMap3D(dataset.corner_idx, origin, cell_size);
-
-    % ------------------- sampling ------------------- 
-    % gradual changing colors
-    color = [0, 0, 1, 0.9];
-    color_sample = [0.0, 0.0, 0.7, 0.04];
-
-    i_vec_means = vec_means{nsteps};
-    i_vec_covs = vec_covs{nsteps};
-    % mu j
-    mean_j = i_vec_means{j};
-    % cov j
-    cov_j = i_vec_covs{j};
-    rng('default')  % For reproducibility
-    samples = mvnrnd(mean_j, cov_j(1:7, 1:7), n_samples);
-    plotArm3D(arm.fk_model(), mean_j, color, 4, true);
-    for k = 1: size(samples, 1)
-        k_sample = samples(k, 1:end)';
-        plotArm3D(arm.fk_model(), k_sample, color_sample, 3, false);
+    for j = 1:nt
+        % gradual changing colors
+        alpha = (j / nt)^(1.15);
+        color = [0, 0, 1, alpha];
+        % means
+        plotArm3D(arm.fk_model(), i_means(1:7, j), color, 4, true);
     end
-
-plotArm3D(arm.fk_model(), start_conf, 'r', 4, true);
-plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
-
+    plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
+    plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
 end
+
+
+% %% ==== plot sampled covariance for the supported states seperately ==== 
+% x0 = 500;
+% y0 = 500;
+% width = 600;
+% height = 350;
+% figure
+% set(gcf,'position',[x0,y0,width,height])
+% 
+% tiledlayout(3, 5, 'TileSpacing', 'tight', 'Padding', 'tight')
+% 
+% n_samples = 50;
+% for j = 1:1:n_states
+%     nexttile
+%     t = title(['Support State ',num2str(j)]);
+%     t.FontSize = 16;
+%     hold on 
+%     view(3)
+%     % plot map
+%     plotMap3D(dataset.corner_idx, origin, cell_size);
+% 
+%     % ------------------- sampling ------------------- 
+%     % gradual changing colors
+%     color = [0, 0, 1, 0.9];
+%     color_sample = [0.0, 0.0, 0.7, 0.04];
+% 
+%     i_vec_means = vec_means{nsteps};
+%     i_vec_covs = vec_covs{nsteps};
+%     % mu j
+%     mean_j = i_vec_means{j};
+%     % cov j
+%     cov_j = i_vec_covs{j};
+%     rng('default')  % For reproducibility
+%     samples = mvnrnd(mean_j, cov_j(1:7, 1:7), n_samples);
+%     plotArm3D(arm.fk_model(), mean_j, color, 4, true);
+%     for k = 1: size(samples, 1)
+%         k_sample = samples(k, 1:end)';
+%         plotArm3D(arm.fk_model(), k_sample, color_sample, 3, false);
+%     end
+% 
+% plotArm3D(arm.fk_model(), start_conf, 'r', 4, true);
+% plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
+% 
+% end

@@ -5,12 +5,13 @@
 close all
 clear
 
+addpath('gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
-addpath('utils')
+% addpath('utils')
 %% dataset
-dataset = generate3Ddataset('WAMDeskDataset');
+dataset = generate3Ddataset_1('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;

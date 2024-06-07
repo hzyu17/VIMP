@@ -1,21 +1,21 @@
 <Commons>
-    <total_time>2.5</total_time>
-    <n_states>25</n_states>
+    <total_time>3.0</total_time>
+    <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
-    <sig_obs>5</sig_obs>
+    <sig_obs>15.5</sig_obs>
     <map_name>2dpr_map2</map_name>
-    <eps_sdf>0.3</eps_sdf>
+    <eps_sdf>0.5</eps_sdf>
     <radius>1.0</radius>
     <step_size>0.45</step_size>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
-    <high_temperature>200.0</high_temperature>
-    <low_temp_iterations>20</low_temp_iterations>
+    <high_temperature>30.0</high_temperature>
+    <low_temp_iterations>25</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_iterations>45</max_iterations>
-    <max_n_backtracking>9</max_n_backtracking>
+    <max_iterations>35</max_iterations>
+    <max_n_backtracking>20</max_n_backtracking>
 
 </Commons>
 
@@ -29,12 +29,12 @@
 
     <goal_pos>
         <x>-10.0</x>
-        <y>16.0</y>
+        <y>17.0</y>
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
  
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case1/</saving_prefix>
 
 </Experiment1>
 
@@ -52,8 +52,11 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2/</saving_prefix>
+    <sig_obs>25.5</sig_obs>
+    <temperature>18.0</temperature>
+    <high_temperature>30.0</high_temperature>
+    <step_size>0.4</step_size>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2/</saving_prefix>
 
 </Experiment2>
 
@@ -71,9 +74,9 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
+    <!-- <sig_obs>15.0</sig_obs> -->
     <step_size>0.4</step_size>
-    <sig_obs>1.5</sig_obs>
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case3/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case3/</saving_prefix>
 
 </Experiment3>
 
@@ -91,8 +94,8 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-    <step_size>0.4</step_size>
-    <sig_obs>1.45</sig_obs>
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case4/</saving_prefix>
+    <!-- <step_size>0.4</step_size>
+    <sig_obs>1.45</sig_obs> -->
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case4/</saving_prefix>
 
 </Experiment4>

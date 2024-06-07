@@ -23,7 +23,7 @@ set(gcf,'position',[x0,y0,width,height])
 
 is_sparse = 1;
 
-i_exp = 1;
+i_exp = 2;
 if is_sparse
     prefix = ["sparse_gh/map2/case" + num2str(i_exp)+"/"];
 else
@@ -46,7 +46,7 @@ tiledlayout(1, 4, 'TileSpacing', 'none', 'Padding', 'none')
 for i = [1, 5, 15, 25]
     nexttile
     output = plot_planarPR_oneiter(means, covs, sdfmap, i);
-    title(['Iteration ', num2str(i), ', $\hat{T} = 10$'], 'Interpreter', 'latex')
+    title(['Iteration ', num2str(i), ', $\hat{T} = 2$'], 'Interpreter', 'latex')
     axis off
 end
 
@@ -61,6 +61,6 @@ tiledlayout(1, 4, 'TileSpacing', 'none', 'Padding', 'none')
 for i = [ 30, 35, 40, 45]
     nexttile
     output = plot_planarPR_oneiter(means, covs, sdfmap, i);
-    title(['Iteration ', num2str(i), ', $\hat{T} = 200$'], 'Interpreter', 'latex')
+    title(['Iteration ', num2str(i), ', $\hat{T} = 20$'], 'Interpreter', 'latex')
     axis off
 end
