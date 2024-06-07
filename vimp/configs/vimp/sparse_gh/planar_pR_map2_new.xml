@@ -52,9 +52,7 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-    <sig_obs>25.5</sig_obs>
-    <temperature>18.0</temperature>
-    <high_temperature>30.0</high_temperature>
+    
     <step_size>0.4</step_size>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2/</saving_prefix>
 
@@ -74,7 +72,9 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-    <!-- <sig_obs>15.0</sig_obs> -->
+    <sig_obs>2.0</sig_obs>
+    <!-- <temperature>5.0</temperature>
+    <high_temperature>20.0</high_temperature> -->
     <step_size>0.4</step_size>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case3/</saving_prefix>
 
@@ -94,8 +94,8 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-    <!-- <step_size>0.4</step_size>
-    <sig_obs>1.45</sig_obs> -->
+    <sig_obs>20</sig_obs>
+    <step_size>0.45</step_size>
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case4/</saving_prefix>
 
 </Experiment4>

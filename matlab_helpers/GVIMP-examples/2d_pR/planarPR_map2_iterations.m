@@ -43,10 +43,11 @@ niters = find_niters(means);
 % tiledlayout(2, floor(niters/5), 'TileSpacing', 'none', 'Padding', 'none')
 % for i = 1:8:niters % 
 tiledlayout(1, 4, 'TileSpacing', 'none', 'Padding', 'none')
-for i = [1, 5, 15, 25]
+% for i = [1, 5, 15, 25]
+for i = [1, 5, 10, 15]
     nexttile
     output = plot_planarPR_oneiter(means, covs, sdfmap, i);
-    title(['Iteration ', num2str(i), ', $\hat{T} = 2$'], 'Interpreter', 'latex')
+    title(['Iteration ', num2str(i), ', $\hat{T} = 10$'], 'Interpreter', 'latex', 'FontSize', 20)
     axis off
 end
 
@@ -58,9 +59,10 @@ figure
 set(gcf,'position',[x0,y0,width,height])
 
 tiledlayout(1, 4, 'TileSpacing', 'none', 'Padding', 'none')
-for i = [ 30, 35, 40, 45]
+% for i = [ 30, 35, 40, 45]
+for i = [ 20, 25, 30, 35]
     nexttile
     output = plot_planarPR_oneiter(means, covs, sdfmap, i);
-    title(['Iteration ', num2str(i), ', $\hat{T} = 20$'], 'Interpreter', 'latex')
+    title(['Iteration ', num2str(i), ', $\hat{T} = 30$'], 'Interpreter', 'latex', 'FontSize', 20)
     axis off
 end

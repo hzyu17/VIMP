@@ -18,35 +18,29 @@ height = 500;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(2, 3, 'TileSpacing', 'tight', 'Padding', 'tight') 
+tiledlayout(2, 3, 'TileSpacing', 'compact', 'Padding', 'compact') 
 nexttile
 
-t = title('Factored Prior Costs');
-t.FontSize = 16;
+t = title('Factored Prior Costs', 'Interpreter', 'latex', 'FontSize', 20);
 hold on
 grid on
 plot(prior_costs', 'LineWidth', 1.5) % in shape: (n_prior_costs, niters)
 for j = 1:size(prior_costs, 1)
     scatter(linspace(1, niters, niters), prior_costs(j, 1:niters), 30, 'filled')
 end
-xl = xlabel('Iterations','fontweight','bold');
-xl.FontSize = 16;
-yl = ylabel('-log(p(x_k))','fontweight','bold');
-yl.FontSize = 16;
+xlabel('Iterations','Interpreter', 'latex', 'FontSize', 20);
+ylabel('$-\log(p(x_k))$','Interpreter', 'latex', 'FontSize', 20);
 
 nexttile
-t = title('Factored Collision Costs');
-t.FontSize = 16;
+t = title('Factored Collision Costs', 'Interpreter', 'latex', 'FontSize', 20);
 hold on
 grid on
 plot(obs_costs, 'LineWidth', 1.5)
 for j = 1:size(obs_costs, 2)
     scatter(linspace(1, niters, niters), obs_costs(1:niters, j), 30, 'filled')
 end
-xl = xlabel('Iterations','fontweight','bold');
-xl.FontSize = 16;
-yl = ylabel('-log(p(z|x_k))','fontweight','bold');
-yl.FontSize = 16;
+xlabel('Iterations','Interpreter', 'latex', 'FontSize', 20);
+ylabel('$-\log(p(z|x_k))$', 'Interpreter', 'latex', 'FontSize', 20);
 
 % --------- 
 % entropy
@@ -61,16 +55,13 @@ for i_iter = 1:niters
 end
 
 nexttile
-t = title('Entropy Cost');
-t.FontSize = 16;
+t = title('Entropy Cost', 'Interpreter', 'latex', 'FontSize', 20);
 hold on
 grid on
 plot(entropy_costs, 'LineWidth', 1.5)
 scatter(linspace(1,niters, niters), entropy_costs(1:niters), 30, 'filled')
-xl = xlabel('Iterations', 'fontweight', 'bold');
-xl.FontSize = 16;
-yl = ylabel('log(|\Sigma^{-1}|)/2', 'Interpreter', 'tex', 'fontweight', 'bold');
-yl.FontSize = 16;
+xlabel('Iterations', 'Interpreter', 'latex', 'FontSize', 20);
+ylabel('$\log(|\Sigma^{-1}_{\theta}|)/2$', 'Interpreter', 'latex', 'FontSize', 20);
 
 % verify that the sum of the factored costs is the same as the total cost
 sum_fact_costs = sum(factor_costs, 1)';
@@ -79,16 +70,13 @@ diff = sum(sum_fact_costs + entropy_costs - costs)
 
 % ================ plot the total costs ================
 nexttile([1 3])
-t = title('Total Cost');
-t.FontSize = 16;
+t = title('Total Cost', 'Interpreter', 'latex', 'FontSize', 20);
 grid on 
 hold on
 plot(costs(1:niters), 'LineWidth', 2.0);
 scatter(linspace(1, niters, niters), costs(1:niters), 30, 'fill')
-xl = xlabel('Iterations','fontweight','bold');
-xl.FontSize = 16;
-yl = ylabel('V(q)','fontweight','bold');
-yl.FontSize = 16;
+xlabel('Iterations', 'Interpreter', 'latex', 'FontSize', 20);
+ylabel('$V(q)$', 'Interpreter', 'latex', 'FontSize', 20);
 hold off
 
 output = true;

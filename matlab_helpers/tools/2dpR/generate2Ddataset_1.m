@@ -14,7 +14,7 @@ function dataset = generate2Ddataset_1(dataset_str)
 %   dataset.cell_size  cell size
 
 
-% dataset: 1 obs dataset for 2D Arm obs avoid
+% dataset 1: 1 obs dataset for 2D Arm obs avoid
 if strcmp(dataset_str, 'OneObstacleDataset')
     % params
     dataset.cols = 300;
@@ -27,7 +27,7 @@ if strcmp(dataset_str, 'OneObstacleDataset')
     % obstacles
     dataset.map = add_obstacle([190, 160], [60, 80], dataset.map);
     
-% dataset 7: multiple obs dataset for 2D Arm obs avoid
+% dataset 2: multiple obs dataset for 2D Arm obs avoid
 elseif strcmp(dataset_str, 'MultiObstacleDataset')
     % params
     dataset.cols = 400; %x
@@ -42,7 +42,7 @@ elseif strcmp(dataset_str, 'MultiObstacleDataset')
     dataset.map = add_obstacle(get_center(-8,10,dataset), get_dim(9,7,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(0,-5,dataset), get_dim(10,5,dataset), dataset.map);
 
-    
+% dataset 3: multiple obs dataset for 2D Point obs avoid
 elseif strcmp(dataset_str, 'MultiObstacleEntropy1')
     % params
     dataset.cols = 400; %x
@@ -57,21 +57,7 @@ elseif strcmp(dataset_str, 'MultiObstacleEntropy1')
     dataset.map = add_obstacle(get_center(-2.5,10,dataset), get_dim(9,7,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(0,-5,dataset), get_dim(10,5,dataset), dataset.map);
 
-
-% elseif strcmp(dataset_str, 'MultiObstacleEntropy1')
-%     % params
-%     dataset.cols = 400; %x
-%     dataset.rows = 300; %y
-%     dataset.origin_x = -20;
-%     dataset.origin_y = -10;
-%     dataset.cell_size = 0.1;
-%     % map
-%     dataset.map = zeros(dataset.rows, dataset.cols);
-%     % obstacles
-%     dataset.map = add_obstacle(get_center(12,5,dataset), get_dim(5,10,dataset), dataset.map);
-%     dataset.map = add_obstacle(get_center(-10,5,dataset), get_dim(7,10,dataset), dataset.map);
-%     dataset.map = add_obstacle(get_center(2,5,dataset), get_dim(7,8,dataset), dataset.map);
-    
+% dataset 3: multiple obs dataset for 2D Point obs avoid
 elseif strcmp(dataset_str, 'MultiObstacleEntropy2')
     % params
     dataset.cols = 400; %x
@@ -87,7 +73,7 @@ elseif strcmp(dataset_str, 'MultiObstacleEntropy2')
     dataset.map = add_obstacle(get_center(-10,13,dataset), get_dim(8,5,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(1,0,dataset), get_dim(10,5,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(5,12,dataset), get_dim(7,8,dataset), dataset.map);
-
+% Map narrow gap for 2D point robot motion planning
 elseif strcmp(dataset_str, 'MultiObstacleEntropy3')
     % params
     dataset.cols = 400; %x

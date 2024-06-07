@@ -29,8 +29,8 @@ dim_theta = 2;
 %% ================ 
 % plot costs 
 % =================
-tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i = 1:4 % 4 experiments
+% tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+for i = 4:4 % 4 experiments
     if is_sparse
         prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];
     else
@@ -47,8 +47,8 @@ for i = 1:4 % 4 experiments
     n_states = floor(ttl_dim / dim_state);
     
     output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
-    fig = get(groot,'CurrentFigure');
-    title(['Experiment ', num2str(i)])
+%     fig = get(groot,'CurrentFigure');
+%     title(['Experiment ', num2str(i)])
 end
 
 %% ================ 
