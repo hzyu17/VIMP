@@ -3,7 +3,6 @@ close all
 clc
 
 % ******************* dependencies and includes ******************
-% addpath('/usr/local/gtsam_toolbox')
 addpath('../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
@@ -286,7 +285,7 @@ for i_exp = 1:1
 
     set(gca,'fontsize',16);
     xlabel('Joint $q_4$','Interpreter','latex'),ylabel('Joint $q_5$','Interpreter','latex');
-
+    
     % ------------- q6 q7 -------------
     figure
     set(gcf,'position',[x0,y0,width,height])

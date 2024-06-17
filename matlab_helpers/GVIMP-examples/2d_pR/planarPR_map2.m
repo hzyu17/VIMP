@@ -29,7 +29,7 @@ dim_theta = 2;
 %% ================ 
 % plot costs 
 % =================
-% tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
 for i = 4:4 % 4 experiments
     if is_sparse
         prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];

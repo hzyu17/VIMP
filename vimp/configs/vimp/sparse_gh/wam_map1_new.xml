@@ -1,17 +1,17 @@
 <Commons>
-    <total_time>3.0</total_time>
-    <n_states>20</n_states>
+    <total_time>2.0</total_time>
+    <n_states>50</n_states>
     <map_name>map_bookshelf</map_name>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>3</GH_deg>
-    <sig_obs>800</sig_obs>
-    <eps_sdf>0.05</eps_sdf>
-    <radius>0.1</radius>
+    <sig_obs>50.0</sig_obs>
+    <eps_sdf>0.2</eps_sdf>
+    <radius>0.01</radius>
     <step_size>0.45</step_size>
-    <init_precision_factor>50.0</init_precision_factor>
-    <boundary_penalties>1000.0</boundary_penalties>
-    <temperature>5.0</temperature>
-    <high_temperature>100.0</high_temperature>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>100.0</boundary_penalties>
+    <temperature>0.01</temperature>
+    <high_temperature>0.2</high_temperature>
     <stop_err>1e-5</stop_err>
     <max_iterations>30</max_iterations>
     <low_temp_iterations>20</low_temp_iterations>
@@ -65,8 +65,7 @@
         <7>1.2</7>
     </goal_pos>
 
-    <!-- <step_size>0.7</step_size>
-    <sig_obs>0.02</sig_obs> -->
+
 
     <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/WAM/sparse_gh/case2/</saving_prefix>
 

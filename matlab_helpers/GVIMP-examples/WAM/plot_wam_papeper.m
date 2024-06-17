@@ -135,7 +135,7 @@ figure
 set(gcf,'position',[x0,y0,width,height])
 
 tiledlayout(floor(niters/5), 5, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i_iter = 1:niters
+for i_iter = 1:2:niters
     nexttile
     t=title(['Iteration ', num2str(i_iter)]);
     t.FontSize = 16;

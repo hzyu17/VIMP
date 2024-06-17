@@ -14,7 +14,7 @@ end
 x0 = 50;
 y0 = 50;
 width = 1000;
-height = 500;
+height = 700;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
@@ -30,6 +30,7 @@ for j = 1:size(prior_costs, 1)
 end
 xlabel('Iterations','Interpreter', 'latex', 'FontSize', 20);
 ylabel('$-\log(p(x_k))$','Interpreter', 'latex', 'FontSize', 20);
+xlim([0, niters])
 
 nexttile
 t = title('Factored Collision Costs', 'Interpreter', 'latex', 'FontSize', 20);
@@ -41,6 +42,7 @@ for j = 1:size(obs_costs, 2)
 end
 xlabel('Iterations','Interpreter', 'latex', 'FontSize', 20);
 ylabel('$-\log(p(z|x_k))$', 'Interpreter', 'latex', 'FontSize', 20);
+xlim([0, niters])
 
 % --------- 
 % entropy
@@ -62,6 +64,7 @@ plot(entropy_costs, 'LineWidth', 1.5)
 scatter(linspace(1,niters, niters), entropy_costs(1:niters), 30, 'filled')
 xlabel('Iterations', 'Interpreter', 'latex', 'FontSize', 20);
 ylabel('$\log(|\Sigma^{-1}_{\theta}|)/2$', 'Interpreter', 'latex', 'FontSize', 20);
+xlim([0, niters])
 
 % verify that the sum of the factored costs is the same as the total cost
 sum_fact_costs = sum(factor_costs, 1)';

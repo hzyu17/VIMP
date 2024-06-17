@@ -3,15 +3,15 @@
     <n_states>40</n_states>
     <coeff_Qc>1</coeff_Qc>
     <GH_deg>6</GH_deg>
-    <sig_obs>5.5</sig_obs>
+    <sig_obs>30.5</sig_obs>
     <map_name>2darm_map1</map_name>
     <eps_sdf>0.03</eps_sdf>
     <radius>0.1</radius>
     <step_size>0.45</step_size>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
-    <temperature>10</temperature>
-    <high_temperature>50</high_temperature>
+    <temperature>0.1</temperature>
+    <high_temperature>0.5</high_temperature>
     <max_iterations>35</max_iterations>
     <low_temp_iterations>25</low_temp_iterations>
     <stop_err>1e-5</stop_err>
@@ -36,7 +36,7 @@
     </goal_pos>
 
     <!-- <sig_obs> 0.0055 </sig_obs> -->
-    <saving_prefix>/home/hyu419/git/VIMP/matlab_helpers/GVIMP-examples/2d_Arm/sparse_gh/map1/case1/</saving_prefix>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_Arm/sparse_gh/map1/case1/</saving_prefix>
 
 </Experiment1>
 

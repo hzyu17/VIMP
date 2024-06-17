@@ -23,7 +23,7 @@ set(gcf,'position',[x0,y0,width,height])
 
 is_sparse = 1;
 
-i_exp = 2;
+i_exp = 3;
 if is_sparse
     prefix = ["sparse_gh/map2/case" + num2str(i_exp)+"/"];
 else
