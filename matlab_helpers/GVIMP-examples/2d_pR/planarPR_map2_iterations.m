@@ -3,7 +3,8 @@ close all
 clc
 addpath('../../tools/gtsam_toolbox');
 addpath("../../tools/error_ellipse");
-addpath("../../../matlab_helpers/");
+addpath("../../");
+addpath("../../tools/");
 import gtsam.*
 import gpmp2.*
 

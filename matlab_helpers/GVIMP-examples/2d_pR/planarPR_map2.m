@@ -7,6 +7,7 @@ import gtsam.*
 import gpmp2.*
 
 addpath("../../tools/error_ellipse");
+addpath("../../");
 addpath("../../tools");
 
 is_sparse = 1;
