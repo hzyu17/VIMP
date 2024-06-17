@@ -2,13 +2,13 @@ close all
 clear all
 clc
 
-addpath('../../tools/gtsam_toolbox');
 import gtsam.*
 import gpmp2.*
 
-addpath("../../tools/error_ellipse");
 addpath("../../");
 addpath("../../tools");
+addpath('../../tools/gtsam_toolbox');
+addpath("../../tools/error_ellipse");
 
 is_sparse = 1;
 
@@ -17,20 +17,12 @@ is_sparse = 1;
 % ============
 sdfmap = csvread("map2/map_multiobs_map2.csv");
 
-x0 = 500;
-y0 = 500;
-width = 1290.427199;
-height = 800;
-figure
-set(gcf,'position',[x0,y0,width,height])
-
 dim_state = 4;
 dim_theta = 2;
 
 %% ================ 
 % plot costs 
 % =================
-tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
 for i = 4:4 % 4 experiments
     if is_sparse
         prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];
@@ -46,15 +38,21 @@ for i = 4:4 % 4 experiments
     [ttl_dim, ~] = size(means);
     niters = find_niters(means);
     n_states = floor(ttl_dim / dim_state);
-    
+
     output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
-%     fig = get(groot,'CurrentFigure');
-%     title(['Experiment ', num2str(i)])
+
 end
 
 %% ================ 
 % plot trajectories 
 % =================
+x0 = 500;
+y0 = 500;
+width = 1290.427199;
+height = 800;
+figure
+set(gcf,'position',[x0,y0,width,height])
+
 tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
 for i = 1:4 % 4 experiments
     nexttile

@@ -122,7 +122,6 @@ plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
 % plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
 hold off
 
-
 %% ================= plot costs ===================
 output = plot_costs(costs, factor_costs, precisions, niters, n_states, dim_state);
 
