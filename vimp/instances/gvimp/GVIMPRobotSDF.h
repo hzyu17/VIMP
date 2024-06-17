@@ -14,6 +14,8 @@
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
 #include <gtsam/inference/Symbol.h>
 
+std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
+
 namespace vimp{
 
 template <typename Robot, typename RobotSDF>
@@ -39,6 +41,26 @@ public:
     }
 
     std::tuple<Eigen::VectorXd, SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
+
+        // Read the sparse grid GH quadrature weights and nodes
+        QuadratureWeightsMap nodes_weights_map;
+        try {
+            std::ifstream ifs(GH_map_file, std::ios::binary);
+            if (!ifs.is_open()) {
+                std::string error_msg = "Failed to open file for GH weights reading in file: " + GH_map_file;
+                throw std::runtime_error(error_msg);
+            }
+
+            std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
+            boost::archive::binary_iarchive ia(ifs);
+            ia >> nodes_weights_map;
+
+        } catch (const boost::archive::archive_exception& e) {
+            std::cerr << "Boost archive exception: " << e.what() << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "Standard exception: " << e.what() << std::endl;
+        }
+
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
@@ -86,10 +108,8 @@ public:
 
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
-                    // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
                     vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                                 dim_state, 
-                                                                // params.GH_degree(),
                                                                 cost_linear_gp, 
                                                                 lin_gp, 
                                                                 n_states, 
@@ -102,7 +122,6 @@ public:
                 FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
                 vec_factors.emplace_back(new FixedGpPrior{dim_state, 
                                                           dim_state, 
-                                                        //   params.GH_degree(),
                                                           cost_fixed_gp, 
                                                           fixed_gp, 
                                                           n_states, 
@@ -114,7 +133,6 @@ public:
                 // linear gp factors
                 vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
-                                                            // params.GH_degree(),
                                                             cost_linear_gp, 
                                                             lin_gp, 
                                                             n_states, 
@@ -123,7 +141,6 @@ public:
                                                             params.high_temperature()});
 
                 // collision factor
-                // auto cost_sdf_Robot = cost_obstacle<Robot>;
                 vec_factors.emplace_back(new GVIFactorizedSDFRobot{dim_conf, 
                                                                     dim_state, 
                                                                     params.GH_degree(),
@@ -136,7 +153,8 @@ public:
                                                                     n_states, 
                                                                     i, 
                                                                     temperature, 
-                                                                    high_temperature});    
+                                                                    high_temperature,
+                                                                    nodes_weights_map});    
             }
         }
 

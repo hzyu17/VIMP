@@ -14,9 +14,11 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 #include "helpers/ExperimentParams.h"
 #include "dynamics/LinearDynamics.h"
-// #include "dynamics/NonlinearDynamics.h"
 #include "3rdparty/rapidxml-1.13/rapidxml.hpp"
 #include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
 #include <memory>
@@ -165,7 +167,9 @@ public:
             params.update_sig_obs(cost_sigma);
         }
 
-        std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        std::string source_root{XSTRING(SOURCE_ROOT)};
+        std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        std::string saving_prefix = source_root + '/' + saving_prefix_relative;
         params.set_saving_prefix(saving_prefix);
 
     }
@@ -268,8 +272,13 @@ public:
             params.update_sig_obs(cost_sigma);
         }
 
-        std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        std::string source_root{XSTRING(SOURCE_ROOT)};
+        std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        std::string saving_prefix = source_root + '/' + saving_prefix_relative;
         params.set_saving_prefix(saving_prefix);
+
+        // std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        // params.set_saving_prefix(saving_prefix);
     }
 
 };

@@ -16,7 +16,6 @@ import gpmp2.*
 % ===================================== 
 % prefix = "case1";
 
-
 % =================================== 
 % sparse GH quadrature results 0.5
 % ===================================
@@ -119,7 +118,6 @@ for j = 1:nt
 end
 plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
 plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
-% plotArm3D(arm.fk_model(), end_conf, 'g', 4, true);
 hold off
 
 %% ================= plot costs ===================
