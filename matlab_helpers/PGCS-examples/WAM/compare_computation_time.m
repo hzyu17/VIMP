@@ -62,24 +62,25 @@ clear all
 close all
 clc
 % ------------- parameters -------------
-total_time = 4.0;
-n_states = 20;
+total_time = 2.0;
+n_states = 30;
+GH_deg = 3;
 coeff_Qc = 1.0;
-sig_obs = 0.02;
+sig_obs = 21.0;
 eps_sdf = 0.2;
-radius = 0.0;
-step_size = 0.7;
-init_precision_factor = 1e4;
-boundary_penalties = 1e4;
-temperature = 0.01;
-high_temperature = 0.5;
+radius = 0.01;
+step_size = 0.45;
+init_precision_factor = 10000.0;
+boundary_penalties = 10000.0;
+temperature = 0.5;
+high_temperature = 5.0;
 low_temp_iterations = 20;
 stop_err = 1e-5;
 num_iter = 30;
-max_n_backtracking = 20;
+max_n_backtracking = 5;
 sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
 
-executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_WAMArm';
+executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_WAMArm_spgh';
 
 %% ================= 1st experiment =================
 i_exp = 1;

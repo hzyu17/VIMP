@@ -19,7 +19,7 @@
     <sdf_file>/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin</sdf_file>
 </Commons>
 
-<!-- <Experiment1>    
+<Experiment1>    
     <start_pos>
         <1>-0.8</1>
         <2>-1.70</2>
@@ -42,9 +42,9 @@
 
     <saving_prefix>matlab_helpers/GVIMP-examples/WAM/sparse_gh/case1/</saving_prefix>
 
-</Experiment1> -->
+</Experiment1>
 
-<Experiment1>    
+<!-- <Experiment2>    
     <start_pos>
         <1>-0.9</1>
         <2>-1.70</2>
@@ -69,4 +69,4 @@
     <high_temperature>8.0</high_temperature>
     <saving_prefix>matlab_helpers/GVIMP-examples/WAM/sparse_gh/case2/</saving_prefix>
 
-</Experiment1>
+</Experiment2> -->
