@@ -197,7 +197,7 @@ public:
     void run_one_exp(int exp, GVIMPParams& params, bool verbose=true) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
-        doc.parse<0>(xmlFile.data());        
+        doc.parse<0>(xmlFile.data());
         std::string ExpNodeName = "Experiment" + std::to_string(exp);
 
         char * c_expname = ExpNodeName.data();
@@ -250,7 +250,7 @@ public:
         std::string ExpNodeName = "Experiment" + std::to_string(i_exp);
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
-
+        
         this->read_boundary_conditions(paramNode, params);
 
     }
@@ -287,6 +287,21 @@ public:
         params.set_m0(m0);
         params.set_mT(mT);
 
+        if (paramNode->first_node("temperature")){
+            double temperature = atof(paramNode->first_node("temperature")->value());
+            params.set_temperature(temperature);
+        }
+
+        if (paramNode->first_node("high_temperature")){
+            double high_temperature = atof(paramNode->first_node("high_temperature")->value());
+            params.set_high_temperature(high_temperature);
+        }
+
+        if (paramNode->first_node("step_size")){
+            double step_size = atof(paramNode->first_node("step_size")->value());
+            params.update_step_size(step_size);
+        }
+
         if (paramNode->first_node("sig_obs")){
             double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
             params.update_sig_obs(cost_sigma);
@@ -294,7 +309,7 @@ public:
 
         std::string source_root{XSTRING(SOURCE_ROOT)};
         std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
-        std::string saving_prefix = source_root + '/' + saving_prefix_relative;
+        std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
         params.set_saving_prefix(saving_prefix);
 
         // std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());

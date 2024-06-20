@@ -11,16 +11,30 @@ addpath("../../tools/error_ellipse");
 import gtsam.*
 import gpmp2.*
 
-% =====================================  
+% =================================  
 % full grid GH quadrature results 
-% ===================================== 
+% ================================= 
 % prefix = "case1";
 
-% =================================== 
-% sparse GH quadrature results 0.5
-% ===================================
-prefix = "sparse_gh/case1";
+% =============================
+% sparse GH quadrature results 
+% =============================
+i_exp = 2;
 
+switch i_exp
+    case 1
+        prefix = "sparse_gh/case1";
+    case 2
+        prefix = "sparse_gh/case2";
+end
+
+%% ******************* Start and goal configurations ******************
+start_confs = [-0.8,   -1.70,   1.64,  1.29,   1.1, -0.106,    2.2;
+               -0.9,  -1.70,   1.34,  1.19,   0.8,  -0.126,    2.5];
+end_confs = [-0.0,    0.94,     0,     1.6,     0,   -0.919,   1.55;
+              -0.7,   1.35,    1.2,    1.0,   -0.7,  -0.1,   1.2];
+
+%% read experiment results
 means = csvread([prefix+"/mean.csv"]);
 covs = csvread([prefix+"/cov.csv"]);
 precisions = csvread([prefix+"/joint_precision.csv"]);
@@ -43,7 +57,6 @@ for i=niters:-1:1
         break
     end
 end
-
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 
@@ -60,11 +73,13 @@ disp('calculating signed distance field ...');
 field = signedDistanceField3D(dataset.map, dataset.cell_size);
 disp('calculating signed distance field done');
 
-%% ******************* WAM Arm and start and end conf ******************
+%% ******************* WAM Arm ******************
 arm = generateArm('WAMArm');
 
-start_conf = [-0.8,-1.70,1.64,1.29,1.1,-0.106,2.2]';
-end_conf = [-0.0,0.94,0,1.6,0,-0.919,1.55]';
+% start and goal 
+start_conf = start_confs(i_exp, 1:end)';
+end_conf = end_confs(i_exp, 1:end)';
+
 start_vel = zeros(7,1);
 end_vel = zeros(7,1);
 
