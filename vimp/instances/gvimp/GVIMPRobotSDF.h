@@ -9,6 +9,7 @@
  * 
  */
 
+#include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
 #include "instances/FactorizedGVI.h"
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
@@ -36,8 +37,13 @@ public:
         return _robot_sdf;
     }
 
-    void run_optimization(const GVIMPParams& params, bool verbose=true){
+    double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
+        Timer timer;
+        timer.start();
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
+
+        std::cout << "========== Optimization time: " << std::endl;
+        return timer.end_sec();
     }
 
     std::tuple<Eigen::VectorXd, SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
@@ -60,6 +66,10 @@ public:
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
+
+        
+        Timer timer;
+        timer.start();
 
         /// parameters
         int n_states = params.nt();
@@ -178,12 +188,11 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
 
-        #include "helpers/timer.h"
-        Timer timer;
-        timer.start();
         optimizer.optimize(verbose);
+        
         std::cout << "========== Optimization time: " << std::endl;
         timer.end_mus();
+
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
         return _last_iteration_mean_precision;

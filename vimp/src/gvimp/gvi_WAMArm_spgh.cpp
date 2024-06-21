@@ -79,7 +79,14 @@ int main(int argc, char* argv[]){
                             boundary_penalties, temperature, high_temperature, low_temp_iterations, 
                             stop_err, max_n_backtracking, "map_bookshelf", sdf_file);
 
-        runner.run_one_exp(i_exp, params, true);
+        double time_elapsed = 0.0;
+        for (int i=0; i<5; i++){
+            std::cout << "repeated experiment: " << i << std::endl;
+            time_elapsed += runner.run_one_exp(i_exp, params, true);
+        }
+        
+        std::cout << "time elapsed: " << time_elapsed << std::endl;
+
         return 0;
     }
     else{

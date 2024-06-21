@@ -45,7 +45,7 @@ public:
 
     virtual void read_config(ExperimentParams& params) = 0;
     virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, ExperimentParams& params) = 0;
-    virtual void run_one_exp(int exp, ExperimentParams& params, bool verbose=true) = 0;
+    virtual double run_one_exp(int exp, ExperimentParams& params, bool verbose=true) = 0;
 
     void read_config(){
         read_config(_params);
@@ -194,7 +194,7 @@ public:
 
     }
 
-    void run_one_exp(int exp, GVIMPParams& params, bool verbose=true) override {
+    double run_one_exp(int exp, GVIMPParams& params, bool verbose=true) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
         doc.parse<0>(xmlFile.data());
@@ -209,10 +209,12 @@ public:
         
         this->read_boundary_conditions(paramNode, params);
 
-        params.print_params();
+        if (verbose){
+            params.print_params();
+        }
         
-        _gvimp_robotsdf.run_optimization(params, verbose);
-
+        return _gvimp_robotsdf.run_optimization_withtime(params, verbose);
+        
     }
 
     // Run one experiment, return the optimized means and precision matrices.
@@ -312,8 +314,6 @@ public:
         std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
         params.set_saving_prefix(saving_prefix);
 
-        // std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
-        // params.set_saving_prefix(saving_prefix);
     }
 
 };
@@ -376,7 +376,7 @@ public:
         opt_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
     }
 
-    virtual void run_one_exp(int exp, PGCSParams& params, bool verbose=true) = 0;
+    virtual double run_one_exp(int exp, PGCSParams& params, bool verbose=true) = 0;
 
     void read_config(PGCSParams& params) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
