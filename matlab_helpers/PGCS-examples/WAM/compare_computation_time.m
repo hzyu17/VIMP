@@ -2,78 +2,16 @@ clear all
 close all
 clc
 
-%% Compute the computation time and compare between gpmp2, gvimp, and pgcsmp.
-%% ========================================================================
-%                                  GVI-MP
-% =========================================================================
-n_repeat = 50;
-
-args = num2str(n_repeat);
-executable = '/home/hzyu/git/VIMP/build/src/gvimp/computation_time';
-execute_one_exp(executable, args);
-
-% % ------------- parameters -------------
-% total_time = 2.0;
-% n_states = 30;
-% GH_deg = 3;
-% coeff_Qc = 1.0;
-% sig_obs = 21.0;
-% eps_sdf = 0.2;
-% radius = 0.01;
-% step_size = 0.45;
-% init_precision_factor = 10000.0;
-% boundary_penalties = 10000.0;
-% temperature = 0.5;
-% high_temperature = 5.0;
-% low_temp_iterations = 20;
-% stop_err = 1e-5;
-% num_iter = 30;
-% max_n_backtracking = 5;
-% sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
+% %% Compute the computation time and compare between gpmp2, gvimp, and pgcsmp.
+% %% ========================================================================
+% %                                  GVI-MP
+% % =========================================================================
+% n_repeat = 50;
 % 
-% executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_WAMArm_spgh';
+% args = num2str(n_repeat);
+% executable = '/home/hzyu/git/VIMP/build/src/gvimp/computation_time';
+% execute_one_exp(executable, args);
 % 
-% %% ================= 1st experiment =================
-% i_exp = 1;
-% args = [num2str(i_exp), ' ', num2str(total_time), ' ', num2str(n_states), ' ',... 
-%         num2str(coeff_Qc), ' ', num2str(sig_obs), ' ', num2str(eps_sdf), ' ', ...
-%         num2str(radius), ' ', num2str(step_size), ' ', num2str(init_precision_factor), ...
-%         ' ', num2str(boundary_penalties), ...
-%         ' ', num2str(temperature), ' ', num2str(high_temperature), ...
-%         ' ', num2str(low_temp_iterations), ' ', num2str(stop_err), ...
-%         ' ', num2str(num_iter), ...
-%         ' ', num2str(max_n_backtracking), ' ', num2str(sdf_file)];
-% 
-% % ================== optimize and count time ======================
-% profile on
-% for i = 1:5
-%     execute_one_exp(executable, args);
-% end
-% profile viewer
-% % =================================================================
-
-% %% ================= 2nd experiment =================
-% i_exp = 2;
-% 
-% temperature = 1.0;
-% high_temperature = 8.0;
-% 
-% args = [num2str(i_exp), ' ', num2str(total_time), ' ', num2str(n_states), ' ',... 
-%         num2str(coeff_Qc), ' ', num2str(sig_obs), ' ', num2str(eps_sdf), ' ', num2str(radius), ...
-%         ' ', num2str(step_size), ' ', num2str(init_precision_factor), ' ', num2str(boundary_penalties), ...
-%         ' ', num2str(temperature), ' ', num2str(high_temperature), ...
-%         ' ', num2str(low_temp_iterations), ' ', num2str(stop_err), ' ', num2str(num_iter), ...
-%         ' ', num2str(max_n_backtracking), ' ', num2str(sdf_file)];
-% 
-% % ================== optimize and count time ======================
-% profile on
-% for i = 1:50
-%     execute_one_exp(executable, args);
-% end
-% profile viewer
-
-
-
 % % =========================================================================
 % %                                  PGCS-MP
 % % =========================================================================
@@ -227,20 +165,20 @@ execute_one_exp(executable, args);
 % rng('default')  % For reproducibility
 % samples = mvnrnd(mean_j, cov_j, n_samples);
 % profile viewer
-% 
-% %% ==================== closed-from prior time V.S. G-H estimation ==================== 
-% % ------------------------- Arm 2 --------------------------
-% profile on
-% for i = 1:50
-%     executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_Arm2_prior_factors';
-%     execute_one_exp(executable, '');
-% end
-% profile viewer
-% 
-% %% ------------------------- WAM Arm --------------------------
-% profile on
-% for i = 1:50
-%     executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_wam_prior_factors';
-%     execute_one_exp(executable, '');
-% end
-% profile viewer
+
+%% ==================== closed-from prior time V.S. G-H estimation ==================== 
+% ------------------------- Arm 2 --------------------------
+profile on
+for i = 1:50
+    executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_Arm2_prior_factors';
+    execute_one_exp(executable, '');
+end
+profile viewer
+
+%% ------------------------- WAM Arm --------------------------
+profile on
+for i = 1:50
+    executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_wam_prior_factors';
+    execute_one_exp(executable, '');
+end
+profile viewer

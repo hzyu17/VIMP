@@ -1,4 +1,4 @@
-close all
+% close all
 clear all
 clc
 
@@ -53,8 +53,18 @@ height = 800;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
+% 4 Experiments start and goal states
+start_configs = [7.0, -5, 0, 0;
+                 -7, -5, 0, 0;
+                 -7, -5, 0, 0;
+                 13, 14, 0, 0];
+goal_configs = [-10, 17, 0, 0;
+                8, 18, 0, 0;
+                13, 10, 0, 0;
+                -13, 8, 0, 0];
+
 tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i = 1:4 % 4 experiments
+for i = 1:4 % 4 experiments  
     nexttile
     if is_sparse
         prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];
@@ -73,7 +83,17 @@ for i = 1:4 % 4 experiments
 %     [ttl_dim, niters] = size(means);
     output = plot_planarPR_oneiter(means, covs, sdfmap, niters);
     
+    start_i = start_configs(i, :)';
+    goal_i = goal_configs(i, :)';
+    s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 500);
+    s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 500);
+    
+    lgd = legend([s1, s2], {'Start', 'Goal'});
+    set(lgd, 'FontWeight', 'bold');
+    
     xlim([-15, 20])
     ylim([-10, 20])
+    
+    axis off
     
 end

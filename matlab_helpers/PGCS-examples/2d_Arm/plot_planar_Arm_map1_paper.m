@@ -3,7 +3,7 @@ close all
 clc
 
 %% ******************* Read datas ******************
-addpath('/home/hyu419/.local/gtsam_toolbox')
+addpath('../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 

@@ -47,6 +47,10 @@ for i = 1:4 % 4 experiments
     % % --- high temperature ---
     means = csvread([prefix + "zk_sdf.csv"]);
     covs = csvread([prefix + "Sk_sdf.csv"]);
+    
+    terminal_cov = reshape(covs, [6,6,50]);
+    terminal_cov = terminal_cov(1:end, 1:end, end);
+    diff_terminal_cov = norm(terminal_cov - 0.04.*eye(6), 'fro')
        
     plotMap3D(dataset.corner_idx, origin, cell_size);
     plot_3d_result(means, covs);

@@ -3,12 +3,12 @@ close all
 clc
 
 %% ******************* Read datas ******************
-addpath('../../tools/gtsam_toolbox')
-import gtsam.*
-import gpmp2.*
-
 addpath("../../tools/error_ellipse");
 addpath('../../tools/2dArm');
+addpath('../../tools/gtsam_toolbox');
+
+import gtsam.*
+import gpmp2.*
 
 map = 1;
 exp = 1;
@@ -173,7 +173,6 @@ xlim([-1, 1.5])
 ylim([-0.8, 1.5])
 axis off;
 hold off
-
 
 % ===================================== 
 % configuration space trajectory 

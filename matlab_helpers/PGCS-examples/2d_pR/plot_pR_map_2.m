@@ -1,34 +1,18 @@
 clear all
 close all
 clc
-addpath('../../tools/gtsam_toolbox')
+
+addpath("../../tools/error_ellipse/");
+addpath("../../../matlab_helpers/");
+addpath("../../tools/gtsam_toolbox/");
+
 import gtsam.*
 import gpmp2.*
 
-addpath("../../tools/error_ellipse");
-addpath("../../../matlab_helpers/");
+
 
 %% read map
 sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
-
-% % hyper parameters
-% i_exp = 1;
-% eps = 0.01;
-% eps_map = 0.6;
-% speed = 0.23;
-% nt = 50;
-% sig0 = 0.001;
-% sigT = 0.001;
-% eta = 1e-1;
-% stop_err = 1e-5;
-% max_iter = 50;
-% cost_sigma = 1.5e5;
-% 
-% args = [num2str(i_exp), ' ', num2str(eps), ' ', num2str(eps_map), ' ', num2str(speed), ' ', num2str(nt), ' ', num2str(sig0), ' ', num2str(sigT), ' ', ...
-%             num2str(eta), ' ', num2str(stop_err), ' ', num2str(max_iter), ' ', num2str(cost_sigma)];
-%     
-% command = ['/home/hongzhe/git/VIMP/vimp/build/pgcs_PlanarPRModel', ' ', args];
-% num_iter = system(command);
 
 % plotting
 x0 = 500;
@@ -40,6 +24,16 @@ set(gcf,'position',[x0,y0,width,height])
 
 tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
 
+% 4 Experiments start and goal states
+start_configs = [7.0, -5, 0, 0;
+                 -7, -5, 0, 0;
+                 -7, -5, 0, 0;
+                 13, 14, 0, 0];
+goal_configs = [-10, 17, 0, 0;
+                8, 18, 0, 0;
+                13, 10, 0, 0;
+                -12.0, 7.0, 0, 0];
+
 for i = 1:4 % 4 experiments
     nexttile
     hold on
@@ -50,37 +44,21 @@ for i = 1:4 % 4 experiments
     
     cov_final = covs(:,50);
     disp("cov_final_RESHAPED")
-    cov_final_RESHAPED = reshape(cov_final, [4,4])
+    cov_final_RESHAPED = reshape(cov_final, [4,4]);
     
     plot_2d_result(sdfmap, means, covs);
 
-%     % --- read baselines ---
-%     means_prm = csvread([prefix + "prm_5000.csv"]);
-%     means_rrt = csvread([prefix + "RRTstar_3000.csv"]);
-% 
-%     % --- plot baselines ---
-%     [~, nt_prm] = size(means_prm);
-%     [~, nt_rrt] = size(means_rrt);
-%     
-%     for i_pt = 1:nt_prm-1
-%         plot([means_prm(1, i_pt), means_prm(1, i_pt+1)], ...
-%             [means_prm(2, i_pt), means_prm(2, i_pt+1)], 'LineWidth', 3.0, 'Color', 'b');
-%     end
-%     
-%     hold on
-% 
-%     for i_pt = 1:nt_rrt-1
-%         plot([means_rrt(1, i_pt), means_rrt(1, i_pt+1)], ...
-%             [means_rrt(2, i_pt), means_rrt(2, i_pt+1)], 'LineWidth', 3.0, 'Color', 'g');
-%     end
+    start_i = start_configs(i, :)';
+    goal_i = goal_configs(i, :)';
+    s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 500);
+    s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 500);
     
-%     if i==3
-%         xlim([-20, 25]);
-%         ylim([-15, 22]);
-%     end
-%     axis off ; 
-
+    lgd = legend([s1, s2], {'Start', 'Goal'});
+    set(lgd, 'FontWeight', 'bold');
+    
     xlim([-15, 20])
     ylim([-10, 20])
+    
+    axis off
 
 end
