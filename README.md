@@ -35,8 +35,9 @@ In a bookshelf senario below, the animated trajectory is the mean of the traject
 The experiment settings
 <img src="figures/planar_quad_settings.jpg" width="300" >
 
-4 Experiments
-<img src="figures/planar_quad_exp1.gif" width="300"> <img src="figures/planar_quad_exp2.gif" width="300"> <img src="figures/planar_quad_exp3.gif" width="300"> <img src="figures/planar_quad_exp4.gif" width="300">
+### 4 Experiment results
+<img src="figures/planar_quad_exp1.gif" height="400"> <img src="figures/planar_quad_exp2.gif" height="400"> <img src="figures/planar_quad_exp3.gif" height="400"> <img src="figures/planar_quad_exp4.gif" height="400">
+
 
 ## Dependencies
 1. Boost \
