@@ -16,3 +16,4 @@ vimp/maps/WAM/WAMDeskDataset.bin
 vimp/maps/3dpR/pRSDF3D.bin
 vimp/data/WAM/*
 vimp/quadrature/SparseGHQuadratureWeights.bin
+vimp/python/debug/*
