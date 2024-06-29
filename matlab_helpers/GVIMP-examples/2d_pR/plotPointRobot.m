@@ -1,6 +1,5 @@
 function output = plotPointRobot(means, covs, precisions, costs, factor_costs, sdfmap, niters, nsteps)
 
-%%
 [~, ttl_dim] = size(means);
 dim_theta = 4;
 if nargin == 6
@@ -15,8 +14,6 @@ if nargin == 6
     nsteps = 6;
 end
 
-% niters = 10;
-% nsteps = 6;
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
 
@@ -38,7 +35,10 @@ grid_Y = origin_y : cell_size : grid_corner_y;
 mesh_X = repmat(grid_X', 1, size(grid_Y,2));
 mesh_Y = repmat(grid_Y, size(grid_X,2), 1);
 
-% =========================== load the means and covs on the 2*2 level
+% ========================================= 
+% load the means and covs on the 2*2 level
+% ========================================= 
+
 % containers for all the steps data
 vec_means = cell(niters, 1);
 vec_covs = cell(niters, 1);
@@ -62,7 +62,9 @@ for i_iter = 0: nsteps-1
         vec_covs{i_iter+1} = i_vec_covs_2d;
 end
 
-%% plot sdf and means and covs
+%% ============================== 
+% plot sdf and means and covs
+% ===============================
 addpath('../../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*

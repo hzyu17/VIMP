@@ -31,6 +31,12 @@ In a bookshelf senario below, the animated trajectory is the mean of the traject
 
 <img src="figures/WAM_GVI_RVIZ_2.gif" width="300"> <img src="figures/WAM_RVIZ_2.gif" width="300">
 
+**Variational Mmotion planning for a linearized 2D quadrotor (LTV system)**
+The experiment settings
+<img src="figures/planar_quad_settings.jpg" width="300" >
+
+4 Experiments
+<img src="figures/planar_quad_exp1.gif" width="300"> <img src="figures/planar_quad_exp2.gif" width="300"> <img src="figures/planar_quad_exp3.gif" width="300"> <img src="figures/planar_quad_exp4.gif" width="300">
 
 ## Dependencies
 1. Boost \

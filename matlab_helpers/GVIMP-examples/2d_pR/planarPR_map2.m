@@ -1,4 +1,6 @@
-% close all
+%% Plot the results for planar robot in the paper
+
+close all
 clear all
 clc
 

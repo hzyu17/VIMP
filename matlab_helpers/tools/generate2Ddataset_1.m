@@ -26,6 +26,23 @@ if strcmp(dataset_str, 'OneObstacleDataset')
     dataset.map = zeros(dataset.rows, dataset.cols);
     % obstacles
     dataset.map = add_obstacle([190, 160], [60, 80], dataset.map);
+
+elseif strcmp(dataset_str, 'OneObstacleDatasetNoisy')
+    % params
+    dataset.cols = 300;
+    dataset.rows = 300;
+    dataset.origin_x = -1;
+    dataset.origin_y = -1;
+    dataset.cell_size = 0.01;
+    % map
+    dataset.map = zeros(dataset.rows, dataset.cols);
+    
+    % sample the obstacle location
+    randN_1 = randn()*5;
+    randN_2 = randn()*5;
+    
+    % obstacles
+    dataset.map = add_obstacle([190+randN_1, 160+randN_2], [60, 80], dataset.map);
     
 % dataset 2: multiple obs dataset for 2D Arm obs avoid
 elseif strcmp(dataset_str, 'MultiObstacleDataset')
@@ -73,6 +90,29 @@ elseif strcmp(dataset_str, 'MultiObstacleEntropy2')
     dataset.map = add_obstacle(get_center(-10,13,dataset), get_dim(8,5,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(1,0,dataset), get_dim(10,5,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(5,12,dataset), get_dim(7,8,dataset), dataset.map);
+    
+% Map 2 with perception noise simulation
+elseif strcmp(dataset_str, 'MultiObstacleEntropy2Noisy')
+    % params
+    dataset.cols = 400; %x
+    dataset.rows = 300; %y
+    dataset.origin_x = -20;
+    dataset.origin_y = -10;
+    dataset.cell_size = 0.1;
+    % map
+    dataset.map = zeros(dataset.rows, dataset.cols);
+    
+    % Perception noise
+    randN_1 = randn()*5;
+    randN_2 = randn()*5;
+    
+    % obstacles
+    dataset.map = add_obstacle(get_center(12,0,dataset)+randN_1, get_dim(5,10,dataset)+randN_2, dataset.map);
+    dataset.map = add_obstacle(get_center(-12,0,dataset)+randN_1, get_dim(7,10,dataset)+randN_2, dataset.map);
+    dataset.map = add_obstacle(get_center(-10,13,dataset)+randN_1, get_dim(8,5,dataset)+randN_2, dataset.map);
+    dataset.map = add_obstacle(get_center(1,0,dataset)+randN_1, get_dim(10,5,dataset)+randN_2, dataset.map);
+    dataset.map = add_obstacle(get_center(5,12,dataset)+randN_1, get_dim(7,8,dataset)+randN_2, dataset.map);
+    
 % Map narrow gap for 2D point robot motion planning
 elseif strcmp(dataset_str, 'MultiObstacleEntropy3')
     % params
@@ -87,25 +127,32 @@ elseif strcmp(dataset_str, 'MultiObstacleEntropy3')
     dataset.map = add_obstacle(get_center(-4,5,dataset), get_dim(6,15,dataset), dataset.map);
     dataset.map = add_obstacle(get_center(4,5,dataset), get_dim(6,15,dataset), dataset.map);
 
-elseif strcmp(dataset_str, 'MultiObstacleLongRangeDataset')
+elseif strcmp(dataset_str, 'MultiObstacleEntropy3Noisy')
+    % The obstacle's y positions are sampled from a Gaussian distribution.
     % params
-    dataset.cols = 1000; %x
-    dataset.rows = 800; %y
+    dataset.cols = 400; %x
+    dataset.rows = 300; %y
     dataset.origin_x = -20;
     dataset.origin_y = -10;
     dataset.cell_size = 0.1;
     % map
     dataset.map = zeros(dataset.rows, dataset.cols);
-    % random obstacles
-    for i=1:40
-        % pos
-        pos_x = randi([0, 60]);
-        pos_y = randi([0, 60]);
-        % size
-        size_x = randi([2, 8]);
-        size_y = randi([2, 8]);
-        dataset.map = add_obstacle(get_center(pos_x,pos_y,dataset), get_dim(size_x,size_y,dataset), dataset.map);
-    end
+    % sample the obstacle location
+    randN = randn();
+    
+    center_1 = get_center(-4,5,dataset);
+    center_2 = get_center(4,5,dataset);
+    
+    center_1(2) = center_1(2) + randN*10;
+    center_2(2) = center_2(2) + randN*10;
+    
+    dim_1 = get_dim(6,15,dataset);
+    dim_2 = get_dim(6,15,dataset);
+    
+    % obstacles
+    dataset.map = add_obstacle(center_1, dim_1, dataset.map);
+    dataset.map = add_obstacle(center_2, dim_2, dataset.map);
+    
 % no such dataset
 else
     error('No such dataset exist');
