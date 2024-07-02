@@ -1,10 +1,10 @@
 # Stochastic motion planning as Gaussian Variational Inference
 
-This repository is dedicated to implementing Gaussian Variational Inference Motion Planning algorithms (GVIMP). GVIMP was introduced in the following work: 
+This repository is dedicated to implementing Gaussian Variational Inference Motion Planning algorithms (GVI-MP). GVI-MP was introduced in the following work: 
 **[A Gaussian Variational Inference Motion Planning](https://arxiv.org/abs/2209.05655)**, 
 and the details and complete proofs are included in the work 
 **[Stochastic Motion Planning as Gaussian Variational Inference: Theory and Algorithms](https://arxiv.org/abs/2308.14985)**. 
-The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Gradient Covariance Steering Motion Planning (PGCS-MP). 
+The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Covariance Steering Motion Planning (PCS-MP). 
 
 ## Planning-as-inferencec
 The motion planning problem can be formulated as a probability inference, and the (sub-) optimal trajectory is modeled as a posterior probability $p(X|Z)$, $X$ being the trajecotry, and $Z$ is the environment, often represented by the joint space with obstacles. In this thread of research we use **[GaussianVI](vimp/gvimp/README.md)** to find a Gaussian distribution that is closest to the posterior. We can then sample from the solved Gaussian distribution.
