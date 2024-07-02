@@ -38,8 +38,7 @@ The experiment settings
 <img src="figures/planar_quad_settings.jpg" width="300" >
 
 ### Examples
-<img src="figures/planar_quad_exp1.gif" height="200">
-<img src="figures/planar_quad_exp3.gif" height="200">
+<img src="figures/planar_quad_exp1.gif" height="200"> <img src="figures/planar_quad_exp2.gif" height="200"> <img src="figures/planar_quad_exp3.gif" height="200"> <img src="figures/planar_quad_exp4.gif" height="200">
 
 ## Dependencies
 1. Boost \
