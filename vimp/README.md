@@ -3,7 +3,7 @@ This repository is dedicated to the implementation of Gaussian Variational Infer
 
 ## Show planned trajectories in ROS environment
 1. Install ROS ([noetic](http://wiki.ros.org/noetic/Installation/Ubuntu) as example)
-2. Follow this [repository](https://github.com/hzyu17/moveit_wam_ros_noetic) README to create and clone the ROS workspace. 
+2. An example [repository](https://github.com/hzyu17/moveit_wam_ros_noetic) to create and clone the ROS workspace. 
 3. Launch an empty environment
 ```
 roslaunch barrett_wam_moveit_config demo.launch

@@ -1,17 +1,17 @@
 # Stochastic motion planning as Gaussian Variational Inference
 
-This repository is dedicated to implementing Gaussian Variational Inference Motion Planning algorithms (GVIMP). GVIMP was introduced in the following work: 
+This repository is dedicated to implementing Gaussian Variational Inference Motion Planning algorithms (GVI-MP). GVI-MP was introduced in the following work: 
 **[A Gaussian Variational Inference Motion Planning](https://arxiv.org/abs/2209.05655)**, 
 and the details and complete proofs are included in the work 
 **[Stochastic Motion Planning as Gaussian Variational Inference: Theory and Algorithms](https://arxiv.org/abs/2308.14985)**. 
-The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Gradient Covariance Steering Motion Planning (PGCS-MP). 
+The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Covariance Steering Motion Planning (PCS-MP). 
 
 ## Planning-as-inferencec
 The motion planning problem can be formulated as a probability inference, and the (sub-) optimal trajectory is modeled as a posterior probability $p(X|Z)$, $X$ being the trajecotry, and $Z$ is the environment, often represented by the joint space with obstacles. In this thread of research we use **[GaussianVI](vimp/gvimp/README.md)** to find a Gaussian distribution that is closest to the posterior. We can then sample from the solved Gaussian distribution.
 
 ## Examples
 
-**Safe and robust motion planning: Entropy maximization formulation**
+**1. Safe and robust motion planning: Entropy maximization formulation**
 
 In a senario with a narrow gap existed between 2 obstacles, classical deterministic motion planner will find a plan that is short, but risky. Our method is equivalently entropy-regularized motion planning. The objective in the stochastic optimal control problem, $\mathbb{E}_q [J(q)]$, is regularized by the entropy of the trajectory joint distribution $H(q)$. The objective we are maximizing is
 $$\mathbb{E}_q [J(q)] + H(q).$$
@@ -21,7 +21,7 @@ A higher entropy will trade off the short distance risky plan, and gives a longe
 <img src="https://github.com/hzyu17/VIMP/blob/master/figures/compare_go_through_go_around.png" width="600">
 
 
-**Variational Mmotion planning for a 7-DOF WAM robot arm**
+**2. Variational Mmotion planning for a 7-DOF WAM robot arm**
 
 Our method leverages the factor graph structure of the probabilistic motion planning formulation, and the closed-form expressions for Gaussian posterior expectation computations that does not need other expectation techniques such as Gauss-Hermite quadratures. These structures helped our method to be scalable to higher DOF system such as a industrial robot arm. 
 
@@ -31,6 +31,14 @@ In a bookshelf senario below, the animated trajectory is the mean of the traject
 
 <img src="figures/WAM_GVI_RVIZ_2.gif" width="300"> <img src="figures/WAM_RVIZ_2.gif" width="300">
 
+**3. Variational Mmotion planning for a linearized 2D quadrotor (LTV system)**
+
+The experiment settings
+
+<img src="figures/planar_quad_settings.jpg" width="300" >
+
+### Examples
+<img src="figures/planar_quad_exp1.gif" height="200"> <img src="figures/planar_quad_exp2.gif" height="200"> <img src="figures/planar_quad_exp3.gif" height="200"> <img src="figures/planar_quad_exp4.gif" height="200">
 
 ## Dependencies
 1. Boost \
@@ -39,6 +47,10 @@ To build Boost in a customized location: **[check this link](https://github.com/
 
 2. **[Eigen 3.4.0](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
 
+3. **[OpenMP](https://www.openmp.org/)**
+```
+sudo apt-get install libomp-dev
+```
 
 ## Build and install VIMP
 ```

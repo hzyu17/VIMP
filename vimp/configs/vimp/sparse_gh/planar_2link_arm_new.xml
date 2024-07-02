@@ -1,23 +1,22 @@
 <Commons>
-    <total_time>6.0</total_time>
-    <n_states>50</n_states>
+    <total_time>4.0</total_time>
+    <n_states>40</n_states>
     <coeff_Qc>1</coeff_Qc>
-    <!-- <sig_obs>0.05</sig_obs> -->
-    <sig_obs>80.0</sig_obs>
+    <GH_deg>6</GH_deg>
+    <sig_obs>30.5</sig_obs>
     <map_name>2darm_map1</map_name>
-    <eps_sdf>0.1</eps_sdf>
-    <radius>0.01</radius>
-    <step_size>0.3</step_size>
+    <eps_sdf>0.03</eps_sdf>
+    <radius>0.1</radius>
+    <step_size>0.45</step_size>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
-    <!-- <temperature>0.0001</temperature> -->
     <temperature>0.1</temperature>
-    <high_temperature>0.2</high_temperature>
-    <max_iterations>30</max_iterations>
-    <low_temp_iterations>15</low_temp_iterations>
+    <high_temperature>0.5</high_temperature>
+    <max_iterations>35</max_iterations>
+    <low_temp_iterations>25</low_temp_iterations>
     <stop_err>1e-5</stop_err>
-    <max_n_backtracking>8</max_n_backtracking>
-    <GH_deg>3</GH_deg>
+    <max_n_backtracking>9</max_n_backtracking>
+    
 
 </Commons>
 

@@ -1,0 +1,121 @@
+%% Add disturbance in the map to simulate the perception noise
+% Hongzhe Yu
+
+close all
+clear all
+clc
+
+import gtsam.*
+import gpmp2.*
+
+addpath("../../");
+addpath("../../tools");
+addpath("../../tools/2dpR");
+addpath('../../tools/gtsam_toolbox');
+addpath("../../tools/error_ellipse");
+
+
+dim_state = 4;
+
+% 4 Experiments start and goal states
+start_configs = [7.0, -5, 0, 0;
+                 -7, -5, 0, 0;
+                 -7, -5, 0, 0;
+                 13, 14, 0, 0];
+goal_configs = [-10, 17, 0, 0;
+                8, 18, 0, 0;
+                13, 10, 0, 0;
+                -13, 8, 0, 0];
+
+x0 = 500;
+y0 = 500;
+width = 1290.427199;
+height = 800;
+    
+% map origin
+origin_x = -20;
+origin_y = -10;
+origin_point2 = Point2(origin_x, origin_y);
+
+figure
+set(gcf,'position',[x0,y0,width,height])
+hold on
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
+nexttile
+
+for i_map = 1:10
+    % generate noise map
+    dataset_noisy = generate2Ddataset_1('MultiObstacleEntropy2Noisy');
+    cell_size = dataset_noisy.cell_size;
+
+    % signed distance field
+    field_noisy = signedDistanceField2D(dataset_noisy.map, cell_size);
+    sdfmap_noisy = PlanarSDF(origin_point2, cell_size, field_noisy);    
+    
+    i_exp = 4;
+    
+    prefix = ["sparse_gh/map2/case" + num2str(i_exp)+"/"];
+
+    % --- high temperature ---
+    means = csvread([prefix + "mean.csv"]);
+    covs = csvread([prefix + "cov.csv"]);
+    precisions = csvread([prefix + "precision.csv"]);
+
+    [ttl_dim, ~] = size(means);
+    niters = find_niters(means);
+    n_states = floor(ttl_dim / dim_state);
+    
+    means_niter = reshape(means(1:end, niters), [4, 50]);
+    covs_niter = reshape(covs(1:end, niters), [4,4,50]);
+    
+    % plot map
+    plotEvidenceMap2D_1(dataset_noisy.map, origin_x, origin_y, cell_size);
+
+    hold on
+
+    for j = 1:n_states
+        % means
+        scatter(means_niter(1, j), means_niter(2, j), 20, 'k', 'fill');
+    end
+
+    for j = 1:n_states
+        % covariance
+        error_ellipse(covs_niter(1:2,1:2,j), means_niter(1:2,j));
+    end
+    
+%     % sampling and interpolate from the joint trajectory distribution
+%     numSamples = 1;
+%     samples = zeros(numSamples, n_states, dim_state);
+%     
+%     % scatter the samples
+%     hold on
+%     for i = 1:n_states
+%         samples(:,i,:) = mvnrnd(means_niter(:,i), covs_niter(:,:,i), numSamples);
+%         scatter(samples(:,i,1), samples(:,i,2), 20, 'b', 'filled');
+%     end
+%     
+%     % plot the sampltrajectories
+%     for i_s = 1:numSamples
+%         plot(samples(i_s,:,1), samples(i_s,:,2), 'g');
+%     end
+
+    start_i = start_configs(i_exp, :)';
+    goal_i = goal_configs(i_exp, :)';
+    s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 500);
+    s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 500);
+
+    lgd = legend([s1, s2], {'Start', 'Goal'});
+    set(lgd, 'FontWeight', 'bold');
+
+    xlim([-15, 20])
+    ylim([-10, 20])
+
+    axis off
+    
+    % Pause to display the plot
+    pause(0.5);  % Pause for 1 second between iterations
+    
+    % Clear the figure for the next iteration
+    clf;
+
+end

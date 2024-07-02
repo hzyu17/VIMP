@@ -14,12 +14,15 @@
  * 
  */
 
+#define STRING(x) #x
+#define XSTRING(x) STRING(x)
+
 #include "helpers/ExperimentParams.h"
 #include "dynamics/LinearDynamics.h"
-// #include "dynamics/NonlinearDynamics.h"
 #include "3rdparty/rapidxml-1.13/rapidxml.hpp"
 #include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
 #include <memory>
+#include "helpers/timer.h"
 
 using namespace Eigen;
 
@@ -43,7 +46,7 @@ public:
 
     virtual void read_config(ExperimentParams& params) = 0;
     virtual void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, ExperimentParams& params) = 0;
-    virtual void run_one_exp(int exp, ExperimentParams& params, bool verbose=true) = 0;
+    virtual double run_one_exp(int exp, ExperimentParams& params, bool verbose=true) = 0;
 
     void read_config(){
         read_config(_params);
@@ -165,15 +168,37 @@ public:
             params.update_sig_obs(cost_sigma);
         }
 
-        std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        if (paramNode->first_node("total_time")){
+            double total_time = atof(paramNode->first_node("total_time")->value());
+            params.set_total_time(total_time);
+        }
+
+        if (paramNode->first_node("temperature")){
+            double temperature = atof(paramNode->first_node("temperature")->value());
+            params.set_temperature(temperature);
+        }
+
+        if (paramNode->first_node("high_temperature")){
+            double high_temperature = atof(paramNode->first_node("high_temperature")->value());
+            params.set_high_temperature(high_temperature);
+        }
+
+        if (paramNode->first_node("step_size")){
+            double step_size = atof(paramNode->first_node("step_size")->value());
+            params.update_step_size(step_size);
+        }
+
+        std::string source_root{XSTRING(SOURCE_ROOT)};
+        std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
         params.set_saving_prefix(saving_prefix);
 
     }
 
-    void run_one_exp(int exp, GVIMPParams& params, bool verbose=true) override {
+    double run_one_exp(int exp, GVIMPParams& params, bool verbose=true) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
         rapidxml::xml_document<> doc;
-        doc.parse<0>(xmlFile.data());        
+        doc.parse<0>(xmlFile.data());
         std::string ExpNodeName = "Experiment" + std::to_string(exp);
 
         char * c_expname = ExpNodeName.data();
@@ -185,10 +210,12 @@ public:
         
         this->read_boundary_conditions(paramNode, params);
 
-        params.print_params();
+        if (verbose){
+            params.print_params();
+        }
         
-        _gvimp_robotsdf.run_optimization(params, verbose);
-
+        return _gvimp_robotsdf.run_optimization_withtime(params, verbose);
+        
     }
 
     // Run one experiment, return the optimized means and precision matrices.
@@ -212,7 +239,7 @@ private:
 template <typename GVIOptimizer>
 class GVIMPRunner7D: public GVIMPRunner<GVIOptimizer>{
 public:
-    // PGCSRunner(){}
+    // PCSRunner(){}
     virtual ~GVIMPRunner7D(){}
 
     GVIMPRunner7D(int num_exp, const std::string & config):
@@ -226,7 +253,7 @@ public:
         std::string ExpNodeName = "Experiment" + std::to_string(i_exp);
         char * c_expname = ExpNodeName.data();
         rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
-
+        
         this->read_boundary_conditions(paramNode, params);
 
     }
@@ -263,41 +290,64 @@ public:
         params.set_m0(m0);
         params.set_mT(mT);
 
+        if (paramNode->first_node("temperature")){
+            double temperature = atof(paramNode->first_node("temperature")->value());
+            params.set_temperature(temperature);
+        }
+
+        if (paramNode->first_node("high_temperature")){
+            double high_temperature = atof(paramNode->first_node("high_temperature")->value());
+            params.set_high_temperature(high_temperature);
+        }
+
+        if (paramNode->first_node("step_size")){
+            double step_size = atof(paramNode->first_node("step_size")->value());
+            params.update_step_size(step_size);
+        }
+
         if (paramNode->first_node("sig_obs")){
             double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
             params.update_sig_obs(cost_sigma);
         }
 
-        std::string saving_prefix = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        std::string source_root{XSTRING(SOURCE_ROOT)};
+        std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
         params.set_saving_prefix(saving_prefix);
+
     }
 
 };
 
-template <typename PGCSOptimizer>
-class PGCSRunnerBase: public ExperimentRunner<PGCSParams>{
+template <typename PCSOptimizer>
+class PCSRunnerBase: public ExperimentRunner<PGCSParams>{
     
 public:
-    // PGCSRunner(){}
-    virtual ~PGCSRunnerBase(){}
+    // PCSRunner(){}
+    virtual ~PCSRunnerBase(){}
     
-    PGCSRunnerBase(int nx, int nu, int num_exp, const std::string & config): 
+    PCSRunnerBase(int nx, int nu, int num_exp, const std::string & config): 
                     ExperimentRunner<PGCSParams>(nx, nu, num_exp, config)
                     {
-                        read_config(_params);
+                        this->read_config(_params);
                     }
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode){
         this->read_boundary_conditions(paramNode, _params);
     }
 
-    void run_and_save(PGCSOptimizer & opt_sdf,
+    double run_and_save(PCSOptimizer & opt_sdf,
                     const PGCSParams & params, 
                     const rapidxml::xml_node<>* paramNode){
         
+        Timer timer;
+        timer.start();
+
         PGCSResultHistory res_Kd;
 
         res_Kd = opt_sdf.backtrack();
+
+        double time_spend = timer.end_sec();
 
         MatrixXd Kt(this->_nx*this->_nx, params.nt()), dt(this->_nx, params.nt());
         Kt = std::get<0>(res_Kd);
@@ -330,9 +380,11 @@ public:
         m_io.saveData(saving_prefix + std::string{"hakt_sdf.csv"}, hakt_star);
 
         opt_sdf.save_costs(saving_prefix + std::string{"costs.csv"});
+
+        return time_spend;
     }
 
-    virtual void run_one_exp(int exp, PGCSParams& params, bool verbose=true) = 0;
+    virtual double run_one_exp(int exp, PGCSParams& params, bool verbose=true) = 0;
 
     void read_config(PGCSParams& params) override {
         rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
@@ -362,16 +414,10 @@ public:
         int max_iterations = atoi(commonParams->first_node("max_iter")->value());
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
         std::string map_name = static_cast<std::string>(commonParams->first_node("map_name")->value());
-        // std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
 
         params = PGCSParams(this->_nx, this->_nu, eps_sdf, radius, eps, total_time, this->_nt, 
                             sig0, sigT, eta, stop_err, sig_obs, 
                             max_iterations, backtracking_ratio, max_n_backtracking, map_name);
-
-        // if (commonParams->first_node("field_file")){
-        //     std::string field = static_cast<std::string>(commonParams->first_node("field_file")->value());
-        //     params.update_field_file(field);
-        // }
 
         if (commonParams->first_node("sdf_file")){
             std::string sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
@@ -384,16 +430,16 @@ public:
 
 };
 
-template <typename PGCSOptimizer>
-class PGCSRunnerLinDynBase: public PGCSRunnerBase<PGCSOptimizer>{
+template <typename PCSOptimizer>
+class PCSRunnerLinDynBase: public PCSRunnerBase<PCSOptimizer>{
 public:
-    // PGCSRunner(){}
-    virtual ~PGCSRunnerLinDynBase(){}
+    // PCSRunner(){}
+    virtual ~PCSRunnerLinDynBase(){}
 
-    PGCSRunnerLinDynBase(int nx, int nu, int num_exp, const std::string & config):
-                        PGCSRunnerBase<PGCSOptimizer>(nx, nu, num_exp, config){}
+    PCSRunnerLinDynBase(int nx, int nu, int num_exp, const std::string & config):
+                        PCSRunnerBase<PCSOptimizer>(nx, nu, num_exp, config){}
 
-void run_one_exp(int exp, PGCSParams& params, bool verbose=true)
+double run_one_exp(int exp, PGCSParams& params, bool verbose=true)
 {
     rapidxml::file<> xmlFile(this->_config_file.data()); // Default template is char
 
@@ -414,20 +460,20 @@ void run_one_exp(int exp, PGCSParams& params, bool verbose=true)
     B0 = pdyn->B0();
     a0 = pdyn->a0();
     
-    PGCSOptimizer opt_sdf(A0, a0, B0, pdyn, params);
+    PCSOptimizer opt_sdf(A0, a0, B0, pdyn, params);
 
-    this->run_and_save(opt_sdf, params, paramNode);
+    return this->run_and_save(opt_sdf, params, paramNode);
 }
 };
 
-template <typename PGCSOptimizer>
-class PGCSRunner: public PGCSRunnerLinDynBase<PGCSOptimizer>{
+template <typename PCSOptimizer>
+class PCSRunner: public PCSRunnerLinDynBase<PCSOptimizer>{
 public:
-    // PGCSRunner(){}
-    virtual ~PGCSRunner(){}
+    // PCSRunner(){}
+    virtual ~PCSRunner(){}
 
-    PGCSRunner(int nx, int nu, int num_exp, const std::string & config): 
-                    PGCSRunnerLinDynBase<PGCSOptimizer>(nx, nu, num_exp, config)
+    PCSRunner(int nx, int nu, int num_exp, const std::string & config): 
+                    PCSRunnerLinDynBase<PCSOptimizer>(nx, nu, num_exp, config)
                     {}
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& params) override{
@@ -465,14 +511,14 @@ public:
 };
 
 
-template <typename PGCSOptimizer>
-class PGCSRunner3D: public PGCSRunnerLinDynBase<PGCSOptimizer>{
+template <typename PCSOptimizer>
+class PCSRunner3D: public PCSRunnerLinDynBase<PCSOptimizer>{
 public:
-    // PGCSRunner(){}
-    virtual ~PGCSRunner3D(){}
+    // PCSRunner(){}
+    virtual ~PCSRunner3D(){}
 
-    PGCSRunner3D(int num_exp, const std::string & config):
-                        PGCSRunnerLinDynBase<PGCSOptimizer>(6, 3, num_exp, config){}
+    PCSRunner3D(int num_exp, const std::string & config):
+                        PCSRunnerLinDynBase<PCSOptimizer>(6, 3, num_exp, config){}
 
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& params) override{
@@ -513,14 +559,14 @@ public:
     }
 };
 
-template <typename PGCSOptimizer>
-class PGCSRunner7D: public PGCSRunnerLinDynBase<PGCSOptimizer>{
+template <typename PCSOptimizer>
+class PCSRunner7D: public PCSRunnerLinDynBase<PCSOptimizer>{
 public:
-    // PGCSRunner(){}
-    virtual ~PGCSRunner7D(){}
+    // PCSRunner(){}
+    virtual ~PCSRunner7D(){}
 
-    PGCSRunner7D(int num_exp, const std::string & config):
-                        PGCSRunnerLinDynBase<PGCSOptimizer>(14, 7, num_exp, config){}
+    PCSRunner7D(int num_exp, const std::string & config):
+                        PCSRunnerLinDynBase<PCSOptimizer>(14, 7, num_exp, config){}
     
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, PGCSParams& params) override{

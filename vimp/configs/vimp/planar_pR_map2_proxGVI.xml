@@ -1,0 +1,108 @@
+<Commons>
+    <total_time>2.5</total_time>
+    <n_states>4</n_states>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>15</GH_deg>
+    <sig_obs>0.0035</sig_obs>
+    <map_name>2dpr_map2</map_name>
+    <eps_sdf>0.5</eps_sdf>
+    <radius>1.0</radius>
+    <step_size>0.5</step_size>
+    <init_precision_factor>100.0</init_precision_factor>
+    <boundary_penalties>10000.0</boundary_penalties>
+    <temperature>10.0</temperature>
+    <high_temperature>100.0</high_temperature>
+    <low_temp_iterations>10</low_temp_iterations>
+    <stop_err>1e-5</stop_err>
+    <max_iterations>40</max_iterations>
+    <max_n_backtracking>20</max_n_backtracking>
+
+</Commons>
+
+<Experiment1>    
+    <start_pos>
+        <x>7.0</x>
+        <y>-5.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>-10.0</x>
+        <y>16.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <!-- <init_precision_factor>20.0</init_precision_factor> -->
+    <low_temp_iterations>15</low_temp_iterations>
+    <sig_obs> 120 </sig_obs>
+    <max_iterations>40</max_iterations>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case1/</saving_prefix>
+
+</Experiment1>
+
+<Experiment2>   
+    <start_pos>
+        <x>-7.0</x>
+        <y>-5.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>8.0</x>
+        <y>18.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <sig_obs>100</sig_obs>
+    <max_iterations>40</max_iterations>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case2/</saving_prefix>
+
+</Experiment2>
+
+<Experiment3>   
+    <start_pos>
+        <x>-7.0</x>
+        <y>-5.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>13.0</x>
+        <y>10.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <sig_obs>100</sig_obs>
+    <max_iterations>40</max_iterations>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case3/</saving_prefix>
+
+</Experiment3>
+
+<Experiment4>   
+    <start_pos>
+        <x>13.0</x>
+        <y>14.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </start_pos>
+
+    <goal_pos>
+        <x>-13.0</x>
+        <y>8.0</y>
+        <vx>0.0</vx>
+        <vy>0.0</vy>
+    </goal_pos>
+
+    <step_size>0.45</step_size>
+    <low_temp_iterations>10</low_temp_iterations>
+    <sig_obs>180</sig_obs>
+    <max_iterations>40</max_iterations>
+    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_pR/map2/case4/</saving_prefix>
+
+</Experiment4>

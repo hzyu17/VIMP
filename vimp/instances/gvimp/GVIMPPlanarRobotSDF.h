@@ -9,10 +9,13 @@
  * 
  */
 
+#include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
 #include "instances/FactorizedGVIPlanarNGD.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <gtsam/inference/Symbol.h>
+
+std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
 
 namespace vimp{
 
@@ -34,11 +37,40 @@ public:
         return _robot_sdf;
     }
 
+    double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
+        Timer timer;
+        timer.start();
+        _last_iteration_mean_precision = run_optimization_return(params, verbose);
+
+        std::cout << "========== Optimization time: " << std::endl;
+        return timer.end_sec();
+    }
+
     void run_optimization(const GVIMPParams& params, bool verbose=true){
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
     }
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
+        
+        // Read the sparse grid GH quadrature weights and nodes
+        QuadratureWeightsMap nodes_weights_map;
+        try {
+            std::ifstream ifs(GH_map_file, std::ios::binary);
+            if (!ifs.is_open()) {
+                std::string error_msg = "Failed to open file for GH weights reading in file: " + GH_map_file;
+                throw std::runtime_error(error_msg);
+            }
+
+            std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
+            boost::archive::binary_iarchive ia(ifs);
+            ia >> nodes_weights_map;
+
+        } catch (const boost::archive::archive_exception& e) {
+            std::cerr << "Boost archive exception: " << e.what() << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "Standard exception: " << e.what() << std::endl;
+        }
+
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
@@ -86,10 +118,8 @@ public:
                 std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
-                    // std::shared_ptr<gvi::LinearGpPrior> p_lin_gp{}; 
                     vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                                 dim_state, 
-                                                                // params.GH_degree(),
                                                                 gvi::cost_linear_gp, 
                                                                 lin_gp, 
                                                                 n_states, 
@@ -102,7 +132,6 @@ public:
                 gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
                 vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
                                                           dim_state, 
-                                                        //   params.GH_degree(),
                                                           gvi::cost_fixed_gp, 
                                                           fixed_gp, 
                                                           n_states, 
@@ -114,7 +143,6 @@ public:
                 // linear gp factors
                 vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
-                                                            // params.GH_degree(),
                                                             gvi::cost_linear_gp, 
                                                             lin_gp, 
                                                             n_states, 
@@ -136,7 +164,8 @@ public:
                                                                         n_states, 
                                                                         i, 
                                                                         params.temperature(), 
-                                                                        params.high_temperature()});    
+                                                                        params.high_temperature(),
+                                                                        nodes_weights_map});    
             }
         }
 

@@ -23,8 +23,12 @@ link_directories(${Boost_LIBRARY_DIRS})
 message("Finding Eigen3 Library")
 find_package( Eigen3 3.4.0 REQUIRED)
 
+# Find the OpenMP package
+find_package(OpenMP)
+
 # Find Matlab
 message("Finding Matlab Library")
+# set(MATLAB_ROOT_DIR "~/.local/MATLAB/R2020b")
 set(MATLAB_ROOT_DIR "/usr/local/MATLAB/R2020b")
 set(Matlab_INCLUDE_DIRS "${MATLAB_ROOT_DIR}/extern/include")
 set(Matlab_MEX_LIBRARY "${MATLAB_ROOT_DIR}/bin/glnxa64/libmex.so")  # Adjust the path accordingly
