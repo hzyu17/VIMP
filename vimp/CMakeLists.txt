@@ -28,7 +28,7 @@ endforeach(subdir)
 file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
 foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
-    add_executable(${vimp_name} ${vimp_source})
+    add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/MatrixMultiplication.cu)
     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
     set_target_properties(${vimp_name} PROPERTIES
                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
