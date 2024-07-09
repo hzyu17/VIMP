@@ -1,0 +1,1194 @@
+<Experiment47>
+    <start_pos>
+        <x>-1.9107</x>
+        <y>17.8794</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.8658</x>
+        <y>10.8999</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.31824</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp47</saving_prefix>
+</Experiment47>
+<Experiment32>
+    <start_pos>
+        <x>-8.1531</x>
+        <y>6.1165</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-13.5906</x>
+        <y>8.3388</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.14077</sig0>
+    <sigT>0.33183</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp32</saving_prefix>
+</Experiment32>
+<Experiment33>
+    <start_pos>
+        <x>-8.1531</x>
+        <y>6.1165</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.8658</x>
+        <y>10.8999</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.14077</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp33</saving_prefix>
+</Experiment33>
+<Experiment34>
+    <start_pos>
+        <x>-1.8658</x>
+        <y>10.8999</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-8.1531</x>
+        <y>6.1165</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.14077</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp34</saving_prefix>
+</Experiment34>
+<Experiment35>
+    <start_pos>
+        <x>-1.8658</x>
+        <y>10.8999</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>0.89401</x>
+        <y>5.287</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.59839</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp35</saving_prefix>
+</Experiment35>
+<Experiment36>
+    <start_pos>
+        <x>-1.8658</x>
+        <y>10.8999</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.9107</x>
+        <y>17.8794</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.31824</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp36</saving_prefix>
+</Experiment36>
+<Experiment37>
+    <start_pos>
+        <x>-1.8658</x>
+        <y>10.8999</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-2.3</x>
+        <y>15</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp37</saving_prefix>
+</Experiment37>
+<Experiment38>
+    <start_pos>
+        <x>6.8183</x>
+        <y>6.784</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>8.43</x>
+        <y>1.4893</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.089069</sig0>
+    <sigT>0.098781</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp38</saving_prefix>
+</Experiment38>
+<Experiment39>
+    <start_pos>
+        <x>6.8183</x>
+        <y>6.784</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>12.8316</x>
+        <y>8.0495</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.089069</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp39</saving_prefix>
+</Experiment39>
+<Experiment40>
+    <start_pos>
+        <x>6.8183</x>
+        <y>6.784</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>0.89401</x>
+        <y>5.287</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.089069</sig0>
+    <sigT>0.59839</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp40</saving_prefix>
+</Experiment40>
+<Experiment41>
+    <start_pos>
+        <x>0.89401</x>
+        <y>5.287</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>8.43</x>
+        <y>1.4893</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.59839</sig0>
+    <sigT>0.098781</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp41</saving_prefix>
+</Experiment41>
+<Experiment42>
+    <start_pos>
+        <x>0.89401</x>
+        <y>5.287</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.8658</x>
+        <y>10.8999</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.59839</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp42</saving_prefix>
+</Experiment42>
+<Experiment43>
+    <start_pos>
+        <x>0.89401</x>
+        <y>5.287</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>6.8183</x>
+        <y>6.784</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.59839</sig0>
+    <sigT>0.089069</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp43</saving_prefix>
+</Experiment43>
+<Experiment44>
+    <start_pos>
+        <x>-10.3909</x>
+        <y>17.8911</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-16.8996</x>
+        <y>15.5124</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.31435</sig0>
+    <sigT>0.72571</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp44</saving_prefix>
+</Experiment44>
+<Experiment45>
+    <start_pos>
+        <x>-10.3909</x>
+        <y>17.8911</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.9107</x>
+        <y>17.8794</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.31435</sig0>
+    <sigT>0.31824</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp45</saving_prefix>
+</Experiment45>
+<Experiment46>
+    <start_pos>
+        <x>-10.3909</x>
+        <y>17.8911</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-2.3</x>
+        <y>15</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.31435</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp46</saving_prefix>
+</Experiment46>
+<Experiment31>
+    <start_pos>
+        <x>-16.8996</x>
+        <y>15.5124</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-10.3909</x>
+        <y>17.8911</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.72571</sig0>
+    <sigT>0.31435</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp31</saving_prefix>
+</Experiment31>
+<Experiment48>
+    <start_pos>
+        <x>-1.9107</x>
+        <y>17.8794</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-10.3909</x>
+        <y>17.8911</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.31824</sig0>
+    <sigT>0.31435</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp48</saving_prefix>
+</Experiment48>
+<Experiment49>
+    <start_pos>
+        <x>-1.9107</x>
+        <y>17.8794</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>5.5251</x>
+        <y>17.2823</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.31824</sig0>
+    <sigT>0.16485</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp49</saving_prefix>
+</Experiment49>
+<Experiment50>
+    <start_pos>
+        <x>-1.9107</x>
+        <y>17.8794</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-2.3</x>
+        <y>15</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.31824</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp50</saving_prefix>
+</Experiment50>
+<Experiment51>
+    <start_pos>
+        <x>17.1981</x>
+        <y>11.5412</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>12.8316</x>
+        <y>8.0495</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.67727</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp51</saving_prefix>
+</Experiment51>
+<Experiment52>
+    <start_pos>
+        <x>17.1981</x>
+        <y>11.5412</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>13.6561</x>
+        <y>15.9063</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.67727</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp52</saving_prefix>
+</Experiment52>
+<Experiment53>
+    <start_pos>
+        <x>17.1981</x>
+        <y>11.5412</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>18.6642</x>
+        <y>17.9797</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.67727</sig0>
+    <sigT>0.15394</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp53</saving_prefix>
+</Experiment53>
+<Experiment54>
+    <start_pos>
+        <x>5.5251</x>
+        <y>17.2823</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>13.6561</x>
+        <y>15.9063</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.16485</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp54</saving_prefix>
+</Experiment54>
+<Experiment55>
+    <start_pos>
+        <x>5.5251</x>
+        <y>17.2823</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.9107</x>
+        <y>17.8794</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.16485</sig0>
+    <sigT>0.31824</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp55</saving_prefix>
+</Experiment55>
+<Experiment56>
+    <start_pos>
+        <x>5.5251</x>
+        <y>17.2823</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-2.3</x>
+        <y>15</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.16485</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp56</saving_prefix>
+</Experiment56>
+<Experiment57>
+    <start_pos>
+        <x>18.6642</x>
+        <y>17.9797</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>13.6561</x>
+        <y>15.9063</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.15394</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp57</saving_prefix>
+</Experiment57>
+<Experiment58>
+    <start_pos>
+        <x>18.6642</x>
+        <y>17.9797</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>17.1981</x>
+        <y>11.5412</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.15394</sig0>
+    <sigT>0.67727</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp58</saving_prefix>
+</Experiment58>
+<Experiment59>
+    <start_pos>
+        <x>-2.3</x>
+        <y>15</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.8658</x>
+        <y>10.8999</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp59</saving_prefix>
+</Experiment59>
+<Experiment60>
+    <start_pos>
+        <x>-2.3</x>
+        <y>15</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-10.3909</x>
+        <y>17.8911</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.31435</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp60</saving_prefix>
+</Experiment60>
+<Experiment61>
+    <start_pos>
+        <x>-2.3</x>
+        <y>15</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.9107</x>
+        <y>17.8794</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.31824</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp61</saving_prefix>
+</Experiment61>
+<Experiment62>
+    <start_pos>
+        <x>-2.3</x>
+        <y>15</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>5.5251</x>
+        <y>17.2823</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.16485</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp62</saving_prefix>
+</Experiment62>
+<Experiment16>
+    <start_pos>
+        <x>8.43</x>
+        <y>1.4893</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>12.8316</x>
+        <y>8.0495</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.098781</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp16</saving_prefix>
+</Experiment16>
+<Experiment1>
+    <start_pos>
+        <x>-17.2</x>
+        <y>-6</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-9.32</x>
+        <y>-6.5616</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.35787</sig0>
+    <sigT>0.15996</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp1</saving_prefix>
+</Experiment1>
+<Experiment2>
+    <start_pos>
+        <x>-17.2</x>
+        <y>-6</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-18.0955</x>
+        <y>1.8491</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.35787</sig0>
+    <sigT>0.25066</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp2</saving_prefix>
+</Experiment2>
+<Experiment3>
+    <start_pos>
+        <x>-9.32</x>
+        <y>-6.5616</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-17.2</x>
+        <y>-6</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.15996</sig0>
+    <sigT>0.35787</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp3</saving_prefix>
+</Experiment3>
+<Experiment4>
+    <start_pos>
+        <x>-9.32</x>
+        <y>-6.5616</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.4647</x>
+        <y>-5.7227</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.15996</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp4</saving_prefix>
+</Experiment4>
+<Experiment5>
+    <start_pos>
+        <x>-1.4647</x>
+        <y>-5.7227</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-9.32</x>
+        <y>-6.5616</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.15996</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp5</saving_prefix>
+</Experiment5>
+<Experiment6>
+    <start_pos>
+        <x>-1.4647</x>
+        <y>-5.7227</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>6.4237</x>
+        <y>-6.1517</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp6</saving_prefix>
+</Experiment6>
+<Experiment7>
+    <start_pos>
+        <x>-18.0955</x>
+        <y>1.8491</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-17.2</x>
+        <y>-6</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.25066</sig0>
+    <sigT>0.35787</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp7</saving_prefix>
+</Experiment7>
+<Experiment8>
+    <start_pos>
+        <x>-18.0955</x>
+        <y>1.8491</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-13.5906</x>
+        <y>8.3388</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.25066</sig0>
+    <sigT>0.33183</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp8</saving_prefix>
+</Experiment8>
+<Experiment9>
+    <start_pos>
+        <x>-13.5906</x>
+        <y>8.3388</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-18.0955</x>
+        <y>1.8491</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.33183</sig0>
+    <sigT>0.25066</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp9</saving_prefix>
+</Experiment9>
+<Experiment10>
+    <start_pos>
+        <x>-13.5906</x>
+        <y>8.3388</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-16.8996</x>
+        <y>15.5124</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.33183</sig0>
+    <sigT>0.72571</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp10</saving_prefix>
+</Experiment10>
+<Experiment11>
+    <start_pos>
+        <x>-13.5906</x>
+        <y>8.3388</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-8.1531</x>
+        <y>6.1165</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.33183</sig0>
+    <sigT>0.14077</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp11</saving_prefix>
+</Experiment11>
+<Experiment12>
+    <start_pos>
+        <x>6.4237</x>
+        <y>-6.1517</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-1.4647</x>
+        <y>-5.7227</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp12</saving_prefix>
+</Experiment12>
+<Experiment13>
+    <start_pos>
+        <x>6.4237</x>
+        <y>-6.1517</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>8.43</x>
+        <y>1.4893</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.098781</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp13</saving_prefix>
+</Experiment13>
+<Experiment14>
+    <start_pos>
+        <x>6.4237</x>
+        <y>-6.1517</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>14.3001</x>
+        <y>-6.7613</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.21031</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp14</saving_prefix>
+</Experiment14>
+<Experiment15>
+    <start_pos>
+        <x>8.43</x>
+        <y>1.4893</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>6.4237</x>
+        <y>-6.1517</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.098781</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp15</saving_prefix>
+</Experiment15>
+<Commons>
+    <eps>0.01</eps>
+    <eps_sdf>0.6</eps_sdf>
+    <radius>1.5</radius>
+    <total_time>1.5</total_time>
+    <nt>50</nt>
+    <sig0>0.01</sig0>
+    <sigT>0.05</sigT>
+    <eta>0.0001</eta>
+    <stop_err>0.001</stop_err>
+    <max_iter>500</max_iter>
+    <map_name>2dpr_map2</map_name>
+    <sig_obs>20000</sig_obs>
+    <backtracking_ratio>0.7</backtracking_ratio>
+    <max_n_backtracking>3</max_n_backtracking>
+</Commons>
+<Experiment17>
+    <start_pos>
+        <x>8.43</x>
+        <y>1.4893</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>6.8183</x>
+        <y>6.784</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.098781</sig0>
+    <sigT>0.089069</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp17</saving_prefix>
+</Experiment17>
+<Experiment18>
+    <start_pos>
+        <x>8.43</x>
+        <y>1.4893</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>0.89401</x>
+        <y>5.287</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.098781</sig0>
+    <sigT>0.59839</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp18</saving_prefix>
+</Experiment18>
+<Experiment19>
+    <start_pos>
+        <x>12.8316</x>
+        <y>8.0495</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>8.43</x>
+        <y>1.4893</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.098781</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp19</saving_prefix>
+</Experiment19>
+<Experiment20>
+    <start_pos>
+        <x>12.8316</x>
+        <y>8.0495</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>13.6561</x>
+        <y>15.9063</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp20</saving_prefix>
+</Experiment20>
+<Experiment21>
+    <start_pos>
+        <x>12.8316</x>
+        <y>8.0495</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>6.8183</x>
+        <y>6.784</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.089069</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp21</saving_prefix>
+</Experiment21>
+<Experiment22>
+    <start_pos>
+        <x>12.8316</x>
+        <y>8.0495</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>17.1981</x>
+        <y>11.5412</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.67727</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp22</saving_prefix>
+</Experiment22>
+<Experiment23>
+    <start_pos>
+        <x>14.3001</x>
+        <y>-6.7613</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>6.4237</x>
+        <y>-6.1517</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.21031</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp23</saving_prefix>
+</Experiment23>
+<Experiment24>
+    <start_pos>
+        <x>14.3001</x>
+        <y>-6.7613</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>18.2148</x>
+        <y>-0.40872</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.21031</sig0>
+    <sigT>0.27495</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp24</saving_prefix>
+</Experiment24>
+<Experiment25>
+    <start_pos>
+        <x>18.2148</x>
+        <y>-0.40872</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>14.3001</x>
+        <y>-6.7613</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.27495</sig0>
+    <sigT>0.21031</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp25</saving_prefix>
+</Experiment25>
+<Experiment26>
+    <start_pos>
+        <x>13.6561</x>
+        <y>15.9063</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>12.8316</x>
+        <y>8.0495</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.77462</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp26</saving_prefix>
+</Experiment26>
+<Experiment27>
+    <start_pos>
+        <x>13.6561</x>
+        <y>15.9063</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>17.1981</x>
+        <y>11.5412</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.67727</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp27</saving_prefix>
+</Experiment27>
+<Experiment28>
+    <start_pos>
+        <x>13.6561</x>
+        <y>15.9063</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>5.5251</x>
+        <y>17.2823</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.16485</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp28</saving_prefix>
+</Experiment28>
+<Experiment29>
+    <start_pos>
+        <x>13.6561</x>
+        <y>15.9063</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>18.6642</x>
+        <y>17.9797</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.77462</sig0>
+    <sigT>0.15394</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp29</saving_prefix>
+</Experiment29>
+<Experiment30>
+    <start_pos>
+        <x>-16.8996</x>
+        <y>15.5124</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </start_pos>
+    <goal_pos>
+        <x>-13.5906</x>
+        <y>8.3388</y>
+        <vx>0</vx>
+        <vy>0</vy>
+    </goal_pos>
+    <eta>0.0001</eta>
+    <sig_obs>29000</sig_obs>
+    <sig0>0.72571</sig0>
+    <sigT>0.33183</sigT>
+    <saving_prefix>/home/zchen927/Documents/VIMP/vimp/save/BRM_20nodes_v1/exp30</saving_prefix>
+</Experiment30>

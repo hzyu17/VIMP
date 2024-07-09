@@ -1,0 +1,13 @@
+2324e967410420fed46db69a7ea6d3c300379257 commit	refs/heads/FB_GVI
+4a2b61ea20ac79757c755edf38386cce5f92a0b7 commit	refs/heads/master
+0c1671974999f34fd418567b7273d364fdf781a8 commit	refs/heads/paper_experiment_results
+de8cf56564b7d51d26dbd880b7a271b184e96ac8 commit	refs/remotes/origin/BRM
+2324e967410420fed46db69a7ea6d3c300379257 commit	refs/remotes/origin/FB_GVI
+603bfd6a12056ffacfc4c2cd47619e45fcb80021 commit	refs/remotes/origin/HEAD
+62ca1b41eabf04f64772408a6b3b324196ec4025 commit	refs/remotes/origin/dev
+603bfd6a12056ffacfc4c2cd47619e45fcb80021 commit	refs/remotes/origin/master
+5d657f4155c8c1ccea1b02b8a8e99c4768743741 commit	refs/remotes/origin/paper_experiment_results
+7226f9a776f212c175aaefb3a4b7c4fa60451292 commit	refs/remotes/origin/sparse_gh
+885f8f6b03e98e8d9a6fa7b2cd21fcf32aa4fbc0 commit	refs/remotes/origin/stand-alone-gvi-package
+5542ecfdff472e4968078441f6a68f640f5a8180 commit	refs/tags/v1.0.0
+267790fa80f426c18d4b5120d23e2ea0d97718da commit	refs/tags/v1.1.0
