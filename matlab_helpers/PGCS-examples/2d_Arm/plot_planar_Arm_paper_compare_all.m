@@ -3,12 +3,12 @@ close all
 clc
 
 %% ******************* Read datas ******************
-addpath("../../tools/error_ellipse");
-addpath('../../tools/2dArm');
-addpath('../../tools/gtsam_toolbox');
-
+addpath('../../tools/gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
+
+addpath("../../tools/error_ellipse");
+addpath('../../tools/2dArm');
 
 map = 1;
 exp = 1;
@@ -95,7 +95,7 @@ x0 = 50;
 y0 = 50;
 width = 400;
 height = 350;
-% ==================== plot GVIMP results ===================
+% ==================== plot gvimp results ===================
 means_gvimp_lastiter = means_gvimp(:,end);
 means_gvimp_lastiter = reshape(means_gvimp_lastiter, [dim_theta,nt_gvimp]);
 covs_gvimp_lastiter = covs_gvimp(:, end);
@@ -124,7 +124,7 @@ hold off
 axis off
 
 
-% ==================== plot GPMP2 results ===================
+% ==================== plot gpmp2 results ===================
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
@@ -174,9 +174,8 @@ ylim([-0.8, 1.5])
 axis off;
 hold off
 
-% ===================================== 
-% configuration space trajectory 
-% =====================================
+
+% =================== configuration space trajectory ===================
 % -------------- plot configuration obstacles ----------------
 
 figure
@@ -231,11 +230,9 @@ scatter(end_conf(1), end_conf(2), 100, 'g', 'fill');
 hold off
 
 %% ================= plot samples ===============
-% ------------------ 
-% gvi-mp 
-% ------------------
+% ------------------ gvi-mp ------------------
 n_plots = 10;
-stepsize = floor(nt_gvimp/n_plots);
+stepsize = floor(nt/n_plots);
 
 pos_figsample = 1.0e+03 .*[0.2026, 1.3822, 1.0276, 0.1828];
 
