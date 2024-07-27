@@ -38,7 +38,6 @@ set(CMAKE_CUDA_ARCHITECTURES "52;60;61;70;75;80")
 find_package(CUDA REQUIRED)
 include_directories(${CUDA_INCLUDE_DIRS})
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
-set(CUDA_ARCH "sm_60")
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=${CUDA_ARCH}; -std=c++17; --expt-extended-lambda)
 
 

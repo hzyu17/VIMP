@@ -14,7 +14,8 @@
     <high_temperature>30.0</high_temperature>
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>25</low_temp_iterations>
-    <max_iterations>35</max_iterations>
+    <!-- <max_iterations>35</max_iterations> -->
+    <max_iterations>1</max_iterations>
     <max_n_backtracking>20</max_n_backtracking>
 
 </Commons>

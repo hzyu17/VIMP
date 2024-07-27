@@ -24,21 +24,40 @@ foreach(subdir ${vimp_subdirs})
 
 endforeach(subdir)
 
-# Add all the source files in src/vimp as a separate executable
-file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
-foreach(vimp_source ${VIMP_SOURCES})
-    get_filename_component(vimp_name ${vimp_source} NAME_WE)
-    add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/MatrixMultiplication.cu)
-    set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-    set_target_properties(${vimp_name} PROPERTIES
-                            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                            )   
-    target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
-    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                          ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                          ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
-endforeach()
+# # Add all the source files in src/vimp as a separate executable
+# file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
+# foreach(vimp_source ${VIMP_SOURCES})
+#     get_filename_component(vimp_name ${vimp_source} NAME_WE)
+#     add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/CudaOperation.cu)
+#     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
+#     set_target_properties(${vimp_name} PROPERTIES
+#                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+#                             )   
+#     target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
+#     target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+#                           ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+#                           ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
+# endforeach()
 
+  add_executable(PointRobot_Cuda src/gvimp/gvi_PointRobot_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
+  set_target_properties(PointRobot_Cuda PROPERTIES LINKER_LANGUAGE CXX)
+  set_target_properties(PointRobot_Cuda PROPERTIES
+                          RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+                          )   
+  target_include_directories(PointRobot_Cuda PRIVATE ${Matlab_INCLUDE_DIRS})
+  target_link_libraries(PointRobot_Cuda ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+                        ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                        ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
+
+  # add_executable(PointRobot src/gvimp/gvi_PointRobot_spgh.cpp)
+  # set_target_properties(PointRobot PROPERTIES LINKER_LANGUAGE CXX)
+  # set_target_properties(PointRobot PROPERTIES
+  #                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+  #                         )   
+  # target_include_directories(PointRobot PRIVATE ${Matlab_INCLUDE_DIRS})
+  # target_link_libraries(PointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+  #                       ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+  #                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
