@@ -49,15 +49,16 @@ endforeach(subdir)
                         ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
                         ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
-  # add_executable(PointRobot src/gvimp/gvi_PointRobot_spgh.cpp)
-  # set_target_properties(PointRobot PROPERTIES LINKER_LANGUAGE CXX)
-  # set_target_properties(PointRobot PROPERTIES
-  #                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-  #                         )   
-  # target_include_directories(PointRobot PRIVATE ${Matlab_INCLUDE_DIRS})
-  # target_link_libraries(PointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-  #                       ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-  #                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
+                        
+  add_executable(PointRobot src/gvimp/gvi_PointRobot_spgh.cpp)
+  set_target_properties(PointRobot PROPERTIES LINKER_LANGUAGE CXX)
+  set_target_properties(PointRobot PROPERTIES
+                          RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+                          )   
+  target_include_directories(PointRobot PRIVATE ${Matlab_INCLUDE_DIRS})
+  target_link_libraries(PointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+                        ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                        ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)

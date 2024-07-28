@@ -30,7 +30,7 @@ public:
     GVIMPPlanarRobotSDF_Cuda(){}
 
     GVIMPPlanarRobotSDF_Cuda(GVIMPParams& params):
-    _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file())
+    _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file()) //Initialize PlanarPRSDFExample
     {}
 
     RobotSDF robot_sdf(){
@@ -80,7 +80,7 @@ public:
         /// joint dimension
         const int ndim = dim_state * n_states;
 
-        VectorXd start_theta{ params.m0() };
+        VectorXd st art_theta{ params.m0() };
         VectorXd goal_theta{ params.mT() };
 
         MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*params.coeff_Qc()};
@@ -89,6 +89,7 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
         
+        // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
         auto robot_model = _robot_sdf.RobotModel();
         auto sdf = _robot_sdf.sdf();
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
