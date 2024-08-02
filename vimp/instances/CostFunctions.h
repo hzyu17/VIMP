@@ -12,9 +12,13 @@ template <typename ROBOT>
 double cost_obstacle_planar(const VectorXd& pose, 
                             const gpmp2::ObstaclePlanarSDFFactor<ROBOT>& obs_factor){
     VectorXd vec_err = obs_factor.evaluateError(pose);
+    // std::cout << "size:" << vec_err.size() << std::endl;
+    // std::cerr << "  err: " << vec_err << std::endl << std::endl;
 
     MatrixXd precision_obs{MatrixXd::Identity(vec_err.rows(), vec_err.rows())};
     precision_obs = precision_obs / obs_factor.get_noiseModel()->sigmas()[0];
+
+    // std::cout << "sigma = " << precision_obs << std::endl << std::endl;
 
     return vec_err.transpose().eval() * precision_obs * vec_err;
 

@@ -80,7 +80,7 @@ public:
         /// joint dimension
         const int ndim = dim_state * n_states;
 
-        VectorXd st art_theta{ params.m0() };
+        VectorXd start_theta{ params.m0() };
         VectorXd goal_theta{ params.mT() };
 
         MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*params.coeff_Qc()};

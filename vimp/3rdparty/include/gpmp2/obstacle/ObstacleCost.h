@@ -54,6 +54,7 @@ inline double hingeLossObstacleCost(const gtsam::Point3& point, const SignedDist
 inline double hingeLossObstacleCost(const gtsam::Point2& point, const PlanarSDF& sdf,
     double eps, gtsam::OptionalJacobian<1, 2> H_point = boost::none) {
 
+  // std::cerr << "x = " << point.x() << ", " << point.y() << std::endl;
   gtsam::Vector2 field_gradient;
   double dist_signed;
   try {
@@ -64,6 +65,8 @@ inline double hingeLossObstacleCost(const gtsam::Point2& point, const PlanarSDF&
     if (H_point) *H_point = gtsam::Matrix12::Zero();
     return 0.0;
   }
+
+  // std::cerr << "Signed distance = " << dist_signed;
 
   if (dist_signed > eps) {
     // faraway no error
