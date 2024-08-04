@@ -66,8 +66,6 @@ inline double hingeLossObstacleCost(const gtsam::Point2& point, const PlanarSDF&
     return 0.0;
   }
 
-  // std::cerr << "Signed distance = " << dist_signed;
-
   if (dist_signed > eps) {
     // faraway no error
     if (H_point) *H_point = gtsam::Matrix12::Zero();

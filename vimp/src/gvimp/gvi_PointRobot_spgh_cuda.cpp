@@ -29,8 +29,8 @@ int main(int argc, char* argv[]){
         std::string config_file{source_root+"/configs/vimp/sparse_gh/planar_pR_map2_new.xml"};
         GVIMPRunner<GVIMPPlanarPRSDF_Cuda> runner(nx, nu, num_exp, config_file); // GVIMPPlanarPRSDF is the Optimizer
         runner.read_config(params);
-        GVIMPPlanarPRSDF_Cuda optimizer(params); //Robot->gpmp2::PointRobotModel, RobotSDF->PlanarPRSDFExample
-        optimizer.run_optimization_withtime(params);
+        // GVIMPPlanarPRSDF_Cuda optimizer(params); //Robot->gpmp2::PointRobotModel, RobotSDF->PlanarPRSDFExample
+        // optimizer.run_optimization_withtime(params);
         runner.run();
         return 0;
     }
