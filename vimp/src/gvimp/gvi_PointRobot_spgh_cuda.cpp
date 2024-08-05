@@ -29,21 +29,19 @@ int main(int argc, char* argv[]){
         std::string config_file{source_root+"/configs/vimp/sparse_gh/planar_pR_map2_new.xml"};
         GVIMPRunner<GVIMPPlanarPRSDF_Cuda> runner(nx, nu, num_exp, config_file); // GVIMPPlanarPRSDF is the Optimizer
         runner.read_config(params);
-        // GVIMPPlanarPRSDF_Cuda optimizer(params); //Robot->gpmp2::PointRobotModel, RobotSDF->PlanarPRSDFExample
-        // optimizer.run_optimization_withtime(params);
         runner.run();
         return 0;
     }
-    // // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
-    // else if (argc == 3){
-    //     std::string config_abs_path = static_cast<std::string>(argv[1]);
-    //     num_exp = std::stoi(argv[2]);
+    // arguments: i_exp, params:(i_exp, eps, eps_sdf, speed, nt, sig0, sigT, eta, stop_err, max_iter, cost_sig)
+    else if (argc == 3){
+        std::string config_abs_path = static_cast<std::string>(argv[1]);
+        num_exp = std::stoi(argv[2]);
         
-    //     GVIMPRunner<GVIMPPlanarPRSDF> runner(nx, nu, num_exp, config_abs_path);
-    //     runner.read_config(params);
-    //     runner.run();
-    //     return 0;
-    // }
+        GVIMPRunner<GVIMPPlanarPRSDF_Cuda> runner(nx, nu, num_exp, config_abs_path);
+        runner.read_config(params);
+        runner.run();
+        return 0;
+    }
     else{
         std::runtime_error("Wrong number of arguments!");
     }
