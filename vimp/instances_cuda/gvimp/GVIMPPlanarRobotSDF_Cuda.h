@@ -164,6 +164,8 @@ public:
                                                                         eps_sdf}, 
                                                                         n_states, 
                                                                         i, 
+                                                                        params.sig_obs(), 
+                                                                        params.eps_sdf() + params.radius(), 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
                                                                         nodes_weights_map});    

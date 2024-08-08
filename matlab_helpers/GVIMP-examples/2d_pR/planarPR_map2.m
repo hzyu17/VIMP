@@ -25,7 +25,7 @@ dim_theta = 2;
 %% ================ 
 % plot costs 
 % =================
-for i = 1:1 % 4 experiments
+for i = 3:3 % 4 experiments
     if is_sparse
         prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];
     else
