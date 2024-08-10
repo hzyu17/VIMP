@@ -206,8 +206,9 @@ def planarquad_linearization(St, zt, At):
     nt, nx = zt.shape
     hA = np.zeros((nt, nx, nx), dtype=np.float64)
     ha = np.zeros((nt, nx), dtype=np.float64)
-    nTr = np.zeros((nt, nx), dtype=np.float64)
     hB = np.zeros((nt, nx, 2), dtype=np.float64)
+    
+    nTr = np.zeros((nt, nx), dtype=np.float64)
     
     hBi = np.array([[0.0, 0.0], 
                     [0.0, 0.0], 
@@ -256,20 +257,6 @@ def planarquad_linearization(St, zt, At):
                            0.0, 
                            2*St[i,3,3]*zt[i,5] + St[i,3,5]*zt[i,3] + St[i,5,3]*zt[i,3] - 9.81*St[i,2,3]*np.sin(zt[i,2]) - 9.81*St[i,3,2]*np.sin(zt[i,2]) + 2*At[i,4,0]*St[i,3,0] + 2*At[i,4,1]*St[i,3,1] + 2*At[i,4,2]*St[i,3,2] + 2*At[i,4,3]*St[i,3,3] + 2*At[i,4,4]*St[i,3,4] + 2*At[i,4,5]*St[i,3,5]
                            ], dtype=np.float64)
-        
-        # nTr[i] = np.array([0.0, 0.0, 11.3653*St[i,2,2]*np.sin(2*zt[i,2]) - 1.1585*St[i,2,3]*zt[i,5]*np.cos(zt[i,2]) - 1.1585*St[i,2,5]*zt[i,3]*np.cos(zt[i,2]) - 1.1585*St[i,3,2]*zt[i,5]*np.cos(zt[i,2]) - 1.1585*St[i,5,2]*zt[i,3]*np.cos(zt[i,2]) - 2.3171*At[i,4,0]*St[i,2,0]*np.cos(zt[i,2]) - 2.3171*At[i,4,1]*St[i,2,1]*np.cos(zt[i,2]) - 2.3171*At[i,4,2]*St[i,2,2]*np.cos(zt[i,2]) - 2.3171*At[i,4,3]*St[i,2,3]*np.cos(zt[i,2]) - 2.3171*At[i,4,4]*St[i,2,4]*np.cos(zt[i,2]) - 2.3171*At[i,4,5]*St[i,2,5]*np.cos(zt[i,2]),
-        #                    0.1181*St[i,3,5]*zt[i,5] + 0.1181*St[i,5,3]*zt[i,5] + 0.2362*St[i,5,5]*zt[i,3] - 1.1585*St[i,2,5]*np.sin(zt[i,2]) - 1.1585*St[i,5,2]*np.sin(zt[i,2]) + 0.2362*At[i,4,0]*St[i,5,0] + 0.2362*At[i,4,1]*St[i,5,1] + 0.2362*At[i,4,2]*St[i,5,2] + 0.2362*At[i,4,3]*St[i,5,3] + 0.2362*At[i,4,4]*St[i,5,4] + 0.2362*At[i,4,5]*St[i,5,5],
-        #                    0.0,
-        #                    0.2362*St[i,3,3]*zt[i,5] + 0.1181*St[i,3,5]*zt[i,3] + 0.1181*St[i,5,3]*zt[i,3] - 1.1585*St[i,2,3]*np.sin(zt[i,2]) - 1.1585*St[i,3,2]*np.sin(zt[i,2]) + 0.2362*At[i,4,0]*St[i,3,0] + 0.2362*At[i,4,1]*St[i,3,1] + 0.2362*At[i,4,2]*St[i,3,2] + 0.2362*At[i,4,3]*St[i,3,3] + 0.2362*At[i,4,4]*St[i,3,4] + 0.2362*At[i,4,5]*St[i,3,5]], 
-        #                   dtype=np.float64)
-        
-        # 10.0*hBi
-        # nTr[i] = np.array([0.0, 0.0, 0.9624*St[i,2,2]*np.sin(2*zt[i,2]) - 0.0981*St[i,2,3]*zt[i,5]*np.cos(zt[i,2]) - 0.0981*St[i,2,5]*zt[i,3]*np.cos(zt[i,2]) - 0.0981*St[i,3,2]*zt[i,5]*np.cos(zt[i,2]) - 0.0981*St[i,5,2]*zt[i,3]*np.cos(zt[i,2]) - 0.1962*At[i,4,0]*St[i,2,0]*np.cos(zt[i,2]) - 0.1962*At[i,4,1]*St[i,2,1]*np.cos(zt[i,2]) - 0.1962*At[i,4,2]*St[i,2,2]*np.cos(zt[i,2]) - 0.1962*At[i,4,3]*St[i,2,3]*np.cos(zt[i,2]) - 0.1962*At[i,4,4]*St[i,2,4]*np.cos(zt[i,2]) - 0.1962*At[i,4,5]*St[i,2,5]*np.cos(zt[i,2]),
-        #                    0.0100*St[i,3,5]*zt[i,5] + 0.0100*St[i,5,3]*zt[i,5] + 0.0200*St[i,5,5]*zt[i,3] - 0.0981*St[i,2,5]*np.sin(zt[i,2]) - 0.0981*St[i,5,2]*np.sin(zt[i,2]) + 0.0200*At[i,4,0]*St[i,5,0] + 0.0200*At[i,4,1]*St[i,5,1] + 0.0200*At[i,4,2]*St[i,5,2] + 0.0200*At[i,4,3]*St[i,5,3] + 0.0200*At[i,4,4]*St[i,5,4] + 0.0200*At[i,4,5]*St[i,5,5], 
-        #                    0.0,
-        #                    0.0200*St[i,3,3]*zt[i,5] + 0.0100*St[i,3,5]*zt[i,3] + 0.0100*St[i,5,3]*zt[i,3] - 0.0981*St[i,2,3]*np.sin(zt[i,2]) - 0.0981*St[i,3,2]*np.sin(zt[i,2]) + 0.0200*At[i,4,0]*St[i,3,0] + 0.0200*At[i,4,1]*St[i,3,1] + 0.0200*At[i,4,2]*St[i,3,2] + 0.0200*At[i,4,3]*St[i,3,3] + 0.0200*At[i,4,4]*St[i,3,4] + 0.0200*At[i,4,5]*St[i,3,5]
-        #                    ], 
-        #                   dtype=np.float64)
         
     return hA, hB, ha, nTr
 

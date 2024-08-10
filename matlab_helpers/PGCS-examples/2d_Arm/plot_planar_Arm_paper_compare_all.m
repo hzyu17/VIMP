@@ -141,7 +141,9 @@ nt_gpmp2 = size(means_gpmp2, 2);
 % plot gpmp2 results
 for j = 1:1:nt_gpmp2
     % means
-    plotPlanarArm1(arm.fk_model(), means_gpmp2(1:2,j), 'c', 8, true);
+    alpha = (j / nt_gpmp2)^(1.15);
+    color = [0, 1, 1, alpha];
+    plotPlanarArm1(arm.fk_model(), means_gpmp2(1:2,j), color, 8, true);
 end
 plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
@@ -180,7 +182,7 @@ hold off
 
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
 nexttile
 hold on
 
@@ -220,7 +222,7 @@ end
 
 % plot gpmp2 results
 for i = 1:1:nt_gpmp2
-    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 100, 'd', 'g', 'fill');
+    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 100, 'd', 'c', 'fill');
 end
 
 % plot start and goal conf

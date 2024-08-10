@@ -5,6 +5,9 @@ close all
 clear all
 clc
 
+import gtsam.*
+import gpmp2.*
+
 addpath("../../");
 addpath("../../tools");
 addpath("../../tools/2dArm");
@@ -13,10 +16,7 @@ addpath("../../tools/error_ellipse");
 
 dim_state = 4;
 
-%% ======================= gvi-mp results =======================
-import gtsam.*
-import gpmp2.*
-
+% ======================= gvi-mp results =======================
 prefix = ["sparse_gh/map1/case1/"];
     
 % --------------- high temperature ------------------
@@ -206,17 +206,11 @@ cnt_gvimp_col = 0;
 cnt_pcsmp_col = 0;
 cnt_gpmp2_replan_fail = 0;
 
-
-min_dist_gvimp_ever = 0;
-worst_case_map = [];
-found_new_worstcase = false;
-worst_case_gvimp_sample_trj = means_gvimp_niter;
-
 % fix random seed
 rng(123);
 
 % --------------- Sample map with uncertainty ---------------
-for sigma_map = 1:3
+for sigma_map = 1:6
     
     for i_map = 1:2000
 
@@ -265,94 +259,22 @@ for sigma_map = 1:3
             if min(dist_vec_gvimp) < 0.0
                 gvimp_col = true;
                 
-                % record the worst case
-                if min(dist_vec_gvimp) < min_dist_gvimp_ever
-                   found_new_worstcase = true;
-                   
-                    min_dist_gvimp_ever = min(dist_vec_gvimp);
-                    worst_case_map = dataset_noisy;
-                    
-                    
-                    % ------------ re-sample -------------
-                    dist_vec_gvimp_resampled = dist_vec_gvimp;
-                    while min(dist_vec_gvimp_resampled) < 0.1
-                        config_ij_gvimp_resample = config_ij_gvimp + sqrtm(covs_gvimp_niter(1:2, 1:2, j))*randn(2, 1);
-                        err_vec_gvimp_resample = planar_sdf_arm.evaluateError(config_ij_gvimp_resample);
-                        dist_vec_gvimp_resampled = epsilon - err_vec_gvimp_resample;
-                    end
-
-                    % ------------ update the sampled trajectory ------------
-                    gvimp_sample_trj(1:2, j) = config_ij_gvimp_resample;
+                % ------------ re-sample -------------
+                while min(dist_vec_gvimp) < 0.0
+                    config_ij_gvimp_resample = means_gvimp_niter(1:2, j) + sqrtm(covs_gvimp_niter(1:2, 1:2, j))*randn(2, 1);
+                    err_vec_gvimp_resample = planar_sdf_arm.evaluateError(config_ij_gvimp_resample);
+                    dist_vec_gvimp = epsilon - err_vec_gvimp_resample;
                 end
+
+                % ------------ update the sampled trajectory ------------
+                gvimp_sample_trj(1:2, j) = config_ij_gvimp_resample;
+                
+                
+                % plot the original traj
+            
             end
             
-        end
-        
-        if found_new_worstcase
-            found_new_worstcase = false;
-            worst_case_gvimp_sample_trj = gvimp_sample_trj;
-        end
-        
-%         % ------------ plot the original and the resampled traj ------------
-%         if gvimp_col
-%             
-%             figure(3)
-%             set(gcf,'position',[x0,y0,width,height])
-%             tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'none')
-% 
-%             % ----------------- The original plan ----------------- 
-%             nexttile(1)
-%             hold on
-% 
-%             % plot world
-%             plotEvidenceMap2D_arm(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
-%             plotPlanarArm(arm.fk_model(), start_conf, 'r', 5);
-%             plotPlanarArm(arm.fk_model(), end_conf, 'g', 5);
-% 
-%             for ii=1:n_states  
-%                 % gradual changing colors
-%                 alpha = (ii / n_states)^(1.15);
-%                 color = [0, 0, 1, alpha];
-% 
-%                 % plot arm        
-%                 conf = means_gvimp_niter(:, ii);
-%                 plotPlanarArm1(arm.fk_model(), conf, color, 5, true);
-% 
-%                 % Pause to display the plot
-%                 pause(0.05)
-%             end
-% 
-%             plotPlanarArm(arm.fk_model(), start_conf, 'r', 5);
-%             plotPlanarArm(arm.fk_model(), end_conf, 'g', 5);
-%             title('GVI-MP original plan')
-% 
-%             % ----------------- The replan ----------------- 
-%             nexttile(2)
-%             hold on
-% 
-%             % plot world
-%             plotEvidenceMap2D_arm(dataset.map, dataset.origin_x, dataset.origin_y, cell_size);
-%             plotPlanarArm(arm.fk_model(), start_conf, 'r', 5);
-%             plotPlanarArm(arm.fk_model(), end_conf, 'g', 5);
-% 
-%             for ii=1:n_states  
-%                 % gradual changing colors
-%                 alpha = (ii / n_states)^(1.15);
-%                 color = [0, 0, 1, alpha];
-% 
-%                 % plot arm        
-%                 conf = gvimp_sample_trj(:, ii);
-%                 plotPlanarArm1(arm.fk_model(), conf, color, 5, true);
-% 
-%                 % Pause to display the plot
-%                 pause(0.05)
-%             end
-% 
-%             plotPlanarArm(arm.fk_model(), start_conf, 'r', 5);
-%             plotPlanarArm(arm.fk_model(), end_conf, 'g', 5);
-%             title('GVI-MP re-sampled plan')
-%         end
-        
+        end    
     % ------------------ check collision PCS-MP ----------------
         for j = 1:nt_pcs
             config_ij_pcs = means_pcsmp(1:2, j);
@@ -435,70 +357,6 @@ cnt_gpmp2_replan_fail = 0;
 
 end
 
-
-%% ========================== plot the original and the resampled traj ==========================
-import gtsam.*
-import gpmp2.*
-
-figure(3)
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'none')
-
-% ----------------- The original plan ----------------- 
-nexttile(1)
-hold on
-
-% plot world
-plotEvidenceMap2D_arm(worst_case_map.map, worst_case_map.origin_x, worst_case_map.origin_y, cell_size);
-arm = generateArm('SimpleTwoLinksArm');
-plotPlanarArm(arm.fk_model(), start_conf, 'r', 5);
-plotPlanarArm(arm.fk_model(), end_conf, 'g', 5);
-
-for ii=1:n_states  
-    % gradual changing colors
-    alpha = (ii / n_states)^(1.15);
-    color = [0, 0, 1, alpha];
-
-    % plot arm        
-    conf = means_gvimp_niter(:, ii);
-    plotPlanarArm1(arm.fk_model(), conf, color, 5, true);
-
-    % Pause to display the plot
-    pause(0.05)
-end
-
-plotPlanarArm(arm.fk_model(), start_conf, 'r', 5);
-plotPlanarArm(arm.fk_model(), end_conf, 'g', 5);
-title('GVI-MP original plan')
-
-% ----------------- The replan ----------------- 
-nexttile(2)
-hold on
-
-% plot world
-plotEvidenceMap2D_arm(worst_case_map.map, worst_case_map.origin_x, worst_case_map.origin_y, cell_size);
-plotPlanarArm(arm.fk_model(), start_conf, 'r', 5);
-plotPlanarArm(arm.fk_model(), end_conf, 'g', 5);
-
-for ii=1:n_states  
-    % gradual changing colors
-    alpha = (ii / n_states)^(1.15);
-    color = [0, 0, 1, alpha];
-
-    % plot arm        
-    conf = worst_case_gvimp_sample_trj(:, ii);
-    plotPlanarArm1(arm.fk_model(), conf, color, 5, true);
-
-    % Pause to display the plot
-    pause(0.05)
-end
-
-plotPlanarArm(arm.fk_model(), start_conf, 'r', 5);
-plotPlanarArm(arm.fk_model(), end_conf, 'g', 5);
-title('GVI-MP re-sampled plan')
-
-
-%% ============================= Helper functions =============================
 function [map, landmarks] = add_obstacle(position, size, map, landmarks, origin_x, origin_y, cell_size)
 
 half_size_row = floor((size(1)-1)/2);

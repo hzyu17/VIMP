@@ -1,22 +1,22 @@
-function means_gpmp2 = optimize_gpmp2(dataset, nt_gpmp2)
+function means_gpmp2 = optimize_gpmp2(input_dataset, nt)
 
    import gtsam.*
    import gpmp2.*
 
-    rows = dataset.rows;
-    cols = dataset.cols;
-    cell_size = dataset.cell_size;
-    origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
+    rows = input_dataset.rows;
+    cols = input_dataset.cols;
+    cell_size = input_dataset.cell_size;
+    origin_point2 = Point2(input_dataset.origin_x, input_dataset.origin_y);
 
     % signed distance field
-    field = signedDistanceField2D(dataset.map, cell_size);
+    field = signedDistanceField2D(input_dataset.map, cell_size);
     sdf = PlanarSDF(origin_point2, cell_size, field);
 
     % settings
     total_time_sec = 4.0;
     total_check_step = 40;
-    delta_t = total_time_sec / nt_gpmp2;
-    check_inter = total_check_step / nt_gpmp2 - 1;
+    delta_t = total_time_sec / nt;
+    check_inter = total_check_step / nt - 1;
 
     % use GP interpolation
     use_GP_inter = false;
@@ -29,7 +29,7 @@ function means_gpmp2 = optimize_gpmp2(dataset, nt_gpmp2)
     Qc_model = noiseModel.Gaussian.Covariance(Qc); 
 
     % Obstacle avoid settings
-    cost_sigma = 0.1;
+    cost_sigma = 0.05;
     epsilon_dist = 0.1;
 
     % prior to start/goal
@@ -41,21 +41,21 @@ function means_gpmp2 = optimize_gpmp2(dataset, nt_gpmp2)
     start_vel = [0, 0]';
     end_conf = [pi/2, 0]';
     end_vel = [0, 0]';
-    avg_vel = (end_conf / nt_gpmp2) / delta_t;
+    avg_vel = (end_conf / nt) / delta_t;
 
     % plot param
-    pause_time = total_time_sec / nt_gpmp2;
+    pause_time = total_time_sec / nt;
 
     % ------------------------- init optimization ------------------------- 
     graph = NonlinearFactorGraph;
     init_values = Values;
 
-    for i = 0 : nt_gpmp2
+    for i = 0 : nt
         key_pos = symbol('x', i);
         key_vel = symbol('v', i);
 
         % initialize as straight line in conf space
-        pose = start_conf * (nt_gpmp2-i)/nt_gpmp2 + end_conf * i/nt_gpmp2;
+        pose = start_conf * (nt-i)/nt + end_conf * i/nt;
         vel = avg_vel;
         init_values.insert(key_pos, pose);
         init_values.insert(key_vel, vel);
@@ -64,7 +64,7 @@ function means_gpmp2 = optimize_gpmp2(dataset, nt_gpmp2)
         if i==0
             graph.add(PriorFactorVector(key_pos, start_conf, pose_fix));
             graph.add(PriorFactorVector(key_vel, start_vel, vel_fix));
-        elseif i==nt_gpmp2
+        elseif i==nt
             graph.add(PriorFactorVector(key_pos, end_conf, pose_fix));
             graph.add(PriorFactorVector(key_vel, end_vel, vel_fix));
         end
@@ -112,8 +112,8 @@ function means_gpmp2 = optimize_gpmp2(dataset, nt_gpmp2)
     result = optimizer.values();
     % result.print('Final results')
 
-    means_gpmp2 = zeros(2, nt_gpmp2+1);
-    for i=0:nt_gpmp2
+    means_gpmp2 = zeros(2, nt+1);
+    for i=0:nt
         conf = result.atVector(symbol('x', i));
         means_gpmp2(:, i+1) = conf;
     end
