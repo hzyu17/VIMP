@@ -37,9 +37,6 @@ def vec_colloss_gradient(sig_obs, vec_pts, sdf_2d, eps_obs, slope):
         h, g_h_pt = hingesdfloss_gradient(pt, sdf_2d, eps_obs, slope)
         vec_hinge[i_pt] = h
         vec_grad_hinge_x[i_pt] = g_h_pt
-        
-    # print("vec_grad_hinge_x ")
-    # print(vec_grad_hinge_x)
     
     Sig_obs = sig_obs * np.eye(n_pts, dtype=np.float32)
     collision_cost = vec_hinge.T @ Sig_obs @ vec_hinge
