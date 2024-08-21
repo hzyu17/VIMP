@@ -17,7 +17,7 @@ is_sparse = 1;
 %% ============ 
 % read map
 % ============
-sdfmap = csvread("map2/map_multiobs_map2.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 
 dim_state = 4;
 dim_theta = 2;
