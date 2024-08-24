@@ -11,7 +11,7 @@
 
 // #pragma once
 #include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
-#include "instances/CostFunctions.h"
+#include "instances_cuda/CostFunctions.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH.h"
 #include <gpmp2/kinematics/PointRobotModel.h>
@@ -19,7 +19,5 @@
 namespace vimp{
     template <typename ROBOT>
     using NGDFactorizedPlanarSDF_Cuda = gvi::NGDFactorizedBaseGH_Cuda<gpmp2::ObstaclePlanarSDFFactor<ROBOT>>;
-
-    using NGDFactorizedPlanarSDF_PR = gvi::NGDFactorizedBaseGH_Cuda<gpmp2::ObstaclePlanarSDFFactor<gpmp2::PointRobotModel>>;
 }
 

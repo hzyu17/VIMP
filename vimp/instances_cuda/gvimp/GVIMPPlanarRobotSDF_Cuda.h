@@ -102,6 +102,23 @@ public:
         /// prior 
         double delt_t = params.total_time() / N;
 
+        /// System Matrix of LTV system
+        MatrixXd matrix_A (dim_state, dim_state);
+        MatrixXd matrix_b (dim_state, dim_conf);
+        matrix_A.setZero();
+        matrix_b.setZero();
+
+        matrix_A << MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Identity(dim_conf, dim_conf), 
+                    MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Zero(dim_conf, dim_conf);
+        matrix_b << MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Identity(dim_conf, dim_conf);
+        std::vector<MatrixXd> hA(n_states);
+        std::vector<MatrixXd> hb(n_states);
+
+        for (int i = 0; i < n_states; i++){
+            hA[i] = matrix_A;
+            hb[i] = matrix_b;
+        }
+
         for (int i = 0; i < n_states; i++) {
 
             // initial state
@@ -111,7 +128,7 @@ public:
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
 
-            gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
+            gvi::MinimumAccGP_integral lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb};
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -165,7 +182,8 @@ public:
                                                                         n_states, 
                                                                         i, 
                                                                         params.sig_obs(), 
-                                                                        params.eps_sdf() + params.radius(), 
+                                                                        params.eps_sdf(), 
+                                                                        params.radius(), 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
                                                                         nodes_weights_map});    

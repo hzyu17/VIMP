@@ -1,4 +1,4 @@
-#include "GaussianVI/gp/cost_functions.h"
+#include "GaussianVI/gp/cost_functions_integral.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
 
