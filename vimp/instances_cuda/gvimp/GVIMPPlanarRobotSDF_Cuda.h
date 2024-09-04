@@ -112,11 +112,38 @@ public:
                     MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Zero(dim_conf, dim_conf);
         matrix_b << MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Identity(dim_conf, dim_conf);
         std::vector<MatrixXd> hA(n_states);
-        std::vector<MatrixXd> hb(n_states);
+        std::vector<MatrixXd> hb(n_states + 1);
+        std::vector<MatrixXd> Phi_vec(n_states + 1);
+
+        MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
+        Phi_vec[0] = Phi;
+        hb[0] = matrix_b;
+        
 
         for (int i = 0; i < n_states; i++){
             hA[i] = matrix_A;
-            hb[i] = matrix_b;
+            hb[i + 1] = matrix_b;
+            Phi = Phi + hA[i] * Phi * delt_t;
+            Phi_vec[i + 1] = Phi;
+        }
+
+        // Linearize the nonlinear system is the dim is 6
+        if (dim_state == 6){
+            MatrixXd theta_mat(n_states, dim_state);
+            for (int i = 0; i < n_states; i++) {
+                theta_mat.row(i) = start_theta + double(i) * (goal_theta - start_theta) / N;  //How to choose the initial
+            }
+            std::tuple<std::vector<MatrixXd>, std::vector<MatrixXd>, std::vector<VectorXd>> linearized_matrices;
+            linearized_matrices = planarquad_linearization_deterministic(theta_mat);
+            hA = std::get<0>(linearized_matrices);
+            hb = std::get<1>(linearized_matrices);
+
+            for (int i = 0; i < n_states; i++){
+                hA[i] = matrix_A;
+                hb[i + 1] = matrix_b;
+                Phi = Phi + hA[i] * Phi * delt_t;
+                Phi_vec[i + 1] = Phi;
+            }
         }
 
         for (int i = 0; i < n_states; i++) {
@@ -127,8 +154,11 @@ public:
             // initial velocity: must have initial velocity for the fitst state??
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
+            
 
-            gvi::MinimumAccGP_integral lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb};
+            gvi::MinimumAccGP_integral lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
+            // gvi::QuadGP lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
+
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 

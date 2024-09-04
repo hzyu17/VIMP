@@ -124,21 +124,45 @@ public:
     }
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& params) override {
-        double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
-        double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
-
-        double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
-        double start_vy = atof(paramNode->first_node("start_pos")->first_node("vy")->value());
-
-        double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
-        double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
-
-        double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
-        double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
 
         VectorXd m0(this->_nx), mT(this->_nx); 
-        m0 << start_x, start_y, start_vx, start_vy;
-        mT << goal_x, goal_y, goal_vx, goal_vy;
+        if (this->_nx == 4){
+            double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
+            double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
+
+            double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
+            double start_vy = atof(paramNode->first_node("start_pos")->first_node("vy")->value());
+
+            double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
+            double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
+
+            double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
+            double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
+
+            
+            m0 << start_x, start_y, start_vx, start_vy;
+            mT << goal_x, goal_y, goal_vx, goal_vy;
+        }
+        else if (this->_nx == 6){
+            double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
+            double start_z = atof(paramNode->first_node("start_pos")->first_node("z")->value());
+            double start_phi = atof(paramNode->first_node("start_pos")->first_node("phi")->value());
+
+            double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
+            double start_vz = atof(paramNode->first_node("start_pos")->first_node("vz")->value());
+            double start_vphi = atof(paramNode->first_node("start_pos")->first_node("vphi")->value());
+
+            double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
+            double goal_z = atof(paramNode->first_node("goal_pos")->first_node("z")->value());
+            double goal_phi = atof(paramNode->first_node("goal_pos")->first_node("phi")->value());
+
+            double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
+            double goal_vz = atof(paramNode->first_node("goal_pos")->first_node("vz")->value());
+            double goal_vphi = atof(paramNode->first_node("goal_pos")->first_node("vphi")->value());
+
+            m0 << start_x, start_z, start_phi, start_vx, start_vz, start_vphi;
+            mT << goal_x, goal_z, goal_phi, goal_vx, goal_vz, goal_vphi;
+        }
 
         params.set_m0(m0);
         params.set_mT(mT);

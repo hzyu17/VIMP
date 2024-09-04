@@ -88,6 +88,12 @@ public:
                     _origin << -1.0, -1.0;
                     _field_file = source_root+"/maps/2dArm/field_two_obs.csv";
                 }
+                else if(strcmp(map_name.data(), "single_obs") == 0){
+                    _cell_size=0.1;
+                    _origin << -5.0, -5.0;
+                    _field_file = source_root+"/maps/2dQuad/singleObstacleMap_field.csv";
+                }
+
                 else{
                     std::runtime_error("No such map for 2d point robot sdf!");
                 }
