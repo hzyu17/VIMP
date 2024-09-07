@@ -11,16 +11,10 @@
 
 #include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
-#include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
-#include "instances_cuda/CostFunctions.h"
+#include "GaussianVI/gp/factorized_opts_LTV.h"
+#include "instances_cuda/CostFunctions_LTV.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Quadrotor.h"
 #include "GaussianVI/ngd/NGD-GH.h"
-
-
-// #include "instances_cuda/FactorizedGVIPlanarNGD_Quadrotor.h"
-#include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
-#include <gtsam/inference/Symbol.h>
-#include <gpmp2/kinematics/PointRobotModel.h>
 
 #include "dynamics/PlanarQuad_linearization.h"
 
@@ -100,41 +94,49 @@ public:
         /// prior 
         double delt_t = params.total_time() / N;
 
-        /// Linearize the nonlinear system
+        /// Initialize the trajectory
         std::vector<MatrixXd> hA(n_states);
-        std::vector<MatrixXd> hb(n_states + 1);
-        std::vector<MatrixXd> Phi_vec(n_states + 1);
-        
-        MatrixXd theta_mat(n_states, dim_state);
-        for (int i = 0; i < n_states; i++) {
-            theta_mat.row(i) = start_theta + double(i) * (goal_theta - start_theta) / N;  //How to choose the initial(Need to change it)
-        }
+        std::vector<MatrixXd> hB(n_states);
+        std::vector<MatrixXd> Phi_vec(n_states+1);
 
         std::tuple<std::vector<MatrixXd>, std::vector<MatrixXd>, std::vector<VectorXd>> linearized_matrices;
-        linearized_matrices = planarquad_linearization_deterministic(theta_mat);
-        hA = std::get<0>(linearized_matrices);
-        hb = std::get<1>(linearized_matrices);
+        std::vector<MatrixXd> hB1;
+        MatrixXd start_point (1, start_theta.size());
+        start_point.row(0) = start_theta;
+        start_point.block(0, dim_conf, 1, dim_conf) = ((goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)).transpose() ) / params.total_time();
 
+        linearized_matrices = planarquad_linearization_deterministic(start_point);
+        hB1 = std::get<1>(linearized_matrices);
+
+        std::cout << "x0 = " << std::endl << start_point << std::endl;
+        std::cout << "hA1 = " << std::endl << std::get<0>(linearized_matrices)[0] << std::endl;
+        std::cout << "hB1 = " << std::endl << std::get<1>(linearized_matrices)[0] << std::endl << std::endl;
+         
+        /// Obtain the Transition Matrices by integration
         MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
         Phi_vec[0] = Phi;
         for (int i = 0; i < n_states; i++){
+            hA[i] = std::get<0>(linearized_matrices)[0];
+            hB[i] = hB1[0];
             Phi = Phi + hA[i] * Phi * delt_t;
             Phi_vec[i + 1] = Phi;
         }
-        
-
 
         for (int i = 0; i < n_states; i++) {
 
-            // initial state
+            // initial state(Need to change for the quadrotor)
             VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
 
-            // initial velocity: must have initial velocity for the fitst state??
-            theta_i.segment(dim_conf, dim_conf) = avg_vel;
-            joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
+            // // Checking the collision cost
+            // VectorXd theta_i(6); 
+            // theta_i << 10, 10, 0.78539816339, -2, -1, 0;
+
+            // // initial velocity: must have initial velocity for the fitst state??
+            // theta_i.segment(dim_conf, dim_conf) = avg_vel;
+            // joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
             
 
-            gvi::MinimumAccGP_integral lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
+            gvi::LTV_GP lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hB, Phi_vec};
             // gvi::QuadGP lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
 
 
@@ -176,7 +178,7 @@ public:
                                                             params.temperature(), 
                                                             params.high_temperature()});
 
-                // collision factor (Runs in GPU)  //Robot -> 
+                // collision factor
                 vec_factors.emplace_back(new NGDFactorizedBaseGH_Quadrotor{dim_conf, 
                                                                         dim_state, 
                                                                         params.GH_degree(),

@@ -91,7 +91,7 @@ public:
                 else if(strcmp(map_name.data(), "single_obs") == 0){
                     _cell_size=0.1;
                     _origin << -5.0, -5.0;
-                    _field_file = source_root+"/maps/2dQuad/singleObstacleMap_field.csv";
+                    _field_file = source_root+"/maps/2dQuad/SingleObstacleMap_field.csv";
                 }
 
                 else{

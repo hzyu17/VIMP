@@ -127,25 +127,6 @@ public:
             Phi_vec[i + 1] = Phi;
         }
 
-        // Linearize the nonlinear system is the dim is 6
-        if (dim_state == 6){
-            MatrixXd theta_mat(n_states, dim_state);
-            for (int i = 0; i < n_states; i++) {
-                theta_mat.row(i) = start_theta + double(i) * (goal_theta - start_theta) / N;  //How to choose the initial
-            }
-            std::tuple<std::vector<MatrixXd>, std::vector<MatrixXd>, std::vector<VectorXd>> linearized_matrices;
-            linearized_matrices = planarquad_linearization_deterministic(theta_mat);
-            hA = std::get<0>(linearized_matrices);
-            hb = std::get<1>(linearized_matrices);
-
-            for (int i = 0; i < n_states; i++){
-                hA[i] = matrix_A;
-                hb[i + 1] = matrix_b;
-                Phi = Phi + hA[i] * Phi * delt_t;
-                Phi_vec[i + 1] = Phi;
-            }
-        }
-
         for (int i = 0; i < n_states; i++) {
 
             // initial state
