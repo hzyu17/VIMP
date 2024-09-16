@@ -1,25 +1,22 @@
 <Commons>
-    <total_time>4.0</total_time>
-    <n_states>20</n_states>
+    <total_time>15.0</total_time>
+    <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
-    <!-- <sig_obs>50</sig_obs> -->
+    <sig_obs>0.2</sig_obs>
     <map_name>single_obs</map_name> 
-    <!-- <eps_sdf>0.5</eps_sdf> -->
-    <!-- <radius>1.25</radius> -->
+    <eps_sdf>0.5</eps_sdf>
+    <radius>0.4</radius>
     <step_size>0.45</step_size>
-    <init_precision_factor>10000.0</init_precision_factor>
-    <boundary_penalties>10000.0</boundary_penalties>
-    <temperature>10.0</temperature>
-    <high_temperature>30.0</high_temperature>  <!-- Make it higher -->
+    <init_precision_factor>1000.0</init_precision_factor>
+    <boundary_penalties>200.0</boundary_penalties>
+    <temperature>15.0</temperature>
+    <high_temperature>50.0</high_temperature>  <!-- Make it higher -->
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>25</low_temp_iterations>
-    <max_iterations>1</max_iterations>
-    <!-- <max_iterations>10</max_iterations> -->
+    <max_iterations>35</max_iterations>
     <max_n_backtracking>20</max_n_backtracking>
-    <eps_sdf>0.2</eps_sdf>
-    <sig_obs>1</sig_obs>
-    <radius>0.1</radius>
+
 
 </Commons>
 
@@ -27,9 +24,9 @@
     <start_pos>
         <x>0.0</x>
         <z>0.0</z>
-        <phi>0.01</phi>
-        <vx>0.0</vx>
-        <vz>0.0</vz>
+        <phi>0.1</phi>
+        <vx>0.1</vx>
+        <vz>0.1</vz>
         <vphi>0.0</vphi>
     </start_pos>
 
@@ -44,10 +41,9 @@
 
     <!-- <eps_sdf>0.8</eps_sdf>
     <sig_obs>80</sig_obs>
-    <radius>1.0</radius>
-    <step_size>0.4</step_size> -->
+    <radius>1.0</radius> -->
  
-    <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case1/</saving_prefix>
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case1/</saving_prefix>
 
 </Experiment1>
 
@@ -75,7 +71,7 @@
     <sig_obs>50</sig_obs>
     <radius>1.2</radius>
     
-    <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2/</saving_prefix>
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case2/</saving_prefix>
 
 </Experiment2>
 
@@ -103,7 +99,7 @@
     <sig_obs>80</sig_obs>
     <radius>1.0</radius>
     
-    <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case3/</saving_prefix>
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case3/</saving_prefix>
 </Experiment3>
 
 <Experiment4>   
@@ -129,6 +125,6 @@
     <sig_obs>85</sig_obs>
     <eps_sdf>0.8</eps_sdf>
     <radius>1.0</radius>
-    <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case4/</saving_prefix>
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case4/</saving_prefix>
 
 </Experiment4>

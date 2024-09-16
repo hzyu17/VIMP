@@ -34,6 +34,7 @@ public:
     double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
         Timer timer;
         timer.start();
+        
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
 
         std::cout << "========== Optimization time: " << std::endl;
@@ -45,7 +46,8 @@ public:
     }
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
-        
+        // Get the result of each experiment
+
         // Read the sparse grid GH quadrature weights and nodes
         QuadratureWeightsMap nodes_weights_map;
         try {
@@ -83,7 +85,7 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
         
-        // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
+        // Obtain the parameters from params
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
 
@@ -94,51 +96,53 @@ public:
         /// prior 
         double delt_t = params.total_time() / N;
 
-        /// Initialize the trajectory
-        std::vector<MatrixXd> hA(n_states);
-        std::vector<MatrixXd> hB(n_states);
-        std::vector<MatrixXd> Phi_vec(n_states+1);
-
+        // Initialize the trajectory
+        std::vector<MatrixXd> hA(4 * n_states + 1);
+        std::vector<MatrixXd> hB(4 * n_states + 1);
+        std::vector<VectorXd> ha(4 * n_states + 1);
+        std::vector<VectorXd> target_mean(n_states + 1);
         std::tuple<std::vector<MatrixXd>, std::vector<MatrixXd>, std::vector<VectorXd>> linearized_matrices;
-        std::vector<MatrixXd> hB1;
-        MatrixXd start_point (1, start_theta.size());
-        start_point.row(0) = start_theta;
-        start_point.block(0, dim_conf, 1, dim_conf) = ((goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)).transpose() ) / params.total_time();
 
-        linearized_matrices = planarquad_linearization_deterministic(start_point);
-        hB1 = std::get<1>(linearized_matrices);
+        MatrixXd trajectory(4 * n_states + 1, dim_state);
 
-        std::cout << "x0 = " << std::endl << start_point << std::endl;
-        std::cout << "hA1 = " << std::endl << std::get<0>(linearized_matrices)[0] << std::endl;
-        std::cout << "hB1 = " << std::endl << std::get<1>(linearized_matrices)[0] << std::endl << std::endl;
-         
-        /// Obtain the Transition Matrices by integration
-        MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
-        Phi_vec[0] = Phi;
-        for (int i = 0; i < n_states; i++){
-            hA[i] = std::get<0>(linearized_matrices)[0];
-            hB[i] = hB1[0];
-            Phi = Phi + hA[i] * Phi * delt_t;
-            Phi_vec[i + 1] = Phi;
+        for (int i = 0; i < n_states; i++) {
+            VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / N};
+            trajectory.row(4*i) = theta.transpose();
+            target_mean[i] = theta;
+
+            VectorXd theta_left_quater{start_theta + double(4*i+1) * (goal_theta - start_theta) / (4*N)};
+            trajectory.row(4*i+1) = theta_left_quater.transpose();
+
+            VectorXd theta_mid{start_theta + double(2*i+1) * (goal_theta - start_theta) / (2*N)};
+            trajectory.row(4*i+2) = theta_mid.transpose();
+
+            VectorXd theta_right_quater{start_theta + double(4*i+3) * (goal_theta - start_theta) / (4*N)};
+            trajectory.row(4*i+3) = theta_right_quater.transpose();
+
         }
+        trajectory.row(4 * n_states) = goal_theta.transpose();
+        target_mean[n_states] = goal_theta;
 
+        linearized_matrices = planarquad_linearization_deterministic(trajectory);
+        hA = std::get<0>(linearized_matrices);
+        hB = std::get<1>(linearized_matrices);
+        ha = std::get<2>(linearized_matrices);
+        
+        // The targrt mean obtained in this way is not stable
+        // target_mean = get_target_mean(hA, ha, start_theta, n_states, dim_state, delt_t);
+
+        // create each factor
         for (int i = 0; i < n_states; i++) {
 
             // initial state(Need to change for the quadrotor)
             VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
-
-            // // Checking the collision cost
-            // VectorXd theta_i(6); 
-            // theta_i << 10, 10, 0.78539816339, -2, -1, 0;
-
-            // // initial velocity: must have initial velocity for the fitst state??
-            // theta_i.segment(dim_conf, dim_conf) = avg_vel;
             // joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
+            joint_init_theta.segment(i*dim_state, dim_state) = std::move(target_mean[i]);   
             
+            // initial velocity: must have initial velocity for the fitst state??
+            theta_i.segment(dim_conf, dim_conf) = avg_vel;            
 
-            gvi::LTV_GP lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hB, Phi_vec};
-            // gvi::QuadGP lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
-
+            gvi::LTV_GP lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hB, target_mean};
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -226,6 +230,30 @@ public:
         return _last_iteration_mean_precision;
     }
 
+    std::vector<MatrixXd> get_transition_matrix(std::vector<MatrixXd> hA, int n_states, int dim_state, double delta_t){
+        std::vector<MatrixXd> Phi_vec(n_states + 1);
+        MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
+        MatrixXd Phi_pred;
+        Phi_vec[0] = Phi;
+        for (int i = 0; i < n_states; i++){
+            Phi_pred = Phi + hA[4*i] * Phi * delta_t;
+            Phi_vec[i+1] = Phi + (hA[4*i] * Phi + hA[4*(i+1)] * Phi_pred) * delta_t / 2;
+            Phi = Phi_vec[i + 1];
+        }
+        return Phi_vec;
+    }
+
+    std::vector<VectorXd> get_target_mean(std::vector<MatrixXd> hA, std::vector<VectorXd> ha, VectorXd start_theta, int n_states, int dim_state, double delta_t){
+        std::vector<VectorXd> mean_target(n_states + 1);
+        mean_target[0] = start_theta;
+
+        for (int i = 0; i < n_states; i++){
+            MatrixXd Phi = (hA[4*i] * delta_t).exp();
+            mean_target[i+1] = Phi * mean_target[i] + (Phi * ha[4*i] + ha[4*(i+1)]) / 2 * delta_t;
+        }
+        return mean_target;
+    }
+
 protected: 
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
@@ -237,3 +265,22 @@ protected:
 };
 
 } // namespace vimp
+
+
+// std::vector<MatrixXd> hB1;
+// MatrixXd start_point (1, start_theta.size());
+// start_point.row(0) = start_theta;
+// start_point.block(0, dim_conf, 1, dim_conf) = ((goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)).transpose() ) / params.total_time();
+
+// linearized_matrices = planarquad_linearization_deterministic(start_point);
+// hB1 = std::get<1>(linearized_matrices);
+    
+// /// Obtain the Transition Matrices by integration
+// MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
+// Phi_vec[0] = Phi;
+// for (int i = 0; i < n_states; i++){
+//     hA[i] = std::get<0>(linearized_matrices)[0];
+//     hB[i] = hB1[0];
+//     Phi = Phi + hA[i] * Phi * delt_t;
+//     Phi_vec[i + 1] = Phi;
+// }

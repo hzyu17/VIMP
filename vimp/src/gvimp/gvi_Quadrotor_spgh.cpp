@@ -21,7 +21,7 @@ using namespace vimp;
 
 int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    int nx = 6, nu = 2, num_exp = 4;
+    int nx = 6, nu = 2, num_exp = 1; // change the num_exp here
     GVIMPParams params;
     // no experiment argument, run the default scripts
     if (argc == 1){
