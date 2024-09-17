@@ -44,6 +44,7 @@
 
 </Experiment1> -->
 
+<Experiment2>    
 <Experiment1>    
     <start_pos>
         <1>-0.9</1>
@@ -69,4 +70,4 @@
     <high_temperature>8.0</high_temperature>
     <saving_prefix>matlab_helpers/GVIMP-examples/WAM/sparse_gh/case2/</saving_prefix>
 
-</Experiment1>
+</Experiment2>

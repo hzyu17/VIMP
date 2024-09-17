@@ -133,5 +133,3 @@ for i = 1:niters
     axis equal;  % Ensure the scaling of axes is equal
     
 end
-
-

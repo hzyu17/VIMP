@@ -41,9 +41,9 @@ def main():
     
     
     if (args.algorithm == "gvi-mp"):
-        wam_dir = root_VIMP + "/matlab_helpers/GVIMP-examples/WAM/case" + args.experiment
+        wam_dir = root_VIMP + "/matlab_helpers/GVIMP-examples/WAM/sparse_gh/case" + args.experiment
     elif (args.algorithm == "pgcs-mp"):
-        wam_dir = root_VIMP + "/matlab_helpers/PGCS-examples/WAM/case" + args.experiment
+        wam_dir = root_VIMP + "/matlab_helpers/PGCS-examples/WAM/sparse_gh/case" + args.experiment
     elif (args.algorithm == "gpmp2"):
         wam_dir = root_VIMP + "/matlab_helpers/PGCS-examples/WAM/case" + args.experiment + "/gpmp2"
         

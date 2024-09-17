@@ -9,6 +9,7 @@
  * 
  */
 
+#include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
 #include "instances/FactorizedGVIPlanarNGD.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
@@ -34,6 +35,15 @@ public:
 
     RobotSDF robot_sdf(){
         return _robot_sdf;
+    }
+
+    double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
+        Timer timer;
+        timer.start();
+        _last_iteration_mean_precision = run_optimization_return(params, verbose);
+
+        std::cout << "========== Optimization time: " << std::endl;
+        return timer.end_sec();
     }
 
     void run_optimization(const GVIMPParams& params, bool verbose=true){

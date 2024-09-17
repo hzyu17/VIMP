@@ -35,8 +35,7 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <!-- <sig_obs> 0.0055 </sig_obs> -->
-    <saving_prefix>/home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/2d_Arm/sparse_gh/map1/case1/</saving_prefix>
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Arm/sparse_gh/map1/case1/</saving_prefix>
 
 </Experiment1>
 

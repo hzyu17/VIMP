@@ -19,7 +19,7 @@ import gpmp2.*
 % =============================
 % sparse GH quadrature results 
 % =============================
-i_exp = 2;
+i_exp = 1;
 
 switch i_exp
     case 1

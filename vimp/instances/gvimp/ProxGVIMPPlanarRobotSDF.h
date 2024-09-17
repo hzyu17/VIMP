@@ -9,6 +9,7 @@
  * 
  */
 
+#include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
 #include "instances/ProxGVIFactorizedPlanarSDF.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
@@ -33,10 +34,19 @@ public:
     RobotSDF robot_sdf(){
         return _robot_sdf;
     }
-
-    void run_optimization(const GVIMPParams& params, bool verbose=true){
+    
+    double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
+        Timer timer;
+        timer.start();
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
+
+        std::cout << "========== Optimization time: " << std::endl;
+        return timer.end_sec();
     }
+
+    // void run_optimization(const GVIMPParams& params, bool verbose=true){
+    //     _last_iteration_mean_precision = run_optimization_return(params, verbose);
+    // }
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
         /// parameters

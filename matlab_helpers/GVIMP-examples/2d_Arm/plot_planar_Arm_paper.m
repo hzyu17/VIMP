@@ -82,7 +82,6 @@ for i_iter = 1: niters-1
         color = [0, 0, 1, alpha];
         % means
         plotPlanarArm1(arm.fk_model(), i_mean(1:2, j), color, 2, true);
-
     end
 
 xlim([-1 1.5])

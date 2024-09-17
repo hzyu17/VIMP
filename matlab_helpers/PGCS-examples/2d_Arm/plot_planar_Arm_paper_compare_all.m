@@ -95,7 +95,7 @@ x0 = 50;
 y0 = 50;
 width = 400;
 height = 350;
-% ==================== plot GVIMP results ===================
+% ==================== plot gvimp results ===================
 means_gvimp_lastiter = means_gvimp(:,end);
 means_gvimp_lastiter = reshape(means_gvimp_lastiter, [dim_theta,nt_gvimp]);
 covs_gvimp_lastiter = covs_gvimp(:, end);
@@ -124,7 +124,7 @@ hold off
 axis off
 
 
-% ==================== plot GPMP2 results ===================
+% ==================== plot gpmp2 results ===================
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
@@ -141,7 +141,9 @@ nt_gpmp2 = size(means_gpmp2, 2);
 % plot gpmp2 results
 for j = 1:1:nt_gpmp2
     % means
-    plotPlanarArm1(arm.fk_model(), means_gpmp2(1:2,j), 'c', 8, true);
+    alpha = (j / nt_gpmp2)^(1.15);
+    color = [0, 1, 1, alpha];
+    plotPlanarArm1(arm.fk_model(), means_gpmp2(1:2,j), color, 8, true);
 end
 plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
 plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
@@ -175,14 +177,12 @@ axis off;
 hold off
 
 
-% ===================================== 
-% configuration space trajectory 
-% =====================================
+% =================== configuration space trajectory ===================
 % -------------- plot configuration obstacles ----------------
 
 figure
 set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
 nexttile
 hold on
 
@@ -222,7 +222,7 @@ end
 
 % plot gpmp2 results
 for i = 1:1:nt_gpmp2
-    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 100, 'd', 'g', 'fill');
+    scatter(means_gpmp2(1, i), means_gpmp2(2, i), 100, 'd', 'c', 'fill');
 end
 
 % plot start and goal conf
@@ -232,11 +232,9 @@ scatter(end_conf(1), end_conf(2), 100, 'g', 'fill');
 hold off
 
 %% ================= plot samples ===============
-% ------------------ 
-% gvi-mp 
-% ------------------
+% ------------------ gvi-mp ------------------
 n_plots = 10;
-stepsize = floor(nt_gvimp/n_plots);
+stepsize = floor(nt/n_plots);
 
 pos_figsample = 1.0e+03 .*[0.2026, 1.3822, 1.0276, 0.1828];
 

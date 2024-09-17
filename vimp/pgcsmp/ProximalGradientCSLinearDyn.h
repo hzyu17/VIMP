@@ -71,6 +71,8 @@ public:
     {
         // propagate the mean and the covariance
         
+        std::cout << " propagate mean " << std::endl;
+
         std::tuple<Matrix3D, Matrix3D> ztSigt;
         ztSigt = propagate_nominal(At, at, Bt, z0, Sig0);
 
@@ -82,6 +84,8 @@ public:
         MatrixXd aprior = at / (1 + step_size) + hat * step_size / (1 + step_size);
 
         // Update Qkt, rkt
+        std::cout << " Update Q, r " << std::endl;
+
         std::tuple<Matrix3D, Matrix3D> Qtrt;
         Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, hAt, hat, step_size);
 
@@ -91,6 +95,7 @@ public:
         rt = std::get<1>(Qtrt);
 
         // solve inner loop linear CS
+        std::cout << " Solve linear CS " << std::endl;
         std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> KtdtAtat;
         KtdtAtat = solve_linearCS_return(Aprior, Bt, aprior, Qt, rt);
 
