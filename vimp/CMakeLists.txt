@@ -39,7 +39,7 @@ foreach(vimp_source ${VIMP_SOURCES})
                           ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 endforeach()
 
-
+## ============================== Build Tests ===============================
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
 # foreach(pgcs_source ${PGCS_SOURCES})

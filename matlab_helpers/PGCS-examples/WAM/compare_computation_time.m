@@ -2,6 +2,12 @@ clear all
 close all
 clc
 
+import gtsam.*
+import gpmp2.*
+
+addpath("../../tools");
+addpath('../../tools/gtsam_toolbox');
+
 %% Compute the computation time and compare between gpmp2, gvimp, and pgcsmp.
 % =========================================================================
 %                                  PGCS-MP
@@ -21,9 +27,9 @@ map_name = 'map_bookshelf';
 sig_obs = 8e2;
 backtrack_ratio = 0.5;
 max_n_backtracking = 8;
-sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
+sdf_file = '../../../vimp/maps/WAM/WAMDeskDataset.bin';
 
-executable = '/home/hzyu/git/VIMP/vimp/build/src/pgcs/pgcs_WAMArm';
+executable = '../../../vimp/build/src/pgcs/pgcs_WAMArm';
 
 %% ========================= 1st experiment =========================
 i_exp = 1;
@@ -78,9 +84,9 @@ low_temp_iterations = 20;
 stop_err = 1e-5;
 num_iter = 30;
 max_n_backtracking = 5;
-sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
+sdf_file = '../../../vimp/maps/WAM/WAMDeskDataset.bin';
 
-executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_WAMArm_spgh';
+executable = '../../../build/src/gvimp/gvi_WAMArm_spgh';
 
 %% ================= 1st experiment =================
 i_exp = 1;
@@ -126,7 +132,7 @@ clc
 start_conf = [-0.8,-1.70,1.64,1.29,1.1,-0.106,2.2]';
 end_conf = [-0.0,0.94,0,1.6,0,-0.919,1.55]';
 
-sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
+sdf_file = '../../../vimp/maps/WAM/WAMDeskDataset.bin';
 
 % ================== optimize and count time ======================
 profile on
@@ -144,7 +150,7 @@ clc
 start_conf = [-0.9,-1.70,1.34,1.19,0.8,-0.126,2.5]';
 end_conf = [-0.7,1.35,1.2,1.0,-0.7,-0.1,1.2]';
 
-sdf_file = '/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin';
+sdf_file = '../../../vimp/maps/WAM/WAMDeskDataset.bin';
 
 profile on
 for i=1:50
@@ -220,7 +226,7 @@ profile viewer
 % ------------------------- Arm 2 --------------------------
 profile on
 for i = 1:50
-    executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_Arm2_prior_factors';
+    executable = '../../../build/src/gvimp/gvi_Arm2_prior_factors';
     execute_one_exp(executable, '');
 end
 profile viewer
@@ -228,7 +234,7 @@ profile viewer
 %% ------------------------- WAM Arm --------------------------
 profile on
 for i = 1:50
-    executable = '/home/hzyu/git/VIMP/build/src/gvimp/gvi_wam_prior_factors';
+    executable = '../../../build/src/gvimp/gvi_wam_prior_factors';
     execute_one_exp(executable, '');
 end
 profile viewer
