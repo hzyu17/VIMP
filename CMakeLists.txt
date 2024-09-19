@@ -5,7 +5,8 @@ project(VIMP CXX C CUDA)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
-set(BOOST_ROOT "/usr/local/bin/boost")
+# set(BOOST_ROOT "/usr/local/bin/boost")
+set(BOOST_ROOT "~/.local/bin/boost")
 list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
 # Boost
 find_package(Boost 1.70 REQUIRED)
@@ -43,8 +44,8 @@ set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=${CUDA_ARCH}; -std=c++17; --expt-e
 
 # Find Matlab
 message("Finding Matlab Library")
-# set(MATLAB_ROOT_DIR "~/.local/MATLAB/R2020b")
-set(MATLAB_ROOT_DIR "/usr/local/MATLAB/R2020b")
+set(MATLAB_ROOT_DIR "~/.local/MATLAB/R2020b")
+# set(MATLAB_ROOT_DIR "/usr/local/MATLAB/R2020b")
 set(Matlab_INCLUDE_DIRS "${MATLAB_ROOT_DIR}/extern/include")
 set(Matlab_MEX_LIBRARY "${MATLAB_ROOT_DIR}/bin/glnxa64/libmex.so")  # Adjust the path accordingly
 set(MCR_LIBRARY_PATH "${MATLAB_ROOT_DIR}/runtime/glnxa64") 
