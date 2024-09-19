@@ -1,5 +1,5 @@
 <Commons>
-    <total_time>15.0</total_time>
+    <total_time>13</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
@@ -10,13 +10,12 @@
     <step_size>0.45</step_size>
     <init_precision_factor>1000.0</init_precision_factor>
     <boundary_penalties>200.0</boundary_penalties>
-    <temperature>15.0</temperature>
+    <temperature>30.0</temperature>
     <high_temperature>50.0</high_temperature>  <!-- Make it higher -->
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>25</low_temp_iterations>
     <max_iterations>35</max_iterations>
     <max_n_backtracking>20</max_n_backtracking>
-
 
 </Commons>
 
@@ -24,9 +23,9 @@
     <start_pos>
         <x>0.0</x>
         <z>0.0</z>
-        <phi>0.1</phi>
-        <vx>0.1</vx>
-        <vz>0.1</vz>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
         <vphi>0.0</vphi>
     </start_pos>
 

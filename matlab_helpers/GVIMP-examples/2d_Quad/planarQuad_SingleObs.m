@@ -93,8 +93,8 @@ for i = 1:1 % 4 experiments
     % lgd = legend([s1, s2], {'Start', 'Goal'});
     % set(lgd, 'FontWeight', 'bold');
     
-    xlim([-5, 30])
-    ylim([-2.5, 32.5])
+    xlim([-30, 60])
+    ylim([-20, 50])
     
     grid on
     % axis off
