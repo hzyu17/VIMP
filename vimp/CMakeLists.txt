@@ -72,15 +72,15 @@ target_link_libraries(PointRobot_No_Template ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARI
                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
                         
-add_executable(PointRobot src/gvimp/gvi_PointRobot_spgh.cpp GaussianVI/helpers/CudaOperation.cu)
-set_target_properties(PointRobot PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(PointRobot PROPERTIES
-                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                        )   
-target_include_directories(PointRobot PRIVATE ${Matlab_INCLUDE_DIRS})
-target_link_libraries(PointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                      ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                      ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
+# add_executable(PointRobot src/gvimp/gvi_PointRobot_spgh.cpp GaussianVI/helpers/CudaOperation.cu)
+# set_target_properties(PointRobot PROPERTIES LINKER_LANGUAGE CXX)
+# set_target_properties(PointRobot PROPERTIES
+#                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+#                         )   
+# target_include_directories(PointRobot PRIVATE ${Matlab_INCLUDE_DIRS})
+# target_link_libraries(PointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+#                       ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+#                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 
 
@@ -101,8 +101,8 @@ target_link_libraries(PointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_
 # endforeach()
  
 #% --------------------------------------------------------- Tests files ---------------------------------------------------------
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+# find_package(GTest REQUIRED)
+# include_directories(${GTEST_INCLUDE_DIRS})
 
 # # Recursively search for all test files in the subfolders
 # file(GLOB_RECURSE TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/vimp false tests/*/*.cpp)

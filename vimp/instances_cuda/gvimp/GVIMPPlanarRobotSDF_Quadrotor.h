@@ -22,6 +22,9 @@ std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWe
 
 namespace vimp{
 
+using GHFunction = std::function<MatrixXd(const VectorXd&)>;
+using GH = SparseGaussHermite_Cuda<GHFunction>;
+
 class GVIMPPlanarRobotSDF_Quadrotor{
 
 public:
@@ -35,21 +38,26 @@ public:
         Timer timer;
         timer.start();
 
-        int n_iter = 1;
+        int n_iter = 3;
         int n_states = params.nt();
+        const int dim_conf = 3;
+
         VectorXd start_theta{ params.m0() };
         VectorXd goal_theta{ params.mT() };
-        MatrixXd trajectory(n_states, 6);
+        MatrixXd trajectory(n_states, 2*dim_conf);
+
+        VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
 
         for (int i = 0; i < n_states; i++) {
             VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / (n_states - 1)};
+            theta.segment(dim_conf, dim_conf) = avg_vel;
             trajectory.row(i) = theta.transpose();
         }
 
         for (int i = 0; i < n_iter; i++){
             _last_iteration_mean_precision = run_optimization_return(params, trajectory, verbose);
             VectorXd mean = std::get<0>(_last_iteration_mean_precision);
-            trajectory = Eigen::Map<Eigen::MatrixXd>(mean.data(), 6, n_states).transpose();
+            trajectory = Eigen::Map<Eigen::MatrixXd>(mean.data(), 2*dim_conf, n_states).transpose();
         }
         
 
@@ -100,6 +108,10 @@ public:
 
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
+
+        std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, nodes_weights_map});
+        std::shared_ptr<CudaOperation_Quad> cuda_ptr = std::make_shared<CudaOperation_Quad>(CudaOperation_Quad{params.sig_obs(), params.eps_sdf(), params.radius()});
+        cuda_ptr -> Cuda_init(gh_ptr -> weights());
         
         // Obtain the parameters from params
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
@@ -107,7 +119,6 @@ public:
 
         /// initial values
         VectorXd joint_init_theta{VectorXd::Zero(ndim)};
-        VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
         
         /// prior 
         double delt_t = params.total_time() / N;
@@ -133,13 +144,8 @@ public:
         // create each factor
         for (int i = 0; i < n_states; i++) {
 
-            // initial state
-            VectorXd theta_i = target_mean[i];
-
-            // initial velocity: must have initial velocity for the fitst state??
-            theta_i.segment(dim_conf, dim_conf) = avg_vel;            
-            
-            joint_init_theta.segment(i*dim_state, dim_state) = theta_i;
+            // initial state                     
+            joint_init_theta.segment(i*dim_state, dim_state) = target_mean[i];
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -159,7 +165,7 @@ public:
                 }
 
                 // Fixed gp factor
-                gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
+                gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{target_mean[i]}};
                 vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
                                                           dim_state, 
                                                           gvi::cost_fixed_gp, 
@@ -192,7 +198,8 @@ public:
                                                                         params.radius(), 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
-                                                                        nodes_weights_map});    
+                                                                        nodes_weights_map, 
+                                                                        cuda_ptr});    
             }
         }
 
@@ -219,6 +226,8 @@ public:
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
 
+        cuda_ptr -> Cuda_free();
+
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
         return _last_iteration_mean_precision;
@@ -227,19 +236,6 @@ public:
 
     std::tuple<VectorXd, gvi::SpMat> get_mu_precision(){
         return _last_iteration_mean_precision;
-    }
-
-    std::vector<MatrixXd> get_transition_matrix(std::vector<MatrixXd> hA, int n_states, int dim_state, double delta_t){
-        std::vector<MatrixXd> Phi_vec(n_states + 1);
-        MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
-        MatrixXd Phi_pred;
-        Phi_vec[0] = Phi;
-        for (int i = 0; i < n_states; i++){
-            Phi_pred = Phi + hA[4*i] * Phi * delta_t;
-            Phi_vec[i+1] = Phi + (hA[4*i] * Phi + hA[4*(i+1)] * Phi_pred) * delta_t / 2;
-            Phi = Phi_vec[i + 1];
-        }
-        return Phi_vec;
     }
 
     std::vector<VectorXd> get_target_mean(std::vector<MatrixXd> hA, std::vector<VectorXd> ha, VectorXd start_theta, int n_states, int dim_state, double delta_t){
@@ -301,4 +297,17 @@ protected:
 //     hB[i] = hB1[0];
 //     Phi = Phi + hA[i] * Phi * delt_t;
 //     Phi_vec[i + 1] = Phi;
+// }
+
+// std::vector<MatrixXd> get_transition_matrix(std::vector<MatrixXd> hA, int n_states, int dim_state, double delta_t){
+//     std::vector<MatrixXd> Phi_vec(n_states + 1);
+//     MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
+//     MatrixXd Phi_pred;
+//     Phi_vec[0] = Phi;
+//     for (int i = 0; i < n_states; i++){
+//         Phi_pred = Phi + hA[4*i] * Phi * delta_t;
+//         Phi_vec[i+1] = Phi + (hA[4*i] * Phi + hA[4*(i+1)] * Phi_pred) * delta_t / 2;
+//         Phi = Phi_vec[i + 1];
+//     }
+//     return Phi_vec;
 // }

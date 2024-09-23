@@ -16,11 +16,12 @@
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_No_Template.h"
 #include "GaussianVI/ngd/NGD-GH.h"
 
-// #include "dynamics/PlanarQuad_linearization.h"
-
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
 
 namespace vimp{
+
+using GHFunction = std::function<MatrixXd(const VectorXd&)>;
+using GH = SparseGaussHermite_Cuda<GHFunction>;
 
 class GVIMPPlanarPointRobotSDF{
 
@@ -82,6 +83,11 @@ public:
 
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
+
+        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, nodes_weights_map});
+        _cuda_ptr = std::make_shared<CudaOperation>(CudaOperation{params.sig_obs(), params.eps_sdf(), params.radius()});
+
+        _cuda_ptr -> Cuda_init(_gh_ptr -> weights());
         
         // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
@@ -182,7 +188,8 @@ public:
                                                                         params.radius(), 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
-                                                                        nodes_weights_map});    
+                                                                        nodes_weights_map, 
+                                                                        _cuda_ptr});    
             }
         }
 
@@ -209,6 +216,8 @@ public:
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
 
+        _cuda_ptr -> Cuda_free();
+
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
         return _last_iteration_mean_precision;
@@ -224,6 +233,8 @@ protected:
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     gvi::EigenWrapper _ei;
     std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase_Cuda>> _p_opt;
+    std::shared_ptr<CudaOperation> _cuda_ptr;
+    std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 
