@@ -15,6 +15,8 @@
 #include "instances_cuda/CostFunctions_LTV.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Quadrotor.h"
 #include "GaussianVI/ngd/NGD-GH.h"
+#include <boost/numeric/odeint.hpp>
+#include <boost/math/quadrature/trapezoidal.hpp>
 
 #include "dynamics/PlanarQuad_linearization.h"
 
@@ -137,15 +139,22 @@ public:
         hA = std::get<0>(linearized_matrices);
         hB = std::get<1>(linearized_matrices);
         ha = std::get<2>(linearized_matrices);
-        
+
+        // Assign value to members for ode solver
+        _n_states = n_states;
+        _dim_state = dim_state;
+        _delta_t = delt_t;
+        _A_vec = hA;
+        _a_vec = ha;
+    
         // The targrt mean obtained in this way is not stable
-        // target_mean = get_target_mean(hA, ha, start_theta, n_states, dim_state, delt_t);
+        // target_mean = get_target_mean(ha, traj.row(0));
 
         // create each factor
         for (int i = 0; i < n_states; i++) {
 
             // initial state                     
-            joint_init_theta.segment(i*dim_state, dim_state) = target_mean[i];
+            joint_init_theta.segment(i*dim_state, dim_state) = traj.row(i);
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -199,6 +208,7 @@ public:
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
                                                                         nodes_weights_map, 
+                                                                        gh_ptr,
                                                                         cuda_ptr});    
             }
         }
@@ -238,15 +248,48 @@ public:
         return _last_iteration_mean_precision;
     }
 
-    std::vector<VectorXd> get_target_mean(std::vector<MatrixXd> hA, std::vector<VectorXd> ha, VectorXd start_theta, int n_states, int dim_state, double delta_t){
-        std::vector<VectorXd> mean_target(n_states + 1);
+    
+
+    std::vector<VectorXd> get_target_mean(std::vector<VectorXd> ha, VectorXd start_theta){
+        std::vector<VectorXd> mean_target(_n_states);
         mean_target[0] = start_theta;
 
-        for (int i = 0; i < n_states; i++){
-            MatrixXd Phi = (hA[4*i] * delta_t).exp();
-            mean_target[i+1] = Phi * mean_target[i] + (Phi * ha[4*i] + ha[4*(i+1)]) / 2 * delta_t;
+        runge_kutta_dopri5<std::vector<double>> stepper;
+        auto system_ode_bound = std::bind(&vimp::GVIMPPlanarRobotSDF_Quadrotor::system_ode_target, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+
+        #pragma omp parallel for
+        for (int i = 1; i < _n_states; i++){
+            double end_time = _delta_t * i;
+            std::vector<double> x_i (start_theta.data(), start_theta.data() + _dim_state);
+            integrate_adaptive(stepper, system_ode_bound, x_i, 0.0, end_time, _delta_t/5);
+            VectorXd x_result = Eigen::Map<const VectorXd>(x_i.data(), _dim_state);
+            mean_target[i] = x_result;
+
+
+            // VectorXd mu_t = _Phi_results[i] * start_theta + (_Phi_results[i] * ha[0] + MatrixXd::Identity(_dim_state, _dim_state) * ha[4*i]) * _delta_t / 2;
+            // for (int j = 1; j < i; j++){
+            //     mu_t += _Phi_results[i] * _Phi_results[j].inverse() * ha[4*j] *_delta_t;
+            // }
+            // mean_target[i] = mu_t;
+
+
+            // MatrixXd Phi = (hA[4*i] * _delta_t).exp();
+            // mean_target[i+1] = Phi * mean_target[i] + (Phi * ha[4*i] + ha[4*(i+1)]) / 2 * delta_t;
         }
         return mean_target;
+    }
+
+    void system_ode_target(const std::vector<double>& x_i, std::vector<double>& dx_dt, double t) {
+        std::pair <MatrixXd,MatrixXd> system = system_param(t);
+        VectorXd x = Eigen::Map<const VectorXd>(x_i.data(), _dim_state);
+        VectorXd dx = system.first * x + system.second;
+        Eigen::Map<VectorXd>(dx_dt.data(), _dim_state) = dx;
+    }
+
+    std::pair <MatrixXd,MatrixXd> system_param(double t) {
+        int t_idx;
+        t_idx = static_cast<int>(std::floor(4 * t / _delta_t));
+        return {_A_vec[t_idx], _a_vec[t_idx]};
     }
 
     MatrixXd trajctory_interpolation(const MatrixXd& trajectory, std::vector<VectorXd>& target_mean){
@@ -268,6 +311,33 @@ public:
         return traj;
     }
 
+    void get_Phi(){
+        runge_kutta_dopri5<std::vector<double>> stepper;
+        auto system_ode_bound = std::bind(&vimp::GVIMPPlanarRobotSDF_Quadrotor::system_ode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+
+        for (int i = 0; i < _n_states; i++) {
+            double end_time = _delta_t * i;
+            MatrixXd Phi0 = MatrixXd::Identity(_dim_state, _dim_state);
+            std::vector<double> Phi_vec(Phi0.data(), Phi0.data() + _dim_state * _dim_state);
+            integrate_adaptive(stepper, system_ode_bound, Phi_vec, 0.0, end_time, _delta_t);
+            MatrixXd Phi_result = Eigen::Map<const MatrixXd>(Phi_vec.data(), _dim_state, _dim_state);
+            _Phi_results.push_back(Phi_result);
+        }
+    }
+
+    void system_ode(const std::vector<double>& Phi_vec, std::vector<double>& dPhi_dt, double t) {
+        MatrixXd A = A_function(t);
+        MatrixXd Phi = Eigen::Map<const MatrixXd>(Phi_vec.data(), _dim_state, _dim_state);
+        MatrixXd dPhi = A * Phi;
+        Eigen::Map<MatrixXd>(dPhi_dt.data(), _dim_state, _dim_state) = dPhi;
+    }
+
+    MatrixXd A_function(double t) {
+        int t_idx;
+        t_idx = static_cast<int>(std::floor(4 * t / _delta_t));
+        return _A_vec[t_idx];
+    }
+
 protected: 
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
@@ -275,6 +345,12 @@ protected:
     std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase_Cuda>> _p_opt;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
+
+    int _dim_state, _n_states;
+    double _delta_t;
+
+    std::vector<MatrixXd> _A_vec, _Phi_results;
+    std::vector<VectorXd> _a_vec;
 
 };
 
