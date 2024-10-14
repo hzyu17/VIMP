@@ -26,10 +26,14 @@ namespace gpmp2 {
 inline double hingeLossObstacleCost(const gtsam::Point3& point, const SignedDistanceField& sdf,
     double eps, gtsam::OptionalJacobian<1, 3> H_point = boost::none) {
 
+  // gtsam::Point3 pt(3);
+  // pt << 1.02041, 1.02041, 6.61224;
+  // std::cout << "point in hinge loss function= " << point.transpose() << std::endl;
   gtsam::Vector3 field_gradient;
   double dist_signed;
   try {
     dist_signed = sdf.getSignedDistance(point, field_gradient);
+    // std::cout << "dist_signed of pt :(" << pt.transpose() << ") = " << dist_signed << std::endl;
   } catch (SDFQueryOutOfRange&) {
     //std::cout << "[hingeLossObstacleCost] WARNING: querying signed distance out of range, "
     //    "assume zero obstacle cost." << std::endl;

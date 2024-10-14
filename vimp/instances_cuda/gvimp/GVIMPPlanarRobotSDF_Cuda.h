@@ -135,11 +135,9 @@ public:
             // initial velocity: must have initial velocity for the fitst state??
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
-            
 
-            gvi::MinimumAccGP_integral lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
+            gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
             // gvi::QuadGP lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
-
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 

@@ -3,11 +3,14 @@
 close all
 clear
 
+% addpath("../../../matlab_helpers/tools")    
+addpath("../../../matlab_helpers/tools/gtsam_toolbox/")   
 addpath("/usr/local/gtsam_toolbox")
+% addpath("/usr/local/lib")
 import gtsam.*
 import gpmp2.*
 
-addpath("../../tools")                      
+                  
 %% dataset
 dataset = generate3Ddataset_1('3dPRMap2');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
@@ -19,8 +22,7 @@ disp('calculating signed distance field ...');
 field = signedDistanceField3D(dataset.map, dataset.cell_size);
 disp('calculating signed distance field done');
 
-sdf = SignedDistanceField(origin_point3, cell_size, size(field, 1), ...
-    size(field, 2), size(field, 3));
+sdf = SignedDistanceField(origin_point3, cell_size, size(field, 1), size(field, 2), size(field, 3));
 for z = 1:size(field, 3)
     sdf.initFieldData(z-1, field(:,:,z)');
 end

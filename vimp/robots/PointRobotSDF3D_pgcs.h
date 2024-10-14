@@ -30,6 +30,8 @@ using Base = RobotSDFBase<PRModel, SDF, pRSDF>;
 class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
     public:
         virtual ~PointRobot3DSDFExample(){}
+
+        PointRobot3DSDFExample(){}
         
         PointRobot3DSDFExample(double epsilon, 
                                double radius, 

@@ -44,6 +44,7 @@ public:
 
         std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
+        // return 0;
     }
 
     void run_optimization(const GVIMPParams& params, bool verbose=true){
@@ -191,6 +192,17 @@ public:
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
+
+        // Timer timer;
+        // timer.start();
+
+        // std::cout << "========== Optimization Start: ==========" << std::endl;
+
+        // for (int i=0; i<50; i++){
+        //     optimizer.time_test();
+        // }
+
+        // std::cout << "========== Optimization time sparse GH: " << timer.end_sec() / 50.0 << std::endl;
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 

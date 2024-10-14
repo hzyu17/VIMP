@@ -39,6 +39,7 @@ gtsam::Vector ObstacleSDFFactor<ROBOT>::evaluateError(
 
     const double total_eps = robot_.sphere_radius(sph_idx) + epsilon_;
 
+    // The problem comes with here when passing the pose into hingeloss function
     if (H1) {
       Matrix13 Jerr_point;
       err(sph_idx) = hingeLossObstacleCost(sph_centers[sph_idx], sdf_, total_eps, Jerr_point);

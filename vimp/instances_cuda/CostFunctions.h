@@ -1,9 +1,11 @@
-#include "GaussianVI/gp/cost_functions_integral.h"
+#include "GaussianVI/gp/cost_functions.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
 
 #include "3rdparty/rapidxml-1.13/rapidxml.hpp"
 #include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
+
+#pragma once
 
 /**
  * Obstacle factor: planar case

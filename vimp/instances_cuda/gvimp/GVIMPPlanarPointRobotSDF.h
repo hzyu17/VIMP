@@ -14,7 +14,7 @@
 #include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
 #include "instances_cuda/CostFunctions.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_No_Template.h"
-#include "GaussianVI/ngd/NGD-GH.h"
+#include "GaussianVI/ngd/NGD-GH-Cuda.h"
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
 
@@ -39,6 +39,7 @@ public:
 
         std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
+        // return 0;
     }
 
     void run_optimization(const GVIMPParams& params, bool verbose=true){
@@ -85,9 +86,7 @@ public:
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
         _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, nodes_weights_map});
-        _cuda_ptr = std::make_shared<CudaOperation>(CudaOperation{params.sig_obs(), params.eps_sdf(), params.radius()});
-
-        _cuda_ptr -> Cuda_init(_gh_ptr -> weights());
+        _cuda_ptr = std::make_shared<CudaOperation_PlanarPR>(CudaOperation_PlanarPR{params.sig_obs(), params.eps_sdf(), params.radius()});
         
         // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
@@ -100,31 +99,6 @@ public:
         /// prior 
         double delt_t = params.total_time() / N;
 
-        /// System Matrix of LTV system
-        MatrixXd matrix_A (dim_state, dim_state);
-        MatrixXd matrix_b (dim_state, dim_conf);
-        matrix_A.setZero();
-        matrix_b.setZero();
-
-        matrix_A << MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Identity(dim_conf, dim_conf), 
-                    MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Zero(dim_conf, dim_conf);
-        matrix_b << MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Identity(dim_conf, dim_conf);
-        std::vector<MatrixXd> hA(n_states);
-        std::vector<MatrixXd> hb(n_states + 1);
-        std::vector<MatrixXd> Phi_vec(n_states + 1);
-
-        MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
-        Phi_vec[0] = Phi;
-        hb[0] = matrix_b;
-        
-
-        for (int i = 0; i < n_states; i++){
-            hA[i] = matrix_A;
-            hb[i + 1] = matrix_b;
-            Phi = Phi + hA[i] * Phi * delt_t;
-            Phi_vec[i + 1] = Phi;
-        }
-
         for (int i = 0; i < n_states; i++) {
 
             // initial state
@@ -133,11 +107,8 @@ public:
             // initial velocity: must have initial velocity for the fitst state??
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
-            
 
-            gvi::MinimumAccGP_integral lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
-            // gvi::QuadGP lin_gp{Qc, i, delt_t, start_theta, n_states, hA, hb, Phi_vec};
-
+            gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -212,11 +183,29 @@ public:
 
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
+        optimizer.classify_factors();
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
 
-        _cuda_ptr -> Cuda_free();
+        // _cuda_ptr -> Cuda_free();
+
+
+        // std::cout << "========== Optimization Start: ==========" << std::endl;
+
+        // _cuda_ptr -> Cuda_init(_gh_ptr -> weights());
+
+        // Timer timer1;
+        // timer1.start();
+
+        // for (int i=0; i<50; i++){
+        //     // std::cout << "Now it's iter " << i << std::endl;
+        //     auto result_cuda = optimizer.factor_cost_vector_cuda();
+        // }
+
+        // std::cout << "========== Optimization time sparse GH: " << timer1.end_sec() / 50.0 << std::endl;
+
+        // _cuda_ptr -> Cuda_free();
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
@@ -233,7 +222,7 @@ protected:
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     gvi::EigenWrapper _ei;
     std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase_Cuda>> _p_opt;
-    std::shared_ptr<CudaOperation> _cuda_ptr;
+    std::shared_ptr<CudaOperation_PlanarPR> _cuda_ptr;
     std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
