@@ -14,7 +14,7 @@
 #include "GaussianVI/gp/factorized_opts_LTV.h"
 #include "instances_cuda/CostFunctions_LTV.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Quadrotor.h"
-#include "GaussianVI/ngd/NGD-GH.h"
+#include "GaussianVI/ngd/NGD-GH-Cuda.h"
 #include <boost/numeric/odeint.hpp>
 #include <boost/math/quadrature/trapezoidal.hpp>
 
@@ -40,7 +40,7 @@ public:
         Timer timer;
         timer.start();
 
-        int n_iter = 3;
+        int n_iter = 1;
         int n_states = params.nt();
         const int dim_conf = 3;
 
@@ -113,7 +113,6 @@ public:
 
         std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, nodes_weights_map});
         std::shared_ptr<CudaOperation_Quad> cuda_ptr = std::make_shared<CudaOperation_Quad>(CudaOperation_Quad{params.sig_obs(), params.eps_sdf(), params.radius()});
-        cuda_ptr -> Cuda_init(gh_ptr -> weights());
         
         // Obtain the parameters from params
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
@@ -208,7 +207,6 @@ public:
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
                                                                         nodes_weights_map, 
-                                                                        gh_ptr,
                                                                         cuda_ptr});    
             }
         }
@@ -232,11 +230,12 @@ public:
 
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
+        optimizer.classify_factors();
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
 
-        cuda_ptr -> Cuda_free();
+        // cuda_ptr -> Cuda_free();
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 

@@ -1,16 +1,16 @@
 <Commons>
-    <total_time>20</total_time>
+    <total_time>12</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
-    <sig_obs>0.15</sig_obs>
+    <sig_obs>0.25</sig_obs>
     <map_name>single_obs</map_name> 
     <eps_sdf>1.0</eps_sdf>
     <radius>0.4</radius>
     <step_size>0.45</step_size>
     <init_precision_factor>1000.0</init_precision_factor>
     <boundary_penalties>2000.0</boundary_penalties>
-    <temperature>50.0</temperature>
+    <temperature>40.0</temperature>
     <high_temperature>80.0</high_temperature>  <!-- Make it higher -->
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>30</low_temp_iterations>
