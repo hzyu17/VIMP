@@ -235,8 +235,6 @@ public:
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
 
-        // cuda_ptr -> Cuda_free();
-
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
         return _last_iteration_mean_precision;
@@ -263,17 +261,6 @@ public:
             integrate_adaptive(stepper, system_ode_bound, x_i, 0.0, end_time, _delta_t/5);
             VectorXd x_result = Eigen::Map<const VectorXd>(x_i.data(), _dim_state);
             mean_target[i] = x_result;
-
-
-            // VectorXd mu_t = _Phi_results[i] * start_theta + (_Phi_results[i] * ha[0] + MatrixXd::Identity(_dim_state, _dim_state) * ha[4*i]) * _delta_t / 2;
-            // for (int j = 1; j < i; j++){
-            //     mu_t += _Phi_results[i] * _Phi_results[j].inverse() * ha[4*j] *_delta_t;
-            // }
-            // mean_target[i] = mu_t;
-
-
-            // MatrixXd Phi = (hA[4*i] * _delta_t).exp();
-            // mean_target[i+1] = Phi * mean_target[i] + (Phi * ha[4*i] + ha[4*(i+1)]) / 2 * delta_t;
         }
         return mean_target;
     }
