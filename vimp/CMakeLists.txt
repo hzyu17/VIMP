@@ -73,26 +73,26 @@ target_link_libraries(PointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_
                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 
-add_executable(3DPointRobot src/gvimp/gvi_3DPointRobot_spgh.cpp)
-set_target_properties(3DPointRobot PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(3DPointRobot PROPERTIES
-                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                        )   
-target_include_directories(3DPointRobot PRIVATE ${Matlab_INCLUDE_DIRS})
-target_link_libraries(3DPointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                      ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                      ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
+# add_executable(3DPointRobot src/gvimp/gvi_3DPointRobot_spgh.cpp)
+# set_target_properties(3DPointRobot PROPERTIES LINKER_LANGUAGE CXX)
+# set_target_properties(3DPointRobot PROPERTIES
+#                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+#                         )   
+# target_include_directories(3DPointRobot PRIVATE ${Matlab_INCLUDE_DIRS})
+# target_link_libraries(3DPointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+#                       ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+#                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 
-add_executable(3DPointRobot_Cuda src/gvimp/gvi_3DPointRobot_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
-set_target_properties(3DPointRobot_Cuda PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(3DPointRobot_Cuda PROPERTIES
-                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                        )   
-target_include_directories(3DPointRobot_Cuda PRIVATE ${Matlab_INCLUDE_DIRS})
-target_link_libraries(3DPointRobot_Cuda ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                      ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                      ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
+# add_executable(3DPointRobot_Cuda src/gvimp/gvi_3DPointRobot_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
+# set_target_properties(3DPointRobot_Cuda PROPERTIES LINKER_LANGUAGE CXX)
+# set_target_properties(3DPointRobot_Cuda PROPERTIES
+#                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+#                         )   
+# target_include_directories(3DPointRobot_Cuda PRIVATE ${Matlab_INCLUDE_DIRS})
+# target_link_libraries(3DPointRobot_Cuda ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+#                       ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+#                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 
 # # Add all the source files in src/pgcs as a separate executable

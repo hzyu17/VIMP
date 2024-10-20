@@ -118,37 +118,37 @@ public:
                 std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
-                    // vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
-                    //                                             dim_state, 
-                    //                                             gvi::cost_linear_gp, 
-                    //                                             lin_gp, 
-                    //                                             n_states, 
-                    //                                             i-1, 
-                    //                                             params.temperature(), 
-                    //                                             params.high_temperature()});
+                    vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
+                                                                dim_state, 
+                                                                gvi::cost_linear_gp, 
+                                                                lin_gp, 
+                                                                n_states, 
+                                                                i-1, 
+                                                                params.temperature(), 
+                                                                params.high_temperature()});
                 }
 
                 // Fixed gp factor
-                // gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
-                // vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
-                //                                           dim_state, 
-                //                                           gvi::cost_fixed_gp, 
-                //                                           fixed_gp, 
-                //                                           n_states, 
-                //                                           i,
-                //                                           params.temperature(), 
-                //                                           params.high_temperature()});
+                gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
+                vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
+                                                          dim_state, 
+                                                          gvi::cost_fixed_gp, 
+                                                          fixed_gp, 
+                                                          n_states, 
+                                                          i,
+                                                          params.temperature(), 
+                                                          params.high_temperature()});
 
             }else{
                 // linear gp factors
-                // vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
-                //                                             dim_state, 
-                //                                             gvi::cost_linear_gp, 
-                //                                             lin_gp, 
-                //                                             n_states, 
-                //                                             i-1, 
-                //                                             params.temperature(), 
-                //                                             params.high_temperature()});
+                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
+                                                            dim_state, 
+                                                            gvi::cost_linear_gp, 
+                                                            lin_gp, 
+                                                            n_states, 
+                                                            i-1, 
+                                                            params.temperature(), 
+                                                            params.high_temperature()});
 
                 // collision factor (Runs in GPU)  //Robot -> 
                 vec_factors.emplace_back(new NGDFactorizedBaseGH_3dpR{dim_conf, 

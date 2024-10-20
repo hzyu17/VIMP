@@ -65,8 +65,8 @@ set(gcf,'position',[x0,y0,width,height])
 %                 13, 10, 0, 0;
 %                 -13, 8, 0, 0];
 
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i = 1:1 % 4 experiments  
+tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+for i = 1:4 % 4 experiments  
     nexttile
     if is_sparse
         prefix = ["case" + num2str(i)+"/"];

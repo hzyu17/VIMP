@@ -21,11 +21,11 @@ using namespace vimp;
 
 int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    int nx = 6, nu = 2, num_exp = 1; // change the num_exp here
+    int nx = 6, nu = 2, num_exp = 4; // change the num_exp here
     GVIMPParams params;
     // no experiment argument, run the default scripts
     if (argc == 1){
-        num_exp = 1;
+        num_exp = 4;
         std::string config_file{source_root+"/configs/vimp/sparse_gh/planar_quad_single_obs.xml"};
         GVIMPRunner<GVIMPPlanarRobotSDF_Quadrotor> runner(nx, nu, num_exp, config_file);
         runner.read_config(params); // Write all the parameters into the params
