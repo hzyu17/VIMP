@@ -39,7 +39,6 @@ public:
 
         std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
-        // return 0;
     }
 
     void run_optimization(const GVIMPParams& params, bool verbose=true){
@@ -67,6 +66,8 @@ public:
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
 
+        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
+
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
@@ -85,7 +86,7 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
-        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, nodes_weights_map});
+        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         _cuda_ptr = std::make_shared<CudaOperation_PlanarPR>(CudaOperation_PlanarPR{params.sig_obs(), params.eps_sdf(), params.radius()});
         
         // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
@@ -159,7 +160,7 @@ public:
                                                                         params.radius(), 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
-                                                                        nodes_weights_map, 
+                                                                        _nodes_weights_map_pointer, 
                                                                         _cuda_ptr});    
             }
         }
@@ -183,29 +184,12 @@ public:
 
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
+        optimizer.set_alpha(params.alpha());
+        
         optimizer.classify_factors();
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
-
-        // _cuda_ptr -> Cuda_free();
-
-
-        // std::cout << "========== Optimization Start: ==========" << std::endl;
-
-        // _cuda_ptr -> Cuda_init(_gh_ptr -> weights());
-
-        // Timer timer1;
-        // timer1.start();
-
-        // for (int i=0; i<50; i++){
-        //     // std::cout << "Now it's iter " << i << std::endl;
-        //     auto result_cuda = optimizer.factor_cost_vector_cuda();
-        // }
-
-        // std::cout << "========== Optimization time sparse GH: " << timer1.end_sec() / 50.0 << std::endl;
-
-        // _cuda_ptr -> Cuda_free();
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
@@ -226,6 +210,8 @@ protected:
     std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
+
+    std::shared_ptr<QuadratureWeightsMap> _nodes_weights_map_pointer;
 
 };
 

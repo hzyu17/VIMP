@@ -41,7 +41,7 @@ for i = 1:1 % 4 experiments
     niters = find_niters(means);
     n_states = floor(ttl_dim / dim_state);
 
-    output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
+    output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
 
 end
 
@@ -100,3 +100,5 @@ for i = 1:4 % 4 experiments
     % axis off
     
 end
+
+% exportgraphics(gcf, strcat('Trajectory2_', num2str(niters), '_150_point.pdf'), 'ContentType', 'image');

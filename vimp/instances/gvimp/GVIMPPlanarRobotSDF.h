@@ -44,7 +44,6 @@ public:
 
         std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
-        // return 0;
     }
 
     void run_optimization(const GVIMPParams& params, bool verbose=true){
@@ -71,6 +70,8 @@ public:
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
+
+        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
 
         /// parameters
         int n_states = params.nt();
@@ -166,7 +167,7 @@ public:
                                                                         i, 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
-                                                                        nodes_weights_map});    
+                                                                        _nodes_weights_map_pointer});    
             }
         }
 
@@ -187,22 +188,10 @@ public:
 
         optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
-        // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
-
-        // Timer timer;
-        // timer.start();
-
-        // std::cout << "========== Optimization Start: ==========" << std::endl;
-
-        // for (int i=0; i<50; i++){
-        //     optimizer.time_test();
-        // }
-
-        // std::cout << "========== Optimization time sparse GH: " << timer.end_sec() / 50.0 << std::endl;
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
@@ -222,6 +211,8 @@ protected:
     std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase>> _p_opt;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
+
+    std::shared_ptr<QuadratureWeightsMap> _nodes_weights_map_pointer;
 
 };
 

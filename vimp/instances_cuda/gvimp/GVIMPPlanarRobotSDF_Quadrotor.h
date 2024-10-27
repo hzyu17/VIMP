@@ -43,12 +43,37 @@ public:
         int n_iter = 1;
         int n_states = params.nt();
         const int dim_conf = 3;
+        double delt_t = params.total_time() / (n_states - 1);
 
         VectorXd start_theta{ params.m0() };
         VectorXd goal_theta{ params.mT() };
+
+        // VectorXd inter_theta(6);
+        // inter_theta << 30, 5, -0.19634954084, 0.5, 1, 0.005;
+
         MatrixXd trajectory(n_states, 2*dim_conf);
+        MatrixXd new_trajectory(n_states, 2*dim_conf);
+        MatrixXd traj_diff(n_states, dim_conf);
+        new_trajectory.setZero();
+        traj_diff.setZero();
 
         VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
+
+        // for (int i = 0; i < n_states; i++) {
+        //     VectorXd theta(6);
+        //     theta.setZero();
+        //     if (i < n_states / 2){
+        //         theta = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
+        //         // avg_vel = (inter_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / ((n_states / 2 - 1) * delt_t);
+        //     }
+        //     else{
+        //         theta = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
+        //         // avg_vel = (goal_theta.segment(0, dim_conf) - inter_theta.segment(0, dim_conf)) / ((n_states / 2) * delt_t);
+        //     }
+
+        //     theta.segment(dim_conf, dim_conf) = avg_vel;
+        //     trajectory.row(i) = theta.transpose();
+        // }
 
         for (int i = 0; i < n_states; i++) {
             VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / (n_states - 1)};
@@ -59,7 +84,15 @@ public:
         for (int i = 0; i < n_iter; i++){
             _last_iteration_mean_precision = run_optimization_return(params, trajectory, verbose);
             VectorXd mean = std::get<0>(_last_iteration_mean_precision);
-            trajectory = Eigen::Map<Eigen::MatrixXd>(mean.data(), 2*dim_conf, n_states).transpose();
+            new_trajectory = Eigen::Map<Eigen::MatrixXd>(mean.data(), 2*dim_conf, n_states).transpose();
+            
+            double difference = 0;
+            for (int j = 0; j < n_states; j++)
+                difference += (new_trajectory.row(j).segment(0,3) - trajectory.row(j).segment(0,3)).norm();
+
+            std::cout << "Norm of difference between two trajectories = " << difference << std::endl;
+
+            trajectory = new_trajectory;
         }
         
 
@@ -74,7 +107,6 @@ public:
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, const MatrixXd& traj, bool verbose=true){
         // Get the result of each experiment
 
-        // Read the sparse grid GH quadrature weights and nodes
         QuadratureWeightsMap nodes_weights_map;
         try {
             std::ifstream ifs(GH_map_file, std::ios::binary);
@@ -92,6 +124,8 @@ public:
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
+
+        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
 
         /// parameters
         int n_states = params.nt();
@@ -111,7 +145,7 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
-        std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, nodes_weights_map});
+        std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         std::shared_ptr<CudaOperation_Quad> cuda_ptr = std::make_shared<CudaOperation_Quad>(CudaOperation_Quad{params.sig_obs(), params.eps_sdf(), params.radius()});
         
         // Obtain the parameters from params
@@ -206,7 +240,7 @@ public:
                                                                         params.radius(), 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
-                                                                        nodes_weights_map, 
+                                                                        _nodes_weights_map_pointer, 
                                                                         cuda_ptr});    
             }
         }
@@ -230,6 +264,8 @@ public:
 
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
+        optimizer.set_alpha(params.alpha());
+        
         optimizer.classify_factors();
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
@@ -245,7 +281,6 @@ public:
         return _last_iteration_mean_precision;
     }
 
-    
 
     std::vector<VectorXd> get_target_mean(std::vector<VectorXd> ha, VectorXd start_theta){
         std::vector<VectorXd> mean_target(_n_states);
@@ -337,6 +372,8 @@ protected:
 
     std::vector<MatrixXd> _A_vec, _Phi_results;
     std::vector<VectorXd> _a_vec;
+
+    std::shared_ptr<QuadratureWeightsMap> _nodes_weights_map_pointer;
 
 };
 

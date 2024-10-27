@@ -24,7 +24,8 @@ public:
             double sigma_obs, double eps_sdf, double radius,
             double step_size, int num_iter, double stop_err,
             double backtracking_ratio, int max_n_backtracking, 
-            std::string map_name="map0", std::string sdf_file=""):
+            std::string map_name="map0", std::string sdf_file="", 
+            double alpha = 1):
             _nx(nx),
             _nu(nu),
             _total_time(total_time),
@@ -41,7 +42,8 @@ public:
             _mT(VectorXd::Zero(nx)),
             _Sig0(MatrixXd::Zero(nx, nx)),
             _SigT(MatrixXd::Zero(nx, nx)),
-            _map_name(map_name)
+            _map_name(map_name),
+            _alpha(alpha)
             {}
 
 public:
@@ -96,7 +98,7 @@ public:
     virtual inline void print_params() = 0; 
 
 protected:
-    double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio;
+    double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio, _alpha;
     int _nt, _nx, _nu;
     double _eps_sdf, _radius, _sig_obs;
 
@@ -134,7 +136,8 @@ public:
                 double stop_err,
                 int max_n_backtracking,
                 std::string map_name="map0",
-                std::string sdf_file=""
+                std::string sdf_file="", 
+                double alpha = 1
                 ):
                 Params(nx,
                         nu,
@@ -149,14 +152,16 @@ public:
                         1,
                         max_n_backtracking,
                         map_name,
-                        sdf_file),
+                        sdf_file,
+                        alpha),
                 _coeff_Qc(coeff_Qc),
                 _initial_precision_factor(initial_precision_factor),
                 _boundary_penalties(boundary_penalties),
                 _temperature(temperature),
                 _high_temperature(high_temperature),
                 _max_iter_lowtemp(low_temp_iterations),
-                _GH_degree(GH_degree)
+                _GH_degree(GH_degree),
+                _alpha(alpha)
                 { }
 
     // getters
@@ -166,6 +171,7 @@ public:
     inline double boundary_penalties() const { return _boundary_penalties; }
     inline double temperature() const { return _temperature; }
     inline double high_temperature() const { return _high_temperature; }
+    inline double alpha() const { return _alpha; }
     inline int max_iter_lowtemp() const { return _max_iter_lowtemp; }
     inline int GH_degree() const {return _GH_degree; }
     
@@ -192,6 +198,7 @@ public:
         << " initial_precision_factor:  " << this->initial_precision_factor() << std::endl
         << " boundary_penalties:        " << this->boundary_penalties() << std::endl 
         << " step size:                 " << this->step_size() << std::endl 
+        << " alpha:                     " << this->alpha() << std::endl 
         << " max iterations:            " << this->max_iter() << std::endl 
         << " max iterations lowtemp:    " << this->max_iter_lowtemp() << std::endl 
         << " Backtrack ratio:           " << this->backtrack_ratio() << std::endl 
@@ -205,7 +212,7 @@ public:
 
 protected:    
     int _max_iter_lowtemp;
-    double _coeff_Qc, _initial_precision_factor, _boundary_penalties, _temperature, _high_temperature;
+    double _coeff_Qc, _initial_precision_factor, _boundary_penalties, _temperature, _high_temperature, _alpha;
     int _GH_degree;
 
 };

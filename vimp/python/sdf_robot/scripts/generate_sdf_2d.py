@@ -120,6 +120,18 @@ def generate_map(map_name, save_map=False):
         m = map2d(origin, cell_size, width, height)
         # obstacle range: (x: [10.0, 18.0]; y: [10.0, 16.0])
         m.add_box_xy(10.0, 12.0, [6.0, 8.0])
+    elif map_name == "MultiObstacleMap":
+        origin = np.array([-20.0, -20.0], dtype=np.float64)
+        cell_size = 0.1
+        width = 700
+        height = 700
+
+        # map range: (x: [-20.0, 60.0]; y: [-20.0, 60.0])
+        m = map2d(origin, cell_size, width, height)
+        # obstacle range: (x: [10.0, 18.0]; y: [10.0, 16.0])
+        m.add_box_xy(3.0, 10.0, [6.0, 10.0])
+        m.add_box_xy(15.0, 10.0, [6.0, 10.0])
+
         
     if save_map:
         m.save_map(map_dir + '/' + map_name + '.csv', 

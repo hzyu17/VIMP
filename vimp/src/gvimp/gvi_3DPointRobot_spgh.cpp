@@ -21,11 +21,11 @@ using namespace vimp;
 
 int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    int nx = 6, nu = 3, num_exp = 4;
+    int nx = 6, nu = 3, num_exp = 1;
     GVIMPParams params;
     // no experiment argument, run the default scripts
     if (argc == 1){
-        num_exp = 4;
+        num_exp = 1;
         std::string config_file{source_root+"/configs/vimp/sparse_gh/3D_pR.xml"};
         GVIMPRunner<GVIMP3DPRSDF> runner(nx, nu, num_exp, config_file);
         runner.read_config(params);

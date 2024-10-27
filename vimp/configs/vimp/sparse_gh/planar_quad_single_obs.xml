@@ -8,6 +8,7 @@
     <eps_sdf>1.0</eps_sdf>
     <radius>0.4</radius>
     <step_size>0.45</step_size>
+    <alpha>0.99</alpha>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>2000.0</boundary_penalties>
     <temperature>90.0</temperature>

@@ -8,13 +8,14 @@
     <eps_sdf>0.7</eps_sdf>
     <radius>0.5</radius>
     <step_size>0.45</step_size>
+    <alpha>1.0</alpha>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>
     <high_temperature>30.0</high_temperature>
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>25</low_temp_iterations>
-    <max_iterations>50</max_iterations>
+    <max_iterations>20</max_iterations>
     <max_n_backtracking>10</max_n_backtracking>
 
 </Commons>

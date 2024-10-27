@@ -33,18 +33,12 @@ public:
     GVIMP3DPointRobotSDF(GVIMPParams& params){}
 
     double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
-        // Timer timer;
-        // timer.start();
+
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
 
-        // std::cout << "========== Optimization time: " << std::endl;
-        // return timer.end_sec();
         return 0;
     }
 
-    // void run_optimization(const GVIMPParams& params, bool verbose=true){
-    //     _last_iteration_mean_precision = run_optimization_return(params, verbose);
-    // }
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
         
@@ -67,6 +61,8 @@ public:
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
 
+        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
+
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
@@ -85,10 +81,8 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
-        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, nodes_weights_map});
+        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         _cuda_ptr = std::make_shared<CudaOperation_3dpR>(CudaOperation_3dpR{params.sig_obs(), params.eps_sdf(), params.radius()});
-
-        // _cuda_ptr -> Cuda_init(_gh_ptr -> weights());
         
         // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
@@ -101,7 +95,7 @@ public:
         /// prior 
         double delt_t = params.total_time() / N;
 
-        for (int i = 0; i < n_states; i++) {
+        for (int i = 1; i < n_states-1; i++) {
 
             // initial state
             VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
@@ -110,45 +104,43 @@ public:
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
 
-            gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
+            // // fixed start and goal priors
+            // // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
+            // if (i==0 || i==n_states-1){
+            //     std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
+            //     // lin GP factor for the first and the last support state
+            //     if (i == n_states-1){
+            //         vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
+            //                                                     dim_state, 
+            //                                                     gvi::cost_linear_gp, 
+            //                                                     lin_gp, 
+            //                                                     n_states, 
+            //                                                     i-1, 
+            //                                                     params.temperature(), 
+            //                                                     params.high_temperature()});
+            //     }
 
-            // fixed start and goal priors
-            // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
-            if (i==0 || i==n_states-1){
-                std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
-                // lin GP factor for the first and the last support state
-                if (i == n_states-1){
-                    vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
-                                                                dim_state, 
-                                                                gvi::cost_linear_gp, 
-                                                                lin_gp, 
-                                                                n_states, 
-                                                                i-1, 
-                                                                params.temperature(), 
-                                                                params.high_temperature()});
-                }
+            //     // Fixed gp factor
+            //     gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
+            //     vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
+            //                                               dim_state, 
+            //                                               gvi::cost_fixed_gp, 
+            //                                               fixed_gp, 
+            //                                               n_states, 
+            //                                               i,
+            //                                               params.temperature(), 
+            //                                               params.high_temperature()});
 
-                // Fixed gp factor
-                gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
-                vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
-                                                          dim_state, 
-                                                          gvi::cost_fixed_gp, 
-                                                          fixed_gp, 
-                                                          n_states, 
-                                                          i,
-                                                          params.temperature(), 
-                                                          params.high_temperature()});
-
-            }else{
-                // linear gp factors
-                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
-                                                            dim_state, 
-                                                            gvi::cost_linear_gp, 
-                                                            lin_gp, 
-                                                            n_states, 
-                                                            i-1, 
-                                                            params.temperature(), 
-                                                            params.high_temperature()});
+            // }else{
+            //     // linear gp factors
+            //     vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
+            //                                                 dim_state, 
+            //                                                 gvi::cost_linear_gp, 
+            //                                                 lin_gp, 
+            //                                                 n_states, 
+            //                                                 i-1, 
+            //                                                 params.temperature(), 
+            //                                                 params.high_temperature()});
 
                 // collision factor (Runs in GPU)  //Robot -> 
                 vec_factors.emplace_back(new NGDFactorizedBaseGH_3dpR{dim_conf, 
@@ -161,9 +153,10 @@ public:
                                                                         params.radius(), 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
-                                                                        nodes_weights_map, 
+                                                                        _nodes_weights_map_pointer, 
                                                                         _cuda_ptr});    
-            }
+
+            // }
         }
 
         /// The joint optimizer
@@ -187,25 +180,11 @@ public:
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.classify_factors();
 
+        std::cout << std::endl << "% " << n_states << std::endl;
+        optimizer.time_test();
+
         // std::cout << "---------------- Start the optimization ----------------" << std::endl;
         // optimizer.optimize(verbose);
-
-        // _cuda_ptr -> Cuda_free();
-
-        _cuda_ptr -> Cuda_init(_gh_ptr -> weights());
-
-        Timer timer;
-        timer.start();
-
-        std::cout << "========== Optimization Start: ==========" << std::endl;
-
-        for (int i=0; i<50; i++){
-            auto result_cuda = optimizer.factor_cost_vector_cuda();
-        }
-
-        std::cout << "========== Optimization time sparse GH: " << timer.end_sec() / 50.0 << std::endl;
-
-        _cuda_ptr -> Cuda_free();
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
@@ -226,6 +205,8 @@ protected:
     std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
+
+    std::shared_ptr<QuadratureWeightsMap> _nodes_weights_map_pointer;
 
 };
 
