@@ -12,7 +12,7 @@
 #include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
 #include "GaussianVI/gp/factorized_opts_LTV.h"
-#include "instances_cuda/CostFunctions_LTV.h"
+#include "GaussianVI/gp/cost_functions_LTV.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Quadrotor.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 #include <boost/numeric/odeint.hpp>
@@ -27,14 +27,14 @@ namespace vimp{
 using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 using GH = SparseGaussHermite_Cuda<GHFunction>;
 
-class GVIMPPlanarRobotSDF_Quadrotor{
+class GVIMPPlanarQuadrotorSDF{
 
 public:
-    virtual ~GVIMPPlanarRobotSDF_Quadrotor(){}
+    virtual ~GVIMPPlanarQuadrotorSDF(){}
 
-    GVIMPPlanarRobotSDF_Quadrotor(){}
+    GVIMPPlanarQuadrotorSDF(){}
 
-    GVIMPPlanarRobotSDF_Quadrotor(GVIMPParams& params){}
+    GVIMPPlanarQuadrotorSDF(GVIMPParams& params){}
 
     double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
         Timer timer;
@@ -107,6 +107,9 @@ public:
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, const MatrixXd& traj, bool verbose=true){
         // Get the result of each experiment
 
+        Timer timer;
+        timer.start();
+
         QuadratureWeightsMap nodes_weights_map;
         try {
             std::ifstream ifs(GH_map_file, std::ios::binary);
@@ -126,6 +129,8 @@ public:
         }
 
         _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
+
+        std::cout << "Map Loading time: " << timer.end_sec() * 1000 << "ms" << std::endl;
 
         /// parameters
         int n_states = params.nt();
@@ -179,9 +184,6 @@ public:
         _delta_t = delt_t;
         _A_vec = hA;
         _a_vec = ha;
-    
-        // The targrt mean obtained in this way is not stable
-        // target_mean = get_target_mean(ha, traj.row(0));
 
         // create each factor
         for (int i = 0; i < n_states; i++) {
@@ -287,7 +289,7 @@ public:
         mean_target[0] = start_theta;
 
         runge_kutta_dopri5<std::vector<double>> stepper;
-        auto system_ode_bound = std::bind(&vimp::GVIMPPlanarRobotSDF_Quadrotor::system_ode_target, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+        auto system_ode_bound = std::bind(&vimp::GVIMPPlanarQuadrotorSDF::system_ode_target, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
         #pragma omp parallel for
         for (int i = 1; i < _n_states; i++){
@@ -334,7 +336,7 @@ public:
 
     void get_Phi(){
         runge_kutta_dopri5<std::vector<double>> stepper;
-        auto system_ode_bound = std::bind(&vimp::GVIMPPlanarRobotSDF_Quadrotor::system_ode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+        auto system_ode_bound = std::bind(&vimp::GVIMPPlanarQuadrotorSDF::system_ode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
         for (int i = 0; i < _n_states; i++) {
             double end_time = _delta_t * i;

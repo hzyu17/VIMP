@@ -13,7 +13,7 @@
 #include "helpers/ExperimentParams.h"
 #include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
 #include "instances_cuda/CostFunctions.h"
-#include "GaussianVI/ngd/NGDFactorizedBaseGH_No_Template.h"
+#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
@@ -107,7 +107,7 @@ public:
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i*dim_state, dim_state) = theta_i;
 
-            NGDFactorizedBaseGH_No_Template* factor = new NGDFactorizedBaseGH_No_Template{dim_conf, 
+            NGDFactorizedBaseGH_Cuda* factor = new NGDFactorizedBaseGH_Cuda{dim_conf, 
                                                                                         dim_state, 
                                                                                         params.GH_degree(),
                                                                                         n_states, 

@@ -31,7 +31,7 @@ if __name__ == '__main__':
     i = 4
     
     # case_dirs = [os.path.join(result_dir, f'case{i+1}') for i in range(4)]
-    case_dir = os.path.join(result_dir, 'case2')
+    case_dir = os.path.join(result_dir, 'case3')
 
     # fig, axes = plt.subplots(2, 2, frameon=False)
 
@@ -45,18 +45,18 @@ if __name__ == '__main__':
 
     fig, ax = planarmap.draw_map(fig, ax, plot=False)
     fig, ax = draw_pquad_trj_cov_2d(mean, cov, L, H, n_balls, fig, ax, 1, False, False)
-    ax.set_xlim(-5, 35)
-    ax.set_ylim(-5, 40)
+    ax.set_xlim(-5, 25)
+    ax.set_ylim(-5, 45)
 
-    ax.axis('off') 
-    ax.set_title(r'Iteration 5, $\hat{T} = 90$', fontsize=16)
-    # ax.tick_params(axis='both', which='major', labelsize=16)
+    ax.tick_params(axis='both', which='major', labelsize=16)
+    ax.legend(loc='best', prop={'family': 'serif', 'size': 18})
 
-    # ax.legend(loc='best', prop={'family': 'serif', 'size': 18})
+    # ax.axis('off') 
+    # ax.set_title(r'Iteration 5, $\hat{T} = 90$', fontsize=16)
     
     plt.tight_layout() 
 
-    # fig.savefig(case_dir+f'/Trajectory2_5_90.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+    # fig.savefig(case_dir+f'/Trajectory_3.pdf', format='pdf', dpi=2000, bbox_inches='tight')
 
     plt.show()  
 

@@ -62,7 +62,7 @@ target_link_libraries(PointRobot ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_
 #                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 
-add_executable(PointRobot_Cuda src/gvimp/gvi_PointRobot_spgh_separate.cpp GaussianVI/helpers/CudaOperation.cu)
+add_executable(PointRobot_Cuda src/gvimp/cuda/gvi_PointRobot_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
 set_target_properties(PointRobot_Cuda PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(PointRobot_Cuda PROPERTIES
                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
@@ -73,7 +73,7 @@ target_link_libraries(PointRobot_Cuda ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${G
                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
         
-# add_executable(PointRobot_Cuda_Time_Test src/gvimp/gvi_PointRobot_collision_time_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
+# add_executable(PointRobot_Cuda_Time_Test src/gvimp/cuda/gvi_PointRobot_collision_time_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
 # set_target_properties(PointRobot_Cuda_Time_Test PROPERTIES LINKER_LANGUAGE CXX)
 # set_target_properties(PointRobot_Cuda_Time_Test PROPERTIES
 #                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
@@ -84,7 +84,7 @@ target_link_libraries(PointRobot_Cuda ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${G
 #                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
                         
-add_executable(Quadrotor_Cuda src/gvimp/gvi_Quadrotor_spgh.cpp GaussianVI/helpers/CudaOperation.cu)
+add_executable(Quadrotor_Cuda src/gvimp/cuda/gvi_Quadrotor_spgh.cpp GaussianVI/helpers/CudaOperation.cu)
 set_target_properties(Quadrotor_Cuda PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(Quadrotor_Cuda PROPERTIES
                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
@@ -106,7 +106,7 @@ target_link_libraries(Quadrotor_Cuda ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GP
 #                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 
-# add_executable(3DPointRobot_Cuda_Time_Test src/gvimp/gvi_3DPointRobot_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
+# add_executable(3DPointRobot_Cuda_Time_Test src/gvimp/cuda/gvi_3DPointRobot_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
 # set_target_properties(3DPointRobot_Cuda_Time_Test PROPERTIES LINKER_LANGUAGE CXX)
 # set_target_properties(3DPointRobot_Cuda_Time_Test PROPERTIES
 #                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
