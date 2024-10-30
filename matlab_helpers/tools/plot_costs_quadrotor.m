@@ -49,7 +49,6 @@ ylabel('$-\log(p(x_k))$','Interpreter', 'latex', 'FontSize', 18);
 xlim([15, niters])
 
 nexttile
-obs_costs(obs_costs < 0) = 0;
 t = title('Factored Collision Costs', 'Interpreter', 'latex', 'FontSize', 18);
 hold on
 grid on

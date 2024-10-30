@@ -13,6 +13,7 @@ addpath('../../tools/gtsam_toolbox');
 addpath("../../tools/error_ellipse");
 
 is_sparse = 1;
+save_figure = 0;
 
 %% ============ 
 % read map
@@ -41,7 +42,8 @@ for i = 1:1 % 4 experiments
     niters = find_niters(means);
     n_states = floor(ttl_dim / dim_state);
 
-    output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
+    output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
+    % output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state, save_figure);
 
 end
 
@@ -65,11 +67,12 @@ set(gcf,'position',[x0,y0,width,height])
 %                 13, 10, 0, 0;
 %                 -13, 8, 0, 0];
 
-tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i = 1:4 % 4 experiments  
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
+for i = 2:2 % 4 experiments  
     nexttile
     if is_sparse
-        prefix = ["case" + num2str(i)+"/"];
+        % prefix = ["case" + num2str(i)+"/"];
+        prefix = "Iter_GVIMP/";
     else
         prefix = ["map2/case" + num2str(i)+"/"];
     end

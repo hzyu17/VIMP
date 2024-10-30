@@ -5,6 +5,16 @@ y0 = 500;
 width = 1200;
 height = 900;
 
+figure;
+set(gca, 'FontName', 'Sans Serif', 'FontSize', 28)
+% set(gcf, 'position',[x0,y0,width,height])
+
+set(gcf, 'Units', 'inches', 'Position', [x0/100 y0/100 width/100 height/100]);
+set(gcf, 'PaperUnits', 'inches', 'PaperSize', [width/100, height/100]);
+set(gcf, 'PaperPositionMode', 'auto');
+
+hold on;
+
 %% GH Degree = 4
 n_states = [10, 25, 50, 100, 150, 200, 300, 400, 500, 750, 1000];
 
@@ -18,17 +28,11 @@ CPU_avg = [4.80, 13.50, 27.52, 54.16, 83.96, 116.82, 180.18, 254.50, 335.34, 650
 CPU_min = [3, 10, 17, 40, 70, 105, 166, 231, 308, 590, 932];
 CPU_max = [8, 17, 33, 74, 100, 133, 201, 279, 360, 708, 1035];
 
-figure;
-set(gca, 'FontName', 'Sans Serif', 'FontSize', 28)
-set(gcf, 'position',[x0,y0,width,height])
+plot(n_states, GPU_avg, '-o', 'MarkerSize', 16, 'linewidth', 2.5, 'Color', 'g', 'MarkerFaceColor', '[0.5, 1, 0.5]','MarkerEdgeColor', '[0, 0.4, 0]','DisplayName', 'GPU Mean GH degree = 4');
+fill([n_states, fliplr(n_states)], [GPU_min, fliplr(GPU_max)], 'g', 'FaceAlpha', 0.15, 'HandleVisibility', 'off');
 
-hold on;
-
-plot(n_states, GPU_avg, 'g-o', 'MarkerSize', 14, 'linewidth', 2.5, 'DisplayName', 'GPU Mean GH degree = 4');
-fill([n_states, fliplr(n_states)], [GPU_min, fliplr(GPU_max)], 'g', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
-
-plot(n_states, CPU_avg, 'r-o', 'MarkerSize', 14, 'linewidth', 2.5, 'DisplayName', 'CPU Mean GH degree = 4');
-fill([n_states, fliplr(n_states)], [CPU_min, fliplr(CPU_max)], 'r', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
+plot(n_states, CPU_avg, '-o', 'MarkerSize', 16, 'linewidth', 2.5, 'Color', 'r', 'MarkerFaceColor', '[1, 0.75, 0.8]', 'MarkerEdgeColor', '[0.4, 0, 0]','DisplayName', 'CPU Mean GH degree = 4');
+fill([n_states, fliplr(n_states)], [CPU_min, fliplr(CPU_max)], 'r', 'FaceAlpha', 0.15, 'HandleVisibility', 'off');
 
 
 %% GH Degree = 10
@@ -42,12 +46,12 @@ CPU_avg = [23.2, 53.42, 100.08, 183.82, 277, 368.20, 566.94, 759.24, 957.36, 154
 CPU_min = [19, 45, 88, 157, 239, 344, 536, 723, 909, 1422, 2055];
 CPU_max = [30, 63, 123, 229, 316, 431, 619, 836, 1039, 1646, 2356];
 
-ratio = (CPU_avg-GPU_avg)./CPU_avg
+ratio = (CPU_avg-GPU_avg)./CPU_avg;
 
-plot(n_states, GPU_avg, 'g--x', 'MarkerSize', 18, 'linewidth', 2.5, 'DisplayName', 'GPU Mean GH degree = 10');
+plot(n_states, GPU_avg, '--x', 'MarkerSize', 24, 'linewidth', 2.5, 'Color', 'g', 'MarkerEdgeColor', '[0, 0.4, 0]','DisplayName', 'GPU Mean GH degree = 10');
 fill([n_states, fliplr(n_states)], [GPU_min, fliplr(GPU_max)], 'g', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
 
-plot(n_states, CPU_avg, 'r--x', 'MarkerSize', 18, 'linewidth', 2.5, 'DisplayName', 'CPU Mean GH degree = 10');
+plot(n_states, CPU_avg, '--x', 'MarkerSize', 24, 'linewidth', 2.5, 'Color', 'r', 'MarkerEdgeColor', '[0.4, 0, 0]','DisplayName', 'CPU Mean GH degree = 10');
 fill([n_states, fliplr(n_states)], [CPU_min, fliplr(CPU_max)], 'r', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
 
 
@@ -64,7 +68,13 @@ CPU_avg = [110.4, 265.8, 527.42, 1052.1, 1556.34, 2103.80, 3150.78, 4198.55, 528
 CPU_min = [87, 242, 488, 989, 1510, 2010, 3043, 4088, 5173, 10601];
 CPU_max = [117, 292, 554, 1108, 1614, 2164, 3272, 4322, 5398, 10938];
 
-ratio = (CPU_avg-GPU_avg)./CPU_avg
+ratio = (CPU_avg-GPU_avg)./CPU_avg;
+
+% plot(n_states, GPU_avg, 'g--x', 'MarkerSize', 18, 'linewidth', 2.5, 'DisplayName', 'GPU Mean GH degree = 20');
+% fill([n_states, fliplr(n_states)], [GPU_min, fliplr(GPU_max)], 'g', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
+
+% plot(n_states, CPU_avg, 'r--x', 'MarkerSize', 18, 'linewidth', 2.5, 'DisplayName', 'CPU Mean GH degree = 20');
+% fill([n_states, fliplr(n_states)], [CPU_min, fliplr(CPU_max)], 'r', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
 
 
 xlabel("Time Discretizations")
