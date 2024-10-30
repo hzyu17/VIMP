@@ -101,6 +101,7 @@ public:
 
   /// convert between point and cell corrdinate
   inline float_index convertPoint3toCell(const gtsam::Point3& point) const {
+    // std::cout << "point = " << point.transpose() << std::endl;
     // check point range
     if (point.x() < origin_.x() || point.x() > (origin_.x() + (field_cols_-1.0)*cell_size_) ||
         point.y() < origin_.y() || point.y() > (origin_.y() + (field_rows_-1.0)*cell_size_) ||
@@ -129,6 +130,7 @@ public:
     const double hr = lr + 1.0, hc = lc + 1.0, hz = lz + 1.0;
     const size_t lri = static_cast<size_t>(lr), lci = static_cast<size_t>(lc), lzi = static_cast<size_t>(lz),
         hri = static_cast<size_t>(hr), hci = static_cast<size_t>(hc), hzi = static_cast<size_t>(hz);
+    // std::cout << "lri = " << lri << ", lci = " << lci << ", lzi = " << lzi << ", hri = " << hri << ", hci = " << hci << ", hzi = " << hzi << std::endl;
     return
         (hr-idx.get<0>())*(hc-idx.get<1>())*(hz-idx.get<2>())*signed_distance(lri, lci, lzi) +
         (idx.get<0>()-lr)*(hc-idx.get<1>())*(hz-idx.get<2>())*signed_distance(hri, lci, lzi) +

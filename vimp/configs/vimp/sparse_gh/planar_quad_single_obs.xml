@@ -1,0 +1,112 @@
+<Commons>
+    <total_time>12.5</total_time>
+    <n_states>50</n_states>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>6</GH_deg>
+    <sig_obs>0.5</sig_obs>
+    <map_name>single_obs</map_name> 
+    <eps_sdf>1.0</eps_sdf>
+    <radius>0.4</radius>
+    <step_size>0.45</step_size>
+    <alpha>0.99</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>2000.0</boundary_penalties>
+    <temperature>90.0</temperature>
+    <high_temperature>150.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <low_temp_iterations>25</low_temp_iterations>
+    <max_iterations>30</max_iterations>
+    <max_n_backtracking>20</max_n_backtracking>
+
+</Commons>
+
+<Experiment1>    
+    <start_pos>
+        <x>0.0</x>
+        <z>0.0</z>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>25.0</x>
+        <z>30.0</z>
+        <phi>0.52359877559</phi>
+        <vx>-1.0</vx>
+        <vz>2.0</vz>
+        <vphi>0.01</vphi>
+    </goal_pos>
+ 
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case1/</saving_prefix>
+
+</Experiment1>
+
+<Experiment2>      
+    <start_pos>
+        <x>0.0</x>
+        <z>0.0</z>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>25.0</x>
+        <z>35.0</z>
+        <phi>-0.39269908169</phi>
+        <vx>1.0</vx>
+        <vz>2.0</vz>
+        <vphi>0.01</vphi>
+    </goal_pos>
+    
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case2/</saving_prefix>
+
+</Experiment2>
+
+<Experiment3>   
+    <start_pos>
+        <x>10.0</x>
+        <z>0.0</z>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>5.0</x>
+        <z>35.0</z>
+        <phi>-0.52359877559</phi>
+        <vx>1.0</vx>
+        <vz>1.0</vz>
+        <vphi>-0.02</vphi>
+    </goal_pos>
+
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case3/</saving_prefix>
+</Experiment3>
+
+<Experiment4>   
+    <start_pos>
+        <x>25.0</x>
+        <z>0.0</z>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>12.0</x>
+        <z>35.0</z>
+        <phi>0.52359877559</phi>
+        <vx>-2.0</vx>
+        <vz>1.0</vz>
+        <vphi>0.0</vphi>
+    </goal_pos>
+
+     <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case4/</saving_prefix>
+
+</Experiment4>

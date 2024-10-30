@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
+from scipy.stats import chi2
+
 
 import sys
 import os
@@ -72,8 +75,71 @@ def compute_pqud_patches(x, L, H, n_balls, patch_color='b'):
         
     return rect, l_arrow, r_arrow, v_circles
 
+
+def qchisq(p, df):
+    return chi2.ppf(p, df)
+
+def getpoints(C, clipping_radius=np.inf):
+
+    n = 100 
+    p = np.linspace(0, 2 * np.pi, n)
+    
+    eigvals, eigvecs = np.linalg.eigh(C)
+    
+    xy = np.column_stack([np.cos(p), np.sin(p)]) 
+    
+    xy_transformed = xy @ np.sqrt(np.diag(eigvals)) @ eigvecs.T
+    
+    x, y = xy_transformed[:, 0], xy_transformed[:, 1]
+    
+    r = np.sqrt(x**2 + y**2)
+    x[r > clipping_radius] = np.nan
+    y[r > clipping_radius] = np.nan
+    
+    return x, y
+
+def plot_cov_ellipse(cov, mu, i, conf=0.997, scale=1, ax=None, style='r-.', clipping_radius=np.inf):
+    
+    x0, y0 = mu[0:2]
+    cov_2d = cov[0:2, 0:2]
+    
+    r = cov_2d.shape[0] 
+    k = np.sqrt(qchisq(conf, r)) 
+    
+    if np.any(np.linalg.eigvals(cov_2d) <= 0):
+        raise ValueError("The covariance matrix must be positive definite")
+
+    x, y = getpoints(cov_2d, clipping_radius)
+    
+    if i == 0:
+        ax.plot(scale * (x0 + k * x), scale * (y0 + k * y), style, linewidth=0.5, label=r"3$\sigma$ contour")
+    else:
+        ax.plot(scale * (x0 + k * x), scale * (y0 + k * y), style, linewidth=0.5)
+    ax.set_aspect('equal')
+
+    return ax
+
+
 # @njit
 def draw_quad_balls(x, L, H, n_balls, fig, ax, draw_ball=True, patch_color='b'):
+    rect, l_arrow, r_arrow, v_circles = compute_pqud_patches(x, L, H, n_balls, patch_color)
+    
+    ax.add_patch(l_arrow)
+    ax.add_patch(r_arrow)
+    ax.add_patch(rect)
+    
+    if draw_ball:
+        for i in range(len(v_circles)):
+            ax.add_patch(v_circles[i])
+            plt.axis('equal')
+            
+    return fig, ax
+
+
+def draw_quad_balls_cov(x, cov, i, L, H, n_balls, fig, ax, draw_ball=True, patch_color='b'):
+
+    plot_cov_ellipse(cov, x, i, conf = 0.997, scale=1, ax=ax, style='r-.', clipping_radius=np.inf)
+
     rect, l_arrow, r_arrow, v_circles = compute_pqud_patches(x, L, H, n_balls, patch_color)
     
     ax.add_patch(l_arrow)

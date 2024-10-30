@@ -2,21 +2,34 @@
 # Hongzhe Yu, 12/21/2023
 
 import os
+import sys
 
 file_path = os.path.abspath(__file__)
 costfunction_dir = os.path.dirname(file_path)
-root_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(costfunction_dir, '..'), '..'), '..'))
-col_cost_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(root_dir, '3rdparty'), 'sdf_robot'), 'scripts'))
+# root_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(costfunction_dir, '..'), '..'), '..'))
+# col_cost_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(root_dir, '3rdparty'), 'sdf_robot'), 'scripts'))
 
-import sys
-sys.path.append(col_cost_dir)
-from generate_sdf_2d import *
-from collision_costs_2d import *
+py_dir = os.path.abspath(os.path.join(os.path.join(file_path, '..'),'..'))
+collision_cost_dir = os.path.abspath(os.path.join(os.path.join(py_dir, 'sdf_robot'), 'scripts'))
+
+sys.path.append(collision_cost_dir)
+sys.path.append(py_dir)
+
+print(sys.path)
+
+# sys.path.append(col_cost_dir)
+# from generate_sdf_2d import *
+
 import numpy as np
 
 from numba.experimental import jitclass
 from numba import njit, float64, int64
 import numba as nb
+import matplotlib.pyplot as plt
+
+from sdf_robot.scripts.generate_sdf_2d import *
+from sdf_robot.scripts.collision_costs_2d import *
+from tools.draw_pquadsdf_trj import *
 
 # Defines the forward kinematics for collision-checking balls and their gradients to the states.  
 def vec_balls(x, L, n_balls, radius):
@@ -121,7 +134,7 @@ class PQuadColSDF:
         
 if __name__ == '__main__':
     # obstacle range: (x: [10.0, 20.0]; y: [10.0, 16.0])
-    sdf_2d, planarmap = generate_2dsdf("SingleObstacleMap", False)
+    sdf_2d, planarmap = generate_2dsdf("SingleObstacleMap", True)
     eps_obs = 0.2
     slope = 2.0
     sig_obs = 1.0
@@ -130,13 +143,23 @@ if __name__ == '__main__':
     H = 0.35
     radius = 0.1
     
-    x = np.array([10.0, 10.0, np.pi/4, -2.0, -1.0, 0.0], dtype=np.float64)
+    x = np.array([15.0, 15.0, np.pi/4, -2.0, -1.0, 0.0], dtype=np.float64)
     
     collision_cost, gradient_col_states = planar_quad_hinge_gradient(x, L, n_balls, radius, sig_obs, sdf_2d, eps_obs, slope)
     print("collision_cost")
     print(collision_cost)
     print("g_col_states")
     print(gradient_col_states)
+
+    fig, ax = plt.subplots(1,1,frameon=False)
+
+    fig, ax = planarmap.draw_map(fig, ax, plot=False)
+    
+    x_traj = x.reshape((1, 6))
+
+    fig, ax = draw_pquad_trj_2d(x_traj, L, H, n_balls, fig, ax, 1, True, False)
+    plt.show()
+    
     
 
     instance = PQuadColSDF(eps_obs, slope, sig_obs, n_balls, L, H, radius)

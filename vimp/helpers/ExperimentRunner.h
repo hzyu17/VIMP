@@ -105,6 +105,7 @@ public:
         double radius = atof(commonParams->first_node("radius")->value());
         double step_size = atof(commonParams->first_node("step_size")->value());
         double stop_err = atof(commonParams->first_node("stop_err")->value());
+        double alpha = atof(commonParams->first_node("alpha")->value());
         double init_precision_factor = atof(commonParams->first_node("init_precision_factor")->value());
         double boundary_penalties = atof(commonParams->first_node("boundary_penalties")->value());
         double temperature = atof(commonParams->first_node("temperature")->value());
@@ -120,25 +121,48 @@ public:
 
         params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, gh_degree, sig_obs, eps_sdf, radius, 
                             step_size, max_iterations, init_precision_factor, boundary_penalties, 
-                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name);
+                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name, "", alpha);
     }
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& params) override {
-        double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
-        double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
-
-        double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
-        double start_vy = atof(paramNode->first_node("start_pos")->first_node("vy")->value());
-
-        double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
-        double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
-
-        double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
-        double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
 
         VectorXd m0(this->_nx), mT(this->_nx); 
-        m0 << start_x, start_y, start_vx, start_vy;
-        mT << goal_x, goal_y, goal_vx, goal_vy;
+        if (this->_nx == 4){
+            double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
+            double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
+
+            double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
+            double start_vy = atof(paramNode->first_node("start_pos")->first_node("vy")->value());
+
+            double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
+            double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
+
+            double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
+            double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
+
+            m0 << start_x, start_y, start_vx, start_vy;
+            mT << goal_x, goal_y, goal_vx, goal_vy;
+        }
+        else if (this->_nx == 6){
+            double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
+            double start_y = atof(paramNode->first_node("start_pos")->first_node("y")->value());
+            double start_z = atof(paramNode->first_node("start_pos")->first_node("z")->value());
+
+            double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
+            double start_vy = atof(paramNode->first_node("start_pos")->first_node("vy")->value());
+            double start_vz = atof(paramNode->first_node("start_pos")->first_node("vz")->value());
+
+            double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
+            double goal_y = atof(paramNode->first_node("goal_pos")->first_node("y")->value());
+            double goal_z = atof(paramNode->first_node("goal_pos")->first_node("z")->value());
+
+            double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
+            double goal_vy = atof(paramNode->first_node("goal_pos")->first_node("vy")->value());
+            double goal_vz = atof(paramNode->first_node("goal_pos")->first_node("vz")->value());
+
+            m0 << start_x, start_y, start_z, start_vx, start_vy, start_vz;
+            mT << goal_x, goal_y, goal_z, goal_vx, goal_vy, goal_vz;
+        }
 
         params.set_m0(m0);
         params.set_mT(mT);
@@ -192,7 +216,6 @@ public:
         std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
         params.set_saving_prefix(saving_prefix);
-
     }
 
     double run_one_exp(int exp, GVIMPParams& params, bool verbose=true) override {
@@ -235,6 +258,92 @@ private:
     GVIMPOptimizer _gvimp_robotsdf;
 
 };
+
+
+template <typename GVIMPOptimizer>
+class GVIMPRunner_Quadrotor : public GVIMPRunner<GVIMPOptimizer> {
+public:
+    virtual ~GVIMPRunner_Quadrotor(){}
+    GVIMPRunner_Quadrotor(int nx, int nu, int num_exp, const std::string & config)
+        : GVIMPRunner<GVIMPOptimizer>(nx, nu, num_exp, config) {}
+
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& params) override {
+        VectorXd m0(this->_nx), mT(this->_nx); 
+
+        double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
+        double start_z = atof(paramNode->first_node("start_pos")->first_node("z")->value());
+        double start_phi = atof(paramNode->first_node("start_pos")->first_node("phi")->value());
+
+        double start_vx = atof(paramNode->first_node("start_pos")->first_node("vx")->value());
+        double start_vz = atof(paramNode->first_node("start_pos")->first_node("vz")->value());
+        double start_vphi = atof(paramNode->first_node("start_pos")->first_node("vphi")->value());
+
+        double goal_x = atof(paramNode->first_node("goal_pos")->first_node("x")->value());
+        double goal_z = atof(paramNode->first_node("goal_pos")->first_node("z")->value());
+        double goal_phi = atof(paramNode->first_node("goal_pos")->first_node("phi")->value());
+
+        double goal_vx = atof(paramNode->first_node("goal_pos")->first_node("vx")->value());
+        double goal_vz = atof(paramNode->first_node("goal_pos")->first_node("vz")->value());
+        double goal_vphi = atof(paramNode->first_node("goal_pos")->first_node("vphi")->value());
+
+        m0 << start_x, start_z, start_phi, start_vx, start_vz, start_vphi;
+        mT << goal_x, goal_z, goal_phi, goal_vx, goal_vz, goal_vphi;
+
+        params.set_m0(m0);
+        params.set_mT(mT);
+        
+        if (paramNode->first_node("step_size")){
+            double step_size = atof(paramNode->first_node("step_size")->value());
+            params.update_step_size(step_size);
+        }
+
+        if (paramNode->first_node("max_iterations")){
+            int max_iterations = atoi(paramNode->first_node("max_iterations")->value());
+            params.update_max_iter(max_iterations);
+        }
+
+        if (paramNode->first_node("low_temp_iterations")){
+            int low_temp_iterations = atoi(paramNode->first_node("low_temp_iterations")->value());
+            params.update_lowtemp_iter(low_temp_iterations);
+        }
+
+        if (paramNode->first_node("init_precision_factor")){
+            double init_precision_factor = atof(paramNode->first_node("init_precision_factor")->value());
+            params.update_initial_precision_factor(init_precision_factor);
+        }
+
+        if (paramNode->first_node("sig_obs")){
+            double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
+            params.update_sig_obs(cost_sigma);
+        }
+
+        if (paramNode->first_node("total_time")){
+            double total_time = atof(paramNode->first_node("total_time")->value());
+            params.set_total_time(total_time);
+        }
+
+        if (paramNode->first_node("temperature")){
+            double temperature = atof(paramNode->first_node("temperature")->value());
+            params.set_temperature(temperature);
+        }
+
+        if (paramNode->first_node("high_temperature")){
+            double high_temperature = atof(paramNode->first_node("high_temperature")->value());
+            params.set_high_temperature(high_temperature);
+        }
+
+        if (paramNode->first_node("step_size")){
+            double step_size = atof(paramNode->first_node("step_size")->value());
+            params.update_step_size(step_size);
+        }
+
+        std::string source_root{XSTRING(SOURCE_ROOT)};
+        std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
+        std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
+        params.set_saving_prefix(saving_prefix);
+    }
+};
+
 
 template <typename GVIOptimizer>
 class GVIMPRunner7D: public GVIMPRunner<GVIOptimizer>{

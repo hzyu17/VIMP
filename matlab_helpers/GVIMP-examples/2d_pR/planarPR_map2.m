@@ -17,7 +17,7 @@ is_sparse = 1;
 %% ============ 
 % read map
 % ============
-sdfmap = csvread("map2/map_multiobs_map2.csv");
+sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 
 dim_state = 4;
 dim_theta = 2;
@@ -87,15 +87,15 @@ for i = 1:4 % 4 experiments
     
     start_i = start_configs(i, :)';
     goal_i = goal_configs(i, :)';
-    s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 500);
-    s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 500);
+    % s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 500);
+    % s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 500);
     
-    lgd = legend([s1, s2], {'Start', 'Goal'});
-    set(lgd, 'FontWeight', 'bold');
+    % lgd = legend([s1, s2], {'Start', 'Goal'});
+    % set(lgd, 'FontWeight', 'bold');
     
     xlim([-15, 20])
     ylim([-10, 20])
     
-    axis off
+    % axis off
     
 end

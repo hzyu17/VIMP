@@ -1,11 +1,12 @@
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
 cmake_minimum_required(VERSION 3.0)
 enable_testing()
-project(VIMP CXX C)
+project(VIMP CXX C CUDA)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
 set(BOOST_ROOT "/usr/local/bin/boost")
+# set(BOOST_ROOT "~/.local/bin/boost")
 list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
 # Boost
 find_package(Boost 1.70 REQUIRED)
@@ -25,6 +26,21 @@ find_package( Eigen3 3.4.0 REQUIRED)
 
 # Find the OpenMP package
 find_package(OpenMP)
+
+# Set the policy CMP0104 to NEW
+if(POLICY CMP0104)
+  cmake_policy(SET CMP0104 NEW)
+endif()
+
+# Set the CUDA architectures you want to target
+set(CMAKE_CUDA_ARCHITECTURES "52;60;61;70;75;80")
+
+# Cuda
+find_package(CUDA REQUIRED)
+include_directories(${CUDA_INCLUDE_DIRS})
+include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=${CUDA_ARCH}; -std=c++17; --expt-extended-lambda)
+
 
 # Find Matlab
 message("Finding Matlab Library")
