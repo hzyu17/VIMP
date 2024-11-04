@@ -12,8 +12,8 @@
 #include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
 #include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
-#include "instances_cuda/CostFunctions.h"
-#include "GaussianVI/ngd/NGDFactorizedBaseGH_3dpR.h"
+#include "GaussianVI/gp/cost_functions.h"
+#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
@@ -22,6 +22,7 @@ namespace vimp{
 
 using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 using GH = SparseGaussHermite_Cuda<GHFunction>;
+using NGDFactorizedBaseGH = NGDFactorizedBaseGH_Cuda<CudaOperation_3dpR>;
 
 class GVIMP3DPointRobotSDF{
 
@@ -143,18 +144,18 @@ public:
             //                                                 params.high_temperature()});
 
                 // collision factor (Runs in GPU)  //Robot -> 
-                vec_factors.emplace_back(new NGDFactorizedBaseGH_3dpR{dim_conf, 
-                                                                        dim_state, 
-                                                                        params.GH_degree(),
-                                                                        n_states, 
-                                                                        i, 
-                                                                        params.sig_obs(), 
-                                                                        params.eps_sdf(), 
-                                                                        params.radius(), 
-                                                                        params.temperature(), 
-                                                                        params.high_temperature(),
-                                                                        _nodes_weights_map_pointer, 
-                                                                        _cuda_ptr});    
+                vec_factors.emplace_back(new NGDFactorizedBaseGH{dim_conf, 
+                                                                dim_state, 
+                                                                params.GH_degree(),
+                                                                n_states, 
+                                                                i, 
+                                                                params.sig_obs(), 
+                                                                params.eps_sdf(), 
+                                                                params.radius(), 
+                                                                params.temperature(), 
+                                                                params.high_temperature(),
+                                                                _nodes_weights_map_pointer, 
+                                                                _cuda_ptr});    
 
             // }
         }

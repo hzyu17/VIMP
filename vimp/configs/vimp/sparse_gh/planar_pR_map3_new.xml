@@ -13,6 +13,7 @@
     <eps_sdf>0.6</eps_sdf>
     <radius>1.5</radius>
     <step_size>0.4</step_size>
+    <alpha>1.0</alpha>
     <init_precision_factor>10.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
     <temperature>10.0</temperature>

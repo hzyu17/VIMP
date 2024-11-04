@@ -67,6 +67,7 @@ public:
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
 
+        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
         
         Timer timer;
         timer.start();
@@ -164,7 +165,7 @@ public:
                                                                     i, 
                                                                     temperature, 
                                                                     high_temperature,
-                                                                    nodes_weights_map});    
+                                                                    _nodes_weights_map_pointer});    
             }
         }
 
@@ -211,6 +212,8 @@ protected:
     std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase>> _p_opt;
 
     std::tuple<Eigen::VectorXd, SpMat> _last_iteration_mean_precision;
+
+    std::shared_ptr<QuadratureWeightsMap> _nodes_weights_map_pointer;
 
 };
 
