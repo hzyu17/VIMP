@@ -22,6 +22,7 @@ namespace vimp{
 
 using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 using GH = SparseGaussHermite_Cuda<GHFunction>;
+using NGDFactorizedBaseGH = NGDFactorizedBaseGH_Cuda<CudaOperation_PlanarPR>;
 
 class GVIMPPlanarPointRobotSDF{
 
@@ -150,18 +151,18 @@ public:
                                                             params.high_temperature()});
 
                 // collision factor (Runs in GPU)  //Robot -> 
-                vec_factors.emplace_back(new NGDFactorizedBaseGH_Cuda{dim_conf, 
-                                                                        dim_state, 
-                                                                        params.GH_degree(),
-                                                                        n_states, 
-                                                                        i, 
-                                                                        params.sig_obs(), 
-                                                                        params.eps_sdf(), 
-                                                                        params.radius(), 
-                                                                        params.temperature(), 
-                                                                        params.high_temperature(),
-                                                                        _nodes_weights_map_pointer, 
-                                                                        _cuda_ptr});    
+                vec_factors.emplace_back(new NGDFactorizedBaseGH{dim_conf, 
+                                                                dim_state, 
+                                                                params.GH_degree(),
+                                                                n_states, 
+                                                                i, 
+                                                                params.sig_obs(), 
+                                                                params.eps_sdf(), 
+                                                                params.radius(), 
+                                                                params.temperature(), 
+                                                                params.high_temperature(),
+                                                                _nodes_weights_map_pointer, 
+                                                                _cuda_ptr});    
             }
         }
 

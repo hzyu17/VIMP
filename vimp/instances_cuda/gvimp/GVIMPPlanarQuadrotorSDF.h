@@ -13,7 +13,7 @@
 #include "helpers/ExperimentParams.h"
 #include "GaussianVI/gp/factorized_opts_LTV.h"
 #include "GaussianVI/gp/cost_functions_LTV.h"
-#include "GaussianVI/ngd/NGDFactorizedBaseGH_Quadrotor.h"
+#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 #include <boost/numeric/odeint.hpp>
 #include <boost/math/quadrature/trapezoidal.hpp>
@@ -26,6 +26,7 @@ namespace vimp{
 
 using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 using GH = SparseGaussHermite_Cuda<GHFunction>;
+using NGDFactorizedBaseGH = NGDFactorizedBaseGH_Cuda<CudaOperation_Quad>;
 
 class GVIMPPlanarQuadrotorSDF{
 
@@ -105,11 +106,6 @@ public:
     // }
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, const MatrixXd& traj, bool verbose=true){
-        // Get the result of each experiment
-
-        Timer timer;
-        timer.start();
-
         QuadratureWeightsMap nodes_weights_map;
         try {
             std::ifstream ifs(GH_map_file, std::ios::binary);
@@ -129,8 +125,6 @@ public:
         }
 
         _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
-
-        std::cout << "Map Loading time: " << timer.end_sec() * 1000 << "ms" << std::endl;
 
         /// parameters
         int n_states = params.nt();
@@ -232,18 +226,18 @@ public:
                                                             params.high_temperature()});
 
                 // collision factor
-                vec_factors.emplace_back(new NGDFactorizedBaseGH_Quadrotor{dim_conf, 
-                                                                        dim_state, 
-                                                                        params.GH_degree(),
-                                                                        n_states, 
-                                                                        i, 
-                                                                        params.sig_obs(), 
-                                                                        params.eps_sdf(), 
-                                                                        params.radius(), 
-                                                                        params.temperature(), 
-                                                                        params.high_temperature(),
-                                                                        _nodes_weights_map_pointer, 
-                                                                        cuda_ptr});    
+                vec_factors.emplace_back(new NGDFactorizedBaseGH{dim_conf, 
+                                                                dim_state, 
+                                                                params.GH_degree(),
+                                                                n_states, 
+                                                                i, 
+                                                                params.sig_obs(), 
+                                                                params.eps_sdf(), 
+                                                                params.radius(), 
+                                                                params.temperature(), 
+                                                                params.high_temperature(),
+                                                                _nodes_weights_map_pointer, 
+                                                                cuda_ptr});    
             }
         }
 

@@ -12,7 +12,7 @@
 #include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
 #include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
-#include "instances_cuda/CostFunctions.h"
+#include "GaussianVI/gp/cost_functions.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 
@@ -22,6 +22,7 @@ namespace vimp{
 
 using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 using GH = SparseGaussHermite_Cuda<GHFunction>;
+using NGDFactorizedBaseGH = NGDFactorizedBaseGH_Cuda<CudaOperation_PlanarPR>;
 
 class GVIMPPlanarPointRobotSDF_Time{
 
@@ -107,18 +108,18 @@ public:
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i*dim_state, dim_state) = theta_i;
 
-            NGDFactorizedBaseGH_Cuda* factor = new NGDFactorizedBaseGH_Cuda{dim_conf, 
-                                                                                        dim_state, 
-                                                                                        params.GH_degree(),
-                                                                                        n_states, 
-                                                                                        i, 
-                                                                                        params.sig_obs(), 
-                                                                                        params.eps_sdf(), 
-                                                                                        params.radius(), 
-                                                                                        params.temperature(), 
-                                                                                        params.high_temperature(),
-                                                                                        _nodes_weights_map_pointer, 
-                                                                                        _cuda_ptr};
+            NGDFactorizedBaseGH* factor = new NGDFactorizedBaseGH{dim_conf, 
+                                                                dim_state, 
+                                                                params.GH_degree(),
+                                                                n_states, 
+                                                                i, 
+                                                                params.sig_obs(), 
+                                                                params.eps_sdf(), 
+                                                                params.radius(), 
+                                                                params.temperature(), 
+                                                                params.high_temperature(),
+                                                                _nodes_weights_map_pointer, 
+                                                                _cuda_ptr};
 
             #pragma omp critical
             {

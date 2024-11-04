@@ -65,6 +65,8 @@ int main(){
         std::cerr << "Standard exception: " << e.what() << std::endl;
     }
 
+    std::shared_ptr<QuadratureWeightsMap> nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
+
     /// parameters
     int n_states = params.nt();
     int N = n_states - 1;
@@ -120,7 +122,7 @@ int main(){
                                                                 i-1, 
                                                                 params.temperature(), 
                                                                 params.high_temperature(),
-                                                                nodes_weights_map});
+                                                                nodes_weights_map_pointer});
             }
 
         //     // Fixed gp factor
@@ -134,7 +136,7 @@ int main(){
                                                         i,
                                                         params.temperature(), 
                                                         params.high_temperature(),
-                                                        nodes_weights_map});
+                                                        nodes_weights_map_pointer});
 
         }else{
             // linear gp factors
@@ -147,7 +149,7 @@ int main(){
                                                         i-1, 
                                                         params.temperature(), 
                                                         params.high_temperature(),
-                                                        nodes_weights_map});
+                                                        nodes_weights_map_pointer});
   
         }
 
