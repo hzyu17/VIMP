@@ -117,6 +117,16 @@ target_link_libraries(Quadrotor_Cuda ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GP
 #                       ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
 
 
+add_executable(WAMArm_Cuda src/gvimp/cuda/gvi_WAMArm_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
+set_target_properties(WAMArm_Cuda PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(WAMArm_Cuda PROPERTIES
+                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+                        )   
+target_include_directories(WAMArm_Cuda PRIVATE ${Matlab_INCLUDE_DIRS})
+target_link_libraries(WAMArm_Cuda ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+                      ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                      ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
+
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
 # foreach(pgcs_source ${PGCS_SOURCES})
