@@ -13,7 +13,7 @@
 #include "helpers/ExperimentParams.h"
 #include "GaussianVI/gp/factorized_opts_LTV.h"
 #include "GaussianVI/gp/cost_functions_LTV.h"
-#include "GaussianVI/ngd/NGDFactorizedBaseGH_Quadrotor.h"
+#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 #include <boost/numeric/odeint.hpp>
 #include <boost/math/quadrature/trapezoidal.hpp>
@@ -26,6 +26,7 @@ namespace vimp{
 
 using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 using GH = SparseGaussHermite_Cuda<GHFunction>;
+using NGDFactorizedBaseGH = NGDFactorizedBaseGH_Cuda<CudaOperation_Quad>;
 
 class GVIMPPlanarQuadrotorSDF{
 
@@ -232,7 +233,7 @@ public:
                                                             params.high_temperature()});
 
                 // collision factor
-                vec_factors.emplace_back(new NGDFactorizedBaseGH_Quadrotor{dim_conf, 
+                vec_factors.emplace_back(new NGDFactorizedBaseGH{dim_conf, 
                                                                         dim_state, 
                                                                         params.GH_degree(),
                                                                         n_states, 

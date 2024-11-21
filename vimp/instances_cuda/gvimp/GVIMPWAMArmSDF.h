@@ -1,41 +1,36 @@
 /**
- * @file GVIMPPlanarRobotSDF.h
- * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The optimizer for planar robots at the joint level.
+ * @file GVIMPWAMArmSDF.h
+ * @author Christopher Taylor (ctaylor319@gatech.edu)
+ * @brief The optimizer for a WAM Robot Arm at the joint level.
  * @version 0.1
- * @date 2023-06-24
+ * @date 2024-11-20
  * 
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2024
  * 
  */
 
 #include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
-#include "instances/FactorizedGVIPlanarNGD.h"
-#include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
-#include <gtsam/inference/Symbol.h>
+#include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
+#include "GaussianVI/gp/cost_functions.h"
+#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
+#include "GaussianVI/ngd/NGD-GH-Cuda.h"
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
 
 namespace vimp{
 
-template <typename Robot, typename RobotSDF>
-class GVIMPPlanarRobotSDF{
-    using SDFPR = gpmp2::ObstaclePlanarSDFFactor<Robot>;
-    using NGDFactorizedPlanarSDFRobot = NGDFactorizedPlanarSDF<Robot>;
+using GHFunction = std::function<MatrixXd(const VectorXd&)>;
+using GH = SparseGaussHermite_Cuda<GHFunction>;
+
+class GVIMPWAMArmSDF{
 
 public:
-    virtual ~GVIMPPlanarRobotSDF(){}
+    virtual ~GVIMPWAMArmSDF(){}
 
-    GVIMPPlanarRobotSDF(){}
+    GVIMPWAMArmSDF(){}
 
-    GVIMPPlanarRobotSDF(GVIMPParams& params):
-    _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file())
-    {}
-
-    RobotSDF robot_sdf(){
-        return _robot_sdf;
-    }
+    GVIMPWAMArmSDF(GVIMPParams& params){}
 
     double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
         Timer timer;
@@ -71,10 +66,12 @@ public:
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
 
+        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
+
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
-        const int dim_conf = _robot_sdf.ndof() * _robot_sdf.nlinks();
+        const int dim_conf = 7;
         // state: theta = [conf, vel_conf]
         const int dim_state = 2 * dim_conf; 
         /// joint dimension
@@ -87,10 +84,41 @@ public:
         MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
         /// Vector of base factored optimizers
-        vector<std::shared_ptr<gvi::GVIFactorizedBase>> vec_factors;
+        vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
+
+        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
+        VectorXd a(7);
+        a << 0.0, 0.0, 0.045, -0.045, 0.0, 0.0, 0.0;
+        VectorXd alpha(7);
+        alpha << -M_PI/2.0, M_PI/2.0, -M_PI/2.0, M_PI/2.0, -M_PI/2.0, M_PI/2.0, 0.0;
+        VectorXd d(7);
+        d << 0.0, 0.0, 0.55, 0.0, 0.3, 0.0, 0.06;
+        VectorXd theta_bias(7);
+        theta_bias << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+        VectorXd radii(16);
+        radii << 0.15, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04;
+        VectorXi frames(16);
+        frames << 0, 1, 1, 1, 1, 2, 3, 3, 3, 5, 6, 6, 6, 6, 6, 6;
+        MatrixXd centers(16, 3);
+        centers <<   0.0,    0.0,  0.0,
+                     0.0,    0.0,  0.2,
+                     0.0,    0.0,  0.3,
+                     0.0,    0.0,  0.4,
+                     0.0,    0.0,  0.5,
+                     0.0,    0.0,  0.0,
+                     0.0,    0.0,  0.1,
+                     0.0,    0.0,  0.2,
+                     0.0,    0.0,  0.3,
+                     0.0,    0.0,  0.1,
+                     0.1, -0.025, 0.08,
+                     0.1,  0.025, 0.08,
+                    -0.1,    0.0, 0.08,
+                    0.15, -0.025, 0.13,
+                    0.15,  0.025, 0.13,
+                   -0.15,    0.0, 0.13;
         
-        auto robot_model = _robot_sdf.RobotModel();
-        auto sdf = _robot_sdf.sdf();
+        _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, 7, radii, frames, centers, params.sig_obs(), params.eps_sdf()});
+        
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
 
@@ -150,27 +178,24 @@ public:
                                                             params.temperature(), 
                                                             params.high_temperature()});
 
-                // collision factor
-                auto cost_sdf_Robot = cost_obstacle_planar<Robot>;
-                vec_factors.emplace_back(new NGDFactorizedPlanarSDFRobot{dim_conf, 
+                // collision factor (Runs in GPU)  //Robot -> 
+                vec_factors.emplace_back(new NGDFactorizedBaseGH_Cuda{dim_conf, 
                                                                         dim_state, 
                                                                         params.GH_degree(),
-                                                                        cost_sdf_Robot, 
-                                                                        SDFPR{gtsam::symbol('x', i), 
-                                                                        robot_model, 
-                                                                        sdf, 
-                                                                        1.0/sig_obs, 
-                                                                        eps_sdf}, 
                                                                         n_states, 
                                                                         i, 
+                                                                        params.sig_obs(), 
+                                                                        params.eps_sdf(), 
+                                                                        params.radius(), 
                                                                         params.temperature(), 
                                                                         params.high_temperature(),
-                                                                        nodes_weights_map});    
+                                                                        _nodes_weights_map_pointer, 
+                                                                        _cuda_ptr});    
             }
         }
 
         /// The joint optimizer
-        gvi::NGDGH<gvi::GVIFactorizedBase> optimizer{vec_factors, 
+        gvi::NGDGH<gvi::GVIFactorizedBase_Cuda> optimizer{vec_factors, 
                                            dim_state, 
                                            n_states, 
                                            params.max_iter(), 
@@ -186,7 +211,11 @@ public:
 
         optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
+        // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
+        optimizer.set_alpha(params.alpha());
+        
+        optimizer.classify_factors();
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
@@ -202,11 +231,12 @@ public:
     }
 
 protected: 
-    RobotSDF _robot_sdf;
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     gvi::EigenWrapper _ei;
-    std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase>> _p_opt;
+    std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase_Cuda>> _p_opt;
+    std::shared_ptr<CudaOperation_3dArm> _cuda_ptr;
+    std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 
