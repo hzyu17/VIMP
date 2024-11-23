@@ -117,7 +117,7 @@ public:
                     0.15,  0.025, 0.13,
                    -0.15,    0.0, 0.13;
         
-        _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, 7, radii, frames, centers, params.sig_obs(), params.eps_sdf()});
+        _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers, params.sig_obs(), params.eps_sdf()});
         
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
