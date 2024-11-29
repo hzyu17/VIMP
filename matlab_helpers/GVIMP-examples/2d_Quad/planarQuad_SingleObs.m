@@ -68,11 +68,10 @@ set(gcf,'position',[x0,y0,width,height])
 %                 -13, 8, 0, 0];
 
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i = 2:2 % 4 experiments  
+for i = 1:1 % 4 experiments  
     nexttile
     if is_sparse
-        % prefix = ["case" + num2str(i)+"/"];
-        prefix = "Iter_GVIMP/";
+        prefix = ["case" + num2str(i)+"/"];
     else
         prefix = ["map2/case" + num2str(i)+"/"];
     end

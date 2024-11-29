@@ -16,14 +16,16 @@ sys.path.append(result_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib
 
 from sdf_robot.scripts.generate_sdf_2d import *
 from sdf_robot.scripts.collision_costs_2d import *
 from tools.draw_pquadsdf_trj import *
 
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
         
 if __name__ == '__main__':
-    # obstacle range: (x: [10.0, 20.0]; y: [10.0, 16.0])
     sdf_2d, planarmap = generate_2dsdf("MultiObstacleMap", True)
     n_balls = 5
     L = 5.0
@@ -31,7 +33,8 @@ if __name__ == '__main__':
     i = 4
     
     # case_dirs = [os.path.join(result_dir, f'case{i+1}') for i in range(4)]
-    case_dir = os.path.join(result_dir, 'Multi_Obs')
+    case_dir = os.path.join(os.path.join(result_dir, 'Multi_Obs'), 'Go_around')
+    # case_dir = os.path.join(os.path.join(result_dir, 'Multi_Obs'), 'Go_through')
 
     # fig, axes = plt.subplots(2, 2, frameon=False)
 
@@ -45,23 +48,20 @@ if __name__ == '__main__':
 
     fig, ax = planarmap.draw_map(fig, ax, plot=False)
     fig, ax = draw_pquad_trj_cov_2d(mean, cov, L, H, n_balls, fig, ax, 1, False, False)
-    ax.set_xlim(-10, 40)
-    ax.set_ylim(-5, 40)
+    ax.set_xlim(-12.5, 27.5)
+    ax.set_ylim(-2.5, 40)
 
     ax.axis('off') 
-    ax.set_title('Go Around Plan', fontsize=16, fontweight='bold', fontdict={'family': 'serif'})
+    ax.set_title('Go Around Plan', fontsize=18, fontweight='bold', fontdict={'family': 'serif'})
+    # ax.set_title('Go Through Plan', fontsize=18, fontweight='bold', fontdict={'family': 'serif'})
+
     # ax.tick_params(axis='both', which='major', labelsize=16)
 
     # ax.legend(loc='best', prop={'family': 'serif', 'size': 18})
     
     plt.tight_layout() 
 
-    # fig.savefig(case_dir+f'/Go Around.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+    # fig.savefig(case_dir+f'/Go_Around_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+
 
     plt.show()  
-
-
-
-    
-
-    

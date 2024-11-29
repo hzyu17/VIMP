@@ -37,8 +37,15 @@ elseif strcmp(dataset_str, 'MultiObstacleDataset_Quad')
     % map
     dataset.map = zeros(dataset.rows, dataset.cols);
     % obstacles
-    dataset.map = add_obstacle(get_center(6,15,dataset), get_dim(6,10,dataset), dataset.map);
-    dataset.map = add_obstacle(get_center(18,15,dataset), get_dim(6,10,dataset), dataset.map);
+    
+    % dataset.map = add_obstacle(get_center(6,15,dataset), get_dim(6,10,dataset), dataset.map);
+    % dataset.map = add_obstacle(get_center(18,15,dataset), get_dim(6,10,dataset), dataset.map);
+
+    % dataset.map = add_obstacle(get_center(5,15,dataset), get_dim(6,10,dataset), dataset.map);
+    % dataset.map = add_obstacle(get_center(17,20,dataset), get_dim(6,10,dataset), dataset.map);
+
+    dataset.map = add_obstacle(get_center(-0.5,15,dataset), get_dim(8,10,dataset), dataset.map);
+    dataset.map = add_obstacle(get_center(13,20,dataset), get_dim(8,10,dataset), dataset.map);
 
     
 elseif strcmp(dataset_str, 'MultiObstacleLongRangeDataset')
