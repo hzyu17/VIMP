@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 set(BOOST_ROOT "/usr/local/bin/boost")
 # set(BOOST_ROOT "~/.local/bin/boost")
 list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
+
 # Boost
 find_package(Boost 1.70 REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
@@ -41,7 +42,6 @@ include_directories(${CUDA_INCLUDE_DIRS})
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=${CUDA_ARCH}; -std=c++17; --expt-extended-lambda)
 
-
 # Find Matlab
 message("Finding Matlab Library")
 # set(MATLAB_ROOT_DIR "~/.local/MATLAB/R2020b")
@@ -62,6 +62,15 @@ set(GTSAM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gtsam")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/GaussianVI")
+
+# Cereal
+set(CEREAL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/vimp/GaussianVI/include/cereal/include")
+include_directories(${CEREAL_INCLUDE_DIR})
+
+# GSL
+find_package(GSL REQUIRED)
+include_directories(${GSL_INCLUDE_DIRS})
+link_libraries(${GSL_LIBRARIES})
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}/vimp")
