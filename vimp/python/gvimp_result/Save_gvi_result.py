@@ -16,11 +16,14 @@ sys.path.append(result_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib
 
 from sdf_robot.scripts.generate_sdf_2d import *
 from sdf_robot.scripts.collision_costs_2d import *
 from tools.draw_pquadsdf_trj import *
 
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
         
 if __name__ == '__main__':
     # obstacle range: (x: [10.0, 20.0]; y: [10.0, 16.0])
@@ -45,18 +48,25 @@ if __name__ == '__main__':
 
     fig, ax = planarmap.draw_map(fig, ax, plot=False)
     fig, ax = draw_pquad_trj_cov_2d(mean, cov, L, H, n_balls, fig, ax, 1, False, False)
-    ax.set_xlim(-5, 25)
-    ax.set_ylim(-5, 45)
+    ax.set_xlim(-7.5, 32.5)
+    ax.set_ylim(-5, 40)
 
-    ax.tick_params(axis='both', which='major', labelsize=16)
-    ax.legend(loc='best', prop={'family': 'serif', 'size': 18})
+    # ax.tick_params(axis='both', which='major', labelsize=16)
+    # ax.legend(loc='best', prop={'family': 'serif', 'size': 16})
 
     # ax.axis('off') 
-    # ax.set_title(r'Iteration 5, $\hat{T} = 90$', fontsize=16)
+    # ax.set_title(r'Iteration 5, $\hat{T} = 90$', fontsize=20)
     
     plt.tight_layout() 
 
-    # fig.savefig(case_dir+f'/Trajectory_3.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+    fig.savefig(case_dir+f'/Trajectory_2_30_150_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+
+    # fig.savefig(case_dir+f'/Trajectory4_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+
+    # print(matplotlib.get_cachedir())
+    print(matplotlib.rcParams['font.family'])
+    print(matplotlib.rcParams['pdf.fonttype'])
+    print(matplotlib.rcParams['ps.fonttype'])
 
     plt.show()  
 
