@@ -14,6 +14,8 @@ matlab_helpers/+gtsam/*
 matlab_helpers/+gpmp2/*
 vimp/maps/WAM/WAMDeskDataset.bin
 vimp/maps/3dpR/pRSDF3D.bin
+vimp/maps/3dpR/pRSDF3D_cereal.bin
+vimp/maps/3dpR/pRSDF3D_backup.bin
 vimp/data/WAM/*
 vimp/quadrature/SparseGHQuadratureWeights.bin
 vimp/python/debug/*
