@@ -1,11 +1,11 @@
 /**
  * @file GVIMPPlanarRobotSDF.h
- * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The optimizer for planar robots at the joint level.
+ * @author Zinuo Chang (zchang40@gatech.edu)
+ * @brief The optimizer for planar point robots at the joint level.
  * @version 0.1
- * @date 2023-06-24
+ * @date 2024-07-26
  * 
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2024
  * 
  */
 
@@ -13,10 +13,10 @@
 #include "helpers/ExperimentParams.h"
 #include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
 #include "GaussianVI/gp/cost_functions.h"
-#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
+#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h" // Here we include SerializeEigenMaps through sparseGaussHermite
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 
-std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
+std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
 namespace vimp{
 
@@ -38,7 +38,7 @@ public:
         timer.start();
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
 
-        std::cout << "========== Optimization time: " << std::endl;
+        std::cout << "========== Cereal Optimization time: " << std::endl;
         return timer.end_sec();
     }
 
@@ -49,6 +49,7 @@ public:
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
         
         // Read the sparse grid GH quadrature weights and nodes
+        // Serialization of Eigen is in SerializeEigenMaps.h
         QuadratureWeightsMap nodes_weights_map;
         try {
             std::ifstream ifs(GH_map_file, std::ios::binary);
@@ -58,11 +59,11 @@ public:
             }
 
             std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
-            boost::archive::binary_iarchive ia(ifs);
-            ia >> nodes_weights_map;
+            
+            // Use cereal for deserialization
+            cereal::BinaryInputArchive archive(ifs);
+            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
 
-        } catch (const boost::archive::archive_exception& e) {
-            std::cerr << "Boost archive exception: " << e.what() << std::endl;
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }

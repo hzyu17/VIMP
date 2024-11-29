@@ -1,11 +1,11 @@
 /**
- * @file GVIMPPlanarRobotSDF.h
- * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The optimizer for planar robots at the joint level.
+ * @file GVIMPPlanarQuadrotorSDF.h
+ * @author Zinuo Chang (zchang40@gatech.edu)
+ * @brief The optimizer for planar quadrotor at the joint level.
  * @version 0.1
- * @date 2023-06-24
+ * @date 2024-09-04
  * 
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2024
  * 
  */
 
@@ -15,12 +15,10 @@
 #include "GaussianVI/gp/cost_functions_LTV.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
-#include <boost/numeric/odeint.hpp>
-#include <boost/math/quadrature/trapezoidal.hpp>
-
 #include "dynamics/PlanarQuad_linearization.h"
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
+std::string GH_map_file_cereal{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
 namespace vimp{
 
@@ -108,18 +106,18 @@ public:
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, const MatrixXd& traj, bool verbose=true){
         QuadratureWeightsMap nodes_weights_map;
         try {
-            std::ifstream ifs(GH_map_file, std::ios::binary);
+            std::ifstream ifs(GH_map_file_cereal, std::ios::binary);
             if (!ifs.is_open()) {
-                std::string error_msg = "Failed to open file for GH weights reading in file: " + GH_map_file;
+                std::string error_msg = "Failed to open file for GH weights reading in file: " + GH_map_file_cereal;
                 throw std::runtime_error(error_msg);
             }
 
-            std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
-            boost::archive::binary_iarchive ia(ifs);
-            ia >> nodes_weights_map;
+            std::cout << "Opening file for GH weights reading in file: " << GH_map_file_cereal << std::endl;
+            
+            // Use cereal for deserialization
+            cereal::BinaryInputArchive archive(ifs);
+            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
 
-        } catch (const boost::archive::archive_exception& e) {
-            std::cerr << "Boost archive exception: " << e.what() << std::endl;
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
@@ -172,18 +170,34 @@ public:
         hB = std::get<1>(linearized_matrices);
         ha = std::get<2>(linearized_matrices);
 
-        // Assign value to members for ode solver
-        _n_states = n_states;
-        _dim_state = dim_state;
-        _delta_t = delt_t;
-        _A_vec = hA;
-        _a_vec = ha;
+        MatrixXd trajectory_init(traj.rows(), traj.cols());
+        trajectory_init.setZero();
+
+        // // Go Around
+        // VectorXd inter_theta(6);
+        // inter_theta << 20, 10, -0.19634954084, 0.5, 1, 0.005;
+        // VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
+
+        // for (int i = 0; i < n_states; i++) {
+        //     VectorXd theta(6);
+        //     theta.setZero();
+        //     if (i < n_states / 2)
+        //         theta = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
+        //     else
+        //         theta = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
+
+        //     theta.segment(dim_conf, dim_conf) = avg_vel;
+        //     trajectory_init.row(i) = theta.transpose();
+        // }
+
+        // Go Through
+        trajectory_init = traj;
 
         // create each factor
         for (int i = 0; i < n_states; i++) {
 
             // initial state                     
-            joint_init_theta.segment(i*dim_state, dim_state) = traj.row(i);
+            joint_init_theta.segment(i*dim_state, dim_state) = trajectory_init.row(i);
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -277,38 +291,6 @@ public:
         return _last_iteration_mean_precision;
     }
 
-
-    std::vector<VectorXd> get_target_mean(std::vector<VectorXd> ha, VectorXd start_theta){
-        std::vector<VectorXd> mean_target(_n_states);
-        mean_target[0] = start_theta;
-
-        runge_kutta_dopri5<std::vector<double>> stepper;
-        auto system_ode_bound = std::bind(&vimp::GVIMPPlanarQuadrotorSDF::system_ode_target, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-
-        #pragma omp parallel for
-        for (int i = 1; i < _n_states; i++){
-            double end_time = _delta_t * i;
-            std::vector<double> x_i (start_theta.data(), start_theta.data() + _dim_state);
-            integrate_adaptive(stepper, system_ode_bound, x_i, 0.0, end_time, _delta_t/5);
-            VectorXd x_result = Eigen::Map<const VectorXd>(x_i.data(), _dim_state);
-            mean_target[i] = x_result;
-        }
-        return mean_target;
-    }
-
-    void system_ode_target(const std::vector<double>& x_i, std::vector<double>& dx_dt, double t) {
-        std::pair <MatrixXd,MatrixXd> system = system_param(t);
-        VectorXd x = Eigen::Map<const VectorXd>(x_i.data(), _dim_state);
-        VectorXd dx = system.first * x + system.second;
-        Eigen::Map<VectorXd>(dx_dt.data(), _dim_state) = dx;
-    }
-
-    std::pair <MatrixXd,MatrixXd> system_param(double t) {
-        int t_idx;
-        t_idx = static_cast<int>(std::floor(4 * t / _delta_t));
-        return {_A_vec[t_idx], _a_vec[t_idx]};
-    }
-
     MatrixXd trajctory_interpolation(const MatrixXd& trajectory, std::vector<VectorXd>& target_mean){
         int N = trajectory.rows() - 1;
         int dim_states = trajectory.cols();
@@ -328,33 +310,6 @@ public:
         return traj;
     }
 
-    void get_Phi(){
-        runge_kutta_dopri5<std::vector<double>> stepper;
-        auto system_ode_bound = std::bind(&vimp::GVIMPPlanarQuadrotorSDF::system_ode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-
-        for (int i = 0; i < _n_states; i++) {
-            double end_time = _delta_t * i;
-            MatrixXd Phi0 = MatrixXd::Identity(_dim_state, _dim_state);
-            std::vector<double> Phi_vec(Phi0.data(), Phi0.data() + _dim_state * _dim_state);
-            integrate_adaptive(stepper, system_ode_bound, Phi_vec, 0.0, end_time, _delta_t);
-            MatrixXd Phi_result = Eigen::Map<const MatrixXd>(Phi_vec.data(), _dim_state, _dim_state);
-            _Phi_results.push_back(Phi_result);
-        }
-    }
-
-    void system_ode(const std::vector<double>& Phi_vec, std::vector<double>& dPhi_dt, double t) {
-        MatrixXd A = A_function(t);
-        MatrixXd Phi = Eigen::Map<const MatrixXd>(Phi_vec.data(), _dim_state, _dim_state);
-        MatrixXd dPhi = A * Phi;
-        Eigen::Map<MatrixXd>(dPhi_dt.data(), _dim_state, _dim_state) = dPhi;
-    }
-
-    MatrixXd A_function(double t) {
-        int t_idx;
-        t_idx = static_cast<int>(std::floor(4 * t / _delta_t));
-        return _A_vec[t_idx];
-    }
-
 protected: 
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
@@ -363,46 +318,8 @@ protected:
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 
-    int _dim_state, _n_states;
-    double _delta_t;
-
-    std::vector<MatrixXd> _A_vec, _Phi_results;
-    std::vector<VectorXd> _a_vec;
-
     std::shared_ptr<QuadratureWeightsMap> _nodes_weights_map_pointer;
 
 };
 
 } // namespace vimp
-
-
-// std::vector<MatrixXd> hB1;
-// MatrixXd start_point (1, start_theta.size());
-// start_point.row(0) = start_theta;
-// start_point.block(0, dim_conf, 1, dim_conf) = ((goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)).transpose() ) / params.total_time();
-
-// linearized_matrices = planarquad_linearization_deterministic(start_point);
-// hB1 = std::get<1>(linearized_matrices);
-    
-// /// Obtain the Transition Matrices by integration
-// MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
-// Phi_vec[0] = Phi;
-// for (int i = 0; i < n_states; i++){
-//     hA[i] = std::get<0>(linearized_matrices)[0];
-//     hB[i] = hB1[0];
-//     Phi = Phi + hA[i] * Phi * delt_t;
-//     Phi_vec[i + 1] = Phi;
-// }
-
-// std::vector<MatrixXd> get_transition_matrix(std::vector<MatrixXd> hA, int n_states, int dim_state, double delta_t){
-//     std::vector<MatrixXd> Phi_vec(n_states + 1);
-//     MatrixXd Phi = MatrixXd::Identity(dim_state, dim_state);
-//     MatrixXd Phi_pred;
-//     Phi_vec[0] = Phi;
-//     for (int i = 0; i < n_states; i++){
-//         Phi_pred = Phi + hA[4*i] * Phi * delta_t;
-//         Phi_vec[i+1] = Phi + (hA[4*i] * Phi + hA[4*(i+1)] * Phi_pred) * delta_t / 2;
-//         Phi = Phi_vec[i + 1];
-//     }
-//     return Phi_vec;
-// }

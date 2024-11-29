@@ -44,21 +44,19 @@ int main(){
     PlanarArm2SDFExample _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file());
 
     // Read the sparse grid GH quadrature weights and nodes
-    std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
+    std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
     QuadratureWeightsMap nodes_weights_map;
     try {
-        std::ifstream ifs(GH_map_file, std::ios::binary);
+        std::ifstream ifs(map_file, std::ios::binary);
         if (!ifs.is_open()) {
-            std::string error_msg = "Failed to open file for GH weights reading in file: " + GH_map_file;
+            std::string error_msg = "Failed to open file for GH weights reading in file: " + map_file;
             throw std::runtime_error(error_msg);
         }
 
-        std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
-        boost::archive::binary_iarchive ia(ifs);
-        ia >> nodes_weights_map;
+        // Use cereal for deserialization
+        cereal::BinaryInputArchive archive(ifs);
+        archive(nodes_weights_map);
 
-    } catch (const boost::archive::archive_exception& e) {
-        std::cerr << "Boost archive exception: " << e.what() << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Standard exception: " << e.what() << std::endl;
     }
