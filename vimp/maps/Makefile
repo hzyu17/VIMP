@@ -3,7 +3,7 @@ EIGEN_PATH=/usr/include/eigen3
 
 CXX=g++
 CXXFLAGS=-fPIC -shared -std=c++17
-MEXFLAGS=-I$(MATLAB_ROOT)/extern/include -I$(EIGEN_PATH) -I../ -I../../GaussianVI -I../../GaussianVI/include/cereal/include
+MEXFLAGS=-I$(MATLAB_ROOT)/extern/include -I$(EIGEN_PATH) -I. -I../GaussianVI -I../GaussianVI/include/cereal/include
 
 LDFLAGS=-L$(MATLAB_ROOT)/bin/glnxa64 -lmex -lmx -lmat
 

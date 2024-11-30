@@ -3,8 +3,9 @@
 close all
 clear
 
-addpath("../../../matlab_helpers/tools")    
-                  
+addpath("../../../matlab_helpers/tools")
+addpath("..")
+
 %% dataset
 dataset = generate3Ddataset_1('3dPRMap2');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
