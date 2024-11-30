@@ -1,9 +1,9 @@
 /**
- * @file GVIMPPlanarRobotSDF.h
- * @author Zinuo Chang (zchang40@gatech.edu)
- * @brief The optimizer for planar point robots at the joint level.
+ * @file GVIMPWAMArmSDF.h
+ * @author Christopher Taylor (ctaylor319@gatech.edu)
+ * @brief The optimizer for a WAM Robot Arm at the joint level.
  * @version 0.1
- * @date 2024-07-26
+ * @date 2024-11-20
  * 
  * @copyright Copyright (c) 2024
  * 
@@ -13,7 +13,7 @@
 #include "helpers/ExperimentParams.h"
 #include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
 #include "GaussianVI/gp/cost_functions.h"
-#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h" // Here we include SerializeEigenMaps through sparseGaussHermite
+#include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
@@ -22,23 +22,22 @@ namespace vimp{
 
 using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 using GH = SparseGaussHermite_Cuda<GHFunction>;
-using NGDFactorizedBaseGH = NGDFactorizedBaseGH_Cuda<CudaOperation_PlanarPR>;
 
-class GVIMPPlanarPointRobotSDF{
+class GVIMPWAMArmSDF{
 
 public:
-    virtual ~GVIMPPlanarPointRobotSDF(){}
+    virtual ~GVIMPWAMArmSDF(){}
 
-    GVIMPPlanarPointRobotSDF(){}
+    GVIMPWAMArmSDF(){}
 
-    GVIMPPlanarPointRobotSDF(GVIMPParams& params){}
+    GVIMPWAMArmSDF(GVIMPParams& params){}
 
     double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
         Timer timer;
         timer.start();
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
 
-        std::cout << "========== Cereal Optimization time: " << std::endl;
+        std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
     }
 
@@ -49,7 +48,6 @@ public:
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
         
         // Read the sparse grid GH quadrature weights and nodes
-        // Serialization of Eigen is in SerializeEigenMaps.h
         QuadratureWeightsMap nodes_weights_map;
         try {
             std::ifstream ifs(GH_map_file, std::ios::binary);
@@ -59,10 +57,8 @@ public:
             }
 
             std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
-            
-            // Use cereal for deserialization
             cereal::BinaryInputArchive archive(ifs);
-            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
+            archive(nodes_weights_map);
 
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
@@ -73,7 +69,7 @@ public:
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
-        const int dim_conf = 2;
+        const int dim_conf = 7;
         // state: theta = [conf, vel_conf]
         const int dim_state = 2 * dim_conf; 
         /// joint dimension
@@ -88,9 +84,39 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
-        _cuda_ptr = std::make_shared<CudaOperation_PlanarPR>(CudaOperation_PlanarPR{params.sig_obs(), params.eps_sdf(), params.radius()});
+        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
+        VectorXd a(7);
+        a << 0.0, 0.0, 0.045, -0.045, 0.0, 0.0, 0.0;
+        VectorXd alpha(7);
+        alpha << -M_PI/2.0, M_PI/2.0, -M_PI/2.0, M_PI/2.0, -M_PI/2.0, M_PI/2.0, 0.0;
+        VectorXd d(7);
+        d << 0.0, 0.0, 0.55, 0.0, 0.3, 0.0, 0.06;
+        VectorXd theta_bias(7);
+        theta_bias << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+        VectorXd radii(16);
+        radii << 0.15, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04;
+        VectorXi frames(16);
+        frames << 0, 1, 1, 1, 1, 2, 3, 3, 3, 5, 6, 6, 6, 6, 6, 6;
+        MatrixXd centers(16, 3);
+        centers <<   0.0,    0.0,  0.0,
+                     0.0,    0.0,  0.2,
+                     0.0,    0.0,  0.3,
+                     0.0,    0.0,  0.4,
+                     0.0,    0.0,  0.5,
+                     0.0,    0.0,  0.0,
+                     0.0,    0.0,  0.1,
+                     0.0,    0.0,  0.2,
+                     0.0,    0.0,  0.3,
+                     0.0,    0.0,  0.1,
+                     0.1, -0.025, 0.08,
+                     0.1,  0.025, 0.08,
+                    -0.1,    0.0, 0.08,
+                    0.15, -0.025, 0.13,
+                    0.15,  0.025, 0.13,
+                   -0.15,    0.0, 0.13;
         
-        // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
+        _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers, params.sig_obs(), params.eps_sdf()});
+        
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
 
@@ -151,18 +177,18 @@ public:
                                                             params.high_temperature()});
 
                 // collision factor (Runs in GPU)  //Robot -> 
-                vec_factors.emplace_back(new NGDFactorizedBaseGH{dim_conf, 
-                                                                dim_state, 
-                                                                params.GH_degree(),
-                                                                n_states, 
-                                                                i, 
-                                                                params.sig_obs(), 
-                                                                params.eps_sdf(), 
-                                                                params.radius(), 
-                                                                params.temperature(), 
-                                                                params.high_temperature(),
-                                                                _nodes_weights_map_pointer, 
-                                                                _cuda_ptr});    
+                vec_factors.emplace_back(new NGDFactorizedBaseGH_Cuda{dim_conf, 
+                                                                        dim_state, 
+                                                                        params.GH_degree(),
+                                                                        n_states, 
+                                                                        i, 
+                                                                        params.sig_obs(), 
+                                                                        params.eps_sdf(), 
+                                                                        params.radius(), 
+                                                                        params.temperature(), 
+                                                                        params.high_temperature(),
+                                                                        _nodes_weights_map_pointer, 
+                                                                        _cuda_ptr});    
             }
         }
 
@@ -207,7 +233,8 @@ protected:
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
     gvi::EigenWrapper _ei;
     std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase_Cuda>> _p_opt;
-    std::shared_ptr<CudaOperation_PlanarPR> _cuda_ptr;
+    std::shared_ptr<CudaOperation_3dArm> _cuda_ptr;
+    std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 
