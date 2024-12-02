@@ -3,18 +3,12 @@
 close all
 clear
 
-% addpath("../../../matlab_helpers/tools")    
-addpath("../../../matlab_helpers/tools/gtsam_toolbox/")   
-addpath("/usr/local/gtsam_toolbox")
-% addpath("/usr/local/lib")
-import gtsam.*
-import gpmp2.*
+addpath("../../../matlab_helpers/tools")
+addpath("..")
 
-                  
 %% dataset
 dataset = generate3Ddataset_1('3dPRMap2');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
-origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
 
 % init sdf
@@ -22,9 +16,11 @@ disp('calculating signed distance field ...');
 field = signedDistanceField3D(dataset.map, dataset.cell_size);
 disp('calculating signed distance field done');
 
-sdf = SignedDistanceField(origin_point3, cell_size, size(field, 1), size(field, 2), size(field, 3));
+sdf = SignedDistanceField_mex('new', origin, cell_size, size(field, 1), size(field, 2), size(field, 3));
+
+disp('SDF Creation done');
 for z = 1:size(field, 3)
-    sdf.initFieldData(z-1, field(:,:,z)');
+    SignedDistanceField_mex('initFieldData', sdf, z-1, field(:, :, z));
 end
 
 % plot 3D SDF
@@ -47,7 +43,7 @@ zlim([-10, 40])
 
 %% save SDF
 disp('saving sdf to .bin file...');
-sdf.saveSDF('pRSDF3D.bin');
+SignedDistanceField_mex('save', sdf, 'pRSDF3D.bin');
 
 %% create the mesh for visualization
 [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);

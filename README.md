@@ -18,7 +18,9 @@ $$\mathbb{E}_q [J(q)] + H(q).$$
 
 A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
 
-<img src="https://github.com/hzyu17/VIMP/blob/master/figures/compare_go_through_go_around.png" width="600">
+<img src="figures/compare_go_through_go_around.png" width="600">
+
+<img src="figures/Quad_go_through.png" width="300"> <img src="figures/Quad_go_around.png" width="300">
 
 
 **2. Variational Mmotion planning for a 7-DOF WAM robot arm**
@@ -113,6 +115,16 @@ If you use this repository in your research, please cite the following publicati
       author={Hongzhe Yu and Yongxin Chen},
       year={2023},
       eprint={2308.14985},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}
+```
+```
+@misc{chang2024pgvimp,
+      title={Accelerating Gaussian Variational Inference for Motion Planning Under Uncertainty}, 
+      author={Zinuo Chang and Hongzhe Yu and Patricio Vela and Yongxin Chen},
+      year={2024},
+      eprint={2411.03416},
       archivePrefix={arXiv},
       primaryClass={cs.RO}
 }

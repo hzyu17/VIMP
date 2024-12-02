@@ -15,7 +15,7 @@
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
 #include <gtsam/inference/Symbol.h>
 
-std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
+std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
 namespace vimp{
 
@@ -58,15 +58,14 @@ public:
             }
 
             std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
-            boost::archive::binary_iarchive ia(ifs);
-            ia >> nodes_weights_map;
+            cereal::BinaryInputArchive archive(ifs); // Use cereal for deserialization
+            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
 
-        } catch (const boost::archive::archive_exception& e) {
-            std::cerr << "Boost archive exception: " << e.what() << std::endl;
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
 
+        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
         
         Timer timer;
         timer.start();
@@ -164,7 +163,7 @@ public:
                                                                     i, 
                                                                     temperature, 
                                                                     high_temperature,
-                                                                    nodes_weights_map});    
+                                                                    _nodes_weights_map_pointer});    
             }
         }
 
@@ -211,6 +210,8 @@ protected:
     std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase>> _p_opt;
 
     std::tuple<Eigen::VectorXd, SpMat> _last_iteration_mean_precision;
+
+    std::shared_ptr<QuadratureWeightsMap> _nodes_weights_map_pointer;
 
 };
 
