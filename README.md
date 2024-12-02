@@ -47,22 +47,16 @@ The experiment settings
 Download **[Boost1.78.0](https://github.com/boostorg/boost/releases/tag/boost-1.78.0)**, install, and change the **BOOST_ROOT** variable in the root **[CMakeLists.txt](https://github.com/hzyu17/VIMP/blob/master/CMakeLists.txt)** file. \
 To build Boost in a customized location: **[check this link](https://github.com/hzyu17/technicals/tree/main/C%2B%2B)**
 
-2. **[Eigen 3.4.0](https://gitlab.com/libeigen/eigen/-/releases/3.4.0)**
-
-3. **[OpenMP](https://www.openmp.org/)**
-```
-sudo apt-get install libomp-dev
-```
+2. MATLAB Runtime Library: Download **[MATLAB Runtime R2020b](https://www.mathworks.com/products/compiler/matlab-runtime.html)** and follow **[these instructions](https://www.mathworks.com/help/compiler/install-the-matlab-runtime.html)** to install the source files from the zip file.
 
 ## Build and install VIMP
-```
-git clone https://github.com/lucasyu17/VIMP.git
-cd VIMP
-mkdir build && cd build
-cmake .. 
-sudo make install 
-```
 
+VIMP utilizes a python script to install all necessary dependencies and check system compatibility. All executables can be found in the `VIMP/build/` directory after running the script.
+```
+git clone https://github.com/hzyu17/VIMP.git
+cd VIMP/
+python3 build_GVIMP_modules.py
+```
 ## 2D point robot example
 To recover the 2D Point robot example in [1, 2], run the following:
 ```
@@ -121,6 +115,16 @@ If you use this repository in your research, please cite the following publicati
       author={Hongzhe Yu and Yongxin Chen},
       year={2023},
       eprint={2308.14985},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}
+```
+```
+@misc{chang2024pgvimp,
+      title={Accelerating Gaussian Variational Inference for Motion Planning Under Uncertainty}, 
+      author={Zinuo Chang and Hongzhe Yu and Patricio Vela and Yongxin Chen},
+      year={2024},
+      eprint={2411.03416},
       archivePrefix={arXiv},
       primaryClass={cs.RO}
 }

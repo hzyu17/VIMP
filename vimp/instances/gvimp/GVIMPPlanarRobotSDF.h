@@ -15,7 +15,7 @@
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <gtsam/inference/Symbol.h>
 
-std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
+std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
 namespace vimp{
 
@@ -62,11 +62,9 @@ public:
             }
 
             std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
-            boost::archive::binary_iarchive ia(ifs);
-            ia >> nodes_weights_map;
+            cereal::BinaryInputArchive archive(ifs); // Use cereal for deserialization
+            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
 
-        } catch (const boost::archive::archive_exception& e) {
-            std::cerr << "Boost archive exception: " << e.what() << std::endl;
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }

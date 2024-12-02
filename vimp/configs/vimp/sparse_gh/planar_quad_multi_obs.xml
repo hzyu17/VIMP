@@ -1,5 +1,7 @@
-<Commons>
-    <total_time>14</total_time>
+<!-- Map2, Go_through -->
+
+<!-- <Commons>
+    <total_time>13</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
@@ -11,11 +13,11 @@
     <alpha>1.0</alpha>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>2000.0</boundary_penalties>
-    <temperature>45.0</temperature>
-    <high_temperature>120.0</high_temperature>
+    <temperature>40.0</temperature>
+    <high_temperature>70.0</high_temperature>
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>20</low_temp_iterations>
-    <max_iterations>31</max_iterations>
+    <max_iterations>30</max_iterations>
     <max_n_backtracking>20</max_n_backtracking>
 
 </Commons>
@@ -31,14 +33,110 @@
     </start_pos>
 
     <goal_pos>
-        <x>35.0</x>
+        <x>20.0</x>
         <z>35.0</z>
         <phi>-0.39269908169</phi>
         <vx>1.0</vx>
-        <vz>2.0</vz>
+        <vz>1.0</vz>
         <vphi>0.01</vphi>
     </goal_pos>
     
-    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/Multi_Obs/</saving_prefix>
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/Multi_Obs/Go_through/</saving_prefix>
+
+</Experiment1> -->
+
+
+<!-- Map3, Go_through -->
+
+<Commons>
+    <total_time>12.5</total_time>
+    <n_states>50</n_states>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>6</GH_deg>
+    <sig_obs>0.4</sig_obs>
+    <map_name>single_obs</map_name> 
+    <eps_sdf>0.8</eps_sdf>
+    <radius>0.4</radius>
+    <step_size>0.45</step_size>
+    <alpha>1.0</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>2000.0</boundary_penalties>
+    <temperature>40.0</temperature>
+    <high_temperature>75.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <low_temp_iterations>25</low_temp_iterations>
+    <max_iterations>30</max_iterations>
+    <max_n_backtracking>20</max_n_backtracking>
+
+</Commons>
+
+<Experiment1>    
+    <start_pos>
+        <x>0.0</x>
+        <z>0.0</z>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.5</x>
+        <z>35.0</z>
+        <phi>-0.39269908169</phi>
+        <vx>1.0</vx>
+        <vz>1.0</vz>
+        <vphi>0.01</vphi>
+    </goal_pos>
+    
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/Multi_Obs/Go_through/</saving_prefix>
 
 </Experiment1>
+
+
+<!-- map3, Go_around -->
+
+<!-- <Commons>
+    <total_time>12</total_time>
+    <n_states>50</n_states>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>6</GH_deg>
+    <sig_obs>0.45</sig_obs>
+    <map_name>single_obs</map_name> 
+    <eps_sdf>0.8</eps_sdf>
+    <radius>0.4</radius>
+    <step_size>0.45</step_size>
+    <alpha>1.0</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>2000.0</boundary_penalties>
+    <temperature>40.0</temperature>
+    <high_temperature>110.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <low_temp_iterations>20</low_temp_iterations>
+    <max_iterations>35</max_iterations>
+    <max_n_backtracking>20</max_n_backtracking>
+
+</Commons>
+
+<Experiment1>    
+    <start_pos>
+        <x>0.0</x>
+        <z>0.0</z>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>17.5</x>
+        <z>35.0</z>
+        <phi>-0.39269908169</phi>
+        <vx>1.0</vx>
+        <vz>1.0</vz>
+        <vphi>0.01</vphi>
+    </goal_pos>
+    
+    <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/Multi_Obs/Go_around/</saving_prefix>
+
+</Experiment1> -->

@@ -1,7 +1,7 @@
 /**
- * @file GVIMPPlanarRobotSDF.h
- * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The optimizer for planar robots at the joint level.
+ * @file GVIMP3DRobotSDF.h
+ * @author Zinuo Chang (zchang40@gatech.edu)
+ * @brief The optimizer for 3D point robots at the joint level.
  * @version 0.1
  * @date 2023-06-24
  * 
@@ -15,7 +15,7 @@
 #include <gpmp2/obstacle/ObstacleSDFFactor.h>
 #include <gtsam/inference/Symbol.h>
 
-std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
+std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
 namespace vimp{
 
@@ -60,11 +60,9 @@ public:
             }
 
             std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
-            boost::archive::binary_iarchive ia(ifs);
-            ia >> nodes_weights_map;
+            cereal::BinaryInputArchive archive(ifs); // Use cereal for deserialization
+            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
 
-        } catch (const boost::archive::archive_exception& e) {
-            std::cerr << "Boost archive exception: " << e.what() << std::endl;
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
@@ -118,37 +116,37 @@ public:
                 // std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
-                    // vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
-                    //                                             dim_state, 
-                    //                                             gvi::cost_linear_gp, 
-                    //                                             lin_gp, 
-                    //                                             n_states, 
-                    //                                             i-1, 
-                    //                                             params.temperature(), 
-                    //                                             params.high_temperature()});
+                    vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
+                                                                dim_state, 
+                                                                gvi::cost_linear_gp, 
+                                                                lin_gp, 
+                                                                n_states, 
+                                                                i-1, 
+                                                                params.temperature(), 
+                                                                params.high_temperature()});
                 }
 
                 // Fixed gp factor
-                // gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
-                // vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
-                //                                           dim_state, 
-                //                                           gvi::cost_fixed_gp, 
-                //                                           fixed_gp, 
-                //                                           n_states, 
-                //                                           i,
-                //                                           params.temperature(), 
-                //                                           params.high_temperature()});
+                gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
+                vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
+                                                          dim_state, 
+                                                          gvi::cost_fixed_gp, 
+                                                          fixed_gp, 
+                                                          n_states, 
+                                                          i,
+                                                          params.temperature(), 
+                                                          params.high_temperature()});
 
             }else{
-                // // linear gp factors
-                // vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
-                //                                             dim_state, 
-                //                                             gvi::cost_linear_gp, 
-                //                                             lin_gp, 
-                //                                             n_states, 
-                //                                             i-1, 
-                //                                             params.temperature(), 
-                //                                             params.high_temperature()});
+                // linear gp factors
+                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
+                                                            dim_state, 
+                                                            gvi::cost_linear_gp, 
+                                                            lin_gp, 
+                                                            n_states, 
+                                                            i-1, 
+                                                            params.temperature(), 
+                                                            params.high_temperature()});
 
                 // collision factor
                 auto cost_sdf_Robot = cost_obstacle<Robot>;

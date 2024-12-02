@@ -1,11 +1,11 @@
 /**
- * @file GVIMPPlanarRobotSDF.h
- * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief The optimizer for planar robots at the joint level.
+ * @file GVIMPPlanarPointRobotSDF_Time.h
+ * @author Zinuo Chang (zchang40@gatech.edu)
+ * @brief Time test of planar point robots optimization.
  * @version 0.1
  * @date 2023-06-24
  * 
- * @copyright Copyright (c) 2023
+ * @copyright Copyright (c) 2024
  * 
  */
 
@@ -16,7 +16,7 @@
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 
-std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
+std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
 namespace vimp{
 
@@ -55,11 +55,11 @@ public:
             }
 
             std::cout << "Opening file for GH weights reading in file: " << GH_map_file << std::endl;
-            boost::archive::binary_iarchive ia(ifs);
-            ia >> nodes_weights_map;
+            
+            // Use cereal for deserialization
+            cereal::BinaryInputArchive archive(ifs);
+            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
 
-        } catch (const boost::archive::archive_exception& e) {
-            std::cerr << "Boost archive exception: " << e.what() << std::endl;
         } catch (const std::exception& e) {
             std::cerr << "Standard exception: " << e.what() << std::endl;
         }
@@ -98,17 +98,57 @@ public:
         /// prior 
         double delt_t = params.total_time() / N;
 
-        #pragma omp parallel for
-        for (int i = 1; i < n_states-1; i++) {
+        for (int i = 0; i < n_states; i++) {
 
             // initial state
             VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
 
             // initial velocity: must have initial velocity for the fitst state??
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
-            joint_init_theta.segment(i*dim_state, dim_state) = theta_i;
+            joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
 
-            NGDFactorizedBaseGH* factor = new NGDFactorizedBaseGH{dim_conf, 
+            gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
+
+            // fixed start and goal priors
+            // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
+            if (i==0 || i==n_states-1){
+                // std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
+                // lin GP factor for the first and the last support state
+                if (i == n_states-1){
+                    vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
+                                                                dim_state, 
+                                                                gvi::cost_linear_gp, 
+                                                                lin_gp, 
+                                                                n_states, 
+                                                                i-1, 
+                                                                params.temperature(), 
+                                                                params.high_temperature()});
+                }
+
+                // Fixed gp factor
+                gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
+                vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
+                                                          dim_state, 
+                                                          gvi::cost_fixed_gp, 
+                                                          fixed_gp, 
+                                                          n_states, 
+                                                          i,
+                                                          params.temperature(), 
+                                                          params.high_temperature()});
+
+            }else{
+                // linear gp factors
+                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
+                                                            dim_state, 
+                                                            gvi::cost_linear_gp, 
+                                                            lin_gp, 
+                                                            n_states, 
+                                                            i-1, 
+                                                            params.temperature(), 
+                                                            params.high_temperature()});
+
+                // collision factor (Runs in GPU)  //Robot -> 
+                vec_factors.emplace_back(new NGDFactorizedBaseGH{dim_conf, 
                                                                 dim_state, 
                                                                 params.GH_degree(),
                                                                 n_states, 
@@ -119,11 +159,7 @@ public:
                                                                 params.temperature(), 
                                                                 params.high_temperature(),
                                                                 _nodes_weights_map_pointer, 
-                                                                _cuda_ptr};
-
-            #pragma omp critical
-            {
-                vec_factors.emplace_back(factor);
+                                                                _cuda_ptr});    
             }
         }
 
@@ -148,7 +184,6 @@ public:
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.classify_factors();
 
-        std::cout << std::endl << "% " << n_states << std::endl;
         optimizer.time_test();
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
