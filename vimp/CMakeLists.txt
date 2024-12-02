@@ -35,10 +35,11 @@ foreach(vimp_source ${VIMP_SOURCES})
                             )   
     target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
     target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                          ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                          ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization)
+                          ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                          ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9)
 endforeach()
 
+# Add all the source files in src/gvimp_cuda as a separate executable
 file(GLOB_RECURSE VIMP_SOURCES src/gvimp_cuda/*.cpp)
 foreach(vimp_source ${VIMP_SOURCES})
     get_filename_component(vimp_name ${vimp_source} NAME_WE)
@@ -49,8 +50,8 @@ foreach(vimp_source ${VIMP_SOURCES})
                             )   
     target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
     target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                          ${BOOST_LIBRARIES} ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                          ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 Boost::serialization ${GSL_LIBRARIES})
+                          ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                          ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES})
 endforeach()
 
 

@@ -5,21 +5,21 @@ project(VIMP CXX C CUDA)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
-set(BOOST_ROOT "/usr/local/bin/boost")
-# set(BOOST_ROOT "~/.local/bin/boost")
-list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
+# set(BOOST_ROOT "/usr/local/bin/boost")
+# # set(BOOST_ROOT "~/.local/bin/boost")
+# list(APPEND CMAKE_PREFIX_PATH "${BOOST_ROOT}")
 
-# Boost
-find_package(Boost 1.70 REQUIRED)
-find_package(Boost COMPONENTS filesystem REQUIRED)
-find_package(Boost COMPONENTS system REQUIRED)
-find_package(Boost COMPONENTS thread REQUIRED)
-find_package(Boost COMPONENTS timer REQUIRED)
-find_package(Boost COMPONENTS date_time REQUIRED)
-find_package(Boost COMPONENTS serialization REQUIRED)
+# # Boost
+# find_package(Boost 1.70 REQUIRED)
+# find_package(Boost COMPONENTS filesystem REQUIRED)
+# find_package(Boost COMPONENTS system REQUIRED)
+# find_package(Boost COMPONENTS thread REQUIRED)
+# find_package(Boost COMPONENTS timer REQUIRED)
+# find_package(Boost COMPONENTS date_time REQUIRED)
+# find_package(Boost COMPONENTS serialization REQUIRED)
 
-include_directories(${Boost_INCLUDE_DIR})
-link_directories(${Boost_LIBRARY_DIRS})
+# include_directories(${Boost_INCLUDE_DIR})
+# link_directories(${Boost_LIBRARY_DIRS})
 
 # Eigen
 message("Finding Eigen3 Library")

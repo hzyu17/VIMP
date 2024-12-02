@@ -1,4 +1,4 @@
-<Commons>
+<!-- <Commons>
     <total_time>12.5</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
@@ -109,13 +109,12 @@
 
      <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case4/</saving_prefix>
 
-</Experiment4>
-
+</Experiment4> -->
 
 
 <!-- GSL ode solver -->
 
-<!-- <Commons>
+<Commons>
     <total_time>10.5</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
@@ -229,4 +228,4 @@
 
      <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case4/</saving_prefix>
 
-</Experiment4> -->
+</Experiment4>
