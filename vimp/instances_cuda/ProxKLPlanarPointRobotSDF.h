@@ -11,10 +11,26 @@
 
 #include "helpers/timer.h"
 #include "helpers/ExperimentParams.h"
-#include "GaussianVI/gp/factorized_opts_linear_Cuda.h"
-#include "GaussianVI/gp/cost_functions.h"
 #include "GaussianVI/proxKL/ProxKLFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/proxKL/ProxKL-GH-Cuda.h"
+
+#include "ngd/NGDFactorizedLinear_Cuda.h"
+#include "gp/fixed_prior_proxkl.h"
+#include "gp/minimum_acc_prior_proxkl.h"
+
+namespace gvi{
+    using FixedGpPrior = NGDFactorizedLinear_Cuda<FixedPriorGP_proxkl>;
+    using LinearGpPrior = NGDFactorizedLinear_Cuda<MinimumAccGP_proxkl>;
+
+    double cost_fixed_gp(const VectorXd& x, const gvi::FixedPriorGP_proxkl& fixed_gp){
+        return fixed_gp.fixed_factor_cost(x);
+    }
+
+    double cost_linear_gp(const VectorXd& pose_cmb, const gvi::MinimumAccGP_proxkl& gp_minacc){
+        int dim = gp_minacc.dim_posvel();
+        return gp_minacc.cost(pose_cmb.segment(0, dim), pose_cmb.segment(dim, dim));
+    }
+}
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
@@ -109,36 +125,48 @@ public:
         VectorXd mu_start = start_theta;
         mu_start.segment(dim_conf, dim_conf) = avg_vel;
 
+        // Create the prior mean vector
         for(int i = 0; i < n_states; i++)
-        {
-            // initial state
+        {   
             VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
-
-            // initial velocity: must have initial velocity for the fitst state??
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
-            joint_init_theta.segment(i*dim_state, dim_state) = theta_i;
-
-            // some problems with index in lin_gp, but it is not used in the code
-            // gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
-            gvi::MinimumAccGP lin_gp{Qc, i, delt_t, mu_start};
 
             // Only works in linear system, in nonlinear systems, we need to compute the transition matrix and gramian by ode solver.
             MatrixXd Phi_i = MatrixXd::Zero(dim_state, dim_state);
             Phi_i << MatrixXd::Identity(dim_conf, dim_conf), i*delt_t*MatrixXd::Identity(dim_conf, dim_conf), 
                     MatrixXd::Zero(dim_conf, dim_conf), MatrixXd::Identity(dim_conf, dim_conf);
-            
+
             if(i == 0){
                 // mu_prior.segment(i*dim_state, dim_state) = Phi_i * mu_start;
                 mu_prior.segment(i*dim_state, dim_state) = theta_i;
+            }
+            else if (i == n_states-1){
+                // mu_prior.segment(i*dim_state, dim_state) = Phi_i * mu_start;
+                mu_prior.segment(i*dim_state, dim_state) = theta_i; // set the last state to be the goal state
+            }
+            else{
+                // mu_prior.segment(i*dim_state, dim_state) = Phi_i * start_theta;
+                mu_prior.segment(i*dim_state, dim_state) = Phi_i * mu_start;
+            }
+        }
 
+        for(int i = 0; i < n_states; i++)
+        {
+            // initial state
+            VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
+            theta_i.segment(dim_conf, dim_conf) = avg_vel;
+            joint_init_theta.segment(i*dim_state, dim_state) = theta_i;
+
+            // some problems with index in lin_gp, but it is not used in the code
+            gvi::MinimumAccGP_proxkl lin_gp{Qc, max(0, i-1), delt_t, mu_prior};
+            
+            if(i == 0){
                 B_matrix.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
                 B_matrix.block(dim_state, 0, dim_state, dim_state) = -lin_gp.Phi();
+
                 Q_inverse.block(0, 0, dim_state, dim_state) = K0_fixed.inverse();
             }
             else if (i == n_states-1){
-                // mu_prior.segment(i*dim_state, dim_state) = Phi_i * mu_start; // set the last state to be the goal state
-                mu_prior.segment(i*dim_state, dim_state) = theta_i;
-
                 B_matrix.block(i*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
                 B_matrix.block((i+1)*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
 
@@ -146,9 +174,6 @@ public:
                 Q_inverse.block((i+1)*dim_state, (i+1)*dim_state, dim_state, dim_state) = K0_fixed.inverse();
             }
             else{
-                mu_prior.segment(i*dim_state, dim_state) = Phi_i * start_theta;
-                // mu_prior.segment(i*dim_state, dim_state) = Phi_i * mu_start;
-
                 B_matrix.block(i*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
                 B_matrix.block((i+1)*dim_state, i*dim_state, dim_state, dim_state) = -lin_gp.Phi();
 
@@ -172,7 +197,7 @@ public:
                 }
 
                 // Fixed gp factor
-                gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{theta_i}};
+                gvi::FixedPriorGP_proxkl fixed_gp{K0_fixed, MatrixXd{mu_prior.segment(i*dim_state, dim_state)}};
                 // gvi::FixedPriorGP fixed_gp{K0_fixed, MatrixXd{Phi_i * start_theta}};
 
                 vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
@@ -241,7 +266,7 @@ public:
         optimizer.set_prior(mu_prior, precision_prior.sparseView());
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
-        optimizer.optimize_linear(verbose);
+        optimizer.optimize(verbose);
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 

@@ -66,8 +66,8 @@ goal_configs = [-10, 17, 0, 0;
                 13, 10, 0, 0;
                 -13, 8, 0, 0];
 
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i = 1:1 % 4 experiments  
+tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+for i = 1:4 % 4 experiments  
     nexttile
     if is_sparse
         prefix = ["sparse_gh/map2/case" + num2str(i)+"/"];
