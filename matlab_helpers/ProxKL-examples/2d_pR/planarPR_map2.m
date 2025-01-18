@@ -22,6 +22,10 @@ sdfmap = csvread("../../../vimp/maps/2dpR/map2/map_multiobs_map2.csv");
 dim_state = 4;
 dim_theta = 2;
 
+output_path_1 = '/home/zinuo/VIMP/matlab_helpers/ProxKL-examples/2d_pR/output_figure_1.png';
+output_path_2 = '/home/zinuo/VIMP/matlab_helpers/ProxKL-examples/2d_pR/output_figure_2.png';
+
+
 %% ================ 
 % plot costs 
 % =================
@@ -45,6 +49,8 @@ for i = 1:1 % 4 experiments
     output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
 
 end
+
+exportgraphics(gcf, 'output_figure_1.png', 'Resolution', 75);
 
 %% ================ 
 % plot trajectories 
@@ -100,3 +106,5 @@ for i = 1:4 % 4 experiments
     % axis off
     
 end
+
+exportgraphics(gcf, 'output_figure_2.png', 'Resolution', 75);

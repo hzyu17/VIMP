@@ -236,11 +236,6 @@ public:
         // Already make sure that the prior precision is good
         precision_prior = B_matrix.transpose() * Q_inverse * B_matrix;
 
-        // std::cout << "mu_prior: " << std::endl << mu_prior.transpose() << std::endl;
-        // std::cout << "B * mu_prior: " << std::endl << (B_matrix * mu_prior).transpose() << std::endl;
-        // std::cout << "Q_inv * B * mu_prior: " << std::endl << (Q_inverse * B_matrix * mu_prior).transpose() << std::endl;
-        // std::cout << "K_inv * mu_prior: " << std::endl << (precision_prior * mu_prior).transpose() << std::endl;
-
         /// The joint optimizer
         gvi::ProxKLGH<gvi::GVIFactorizedBase_Cuda> optimizer{vec_factors, 
                                                 dim_state, 
