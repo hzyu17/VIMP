@@ -43,11 +43,7 @@ The experiment settings
 <img src="figures/planar_quad_exp1.gif" height="200" width=180> <img src="figures/planar_quad_exp2.gif" height="200" width=180> <img src="figures/planar_quad_exp3.gif" height="200" width=180> <img src="figures/planar_quad_exp4.gif" height="200" width=180>
 
 ## Dependencies
-1. Boost \
-Download **[Boost1.78.0](https://github.com/boostorg/boost/releases/tag/boost-1.78.0)**, install, and change the **BOOST_ROOT** variable in the root **[CMakeLists.txt](https://github.com/hzyu17/VIMP/blob/master/CMakeLists.txt)** file. \
-To build Boost in a customized location: **[check this link](https://github.com/hzyu17/technicals/tree/main/C%2B%2B)**
-
-2. MATLAB Runtime Library: Download **[MATLAB Runtime R2020b](https://www.mathworks.com/products/compiler/matlab-runtime.html)** and follow **[these instructions](https://www.mathworks.com/help/compiler/install-the-matlab-runtime.html)** to install the source files from the zip file.
+MATLAB Runtime Library: Download **[MATLAB Runtime R2020b](https://www.mathworks.com/products/compiler/matlab-runtime.html)** and follow **[these instructions](https://www.mathworks.com/help/compiler/install-the-matlab-runtime.html)** to install the source files from the zip file.
 
 ## Build and install VIMP
 
