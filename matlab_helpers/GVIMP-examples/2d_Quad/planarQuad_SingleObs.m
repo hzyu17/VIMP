@@ -104,3 +104,48 @@ for i = 1:1 % 4 experiments
 end
 
 % exportgraphics(gcf, strcat('Trajectory2_', num2str(niters), '_150_point.pdf'), 'ContentType', 'image');
+
+
+
+% figure
+% tiledlayout(2, 4, 'TileSpacing', 'tight', 'Padding', 'tight')
+% i = 1;
+% nexttile
+% if is_sparse
+%     prefix = ["case" + num2str(i)+"/"];
+% else
+%     prefix = ["map2/case" + num2str(i)+"/"];
+% end
+
+% sample = csvread([prefix + "samples.csv"]);
+% control = csvread([prefix + "controls.csv"]);
+% means = csvread([prefix + "zk_sdf.csv"]);
+
+
+% hold on
+% plot(sample(1,:))
+% plot(means(1,:), "r")
+% nexttile
+% hold on
+% plot(sample(2,:))
+% plot(means(2,:), "r")
+% nexttile
+% hold on
+% plot(sample(3,:))
+% plot(means(3,:), "r")
+% nexttile
+% hold on
+% plot(sample(4,:))
+% plot(means(4,:), "r")
+% nexttile
+% hold on
+% plot(sample(5,:))
+% plot(means(5,:), "r")
+% nexttile
+% hold on
+% plot(sample(6,:))
+% plot(means(6,:), "r")
+% nexttile
+% plot(control(1,:))
+% nexttile
+% plot(control(2,:))

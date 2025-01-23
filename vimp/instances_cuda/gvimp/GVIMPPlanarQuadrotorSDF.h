@@ -16,6 +16,7 @@
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 #include "dynamics/PlanarQuad_linearization.h"
+#include "dynamics/PlanarQuad_SLR.h"
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
 std::string GH_map_file_cereal{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
@@ -53,6 +54,7 @@ public:
         MatrixXd trajectory(n_states, 2*dim_conf);
         MatrixXd new_trajectory(n_states, 2*dim_conf);
         MatrixXd traj_diff(n_states, dim_conf);
+
         new_trajectory.setZero();
         traj_diff.setZero();
 
@@ -69,7 +71,6 @@ public:
         //         theta = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
         //         // avg_vel = (goal_theta.segment(0, dim_conf) - inter_theta.segment(0, dim_conf)) / ((n_states / 2) * delt_t);
         //     }
-
         //     theta.segment(dim_conf, dim_conf) = avg_vel;
         //     trajectory.row(i) = theta.transpose();
         // }
@@ -80,8 +81,11 @@ public:
             trajectory.row(i) = theta.transpose();
         }
 
+        MatrixXd dense_covariance = MatrixXd::Identity(2 * dim_conf * n_states, 2 * dim_conf * n_states) / params.initial_precision_factor();
+        SpMat covariance = dense_covariance.sparseView();
+
         for (int i = 0; i < n_iter; i++){
-            _last_iteration_mean_precision = run_optimization_return(params, trajectory, verbose);
+            _last_iteration_mean_precision = run_optimization_return(params, trajectory, covariance, verbose);
             VectorXd mean = std::get<0>(_last_iteration_mean_precision);
             new_trajectory = Eigen::Map<Eigen::MatrixXd>(mean.data(), 2*dim_conf, n_states).transpose();
             
@@ -92,6 +96,7 @@ public:
             std::cout << "Norm of difference between two trajectories = " << difference << std::endl;
 
             trajectory = new_trajectory;
+            covariance = std::get<1>(_last_iteration_mean_precision);
         }
         
 
@@ -103,7 +108,7 @@ public:
     //     _last_iteration_mean_precision = run_optimization_return(params, verbose);
     // }
 
-    std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, const MatrixXd& traj, bool verbose=true){
+    std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, const MatrixXd& traj, const SpMat& cov, bool verbose=true){
         QuadratureWeightsMap nodes_weights_map;
         try {
             std::ifstream ifs(GH_map_file_cereal, std::ios::binary);
@@ -144,6 +149,8 @@ public:
 
         std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         std::shared_ptr<CudaOperation_Quad> cuda_ptr = std::make_shared<CudaOperation_Quad>(CudaOperation_Quad{params.sig_obs(), params.eps_sdf(), params.radius()});
+
+        std::shared_ptr<GH> gh_linearization = std::make_shared<GH>(GH{params.GH_degree(), dim_state, _nodes_weights_map_pointer});
         
         // Obtain the parameters from params
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
@@ -169,6 +176,16 @@ public:
         hA = std::get<0>(linearized_matrices);
         hB = std::get<1>(linearized_matrices);
         ha = std::get<2>(linearized_matrices);
+
+        auto SLR_matrices = linearization_SLR(traj, cov, gh_linearization, dim_state, n_states);
+        std::vector<MatrixXd> hA_SLR = std::get<0>(SLR_matrices);
+
+        // for (int i = 0; i<2; i++){
+        //     std::cout << "hA: " << std::endl << hA[4 * i] << std::endl;
+        //     std::cout << "hA_SLR: " << std::endl << hA_SLR[i] << std::endl;
+        //     std::cout << "hA_error: " << (hA[4 * i] - hA_SLR[i]) << std::endl;
+        //     std::cout << "hA_error_norm: " << (hA[4 * i] - hA_SLR[i]).norm() << std::endl;
+        // }
 
         MatrixXd trajectory_init(traj.rows(), traj.cols());
         trajectory_init.setZero();
@@ -282,6 +299,80 @@ public:
         optimizer.optimize(verbose);
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
+
+        // MatrixXd covariances = optimizer.precision().toDense();
+        // std::vector<MatrixXd> control_gain(n_states-1);
+        // std::vector<MatrixXd> states(n_states);
+        // std::vector<MatrixXd> control(n_states - 1);
+
+        // // const int dim_conf = 3;
+        // // const int dim_state = 2 * dim_conf; 
+
+        // for (int i = 0; i < n_states-1; i++){
+        //     MatrixXd cov_i = covariances.block(i*dim_state, i*dim_state, dim_state, dim_state);
+        //     MatrixXd cov_j_i = covariances.block((i+1)*dim_state, i*dim_state, dim_state, dim_state);
+        //     MatrixXd control_gain_i = (cov_j_i * cov_i.inverse() - MatrixXd::Identity(dim_state, dim_state)) / delt_t - hA[4*i];
+        //     control_gain_i = hB[4*i].transpose() * control_gain_i;
+        //     control_gain[i] = control_gain_i;
+
+        //     MatrixXd cov_i_j = cov_i * ((hA[4*i] + hB[4*i] * control_gain_i) * delt_t + MatrixXd::Identity(dim_state, dim_state)).transpose();
+
+        //     std::cout << "cov_i_j: " << std::endl << cov_i_j << std::endl;
+        //     std::cout << "cov_i_j: " << std::endl << cov_j_i.transpose() << std::endl;
+
+        //     // std::cout << "Error: " << error.norm() << std::endl;
+        //     // std::cout << "B*B^T: " << hB[4*i].transpose() * hB[4*i] << std::endl;
+        // }
+
+        // VectorXd initial_mean = optimizer.mean().segment(0, dim_state);
+        // MatrixXd initial_cov = covariances.block(0, 0, dim_state, dim_state);
+
+        // // Cholesky decomposition to get lower triangular matrix L
+        // Eigen::MatrixXd L = initial_cov.llt().matrixL();
+
+        // // Create random number generator for standard normal distribution
+        // std::random_device rd;
+        // std::mt19937 gen(rd());
+        // std::normal_distribution<> dist(0.0, 1.0);
+
+        // // Generate a standard normal vector z
+        // Eigen::VectorXd z(6);
+        // for (int i = 0; i < z.size(); ++i) {
+        //     z(i) = dist(gen);
+        // }
+
+        // // Transform to get multivariate Gaussian sample
+        // Eigen::VectorXd x = initial_mean + L * z;
+        // states[0] = initial_mean;
+
+        // for (int i = 0; i < n_states-1; i++){
+        //     states[i+1] = states[i] + ((hA[4*i]+ hB[4*i] * control_gain[i]) * states[i] + ha[4*i]) * delt_t;
+        //     // Eigen::VectorXd noise(2);
+        //     // for (int i = 0; i < noise.size(); ++i) {
+        //     //     noise(i) = dist(gen);
+        //     // }
+        //     // states[i+1] = states[i+1] + hB[4*i] * sqrt(delt_t) * noise;
+        //     control[i] = control_gain[i] * states[i];
+        // }
+        // MatrixXd states_matrix(states[0].rows(), states.size() * states[0].cols());
+        // MatrixXd control_matrix(control[0].rows(), control.size() * control[0].cols());
+
+        // for (int i = 0; i < n_states; i++){
+        //     states_matrix.block(0, i*states[0].cols(), states[0].rows(), states[0].cols()) = states[i];
+        // }
+
+        // for (int i = 0; i < n_states - 1; i++){
+        //     control_matrix.block(0, i*control[0].cols(), control[0].rows(), control[0].cols()) = control[i];
+
+        // }
+
+
+        // MatrixIO m_io;
+        // std::string file_samples{"../matlab_helpers/GVIMP-examples/2d_Quad/case1/samples.csv"};
+        // std::string file_controls{"../matlab_helpers/GVIMP-examples/2d_Quad/case1/controls.csv"};
+
+        // m_io.saveData(file_samples, states_matrix);
+        // m_io.saveData(file_controls, control_matrix);
 
         return _last_iteration_mean_precision;
 

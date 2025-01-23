@@ -202,18 +202,18 @@ class ParameterEditor(QMainWindow):
         image_path_1 = "/home/zinuo/VIMP/matlab_helpers/ProxKL-examples/2d_pR/output_figure_1.png"
         image_path_2 = "/home/zinuo/VIMP/matlab_helpers/ProxKL-examples/2d_pR/output_figure_2.png"
 
-        max_width = 800  # 设置最大宽度
-        max_height = 600  # 设置最大高度
+        max_width = 800
+        max_height = 600
 
         if os.path.exists(image_path_1):
             pixmap1 = QPixmap(image_path_1)
-            pixmap1 = pixmap1.scaled(max_width, max_height, aspectRatioMode=1)  # 按比例缩放
+            pixmap1 = pixmap1.scaled(max_width, max_height, aspectRatioMode=1)
             self.image_label_1.setPixmap(pixmap1)
             self.image_label_1.setScaledContents(True)
 
         if os.path.exists(image_path_2):
             pixmap2 = QPixmap(image_path_2)
-            pixmap2 = pixmap2.scaled(max_width, max_height, aspectRatioMode=1)  # 按比例缩放
+            pixmap2 = pixmap2.scaled(max_width, max_height, aspectRatioMode=1)
             self.image_label_2.setPixmap(pixmap2)
             self.image_label_2.setScaledContents(True)
 

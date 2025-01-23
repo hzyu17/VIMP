@@ -34,7 +34,7 @@ if __name__ == '__main__':
     i = 4
     
     # case_dirs = [os.path.join(result_dir, f'case{i+1}') for i in range(4)]
-    case_dir = os.path.join(result_dir, 'case3')
+    case_dir = os.path.join(result_dir, 'case4')
 
     # fig, axes = plt.subplots(2, 2, frameon=False)
 
@@ -59,14 +59,15 @@ if __name__ == '__main__':
     
     plt.tight_layout() 
 
-    fig.savefig(case_dir+f'/Trajectory_2_30_150_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+    # fig.savefig(case_dir+f'/Trajectory_2_30_150_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
 
     # fig.savefig(case_dir+f'/Trajectory4_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
 
+
     # print(matplotlib.get_cachedir())
-    print(matplotlib.rcParams['font.family'])
-    print(matplotlib.rcParams['pdf.fonttype'])
-    print(matplotlib.rcParams['ps.fonttype'])
+    # print(matplotlib.rcParams['font.family'])
+    # print(matplotlib.rcParams['pdf.fonttype'])
+    # print(matplotlib.rcParams['ps.fonttype'])
 
     plt.show()  
 
