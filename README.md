@@ -93,7 +93,7 @@ The result can be visualized in matlab by running
 ```
 
 ## Citing
-If you use this repository in your research, please cite the following publications:
+If you find this repository useful in your won research, please kindly cite us:
 ```
 @ARTICLE{10068240,
   author={Yu, Hongzhe and Chen, Yongxin},
