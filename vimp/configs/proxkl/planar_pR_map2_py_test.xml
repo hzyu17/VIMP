@@ -1,22 +1,22 @@
 <Commons>
-    <total_time>3.75</total_time>
+    <total_time>4.0</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
-    <sig_obs>2.0</sig_obs>
+    <sig_obs>4.0</sig_obs>
     <map_name>2dpr_map2</map_name>
     <eps_sdf>0.5</eps_sdf>
     <radius>1.0</radius>
     <step_size>2.0</step_size>
-    <alpha>1.0</alpha>
+    <alpha>20</alpha>
     <init_precision_factor>3000.0</init_precision_factor>
-    <boundary_penalties>3000.0</boundary_penalties>
+    <boundary_penalties>5000.0</boundary_penalties>
     <temperature>7.5</temperature>
-    <high_temperature>20.0</high_temperature>
+    <high_temperature>15.0</high_temperature>
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>15</low_temp_iterations>
     <max_iterations>15</max_iterations>
-    <max_n_backtracking>20</max_n_backtracking>
+    <max_n_backtracking>1</max_n_backtracking>
 </Commons> 
 
 <Experiment1>
