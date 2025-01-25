@@ -25,9 +25,10 @@ using GH = SparseGaussHermite_Cuda<GHFunction>;
 // const double l = 1.0; // Example length
 // const double J = 1.0; // Example inertia
 
-std::tuple<std::vector<MatrixXd>, std::vector<VectorXd>> linearization_SLR(const MatrixXd& trajectory, const SpMat& covariace, std::shared_ptr<GH> gh_ptr, int dim_state, int n_states){
+std::tuple<std::vector<MatrixXd>, std::vector<VectorXd>> linearization_SLR(const MatrixXd& trajectory, const std::vector<MatrixXd>& covariace, std::shared_ptr<GH>& gh_ptr){
+    int n_states = covariace.size();
+    int dim_state = trajectory.cols();
     std::vector<MatrixXd> sigmapts_vec(n_states);
-    std::vector<VectorXd> mean_vec(n_states);
 
     VectorXd weights = gh_ptr->weights();
     MatrixXd y_bar = MatrixXd::Zero(dim_state, n_states);
@@ -35,8 +36,8 @@ std::tuple<std::vector<MatrixXd>, std::vector<VectorXd>> linearization_SLR(const
 
     for (int i = 0; i < n_states; i++)
     {
-        // MatrixXd covariace_i = MatrixXd::Identity(dim_state, dim_state) * 1.0;
-        MatrixXd covariace_i = covariace.block(i*dim_state, i*dim_state, dim_state, dim_state);
+        // Use mean and covariance of each state to update the GH
+        MatrixXd covariace_i = covariace[i];
         gh_ptr->update_P(covariace_i);
         gh_ptr->update_mean(trajectory.row(i));
         gh_ptr->update_sigmapoints();
@@ -45,8 +46,8 @@ std::tuple<std::vector<MatrixXd>, std::vector<VectorXd>> linearization_SLR(const
     }
 
     int sigma_rows = sigmapts_vec[0].rows();
-    std::cout << "sigma_rows: " << sigma_rows << std::endl;
 
+    // Convert the sigmapts_vec to a matrix
     MatrixXd sigmapts_mat(sigma_rows, n_states*dim_state);
 
     for (int i = 0; i < n_states; i++)
@@ -61,7 +62,7 @@ std::tuple<std::vector<MatrixXd>, std::vector<VectorXd>> linearization_SLR(const
 
     for (int i = 0; i < n_states; i++)
     {
-        MatrixXd covariace_i = covariace.block(i*dim_state, i*dim_state, dim_state, dim_state);
+        MatrixXd covariace_i = covariace[i];
         // std::cout << "covariace_i: " << std::endl << covariace_i.inverse() << std::endl;
         hA[i] = P_xy.block(0, i*dim_state, dim_state, dim_state).transpose() * (covariace_i.inverse());
         ha[i] = y_bar.col(i) - hA[i] * trajectory.row(i).transpose();

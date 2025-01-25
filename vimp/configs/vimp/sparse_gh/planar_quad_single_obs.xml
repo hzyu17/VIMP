@@ -113,8 +113,7 @@
 
 
 <!-- GSL ode solver -->
-
-<!-- Experiment1 Pretty Good -->
+<!-- GLS with Jacobian -->
 <!-- <Commons>
     <total_time>10.0</total_time>
     <n_states>50</n_states>
@@ -137,7 +136,30 @@
 
 </Commons> -->
 
-<!-- <Experiment1>    
+
+<Commons>
+    <total_time>10.25</total_time>
+    <n_states>50</n_states>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>6</GH_deg>
+    <sig_obs>0.55</sig_obs>
+    <map_name>single_obs</map_name> 
+    <eps_sdf>1.0</eps_sdf>
+    <radius>0.4</radius>
+    <step_size>0.425</step_size>
+    <alpha>1.0</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>2000.0</boundary_penalties>
+    <temperature>70.0</temperature>
+    <high_temperature>150.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <low_temp_iterations>25</low_temp_iterations>
+    <max_iterations>35</max_iterations>
+    <max_n_backtracking>20</max_n_backtracking>
+
+</Commons>
+
+<Experiment1>    
     <start_pos>
         <x>0.0</x>
         <z>0.0</z>
@@ -158,55 +180,11 @@
  
     <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case1/</saving_prefix>
 
-</Experiment1> -->
+</Experiment1>
 
 
-<!-- <Commons>
+<Experiment2>      
     <total_time>9.5</total_time>
-    <n_states>50</n_states>
-    <coeff_Qc>1.0</coeff_Qc>
-    <GH_deg>6</GH_deg>
-    <sig_obs>0.5</sig_obs>
-    <map_name>single_obs</map_name> 
-    <eps_sdf>1.0</eps_sdf>
-    <radius>0.4</radius>
-    <step_size>0.45</step_size>
-    <alpha>1.0</alpha>
-    <init_precision_factor>10000.0</init_precision_factor>
-    <boundary_penalties>2000.0</boundary_penalties>
-    <temperature>75.0</temperature>
-    <high_temperature>150.0</high_temperature>
-    <stop_err>1e-5</stop_err>
-    <low_temp_iterations>25</low_temp_iterations>
-    <max_iterations>35</max_iterations>
-    <max_n_backtracking>20</max_n_backtracking>
-
-</Commons> -->
-
-
-<!-- <Commons>
-    <total_time>9.5</total_time>
-    <n_states>50</n_states>
-    <coeff_Qc>1.0</coeff_Qc>
-    <GH_deg>6</GH_deg>
-    <sig_obs>0.6</sig_obs>
-    <map_name>single_obs</map_name> 
-    <eps_sdf>1.0</eps_sdf>
-    <radius>0.4</radius>
-    <step_size>0.45</step_size>
-    <alpha>1.0</alpha>
-    <init_precision_factor>10000.0</init_precision_factor>
-    <boundary_penalties>2000.0</boundary_penalties>
-    <temperature>70.0</temperature>
-    <high_temperature>150.0</high_temperature>
-    <stop_err>1e-5</stop_err>
-    <low_temp_iterations>25</low_temp_iterations>
-    <max_iterations>35</max_iterations>
-    <max_n_backtracking>20</max_n_backtracking>
-
-</Commons> -->
-
-<!-- <Experiment1>      
     <start_pos>
         <x>0.0</x>
         <z>0.0</z>
@@ -224,35 +202,15 @@
         <vz>2.0</vz>
         <vphi>0.01</vphi>
     </goal_pos>
+
+    <sig_obs>0.6</sig_obs>
+    <temperature>70.0</temperature>
     
     <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case2/</saving_prefix>
 
-</Experiment1> -->
+</Experiment2>
 
-
-<!-- <Commons>
-    <total_time>9.5</total_time>
-    <n_states>50</n_states>
-    <coeff_Qc>1.0</coeff_Qc>
-    <GH_deg>6</GH_deg>
-    <sig_obs>0.6</sig_obs>
-    <map_name>single_obs</map_name> 
-    <eps_sdf>1.0</eps_sdf>
-    <radius>0.4</radius>
-    <step_size>0.45</step_size>
-    <alpha>1.0</alpha>
-    <init_precision_factor>10000.0</init_precision_factor>
-    <boundary_penalties>2000.0</boundary_penalties>
-    <temperature>70.0</temperature>
-    <high_temperature>200.0</high_temperature>
-    <stop_err>1e-5</stop_err>
-    <low_temp_iterations>25</low_temp_iterations>
-    <max_iterations>35</max_iterations>
-    <max_n_backtracking>20</max_n_backtracking>
-
-</Commons> -->
-
-<!-- <Experiment1>   
+<Experiment3>   
     <start_pos>
         <x>10.0</x>
         <z>0.0</z>
@@ -272,32 +230,9 @@
     </goal_pos>
 
     <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case3/</saving_prefix>
-</Experiment1> -->
+</Experiment3>
 
-
-<Commons>
-    <total_time>9.5</total_time>
-    <n_states>50</n_states>
-    <coeff_Qc>1.0</coeff_Qc>
-    <GH_deg>6</GH_deg>
-    <sig_obs>0.6</sig_obs>
-    <map_name>single_obs</map_name> 
-    <eps_sdf>1.0</eps_sdf>
-    <radius>0.4</radius>
-    <step_size>0.45</step_size>
-    <alpha>1.0</alpha>
-    <init_precision_factor>10000.0</init_precision_factor>
-    <boundary_penalties>2000.0</boundary_penalties>
-    <temperature>70.0</temperature>
-    <high_temperature>200.0</high_temperature>
-    <stop_err>1e-5</stop_err>
-    <low_temp_iterations>25</low_temp_iterations>
-    <max_iterations>35</max_iterations>
-    <max_n_backtracking>20</max_n_backtracking>
-
-</Commons>
-
-<Experiment1>   
+<Experiment4>   
     <start_pos>
         <x>25.0</x>
         <z>0.0</z>
@@ -318,4 +253,4 @@
 
      <saving_prefix>matlab_helpers/GVIMP-examples/2d_Quad/case4/</saving_prefix>
 
-</Experiment1>
+</Experiment4>
