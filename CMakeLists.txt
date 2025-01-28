@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.0)
 enable_testing()
 project(VIMP CXX C CUDA)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -O3")
+
 
 # set(BOOST_ROOT "/usr/local/bin/boost")
 # # set(BOOST_ROOT "~/.local/bin/boost")
