@@ -53,6 +53,11 @@ git clone https://github.com/hzyu17/VIMP.git
 cd VIMP/
 python3 build_GVIMP_modules.py
 ```
+## Generate GH-quadratures before running experiments
+```
+cd build
+./src/save_SparseGH_weights
+```
 ## 2D point robot example
 To recover the 2D Point robot example in [1, 2], run the following:
 ```
