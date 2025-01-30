@@ -17,6 +17,7 @@
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
 #include "dynamics/PlanarQuad_linearization.h"
 #include "dynamics/PlanarQuad_SLR.h"
+#include <unsupported/Eigen/MatrixFunctions>
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
 std::string GH_map_file_cereal{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
@@ -89,6 +90,7 @@ public:
             VectorXd mean = std::get<0>(_last_iteration_mean_precision);
             new_trajectory = Eigen::Map<Eigen::MatrixXd>(mean.data(), 2*dim_conf, n_states).transpose();
             
+            // Compute the difference between the new trajectory and the old trajectory
             double difference = 0;
             for (int j = 0; j < n_states; j++)
                 difference += (new_trajectory.row(j).segment(0,3) - trajectory.row(j).segment(0,3)).norm();
@@ -167,24 +169,29 @@ public:
         std::vector<MatrixXd> hB(4 * N + 1);
         std::vector<VectorXd> ha(4 * N + 1);
         std::vector<VectorXd> target_mean(n_states);
-        std::tuple<std::vector<MatrixXd>, std::vector<MatrixXd>, std::vector<VectorXd>> linearized_matrices;
 
-        MatrixXd trajectory(4 * N + 1, dim_state);
-        trajectory = trajctory_interpolation(traj, target_mean);            
+        MatrixXd trajectory = trajctory_interpolation(traj, target_mean);
+        std::vector<MatrixXd> covariances = covariance_interpolation(cov, dim_state, n_states);        
 
-        linearized_matrices = planarquad_linearization_deterministic(trajectory);
+        auto linearized_matrices = planarquad_linearization_deterministic(trajectory);
         hA = std::get<0>(linearized_matrices);
         hB = std::get<1>(linearized_matrices);
         ha = std::get<2>(linearized_matrices);
 
-        auto SLR_matrices = linearization_SLR(traj, cov, gh_linearization, dim_state, n_states);
+        auto SLR_matrices = linearization_SLR(trajectory, covariances, gh_linearization);
         std::vector<MatrixXd> hA_SLR = std::get<0>(SLR_matrices);
+        std::vector<VectorXd> ha_SLR = std::get<1>(SLR_matrices);
+        hA = hA_SLR;
+        ha = ha_SLR;
 
-        // for (int i = 0; i<2; i++){
-        //     std::cout << "hA: " << std::endl << hA[4 * i] << std::endl;
-        //     std::cout << "hA_SLR: " << std::endl << hA_SLR[i] << std::endl;
-        //     std::cout << "hA_error: " << (hA[4 * i] - hA_SLR[i]) << std::endl;
-        //     std::cout << "hA_error_norm: " << (hA[4 * i] - hA_SLR[i]).norm() << std::endl;
+        // for (int i = 0; i < 4*N+1; i++){
+        //     std::cout << "i: " << i << std::endl;
+        //     // std::cout << "hA: " << std::endl << hA[i] << std::endl;
+        //     // std::cout << "hA_SLR: " << std::endl << hA_SLR[i] << std::endl;
+        //     // std::cout << "hA_error: " << (hA[i] - hA_SLR[i]) << std::endl;
+        //     std::cout << "norm of hA and ha: " << hA[i].norm() << ", " << ha[i].norm() << std::endl;
+        //     std::cout << "hA_error_norm: " << (hA[i] - hA_SLR[i]).norm() << std::endl;
+        //     std::cout << "ha_error_norm: " << (ha[i] - ha_SLR[i]).norm() << std::endl;
         // }
 
         MatrixXd trajectory_init(traj.rows(), traj.cols());
@@ -215,6 +222,7 @@ public:
 
             // initial state                     
             joint_init_theta.segment(i*dim_state, dim_state) = trajectory_init.row(i);
+            gvi::LTV_GP lin_gp{Qc, max(0, i-1), delt_t, start_theta, n_states, hA, hB, target_mean}; // Check if it affects the result
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
@@ -222,7 +230,6 @@ public:
                 std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
-                    gvi::LTV_GP lin_gp{Qc, i-1, delt_t, start_theta, n_states, hA, hB, target_mean};
                     vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                                 dim_state, 
                                                                 gvi::cost_linear_gp, 
@@ -246,7 +253,6 @@ public:
 
             }else{
                 // linear gp factors
-                gvi::LTV_GP lin_gp{Qc, i-1, delt_t, start_theta, n_states, hA, hB, target_mean};
                 vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
                                                             dim_state, 
                                                             gvi::cost_linear_gp, 
@@ -298,7 +304,7 @@ public:
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
 
-        _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
+        _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.covariance());
 
         // MatrixXd covariances = optimizer.precision().toDense();
         // std::vector<MatrixXd> control_gain(n_states-1);
@@ -384,8 +390,8 @@ public:
 
     MatrixXd trajctory_interpolation(const MatrixXd& trajectory, std::vector<VectorXd>& target_mean){
         int N = trajectory.rows() - 1;
-        int dim_states = trajectory.cols();
-        MatrixXd traj(4*N+1, dim_states);
+        int dim_state = trajectory.cols();
+        MatrixXd traj(4*N+1, dim_state);
 
         for (int i = 0; i < N; i++) {
             traj.row(4*i) = trajectory.row(i);
@@ -400,6 +406,36 @@ public:
 
         return traj;
     }
+
+
+    std::vector<MatrixXd> covariance_interpolation(const SpMat& covariance, int dim_state, int n_states) {
+        int N = n_states - 1;
+        std::vector<MatrixXd> interpolated_covariances(4 * N + 1);
+
+        for (int i = 0; i < N; i++) {
+            MatrixXd Sigma1 = covariance.block(i*dim_state, i*dim_state, dim_state, dim_state);
+            MatrixXd Sigma2 = covariance.block((i+1)*dim_state, (i+1)*dim_state, dim_state, dim_state);
+
+            // Compute the logarithm of the covariance matrices
+            MatrixXd log_Sigma1 = Sigma1.log();
+            MatrixXd log_Sigma2 = Sigma2.log();
+
+            // Interpolate between the covariance matrices
+            interpolated_covariances[4 * i] = Sigma1;
+            interpolated_covariances[4 * i + 1] = (0.75*log_Sigma1 + 0.25*log_Sigma2).exp();
+            interpolated_covariances[4 * i + 2] = (0.5*log_Sigma1 + 0.5*log_Sigma2).exp();
+            interpolated_covariances[4 * i + 3] = (0.25*log_Sigma1 + 0.75*log_Sigma2).exp();
+
+            // std::cout << "Norm of the differences: " << (Sigma1 - interpolated_covariances[4 * i]).norm() << ", " <<  (Sigma1 - interpolated_covariances[4 * i + 1]).norm() << ", " <<  (Sigma1 - interpolated_covariances[4 * i + 2]).norm()
+            // << ", " <<  (Sigma1 - interpolated_covariances[4 * i + 3]).norm() << ", " <<  (Sigma1 - Sigma2).norm() << std::endl;
+        }
+
+        // Append the last covariance matrix
+        interpolated_covariances[4 * N] = covariance.block(N * dim_state, N * dim_state, dim_state, dim_state);
+
+        return interpolated_covariances;
+    }
+
 
 protected: 
     double _eps_sdf;
