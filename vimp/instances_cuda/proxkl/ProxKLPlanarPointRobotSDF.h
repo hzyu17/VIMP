@@ -162,20 +162,19 @@ public:
             
             if(i == 0){
                 B_matrix.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
-                B_matrix.block(dim_state, 0, dim_state, dim_state) = -lin_gp.Phi();
-
                 Q_inverse.block(0, 0, dim_state, dim_state) = K0_fixed.inverse();
             }
             else if (i == n_states-1){
                 B_matrix.block(i*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
                 B_matrix.block((i+1)*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
+                B_matrix.block(i*dim_state, (i-1)*dim_state, dim_state, dim_state) = -lin_gp.Phi();
 
                 Q_inverse.block(i*dim_state, i*dim_state, dim_state, dim_state) = lin_gp.get_precision();
                 Q_inverse.block((i+1)*dim_state, (i+1)*dim_state, dim_state, dim_state) = K0_fixed.inverse();
             }
             else{
                 B_matrix.block(i*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
-                B_matrix.block((i+1)*dim_state, i*dim_state, dim_state, dim_state) = -lin_gp.Phi();
+                B_matrix.block(i*dim_state, (i-1)*dim_state, dim_state, dim_state) = -lin_gp.Phi();
 
                 Q_inverse.block(i*dim_state, i*dim_state, dim_state, dim_state) = lin_gp.get_precision();
             }
