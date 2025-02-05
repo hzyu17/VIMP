@@ -14,19 +14,19 @@
 #define XSTRING(x) STRING(x)
 
 #include "helpers/ExperimentRunner.h"
-#include "instances_cuda/proxkl/ProxKLPlanarPointRobotSDF.h"
+#include "instances_cuda/proxkl/ProxKLPlanarQuadrotorSDF.h"
 
 using namespace vimp;
 
 int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};
-    int nx = 4, nu = 2, num_exp = 4;
+    int nx = 6, nu = 2, num_exp = 4;
     GVIMPParams params;
     // no experiment argument, run the default scripts
     if (argc == 1){
         num_exp = 1;
-        std::string config_file{source_root+"/configs/proxkl/planar_pR_map2_py_test.xml"};
-        GVIMPRunner<ProxKLPlanarPointRobotSDF> runner(nx, nu, num_exp, config_file); // GVIMPPlanarPRSDF is the Optimizer
+        std::string config_file{source_root+"/configs/proxkl/planar_quad_single_obs.xml"};
+        GVIMPRunner_Quadrotor<ProxKLPlanarQuadrotorSDF> runner(nx, nu, num_exp, config_file); // GVIMPPlanarPRSDF is the Optimizer
         runner.read_config(params);
         runner.run();
         return 0;
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
         std::string config_abs_path = static_cast<std::string>(argv[1]);
         num_exp = std::stoi(argv[2]);
         
-        GVIMPRunner<ProxKLPlanarPointRobotSDF> runner(nx, nu, num_exp, config_abs_path);
+        GVIMPRunner_Quadrotor<ProxKLPlanarQuadrotorSDF> runner(nx, nu, num_exp, config_abs_path);
         runner.read_config(params);
         runner.run();
         return 0;

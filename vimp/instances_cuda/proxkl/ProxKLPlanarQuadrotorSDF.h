@@ -45,14 +45,14 @@ using GHFunction = std::function<MatrixXd(const VectorXd&)>;
 using GH = SparseGaussHermite_Cuda<GHFunction>;
 using ProxKLFactorizedBaseGH = ProxKLFactorizedBaseGH_Cuda<CudaOperation_Quad>;
 
-class GVIMPPlanarQuadrotorSDF{
+class ProxKLPlanarQuadrotorSDF{
 
 public:
-    virtual ~GVIMPPlanarQuadrotorSDF(){}
+    virtual ~ProxKLPlanarQuadrotorSDF(){}
 
-    GVIMPPlanarQuadrotorSDF(){}
+    ProxKLPlanarQuadrotorSDF(){}
 
-    GVIMPPlanarQuadrotorSDF(GVIMPParams& params){}
+    ProxKLPlanarQuadrotorSDF(GVIMPParams& params){}
 
     double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
         Timer timer;
@@ -195,8 +195,6 @@ public:
         MatrixXd B_matrix{MatrixXd::Zero(dim_state * (n_states+1), dim_state * n_states)};
         MatrixXd Q_inverse{MatrixXd::Zero(dim_state * (n_states+1), dim_state * (n_states+1))};
 
-        // create each factor
-        // fill the B and Q_inverse matrix in each iteration
         for (int i = 0; i < n_states; i++) {
 
             // initial state                     
