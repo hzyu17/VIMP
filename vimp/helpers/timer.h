@@ -64,6 +64,19 @@ public:
         
     }
 
+    double end_mus_output(const std::string & header="Time difference = "){
+        if (!_has_started){
+            cout << "Not started yet, must call start() first! " << endl;
+            return -999.9;
+        }else{
+            _end = chrono::steady_clock::now();
+            auto time_elapsed_us = chrono::duration_cast<chrono::microseconds>(_end - _start).count();
+            _has_started = false;
+
+            return time_elapsed_us;
+        }
+    }
+
     void end_mus(const std::string & header="Time difference = "){
         if (!_has_started){
             cout << "Not started yet, must call start() first! " << endl;

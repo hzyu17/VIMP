@@ -24,8 +24,8 @@ int main(int argc, char* argv[]){
     GVIMPParams params;
     // no experiment argument, run the default scripts
     if (argc == 1){
-        num_exp = 1;
-        std::string config_file{source_root+"/configs/proxkl/planar_pR_map2_py_test.xml"};
+        num_exp = 4;
+        std::string config_file{source_root+"/configs/proxkl/planar_pR_map2.xml"};
         GVIMPRunner<ProxKLPlanarPointRobotSDF> runner(nx, nu, num_exp, config_file); // GVIMPPlanarPRSDF is the Optimizer
         runner.read_config(params);
         runner.run();

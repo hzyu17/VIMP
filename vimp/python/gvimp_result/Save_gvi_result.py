@@ -7,7 +7,8 @@ costfunction_dir = os.path.dirname(file_path)
 py_dir = os.path.abspath(os.path.join(os.path.join(file_path, '..'),'..'))
 collision_cost_dir = os.path.abspath(os.path.join(os.path.join(py_dir, 'sdf_robot'), 'scripts'))
 VIMP_dir = os.path.abspath(os.path.join(os.path.join(py_dir, '..'), '..'))
-result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'GVIMP-examples'), '2d_Quad'))
+# result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'GVIMP-examples'), '2d_Quad'))
+result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'ProxKL-examples'), '2d_Quad'))
 
 sys.path.append(collision_cost_dir)
 sys.path.append(py_dir)
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     i = 4
     
     # case_dirs = [os.path.join(result_dir, f'case{i+1}') for i in range(4)]
-    case_dir = os.path.join(result_dir, 'case4')
+    case_dir = os.path.join(result_dir, 'case2')
 
     # fig, axes = plt.subplots(2, 2, frameon=False)
 
