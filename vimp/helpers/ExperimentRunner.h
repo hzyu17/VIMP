@@ -212,6 +212,16 @@ public:
             params.update_step_size(step_size);
         }
 
+        if (paramNode->first_node("boundary_penalties")){
+            double boundary_penalties = atof(paramNode->first_node("boundary_penalties")->value());
+            params.update_boundary_penalties(boundary_penalties);
+        }
+
+        if (paramNode->first_node("alpha")){
+            double alpha = atof(paramNode->first_node("alpha")->value());
+            params.update_alpha(alpha);
+        }
+
         std::string source_root{XSTRING(SOURCE_ROOT)};
         std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
@@ -335,6 +345,16 @@ public:
         if (paramNode->first_node("step_size")){
             double step_size = atof(paramNode->first_node("step_size")->value());
             params.update_step_size(step_size);
+        }
+
+        if (paramNode->first_node("boundary_penalties")){
+            double boundary_penalties = atof(paramNode->first_node("boundary_penalties")->value());
+            params.update_boundary_penalties(boundary_penalties);
+        }
+
+        if (paramNode->first_node("alpha")){
+            double alpha = atof(paramNode->first_node("alpha")->value());
+            params.update_alpha(alpha);
         }
 
         std::string source_root{XSTRING(SOURCE_ROOT)};

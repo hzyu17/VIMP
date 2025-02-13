@@ -24,8 +24,7 @@ public:
             double sigma_obs, double eps_sdf, double radius,
             double step_size, int num_iter, double stop_err,
             double backtracking_ratio, int max_n_backtracking, 
-            std::string map_name="map0", std::string sdf_file="", 
-            double alpha = 1):
+            std::string map_name="map0", std::string sdf_file=""):
             _nx(nx),
             _nu(nu),
             _total_time(total_time),
@@ -42,8 +41,7 @@ public:
             _mT(VectorXd::Zero(nx)),
             _Sig0(MatrixXd::Zero(nx, nx)),
             _SigT(MatrixXd::Zero(nx, nx)),
-            _map_name(map_name),
-            _alpha(alpha)
+            _map_name(map_name)
             {}
 
 public:
@@ -86,7 +84,6 @@ public:
     inline void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
     inline void update_step_size(double step_size){ _step_size = step_size; }
     inline void update_max_iter(int max_iter){ _max_iterations = max_iter; }
-    inline void update_lowtemp_iter(int low_temp_iter){ _lowtemp_iterations = low_temp_iter; }
 
     inline void set_saving_prefix(const std::string& save_prefix){ _save_prefix = save_prefix; }
 
@@ -98,11 +95,11 @@ public:
     virtual inline void print_params() = 0; 
 
 protected:
-    double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio, _alpha;
+    double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio;
     int _nt, _nx, _nu;
     double _eps_sdf, _radius, _sig_obs;
 
-    int _max_iterations, _max_n_backtrack, _lowtemp_iterations;
+    int _max_iterations, _max_n_backtrack;
 
     gvi::MatrixIO _m_io;
     gvi::EigenWrapper _ei;
@@ -152,8 +149,7 @@ public:
                         1,
                         max_n_backtracking,
                         map_name,
-                        sdf_file,
-                        alpha),
+                        sdf_file),
                 _coeff_Qc(coeff_Qc),
                 _initial_precision_factor(initial_precision_factor),
                 _boundary_penalties(boundary_penalties),
@@ -180,6 +176,8 @@ public:
     inline void set_boundary_penalties(double boundary_penalties){ _boundary_penalties = boundary_penalties; }
     inline void update_initial_precision_factor(double initial_precision_factor){ _initial_precision_factor =  initial_precision_factor; }
     inline void update_boundary_penalties(double boundary_penalties) { _boundary_penalties = boundary_penalties; }
+    inline void update_lowtemp_iter(int low_temp_iter){ _max_iter_lowtemp = low_temp_iter; }
+    inline void update_alpha(double alpha) { _alpha = alpha; }
     
     void inline print_params() override {
         std::cout << "================ Experiment Parameters for GVI-MP ================" << std::endl 
