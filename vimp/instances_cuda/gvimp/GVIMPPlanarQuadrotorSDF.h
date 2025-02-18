@@ -19,6 +19,9 @@
 #include "dynamics/PlanarQuad_SLR.h"
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <vector>
+#include <fstream>
+
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights.bin"};
 std::string GH_map_file_cereal{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
@@ -35,13 +38,34 @@ public:
 
     GVIMPPlanarQuadrotorSDF(){}
 
-    GVIMPPlanarQuadrotorSDF(GVIMPParams& params){}
+    GVIMPPlanarQuadrotorSDF(GVIMPParams_nonlinear& params){}
 
-    double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
+    double run_optimization_withtime(const GVIMPParams_nonlinear& params, bool verbose=true){
         Timer timer;
         timer.start();
 
-        int n_iter = 1;
+        QuadratureWeightsMap nodes_weights_map;
+        try {
+            std::ifstream ifs(GH_map_file_cereal, std::ios::binary);
+            if (!ifs.is_open()) {
+                std::string error_msg = "Failed to open file for GH weights reading in file: " + GH_map_file_cereal;
+                throw std::runtime_error(error_msg);
+            }
+
+            std::cout << "Opening file for GH weights reading in file: " << GH_map_file_cereal << std::endl;
+            
+            // Use cereal for deserialization
+            cereal::BinaryInputArchive archive(ifs);
+            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
+
+        } catch (const std::exception& e) {
+            std::cerr << "Standard exception: " << e.what() << std::endl;
+        }
+
+        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
+
+
+        int n_iter = params.max_linear_iter();
         int n_states = params.nt();
         const int dim_conf = 3;
         double delt_t = params.total_time() / (n_states - 1);
@@ -85,8 +109,11 @@ public:
         MatrixXd dense_covariance = MatrixXd::Identity(2 * dim_conf * n_states, 2 * dim_conf * n_states) / params.initial_precision_factor();
         SpMat covariance = dense_covariance.sparseView();
 
+        std::vector<double> norm_differences;
+
         for (int i = 0; i < n_iter; i++){
-            _last_iteration_mean_precision = run_optimization_return(params, trajectory, covariance, verbose);
+            bool is_final_iter = (i == n_iter - 1);
+            _last_iteration_mean_precision = run_optimization_return(params, trajectory, covariance, is_final_iter, verbose);
             VectorXd mean = std::get<0>(_last_iteration_mean_precision);
             new_trajectory = Eigen::Map<Eigen::MatrixXd>(mean.data(), 2*dim_conf, n_states).transpose();
             
@@ -97,40 +124,37 @@ public:
 
             std::cout << "Norm of difference between two trajectories = " << difference << std::endl;
 
+            norm_differences.push_back(difference);
+
             trajectory = new_trajectory;
             covariance = std::get<1>(_last_iteration_mean_precision);
         }
         
+        // // Save the norm differences to a CSV file
+        // std::ofstream file("norm_differences.csv");
+        // if (file.is_open()) {
+        //     for (size_t i = 0; i < norm_differences.size(); i++){
+        //         file << norm_differences[i];
+        //         if (i != norm_differences.size() - 1)
+        //             file << "\n";  // Newline for each entry
+        //     }
+        //     file.close();
+        //     std::cout << "Norm differences saved to norm_differences.csv" << std::endl;
+        // }
+        // else {
+        //     std::cerr << "Could not open file to write norm differences." << std::endl;
+        // }
 
         std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
     }
 
-    // void run_optimization(const GVIMPParams& params, bool verbose=true){
+    // void run_optimization(const GVIMPParams_nonlinear& params, bool verbose=true){
     //     _last_iteration_mean_precision = run_optimization_return(params, verbose);
     // }
 
-    std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, const MatrixXd& traj, const SpMat& cov, bool verbose=true){
-        QuadratureWeightsMap nodes_weights_map;
-        try {
-            std::ifstream ifs(GH_map_file_cereal, std::ios::binary);
-            if (!ifs.is_open()) {
-                std::string error_msg = "Failed to open file for GH weights reading in file: " + GH_map_file_cereal;
-                throw std::runtime_error(error_msg);
-            }
-
-            std::cout << "Opening file for GH weights reading in file: " << GH_map_file_cereal << std::endl;
-            
-            // Use cereal for deserialization
-            cereal::BinaryInputArchive archive(ifs);
-            archive(nodes_weights_map); // Read and deserialize into nodes_weights_map
-
-        } catch (const std::exception& e) {
-            std::cerr << "Standard exception: " << e.what() << std::endl;
-        }
-
-        _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
-
+    std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams_nonlinear& params, const MatrixXd& traj, const SpMat& cov, const bool final_iter, bool verbose=true){
+        
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
@@ -298,6 +322,7 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
+        optimizer.set_data_save(final_iter);
         
         optimizer.classify_factors();
 

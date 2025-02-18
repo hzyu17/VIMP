@@ -182,7 +182,7 @@ class ParameterEditor(QMainWindow):
 
         # Specify the paths to the executable and MATLAB script
         executable = "/home/zinuo/VIMP/build/src/gvimp/gvi_Quadrotor_spgh"
-        matlab_script = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/planarPR_map2.m"
+        matlab_script = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/planarQuad_morestates.m"
 
         try:
             # Run the C++ executable
@@ -199,11 +199,11 @@ class ParameterEditor(QMainWindow):
 
     def display_images(self):
         # Paths to the generated images
-        image_path_1 = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/output_figure_1.png"
-        image_path_2 = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/output_figure_2.png"
+        image_path_1 = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/case2_300_states/output_figure_1.png"
+        image_path_2 = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/case2_300_states/output_figure_2.png"
 
-        max_width = 800
-        max_height = 600
+        max_width = 600
+        max_height = 450
 
         if os.path.exists(image_path_1):
             pixmap1 = QPixmap(image_path_1)

@@ -21,7 +21,7 @@ using namespace vimp;
 int main(int argc, char* argv[]){
     std::string source_root{XSTRING(SOURCE_ROOT)};
     int nx = 6, nu = 2, num_exp = 4;
-    GVIMPParams params;
+    GVIMPParams_nonlinear params;
     // no experiment argument, run the default scripts
     if (argc == 1){
         num_exp = 1;
