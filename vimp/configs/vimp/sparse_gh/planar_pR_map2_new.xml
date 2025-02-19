@@ -59,6 +59,8 @@
 
 </Experiment2>
 
+<!-- First two experiments don't need to tune the parameters when change state to 300 -->
+
 <Experiment3>   
     <total_time>3.5</total_time>
     <start_pos>
@@ -74,10 +76,10 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-    <temperature>50.0</temperature>
-    <high_temperature>80.0</high_temperature>
+    <temperature>20.0</temperature>
+    <high_temperature>50.0</high_temperature>
     <sig_obs>20.0</sig_obs>
-    <step_size>0.4</step_size>
+    <step_size>0.425</step_size>
     <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case3/</saving_prefix>
 </Experiment3>
 
