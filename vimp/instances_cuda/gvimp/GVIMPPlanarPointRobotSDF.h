@@ -50,6 +50,8 @@ public:
         
         // Read the sparse grid GH quadrature weights and nodes
         // Serialization of Eigen is in SerializeEigenMaps.h
+        Timer timer;
+        timer.start();
         QuadratureWeightsMap nodes_weights_map;
         try {
             std::ifstream ifs(GH_map_file, std::ios::binary);
@@ -70,6 +72,8 @@ public:
 
         _nodes_weights_map_pointer = std::make_shared<QuadratureWeightsMap>(nodes_weights_map);
 
+        std::cout << "Time for reading GH weights: " << timer.end_mis() << " ms" << std::endl;
+
         /// parameters
         int n_states = params.nt();
         int N = n_states - 1;
@@ -85,15 +89,13 @@ public:
         MatrixXd Qc{MatrixXd::Identity(dim_conf, dim_conf)*params.coeff_Qc()};
         MatrixXd K0_fixed{MatrixXd::Identity(dim_state, dim_state)/params.boundary_penalties()};
 
+        double temperature = params.temperature();
+
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
         _cuda_ptr = std::make_shared<CudaOperation_PlanarPR>(CudaOperation_PlanarPR{params.sig_obs(), params.eps_sdf(), params.radius()});
         
-        // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
-        double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
-        double temperature = params.temperature();
-
         /// initial values
         VectorXd joint_init_theta{VectorXd::Zero(ndim)};
         VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
@@ -166,6 +168,7 @@ public:
             }
         }
 
+        timer.start();
         /// The joint optimizer
         gvi::NGDGH<gvi::GVIFactorizedBase_Cuda> optimizer{vec_factors, 
                                            dim_state, 
@@ -173,6 +176,8 @@ public:
                                            params.max_iter(), 
                                            params.temperature(), 
                                            params.high_temperature()};
+
+        std::cout << "Time for setting up optimizer: " << timer.end_mis() << " ms" << std::endl;
 
         optimizer.set_max_iter_backtrack(params.max_n_backtrack());
         optimizer.set_niter_low_temperature(params.max_iter_lowtemp());

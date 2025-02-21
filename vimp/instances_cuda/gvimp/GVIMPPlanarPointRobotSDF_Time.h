@@ -183,6 +183,7 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.classify_factors();
+        optimizer.set_data_save(false);
 
         optimizer.time_test();
 

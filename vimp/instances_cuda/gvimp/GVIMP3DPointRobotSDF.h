@@ -81,7 +81,6 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
-        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         _cuda_ptr = std::make_shared<CudaOperation_3dpR>(CudaOperation_3dpR{params.sig_obs(), params.eps_sdf(), params.radius()});
         
         // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
@@ -95,14 +94,14 @@ public:
         /// prior 
         double delt_t = params.total_time() / N;
 
-        for (int i = 1; i < n_states-1; i++) {
+        for (int i = 0; i < n_states; i++) {
 
             // initial state
             VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
 
             // initial velocity: must have initial velocity for the fitst state??
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
-            joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);  
+            joint_init_theta.segment(i*dim_state, dim_state) = theta_i;
 
             gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta}; 
 
@@ -157,7 +156,6 @@ public:
                                                                 params.high_temperature(),
                                                                 _nodes_weights_map_pointer, 
                                                                 _cuda_ptr});    
-
             }
         }
 
@@ -181,6 +179,7 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.classify_factors();
+        optimizer.set_data_save(false);
 
         optimizer.time_test();
 
@@ -203,7 +202,6 @@ protected:
     gvi::EigenWrapper _ei;
     std::shared_ptr<gvi::NGDGH<gvi::GVIFactorizedBase_Cuda>> _p_opt;
     std::shared_ptr<CudaOperation_3dpR> _cuda_ptr;
-    std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 

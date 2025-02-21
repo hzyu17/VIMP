@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 enable_testing()
 project(VIMP CXX C CUDA)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -O3")
 
 # set(BOOST_ROOT "/usr/local/bin/boost")
 # # set(BOOST_ROOT "~/.local/bin/boost")
@@ -34,7 +34,7 @@ if(POLICY CMP0104)
 endif()
 
 # Set the CUDA architectures you want to target
-set(CMAKE_CUDA_ARCHITECTURES "52;60;61;70;75;80")
+set(CMAKE_CUDA_ARCHITECTURES "52;60;61;70;75")
 
 # Cuda
 find_package(CUDA REQUIRED)
