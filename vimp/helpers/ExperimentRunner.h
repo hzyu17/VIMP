@@ -118,10 +118,14 @@ public:
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
 
         std::string map_name = static_cast<std::string>(commonParams->first_node("map_name")->value());
+        std::string sdf_file = "";
+        if (commonParams->first_node("sdf_file")){
+            sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
+        }
 
         params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, gh_degree, sig_obs, eps_sdf, radius, 
                             step_size, max_iterations, init_precision_factor, boundary_penalties, 
-                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name, "", alpha);
+                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name, sdf_file, alpha);
     }
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& params) override {

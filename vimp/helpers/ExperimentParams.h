@@ -41,7 +41,8 @@ public:
             _mT(VectorXd::Zero(nx)),
             _Sig0(MatrixXd::Zero(nx, nx)),
             _SigT(MatrixXd::Zero(nx, nx)),
-            _map_name(map_name)
+            _map_name(map_name), 
+            _sdf_file(sdf_file)
             {}
 
 public:
