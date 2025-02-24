@@ -1,0 +1,18 @@
+{
+    "map_name": "SingleObstacleMap",
+    "origin": [
+        -20.0,
+        -20.0
+    ],
+    "cell_size": 0.1,
+    "map_width": 700,
+    "map_height": 700,
+    "obstacles": [
+        {
+            "xmin": 10.0,
+            "ymin": 12.0,
+            "width": 6.0,
+            "height": 8.0
+        }
+    ]
+}

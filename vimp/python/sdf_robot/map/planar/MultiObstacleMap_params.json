@@ -1,0 +1,24 @@
+{
+    "map_name": "MultiObstacleMap",
+    "origin": [
+        -20.0,
+        -20.0
+    ],
+    "cell_size": 0.1,
+    "map_width": 700,
+    "map_height": 700,
+    "obstacles": [
+        {
+            "xmin": -5.0,
+            "ymin": 10.0,
+            "width": 8.0,
+            "height": 10.0
+        },
+        {
+            "xmin": 9.5,
+            "ymin": 15.0,
+            "width": 8.0,
+            "height": 10.0
+        }
+    ]
+}
