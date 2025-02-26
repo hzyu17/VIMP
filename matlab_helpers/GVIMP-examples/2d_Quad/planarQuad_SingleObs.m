@@ -18,7 +18,7 @@ save_figure = 0;
 %% ============ 
 % read map
 % ============
-sdfmap = csvread("../../../vimp/maps/2dQuad/SingleObstacleMap.csv");
+sdfmap = csvread("../../../vimp/python/sdf_robot/map/planar/SingleObstacleMap.csv");
 
 dim_state = 6;
 dim_theta = 3;
@@ -26,15 +26,15 @@ dim_theta = 3;
 %% ================ 
 % plot costs 
 % =================
-for i = 1:1 % 4 experiments
+for i = 2:2 % 4 experiments
     if is_sparse
         prefix = ["case" + num2str(i)+"/"];
     else
         prefix = ["map2/case" + num2str(i)+"/"];
     end
-    means = csvread([prefix + "mean.csv"]);
-    joint_precisions = csvread([prefix + "joint_precision.csv"]);
-    costs = csvread([prefix + "cost.csv"]);
+    means = csvread([prefix + "mean.csv"]);  %n_states*dim_state x niters
+    joint_precisions = csvread([prefix + "joint_precision.csv"]);  % n_states*dim_state*dim_state x niters
+    costs = csvread([prefix + "cost.csv"]);  % niters x 1
     
     factor_costs = csvread([prefix + "factor_costs.csv"]);
     
@@ -68,7 +68,7 @@ set(gcf,'position',[x0,y0,width,height])
 %                 -13, 8, 0, 0];
 
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i = 1:1 % 4 experiments  
+for i = 2:2 % 4 experiments  
     nexttile
     if is_sparse
         prefix = ["case" + num2str(i)+"/"];
@@ -102,6 +102,14 @@ for i = 1:1 % 4 experiments
     % axis off
     
 end
+
+
+% prefix = ["case2" + "/"];
+% norm_difference = csvread([prefix + "norm_differences.csv"]);
+% figure
+% plot(norm_difference, 'LineWidth', 2)
+
+
 
 % exportgraphics(gcf, strcat('Trajectory2_', num2str(niters), '_150_point.pdf'), 'ContentType', 'image');
 

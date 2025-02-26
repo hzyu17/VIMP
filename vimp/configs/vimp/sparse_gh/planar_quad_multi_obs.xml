@@ -6,7 +6,7 @@
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
     <sig_obs>0.45</sig_obs>
-    <map_name>single_obs</map_name> 
+    <map_name>MultiObstacleMap</map_name> 
     <eps_sdf>0.8</eps_sdf>
     <radius>0.4</radius>
     <step_size>0.45</step_size>
@@ -54,7 +54,7 @@
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
     <sig_obs>0.4</sig_obs>
-    <map_name>single_obs</map_name> 
+    <map_name>MultiObstacleMap</map_name> 
     <eps_sdf>0.8</eps_sdf>
     <radius>0.4</radius>
     <step_size>0.45</step_size>
@@ -102,7 +102,7 @@
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
     <sig_obs>0.45</sig_obs>
-    <map_name>single_obs</map_name> 
+    <map_name>MultiObstacleMap</map_name> 
     <eps_sdf>0.8</eps_sdf>
     <radius>0.4</radius>
     <step_size>0.45</step_size>

@@ -1,9 +1,5 @@
-function output = plot_2d_result(sdfmap, zk, Sk)
+function output = plot_2d_result(sdfmap, zk, Sk, cell_size, origin_x, origin_y)
 output = 1;
-
-cell_size = 0.1;
-origin_x = -20;
-origin_y = -20;
 
 plotEvidenceMap2D_1(sdfmap, origin_x, origin_y, cell_size);
 

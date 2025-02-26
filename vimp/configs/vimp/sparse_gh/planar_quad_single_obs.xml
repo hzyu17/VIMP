@@ -4,7 +4,7 @@
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
     <sig_obs>0.5</sig_obs>
-    <map_name>single_obs</map_name> 
+    <map_name>SingleObstacleMap</map_name> 
     <eps_sdf>1.0</eps_sdf>
     <radius>0.4</radius>
     <step_size>0.45</step_size>
@@ -120,7 +120,7 @@
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
     <sig_obs>0.425</sig_obs>
-    <map_name>single_obs</map_name> 
+    <map_name>SingleObstacleMap</map_name> 
     <eps_sdf>1.0</eps_sdf>
     <radius>0.4</radius>
     <step_size>0.45</step_size>
@@ -137,13 +137,17 @@
 </Commons> -->
 
 
+
+
+
+<!-- GLS with SLR -->
 <Commons>
     <total_time>10.25</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
     <sig_obs>0.55</sig_obs>
-    <map_name>single_obs</map_name> 
+    <map_name>SingleObstacleMap</map_name> 
     <eps_sdf>1.0</eps_sdf>
     <radius>0.4</radius>
     <step_size>0.425</step_size>

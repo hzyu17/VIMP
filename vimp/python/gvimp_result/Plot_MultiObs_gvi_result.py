@@ -32,11 +32,8 @@ if __name__ == '__main__':
     H = 0.35
     i = 4
     
-    # case_dirs = [os.path.join(result_dir, f'case{i+1}') for i in range(4)]
     case_dir = os.path.join(os.path.join(result_dir, 'Multi_Obs'), 'Go_around')
     # case_dir = os.path.join(os.path.join(result_dir, 'Multi_Obs'), 'Go_through')
-
-    # fig, axes = plt.subplots(2, 2, frameon=False)
 
     mean_pd = pd.read_csv(os.path.join(case_dir,'zk_sdf.csv'), header=None)
     mean = mean_pd.values.T

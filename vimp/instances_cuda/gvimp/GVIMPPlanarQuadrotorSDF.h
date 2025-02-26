@@ -130,20 +130,21 @@ public:
             covariance = std::get<1>(_last_iteration_mean_precision);
         }
         
-        // // Save the norm differences to a CSV file
-        // std::ofstream file("norm_differences.csv");
-        // if (file.is_open()) {
-        //     for (size_t i = 0; i < norm_differences.size(); i++){
-        //         file << norm_differences[i];
-        //         if (i != norm_differences.size() - 1)
-        //             file << "\n";  // Newline for each entry
-        //     }
-        //     file.close();
-        //     std::cout << "Norm differences saved to norm_differences.csv" << std::endl;
-        // }
-        // else {
-        //     std::cerr << "Could not open file to write norm differences." << std::endl;
-        // }
+        // Save the norm differences to a CSV file
+        std::string file_path = params.saving_prefix() + "/norm_differences.csv";
+        std::ofstream file(file_path);
+        if (file.is_open()) {
+            for (size_t i = 0; i < norm_differences.size(); i++){
+                file << norm_differences[i];
+                if (i != norm_differences.size() - 1)
+                    file << "\n";  // Newline for each entry
+            }
+            file.close();
+            std::cout << "Norm differences saved to norm_differences.csv" << std::endl;
+        }
+        else {
+            std::cerr << "Could not open file to write norm differences." << std::endl;
+        }
 
         std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
@@ -174,7 +175,7 @@ public:
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
         std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
-        std::shared_ptr<CudaOperation_Quad> cuda_ptr = std::make_shared<CudaOperation_Quad>(CudaOperation_Quad{params.sig_obs(), params.eps_sdf(), params.radius()});
+        std::shared_ptr<CudaOperation_Quad> cuda_ptr = std::make_shared<CudaOperation_Quad>(CudaOperation_Quad{params.sig_obs(), params.eps_sdf(), params.radius(), params.map_name()});
 
         std::shared_ptr<GH> gh_linearization = std::make_shared<GH>(GH{params.GH_degree(), dim_state, _nodes_weights_map_pointer});
         
@@ -246,7 +247,7 @@ public:
 
             // initial state                     
             joint_init_theta.segment(i*dim_state, dim_state) = trajectory_init.row(i);
-            gvi::LTV_GP lin_gp{Qc, max(0, i-1), delt_t, start_theta, n_states, hA, hB, target_mean}; // Check if it affects the result
+            gvi::LTV_GP lin_gp{Qc, max(0, i-1), delt_t, start_theta, n_states, hA, hB, target_mean};
 
             // fixed start and goal priors
             // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
