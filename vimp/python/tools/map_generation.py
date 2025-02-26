@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QLabel, QLineEdit, QPushButton, QFileDialog, QScrollArea, QMessageBox)
 from scipy.ndimage import distance_transform_edt as bwdist
 
-# Suppose libplanar_sdf is in your build directory
+# Add the directories to the sys path
 file_path = os.path.abspath(__file__)
 current_dir = os.path.dirname(file_path)
 build_dir = os.path.abspath(os.path.join(current_dir, '../sdf_robot/build'))
@@ -93,6 +93,7 @@ class MapEditorApp(QMainWindow):
         super().__init__()
         self.setWindowTitle("Planar Map Editor")
         self.map_obj = None
+        self.cb = None
         self.obstacle_rows = []
 
         # Main widget
@@ -228,6 +229,10 @@ class MapEditorApp(QMainWindow):
         show_map_btn.clicked.connect(self.show_map)
         self.button_layout.addWidget(show_map_btn)
 
+        show_sdf_btn = QPushButton("Show SDF")
+        show_sdf_btn.clicked.connect(self.show_sdf)
+        self.button_layout.addWidget(show_sdf_btn)
+
         save_map_btn = QPushButton("Save Map")
         save_map_btn.clicked.connect(self.save_map)
         self.button_layout.addWidget(save_map_btn)
@@ -257,6 +262,10 @@ class MapEditorApp(QMainWindow):
             QMessageBox.critical(self, "Input Error", "Please enter valid numerical parameters!")
             return
         
+        if self.cb is not None:
+            self.cb.remove()
+            self.cb = None
+
         origin = np.array([origin_x, origin_y], dtype=np.float64)
         m = map2d(origin, cell_size, width, height, map_name)
 
@@ -272,15 +281,47 @@ class MapEditorApp(QMainWindow):
             m.add_box_xy(xmin, ymin, [obs_w, obs_h])
 
         self.ax.clear()
+        self.ax.set_position([0.125, 0.11, 0.775, 0.77])
         m.draw_map(self.fig, self.ax, plot=False, labels=True)
         self.canvas.draw()
         self.map_obj = m
+    
+    def show_sdf(self):
+        if self.map_obj is None:
+            QMessageBox.critical(self, "Error", "Please generate the map before displaying the SDF!")
+            return
+
+        # Remove existing colorbar if it exists
+        if self.cb is not None:
+            try:
+                self.cb.remove()
+            except Exception as e:
+                print("Error removing colorbar:", e)
+            self.cb = None
+
+        self.ax.clear()
+
+        # Get SDF data and map parameters
+        sdf_field = self.map_obj.get_field()
+        origin = self.map_obj.get_origin()
+        cell_size = self.map_obj.get_cell_size()
+        width = self.map_obj.get_width()
+        height = self.map_obj.get_height()
+        extent = [origin[0], origin[0] + width * cell_size,
+                  origin[1], origin[1] + height * cell_size]
+        
+        # Display SDF values using a colormap, recommended colormaps are 'jet' or 'RdBu'
+        im = self.ax.imshow(sdf_field, cmap='jet', interpolation='nearest',
+                        origin='lower', extent=extent)
+        self.ax.set_xlabel('x')
+        self.ax.set_ylabel('y')
+        self.ax.set_title('Signed Distance Field')
+        # Add a colorbar to show the mapping of SDF values
+        self.cb = self.fig.colorbar(im, ax=self.ax)
+        self.canvas.draw()
+
 
     def save_map(self):
-        """
-        Save CSV for other programs, but only store parameters + obstacles in JSON.
-        We do NOT store the entire map data in JSON. We'll rebuild from obstacles if needed.
-        """
         if self.map_obj is None:
             QMessageBox.critical(self, "Error", "Please generate the map before saving!")
             return
@@ -327,10 +368,6 @@ class MapEditorApp(QMainWindow):
         )
 
     def load_map(self):
-        """
-        Load ONLY from JSON. We do NOT parse CSV here. We'll rebuild the map from scratch
-        by reading the obstacles in JSON and re-adding them to an empty map2d.
-        """
         file_filter = "JSON files (*.json);;All Files (*.*)"
         file_path, _ = QFileDialog.getOpenFileName(self, "Load Map (JSON)", map_dir, file_filter)
         if not file_path:
