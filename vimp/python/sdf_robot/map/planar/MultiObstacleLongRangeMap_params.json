@@ -1,0 +1,54 @@
+{
+    "map_name": "MultiObstacleLongRangeMap",
+    "origin": [
+        -50.0,
+        -50.0
+    ],
+    "cell_size": 0.1,
+    "map_width": 3000,
+    "map_height": 3000,
+    "obstacles": [
+        {
+            "xmin": 0.0,
+            "ymin": -40.0,
+            "width": 250.0,
+            "height": 40.0
+        },
+        {
+            "xmin": -25.0,
+            "ymin": 35.0,
+            "width": 35.0,
+            "height": 200.0
+        },
+        {
+            "xmin": 75.0,
+            "ymin": 50.0,
+            "width": 75.0,
+            "height": 35.0
+        },
+        {
+            "xmin": 210.0,
+            "ymin": 80.0,
+            "width": 40.0,
+            "height": 80.0
+        },
+        {
+            "xmin": 80.0,
+            "ymin": 220.0,
+            "width": 60.0,
+            "height": 30.0
+        },
+        {
+            "xmin": 130.0,
+            "ymin": 85.0,
+            "width": 20.0,
+            "height": 60.0
+        },
+        {
+            "xmin": 50.0,
+            "ymin": 150.0,
+            "width": 35.0,
+            "height": 15.0
+        }
+    ]
+}
