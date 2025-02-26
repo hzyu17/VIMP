@@ -2,12 +2,65 @@ import sys
 import os
 import subprocess
 import xml.etree.ElementTree as ET
+import time
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QWidget, QFileDialog,
     QMessageBox, QGridLayout, QGroupBox
 )
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtCore import QThread, pyqtSignal
+
+file_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(file_path)
+config_dir = os.path.abspath(os.path.join(current_dir, '../../configs/vimp/sparse_gh'))
+
+class RunProgramThread(QThread):
+    finished_signal = pyqtSignal()
+    error_signal = pyqtSignal(str)
+    
+    def __init__(self, executable, matlab_script, parent=None):
+        super().__init__(parent)
+        self.executable = executable
+        self.matlab_script = matlab_script
+        self._stop_requested = False
+        self.processes = []  # Store running subprocesses
+
+    def run(self):
+        try:
+            # Run the C++ executable
+            if self._stop_requested:
+                return
+            process_exe = subprocess.Popen([self.executable])
+            self.processes.append(process_exe)
+            # Polling to check process status
+            while process_exe.poll() is None:
+                if self._stop_requested:
+                    process_exe.terminate()
+                    return
+                time.sleep(0.1)
+
+            if self._stop_requested:
+                return
+
+            # Run the MATLAB script
+            matlab_command = f"run('{self.matlab_script}')"
+            process_matlab = subprocess.Popen(["matlab", "-batch", matlab_command])
+            self.processes.append(process_matlab)
+            while process_matlab.poll() is None:
+                if self._stop_requested:
+                    process_matlab.terminate()
+                    return
+                time.sleep(0.1)
+        except Exception as e:
+            self.error_signal.emit(str(e))
+        finally:
+            self.finished_signal.emit()
+
+    def stop(self):
+        self._stop_requested = True
+        for proc in self.processes:
+            if proc.poll() is None:
+                proc.terminate()
 
 class ParameterEditor(QMainWindow):
     def __init__(self):
@@ -16,6 +69,7 @@ class ParameterEditor(QMainWindow):
         self.xml_file = None
         self.parameters = {}
         self.original_parameters = {}
+        self.run_thread = None  # Background run thread
         self.initUI()
 
     def initUI(self):
@@ -43,16 +97,21 @@ class ParameterEditor(QMainWindow):
         control_layout = QHBoxLayout()
         self.run_button = QPushButton("Run Program")
         self.run_button.clicked.connect(self.run_program)
+        self.read_parameters_button = QPushButton("Read Parameters")
+        self.read_parameters_button.clicked.connect(self.read_parameters)
         self.reset_button = QPushButton("Reset Parameters")
         self.reset_button.clicked.connect(self.reset_parameters)
         self.load_images_button = QPushButton("Load Images")
         self.load_images_button.clicked.connect(self.display_images)
-        self.read_parameters_button = QPushButton("Read Parameters")
-        self.read_parameters_button.clicked.connect(self.read_parameters)
+        self.stop_button = QPushButton("Stop Run")
+        self.stop_button.clicked.connect(self.stop_run_program)
+        self.stop_button.setEnabled(False)  # Initially disabled
+
         control_layout.addWidget(self.run_button)
         control_layout.addWidget(self.read_parameters_button)
         control_layout.addWidget(self.reset_button)
         control_layout.addWidget(self.load_images_button)
+        control_layout.addWidget(self.stop_button)
         main_layout.addLayout(control_layout)
 
         # Image Display (Horizontal Layout)
@@ -71,7 +130,7 @@ class ParameterEditor(QMainWindow):
     def load_xml_file(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        file_name, _ = QFileDialog.getOpenFileName(self, "Select XML File", "", "XML Files (*.xml)", options=options)
+        file_name, _ = QFileDialog.getOpenFileName(self, "Select XML File", config_dir, "XML Files (*.xml)", options=options)
 
         if file_name:
             self.xml_file = file_name
@@ -82,11 +141,10 @@ class ParameterEditor(QMainWindow):
         self.parameters.clear()
         self.original_parameters.clear()
         try:
-            # Manually parse the XML file to extract only the <Commons> section
+            # Read the XML file and extract the <Commons> section
             with open(self.xml_file, 'r') as file:
                 lines = file.readlines()
 
-            # Extract only the <Commons> section
             commons_data = ""
             in_commons = False
             for line in lines:
@@ -101,7 +159,6 @@ class ParameterEditor(QMainWindow):
                 QMessageBox.critical(self, "Error", "No <Commons> section found in the XML file.")
                 return
 
-            # Parse the extracted <Commons> data
             commons_element = ET.fromstring(commons_data)
 
             # Clear previous layout
@@ -160,8 +217,6 @@ class ParameterEditor(QMainWindow):
 
             with open(self.xml_file, 'w') as file:
                 file.writelines(new_lines)
-
-            # QMessageBox.information(self, "Success", "Changes saved successfully!")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to save XML file: {e}")
             print(f"Error: {e}")
@@ -177,25 +232,37 @@ class ParameterEditor(QMainWindow):
             QMessageBox.warning(self, "Error", "No XML file loaded.")
             return
 
-        # Save current parameters to the XML file
+        # Save current parameters
         self.save_xml_file()
 
-        # Specify the paths to the executable and MATLAB script
         executable = "/home/zinuo/VIMP/build/src/gvimp/gvi_Quadrotor_spgh"
         matlab_script = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/planarQuad_morestates.m"
 
-        try:
-            # Run the C++ executable
-            subprocess.run([executable], check=True)
+        # Disable run button and enable stop button
+        self.run_button.setEnabled(False)
+        self.stop_button.setEnabled(True)
 
-            # Run the MATLAB script for visualization
-            matlab_command = f"run('{matlab_script}')"
-            subprocess.run(["matlab", "-batch", matlab_command], check=True)
+        # Create and start background thread
+        self.run_thread = RunProgramThread(executable, matlab_script)
+        self.run_thread.finished_signal.connect(self.on_run_finished)
+        self.run_thread.error_signal.connect(lambda err: QMessageBox.critical(self, "Error", f"Error running program: {err}"))
+        self.run_thread.start()
 
-            # Load the generated images
-            self.display_images()
-        except subprocess.CalledProcessError as e:
-            QMessageBox.critical(self, "Error", f"Error running program: {e}")
+    def on_run_finished(self):
+        # Restore button states
+        self.run_button.setEnabled(True)
+        self.stop_button.setEnabled(False)
+        self.run_thread = None
+        # Load generated images after program finishes running
+        self.display_images()
+
+    def stop_run_program(self):
+        if self.run_thread:
+            self.run_thread.stop()
+            # Optionally wait for thread to finish before restoring state
+            self.run_thread.wait()
+            self.on_run_finished()
+            print("Program has been stopped")  # Print stop message to the command line
 
     def display_images(self):
         # Paths to the generated images
