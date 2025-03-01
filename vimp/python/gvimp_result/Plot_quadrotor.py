@@ -20,7 +20,8 @@ matplotlib.rcParams['ps.fonttype'] = 42
 from tools.draw_pquadsdf_trj import *
 from sdf_robot.scripts.generate_sdf_2d import map2d
 
-json_file_path = os.path.join(map_dir, 'MultiObstacleLongRangeMap_params.json')
+# json_file_path = os.path.join(map_dir, 'MultiObstacleLongRangeMap_params.json')
+json_file_path = os.path.join(map_dir, 'SingleObstacleMap_params.json')
 
 
 with open(json_file_path, 'r') as f:
@@ -68,10 +69,21 @@ H = 0.35
 fig, ax = plt.subplots()
 
 # First, draw the map (show axes, labels, etc.)
-fig, ax = m.draw_map(fig, ax, plot=False, labels=True)
+# fig, ax = m.draw_map(fig, ax, plot=False, labels=True)
+fig, ax = m.draw_map(fig, ax, plot=False)
 
 # Then overlay the trajectory on the map
 fig, ax = draw_pquad_trj_cov_2d(mean, cov, L, H, n_balls, fig, ax, 1, False, False)
+ax.set_xlim(-7.5, 32.5)
+ax.set_ylim(-5, 40)
+
+# ax.tick_params(axis='both', which='major', labelsize=16)
+# ax.legend(loc='best', prop={'family': 'serif', 'size': 16})
+
+ax.axis('off') 
+ax.set_title("Iteration 10", fontsize=18)
 
 plt.tight_layout()
 plt.show()
+
+# fig.savefig(case_dir+f'/Nonlinear_Trajectory_10.pdf', format='pdf', dpi=2000, bbox_inches='tight')
