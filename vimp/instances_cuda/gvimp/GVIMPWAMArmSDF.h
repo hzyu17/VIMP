@@ -97,7 +97,7 @@ public:
         radii << 0.15, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04;
         VectorXi frames(16);
         frames << 0, 1, 1, 1, 1, 2, 3, 3, 3, 5, 6, 6, 6, 6, 6, 6;
-        MatrixXd centers(16, 3);
+        MatrixXd centers(16, 3); // Each row is a center; transpose when inputting to CUDA
         centers <<   0.0,    0.0,  0.0,
                      0.0,    0.0,  0.2,
                      0.0,    0.0,  0.3,
@@ -115,7 +115,7 @@ public:
                     0.15,  0.025, 0.13,
                    -0.15,    0.0, 0.13;
         
-        _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers, params.sig_obs(), params.eps_sdf()});
+        _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sig_obs(), params.eps_sdf()});
         
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
