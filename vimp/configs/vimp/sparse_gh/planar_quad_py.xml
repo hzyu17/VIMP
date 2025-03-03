@@ -90,6 +90,29 @@
     <max_n_backtracking>20</max_n_backtracking>
     <max_linear_iter>20</max_linear_iter> -->
 
+
+<!-- 100 states -->
+<!-- <total_time>9.0</total_time>
+    <n_states>100</n_states>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>6</GH_deg>
+    <sig_obs>4.0</sig_obs>
+    <map_name>SingleObstacleMap</map_name>
+    <eps_sdf>1.0</eps_sdf>
+    <radius>0.4</radius>
+    <step_size>0.4</step_size>
+    <alpha>1.0</alpha>
+    <init_precision_factor>15000.0</init_precision_factor>
+    <boundary_penalties>20000.0</boundary_penalties>
+    <temperature>75</temperature>
+    <high_temperature>45000.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <low_temp_iterations>30</low_temp_iterations>
+    <max_iterations>35</max_iterations>
+    <max_n_backtracking>20</max_n_backtracking>
+    <max_linear_iter>20</max_linear_iter> -->
+
+
 <!-- Example of quadrotor with 200 states -->
 <!--
     <total_time>7.5</total_time>

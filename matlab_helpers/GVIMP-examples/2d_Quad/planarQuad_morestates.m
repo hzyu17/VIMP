@@ -18,8 +18,8 @@ save_figure = 0;
 %% ============ 
 % read map
 % ============
-sdfmap = csvread("../../../vimp/python/sdf_robot/map/planar/MultiObstacleLongRangeMap.csv");
-% sdfmap = csvread("../../../vimp/python/sdf_robot/map/planar/SingleObstacleMap.csv");
+% sdfmap = csvread("../../../vimp/python/sdf_robot/map/planar/MultiObstacleLongRangeMap.csv");
+sdfmap = csvread("../../../vimp/python/sdf_robot/map/planar/SingleObstacleMap.csv");
 dim_state = 6;
 dim_theta = 3;
 
@@ -30,7 +30,7 @@ dim_theta = 3;
 % prefix = ["case2"+"/"];
 prefix = ["case2_300_states"+"/"];
 means = csvread([prefix + "mean.csv"]);  %n_states*dim_state x niters
-joint_precisions = csvread([prefix + "joint_precision.csv"]);  % n_states*dim_state*dim_state x niters
+% joint_precisions = csvread([prefix + "joint_precision.csv"]);  % n_states*dim_state*dim_state x niters
 costs = csvread([prefix + "cost.csv"]);  % niters x 1
 
 factor_costs = csvread([prefix + "factor_costs.csv"]);
@@ -39,8 +39,8 @@ factor_costs = csvread([prefix + "factor_costs.csv"]);
 niters = find_niters(means);
 n_states = floor(ttl_dim / dim_state);
 
-output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
-% output_costplot = plot_costs_without_entropy(costs, factor_costs, niters, n_states, dim_state);
+% output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
+output_costplot = plot_costs_without_entropy(costs, factor_costs, niters, n_states, dim_state);
 
 exportgraphics(gcf, fullfile(prefix, 'output_figure_1.png'), 'Resolution', 75);
 
@@ -67,7 +67,8 @@ niters = find_niters(means);
 
 nsteps = 1;
 %     [ttl_dim, niters] = size(means);
-output = plot_planarPR_oneiter(means, covs, sdfmap, niters, 0.1, -50, -50);
+% output = plot_planarPR_oneiter(means, covs, sdfmap, niters, 0.1, -50, -50);
+output = plot_planarPR_oneiter(means, covs, sdfmap, niters);
 
 % title(['iter ' num2str(niters)], 'FontSize', 20);
 
@@ -83,7 +84,22 @@ grid on
 exportgraphics(gcf, fullfile(prefix, 'output_figure_2.png'), 'Resolution', 75);
 
 
-% prefix = ["case2_300_states"+"/"];
-% norm_difference = csvread([prefix + "norm_differences.csv"]);
-% figure
-% plot(norm_difference, 'LineWidth', 2)
+x0 = 2500;
+y0 = 500;
+width = 1200;
+height = 400;
+figure
+set(gcf,'position',[x0,y0,width,height])
+
+prefix = ["case2_300_states"+"/"];
+norm_difference = csvread([prefix + "norm_differences.csv"]);
+plot(norm_difference, 'LineWidth', 3)
+set(gca, 'FontSize', 14);
+xlabel('Iterations', 'FontSize', 16);
+ylabel('Norm of Difference', 'FontSize', 16);
+grid minor
+
+exportgraphics(gcf, fullfile(prefix, 'Difference_Norm.pdf')', 'ContentType', 'vector', 'BackgroundColor', 'none');
+
+% title('Difference Between Result and the Initial Trajectory', ...
+%     'FontSize', 16);

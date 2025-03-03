@@ -11,6 +11,7 @@ current_dir = os.path.dirname(file_path)
 py_dir = os.path.abspath(os.path.join(current_dir, '..'))
 map_dir = os.path.abspath(os.path.join(current_dir, '../sdf_robot/map/planar'))
 result_dir = os.path.abspath(os.path.join(current_dir, '../../../matlab_helpers/GVIMP-examples/2d_Quad'))
+# result_dir = os.path.abspath(os.path.join(current_dir, '../../../matlab_helpers/ProxKL-examples/2d_Quad'))
 
 sys.path.append(py_dir)
 
@@ -44,6 +45,7 @@ for obs in params.get("obstacles", []):
 
 # ----------------- 2. Read trajectory data CSV files -----------------
 case_dir = os.path.join(result_dir, 'case2_300_states')
+# case_dir = os.path.join(result_dir, 'case2')
 
 # Paths to the CSV files for trajectory mean and covariance data (no headers)
 mean_csv_path = os.path.join(case_dir, 'zk_sdf.csv')
@@ -80,7 +82,7 @@ ax.set_ylim(-5, 40)
 # ax.tick_params(axis='both', which='major', labelsize=16)
 # ax.legend(loc='best', prop={'family': 'serif', 'size': 16})
 
-ax.axis('off') 
+ax.axis('off')
 ax.set_title("Iteration 10", fontsize=18)
 
 plt.tight_layout()
