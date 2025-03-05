@@ -41,7 +41,7 @@ for i_iter = 1: nsteps
         color = [0, 0, 1, alpha];
 
         % means
-        mean_j = i_vec_means{j}';
+        mean_j = i_vec_means{j};
 
         % cov j
         cov_j = i_vec_covs{j};

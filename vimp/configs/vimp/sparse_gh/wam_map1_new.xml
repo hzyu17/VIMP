@@ -68,7 +68,6 @@
 
     <temperature>1.0</temperature>
     <high_temperature>8.0</high_temperature>
-    <sig_obs>20.5</sig_obs>
     <saving_prefix>matlab_helpers/GVIMP-examples/WAM/sparse_gh/case2/</saving_prefix>
 
 </Experiment2>

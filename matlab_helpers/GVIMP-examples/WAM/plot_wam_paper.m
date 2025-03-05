@@ -84,7 +84,7 @@ start_vel = zeros(7,1);
 end_vel = zeros(7,1);
 
 % ============= plot sampled states for n iterations =============
-% plotArmSamples3D(arm, vec_means, vec_covs, n_states, niters, nsteps, dataset, start_conf, end_conf);
+plotArmSamples3D(arm, vec_means, vec_covs, n_states, niters, nsteps, dataset, start_conf, end_conf);
 
 %% ================= plot the final iteration, only mean value ===================
 % ----- parameters -----

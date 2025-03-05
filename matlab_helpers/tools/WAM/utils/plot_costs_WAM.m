@@ -1,4 +1,4 @@
-function output = plot_costs(costs, factor_costs, precisions, niters, n_states)
+function output = plot_costs_WAM(costs, factor_costs, precisions, niters, n_states)
 %% =============== plot cost for each factor and the total cost ================
 fixed_prior_costs = [factor_costs(1:end, 1), factor_costs(1:end, end)];
 prior_costs = [];
