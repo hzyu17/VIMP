@@ -52,13 +52,13 @@ public:
 
     ProxKLPlanarQuadrotorSDF(){}
 
-    ProxKLPlanarQuadrotorSDF(GVIMPParams& params){}
+    ProxKLPlanarQuadrotorSDF(GVIMPParams_nonlinear& params){}
 
-    double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
+    double run_optimization_withtime(const GVIMPParams_nonlinear& params, bool verbose=true){
         Timer timer;
         timer.start();
 
-        int n_iter = 1;
+        int n_iter = params.max_linear_iter();
         int n_states = params.nt();
         const int dim_conf = 3;
         double delt_t = params.total_time() / (n_states - 1);
@@ -84,32 +84,53 @@ public:
         MatrixXd dense_covariance = MatrixXd::Identity(2 * dim_conf * n_states, 2 * dim_conf * n_states) / params.initial_precision_factor();
         SpMat covariance = dense_covariance.sparseView();
 
+        std::vector<double> norm_differences;
+
         for (int i = 0; i < n_iter; i++){
-            _last_iteration_mean_precision = run_optimization_return(params, trajectory, covariance, verbose);
+            bool is_final_iter = (i == n_iter - 1);
+            _last_iteration_mean_precision = run_optimization_return(params, trajectory, covariance, is_final_iter, verbose);
             VectorXd mean = std::get<0>(_last_iteration_mean_precision);
             new_trajectory = Eigen::Map<Eigen::MatrixXd>(mean.data(), 2*dim_conf, n_states).transpose();
             
             // Compute the difference between the new trajectory and the old trajectory
             double difference = 0;
             for (int j = 0; j < n_states; j++)
-                difference += (new_trajectory.row(j).segment(0,3) - trajectory.row(j).segment(0,3)).norm();
+                difference += (new_trajectory.row(j) - trajectory.row(j)).norm();
+                // difference += (new_trajectory.row(j).segment(0,3) - trajectory.row(j).segment(0,3)).norm();
 
             std::cout << "Norm of difference between two trajectories = " << difference << std::endl;
 
+            norm_differences.push_back(difference);
+
             trajectory = new_trajectory;
-            covariance = std::get<1>(_last_iteration_mean_precision); // Fix this, the matrix here is precision, not covariance
+            covariance = std::get<1>(_last_iteration_mean_precision);
         }
         
+        // Save the norm differences to a CSV file
+        std::string file_path = params.saving_prefix() + "/norm_differences.csv";
+        std::ofstream file(file_path);
+        if (file.is_open()) {
+            for (size_t i = 0; i < norm_differences.size(); i++){
+                file << norm_differences[i];
+                if (i != norm_differences.size() - 1)
+                    file << "\n";  // Newline for each entry
+            }
+            file.close();
+            std::cout << "Norm differences saved to norm_differences.csv" << std::endl;
+        }
+        else {
+            std::cerr << "Could not open file to write norm differences." << std::endl;
+        }
 
         std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
     }
 
-    // void run_optimization(const GVIMPParams& params, bool verbose=true){
+    // void run_optimization(const GVIMPParams_nonlinear& params, bool verbose=true){
     //     _last_iteration_mean_precision = run_optimization_return(params, verbose);
     // }
 
-    std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, const MatrixXd& traj, const SpMat& cov, bool verbose=true){
+    std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams_nonlinear& params, const MatrixXd& traj, const SpMat& cov, const bool final_iter, bool verbose=true){
         QuadratureWeightsMap nodes_weights_map;
         try {
             std::ifstream ifs(GH_map_file_cereal, std::ios::binary);
@@ -135,7 +156,7 @@ public:
         int N = n_states - 1;
         const int dim_conf = 3;
         // state: theta = [conf, vel_conf]
-        const int dim_state = 2 * dim_conf; 
+        const int dim_state = 2 * dim_conf;
         /// joint dimension
         const int ndim = dim_state * n_states;
 
@@ -149,7 +170,7 @@ public:
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
         std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
-        std::shared_ptr<CudaOperation_Quad> cuda_ptr = std::make_shared<CudaOperation_Quad>(CudaOperation_Quad{params.sig_obs(), params.eps_sdf(), params.radius()});
+        std::shared_ptr<CudaOperation_Quad> cuda_ptr = std::make_shared<CudaOperation_Quad>(CudaOperation_Quad{params.sig_obs(), params.eps_sdf(), params.radius(), params.map_name()});
 
         std::shared_ptr<GH> gh_linearization = std::make_shared<GH>(GH{params.GH_degree(), dim_state, _nodes_weights_map_pointer});
         
@@ -160,7 +181,7 @@ public:
         /// initial values
         VectorXd joint_init_theta{VectorXd::Zero(ndim)};
         
-        /// prior 
+        /// prior
         double delt_t = params.total_time() / N;
 
         // Initialize the trajectory
@@ -170,7 +191,7 @@ public:
         std::vector<VectorXd> target_mean(n_states);
 
         MatrixXd trajectory = trajctory_interpolation(traj, target_mean); // the traj here is the prior mean
-        std::vector<MatrixXd> covariances = covariance_interpolation(cov, dim_state, n_states);        
+        std::vector<MatrixXd> covariances = covariance_interpolation(cov, dim_state, n_states);
 
         auto linearized_matrices = planarquad_linearization_deterministic(trajectory);
         hA = std::get<0>(linearized_matrices);
@@ -196,8 +217,7 @@ public:
         MatrixXd Q_inverse{MatrixXd::Zero(dim_state * (n_states+1), dim_state * (n_states+1))};
 
         for (int i = 0; i < n_states; i++) {
-
-            // initial state                     
+            // initial state
             joint_init_theta.segment(i*dim_state, dim_state) = trajectory_init.row(i);
             gvi::LTV_GP lin_gp{Qc, max(0, i-1), delt_t, start_theta, n_states, hA, hB, target_mean};
 
@@ -221,53 +241,53 @@ public:
             }
 
             // fixed start and goal priors
-            // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)] 
+            // Factor Order: [fixed_gp_0, lin_gp_1, obs_1, ..., lin_gp_(N-1), obs_(N-1), lin_gp_(N), fixed_gp_(N)]
             if (i==0 || i==n_states-1){
                 std::cout << "---------------- Building fixed start and goal priors ----------------" << std::endl;
                 // lin GP factor for the first and the last support state
                 if (i == n_states-1){
-                    vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
-                                                                dim_state, 
-                                                                gvi::cost_linear_gp, 
-                                                                lin_gp, 
-                                                                n_states, 
-                                                                i-1, 
-                                                                params.temperature(), 
+                    vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state,
+                                                                dim_state,
+                                                                gvi::cost_linear_gp,
+                                                                lin_gp,
+                                                                n_states,
+                                                                i-1,
+                                                                params.temperature(),
                                                                 params.high_temperature()});
                 }
 
                 // Fixed gp factor
                 gvi::FixedPriorGP_proxkl fixed_gp{K0_fixed, MatrixXd{target_mean[i]}};
-                vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state, 
-                                                          dim_state, 
-                                                          gvi::cost_fixed_gp, 
-                                                          fixed_gp, 
-                                                          n_states, 
+                vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state,
+                                                          dim_state,
+                                                          gvi::cost_fixed_gp,
+                                                          fixed_gp,
+                                                          n_states,
                                                           i,
-                                                          params.temperature(), 
+                                                          params.temperature(),
                                                           params.high_temperature()});
 
             }else{
                 // linear gp factors
-                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state, 
-                                                            dim_state, 
-                                                            gvi::cost_linear_gp, 
-                                                            lin_gp, 
-                                                            n_states, 
-                                                            i-1, 
-                                                            params.temperature(), 
+                vec_factors.emplace_back(new gvi::LinearGpPrior{2*dim_state,
+                                                            dim_state,
+                                                            gvi::cost_linear_gp,
+                                                            lin_gp,
+                                                            n_states,
+                                                            i-1,
+                                                            params.temperature(),
                                                             params.high_temperature()});
 
                 // collision factor
-                vec_factors.emplace_back(new ProxKLFactorizedBaseGH{dim_conf, 
-                                                                    dim_state, 
+                vec_factors.emplace_back(new ProxKLFactorizedBaseGH{dim_conf,
+                                                                    dim_state,
                                                                     params.GH_degree(),
-                                                                    n_states, 
+                                                                    n_states,
                                                                     i,
-                                                                    params.temperature(), 
+                                                                    params.temperature(),
                                                                     params.high_temperature(),
-                                                                    _nodes_weights_map_pointer, 
-                                                                    cuda_ptr});    
+                                                                    _nodes_weights_map_pointer,
+                                                                    cuda_ptr});
             }
         }
 
@@ -275,12 +295,14 @@ public:
         precision_prior = B_matrix.transpose() * Q_inverse * B_matrix;
 
         /// The joint optimizer
-        gvi::ProxKLGH<gvi::GVIFactorizedBase_Cuda> optimizer{vec_factors, 
-                                           dim_state, 
-                                           n_states, 
-                                           params.max_iter(), 
-                                           params.temperature(), 
-                                           params.high_temperature()};
+        gvi::ProxKLGH<gvi::GVIFactorizedBase_Cuda, CudaOperation_Quad> optimizer{vec_factors,
+                                                                                dim_state,
+                                                                                n_states,
+                                                                                cuda_ptr,
+                                                                                gh_ptr,
+                                                                                params.max_iter(),
+                                                                                params.temperature(),
+                                                                                params.high_temperature()};
 
         optimizer.set_max_iter_backtrack(params.max_n_backtrack());
         optimizer.set_niter_low_temperature(params.max_iter_lowtemp());
@@ -294,9 +316,10 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
+        optimizer.set_prior(mu_prior, precision_prior.sparseView()); // Set the prior mean with trajectory
+        optimizer.set_data_save(final_iter);
         
         optimizer.classify_factors();
-        optimizer.set_prior(mu_prior, precision_prior.sparseView()); // Set the prior mean with trajectory
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
@@ -304,7 +327,6 @@ public:
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.covariance());
 
         return _last_iteration_mean_precision;
-
     }
 
     std::tuple<VectorXd, gvi::SpMat> get_mu_precision(){
@@ -360,11 +382,10 @@ public:
     }
 
 
-protected: 
+protected:
     double _eps_sdf;
-    double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
+    double _sig_obs; // The inverse of Covariance matrix related to the obs penalty.
     gvi::EigenWrapper _ei;
-    std::shared_ptr<gvi::ProxKLGH<gvi::GVIFactorizedBase_Cuda>> _p_opt;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 
