@@ -1,24 +1,23 @@
-<!-- Experiment1 without temperature in constraints -->
 <!-- let the alpha here serve as the upper bound of the KL divergence -->
 <Commons>
-    <total_time>4.0</total_time>
+    <total_time>4.5</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
-    <sig_obs>8.0</sig_obs>
+    <sig_obs>17.5</sig_obs>
     <map_name>2dpr_map2</map_name>
     <eps_sdf>0.5</eps_sdf>
     <radius>1.0</radius>
     <step_size>2.0</step_size>
     <alpha>30</alpha> 
     <init_precision_factor>3000.0</init_precision_factor>
-    <boundary_penalties>500.0</boundary_penalties>
+    <boundary_penalties>1000.0</boundary_penalties>
     <temperature>2.5</temperature>
-    <high_temperature>7.5</high_temperature>
+    <high_temperature>10.0</high_temperature>
     <stop_err>1e-5</stop_err>
-    <low_temp_iterations>20</low_temp_iterations>
+    <low_temp_iterations>15</low_temp_iterations>
     <max_iterations>20</max_iterations>
-    <max_n_backtracking>1</max_n_backtracking>
+    <max_n_backtracking>10</max_n_backtracking>
 </Commons>
 
 <Experiment1>    
@@ -57,10 +56,8 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <sig_obs>17.5</sig_obs>
-    <low_temp_iterations>15</low_temp_iterations>
     <temperature>5.0</temperature>
-    <high_temperature>17.5</high_temperature>
+    <high_temperature>12.5</high_temperature>
     <boundary_penalties>5000.0</boundary_penalties>
     
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_pR/sparse_gh/map2/case2/</saving_prefix>
@@ -69,7 +66,7 @@
 
 
 <Experiment3>
-    <total_time>3.0</total_time>
+    <total_time>3.5</total_time>
     <start_pos>
         <x>-7.0</x>
         <y>-5.0</y>
@@ -84,11 +81,11 @@
         <vy>0.0</vy>
     </goal_pos>
 
-    <sig_obs>5.25</sig_obs>
-    <alpha>12.5</alpha>
+    <sig_obs>15.0</sig_obs>
+    <alpha>15.0</alpha>
     <temperature>5.0</temperature>
     <high_temperature>10.0</high_temperature>
-    <init_precision_factor>1000.0</init_precision_factor>
+    <init_precision_factor>3000.0</init_precision_factor>
     <max_iterations>25</max_iterations>
 
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_pR/sparse_gh/map2/case3/</saving_prefix>
@@ -111,17 +108,13 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-    <sig_obs>4.0</sig_obs>
-    <temperature>7.5</temperature>
-    <high_temperature>15.0</high_temperature>
-    <init_precision_factor>3000.0</init_precision_factor>
-    <low_temp_iterations>15</low_temp_iterations>
-    <max_iterations>15</max_iterations>
+    <temperature>5.0</temperature>
+    <high_temperature>12.5</high_temperature>
+    <max_iterations>20</max_iterations>
     <alpha>20</alpha>
 
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_pR/sparse_gh/map2/case4/</saving_prefix>
 </Experiment4>
-
 
 
 
