@@ -14,6 +14,7 @@ matlab_helpers/+gtsam/*
 matlab_helpers/+gpmp2/*
 vimp/maps/WAM/WAMDeskDataset.bin
 vimp/maps/WAM/WAMDeskDataset_cereal.bin
+vimp/maps/WAM/PR2DeskDataset_cereal.bin
 vimp/maps/3dpR/pRSDF3D.bin
 vimp/maps/3dpR/pRSDF3D_cereal.bin
 vimp/data/WAM/*
