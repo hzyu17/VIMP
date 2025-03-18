@@ -19,18 +19,18 @@ set(gcf, 'PaperPositionMode', 'auto');
 
 hold on;
 
-%% 2dpR GH Degree = 4
-n_states = [25, 50, 100, 200, 300, 500, 750, 1000];
+%% WAM GH Degree = 3
+n_states = [25, 50, 100, 200, 300, 500, 750];
 
 % GPU times (in ms)
-GPU_avg = [0.05, 0.3, 1, 1.55, 3.45, 6.8, 13.25, 20.15];
-GPU_min = [0, 0, 0, 1, 3, 6, 11, 18];
-GPU_max = [1, 1, 2, 4, 5, 8, 15, 22];
+GPU_avg = [2.76667, 5.63333, 12.7, 19.8, 30.0667, 48.1, 78.8];
+GPU_min = [2, 4, 9, 16, 23, 40, 74];
+GPU_max = [4, 7, 15, 26, 39, 56, 88];
 
 % CPU times (in ms)
-CPU_avg = [0.3, 1.25, 3.55, 8.65, 16.65, 31.75, 96.35, 160.6];
-CPU_min = [0, 1, 3, 8, 14, 29, 92, 156];
-CPU_max = [1, 3, 4, 9, 22, 37, 102, 166];
+CPU_avg = [16.1, 30.3, 57.8, 161.75, 269.35, 547.35, 1002.4];
+CPU_min = [14, 28, 52, 152, 248, 522, 970];
+CPU_max = [19, 34, 64, 177, 287, 578, 1060];
 
 ratio = (CPU_avg-GPU_avg)./CPU_avg
 
@@ -43,19 +43,19 @@ cpu1 = plot(n_states, CPU_avg, '-o', 'MarkerSize', 14, 'LineWidth', 3, 'Color', 
 % fill([n_states, fliplr(n_states)], [CPU_min, fliplr(CPU_max)], 'r', 'FaceAlpha', 0.15, 'HandleVisibility', 'off');
 
 
-%% 2dpR GH Degree = 10
+%% WAM GH Degree = 5
 % Using the same discretization points
-n_states = [25, 50, 100, 200, 300, 500, 750, 1000];
+n_states = [25, 50, 100, 200, 300, 500, 750];
 
 % GPU times (in ms)
-GPU_avg = [0.4, 0.75, 2.2, 2.75, 4.6, 7.4, 14.8, 23.55];
-GPU_min = [0, 0, 1, 2, 3, 6, 12, 21];
-GPU_max = [1, 1, 3, 4, 6, 9, 18, 27];
+GPU_avg = [6.36667, 10.6333, 21.0333, 36.2333, 57.5667, 89.2667, 136];
+GPU_min = [5, 9, 18, 32, 52, 84, 131];
+GPU_max = [8, 12, 25, 42, 72, 99, 143];
 
 % CPU times (in ms)
-CPU_avg = [2.15, 4.2, 9.8, 22.35, 34.35, 64.45, 147.4, 211.9];
-CPU_min = [2, 4, 8, 21, 31, 59, 142, 202];
-CPU_max = [3, 5, 11, 27, 37, 72, 154, 222];
+CPU_avg = [93.4, 178.45, 343.15, 717.4, 1085.5, 1907.8, 3088.4];
+CPU_min = [82, 170, 333, 702, 1066, 1873, 3004];
+CPU_max = [103, 190, 356, 737, 1117, 1957, 3144];
 
 ratio = (CPU_avg-GPU_avg)./CPU_avg
 
@@ -68,18 +68,18 @@ cpu2 = plot(n_states, CPU_avg, '--x', 'MarkerSize', 16, 'LineWidth', 3, 'Color',
 % fill([n_states, fliplr(n_states)], [CPU_min, fliplr(CPU_max)], 'r', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
 
 
-%% 2dpR GH Degree = 20
-n_states = [25, 50, 100, 200, 300, 500, 750, 1000];
+%% WAM GH Degree = 6
+n_states = [25, 50, 100, 200, 300, 500, 750];
 
 % GPU times (in ms)
-GPU_avg = [1.1, 1.4, 2.6, 4.7, 7.5, 13.95, 23.05, 31.65];
-GPU_min = [1, 1, 2, 4, 7, 12, 19, 29];
-GPU_max = [2, 2, 4, 7, 9, 16, 26, 34];
+GPU_avg = [14.9, 21.4333, 49.7667, 78.6667, 117.233, 203.533, 306.167];
+GPU_min = [12, 20, 41, 76, 112, 185, 284];
+GPU_max = [18, 25, 56, 86, 122, 252, 384];
 
 % CPU times (in ms)
-CPU_avg = [13.55, 26.3, 58.6, 106.3, 163.25, 270.75, 442.55, 596.45];
-CPU_min = [11, 23, 50, 102, 158, 258, 420, 586];
-CPU_max = [17, 33, 69, 112, 179, 282, 464, 616];
+CPU_avg = [294.65, 567.3, 1080.85, 2155.8, 3261.35, 5490.65, 8527.6];
+CPU_min = [267, 541, 1048, 2108, 3164, 5343, 8383];
+CPU_max = [327, 648, 1143, 2213, 3327, 5735, 8699];
 
 ratio = (CPU_avg-GPU_avg)./CPU_avg
 
@@ -98,5 +98,5 @@ legend([gpu1 gpu2 gpu3 cpu1 cpu2 cpu3], 'Location', 'northwest');
 % legend([gpu1 gpu2 gpu3 cpu1 cpu2], 'Location', 'northwest');
 grid minor
 
-% set(gcf, 'Toolbar', 'none')
-% exportgraphics(gcf, '2dpR_1_updated.pdf', 'ContentType', 'vector', 'BackgroundColor', 'none');
+set(gcf, 'Toolbar', 'none')
+% exportgraphics(gcf, 'WAM_1_updated.pdf', 'ContentType', 'vector', 'BackgroundColor', 'none');

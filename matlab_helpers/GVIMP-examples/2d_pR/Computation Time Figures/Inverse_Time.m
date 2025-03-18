@@ -2,7 +2,7 @@ clear; clc; close all;
 
 x0 = 500;
 y0 = 500;
-width = 1200;
+width = 1600;
 height = 900;
 
 figure;
