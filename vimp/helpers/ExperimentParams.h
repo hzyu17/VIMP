@@ -75,6 +75,7 @@ public:
     inline MatrixXd SigT() const { return _SigT; }
 
     // setters
+    inline void set_nt(int nt){ _nt = nt; }
     inline void set_m0(const VectorXd& m0){ _m0 = m0; }
     inline void set_mT(const VectorXd& mT){ _mT = mT; }
 

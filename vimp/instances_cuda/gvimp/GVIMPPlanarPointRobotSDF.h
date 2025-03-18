@@ -38,7 +38,7 @@ public:
         timer.start();
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
 
-        std::cout << "========== Cereal Optimization time: " << std::endl;
+        std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
     }
 
@@ -194,6 +194,7 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
+        // optimizer.set_data_save(false);
         
         optimizer.classify_factors();
 

@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
     GVIMPParams_nonlinear params;
     // no experiment argument, run the default scripts
     if (argc == 1){
-        num_exp = 1;
+        num_exp = 4;
         std::string config_file{source_root+"/configs/proxkl/planar_quad_single_obs.xml"};
         GVIMPRunner_Quadrotor<ProxKLPlanarQuadrotorSDF> runner(nx, nu, num_exp, config_file); // GVIMPPlanarPRSDF is the Optimizer
         runner.read_config(params);
