@@ -122,7 +122,7 @@ elseif strcmp(arm_str, 'PR2Arm')
     alpha = [-1.5708, 1.5708, -1.5708, 1.5708, -1.5708, 1.5708, 0]';
     a = [0.1, 0, 0, 0, 0, 0, 0]';
     d = [0, 0, 0.4, 0, 0.321, 0, 0]';
-    theta = [0, 1.5708, 0, 0, 0, 0, 0]';
+    theta = [0, 1.5708, 0, 0, 0, 0, 0]'; % Theta Bias
     abs_arm = Arm(7, a, alpha, d, base_pose, theta);
     % physical arm
     % sphere data [id x y z r]
