@@ -12,7 +12,8 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 file_path = os.path.abspath(__file__)
 current_dir = os.path.dirname(file_path)
-config_dir = os.path.abspath(os.path.join(current_dir, '../../configs/vimp/sparse_gh'))
+# config_dir = os.path.abspath(os.path.join(current_dir, '../../configs/vimp/sparse_gh'))
+config_dir = os.path.abspath(os.path.join(current_dir, '../../configs/proxkl'))
 
 class RunProgramThread(QThread):
     finished_signal = pyqtSignal()
@@ -235,8 +236,11 @@ class ParameterEditor(QMainWindow):
         # Save current parameters
         self.save_xml_file()
 
-        executable = "/home/zinuo/VIMP/build/src/gvimp/gvi_Quadrotor_spgh"
-        matlab_script = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/planarQuad_morestates.m"
+        # executable = "/home/zinuo/VIMP/build/src/gvimp/gvi_Quadrotor_spgh"
+        # matlab_script = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/planarQuad_morestates.m"
+
+        executable = "/home/zinuo/VIMP/build/src/gvimp/proxkl_Quadrotor_spgh"
+        matlab_script = "/home/zinuo/VIMP/matlab_helpers/ProxKL-examples/2d_Quad/planarQuad_SingleObs.m"
 
         # Disable run button and enable stop button
         self.run_button.setEnabled(False)
@@ -266,11 +270,14 @@ class ParameterEditor(QMainWindow):
 
     def display_images(self):
         # Paths to the generated images
-        image_path_1 = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/case2_300_states/output_figure_1.png"
-        image_path_2 = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/case2_300_states/output_figure_2.png"
+        # image_path_1 = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/case2_300_states/output_figure_1.png"
+        # image_path_2 = "/home/zinuo/VIMP/matlab_helpers/GVIMP-examples/2d_Quad/case2_300_states/output_figure_2.png"
 
-        max_width = 600
-        max_height = 450
+        image_path_1 = "/home/zinuo/VIMP/matlab_helpers/ProxKL-examples/2d_Quad/case2/output_figure_1.png"
+        image_path_2 = "/home/zinuo/VIMP/matlab_helpers/ProxKL-examples/2d_Quad/case2/output_figure_2.png"
+
+        max_width = 800
+        max_height = 600
 
         if os.path.exists(image_path_1):
             pixmap1 = QPixmap(image_path_1)

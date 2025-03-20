@@ -60,6 +60,10 @@ for i_iter = 1: nsteps
         plotArm3D(arm.fk_model(), end_conf, 'g', 3, true);
     end
 end
+% start_conf'
+% position = arm.fk_model().forwardKinematicsPosition(start_conf);
+% position = position(1:3, :);
+% position = [[0;0;0], position]
 
 output = true;
 end

@@ -407,6 +407,11 @@ public:
             params.update_max_linear_iter(max_linear_iter);
         }
 
+        if (paramNode->first_node("map_name")){
+            std::string map_name = static_cast<std::string>(paramNode->first_node("map_name")->value());
+            params.update_map_name(map_name);
+        }
+
         std::string source_root{XSTRING(SOURCE_ROOT)};
         std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
