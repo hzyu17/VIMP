@@ -24,8 +24,8 @@ int main(int argc, char* argv[]){
     GVIMPParams_nonlinear params;
     // no experiment argument, run the default scripts
     if (argc == 1){
-        num_exp = 1;
-        std::string config_file{source_root+"/configs/vimp/sparse_gh/planar_quad_py.xml"};
+        num_exp = 4;
+        std::string config_file{source_root+"/configs/vimp/sparse_gh/planar_quad_multi_obs.xml"};
         GVIMPRunner_Quadrotor<GVIMPPlanarQuadrotorSDF> runner(nx, nu, num_exp, config_file);
         runner.read_config(params); // Write all the parameters into the params
         runner.run();

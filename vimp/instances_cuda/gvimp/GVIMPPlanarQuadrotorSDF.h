@@ -40,7 +40,7 @@ public:
 
     GVIMPPlanarQuadrotorSDF(GVIMPParams_nonlinear& params){}
 
-    double run_optimization_withtime(const GVIMPParams_nonlinear& params, bool verbose=true){
+    double run_optimization_withtime(GVIMPParams_nonlinear& params, bool verbose=true){
         Timer timer;
         timer.start();
 
@@ -70,11 +70,16 @@ public:
         const int dim_conf = 3;
         double delt_t = params.total_time() / (n_states - 1);
 
+        std::string map_name = params.map_name();
+        std::string mode;
+        size_t pos = map_name.find('_');
+        if (pos != std::string::npos){
+            mode = map_name.substr(pos + 1);
+            params.update_map_name(map_name.substr(0, pos));
+        }
+
         VectorXd start_theta{ params.m0() };
         VectorXd goal_theta{ params.mT() };
-
-        // VectorXd inter_theta(6);
-        // inter_theta << 30, 5, -0.19634954084, 0.5, 1, 0.005;
 
         MatrixXd trajectory(n_states, 2*dim_conf);
         MatrixXd new_trajectory(n_states, 2*dim_conf);
@@ -85,25 +90,30 @@ public:
 
         VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
 
-        // for (int i = 0; i < n_states; i++) {
-        //     VectorXd theta(6);
-        //     theta.setZero();
-        //     if (i < n_states / 2){
-        //         theta = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
-        //         // avg_vel = (inter_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / ((n_states / 2 - 1) * delt_t);
-        //     }
-        //     else{
-        //         theta = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
-        //         // avg_vel = (goal_theta.segment(0, dim_conf) - inter_theta.segment(0, dim_conf)) / ((n_states / 2) * delt_t);
-        //     }
-        //     theta.segment(dim_conf, dim_conf) = avg_vel;
-        //     trajectory.row(i) = theta.transpose();
-        // }
-
-        for (int i = 0; i < n_states; i++) {
-            VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / (n_states - 1)};
-            theta.segment(dim_conf, dim_conf) = avg_vel;
-            trajectory.row(i) = theta.transpose();
+        if (mode == "around"){
+            VectorXd inter_theta(6);
+            inter_theta << 15, 10, -0.19634954084, 0.5, 1, 0.005;
+            for (int i = 0; i < n_states; i++) {
+                VectorXd theta(6);
+                theta.setZero();
+                if (i < n_states / 2){
+                    theta = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
+                    // avg_vel = (inter_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / ((n_states / 2 - 1) * delt_t);
+                }
+                else{
+                    theta = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
+                    // avg_vel = (goal_theta.segment(0, dim_conf) - inter_theta.segment(0, dim_conf)) / ((n_states / 2) * delt_t);
+                }
+                theta.segment(dim_conf, dim_conf) = avg_vel;
+                trajectory.row(i) = theta.transpose();
+            }
+        }
+        else{
+            for (int i = 0; i < n_states; i++) {
+                VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / (n_states - 1)};
+                theta.segment(dim_conf, dim_conf) = avg_vel;
+                trajectory.row(i) = theta.transpose();
+            } 
         }
 
         MatrixXd dense_covariance = MatrixXd::Identity(2 * dim_conf * n_states, 2 * dim_conf * n_states) / params.initial_precision_factor();
@@ -137,7 +147,7 @@ public:
             for (size_t i = 0; i < norm_differences.size(); i++){
                 file << norm_differences[i];
                 if (i != norm_differences.size() - 1)
-                    file << "\n";  // Newline for each entry
+                    file << "\n";
             }
             file.close();
             std::cout << "Norm differences saved to norm_differences.csv" << std::endl;
@@ -219,34 +229,11 @@ public:
         //     std::cout << "ha_error_norm: " << (ha[i] - ha_SLR[i]).norm() << std::endl;
         // }
 
-        MatrixXd trajectory_init(traj.rows(), traj.cols());
-        trajectory_init.setZero();
-
-        // // Go Around
-        // VectorXd inter_theta(6);
-        // inter_theta << 20, 10, -0.19634954084, 0.5, 1, 0.005;
-        // VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
-
-        // for (int i = 0; i < n_states; i++) {
-        //     VectorXd theta(6);
-        //     theta.setZero();
-        //     if (i < n_states / 2)
-        //         theta = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
-        //     else
-        //         theta = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
-
-        //     theta.segment(dim_conf, dim_conf) = avg_vel;
-        //     trajectory_init.row(i) = theta.transpose();
-        // }
-
-        // Go Through
-        trajectory_init = traj;
-
         // create each factor
         for (int i = 0; i < n_states; i++) {
 
             // initial state
-            joint_init_theta.segment(i*dim_state, dim_state) = trajectory_init.row(i);
+            joint_init_theta.segment(i*dim_state, dim_state) = traj.row(i);
             gvi::LTV_GP lin_gp{Qc, max(0, i-1), delt_t, start_theta, n_states, hA, hB, target_mean};
 
             // fixed start and goal priors
@@ -454,9 +441,6 @@ public:
             interpolated_covariances[4 * i + 1] = (0.75*log_Sigma1 + 0.25*log_Sigma2).exp();
             interpolated_covariances[4 * i + 2] = (0.5*log_Sigma1 + 0.5*log_Sigma2).exp();
             interpolated_covariances[4 * i + 3] = (0.25*log_Sigma1 + 0.75*log_Sigma2).exp();
-
-            // std::cout << "Norm of the differences: " << (Sigma1 - interpolated_covariances[4 * i]).norm() << ", " <<  (Sigma1 - interpolated_covariances[4 * i + 1]).norm() << ", " <<  (Sigma1 - interpolated_covariances[4 * i + 2]).norm()
-            // << ", " <<  (Sigma1 - interpolated_covariances[4 * i + 3]).norm() << ", " <<  (Sigma1 - Sigma2).norm() << std::endl;
         }
 
         // Append the last covariance matrix
