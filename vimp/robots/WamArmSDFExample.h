@@ -53,7 +53,8 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
             {
                 if (!sdf_file.empty()){
                     std::cout << "sdf_file.data()" << std::endl << sdf_file.data() << std::endl;
-                    Base::_sdf.loadSDF(sdf_file);
+                    std::string sdf_path = "../vimp" + sdf_file + ".bin";
+                    Base::_sdf.loadSDF(sdf_path);
                     
                     Base::_psdf = std::make_shared<SDF>(Base::_sdf);
                 }
