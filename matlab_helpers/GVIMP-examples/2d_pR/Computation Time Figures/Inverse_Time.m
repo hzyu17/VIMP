@@ -16,36 +16,24 @@ hold on;
 
 dimension = [200, 500, 1000, 2000, 3000, 4000, 5000];
 
-gbp_avg_2dpR = [3, 11, 29.8, 86.18, 199.4, 325.32, 458.28];
-gbp_min_2dpR = [3, 11, 29, 85, 195, 321, 454];
-gbp_max_2dpR = [3, 11, 34, 89, 206, 330, 461];
-inverse_avg_2dpR = [3, 15.02, 61.2, 226.14, 499.62, 884.84, 1337.38];
-inverse_min_2dpR = [3, 15, 59, 221, 481, 881, 1324];
-inverse_max_2dpR = [3, 16, 71, 237, 525, 899, 1370];
+gbp_avg_2dpR = [0, 0, 1, 3, 27.02, 49.14, 74.44];
+inverse_avg_2dpR = [0, 2, 9.08, 39, 92.82, 165.32, 256];
 
-gbp_avg_3dpR = [4, 13, 34.0333, 97.1, 204.433, 338.367, 513.033];
-gbp_min_3dpR = [4, 13, 34, 97, 203, 337, 512];
-gbp_max_3dpR = [4, 13, 35, 98, 207, 340, 515];
-inverse_avg_3dpR = [5, 26.5333, 103.4, 399.967, 844.6, 1576, 2432.77];
-inverse_min_3dpR = [5, 26, 103, 398, 844, 1573, 2425];
-inverse_max_3dpR = [5, 27, 104, 406, 847, 1580, 2440];
+gbp_avg_3dpR = [0, 0, 1, 3, 6.02, 11.34, 16.86];
+inverse_avg_3dpR = [0.04, 4.3, 18.02, 72.54, 166.34, 297.76, 456.86];
 
-plot(dimension, gbp_avg_2dpR, '-o', 'MarkerSize', 16, 'linewidth', 2.5, 'Color', 'g', 'MarkerFaceColor', '[0.5, 1, 0.5]','MarkerEdgeColor', '[0, 0.4, 0]','DisplayName', '2dpR GBP Time Mean');
-% fill([dimension, fliplr(dimension)], [gbp_min_2dpR, fliplr(gbp_max_2dpR)], 'g', 'FaceAlpha', 0.15, 'HandleVisibility', 'off');
+gbp_avg_7dof = [0, 0.14, 1.2, 4.3, 8.46, 52.52, 77.7];
+inverse_avg_7dof = [2, 14, 49.58, 197.44, 439.32, 815.1, 1234.04];
 
-plot(dimension, inverse_avg_2dpR, '-o', 'MarkerSize', 16, 'linewidth', 2.5, 'Color', 'r', 'MarkerFaceColor', '[1, 0.75, 0.8]', 'MarkerEdgeColor', '[0.4, 0, 0]','DisplayName', '2dpR Inverse Time Mean');
-% fill([dimension, fliplr(dimension)], [inverse_min_2dpR, fliplr(inverse_max_2dpR)], 'r', 'FaceAlpha', 0.15, 'HandleVisibility', 'off');
+plot(dimension, gbp_avg_2dpR, '-o', 'MarkerSize', 16, 'linewidth', 2.5, 'Color', 'g', 'MarkerFaceColor', '[0.5, 1, 0.5]','MarkerEdgeColor', '[0, 0.4, 0]','DisplayName', '2D Point Robot GBP');
+plot(dimension, inverse_avg_2dpR, '-o', 'MarkerSize', 16, 'linewidth', 2.5, 'Color', 'r', 'MarkerFaceColor', '[1, 0.75, 0.8]', 'MarkerEdgeColor', '[0.4, 0, 0]','DisplayName', '2D Point Robot Inverse');
+plot(dimension, gbp_avg_3dpR, '--x', 'MarkerSize', 24, 'linewidth', 2.5, 'Color', 'g', 'MarkerEdgeColor', '[0, 0.4, 0]', 'DisplayName', '3D Point Robot GBP');
+plot(dimension, inverse_avg_3dpR, '--x', 'MarkerSize', 24, 'linewidth', 2.5, 'Color', 'r', 'MarkerEdgeColor', '[0.4, 0, 0]', 'DisplayName', '3D Point Robot Inverse');
+plot(dimension, gbp_avg_7dof, ':s', 'MarkerSize', 16, 'linewidth', 2.5, 'Color', 'g', 'MarkerFaceColor', '[0.5, 1, 0.5]','MarkerEdgeColor', '[0, 0.4, 0]', 'DisplayName', '7DoF WAM GBP');
+plot(dimension, inverse_avg_7dof, ':s', 'MarkerSize', 16, 'linewidth', 2.5, 'Color', 'r', 'MarkerFaceColor', '[1, 0.75, 0.8]', 'MarkerEdgeColor', '[0.4, 0, 0]', 'DisplayName', '7DoF WAM Inverse');
 
-plot(dimension, gbp_avg_3dpR, '--x', 'MarkerSize', 24, 'linewidth', 2.5, 'Color', 'g', 'MarkerEdgeColor', '[0, 0.4, 0]', 'DisplayName', '3dpR GBP Time Mean');
-% fill([dimension, fliplr(dimension)], [gbp_min_3dpR, fliplr(gbp_max_3dpR)], 'g', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
-
-plot(dimension, inverse_avg_3dpR, '--x', 'MarkerSize', 24, 'linewidth', 2.5, 'Color', 'r', 'MarkerEdgeColor', '[0.4, 0, 0]', 'DisplayName', '3dpR Inverse Time Mean');
-% fill([dimension, fliplr(dimension)], [inverse_min_3dpR, fliplr(inverse_max_3dpR)], 'r', 'FaceAlpha', 0.2, 'HandleVisibility', 'off');
-
-
-
-xlabel("Dimension of Precision Matrix")
-ylabel("Computation Time (ms)")
+xlabel("Dimension of Joint Precision Matrix")
+ylabel("Inverse Time (ms)")
 legend('show', 'Location', 'northwest');
 grid minor
 
