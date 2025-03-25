@@ -22,6 +22,7 @@ import gpmp2.*
 i_exp = 1;
 
 prefix = "sparse_gh/case3";
+% prefix_gpmp = "../../PGCS-examples/WAM/sparse_gh/case1";
 
 %% ******************* Start and goal configurations ******************
 start_confs = [-0.8,   -1.70,   1.64,  1.29,   1.1, -0.106,    2.2;

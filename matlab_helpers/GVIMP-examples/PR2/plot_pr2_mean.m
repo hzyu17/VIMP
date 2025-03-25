@@ -21,13 +21,11 @@ import gpmp2.*
 % =============================
 i_exp = 1;
 
-prefix = "sparse_gh/case3";
+prefix = "sparse_gh/case2";
 
 %% ******************* Start and goal configurations ******************
-start_confs = [-0.8,   -1.70,   1.64,  1.29,   1.1, -0.106,    2.2;
-               -0.9,  -1.70,   1.34,  1.19,   0.8,  -0.126,    2.5];
-end_confs = [-0.0,    0.94,     0,     1.6,     0,   -0.919,   1.55;
-              -0.7,   1.35,    1.2,    1.0,   -0.7,  -0.1,   1.2];
+start_confs = [-1.57, -0.261, -3.14, -1.047, 3.14, -0.785, 0];
+end_confs = [0.0, 0.0, 0.0, -0.261, 3.14, -0.261, 0];
 
 %% read experiment results
 means = csvread([prefix+"/mean.csv"]);
@@ -55,7 +53,7 @@ n_states = floor(ttl_dim / dim_theta);
 
 
 %% ******************* Define map dataset ******************
-dataset = generate3Ddataset('WAMDeskDataset');
+dataset = generate3Ddataset_1('PR2DeskDataset_1');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 % origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
@@ -65,7 +63,7 @@ field = signedDistanceField3D(dataset.map, dataset.cell_size);
 disp('calculating signed distance field done');
 
 %% ******************* WAM Arm ******************
-arm = generateArm('WAMArm');
+arm = generateArm('PR2Arm');
 
 % start and goal 
 start_conf = start_confs(i_exp, 1:end)';
