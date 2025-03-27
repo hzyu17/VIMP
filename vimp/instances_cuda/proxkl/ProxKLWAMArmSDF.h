@@ -1,6 +1,6 @@
 /**
  * @file ProxKLWAMArmSDF.h
- * @author Christopher Taylor (ctaylor319@gatech.edu)
+ * @author Zinuo Chang (zchang40@gatech.edu)
  * @brief The optimizer for a WAM Robot Arm at the joint level.
  * @version 0.1
  * @date 2025-03-24
@@ -134,13 +134,6 @@ public:
 
         _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sdf_file(), params.sig_obs(), params.eps_sdf()});
-        
-        // std::vector<Point3> joints;
-        // compute_joint_positions_cpu(start_theta.data(), 7, a.data(), alpha.data(), d.data(), theta_bias.data(), joints);
-        // std::cout << "Start Theta: " << start_theta.transpose() << std::endl;
-        // for (int i = 0; i < joints.size(); i++) {
-        //     std::cout << "Joint " << i << ": " << joints[i].x << ", " << joints[i].y << ", " << joints[i].z << std::endl;
-        // }
         
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
@@ -285,8 +278,8 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
-        optimizer.set_save_covariance(false);
-        optimizer.set_data_save(false);
+        // optimizer.set_save_covariance(false);
+        // optimizer.set_data_save(false);
         
         optimizer.classify_factors();
         optimizer.set_prior(mu_prior, precision_prior.sparseView());
@@ -303,7 +296,6 @@ public:
     std::tuple<VectorXd, gvi::SpMat> get_mu_precision(){
         return _last_iteration_mean_precision;
     }
-
 
 
     MatrixXd computePrecisionPriorExplicit(
@@ -357,72 +349,6 @@ public:
     
         return precision_prior;
     }
-
-    struct Point3 {
-        double x, y, z;
-    };
-    
-    void identity(double* M) {
-        M[0]  = 1; M[4]  = 0; M[8]  = 0; M[12] = 0;
-        M[1]  = 0; M[5]  = 1; M[9]  = 0; M[13] = 0;
-        M[2]  = 0; M[6]  = 0; M[10] = 1; M[14] = 0;
-        M[3]  = 0; M[7]  = 0; M[11] = 0; M[15] = 1;
-    }
-    
-    void mat_mul(const double* A, const double* B, double* C, const int dim) {
-        for (int col = 0; col < dim; col++) {
-            for (int row = 0; row < dim; row++) {
-                double sum = 0.0;
-                for (int k = 0; k < dim; k++) {
-                    sum += A[row + k*dim] * B[k + col*dim];
-                }
-                C[row + col*dim] = sum;
-            }
-        }
-    }
-    
-    void dh_matrix(int i, double theta, const double* a, const double* alpha, const double* d, double* mat) {
-        double ct = cos(theta);
-        double st = sin(theta);
-        double ca = cos(alpha[i]);
-        double sa = sin(alpha[i]);
-        
-        // DH Matrix
-        mat[0]  = ct;        mat[4] = -st * ca;  mat[8]  = st * sa;   mat[12] = a[i] * ct;
-        mat[1]  = st;        mat[5] = ct * ca;   mat[9]  = -ct * sa;  mat[13] = a[i] * st;
-        mat[2]  = 0;         mat[6] = sa;        mat[10] = ca;        mat[14] = d[i];
-        mat[3]  = 0;         mat[7] = 0;         mat[11] = 0;         mat[15] = 1;
-    }
-
-    void compute_joint_positions_cpu(const double* theta, int num_joints,
-                                    const double* a, const double* alpha, const double* d, const double* theta_bias,
-                                    std::vector<Point3>& joints) {
-        int MATRIX_ELEMENTS = 16;
-        double T[MATRIX_ELEMENTS];
-        identity(T);
-
-        joints.clear();
-        joints.push_back({ T[12], T[13], T[14] });
-
-        // Sequentially compute the cumulative transformation for each joint and extract the translation part as the joint position
-        for (int i = 0; i < num_joints; ++i) {
-            double th = theta[i] + theta_bias[i];  // Consider joint bias
-            double dh_mat[MATRIX_ELEMENTS];
-            dh_matrix(i, th, a, alpha, d, dh_mat);
-
-            double T_new[MATRIX_ELEMENTS];
-            mat_mul(T, dh_mat, T_new, 4);
-
-            // Update the cumulative transformation matrix T
-            for (int j = 0; j < MATRIX_ELEMENTS; j++) {
-                T[j] = T_new[j];
-            }
-
-            // Use the translation part of the current cumulative transformation matrix as the joint position
-            joints.push_back({ T[12], T[13], T[14] });
-        }
-    }
-
     
 
 protected:

@@ -1,17 +1,17 @@
-<!-- <Commons>
-    <total_time>2.0</total_time>
+<Commons>
+    <total_time>2.5</total_time>
     <n_states>30</n_states>
     <map_name>map_bookshelf</map_name>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>3</GH_deg>
-    <sig_obs>20.5</sig_obs>
+    <sig_obs>25.0</sig_obs>
     <eps_sdf>0.2</eps_sdf>
     <radius>0.01</radius>
     <step_size>0.45</step_size>
     <alpha>30</alpha>
     <init_precision_factor>10000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
-    <temperature>0.5</temperature>
+    <temperature>0.75</temperature>
     <high_temperature>5.0</high_temperature>
     <stop_err>1e-5</stop_err>
     <max_iterations>30</max_iterations>
@@ -66,17 +66,15 @@
         <7>1.2</7>
     </goal_pos>
 
-    <temperature>1.0</temperature>
     <high_temperature>8.0</high_temperature>
-    <sig_obs>22.0</sig_obs>
+    <sig_obs>23.0</sig_obs>
     <saving_prefix>matlab_helpers/ProxKL-examples/WAM/sparse_gh/case2/</saving_prefix>
-
-</Experiment2> -->
+</Experiment2>
 
 
 
 <!-- 750 States -->
-<Commons>
+<!-- <Commons>
     <total_time>1.95</total_time>
     <n_states>750</n_states>
     <map_name>map_bookshelf</map_name>
@@ -121,4 +119,4 @@
 
     <saving_prefix>matlab_helpers/GVIMP-examples/WAM/sparse_gh/case3/</saving_prefix>
 
-</Experiment1>
+</Experiment1> -->

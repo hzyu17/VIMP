@@ -533,6 +533,16 @@ public:
             params.update_sig_obs(cost_sigma);
         }
 
+        if (paramNode->first_node("total_time")){
+            double total_time = atof(paramNode->first_node("total_time")->value());
+            params.set_total_time(total_time);
+        }
+
+        if (paramNode->first_node("alpha")){
+            double alpha = atof(paramNode->first_node("alpha")->value());
+            params.update_alpha(alpha);
+        }
+
         std::string source_root{XSTRING(SOURCE_ROOT)};
         std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
