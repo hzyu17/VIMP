@@ -317,6 +317,7 @@ public:
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
         optimizer.set_prior(mu_prior, precision_prior.sparseView()); // Set the prior mean with trajectory
+        optimizer.set_narrow_range(false);
         optimizer.set_data_save(final_iter);
         
         optimizer.classify_factors();

@@ -46,6 +46,7 @@ for i = 2:2 % 4 experiments
     % output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state, save_figure);
 
 end
+% exportgraphics(gcf, fullfile(prefix, 'output_figure_1.png'), 'Resolution', 75);
 
 %% ================ 
 % plot trajectories 
@@ -67,8 +68,8 @@ set(gcf,'position',[x0,y0,width,height])
 %                 13, 10, 0, 0;
 %                 -13, 8, 0, 0];
 
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i = 2:2 % 4 experiments  
+tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+for i = 1:4 % 4 experiments  
     nexttile
     if is_sparse
         prefix = ["case" + num2str(i)+"/"];
@@ -103,7 +104,7 @@ for i = 2:2 % 4 experiments
     
 end
 
-% exportgraphics(gcf, strcat('Trajectory2_', num2str(niters), '_150_point.pdf'), 'ContentType', 'image');
+% exportgraphics(gcf, fullfile(prefix, 'output_figure_2.png'), 'Resolution', 75);
 
 
 
