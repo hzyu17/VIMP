@@ -1,0 +1,94 @@
+<Commons>
+    <total_time>4.0</total_time>
+    <n_states>30</n_states>
+    <map_name>map_bookshelf</map_name>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>3</GH_deg>
+    <sig_obs>1.5</sig_obs>
+    <eps_sdf>0.2</eps_sdf>
+    <radius>0.01</radius>
+    <step_size>0.45</step_size>
+    <alpha>30</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>10000.0</boundary_penalties>
+    <temperature>0.25</temperature>
+    <high_temperature>3.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <max_iterations>25</max_iterations>
+    <low_temp_iterations>20</low_temp_iterations>
+    <max_n_backtracking>5</max_n_backtracking>
+    <sdf_file>/maps/PR2/PR2DeskDataset_closer</sdf_file>
+</Commons>
+
+<Experiment1>    
+    <start_pos>
+        <1>-1.75</1>
+        <2>0.524</2>
+        <3>-0.9</3>
+        <4>-0.61</4>
+        <5>-0.524</5>
+        <6>-1.05</6>
+        <7>1.57</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>0.0</1>
+        <2>0.0</2>
+        <3>0.0</3>
+        <4>-0.261</4>
+        <5>3.14</5>
+        <6>-0.261</6>
+        <7>0.0</7>
+    </goal_pos>
+
+    <saving_prefix>matlab_helpers/ProxKL-examples/PR2/sparse_gh/case1/</saving_prefix>
+
+</Experiment1>
+
+
+<!-- <Commons>
+    <total_time>4.0</total_time>
+    <n_states>750</n_states>
+    <map_name>map_bookshelf</map_name>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>3</GH_deg>
+    <sig_obs>30.0</sig_obs>
+    <eps_sdf>0.2</eps_sdf>
+    <radius>0.01</radius>
+    <step_size>0.45</step_size>
+    <alpha>200</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>1000.0</boundary_penalties>
+    <temperature>1.0</temperature>
+    <high_temperature>5.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <max_iterations>25</max_iterations>
+    <low_temp_iterations>20</low_temp_iterations>
+    <max_n_backtracking>5</max_n_backtracking>
+    <sdf_file>/maps/PR2/PR2DeskDataset_closer</sdf_file>
+</Commons>
+
+<Experiment1>    
+    <start_pos>
+        <1>-1.75</1>
+        <2>0.524</2>
+        <3>-0.9</3>
+        <4>-0.61</4>
+        <5>-0.524</5>
+        <6>-1.05</6>
+        <7>1.57</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>0.0</1>
+        <2>0.0</2>
+        <3>0.0</3>
+        <4>-0.261</4>
+        <5>3.14</5>
+        <6>-0.261</6>
+        <7>0.0</7>
+    </goal_pos>
+
+    <saving_prefix>matlab_helpers/ProxKL-examples/PR2/sparse_gh/case2/</saving_prefix>
+
+</Experiment1> -->
