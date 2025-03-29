@@ -148,9 +148,6 @@ public:
         VectorXd mu_prior{VectorXd::Zero(ndim)}; // Use start_theta and transition matrix to compute the prior
         MatrixXd precision_prior{MatrixXd::Zero(ndim, ndim)}; // First create a dense matrix then use sparseView() to convert it to sparse
 
-        MatrixXd B_matrix{MatrixXd::Zero(dim_state * (n_states+1), dim_state * n_states)};
-        MatrixXd Q_inverse{MatrixXd::Zero(dim_state * (n_states+1), dim_state * (n_states+1))};
-
         VectorXd mu_start = start_theta;
         mu_start.segment(dim_conf, dim_conf) = avg_vel;
 

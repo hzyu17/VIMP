@@ -156,9 +156,6 @@ public:
         VectorXd mu_prior{VectorXd::Zero(ndim)}; // Use start_theta and transition matrix to compute the prior
         MatrixXd precision_prior{MatrixXd::Zero(ndim, ndim)}; // First create a dense matrix then use sparseView() to convert it to sparse
 
-        MatrixXd B_matrix{MatrixXd::Zero(dim_state * (n_states+1), dim_state * n_states)};
-        MatrixXd Q_inverse{MatrixXd::Zero(dim_state * (n_states+1), dim_state * (n_states+1))};
-
         VectorXd mu_start = start_theta;
         mu_start.segment(dim_conf, dim_conf) = avg_vel;
 
@@ -192,10 +189,26 @@ public:
         MatrixXd K0Inv = K0_fixed.inverse();
         MatrixXd KNInv = K0_fixed.inverse();
 
+        // VectorXd inter_theta = (start_theta + goal_theta) / 2.0;
+        // inter_theta(1) = 0.524;
+        // inter_theta(3) = -1.047;
+
         for (int i = 0; i < n_states; i++) {
 
-            // initial state
+            // // initial state
+            // VectorXd theta_i(14);
+            // theta_i.setZero();
+            // if( i < n_states / 2){
+            //     theta_i = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
+            //     avg_vel = (inter_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / ((n_states / 2 - 1) * delt_t);
+            // }
+            // else{
+            //     theta_i = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
+            //     avg_vel = (goal_theta.segment(0, dim_conf) - inter_theta.segment(0, dim_conf)) / ((n_states / 2) * delt_t);
+            // }
+
             VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
+
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i * dim_state, dim_state) = theta_i;
 
@@ -285,7 +298,7 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
-        optimizer.set_save_covariance(false);
+        // optimizer.set_save_covariance(false);
         // optimizer.set_data_save(false);
         
         optimizer.classify_factors();
