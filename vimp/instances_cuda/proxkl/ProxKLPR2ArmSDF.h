@@ -184,30 +184,42 @@ public:
             }
         }
 
+        size_t pos = params.sdf_file().rfind('/');
+        VectorXd inter_theta = (start_theta + goal_theta) / 2.0;
+        std::string lastPart;
+
+        if (pos != std::string::npos) {
+            lastPart = params.sdf_file().substr(pos + 1);
+            std::cout << "lastPart: " << lastPart << std::endl;
+            if (lastPart == "PR2BookShelfDataset") {
+                inter_theta << -1.038, 0.69, -0.219, -1.85, -1.152, -0.69, 1.14, 0, 0, 0, 0, 0, 0, 0;
+            }
+        }
+
         std::vector<MatrixXd> PhiList(N);
         std::vector<MatrixXd> QInvList(N);
         MatrixXd K0Inv = K0_fixed.inverse();
         MatrixXd KNInv = K0_fixed.inverse();
 
-        // VectorXd inter_theta = (start_theta + goal_theta) / 2.0;
-        // inter_theta(1) = 0.524;
-        // inter_theta(3) = -1.047;
-
         for (int i = 0; i < n_states; i++) {
 
-            // // initial state
-            // VectorXd theta_i(14);
-            // theta_i.setZero();
-            // if( i < n_states / 2){
-            //     theta_i = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
-            //     avg_vel = (inter_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / ((n_states / 2 - 1) * delt_t);
-            // }
-            // else{
-            //     theta_i = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
-            //     avg_vel = (goal_theta.segment(0, dim_conf) - inter_theta.segment(0, dim_conf)) / ((n_states / 2) * delt_t);
-            // }
+            // initial state
+            VectorXd theta_i(14);
+            theta_i.setZero();
 
-            VectorXd theta_i{start_theta + double(i) * (goal_theta - start_theta) / N};
+            if (lastPart == "PR2BookShelfDataset") { 
+                if( i < n_states / 2){
+                    theta_i = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
+                    avg_vel = (inter_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / ((n_states / 2 - 1) * delt_t);
+                }
+                else{
+                    theta_i = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
+                    avg_vel = (goal_theta.segment(0, dim_conf) - inter_theta.segment(0, dim_conf)) / ((n_states / 2) * delt_t);
+                }
+            }
+            else{
+                theta_i = start_theta + double(i) * (goal_theta - start_theta) / (n_states - 1);
+            }
 
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
             joint_init_theta.segment(i * dim_state, dim_state) = theta_i;
@@ -298,7 +310,7 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
-        // optimizer.set_save_covariance(false);
+        optimizer.set_save_covariance(false);
         // optimizer.set_data_save(false);
         
         optimizer.classify_factors();
