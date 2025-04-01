@@ -1,9 +1,9 @@
 <Commons>
-    <total_time>12.5</total_time>
+    <total_time>5.0</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
-    <sig_obs>6.0</sig_obs>
+    <sig_obs>6.5</sig_obs>
     <map_name>SingleObstacleMap</map_name>
     <eps_sdf>1.0</eps_sdf>
     <radius>0.5</radius>
@@ -15,7 +15,7 @@
     <high_temperature>7.5</high_temperature>
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>20</low_temp_iterations>
-    <max_iterations>26</max_iterations>
+    <max_iterations>25</max_iterations>
     <max_n_backtracking>1</max_n_backtracking>
     <max_linear_iter>1</max_linear_iter>
 </Commons>
@@ -43,7 +43,36 @@
 
 </Experiment1>
 
-<Experiment2>   
+<!-- New LTV Experiment -->
+<Experiment2>
+    <total_time>5</total_time>
+    <start_pos>
+        <x>0.0</x>
+        <z>0.0</z>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>25.0</x>
+        <z>35.0</z>
+        <phi>-0.39269908169</phi>
+        <vx>1.0</vx>
+        <vz>2.0</vz>
+        <vphi>0.01</vphi>
+    </goal_pos>
+
+    <sig_obs>7.5</sig_obs>
+    <high_temperature>6.5</high_temperature>
+    
+    <saving_prefix>matlab_helpers/ProxKL-examples/2d_Quad/case2/</saving_prefix>
+
+</Experiment2>
+
+<!-- Original LTV Experiment -->
+<!-- <Experiment2>   
     <total_time>11</total_time>
     <start_pos>
         <x>0.0</x>
@@ -68,10 +97,39 @@
     
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_Quad/case2/</saving_prefix>
 
-</Experiment2>
+</Experiment2> -->
+
+<!-- Nonlinear Experiment -->
+<!-- <Experiment2>   
+    <total_time>4.5</total_time>
+    <start_pos>
+        <x>0.0</x>
+        <z>0.0</z>
+        <phi>0.0</phi>
+        <vx>0.0</vx>
+        <vz>0.0</vz>
+        <vphi>0.0</vphi>
+    </start_pos>
+
+    <goal_pos>
+        <x>25.0</x>
+        <z>35.0</z>
+        <phi>-0.39269908169</phi>
+        <vx>1.0</vx>
+        <vz>2.0</vz>
+        <vphi>0.01</vphi>
+    </goal_pos>
+
+    <sig_obs>12.5</sig_obs>
+    <high_temperature>5</high_temperature>
+    <max_linear_iter>9</max_linear_iter>
+    
+    <saving_prefix>matlab_helpers/ProxKL-examples/2d_Quad/case2/</saving_prefix>
+
+</Experiment2> -->
 
 <Experiment3>
-    <total_time>10</total_time>
+    <total_time>4.25</total_time>
     <start_pos>
         <x>7.5</x>
         <z>0.0</z>
@@ -90,16 +148,13 @@
         <vphi>-0.02</vphi>
     </goal_pos>
 
-    <alpha>30</alpha>
-    <sig_obs>6.0</sig_obs>
-    <max_iterations>25</max_iterations>
-    <temperature>0.5</temperature>
-    <high_temperature>7</high_temperature>
+    <sig_obs>4.0</sig_obs>
+
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_Quad/case3/</saving_prefix>
 </Experiment3>
 
 <Experiment4>
-    <total_time>10.5</total_time>
+    <total_time>4</total_time>
     <start_pos>
         <x>25.0</x>
         <z>0.0</z>
@@ -118,11 +173,8 @@
         <vphi>0.0</vphi>
     </goal_pos>
 
-    <alpha>30</alpha>
-    <sig_obs>5.0</sig_obs>
-    <max_iterations>17</max_iterations>
-    <temperature>0.5</temperature>
-    <high_temperature>4</high_temperature>
+    <alpha>50</alpha>
+    <sig_obs>6</sig_obs>
 
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_Quad/case4/</saving_prefix>
 
