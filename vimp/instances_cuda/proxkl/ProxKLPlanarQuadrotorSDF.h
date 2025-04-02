@@ -54,7 +54,7 @@ public:
 
     ProxKLPlanarQuadrotorSDF(GVIMPParams_nonlinear& params){}
 
-    double run_optimization_withtime(const GVIMPParams_nonlinear& params, bool verbose=true){
+    double run_optimization_withtime(GVIMPParams_nonlinear& params, bool verbose=true){
         Timer timer;
         timer.start();
 
@@ -73,12 +73,46 @@ public:
         new_trajectory.setZero();
         traj_diff.setZero();
 
+        std::string map_name = params.map_name();
+        std::string mode;
+        size_t pos = map_name.find('_');
+        if (pos != std::string::npos){
+            mode = map_name.substr(pos + 1);
+            params.update_map_name(map_name.substr(0, pos));
+        }
+
         VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
 
         for (int i = 0; i < n_states; i++) {
             VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / (n_states - 1)};
             theta.segment(dim_conf, dim_conf) = avg_vel;
             trajectory.row(i) = theta.transpose();
+        }
+
+        if (mode == "around"){
+            VectorXd inter_theta(6);
+            inter_theta << 15, 10, -0.19634954084, 0.5, 1, 0.005;
+            for (int i = 0; i < n_states; i++) {
+                VectorXd theta(6);
+                theta.setZero();
+                if (i < n_states / 2){
+                    theta = start_theta + double(i) * (inter_theta - start_theta) / (n_states / 2 - 1);
+                    // avg_vel = (inter_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / ((n_states / 2 - 1) * delt_t);
+                }
+                else{
+                    theta = inter_theta + double(i - n_states/2 + 1) * (goal_theta - inter_theta) / (n_states / 2);
+                    // avg_vel = (goal_theta.segment(0, dim_conf) - inter_theta.segment(0, dim_conf)) / ((n_states / 2) * delt_t);
+                }
+                theta.segment(dim_conf, dim_conf) = avg_vel;
+                trajectory.row(i) = theta.transpose();
+            }
+        }
+        else{
+            for (int i = 0; i < n_states; i++) {
+                VectorXd theta{start_theta + double(i) * (goal_theta - start_theta) / (n_states - 1)};
+                theta.segment(dim_conf, dim_conf) = avg_vel;
+                trajectory.row(i) = theta.transpose();
+            }
         }
 
         MatrixXd dense_covariance = MatrixXd::Identity(2 * dim_conf * n_states, 2 * dim_conf * n_states) / params.initial_precision_factor();
@@ -204,40 +238,22 @@ public:
         hA = hA_SLR;
         ha = ha_SLR;
 
-        MatrixXd trajectory_init(traj.rows(), traj.cols());
-        trajectory_init.setZero();
-
-        // Go Through
-        trajectory_init = traj;
-
         VectorXd mu_prior{VectorXd::Zero(ndim)}; // Use start_theta and transition matrix to compute the prior
         MatrixXd precision_prior{MatrixXd::Zero(ndim, ndim)}; // First create a dense matrix then use sparseView() to convert it to sparse
 
-        MatrixXd B_matrix{MatrixXd::Zero(dim_state * (n_states+1), dim_state * n_states)};
-        MatrixXd Q_inverse{MatrixXd::Zero(dim_state * (n_states+1), dim_state * (n_states+1))};
+        std::vector<MatrixXd> PhiList(N);
+        std::vector<MatrixXd> QInvList(N);
+        MatrixXd K0Inv = K0_fixed.inverse();
+        MatrixXd KNInv = K0_fixed.inverse();
 
         for (int i = 0; i < n_states; i++) {
             // initial state
-            joint_init_theta.segment(i*dim_state, dim_state) = trajectory_init.row(i);
+            joint_init_theta.segment(i*dim_state, dim_state) = traj.row(i);
             gvi::LTV_GP lin_gp{Qc, max(0, i-1), delt_t, start_theta, n_states, hA, hB, target_mean};
 
-            if(i == 0){
-                B_matrix.block(0, 0, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
-                Q_inverse.block(0, 0, dim_state, dim_state) = K0_fixed.inverse();
-            }
-            else if (i == n_states-1){
-                B_matrix.block(i*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
-                B_matrix.block((i+1)*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
-                B_matrix.block(i*dim_state, (i-1)*dim_state, dim_state, dim_state) = -lin_gp.Phi();
-
-                Q_inverse.block(i*dim_state, i*dim_state, dim_state, dim_state) = lin_gp.get_precision();
-                Q_inverse.block((i+1)*dim_state, (i+1)*dim_state, dim_state, dim_state) = K0_fixed.inverse();
-            }
-            else{
-                B_matrix.block(i*dim_state, i*dim_state, dim_state, dim_state) = MatrixXd::Identity(dim_state, dim_state);
-                B_matrix.block(i*dim_state, (i-1)*dim_state, dim_state, dim_state) = -lin_gp.Phi();
-
-                Q_inverse.block(i*dim_state, i*dim_state, dim_state, dim_state) = lin_gp.get_precision();
+            if (i > 0){
+                PhiList[i - 1] = lin_gp.Phi(); // Store Phi for the previous state
+                QInvList[i - 1] = lin_gp.get_precision(); // Store precision for the previous state
             }
 
             // fixed start and goal priors
@@ -258,6 +274,7 @@ public:
 
                 // Fixed gp factor
                 gvi::FixedPriorGP_proxkl fixed_gp{K0_fixed, MatrixXd{target_mean[i]}};
+                // std::cout << "Fixed Point: " << target_mean[i].transpose() << std::endl;
                 vec_factors.emplace_back(new gvi::FixedGpPrior{dim_state,
                                                           dim_state,
                                                           gvi::cost_fixed_gp,
@@ -292,7 +309,7 @@ public:
         }
 
         mu_prior = traj.transpose().reshaped();
-        precision_prior = B_matrix.transpose() * Q_inverse * B_matrix;
+        precision_prior = computePrecisionPriorExplicit(PhiList, QInvList, K0Inv, KNInv, N, dim_state);
 
         /// The joint optimizer
         gvi::ProxKLGH<gvi::GVIFactorizedBase_Cuda, CudaOperation_Quad> optimizer{vec_factors,
@@ -353,7 +370,6 @@ public:
         return traj;
     }
 
-
     std::vector<MatrixXd> covariance_interpolation(const SpMat& covariance, int dim_state, int n_states) {
         int N = n_states - 1;
         std::vector<MatrixXd> interpolated_covariances(4 * N + 1);
@@ -380,6 +396,58 @@ public:
         interpolated_covariances[4 * N] = covariance.block(N * dim_state, N * dim_state, dim_state, dim_state);
 
         return interpolated_covariances;
+    }
+
+    MatrixXd computePrecisionPriorExplicit(
+        const std::vector<MatrixXd>& PhiList,  // PhiList[k] corresponds to Φ(k,k-1), k=1..N
+        const std::vector<MatrixXd>& QInvList, // QInvList[k] corresponds to Q⁻¹(k,k), k=1..N
+        const MatrixXd& K0Inv,            // Q⁻¹(0,0)
+        const MatrixXd& KNInv,            // Q⁻¹(N+1,N+1)
+        int N,                            // Number of Gramians, i.e., the number of intermediate blocks. B has N+2 rows and N+1 columns
+        int dim_state)
+    {
+        // precision_prior has dimensions ((N+1)*dim_state) x ((N+1)*dim_state)
+        MatrixXd precision_prior = MatrixXd::Zero((N+1) * dim_state, (N+1) * dim_state);
+    
+        // -------------------------------
+        // Row k = 0, corresponds to B(0,0)=I, Q⁻¹(0,0)=K0Inv
+        // Only affects block (0,0)
+        precision_prior.block(0, 0, dim_state, dim_state) += K0Inv;
+    
+        // -------------------------------
+        // For k = 1,...,N
+        // Each row k has two non-zero blocks:
+        //   B(k, k-1) = -Φ(k,k-1) and B(k,k) = I, Q⁻¹(k,k)= Qk (inverse of Gramian)
+        for (int k = 0; k < N; ++k)
+        {
+            // Let i = k-1, j = k
+            int i = k;
+            int j = k+1;
+    
+            // Current Q⁻¹ block (inverse of Gramian)
+            const MatrixXd& Qk = QInvList[k]; // k ranges from 1 to N
+    
+            // Current Φ, representing Φ(k,k-1)
+            const MatrixXd& Phi = PhiList[k];  // k ranges from 1 to N
+    
+            // For block (i, i): from B(k, i) = -Φ, contribution is (-Φ)ᵀ Qk (-Φ) = Φᵀ Qk Φ
+            precision_prior.block(i * dim_state, i * dim_state, dim_state, dim_state) += Phi.transpose() * Qk * Phi;
+    
+            // For block (i, j): from (-Φ)ᵀ Qk I = -Φᵀ Qk
+            MatrixXd PhiTQk = Phi.transpose() * Qk;
+            precision_prior.block(i * dim_state, j * dim_state, dim_state, dim_state) = -PhiTQk;
+            precision_prior.block(j * dim_state, i * dim_state, dim_state, dim_state) = -PhiTQk.transpose();
+    
+            // For block (j, j): from Iᵀ Qk I = Qk
+            precision_prior.block(j * dim_state, j * dim_state, dim_state, dim_state) += Qk;
+        }
+    
+        // -------------------------------
+        // Row k = N+1, corresponds to B(N+1,N)=I, Q⁻¹(N+1,N+1)=KNInv
+        // Only affects block (N, N)
+        precision_prior.block(N * dim_state, N * dim_state, dim_state, dim_state) += KNInv;
+    
+        return precision_prior;
     }
 
 

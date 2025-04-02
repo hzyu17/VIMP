@@ -18,7 +18,7 @@ save_figure = 0;
 %% ============ 
 % read map
 % ============
-sdfmap = csvread("../../../vimp/maps/2dQuad/SingleObstacleMap.csv");
+sdfmap = csvread("../../../vimp/python/sdf_robot/map/planar/SingleObstacleMap.csv");
 
 dim_state = 6;
 dim_theta = 3;
@@ -51,8 +51,8 @@ end
 %% ================ 
 % plot trajectories 
 % =================
-x0 = 500;
-y0 = 500;
+x0 = 1000;
+y0 = 1000;
 width = 1290.427199;
 height = 800;
 figure

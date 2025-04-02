@@ -19,9 +19,14 @@ import gpmp2.*
 % =============================
 % sparse GH quadrature results 
 % =============================
-i_exp = 1;
+i_exp = 2;
 
-prefix = "sparse_gh/case3";
+switch i_exp
+    case 1
+        prefix = "sparse_gh/case3";
+    case 2
+        prefix = "sparse_gh/case4";
+end
 % prefix_gpmp = "../../PGCS-examples/WAM/sparse_gh/case1";
 
 %% ******************* Start and goal configurations ******************
@@ -32,6 +37,8 @@ end_confs = [-0.0,    0.94,     0,     1.6,     0,   -0.919,   1.55;
 
 %% read experiment results
 means = csvread([prefix+"/mean.csv"]);
+% mean_last = csvread([prefix+"/zk_sdf.csv"]);
+mean_last = csvread([prefix+"/zk_gpmp2.csv"]);
 costs = csvread([prefix+"/cost.csv"]);
 factor_costs = csvread([prefix+"/factor_costs.csv"]);
 
@@ -117,7 +124,7 @@ for j = 1:nt
     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, alpha];
     % means
-    plotArm3D(arm.fk_model(), i_means(1:7, j), color, 4, true);
+    plotArm3D(arm.fk_model(), mean_last(1:7, j), color, 4, true);
 end
 plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
 plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
