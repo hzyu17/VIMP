@@ -9,7 +9,7 @@
     "map_height": 700,
     "obstacles": [
         {
-            "xmin": -5.5,
+            "xmin": -5.0,
             "ymin": 10.0,
             "width": 8.0,
             "height": 10.0

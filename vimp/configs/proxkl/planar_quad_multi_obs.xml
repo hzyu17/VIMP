@@ -1,10 +1,10 @@
 <!-- Go_through -->
 <Commons>
-    <total_time>3.75</total_time>
+    <total_time>7.0</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
-    <sig_obs>5.0</sig_obs>
+    <sig_obs>1.75</sig_obs>
     <map_name>MultiObstacleMap</map_name>
     <eps_sdf>1.0</eps_sdf>
     <radius>0.5</radius>
@@ -18,7 +18,7 @@
     <low_temp_iterations>25</low_temp_iterations>
     <max_iterations>30</max_iterations>
     <max_n_backtracking>20</max_n_backtracking>
-    <max_linear_iter>10</max_linear_iter>
+    <max_linear_iter>1</max_linear_iter>
 </Commons>
 
 <Experiment1>
@@ -68,6 +68,7 @@
 
     <sig_obs>10.5</sig_obs>
     <map_name>MultiObstacleMap_around</map_name>
+    <max_linear_iter>10</max_linear_iter>
 
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_Quad/Multi_Obs/Go_around/</saving_prefix>
 
