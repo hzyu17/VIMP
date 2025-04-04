@@ -115,36 +115,6 @@ elseif strcmp(dataset_str, 'PR2DeskDataset')
     [dataset.map, dataset.corner_idx] = add_obstacle([250 140 140], [60, 100, 5], dataset.map, dataset.corner_idx);
     [dataset.map, dataset.corner_idx] = add_obstacle([250 140 90], [60, 100, 5], dataset.map, dataset.corner_idx);
 
-elseif strcmp(dataset_str, 'PR2DeskDataset_1')
-    % params
-    dataset.cols = 300;
-    dataset.rows = 300;
-    dataset.z = 300;
-    % The position of the PR2 Right Arm in ROS is at (-0.1, -0.2, 1)
-    dataset.origin_x = -1.4;
-    dataset.origin_y = -1.3;
-    dataset.origin_z = -1.5;
-    dataset.cell_size = 0.01;
-    % map
-    dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
-    % obstacles
-    dataset.corner_idx = [];
-    [dataset.map, dataset.corner_idx] = add_obstacle([170 60 130], [140, 60, 5], dataset.map, dataset.corner_idx);
-    [dataset.map, dataset.corner_idx] = add_obstacle([105 35 90], [10, 10, 80], dataset.map, dataset.corner_idx);
-    [dataset.map, dataset.corner_idx] = add_obstacle([235 35 90], [10, 10, 80], dataset.map, dataset.corner_idx);
-    [dataset.map, dataset.corner_idx] = add_obstacle([105 85 90], [10, 10, 80], dataset.map, dataset.corner_idx);
-    [dataset.map, dataset.corner_idx] = add_obstacle([235 85 90], [10, 10, 80], dataset.map, dataset.corner_idx);
-    
-    [dataset.map, dataset.corner_idx] = add_obstacle([250 190 145], [60, 5, 190], dataset.map, dataset.corner_idx);   
-    [dataset.map, dataset.corner_idx] = add_obstacle([250 90 145], [60, 5, 190], dataset.map, dataset.corner_idx);   
-   
-    [dataset.map, dataset.corner_idx] = add_obstacle([205 90 145], [30, 5, 190], dataset.map, dataset.corner_idx);  
- 
-    [dataset.map, dataset.corner_idx] = add_obstacle([250 140 240], [60, 100, 5], dataset.map, dataset.corner_idx);
-    [dataset.map, dataset.corner_idx] = add_obstacle([250 140 190], [60, 100, 5], dataset.map, dataset.corner_idx);
-    [dataset.map, dataset.corner_idx] = add_obstacle([250 140 140], [60, 100, 5], dataset.map, dataset.corner_idx);
-    [dataset.map, dataset.corner_idx] = add_obstacle([250 140 90], [60, 100, 5], dataset.map, dataset.corner_idx);
-
 elseif strcmp(dataset_str, 'PR2DeskDataset_closer')
     % params
     dataset.cols = 300;
@@ -175,7 +145,62 @@ elseif strcmp(dataset_str, 'PR2DeskDataset_closer')
     [dataset.map, dataset.corner_idx] = add_obstacle([245 140 85], [60, 100, 5], dataset.map, dataset.corner_idx);
     [dataset.map, dataset.corner_idx] = add_obstacle([245 140 35], [60, 100, 5], dataset.map, dataset.corner_idx);
 
-    [dataset.map, dataset.corner_idx] = add_obstacle([205 90 90], [25, 5, 180], dataset.map, dataset.corner_idx);  
+    [dataset.map, dataset.corner_idx] = add_obstacle([205 90 90], [25, 5, 180], dataset.map, dataset.corner_idx); 
+    
+elseif strcmp(dataset_str, 'PR2BookShelfDataset')
+    % params
+    dataset.cols = 300;
+    dataset.rows = 300;
+    dataset.z = 300;
+    % The position of the PR2 Right Arm in ROS is at (0, -0.2, 0.95)
+    dataset.origin_x = -1.55;
+    dataset.origin_y = -1.3;
+    dataset.origin_z = -0.95;
+    dataset.cell_size = 0.01;
+    % map
+    dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
+    % obstacles
+    dataset.corner_idx = [];
+    
+    % shelf
+    [dataset.map, dataset.corner_idx] = add_obstacle([245 195 70], [60, 5, 135], dataset.map, dataset.corner_idx);   
+    [dataset.map, dataset.corner_idx] = add_obstacle([245 75 70], [60, 5, 135], dataset.map, dataset.corner_idx);   
+ 
+    [dataset.map, dataset.corner_idx] = add_obstacle([245 135 135], [60, 120, 5], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([245 135 95], [60, 120, 5], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([245 135 55], [60, 120, 5], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([245 135 15], [60, 120, 5], dataset.map, dataset.corner_idx);
+
+    [dataset.map, dataset.corner_idx] = add_obstacle([260 135 70], [30, 125, 135], dataset.map, dataset.corner_idx);
+
+elseif strcmp(dataset_str, 'PR2IndustrialDataset')
+    % params
+    dataset.cols = 300;
+    dataset.rows = 300;
+    dataset.z = 300;
+    % The position of the PR2 Right Arm in ROS is at (0, -0.2, 0.95)
+    dataset.origin_x = -1.7;
+    dataset.origin_y = -1.3;
+    dataset.origin_z = -0.95;
+    dataset.cell_size = 0.01;
+    % map
+    dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
+    % obstacles
+    dataset.corner_idx = [];
+
+    % table
+    [dataset.map, dataset.corner_idx] = add_obstacle([170 45 65], [140, 60, 5], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([170 25 75], [85, 5, 20], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([210 45 75], [5, 40, 22], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([170 45 75], [5, 40, 20], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([130 45 75], [5, 40, 22], dataset.map, dataset.corner_idx);
+    
+    % shelf
+    [dataset.map, dataset.corner_idx] = add_obstacle([265 165 85], [40, 5, 35], dataset.map, dataset.corner_idx);   
+    [dataset.map, dataset.corner_idx] = add_obstacle([265 105 85], [40, 5, 35], dataset.map, dataset.corner_idx);   
+ 
+    [dataset.map, dataset.corner_idx] = add_obstacle([265 135 100], [40, 60, 5], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([255 135 65], [60, 120, 5], dataset.map, dataset.corner_idx);
 
 % no such dataset
 else

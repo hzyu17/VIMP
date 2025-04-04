@@ -34,15 +34,23 @@ public:
     GVIMP3DPointRobotSDF(GVIMPParams& params){}
 
     double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
-
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
 
         return 0;
+
+        // int n_states[7] = {33, 83, 167, 333, 500, 667, 833};
+        // for (int i=0; i<7; i++){
+        //     std::cout << "n_states: " << n_states[i] << std::endl;
+        //     GVIMPParams params_test = params;
+        //     params_test.set_nt(n_states[i]);
+        //     _last_iteration_mean_precision = run_optimization_return(params_test, verbose);
+        // }
+        // return 0;
     }
 
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> run_optimization_return(const GVIMPParams& params, bool verbose=true){
-        
+
         // Read the sparse grid GH quadrature weights and nodes
         QuadratureWeightsMap nodes_weights_map;
         try {
@@ -68,7 +76,7 @@ public:
         int N = n_states - 1;
         const int dim_conf = 3;
         // state: theta = [conf, vel_conf]
-        const int dim_state = 2 * dim_conf; 
+        const int dim_state = 2 * dim_conf;
         /// joint dimension
         const int ndim = dim_state * n_states;
 
@@ -82,8 +90,8 @@ public:
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
         std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
-        _cuda_ptr = std::make_shared<CudaOperation_3dpR>(CudaOperation_3dpR{params.sig_obs(), params.eps_sdf(), params.radius()});
-        
+        std::shared_ptr<CudaOperation_3dpR> cuda_ptr = std::make_shared<CudaOperation_3dpR>(CudaOperation_3dpR{params.sig_obs(), params.eps_sdf(), params.radius()});
+
         // Obtain the parameters from params and RobotSDF(PlanarPRSDFExample Here)
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
@@ -91,7 +99,7 @@ public:
         /// initial values
         VectorXd joint_init_theta{VectorXd::Zero(ndim)};
         VectorXd avg_vel{(goal_theta.segment(0, dim_conf) - start_theta.segment(0, dim_conf)) / params.total_time()};
-        
+
         /// prior
         double delt_t = params.total_time() / N;
 
@@ -155,7 +163,7 @@ public:
                                                                 params.temperature(),
                                                                 params.high_temperature(),
                                                                 _nodes_weights_map_pointer,
-                                                                _cuda_ptr});
+                                                                cuda_ptr});
             }
         }
 
@@ -163,7 +171,7 @@ public:
         gvi::NGDGH<gvi::GVIFactorizedBase_Cuda, CudaOperation_3dpR> optimizer{vec_factors,
                                            dim_state,
                                            n_states,
-                                           _cuda_ptr,
+                                           cuda_ptr,
                                            gh_ptr,
                                            params.max_iter(),
                                            params.temperature(),
@@ -202,7 +210,6 @@ protected:
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty.
     gvi::EigenWrapper _ei;
-    std::shared_ptr<CudaOperation_3dpR> _cuda_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 

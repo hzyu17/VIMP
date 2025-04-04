@@ -34,9 +34,18 @@ public:
     GVIMPPlanarPointRobotSDF_Time(GVIMPParams& params){}
 
     double run_optimization_withtime(const GVIMPParams& params, bool verbose=true){
-
         _last_iteration_mean_precision = run_optimization_return(params, verbose);
+
         return 0;
+
+        // int n_states[8] = {25, 50, 100, 200, 300, 500, 750, 1000};
+        // for (int i=6; i<7; i++){
+        //     std::cout << "n_states: " << n_states[i] << std::endl;
+        //     GVIMPParams params_test = params;
+        //     params_test.set_nt(n_states[i]);
+        //     _last_iteration_mean_precision = run_optimization_return(params_test, verbose);
+        // }
+        // return 0;
     }
 
     void run_optimization(const GVIMPParams& params, bool verbose=true){

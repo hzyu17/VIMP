@@ -1,12 +1,12 @@
 % Example to save a 3D sdf dataset
 close all
-clear   
+clear
 
 addpath("../../../matlab_helpers/tools")
 addpath("..")
 
 %% dataset
-dataset = generate3Ddataset_1('PR2DeskDataset');
+dataset = generate3Ddataset_1('PR2BookShelfDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 cell_size = dataset.cell_size;
 
@@ -29,7 +29,7 @@ tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
 t.FontSize = 14;
 grid on
-hold on 
+hold on
 view(3)
 plotMap3D(dataset.corner_idx, origin, cell_size);
 xlim([0.2, 1.4])
@@ -38,7 +38,7 @@ zlim([-0, 0.9])
 
 %% save SDF
 disp('saving sdf to .bin file...');
-SignedDistanceField_mex('save', sdf, 'PR2DeskDataset_cereal.bin');
+SignedDistanceField_mex('save', sdf, 'PR2BookShelfDataset_cereal.bin');
 
 % %% create the mesh for visualization
 % [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);

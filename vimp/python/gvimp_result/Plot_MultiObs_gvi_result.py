@@ -7,7 +7,8 @@ costfunction_dir = os.path.dirname(file_path)
 py_dir = os.path.abspath(os.path.join(os.path.join(file_path, '..'),'..'))
 collision_cost_dir = os.path.abspath(os.path.join(os.path.join(py_dir, 'sdf_robot'), 'scripts'))
 VIMP_dir = os.path.abspath(os.path.join(os.path.join(py_dir, '..'), '..'))
-result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'GVIMP-examples'), '2d_Quad'))
+# result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'GVIMP-examples'), '2d_Quad'))
+result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'ProxKL-examples'), '2d_Quad'))
 
 sys.path.append(collision_cost_dir)
 sys.path.append(py_dir)
@@ -49,15 +50,15 @@ if __name__ == '__main__':
     ax.set_ylim(-2.5, 37.5)
 
     ax.axis('off')
-    # ax.set_title('Go Through Plan', fontsize=18, fontdict={'family': 'serif'})
-    ax.set_title('Go Around Plan', fontsize=18, fontdict={'family': 'serif'})
+    # ax.set_title('Go Through Plan', fontsize=22, fontdict={'family': 'serif'})
+    ax.set_title('Go Around Plan', fontsize=22, fontdict={'family': 'serif'})
 
     # ax.tick_params(axis='both', which='major', labelsize=16)
     # ax.legend(loc='best', prop={'family': 'serif', 'size': 18})
     
     plt.tight_layout() 
 
-    # fig.savefig(case_dir+f'/Go_Around_updated_1.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+    # fig.savefig(case_dir+f'/Go_Around_KL.pdf', format='pdf', dpi=2000, bbox_inches='tight')
 
 
     plt.show()  

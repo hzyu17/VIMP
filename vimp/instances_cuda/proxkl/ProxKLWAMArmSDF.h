@@ -132,8 +132,8 @@ public:
                     0.15,  0.025, 0.13,
                    -0.15,    0.0, 0.13;
 
-        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
-        _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sdf_file(), params.sig_obs(), params.eps_sdf()});
+        std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
+        std::shared_ptr<CudaOperation_3dArm> cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sdf_file(), params.sig_obs(), params.eps_sdf()});
         
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
@@ -242,7 +242,7 @@ public:
                                                                         params.temperature(),
                                                                         params.high_temperature(),
                                                                         _nodes_weights_map_pointer,
-                                                                        _cuda_ptr});
+                                                                        cuda_ptr});
             }
         }
 
@@ -257,8 +257,8 @@ public:
         gvi::ProxKLGH<gvi::GVIFactorizedBase_Cuda, CudaOperation_3dArm> optimizer{vec_factors,
                                                                             dim_state,
                                                                             n_states,
-                                                                            _cuda_ptr,
-                                                                            _gh_ptr,
+                                                                            cuda_ptr,
+                                                                            gh_ptr,
                                                                             params.max_iter(),
                                                                             params.temperature(),
                                                                             params.high_temperature()};
@@ -275,7 +275,7 @@ public:
         // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
-        // optimizer.set_save_covariance(false);
+        optimizer.set_save_covariance(false);
         // optimizer.set_data_save(false);
         
         optimizer.classify_factors();
@@ -352,8 +352,6 @@ protected:
     double _eps_sdf;
     double _sig_obs; // The inverse of Covariance matrix related to the obs penalty.
     gvi::EigenWrapper _ei;
-    std::shared_ptr<CudaOperation_3dArm> _cuda_ptr;
-    std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 

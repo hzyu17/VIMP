@@ -131,13 +131,11 @@ class MoveGroupPythonInterfaceTutorial(object):
         ## This interface can be used to plan and execute motions:
         group_name = "right_arm"
         move_group = moveit_commander.MoveGroupCommander(group_name)
-        
-        start_state = [-1.570000000000000, -0.26100000000000, 3.14000000000000, 
-                       -1.04700000000000, 3.14000000000000, -0.785000000000000, 0.00000000000000]
-        # start_state = [-0.349000000000000, -0.35400000000000, 0.13100000000000, 
-        #                -1.02900000000000, -0.77100000000000, -0.832000000000000, -0.06900000000000]
-        # start_state = [0.000000000000000, 0.00000000000000, 0.00000000000000, 
-        #                0.00000000000000, 0.00000000000000, 0.000000000000000, 0.00000000000000]
+
+        # start_state = [-0.70, 0.175, -0.785, -1.047, -2.88, -0.6, 0.785]
+
+        start_state = [-1.9, 0.15, -2.18, -0.524, 3.14, -0.524, -1.047]
+
         move_group.go(start_state, wait=True)
         # move_group.setStartState(start_state);
 
@@ -228,8 +226,29 @@ class MoveGroupPythonInterfaceTutorial(object):
                 trajectory.append([float(val) for val in col_list[0:7]])
         return trajectory
     
+    def linear_interpolate_trajectory(self, trajectory, num_interp_points=5):
+
+        if len(trajectory) < 2:
+            return trajectory
+
+        new_trajectory = []
+        for i in range(len(trajectory) - 1):
+            pt_start = trajectory[i]
+            pt_end = trajectory[i + 1]
+            new_trajectory.append(pt_start)
+
+            for j in range(1, num_interp_points + 1):
+                t = j / (num_interp_points + 1)
+                interp_point = [(1 - t) * a + t * b for a, b in zip(pt_start, pt_end)]
+                new_trajectory.append(interp_point)
+
+        new_trajectory.append(trajectory[-1])
+        return new_trajectory
+
+
     def update_trajectory(self, file_path):
         self.trajectory = self.read_trajectory_from_csv(file_path)
+        # self.trajectory = self.linear_interpolate_trajectory(self.trajectory, 2)
         
         
     def display_trajectory(self):
@@ -243,13 +262,13 @@ class MoveGroupPythonInterfaceTutorial(object):
         robot_trajectory = RobotTrajectory()
         joint_trajectory = JointTrajectory()
         
-        joint_trajectory.joint_names = ['wam/base_yaw_joint', 
-                                        'wam/shoulder_pitch_joint', 
-                                        'wam/shoulder_yaw_joint', 
-                                        'wam/elbow_pitch_joint', 
-                                        'wam/wrist_yaw_joint', 
-                                        'wam/wrist_pitch_joint',
-                                        'wam/palm_yaw_joint']
+        joint_trajectory.joint_names = ['r_shoulder_pan_joint',
+                                        'r_shoulder_lift_joint',
+                                        'r_upper_arm_roll_joint',
+                                        'r_elbow_flex_joint',
+                                        'r_forearm_roll_joint',
+                                        'r_wrist_flex_joint',
+                                        'r_wrist_roll_joint']
         
         for point in self.trajectory:
             joint_trajectory_point = JointTrajectoryPoint()
@@ -260,8 +279,18 @@ class MoveGroupPythonInterfaceTutorial(object):
         # Create a DisplayTrajectory message and publish it
         display_trajectory = DisplayTrajectory()
         display_trajectory.trajectory.append(robot_trajectory)
-        display_trajectory.trajectory_start = robot.get_current_state()
-        display_trajectory.trajectory_start.joint_state.position = self.trajectory[0][0:7]
+        current_state = robot.get_current_state()
+        positions = list(current_state.joint_state.position)
+
+        for idx, joint in enumerate(joint_trajectory.joint_names):
+            if joint in current_state.joint_state.name:
+                joint_index = current_state.joint_state.name.index(joint)
+                positions[joint_index] = self.trajectory[0][idx]
+            else:
+                print("Warning: Joint", joint, "not found in the current state")
+
+        current_state.joint_state.position = positions
+        display_trajectory.trajectory_start = current_state
         print("display_trajectory.trajectory_start")
         print(display_trajectory.trajectory_start)
         # Publish
@@ -349,6 +378,7 @@ def main():
             full_path = os.path.realpath(__file__)
             path, filename = os.path.split(full_path)
             tutorial.update_trajectory(path+"/PR2/zk_sdf.csv")
+            # tutorial.update_trajectory(path+"/PR2/zk_gpmp2.csv")
         
         if (len(sys.argv) == 2):
             trj_file = sys.argv[1]

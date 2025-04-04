@@ -212,8 +212,6 @@
         <7>0.0</7>
     </goal_pos> 
 
-    <step_size>0</step_size>
-
     <saving_prefix>matlab_helpers/ProxKL-examples/PR2/sparse_gh/case4/</saving_prefix>
 
 </Experiment1>
