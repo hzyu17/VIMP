@@ -47,6 +47,7 @@ for i = 2:2 % 4 experiments
 
 end
 % exportgraphics(gcf, fullfile(prefix, 'output_figure_1.png'), 'Resolution', 75);
+% exportgraphics(gcf, fullfile(prefix, 'cost_graph.pdf'),  'Resolution', 1000);
 
 %% ================ 
 % plot trajectories 
