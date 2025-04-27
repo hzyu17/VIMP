@@ -23,8 +23,8 @@ from tools.draw_pquadsdf_trj import *
 from sdf_robot.scripts.generate_sdf_2d import map2d
 
 # json_file_path = os.path.join(map_dir, 'MultiObstacleLongRangeMap_params.json')
-# json_file_path = os.path.join(map_dir, 'SingleObstacleMap_params.json')
-json_file_path = os.path.join(map_dir, 'MultiObstacleMap_params.json')
+json_file_path = os.path.join(map_dir, 'SingleObstacleMap_params.json')
+# json_file_path = os.path.join(map_dir, 'MultiObstacleMap_params.json')
 
 
 with open(json_file_path, 'r') as f:
@@ -47,8 +47,8 @@ for obs in params.get("obstacles", []):
 
 # ----------------- 2. Read trajectory data CSV files -----------------
 # case_dir = os.path.join(result_dir, 'case2_300_states')
-# case_dir = os.path.join(result_dir, 'case2')
-case_dir = os.path.join(result_dir, 'Multi_Obs/Go_around')
+case_dir = os.path.join(result_dir, 'case2')
+# case_dir = os.path.join(result_dir, 'Multi_Obs/Go_around')
 
 # Paths to the CSV files for trajectory mean and covariance data (no headers)
 mean_csv_path = os.path.join(case_dir, 'zk_sdf.csv')
@@ -79,10 +79,10 @@ fig, ax = m.draw_map(fig, ax, plot=False)
 
 # Then overlay the trajectory on the map
 fig, ax = draw_pquad_trj_cov_2d(mean, cov, L, H, n_balls, fig, ax, 1, False, False)
-ax.set_xlim(-5, 30)
-ax.set_ylim(-2, 33)
+ax.set_xlim(-10, 30)
+ax.set_ylim(-2.5, 37.5)
 
-# case1:    case2:[(-10, 30), (-2.5, 37.5)]  case3:[(-6, 27), (-2, 42)]  case4: [(0, 30), (-5, 35)]
+# case1:[(-5, 30), (-2, 33)]  case2:[(-10, 30), (-2.5, 37.5)]  case3:[(-6, 27), (-2, 42)]  case4: [(0, 30), (-5, 35)]
 
 ax.tick_params(axis='both', which='major', labelsize=16)
 ax.legend(loc='best', prop={'family': 'serif', 'size': 16})
@@ -90,7 +90,7 @@ ax.legend(loc='best', prop={'family': 'serif', 'size': 16})
 # ax.axis('off')
 # ax.set_title("Iteration 10", fontsize=18)
 
-# fig.savefig(case_dir+f'/Trajectory_1.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+# fig.savefig(case_dir+f'/Trajectory_2.pdf', format='pdf', dpi=2000, bbox_inches='tight')
 
 print(matplotlib.get_cachedir())
 print(matplotlib.rcParams['font.family'])

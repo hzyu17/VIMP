@@ -1,5 +1,5 @@
 <Commons>
-    <total_time>5.0</total_time>
+    <total_time>4.5</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
@@ -12,7 +12,7 @@
     <init_precision_factor>100000.0</init_precision_factor>
     <boundary_penalties>5000.0</boundary_penalties>
     <temperature>1</temperature>
-    <high_temperature>3</high_temperature>
+    <high_temperature>2.5</high_temperature>
     <stop_err>1e-5</stop_err>
     <low_temp_iterations>20</low_temp_iterations>
     <max_iterations>25</max_iterations>
@@ -44,7 +44,7 @@
 </Experiment1>
 
 <Experiment2>
-    <total_time>6.0</total_time>
+    <total_time>5.0</total_time>
     <start_pos>
         <x>0.0</x>
         <z>0.0</z>
@@ -63,7 +63,7 @@
         <vphi>0.01</vphi>
     </goal_pos>
 
-    <sig_obs>7.5</sig_obs>
+    <sig_obs>4.0</sig_obs>
     
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_Quad/case2/</saving_prefix>
 
@@ -90,6 +90,7 @@
     </goal_pos>
 
     <sig_obs>4.0</sig_obs>
+    <high_temperature>3</high_temperature>
 
     <saving_prefix>matlab_helpers/ProxKL-examples/2d_Quad/case3/</saving_prefix>
 </Experiment3>
