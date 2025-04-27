@@ -53,7 +53,7 @@ n_states = floor(ttl_dim / dim_theta);
 
 
 %% ******************* Define map dataset ******************
-dataset = generate3Ddataset_1('PR2DeskDataset_1');
+dataset = generate3Ddataset_1('PR2IndustrialDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 % origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
@@ -94,8 +94,8 @@ nt = size(means, 1) / dim_state;
 
 x0 = 50;
 y0 = 50;
-width = 400;
-height = 350;
+width = 800;
+height = 750;
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')

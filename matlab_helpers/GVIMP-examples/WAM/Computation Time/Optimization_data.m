@@ -1,10 +1,8 @@
 %% GH Degree = 3
 
 % 25
-% GPU Optimize average: 147.4 ms
-% GPU Optimize min: 142 ms
-% GPU Optimize max: 151 ms
-% [ 151, 147, 146, 142, 151 ]
+% GPU Optimize average: 76.8 ms
+% [ 73, 90, 74, 72, 75 ]
 
 % CPU Optimize average: 684.2 ms
 % CPU Optimize min: 671 ms
@@ -13,10 +11,8 @@
 
 
 % 50
-% GPU Optimize average: 269.2 ms
-% GPU Optimize min: 252 ms
-% GPU Optimize max: 280 ms
-% [ 265, 280, 278, 252, 271 ]
+% GPU Optimize average: 138.4 ms
+% [ 137, 137, 137, 138, 143 ]
 
 % CPU Optimize average: 1442.2 ms
 % CPU Optimize min: 1415 ms
@@ -25,10 +21,8 @@
 
 
 % 100
-% GPU Optimize average: 595.6 ms
-% GPU Optimize min: 586 ms
-% GPU Optimize max: 604 ms
-% [ 590, 604, 603, 586, 595 ]
+% GPU Optimize average: 270.4 ms
+% [ 250, 248, 286, 264, 304 ]
 
 % CPU Optimize average: 3806 ms
 % CPU Optimize min: 3759 ms
@@ -37,10 +31,8 @@
 
 
 % 200
-% GPU Optimize average: 979.2 ms
-% GPU Optimize min: 925 ms
-% GPU Optimize max: 1059 ms
-% [ 1059, 951, 1023, 938, 925 ]
+% GPU Optimize average: 527.2 ms
+% [ 523, 519, 526, 524, 544 ]
 
 % CPU Optimize average: 13580.2 ms
 % CPU Optimize min: 13490 ms
@@ -49,10 +41,8 @@
 
 
 % 300
-% GPU Optimize average: 2960 ms
-% GPU Optimize min: 2940 ms
-% GPU Optimize max: 2988 ms
-% [ 2940, 2988, 2946, 2943, 2983 ]
+% GPU Optimize average: 951.8 ms
+% [ 819, 977, 993, 966, 1004 ]
 
 % CPU Optimize average: 28218.4 ms
 % CPU Optimize min: 27787 ms
@@ -61,10 +51,8 @@
 
 
 % 500
-% GPU Optimize average: 6456.4 ms
-% GPU Optimize min: 6387 ms
-% GPU Optimize max: 6508 ms
-% [ 6508, 6432, 6505, 6387, 6450 ]
+% GPU Optimize average: 1762.6 ms
+% [ 1781, 1781, 1898, 1708, 1645 ]
 
 % CPU Optimize average: 75812.8 ms
 % CPU Optimize min: 75058 ms
@@ -73,10 +61,8 @@
 
 
 % 750
-% GPU Optimize average: 12666.2 ms
-% GPU Optimize min: 12574 ms
-% GPU Optimize max: 12775 ms
-% [ 12655, 12775, 12648, 12679, 12574 ]
+% GPU Optimize average: 4059.8 ms
+% [ 3431, 3742, 4280, 4410, 4436 ]
 
 % CPU Optimize average: 161814 ms
 % CPU Optimize min: 161084 ms
@@ -87,10 +73,8 @@
 %% GH Degree = 5
 
 % 25
-% GPU Optimize average: 265 ms
-% GPU Optimize min: 258 ms
-% GPU Optimize max: 270 ms
-% [ 266, 266, 265, 258, 270 ]
+% GPU Optimize average: 177.4 ms
+% [ 178, 177, 177, 177, 178 ]
 
 % CPU Optimize average: 3445.2 ms
 % CPU Optimize min: 3385 ms
@@ -99,10 +83,8 @@
 
 
 % 50
-% GPU Optimize average: 516 ms
-% GPU Optimize min: 505 ms
-% GPU Optimize max: 535 ms
-% [ 514, 509, 535, 517, 505 ]
+% GPU Optimize average: 314.8 ms
+% [ 304, 304, 301, 336, 329 ]
 
 % CPU Optimize average: 6740.4 ms
 % CPU Optimize min: 6700 ms
@@ -111,10 +93,8 @@
 
 
 % 100
-% GPU Optimize average: 1047 ms
-% GPU Optimize min: 1029 ms
-% GPU Optimize max: 1078 ms
-% [ 1040, 1029, 1078, 1032, 1056 ]
+% GPU Optimize average: 630.6 ms
+% [ 628, 621, 644, 627, 633 ]
 
 % CPU Optimize average: 14240.8 ms
 % CPU Optimize min: 14211 ms
@@ -123,10 +103,8 @@
 
 
 % 200
-% GPU Optimize average: 1850 ms
-% GPU Optimize min: 1839 ms
-% GPU Optimize max: 1864 ms
-% [ 1848, 1857, 1839, 1842, 1864 ]
+% GPU Optimize average: 1356.2 ms
+% [ 1476, 1300, 1325, 1319, 1361 ]
 
 % CPU Optimize average: 33842.8 ms
 % CPU Optimize min: 33720 ms
@@ -135,10 +113,8 @@
 
 
 % 300
-% GPU Optimize average: 4202.2 ms
-% GPU Optimize min: 4169 ms
-% GPU Optimize max: 4231 ms
-% [ 4230, 4169, 4176, 4205, 4231 ]
+% GPU Optimize average: 2322.6 ms
+% [ 2059, 2610, 3016, 1969, 1959 ]
 
 % CPU Optimize average: 58269 ms
 % CPU Optimize min: 58022 ms
@@ -147,10 +123,8 @@
 
 
 % 500
-% GPU Optimize average: 8409.6 ms
-% GPU Optimize min: 8355 ms
-% GPU Optimize max: 8446 ms
-% [ 8355, 8411, 8400, 8446, 8436 ]
+% GPU Optimize average: 3388.4 ms
+% [ 3399, 3478, 3404, 3386, 3275 ]
 
 % CPU Optimize average: 124961 ms
 % CPU Optimize min: 121466 ms
@@ -159,10 +133,8 @@
 
 
 % 750
-% GPU Optimize average: 15433 ms
-% GPU Optimize min: 15383 ms
-% GPU Optimize max: 15475 ms
-% [ 15400, 15445, 15462, 15475, 15383 ]
+% GPU Optimize average: 5765.4 ms
+% [ 5630, 5660, 6036, 5800, 5701 ]
 
 % CPU Optimize average: 225992 ms
 % CPU Optimize min: 223888 ms
@@ -173,10 +145,8 @@
 %% GH Degree = 6
 
 % 25
-% GPU Optimize average: 127.6 ms
-% GPU Optimize min: 127 ms
-% GPU Optimize max: 128 ms
-% [ 127, 127, 128, 128, 128 ]
+% GPU Optimize average: 505.6 ms
+% [ 490, 538, 525, 486, 489 ]
 
 % CPU Optimize average: 1401.2 ms
 % CPU Optimize min: 1335 ms
@@ -185,10 +155,8 @@
 
 
 % 50
-% GPU Optimize average: 1143.6 ms
-% GPU Optimize min: 1053 ms
-% GPU Optimize max: 1340 ms
-% [ 1082, 1053, 1080, 1163, 1340 ]
+% GPU Optimize average: 840.8 ms
+% [ 876, 797, 881, 856, 794 ]
 
 % CPU Optimize average: 20139.6 ms
 % CPU Optimize min: 19951 ms
@@ -197,10 +165,8 @@
 
 
 % 100
-% GPU Optimize average: 2206.2 ms
-% GPU Optimize min: 2188 ms
-% GPU Optimize max: 2222 ms
-% [ 2221, 2188, 2222, 2203, 2197 ]
+% GPU Optimize average: 1813.2 ms
+% [ 1922, 1945, 1861, 1686, 1652 ]
 
 % CPU Optimize average: 40476.8 ms
 % CPU Optimize min: 39926 ms
@@ -209,10 +175,8 @@
 
 
 % 200
-% GPU Optimize average: 4642.6 ms
-% GPU Optimize min: 4626 ms
-% GPU Optimize max: 4650 ms
-% [ 4644, 4650, 4626, 4647, 4646 ]
+% GPU Optimize average: 3289.8 ms
+% [ 3403, 3383, 3305, 3180, 3178 ]
 
 % CPU Optimize average: 85363 ms
 % CPU Optimize min: 85106 ms
@@ -221,10 +185,8 @@
 
 
 % 300
-% GPU Optimize average: 7465.4 ms
-% GPU Optimize min: 7260 ms
-% GPU Optimize max: 7762 ms
-% [ 7280, 7260, 7319, 7762, 7706 ]
+% GPU Optimize average: 4815.6 ms
+% [ 4764, 5082, 4720, 4816, 4696 ]
 
 % CPU Optimize average: 134789 ms
 % CPU Optimize min: 134447 ms
@@ -232,12 +194,9 @@
 % [ 134754, 134908, 134447, 134577, 135258 ]
 
 
-
 % 500
-% GPU Optimize average: 14908 ms
-% GPU Optimize min: 14074 ms
-% GPU Optimize max: 15358 ms
-% [ 15358, 15343, 15218, 14074, 14547 ]
+% GPU Optimize average: 9038.6 ms
+% [ 8717, 8498, 9834, 9659, 8485 ]
 
 % CPU Optimize average: 254750 ms
 % CPU Optimize min: 253972 ms
@@ -246,10 +205,8 @@
 
 
 % 750
-% GPU Optimize average: 27361.2 ms
-% GPU Optimize min: 26511 ms
-% GPU Optimize max: 28048 ms
-% [ 27421, 28048, 27007, 27819, 26511 ]
+% GPU Optimize average: 12258.6 ms
+% [ 12205, 12297, 12309, 12265, 12217 ]
 
 % CPU Optimize average: 430853 ms
 % CPU Optimize min: 430853 ms
