@@ -12,9 +12,18 @@ zk_pos = zk(1:2, :);
 if size(Sk, 1) ~= 2 && size(Sk, 1) ~= 4
     Sk = reshape(Sk, 4,4,nt);
 end
+% for i=1:5:nt
+for i=1:nt
+    if i == 1
+        h = error_ellipse(Sk(1:2,1:2,i), zk_pos(1:2, i));
+    else
+        error_ellipse(Sk(1:2,1:2,i), zk_pos(1:2, i));
+    end
+end
 for i=1:nt
     scatter(zk_pos(1, i), zk_pos(2, i), 20, 'k', 'fill');
-    error_ellipse(Sk(1:2,1:2,i), zk_pos(1:2, i));
 end
+
+% legend(h, "$3\sigma$ contour", "Location", "northwest", "Interpreter", "latex", "FontSize", 28);
 % axis off
 end

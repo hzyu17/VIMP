@@ -50,7 +50,7 @@ for i = 1:1 % 4 experiments
 
 end
 
-exportgraphics(gcf, 'output_figure_1.png', 'Resolution', 75);
+% exportgraphics(gcf, 'output_figure_1.png', 'Resolution', 75);
 
 %% ================ 
 % plot trajectories 
@@ -59,6 +59,8 @@ x0 = 500;
 y0 = 500;
 width = 1290.427199;
 height = 800;
+% width = 1200;
+% height = 900;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
@@ -94,17 +96,25 @@ for i = 1:4 % 4 experiments
     
     start_i = start_configs(i, :)';
     goal_i = goal_configs(i, :)';
-    % s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 500);
-    % s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 500);
+    % s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 20);
+    % s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 20);
     
     % lgd = legend([s1, s2], {'Start', 'Goal'});
     % set(lgd, 'FontWeight', 'bold');
     
-    xlim([-15, 20])
-    ylim([-10, 20])
-    
     % axis off
+
+    set(gca, 'FontName', 'Sans Serif', 'FontSize', 28)
+
+    xlim([-17.5, 17.5])
+    ylim([-7.5, 22.5])
+    box off
+    % legend('show', 'Location', 'northwest');
+    
+    % set(gca, 'XLimMode', 'manual', 'YLimMode', 'manual')
     
 end
 
-exportgraphics(gcf, 'output_figure_2.png', 'Resolution', 75);
+% exportgraphics(gcf, 'output_figure_2.pg', 'Resolution', 75);
+
+% exportgraphics(gcf, 'Trajectory_1.pdf', 'ContentType', 'vector', 'BackgroundColor', 'none');
