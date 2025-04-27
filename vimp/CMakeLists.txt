@@ -24,84 +24,64 @@ foreach(subdir ${vimp_subdirs})
 
 endforeach(subdir)
 
-# # Add all the source files in src/vimp as a separate executable
-# file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
-# foreach(vimp_source ${VIMP_SOURCES})
-#     get_filename_component(vimp_name ${vimp_source} NAME_WE)
-#     add_executable(${vimp_name} ${vimp_source})
-#     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-#     set_target_properties(${vimp_name} PROPERTIES
-#                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-#                             )   
-#     target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
-#     target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-#                           ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-#                           ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9)
-# endforeach()
+# ----------------------- options -----------------------
+# Add a flag to control whether to build CPU executables
+option(BUILD_CPU_GVIMP "Build CPU version GVIMP executables from src/gvimp" OFF)
+option(BUILD_GPU_GVIMP "Build GPU version GVIMP executables from src/gvimp_cuda" OFF)
+option(BUILD_KL_PROXIMAL "Build KL-Proximal executables from src/proxkl" ON)
 
-# Add all the source files in src/gvimp_cuda as a separate executable
-file(GLOB_RECURSE VIMP_SOURCES src/gvimp_cuda/*.cpp)
-foreach(vimp_source ${VIMP_SOURCES})
-    get_filename_component(vimp_name ${vimp_source} NAME_WE)
-    add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/CudaOperation.cu)
-    set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-    set_target_properties(${vimp_name} PROPERTIES
-                            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                            )   
-    target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
-    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                          ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                          ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
-                          ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
-                          ${CUDA_cusparse_LIBRARY}) 
-endforeach()
+# ---------------------- CPU Executables (Optional) ----------------------
+if(BUILD_CPU_GVIMP)
+  file(GLOB_RECURSE VIMP_SOURCES src/gvimp/*.cpp)
+  foreach(vimp_source ${VIMP_SOURCES})
+      get_filename_component(vimp_name ${vimp_source} NAME_WE)
+      add_executable(${vimp_name} ${vimp_source})
+      set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
+      set_target_properties(${vimp_name} PROPERTIES
+                              RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+                              )   
+      target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
+      target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+                            ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9)
+  endforeach()
+endif()
 
-file(GLOB_RECURSE VIMP_SOURCES src/proxkl/*.cpp)
-foreach(vimp_source ${VIMP_SOURCES})
-    get_filename_component(vimp_name ${vimp_source} NAME_WE)
-    add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/CudaOperation.cu)
-    set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-    set_target_properties(${vimp_name} PROPERTIES
-                            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                            )   
-    target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
-    target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                          ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                          ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
-                          ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
-                          ${CUDA_cusparse_LIBRARY})  
-endforeach()
+if(BUILD_GPU_GVIMP)
+  file(GLOB_RECURSE VIMP_SOURCES src/gvimp_cuda/*.cpp)
+  foreach(vimp_source ${VIMP_SOURCES})
+      get_filename_component(vimp_name ${vimp_source} NAME_WE)
+      add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/CudaOperation.cu)
+      set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
+      set_target_properties(${vimp_name} PROPERTIES
+                              RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+                              )   
+      target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
+      target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+                            ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
+                            ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
+                            ${CUDA_cusparse_LIBRARY}) 
+  endforeach()
+endif()
 
-add_executable(PointRobot_time src/gvimp/gvi_PointRobot_collision_time_spgh.cpp)
-set_target_properties(PointRobot_time PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(PointRobot_time PROPERTIES
-                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                        )   
-target_include_directories(PointRobot_time PRIVATE ${Matlab_INCLUDE_DIRS})
-target_link_libraries(PointRobot_time ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                        ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                        ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9)
-
-add_executable(3DPointRobot_time src/gvimp/gvi_3DPointRobot_spgh.cpp)
-set_target_properties(3DPointRobot_time PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(3DPointRobot_time PROPERTIES
-                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                        )   
-target_include_directories(3DPointRobot_time PRIVATE ${Matlab_INCLUDE_DIRS})
-target_link_libraries(3DPointRobot_time ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                        ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                        ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9)
-
-
-add_executable(WAMArm src/gvimp/gvi_WAMArm_spgh.cpp)
-set_target_properties(WAMArm PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(WAMArm PROPERTIES
-                        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                        )   
-target_include_directories(WAMArm PRIVATE ${Matlab_INCLUDE_DIRS})
-target_link_libraries(WAMArm ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                        ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                        ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9)
+if(BUILD_KL_PROXIMAL)
+  file(GLOB_RECURSE VIMP_SOURCES src/proxkl/*.cpp)
+  foreach(vimp_source ${VIMP_SOURCES})
+      get_filename_component(vimp_name ${vimp_source} NAME_WE)
+      add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/CudaOperation.cu)
+      set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
+      set_target_properties(${vimp_name} PROPERTIES
+                              RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+                              )   
+      target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
+      target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+                            ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
+                            ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
+                            ${CUDA_cusparse_LIBRARY})  
+  endforeach()
+endif()
 
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
