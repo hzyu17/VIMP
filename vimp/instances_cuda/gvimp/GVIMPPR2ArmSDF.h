@@ -84,7 +84,6 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
-        _gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         VectorXd a(7);
         a << 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
         VectorXd alpha(7);
@@ -121,16 +120,10 @@ public:
                     0.00,  -0.036,    0.11,
                     0.00,  -0.027,   0.155,
                     0.00,  -0.009,    0.18,
-                    0.00,  -0.0095,  0.205;
+                    0.00, -0.0095,   0.205;
         
-        // std::vector<Point3> joints;
-        // compute_joint_positions_cpu(start_theta.data(), 7, a.data(), alpha.data(), d.data(), theta_bias.data(), joints);
-        // std::cout << "Start Theta: " << start_theta.transpose() << std::endl;
-        // for (int i = 0; i < joints.size(); i++) {
-        //     std::cout << "Joint " << i << ": " << joints[i].x << ", " << joints[i].y << ", " << joints[i].z << std::endl;
-        // }
-        
-        _cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sdf_file(), params.sig_obs(), params.eps_sdf()});
+        std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
+        std::shared_ptr<CudaOperation_3dArm> cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sdf_file(), params.sig_obs(), params.eps_sdf()});
         
         double sig_obs = params.sig_obs(), eps_sdf = params.eps_sdf();
         double temperature = params.temperature();
@@ -203,7 +196,7 @@ public:
                                                                         params.temperature(),
                                                                         params.high_temperature(),
                                                                         _nodes_weights_map_pointer,
-                                                                        _cuda_ptr});
+                                                                        cuda_ptr});
             }
         }
 
@@ -211,8 +204,8 @@ public:
         gvi::NGDGH<gvi::GVIFactorizedBase_Cuda, CudaOperation_3dArm> optimizer{vec_factors,
                                                                             dim_state,
                                                                             n_states,
-                                                                            _cuda_ptr,
-                                                                            _gh_ptr,
+                                                                            cuda_ptr,
+                                                                            gh_ptr,
                                                                             params.max_iter(),
                                                                             params.temperature(),
                                                                             params.high_temperature()};
@@ -226,9 +219,9 @@ public:
 
         optimizer.initilize_precision_matrix(params.initial_precision_factor());
 
-        // optimizer.set_GH_degree(params.GH_degree());
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
+        // optimizer.set_save_covariance(false);
         
         optimizer.classify_factors();
 
@@ -245,79 +238,10 @@ public:
         return _last_iteration_mean_precision;
     }
 
-    struct Point3 {
-        double x, y, z;
-    };
-    
-    void identity(double* M) {
-        M[0]  = 1; M[4]  = 0; M[8]  = 0; M[12] = 0;
-        M[1]  = 0; M[5]  = 1; M[9]  = 0; M[13] = 0;
-        M[2]  = 0; M[6]  = 0; M[10] = 1; M[14] = 0;
-        M[3]  = 0; M[7]  = 0; M[11] = 0; M[15] = 1;
-    }
-    
-    void mat_mul(const double* A, const double* B, double* C, const int dim) {
-        for (int col = 0; col < dim; col++) {
-            for (int row = 0; row < dim; row++) {
-                double sum = 0.0;
-                for (int k = 0; k < dim; k++) {
-                    sum += A[row + k*dim] * B[k + col*dim];
-                }
-                C[row + col*dim] = sum;
-            }
-        }
-    }
-    
-    void dh_matrix(int i, double theta, const double* a, const double* alpha, const double* d, double* mat) {
-        double ct = cos(theta);
-        double st = sin(theta);
-        double ca = cos(alpha[i]);
-        double sa = sin(alpha[i]);
-        
-        // DH Matrix
-        mat[0]  = ct;        mat[4] = -st * ca;  mat[8]  = st * sa;   mat[12] = a[i] * ct;
-        mat[1]  = st;        mat[5] = ct * ca;   mat[9]  = -ct * sa;  mat[13] = a[i] * st;
-        mat[2]  = 0;         mat[6] = sa;        mat[10] = ca;        mat[14] = d[i];
-        mat[3]  = 0;         mat[7] = 0;         mat[11] = 0;         mat[15] = 1;
-    }
-
-    void compute_joint_positions_cpu(const double* theta, int num_joints,
-                                    const double* a, const double* alpha, const double* d, const double* theta_bias,
-                                    std::vector<Point3>& joints) {
-        int MATRIX_ELEMENTS = 16;
-        double T[MATRIX_ELEMENTS];
-        identity(T);
-
-        joints.clear();
-        joints.push_back({ T[12], T[13], T[14] });
-
-        // 依次计算每个关节的累计变换，并提取平移部分作为该关节的位置
-        for (int i = 0; i < num_joints; ++i) {
-        double th = theta[i] + theta_bias[i];  // 考虑关节偏置
-        double dh_mat[MATRIX_ELEMENTS];
-        dh_matrix(i, th, a, alpha, d, dh_mat);
-
-        double T_new[MATRIX_ELEMENTS];
-        mat_mul(T, dh_mat, T_new, 4);
-
-        // 更新累计变换矩阵 T
-        for (int j = 0; j < MATRIX_ELEMENTS; j++) {
-        T[j] = T_new[j];
-        }
-
-        // 将当前累乘变换矩阵的平移部分作为该关节位置
-        joints.push_back({ T[12], T[13], T[14] });
-        }
-    }
-
-    
-
 protected:
     double _eps_sdf;
-    double _sig_obs; // The inverse of Covariance matrix related to the obs penalty.
+    double _sig_obs; // The inverse of the covariance matrix related to the observation penalty.
     gvi::EigenWrapper _ei;
-    std::shared_ptr<CudaOperation_3dArm> _cuda_ptr;
-    std::shared_ptr<GH> _gh_ptr;
 
     std::tuple<Eigen::VectorXd, gvi::SpMat> _last_iteration_mean_precision;
 

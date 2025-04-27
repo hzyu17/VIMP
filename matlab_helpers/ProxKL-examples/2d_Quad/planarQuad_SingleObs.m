@@ -48,6 +48,7 @@ for i = 2:2 % 4 experiments
 end
 % exportgraphics(gcf, fullfile(prefix, 'output_figure_1.png'), 'Resolution', 75);
 % exportgraphics(gcf, fullfile(prefix, 'cost_graph.pdf'),  'Resolution', 1000);
+% exportgraphics(gcf, fullfile(prefix, 'cost_graph.pdf'), 'ContentType', 'vector', 'BackgroundColor', 'none');
 
 %% ================ 
 % plot trajectories 
@@ -106,6 +107,27 @@ for i = 1:4 % 4 experiments
 end
 
 % exportgraphics(gcf, fullfile(prefix, 'output_figure_2.png'), 'Resolution', 75);
+
+
+
+% width = 1200;
+% height = 450;
+% figure
+% set(gcf,'position',[x0,y0,width,height])
+
+% prefix = "case2/";
+% norm_difference = csvread([prefix + "norm_differences.csv"]);
+% plot(norm_difference, 'LineWidth', 3)
+% set(gca, 'FontName', 'Sans Serif', 'FontSize', 24)
+% xlabel('Iterations');
+% % ylabel({'Norm of', 'Difference'});
+% ylabel('Difference Norm');
+% grid minor
+
+% % exportgraphics(gcf, fullfile(prefix, 'Difference_Norm.pdf')', 'ContentType', 'vector', 'BackgroundColor', 'none');
+
+
+
 
 
 

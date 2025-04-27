@@ -116,7 +116,6 @@
         <6>-0.919</6>
         <7>1.55</7>
     </goal_pos>
-     <step_size>0</step_size>
 
     <saving_prefix>matlab_helpers/ProxKL-examples/WAM/sparse_gh/case3/</saving_prefix>
 

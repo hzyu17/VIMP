@@ -7,8 +7,8 @@ costfunction_dir = os.path.dirname(file_path)
 py_dir = os.path.abspath(os.path.join(os.path.join(file_path, '..'),'..'))
 collision_cost_dir = os.path.abspath(os.path.join(os.path.join(py_dir, 'sdf_robot'), 'scripts'))
 VIMP_dir = os.path.abspath(os.path.join(os.path.join(py_dir, '..'), '..'))
-result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'GVIMP-examples'), '2d_Quad'))
-# result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'ProxKL-examples'), '2d_Quad'))
+# result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'GVIMP-examples'), '2d_Quad'))
+result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'ProxKL-examples'), '2d_Quad'))
 
 sys.path.append(collision_cost_dir)
 sys.path.append(py_dir)
@@ -49,18 +49,23 @@ if __name__ == '__main__':
 
     fig, ax = planarmap.draw_map(fig, ax, plot=False)
     fig, ax = draw_pquad_trj_cov_2d(mean, cov, L, H, n_balls, fig, ax, 1, False, False)
-    ax.set_xlim(-7.5, 32.5)
-    ax.set_ylim(-5, 40)
+    # ax.set_xlim(-10, 30)
+    # ax.set_ylim(-2.5, 37.5)
+
+    ax.set_xlim(-5, 30)
+    ax.set_ylim(-2.5, 37.5)
 
     # ax.tick_params(axis='both', which='major', labelsize=16)
     # ax.legend(loc='best', prop={'family': 'serif', 'size': 16})
 
-    # ax.axis('off') 
-    # ax.set_title(r'Iteration 5, $\hat{T} = 90$', fontsize=20)
+    ax.axis('off')
+    # ax.set_title(r'Iteration $25$, $\hat{T} = 3.0$', fontsize=20, fontfamily='serif')
+    ax.set_title(r'Iteration 20', fontsize=24, fontfamily='serif')
     
     plt.tight_layout() 
 
-    # fig.savefig(case_dir+f'/Trajectory_2_30_150_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+    # fig.savefig(case_dir+f'/Trajectory_2_25_KL.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+    # fig.savefig(case_dir+f'/Nonlinear_Trajectory_20.pdf', format='pdf', dpi=2000, bbox_inches='tight')
 
     # fig.savefig(case_dir+f'/Trajectory4_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
 

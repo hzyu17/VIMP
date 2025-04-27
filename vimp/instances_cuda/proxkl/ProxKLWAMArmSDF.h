@@ -57,6 +57,15 @@ public:
 
         std::cout << "========== Optimization time: " << std::endl;
         return timer.end_sec();
+
+        // int n_states[7] = {25, 50, 100, 200, 300, 500, 750};
+        // for (int i=0; i<7; i++){
+        //     // std::cout << "n_states: " << n_states[i] << std::endl;
+        //     GVIMPParams params_test = params;
+        //     params_test.set_nt(n_states[i]);
+        //     _last_iteration_mean_precision = run_optimization_return(params_test, verbose);
+        // }
+        // return 0;
     }
 
     void run_optimization(const GVIMPParams& params, bool verbose=true){
@@ -283,6 +292,7 @@ public:
 
         std::cout << "---------------- Start the optimization ----------------" << std::endl;
         optimizer.optimize(verbose);
+        // optimizer.time_test();
 
         _last_iteration_mean_precision = std::make_tuple(optimizer.mean(), optimizer.precision());
 
