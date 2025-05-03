@@ -1,16 +1,14 @@
 # Read point cloud from a .ply file, and save the point cloud as an occupancy map to a .mat file.
 import torch
-from types import SimpleNamespace
 import open3d as o3d
 import numpy as np
-
 import os
 
 from pointcloud import PointCloud, OccpuancyGrid, save_occmap_for_matlab
 
 
-this_file = os.path.abspath(__file__)
-this_dir  = os.path.dirname(this_file)
+cur_file = os.path.abspath(__file__)
+cur_dir  = os.path.dirname(cur_file)
 
 
 def ply_to_mat(filename: str, mat_filename:str, cam2world:np.array, T_CO:np.array):
@@ -19,7 +17,7 @@ def ply_to_mat(filename: str, mat_filename:str, cam2world:np.array, T_CO:np.arra
     # ----------------
     #  Read from file
     # ----------------
-    pcd.read_from_file(this_dir+'/'+filename)
+    pcd.read_from_file(cur_dir+'/'+filename)
 
     pcd.register_camera_pose(torch.tensor(cam2world, dtype=torch.float32))
     pcd.update_obstacle_pose(torch.tensor(T_CO, dtype=torch.float32))
@@ -50,7 +48,7 @@ def ply_to_mat(filename: str, mat_filename:str, cam2world:np.array, T_CO:np.arra
 
     print("occupancy map shape:", occup_map.map.shape)
 
-    save_occmap_for_matlab(occup_map, this_dir + '/' + mat_filename)
+    save_occmap_for_matlab(occup_map, cur_dir + '/' + mat_filename)
     
     
 # ---------- Example Usage ----------

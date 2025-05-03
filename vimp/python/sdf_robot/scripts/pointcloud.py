@@ -1,5 +1,4 @@
 import torch
-from types import SimpleNamespace
 import open3d as o3d
 import numpy as np
 
@@ -106,6 +105,7 @@ def save_occmap_for_matlab(occup_map, filename):
         'map'       : dataset.map,
     }
 
+    print("Saving the dataset to the mat file: ", filename)
     sio.savemat(filename, {'dataset': mat_dict}, do_compression=True)
 
 
@@ -145,7 +145,7 @@ class PointCloud:
     
     def read_from_file(self, filename):
         self.pcd = o3d.io.read_point_cloud(filename)
-        
+        print("read pcd")
     
     def transform_frame(self, T):
         T[:3, 3] = [0.0, 0.0, 0.0]
@@ -197,95 +197,136 @@ class PointCloud:
         voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(self.pcd, voxel_size=voxel_size)
         return voxel_grid
     
+    
+def ply_to_mat(filename: str, mat_filename:str, cam2world:np.array, T_CO:np.array):
+    pcd = PointCloud()
 
-# ==================
-#   Example Usage
-# ==================
-# --- Create an occupancy map with one obstacle ----------------------
-rows, cols, z = 100, 100, 100
-cell_size = 0.05
-occup_map = OccpuancyGrid(rows, cols, z, cell_size)   
+    # ----------------
+    #  Read from file
+    # ----------------
+    pcd.read_from_file(this_dir+'/'+filename)
 
-# --- Add a single rectangular obstacle -------------------------------
-center = (50, 50, 50)
-size   = (50, 100, 50)
+    pcd.register_camera_pose(torch.tensor(cam2world, dtype=torch.float32))
+    pcd.update_obstacle_pose(torch.tensor(T_CO, dtype=torch.float32))
+    pcd.draw_pcd_frame()
 
-occup_map.add_obstacle(center, size) 
+    # ----------- Convert point cloud to voxel and visualize -----------
+    voxel_grid = pcd.to_voxel_grid(voxel_size=0.03)
+    o3d.visualization.draw_geometries([voxel_grid, pcd.camera_frame, pcd.base_frame])
+    center = voxel_grid.get_center()
+    min_corner = voxel_grid.get_min_bound()
+    max_corner = voxel_grid.get_max_bound()
 
-# ----------------------
-#   Quick sanity check
-# ----------------------
-print("Number of occupied voxels:", int(occup_map.map.sum()))
-print("First obstacle AABB:", occup_map.corner_idx[0].tolist())
+    voxels = voxel_grid.get_voxels()
 
-pcd = PointCloud()
-# pcd.construct_pcd()
+    print("Voxel grid center:", center)
+    print("min corner:", min_corner)
+    print("max corner:", max_corner)
+    print("voxels:", voxels)
+
+    # -------------------------------
+    #  From voxels to occupancy grid
+    # -------------------------------
+    rows, cols, z = 100, 100, 100
+    cell_size = 0.05
+    occup_map = OccpuancyGrid(rows, cols, z, cell_size)
+    occup_map.from_voxel_grid(voxel_grid)
+    occup_map.set_origin(center[0], center[1], center[2])
+
+    print("occupancy map shape:", occup_map.map.shape)
+
+    save_occmap_for_matlab(occup_map, this_dir + '/' + mat_filename)
+    
+
+if __name__ == '__main__':
+    # ==================
+    #   Example Usage
+    # ==================
+    # --- Create an occupancy map with one obstacle ----------------------
+    rows, cols, z = 100, 100, 100
+    cell_size = 0.05
+    occup_map = OccpuancyGrid(rows, cols, z, cell_size)   
+
+    # --- Add a single rectangular obstacle -------------------------------
+    center = (50, 50, 50)
+    size   = (50, 100, 50)
+
+    occup_map.add_obstacle(center, size) 
+
+    # ----------------------
+    #   Quick sanity check
+    # ----------------------
+    print("Number of occupied voxels:", int(occup_map.map.sum()))
+    print("First obstacle AABB:", occup_map.corner_idx[0].tolist())
+
+    pcd = PointCloud()
+    # pcd.construct_pcd()
 
 
-# ----------------
-#  Read from file
-# ----------------
-pcd.read_from_file(this_dir+"/UTF-800000001.ply")
+    # ----------------
+    #  Read from file
+    # ----------------
+    pcd.read_from_file(this_dir+"/UTF-800000001.ply")
 
-# center_camera = torch.tensor([0.0, 0.0, 0.0])
-# size_camera   = torch.tensor([rows, cols, z])
-# cell_size = 0.05
-# pcd.to_occmap(center_camera, size_camera, cell_size)
+    # center_camera = torch.tensor([0.0, 0.0, 0.0])
+    # size_camera   = torch.tensor([rows, cols, z])
+    # cell_size = 0.05
+    # pcd.to_occmap(center_camera, size_camera, cell_size)
 
 
-# Example of a camera pose
-R = np.array([[ 0, -1,  0],
-              [ 1,  0,  0],
-              [ 0,  0,  1]])
-t = np.array([0.1, 0.1, 0.5])
+    # Example of a camera pose
+    R = np.array([[ 0, -1,  0],
+                [ 1,  0,  0],
+                [ 0,  0,  1]])
+    t = np.array([0.1, 0.1, 0.5])
 
-# build the 4×4 matrix
-cam2world = np.eye(4)
-cam2world[:3, :3] = R
-cam2world[:3,  3] = t
+    # build the 4×4 matrix
+    cam2world = np.eye(4)
+    cam2world[:3, :3] = R
+    cam2world[:3,  3] = t
 
-pcd.register_camera_pose(torch.tensor(cam2world, dtype=torch.float32))
+    pcd.register_camera_pose(torch.tensor(cam2world, dtype=torch.float32))
 
-R_obj = np.array([[ 0, -1,  0],
-                [ 0,  0,  1],
-                [ 1,  0,  0]])
-t_obj = np.array([0, 0, 0])
+    R_obj = np.array([[ 0, -1,  0],
+                    [ 0,  0,  1],
+                    [ 1,  0,  0]])
+    t_obj = np.array([0, 0, 0])
 
-T_CO = np.eye(4)
-T_CO[:3, :3] = R_obj
-T_CO[:3,  3] = t_obj
+    T_CO = np.eye(4)
+    T_CO[:3, :3] = R_obj
+    T_CO[:3,  3] = t_obj
 
-pcd.update_obstacle_pose(torch.tensor(T_CO, dtype=torch.float32))
-pcd.draw_pcd_frame()
+    pcd.update_obstacle_pose(torch.tensor(T_CO, dtype=torch.float32))
+    pcd.draw_pcd_frame()
 
-# ----------- Convert to voxel and visualize -----------
-voxel_grid = pcd.to_voxel_grid(voxel_size=0.03)
-o3d.visualization.draw_geometries([voxel_grid, pcd.camera_frame, pcd.base_frame])
-center = voxel_grid.get_center()
-min_corner = voxel_grid.get_min_bound()
-max_corner = voxel_grid.get_max_bound()
+    # ----------- Convert to voxel and visualize -----------
+    voxel_grid = pcd.to_voxel_grid(voxel_size=0.03)
+    o3d.visualization.draw_geometries([voxel_grid, pcd.camera_frame, pcd.base_frame])
+    center = voxel_grid.get_center()
+    min_corner = voxel_grid.get_min_bound()
+    max_corner = voxel_grid.get_max_bound()
 
-voxels = voxel_grid.get_voxels()
+    voxels = voxel_grid.get_voxels()
 
-print("Voxel grid center:", center)
-print("min corner:", min_corner)
-print("max corner:", max_corner)
-print("voxels:", voxels)
+    print("Voxel grid center:", center)
+    print("min corner:", min_corner)
+    print("max corner:", max_corner)
+    print("voxels:", voxels)
 
-# -------------------------------
-#  From voxels to occupancy grid
-# -------------------------------
-rows, cols, z = 100, 100, 100
-cell_size = 0.05
-occup_map = OccpuancyGrid(rows, cols, z, cell_size)
-occup_map.from_voxel_grid(voxel_grid)
-occup_map.set_origin(center[0], center[1], center[2])
+    # -------------------------------
+    #  From voxels to occupancy grid
+    # -------------------------------
+    rows, cols, z = 100, 100, 100
+    cell_size = 0.05
+    occup_map = OccpuancyGrid(rows, cols, z, cell_size)
+    occup_map.from_voxel_grid(voxel_grid)
+    occup_map.set_origin(center[0], center[1], center[2])
 
-print("occupancy map shape:", occup_map.map.shape)
+    print("occupancy map shape:", occup_map.map.shape)
 
-save_occmap_for_matlab(occup_map, this_dir+"/occupancy_map.mat")
+    save_occmap_for_matlab(occup_map, this_dir+"/occupancy_map.mat")
 
-# ------------------------------------------------
-#   Transform the point cloud under a given pose
-# ------------------------------------------------
+    # ------------------------------------------------
+    #   Transform the point cloud under a given pose
+    # ------------------------------------------------
 
