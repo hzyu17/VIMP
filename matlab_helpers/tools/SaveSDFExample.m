@@ -27,6 +27,14 @@ for z = 1:size(field, 3)
     sdf.initFieldData(z-1, field(:,:,z)');
 end
 
+
+% % plot sdf
+figure;
+ax = gca;        
+eps_dist = 0.1;
+marker_size = 10;
+plotSDF3D(field, origin, cell_size, eps_dist, marker_size, ax);   
+
 %% save SDF
 disp('saving sdf to .bin file...');
 sdf.saveSDF('WAMDeskDataset.bin');
