@@ -50,9 +50,11 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 Base(1, 7, 3, map_name), 
                 _eps(eps), 
                 _radius(radius)
-            {
+            {   
+                std::cout << "sdf file: " << sdf_file << std::endl;
+                std::cout << "map name: " << map_name << std::endl;
                 if (!sdf_file.empty()){
-                    std::cout << "sdf_file.data()" << std::endl << sdf_file.data() << std::endl;
+                    std::cout << "Load SDF file" << std::endl;
                     Base::_sdf.loadSDF(sdf_file);
                     
                     Base::_psdf = std::make_shared<SDF>(Base::_sdf);

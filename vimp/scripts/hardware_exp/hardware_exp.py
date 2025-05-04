@@ -14,52 +14,70 @@ if vimp_dir not in sys.path:
 if build_dir not in sys.path:            
     sys.path.insert(0, build_dir)
 
-import pybind_expparams.core as pybind_params
 from python.sdf_robot import OccpuancyGrid, PointCloud, save_occmap_for_matlab
 import json
 from pathlib import Path
 
-config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
 
+import pybind_expparams.core as pybind_params
+import pybind_WamSDF 
+from pybind_WamSDF import GVIMPWAMArm
+
+config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
 import yaml, numpy as np
 with config_file.open("r", encoding="utf-8") as f:
     cfg = yaml.safe_load(f)
 
 total_time = cfg["total_time"]
 n_states = cfg["n_states"]
-map_name = cfg["map_name"]
+map_name = str(cfg["map_name"])
 coeff_Qc = cfg["coeff_Qc"]
-GH_deg =   cfg["GH_deg"]
-sig_obs =  cfg["sig_obs"]
-eps_sdf =  cfg["eps_sdf"]
-radius =   cfg["radius"]
+GH_deg = cfg["GH_deg"]
+sig_obs = cfg["sig_obs"]
+eps_sdf = cfg["eps_sdf"]
+radius = cfg["radius"]
 step_size = cfg["step_size"]
 init_precision_factor = cfg["init_precision_factor"]
-boundary_penalties =   cfg["boundary_penalties"]
-temperature =  cfg["temperature"]
+boundary_penalties = cfg["boundary_penalties"]
+temperature = cfg["temperature"]
 high_temperature = cfg["high_temperature"]
-low_temp_iterations =  cfg["low_temp_iterations"]
+low_temp_iterations = cfg["low_temp_iterations"]
 stop_err = float(cfg["stop_err"])
-max_iterations =   cfg["max_iterations"]
-max_n_backtracking =   cfg["max_n_backtracking"]
-sdf_file = cfg["sdf_file"]
-saving_prefix = cfg["saving_prefix"]
+max_iterations = cfg["max_iterations"]
+max_n_backtracking = cfg["max_n_backtracking"]
+sdf_file = str(cfg["sdf_file"])
+saving_prefix = str(cfg["saving_prefix"])
 
 start_pos = np.array(cfg["start_pos"], dtype=float)
 goal_pos  = np.array(cfg["goal_pos"],  dtype=float)
 
+print("map_name :", repr(map_name))
+print("sdf_file :", repr(sdf_file), "exists:", Path(sdf_file).is_file())
 print("start:", start_pos)
 print("goal :", goal_pos)
 
 nx = 7
 nu = 7
+
+map_name = map_name.strip()
+sdf_file = sdf_file.strip()
+alpha = 1
+                
 gvimp_params = pybind_params.GVIMPParams(nx, nu, total_time, 
                                          n_states, coeff_Qc, GH_deg, 
-                                         sig_obs, eps_sdf, radius, step_size, max_iterations,
-                                         init_precision_factor, boundary_penalties, temperature,
-                                         high_temperature, low_temp_iterations, stop_err,
-                                         max_n_backtracking, map_name, sdf_file)
+                                         sig_obs, eps_sdf, radius, 
+                                         step_size, max_iterations,
+                                         init_precision_factor, 
+                                         boundary_penalties, temperature,
+                                         high_temperature, low_temp_iterations, 
+                                         stop_err, max_n_backtracking, 
+                                         map_name, sdf_file, alpha)
 
+
+# Generate the optimizer
+verbose = True
+wam_optimizer = GVIMPWAMArm(gvimp_params)
+runtime = wam_optimizer.run_optimization_withtime(gvimp_params, verbose)
 
 # -----------------------------------------
 #    Read from camera configuration file 

@@ -90,13 +90,20 @@ public:
   }
 
   void loadSDF(const std::string& filename) {
+    std::cout << "Debug 0" << std::endl;
     std::ifstream ifs(filename, std::ios::binary);
+    std::cout << "Debug 1" << std::endl;
     if (!ifs.is_open()) {
         std::cout << "File '" << filename << "' does not exist!" << std::endl;
         return;
     }
 
+    std::cout << "Loading SDF file: " << filename << std::endl;
+
     std::string fext = filename.substr(filename.find_last_of(".") + 1);
+
+    std::cout << "File extension: " << fext << std::endl;
+
     if (fext == "xml") {
         cereal::XMLInputArchive ia(ifs);
         ia(*this);
@@ -109,12 +116,17 @@ public:
         cereal::JSONInputArchive ia(ifs);
         ia(*this);
     }
+
+    std::cout << "Loading SDF file completed!" << std::endl;
+
   }
 
   void saveSDF(const std::string filename) {
+    
     std::ofstream ofs(filename.c_str());
     assert(ofs.good());
     std::string fext = filename.substr(filename.find_last_of(".") + 1);
+
     if (fext == "bin") {
       cereal::BinaryOutputArchive archive(ofs);
       archive(*this);

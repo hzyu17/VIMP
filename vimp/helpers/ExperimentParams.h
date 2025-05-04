@@ -43,7 +43,8 @@ public:
             _Sig0(MatrixXd::Zero(nx, nx)),
             _SigT(MatrixXd::Zero(nx, nx)),
             _map_name(map_name),
-            _alpha(alpha)
+            _alpha(alpha),
+            _sdf_file(sdf_file)
             {}
 
 public:

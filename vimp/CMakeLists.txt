@@ -57,8 +57,10 @@ endforeach()
 
 pybind11_add_module(pybind_expparams
     pybinds/bind_params.cpp)
+pybind11_add_module(pybind_WamSDF
+    pybinds/bind_WAMSDF.cpp)
 
-# target_link_libraries(pybind_gvimp PRIVATE my_cpp_lib)
+target_link_libraries(pybind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
 
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
