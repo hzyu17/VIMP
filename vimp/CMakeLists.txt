@@ -55,6 +55,11 @@ foreach(vimp_source ${VIMP_SOURCES})
 endforeach()
 
 
+pybind11_add_module(pybind_expparams
+    pybinds/bind_params.cpp)
+
+# target_link_libraries(pybind_gvimp PRIVATE my_cpp_lib)
+
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
 # foreach(pgcs_source ${PGCS_SOURCES})

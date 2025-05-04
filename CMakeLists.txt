@@ -28,6 +28,8 @@ find_package( Eigen3 3.4.0 REQUIRED)
 # Find the OpenMP package
 find_package(OpenMP)
 
+find_package(pybind11 REQUIRED)
+
 # Set the policy CMP0104 to NEW
 if(POLICY CMP0104)
   cmake_policy(SET CMP0104 NEW)

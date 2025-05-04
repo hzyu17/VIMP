@@ -2,17 +2,67 @@ import torch
 import numpy as np
 import open3d as o3d
 import os, sys
+
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
-if vimp_dir not in sys.path:            # avoid duplicates
-    sys.path.insert(0, vimp_dir)
+build_dir = os.path.dirname(vimp_dir) + "/build/vimp"
 
+print("build_dir:", build_dir)
+if vimp_dir not in sys.path:            
+    sys.path.insert(0, vimp_dir)
+if build_dir not in sys.path:            
+    sys.path.insert(0, build_dir)
+
+import pybind_expparams.core as pybind_params
 from python.sdf_robot import OccpuancyGrid, PointCloud, save_occmap_for_matlab
 import json
+from pathlib import Path
+
+config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
+
+import yaml, numpy as np
+with config_file.open("r", encoding="utf-8") as f:
+    cfg = yaml.safe_load(f)
+
+total_time = cfg["total_time"]
+n_states = cfg["n_states"]
+map_name = cfg["map_name"]
+coeff_Qc = cfg["coeff_Qc"]
+GH_deg =   cfg["GH_deg"]
+sig_obs =  cfg["sig_obs"]
+eps_sdf =  cfg["eps_sdf"]
+radius =   cfg["radius"]
+step_size = cfg["step_size"]
+init_precision_factor = cfg["init_precision_factor"]
+boundary_penalties =   cfg["boundary_penalties"]
+temperature =  cfg["temperature"]
+high_temperature = cfg["high_temperature"]
+low_temp_iterations =  cfg["low_temp_iterations"]
+stop_err = float(cfg["stop_err"])
+max_iterations =   cfg["max_iterations"]
+max_n_backtracking =   cfg["max_n_backtracking"]
+sdf_file = cfg["sdf_file"]
+saving_prefix = cfg["saving_prefix"]
+
+start_pos = np.array(cfg["start_pos"], dtype=float)
+goal_pos  = np.array(cfg["goal_pos"],  dtype=float)
+
+print("start:", start_pos)
+print("goal :", goal_pos)
+
+nx = 7
+nu = 7
+gvimp_params = pybind_params.GVIMPParams(nx, nu, total_time, 
+                                         n_states, coeff_Qc, GH_deg, 
+                                         sig_obs, eps_sdf, radius, step_size, max_iterations,
+                                         init_precision_factor, boundary_penalties, temperature,
+                                         high_temperature, low_temp_iterations, stop_err,
+                                         max_n_backtracking, map_name, sdf_file)
+
 
 # -----------------------------------------
-#   Read from camera configuration file 
+#    Read from camera configuration file 
 # -----------------------------------------
 transform_camera = False
 
@@ -75,5 +125,5 @@ occup_map.from_voxel_grid(voxel_grid)
 occup_map.set_origin(center[0], center[1], center[2])
 
 print("occupancy map shape:", occup_map.map.shape)
-
 save_occmap_for_matlab(occup_map, this_dir+"/occupancy_map.mat")
+

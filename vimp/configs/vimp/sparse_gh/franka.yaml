@@ -1,0 +1,23 @@
+total_time:          4.0
+n_states:            20
+map_name:            map_bookshelf
+coeff_Qc:            1.0
+GH_deg:              3
+sig_obs:             0.02
+eps_sdf:             0.2
+radius:              0.0
+step_size:           0.7
+init_precision_factor: 10000.0
+boundary_penalties:  10000.0
+temperature:         0.01
+high_temperature:    0.2
+low_temp_iterations: 20
+stop_err:            1e-5
+max_iterations:      30
+max_n_backtracking:  5
+sdf_file:            /home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin
+
+start_pos: [-0.8, -1.70, 1.64, 1.29, 1.1, -0.106, 2.2]
+goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
+
+saving_prefix: /home/hzyu/git/VIMP/matlab_helpers/GVIMP-examples/Franka/case1/
