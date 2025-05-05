@@ -72,7 +72,7 @@ void bindParams(py::module &m) {
 }
 
 
-PYBIND11_MODULE(pybind_expparams, m) {
+PYBIND11_MODULE(bind_Params, m) {
     auto core = m.def_submodule("core");
     bindParams(core);
 }

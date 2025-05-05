@@ -5,7 +5,7 @@
 
 namespace py  = pybind11;
 
-PYBIND11_MODULE(pybind_WamSDF, m)
+PYBIND11_MODULE(bind_WamSDF, m)
 {
     m.doc() = "GVIMP bindings for WAM arm";
 

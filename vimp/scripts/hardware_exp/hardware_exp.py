@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import open3d as o3d
 import os, sys
+from read_save_sdf import read_and_save_sdf
 
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
@@ -18,10 +19,10 @@ from python.sdf_robot import OccpuancyGrid, PointCloud, save_occmap_for_matlab
 import json
 from pathlib import Path
 
-
-import pybind_expparams.core as pybind_params
-import pybind_WamSDF 
-from pybind_WamSDF import GVIMPWAMArm
+# python bindings for C++ classes
+from bind_Params.core import GVIMPParams
+from bind_WamSDF import GVIMPWAMArm
+from bind_SDF import SignedDistanceField
 
 config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
 import yaml, numpy as np
@@ -63,21 +64,21 @@ map_name = map_name.strip()
 sdf_file = sdf_file.strip()
 alpha = 1
                 
-gvimp_params = pybind_params.GVIMPParams(nx, nu, total_time, 
-                                         n_states, coeff_Qc, GH_deg, 
-                                         sig_obs, eps_sdf, radius, 
-                                         step_size, max_iterations,
-                                         init_precision_factor, 
-                                         boundary_penalties, temperature,
-                                         high_temperature, low_temp_iterations, 
-                                         stop_err, max_n_backtracking, 
-                                         map_name, sdf_file, alpha)
+gvimp_params = GVIMPParams(nx, nu, total_time, 
+                            n_states, coeff_Qc, GH_deg, 
+                            sig_obs, eps_sdf, radius, 
+                            step_size, max_iterations,
+                            init_precision_factor, 
+                            boundary_penalties, temperature,
+                            high_temperature, low_temp_iterations, 
+                            stop_err, max_n_backtracking, 
+                            map_name, sdf_file, alpha)
 
 
-# Generate the optimizer
-verbose = True
-wam_optimizer = GVIMPWAMArm(gvimp_params)
-runtime = wam_optimizer.run_optimization_withtime(gvimp_params, verbose)
+# # Generate the optimizer
+# verbose = True
+# wam_optimizer = GVIMPWAMArm(gvimp_params)
+# runtime = wam_optimizer.run_optimization_withtime(gvimp_params, verbose)
 
 # -----------------------------------------
 #    Read from camera configuration file 
@@ -144,4 +145,12 @@ occup_map.set_origin(center[0], center[1], center[2])
 
 print("occupancy map shape:", occup_map.map.shape)
 save_occmap_for_matlab(occup_map, this_dir+"/occupancy_map.mat")
+
+
+# Read the occupancy map, convert to SDF and save
+read_and_save_sdf(this_dir+"/occupancy_map.mat", this_dir+"/sdf.bin")
+
+# Read the SDF
+sdf = SignedDistanceField()
+sdf.loadSDF(this_dir+"/sdf.bin")
 

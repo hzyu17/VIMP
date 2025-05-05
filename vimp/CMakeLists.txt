@@ -55,12 +55,14 @@ foreach(vimp_source ${VIMP_SOURCES})
 endforeach()
 
 
-pybind11_add_module(pybind_expparams
+pybind11_add_module(bind_Params
     pybinds/bind_params.cpp)
-pybind11_add_module(pybind_WamSDF
+pybind11_add_module(bind_WamSDF
     pybinds/bind_WAMSDF.cpp)
+pybind11_add_module(bind_SDF
+    pybinds/bind_sdf.cpp)
 
-target_link_libraries(pybind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+target_link_libraries(bind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
 
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
