@@ -36,12 +36,7 @@ This folder provides a C++ implementation of a 3D signed distance field (`Signed
 
 ## How to Build
 
-1. **Adjust the Makefile if necessary**  
-   - Update `MATLAB_ROOT` if your MATLAB installation is in a different location.
-   - Update `EIGEN_PATH` if Eigen is located elsewhere.
-   - Modify any cereal include paths if needed.
-
-2. **Compile the Mex file**  
+1. **Compile the Mex file**  
    Open a terminal in the directory containing the Makefile, then run:
    ```bash
    make clean
@@ -49,7 +44,7 @@ This folder provides a C++ implementation of a 3D signed distance field (`Signed
    ```
    This will generate the SignedDistanceField_mex.mexa64 file (for Linux). On success, you should see the new file in the directory.
 
-3. **Add the Mex file to your MATLAB path**  
+2. **Add the Mex file to your MATLAB path**  
    If the `.mexa64` file is not in your current MATLAB working directory, you can do:
    ```matlab
    addpath('/path/to/where/your/mexa64/file/is')
