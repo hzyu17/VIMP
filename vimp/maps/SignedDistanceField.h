@@ -1,11 +1,16 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
+// #include <helpers/MatrixHelper.h>
 #include <helpers/SerializeEigenMaps.h>
 
 class SignedDistanceField {
 
 public:
+  // index and float_index is <row, col>
+  typedef std::tuple<size_t, size_t, size_t> index;
+  typedef Eigen::Vector3d float_index;
+  typedef std::shared_ptr<SignedDistanceField> shared_ptr;
 
   // geometry setting of signed distance field
   Eigen::Vector3d origin_;
@@ -17,6 +22,11 @@ public:
 public:
   /// constructor
   SignedDistanceField() {}
+
+  /// constructor with data
+  SignedDistanceField(const Eigen::Vector3d& origin, double cell_size, const std::vector<Eigen::MatrixXd>& data) :
+      origin_(origin), field_rows_(data[0].rows()), field_cols_(data[0].cols()), 
+      field_z_(data.size()), cell_size_(cell_size), data_(data){}
 
   SignedDistanceField(const Eigen::Vector3d& origin, double cell_size, int field_rows, int field_cols, int field_z): 
       origin_(origin), field_rows_(field_rows), field_cols_(field_cols),
@@ -31,8 +41,6 @@ public:
     data_[z_idx] = field_layer;
   }
 
-<<<<<<< HEAD
-=======
   /// give a point, search for signed distance field and (optional) gradient
   /// return signed distance
   inline double getSignedDistance(const Eigen::MatrixXd& point) const {
@@ -80,7 +88,6 @@ public:
         (idx(0)-lr)*(idx(1)-lc)*(idx(2)-lz)*signed_distance(hri, hci, hzi);
   }
 
->>>>>>> origin/point_cloud_pot_3dsdf
   void loadSDF(const std::string& filename) {
     std::ifstream ifs(filename, std::ios::binary);
     if (!ifs.is_open()) {
@@ -126,8 +133,6 @@ public:
     }
   }
 
-<<<<<<< HEAD
-=======
   // access
   double signed_distance(int r, int c, int z) const {
     return data_[z](r, c);
@@ -140,9 +145,7 @@ public:
   double cell_size() const { return cell_size_; }
   const std::vector<Eigen::MatrixXd>& raw_data() const { return data_; }
 
->>>>>>> origin/point_cloud_pot_3dsdf
   /** Serialization function */
-  // When serialize and deserialize, the data is stored in a binary file
   template<class Archive>
   void serialize(Archive& ar) {
     ar(CEREAL_NVP(origin_));
