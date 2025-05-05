@@ -76,8 +76,12 @@ class OccpuancyGrid:
         
         self.map[idx_xyz[:, 0], idx_xyz[:, 1], idx_xyz[:, 2]] = 1
         
-        print("occupancy map:")
-        print(self.map)
+        self.set_origin(voxel_grid.origin[0],
+                        voxel_grid.origin[1],
+                        voxel_grid.origin[2])
+        
+        # print("occupancy map:")
+        # print(self.map)
 
 
 def save_occmap_for_matlab(occup_map, filename):
@@ -320,7 +324,7 @@ if __name__ == '__main__':
     cell_size = 0.05
     occup_map = OccpuancyGrid(rows, cols, z, cell_size)
     occup_map.from_voxel_grid(voxel_grid)
-    occup_map.set_origin(center[0], center[1], center[2])
+    
 
     print("occupancy map shape:", occup_map.map.shape)
 

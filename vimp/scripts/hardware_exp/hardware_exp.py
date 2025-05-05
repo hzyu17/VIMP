@@ -15,70 +15,9 @@ if vimp_dir not in sys.path:
 if build_dir not in sys.path:            
     sys.path.insert(0, build_dir)
 
-from python.sdf_robot import OccpuancyGrid, PointCloud, save_occmap_for_matlab
+from python.sdf_robot import OccpuancyGrid, PointCloud, save_occmap_for_matlab, SignedDistanceField3D
 import json
 from pathlib import Path
-
-# python bindings for C++ classes
-from bind_Params.core import GVIMPParams
-from bind_WamSDF import GVIMPWAMArm
-from bind_SDF import SignedDistanceField
-
-config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
-import yaml, numpy as np
-with config_file.open("r", encoding="utf-8") as f:
-    cfg = yaml.safe_load(f)
-
-total_time = cfg["total_time"]
-n_states = cfg["n_states"]
-map_name = str(cfg["map_name"])
-coeff_Qc = cfg["coeff_Qc"]
-GH_deg = cfg["GH_deg"]
-sig_obs = cfg["sig_obs"]
-eps_sdf = cfg["eps_sdf"]
-radius = cfg["radius"]
-step_size = cfg["step_size"]
-init_precision_factor = cfg["init_precision_factor"]
-boundary_penalties = cfg["boundary_penalties"]
-temperature = cfg["temperature"]
-high_temperature = cfg["high_temperature"]
-low_temp_iterations = cfg["low_temp_iterations"]
-stop_err = float(cfg["stop_err"])
-max_iterations = cfg["max_iterations"]
-max_n_backtracking = cfg["max_n_backtracking"]
-sdf_file = str(cfg["sdf_file"])
-saving_prefix = str(cfg["saving_prefix"])
-
-start_pos = np.array(cfg["start_pos"], dtype=float)
-goal_pos  = np.array(cfg["goal_pos"],  dtype=float)
-
-print("map_name :", repr(map_name))
-print("sdf_file :", repr(sdf_file), "exists:", Path(sdf_file).is_file())
-print("start:", start_pos)
-print("goal :", goal_pos)
-
-nx = 7
-nu = 7
-
-map_name = map_name.strip()
-sdf_file = sdf_file.strip()
-alpha = 1
-                
-gvimp_params = GVIMPParams(nx, nu, total_time, 
-                            n_states, coeff_Qc, GH_deg, 
-                            sig_obs, eps_sdf, radius, 
-                            step_size, max_iterations,
-                            init_precision_factor, 
-                            boundary_penalties, temperature,
-                            high_temperature, low_temp_iterations, 
-                            stop_err, max_n_backtracking, 
-                            map_name, sdf_file, alpha)
-
-
-# # Generate the optimizer
-# verbose = True
-# wam_optimizer = GVIMPWAMArm(gvimp_params)
-# runtime = wam_optimizer.run_optimization_withtime(gvimp_params, verbose)
 
 # -----------------------------------------
 #    Read from camera configuration file 
@@ -141,16 +80,86 @@ rows, cols, z = 100, 100, 100
 cell_size = 0.05
 occup_map = OccpuancyGrid(rows, cols, z, cell_size)
 occup_map.from_voxel_grid(voxel_grid)
-occup_map.set_origin(center[0], center[1], center[2])
+field3D = SignedDistanceField3D.generate_field3D(occup_map.map.detach().numpy(), cell_size=voxel_grid.voxel_size)
 
-print("occupancy map shape:", occup_map.map.shape)
-save_occmap_for_matlab(occup_map, this_dir+"/occupancy_map.mat")
+from bind_SDF import SignedDistanceField
+sdf = SignedDistanceField(voxel_grid.origin, voxel_grid.voxel_size, 
+                          field3D.shape[0], field3D.shape[1], field3D.shape[2])
+
+# =========================================================================
+#  Alternatively: We can use files to save, read, and construct the SDF.
+# =========================================================================
+# print("occupancy map shape:", occup_map.map.shape)
+# save_occmap_for_matlab(occup_map, this_dir+"/occupancy_map.mat")
+
+# # -----------------------------------------------------------------
+# # Read the occupancy map, convert to SDF and save to binary file
+# read_and_save_sdf(this_dir+"/occupancy_map.mat", this_dir+"/sdf.bin")
+
+# ------------------------------------------------------
+# Read the SDF into the C++ SignedDistanceField class 
+# from bind_SDF import SignedDistanceField
+# sdf = SignedDistanceField()
+# sdf.loadSDF(this_dir+"/sdf.bin")
+
+# -----------------------------------------------
+# python bindings for GVIMP Planner C++ classes
+from bind_Params.core import GVIMPParams
+# from bind_WamSDF import GVIMPWAMArm # Does not work yet, figuring out why
+
+config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
+import yaml, numpy as np
+with config_file.open("r", encoding="utf-8") as f:
+    cfg = yaml.safe_load(f)
+
+total_time = cfg["total_time"]
+n_states = cfg["n_states"]
+map_name = str(cfg["map_name"])
+coeff_Qc = cfg["coeff_Qc"]
+GH_deg = cfg["GH_deg"]
+sig_obs = cfg["sig_obs"]
+eps_sdf = cfg["eps_sdf"]
+radius = cfg["radius"]
+step_size = cfg["step_size"]
+init_precision_factor = cfg["init_precision_factor"]
+boundary_penalties = cfg["boundary_penalties"]
+temperature = cfg["temperature"]
+high_temperature = cfg["high_temperature"]
+low_temp_iterations = cfg["low_temp_iterations"]
+stop_err = float(cfg["stop_err"])
+max_iterations = cfg["max_iterations"]
+max_n_backtracking = cfg["max_n_backtracking"]
+sdf_file = str(cfg["sdf_file"])
+saving_prefix = str(cfg["saving_prefix"])
+
+start_pos = np.array(cfg["start_pos"], dtype=float)
+goal_pos  = np.array(cfg["goal_pos"],  dtype=float)
+
+print("map_name :", repr(map_name))
+print("sdf_file :", repr(sdf_file), "exists:", Path(sdf_file).is_file())
+print("start:", start_pos)
+print("goal :", goal_pos)
+
+nx = 7
+nu = 7
+
+map_name = map_name.strip()
+sdf_file = sdf_file.strip()
+alpha = 1
+
+gvimp_params = GVIMPParams(nx, nu, total_time, 
+                            n_states, coeff_Qc, GH_deg, 
+                            sig_obs, eps_sdf, radius, 
+                            step_size, max_iterations,
+                            init_precision_factor, 
+                            boundary_penalties, temperature,
+                            high_temperature, low_temp_iterations, 
+                            stop_err, max_n_backtracking, 
+                            map_name, sdf_file, alpha)
 
 
-# Read the occupancy map, convert to SDF and save
-read_and_save_sdf(this_dir+"/occupancy_map.mat", this_dir+"/sdf.bin")
-
-# Read the SDF
-sdf = SignedDistanceField()
-sdf.loadSDF(this_dir+"/sdf.bin")
+# # Generate the optimizer
+# verbose = True
+# wam_optimizer = GVIMPWAMArm(gvimp_params)
+# runtime = wam_optimizer.run_optimization_withtime(gvimp_params, verbose)
 

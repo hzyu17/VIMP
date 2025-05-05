@@ -3,14 +3,9 @@
 
 import numpy as np
 import math
-from scipy import ndimage
+from scipy import ndimage    
 
-
-def signedDistanceField3DFromFile(map_filename):
-    
-
-
-def signedDistanceField3D(ground_truth_map, cell_size):
+def generate_field3D(ground_truth_map, cell_size):
     # SIGNEDDISTANCEFIELD3D 3D signed distance field
     #   Given a ground truth 3D map defined in Matrix in 0-1,
     #   calculate 3D signed distance field, which is defined as a matrix

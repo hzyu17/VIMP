@@ -70,7 +70,6 @@ public:
         cell(2) * cell_size_);
   }
 
-
   /// bilinear interpolation
   inline double signed_distance(const float_index& idx) const {
     const double lr = floor(idx(0)), lc = floor(idx(1)), lz = floor(idx(2));
@@ -90,31 +89,32 @@ public:
   }
 
   void loadSDF(const std::string& filename) {
-    std::cout << "Debug 0" << std::endl;
     std::ifstream ifs(filename, std::ios::binary);
-    std::cout << "Debug 1" << std::endl;
     if (!ifs.is_open()) {
         std::cout << "File '" << filename << "' does not exist!" << std::endl;
         return;
     }
 
-    std::cout << "Loading SDF file: " << filename << std::endl;
+    auto pos = filename.rfind('.');
+    if (pos == std::string::npos) {
+      throw std::runtime_error("Cannot detect extension for SDF file: " + filename);
+    }
+    auto fext = filename.substr(pos + 1);
+    std::transform(fext.begin(), fext.end(), fext.begin(), ::tolower);
 
-    std::string fext = filename.substr(filename.find_last_of(".") + 1);
-
-    std::cout << "File extension: " << fext << std::endl;
+    std::cout << "Loading SDF File: " << filename << "\n"
+              << "  Extension detected: '" << fext << "'\n";
 
     if (fext == "xml") {
-        cereal::XMLInputArchive ia(ifs);
-        ia(*this);
+      cereal::XMLInputArchive ia(ifs);
+      ia(*this);
     }
     else if (fext == "bin") {
-        cereal::BinaryInputArchive ia(ifs);
-        ia(*this);
+      cereal::BinaryInputArchive ia(ifs);
+      ia(*this);
     }
     else {
-        cereal::JSONInputArchive ia(ifs);
-        ia(*this);
+      throw std::runtime_error("Unsupported SDF extension '" + fext + "'");
     }
 
     std::cout << "Loading SDF file completed!" << std::endl;
@@ -132,7 +132,6 @@ public:
       archive(*this);
     }
   }
-
 
   // access
   double signed_distance(int r, int c, int z) const {
@@ -156,6 +155,5 @@ public:
     ar(CEREAL_NVP(cell_size_));
     ar(CEREAL_NVP(data_));
   }
-
 
 };
