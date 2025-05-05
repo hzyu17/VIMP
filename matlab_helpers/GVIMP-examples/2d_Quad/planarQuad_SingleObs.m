@@ -71,7 +71,8 @@ tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
 for i = 2:2 % 4 experiments  
     nexttile
     if is_sparse
-        prefix = ["case" + num2str(i)+"/"];
+        % prefix = ["case" + num2str(i)+"/"];
+        prefix = "Iter_GVIMP/";
     else
         prefix = ["map2/case" + num2str(i)+"/"];
     end

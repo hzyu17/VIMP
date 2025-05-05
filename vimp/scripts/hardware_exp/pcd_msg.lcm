@@ -1,0 +1,10 @@
+package exlcm;
+
+struct pcd_t
+{
+    int64_t  timestamp;
+    double   pose[4][4];
+    int16_t  num_points;
+    double   points[num_points][3];
+    double   robot_base_offset[3];
+}

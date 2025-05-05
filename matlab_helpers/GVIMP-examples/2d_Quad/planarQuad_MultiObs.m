@@ -33,13 +33,19 @@ prefix = "Multi_Obs/Go_around/";
 means = csvread([prefix + "mean.csv"]);
 joint_precisions = csvread([prefix + "joint_precision.csv"]);
 costs = csvread([prefix + "cost.csv"]);
+means = csvread([prefix + "mean.csv"]);
+joint_precisions = csvread([prefix + "joint_precision.csv"]);
+costs = csvread([prefix + "cost.csv"]);
 
+factor_costs = csvread([prefix + "factor_costs.csv"]);
 factor_costs = csvread([prefix + "factor_costs.csv"]);
 
 [ttl_dim, ~] = size(means);
 niters = find_niters(means);
 n_states = floor(ttl_dim / dim_state);
 
+output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
+% output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state, save_figure);
 output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
 % output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state, save_figure);
 
@@ -66,10 +72,11 @@ set(gcf,'position',[x0,y0,width,height])
 %                 13, 10, 0, 0;
 %                 -13, 8, 0, 0];
 
-tiledlayout(1, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
 
 nexttile
-prefix = "Multi_Obs/Go_through/";
+
+prefix = "Multi_Obs/";
 
 % % --- high temperature ---
 means = csvread([prefix + "mean.csv"]);
@@ -79,25 +86,16 @@ precisions = csvread([prefix + "precision.csv"]);
 niters = find_niters(means);
 
 nsteps = 1;
+%     [ttl_dim, niters] = size(means);
 output = plot_planarPR_oneiter(means, covs, sdfmap, niters);
 
-xlim([-30, 60])
-ylim([-20, 50])
+% start_i = start_configs(i, :)';
+% goal_i = goal_configs(i, :)';
+% s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 500);
+% s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 500);
 
-grid on
-
-nexttile
-prefix = "Multi_Obs/Go_around/";
-
-% % --- high temperature ---
-means = csvread([prefix + "mean.csv"]);
-covs = csvread([prefix + "cov.csv"]);
-precisions = csvread([prefix + "precision.csv"]);
-    
-niters = find_niters(means);
-
-nsteps = 1;
-output = plot_planarPR_oneiter(means, covs, sdfmap, niters);
+% lgd = legend([s1, s2], {'Start', 'Goal'});
+% set(lgd, 'FontWeight', 'bold');
 
 xlim([-30, 60])
 ylim([-20, 50])

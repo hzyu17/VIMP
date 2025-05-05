@@ -83,6 +83,15 @@ if(BUILD_KL_PROXIMAL)
   endforeach()
 endif()
 
+pybind11_add_module(bind_Params
+    pybinds/bind_params.cpp)
+pybind11_add_module(bind_WamSDF
+    pybinds/bind_WAMSDF.cpp)
+pybind11_add_module(bind_SDF
+    pybinds/bind_sdf.cpp)
+
+target_link_libraries(bind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
 # foreach(pgcs_source ${PGCS_SOURCES})

@@ -43,11 +43,7 @@ The experiment settings
 <img src="figures/planar_quad_exp1.gif" height="200" width=180> <img src="figures/planar_quad_exp2.gif" height="200" width=180> <img src="figures/planar_quad_exp3.gif" height="200" width=180> <img src="figures/planar_quad_exp4.gif" height="200" width=180>
 
 ## Dependencies
-1. Boost \
-Download **[Boost1.78.0](https://github.com/boostorg/boost/releases/tag/boost-1.78.0)**, install, and change the **BOOST_ROOT** variable in the root **[CMakeLists.txt](https://github.com/hzyu17/VIMP/blob/master/CMakeLists.txt)** file. \
-To build Boost in a customized location: **[check this link](https://github.com/hzyu17/technicals/tree/main/C%2B%2B)**
-
-2. MATLAB Runtime Library: Download **[MATLAB Runtime R2020b](https://www.mathworks.com/products/compiler/matlab-runtime.html)** and follow **[these instructions](https://www.mathworks.com/help/compiler/install-the-matlab-runtime.html)** to install the source files from the zip file.
+MATLAB Runtime Library: Download **[MATLAB Runtime R2020b](https://www.mathworks.com/products/compiler/matlab-runtime.html)** and follow **[these instructions](https://www.mathworks.com/help/compiler/install-the-matlab-runtime.html)** to install the source files from the zip file.
 
 ## Build and install VIMP
 
@@ -56,6 +52,11 @@ VIMP utilizes a python script to install all necessary dependencies and check sy
 git clone https://github.com/hzyu17/VIMP.git
 cd VIMP/
 python3 build_GVIMP_modules.py
+```
+## Generate GH-quadratures before running experiments
+```
+cd build
+./src/save_SparseGH_weights
 ```
 ## 2D point robot example
 To recover the 2D Point robot example in [1, 2], run the following:
@@ -97,7 +98,7 @@ The result can be visualized in matlab by running
 ```
 
 ## Citing
-If you use this repository in your research, please cite the following publications:
+If you find this repository useful in your won research, please kindly cite us:
 ```
 @ARTICLE{10068240,
   author={Yu, Hongzhe and Chen, Yongxin},

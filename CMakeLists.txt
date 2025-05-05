@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -O3")
 
 # ----------------------- Policies ------------------------
+find_package(pybind11 REQUIRED)
+
 # Set the policy CMP0104 to NEW
 if(POLICY CMP0104)
   cmake_policy(SET CMP0104 NEW)

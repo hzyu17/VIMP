@@ -69,7 +69,7 @@ xlim([0, niters])
 % verify that the sum of the factored costs is the same as the total cost
 sum_fact_costs = sum(factor_costs, 1)';
 disp('verify that the sum of the factored costs is the same as the total cost')
-% diff = sum(sum_fact_costs + entropy_costs - costs)
+diff = sum(sum_fact_costs + entropy_costs - costs)
 
 % ================ plot the total costs ================
 nexttile([1 3])
