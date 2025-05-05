@@ -2,8 +2,7 @@ import lcm
 from exlcm import pcd_t
 import open3d as o3d
 import numpy as np
-import rospy, geometry_msgs.msg
-from visualization_msgs.msg import Marker
+import rospy
 
 import os, sys
 this_file = os.path.abspath(__file__)
@@ -57,11 +56,11 @@ def pcd_handler(channel, data):
     radius=0.05, max_nn=30))
     pcd.normalize_normals()
     
-    voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(pcd, voxel_size=0.01)
+    voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(pcd, voxel_size=0.05)
     o3d.visualization.draw_geometries([voxel_grid])    
     
     occmap = voxel_to_occmap(200, 200, 200, 0.01, voxel_grid)
-    field3D = SignedDistanceField3D.generate_field3D(occmap.map.detach().numpy(), cell_size=0.01)
+    field3D = SignedDistanceField3D.generate_field3D(occmap.map.detach().numpy(), cell_size=voxel_grid.voxel_size)
     
     sdf = SignedDistanceField(voxel_grid.origin, voxel_grid.voxel_size, 
                               field3D.shape[0], field3D.shape[1], field3D.shape[2])
