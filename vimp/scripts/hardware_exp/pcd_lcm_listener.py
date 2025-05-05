@@ -2,6 +2,8 @@ import lcm
 from exlcm import pcd_t
 import open3d as o3d
 import numpy as np
+import rospy, geometry_msgs.msg
+from visualization_msgs.msg import Marker
 
 import os, sys
 this_file = os.path.abspath(__file__)
@@ -18,6 +20,7 @@ from python.sdf_robot import OccpuancyGrid
 from python.sdf_robot import SignedDistanceField3D
 from bind_SDF import SignedDistanceField
 
+from scripts.vimp_ros.voxel_to_rviz import publish_voxel_grid
 
 # optional RGB in range [0, 1]
 rgb = np.asarray([
@@ -33,6 +36,8 @@ def voxel_to_occmap(rows, cols, z, cell_size, voxel_grid):
     occmap.from_voxel_grid(voxel_grid)
     return occmap
 
+
+rospy.init_node("voxel_to_rviz")
 
 def pcd_handler(channel, data):
     msg = pcd_t.decode(data)
@@ -70,6 +75,9 @@ def pcd_handler(channel, data):
     print("Signed distance value at point {}: {}".format(test_pt, sdf_val))
     
     print("SDF Constructed!")
+    
+    publish_voxel_grid(voxel_grid, topic="/obstacle_voxel", frame="world")
+    rospy.spin()
     
 lc = lcm.LCM()
 subscription = lc.subscribe("EXAMPLE", pcd_handler)

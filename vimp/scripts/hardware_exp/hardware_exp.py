@@ -90,6 +90,8 @@ sdf = SignedDistanceField(voxel_grid.origin, voxel_grid.voxel_size,
 for z in range(field3D.shape[2]):
         sdf.initFieldData(z, field3D[:,:,z])
 
+sdf.saveSDF(this_dir+"/sdf.bin")
+
 # An example signed distance 
 test_pt = np.array([0.5, 0.5, 0.5])
 sdf_val = sdf.getSignedDistance(test_pt)

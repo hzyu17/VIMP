@@ -10,7 +10,7 @@ set(vimp_subdirs
 )
 
 set(vimp_srcs)
- 
+
 # Library sources
 foreach(subdir ${vimp_subdirs})
   file(GLOB subdir_srcs "${subdir}/*.cpp" "${subdir}/*.h")
@@ -73,7 +73,7 @@ if(BUILD_KL_PROXIMAL)
       set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
       set_target_properties(${vimp_name} PROPERTIES
                               RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                              )   
+                              )
       target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
       target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
                             ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
@@ -85,12 +85,12 @@ endif()
 
 pybind11_add_module(bind_Params
     pybinds/bind_params.cpp)
-pybind11_add_module(bind_WamSDF
-    pybinds/bind_WAMSDF.cpp)
+# pybind11_add_module(bind_WamSDF
+#     pybinds/bind_WAMSDF.cpp)
 pybind11_add_module(bind_SDF
     pybinds/bind_sdf.cpp)
 
-target_link_libraries(bind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+# target_link_libraries(bind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
 
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)

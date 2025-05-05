@@ -58,8 +58,6 @@ class CollisionSceneExample(object):
         box5_pose = [box5_pose[i] + offset[i] for i in range(7)]
         box5_dimensions = [0.1, 0.1, 0.8]
         
-        
-        
         box6_pose = [2.5, 1.9, 1.45, 0, 0, 0, 1]
         box6_pose = [box6_pose[i] + offset[i] for i in range(7)]
         box6_dimensions = [0.6, 0.05, 1.9]
@@ -68,7 +66,6 @@ class CollisionSceneExample(object):
         box7_pose = [box7_pose[i] + offset[i] for i in range(7)]
         box7_dimensions = [0.6, 0.05, 1.9]
         
-        
         box8_pose = [2, 1.9, 1.45, 0, 0, 0, 1]
         box8_pose = [box8_pose[i] + offset[i] for i in range(7)]
         box8_dimensions = [0.4, 0.05, 1.9]
@@ -76,8 +73,6 @@ class CollisionSceneExample(object):
         # box9_pose = [1.3, 0.4, 0.95, 0, 0, 0, 1]
         # box9_pose = [box9_pose[i] + offset[i] for i in range(7)]
         # box9_dimensions = [0.6, 0.05, 1.9]
-        
-        
         
         box10_pose = [2.5, 1.4, 2.4, 0, 0, 0, 1]
         box10_pose = [box10_pose[i] + offset[i] for i in range(7)]
