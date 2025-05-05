@@ -5,7 +5,7 @@
 close all
 clear
 
-addpath('/home/hyu419/.local/gtsam_toolbox')
+addpath('../gtsam_toolbox')
 import gtsam.*
 import gpmp2.*
 
@@ -21,10 +21,10 @@ origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
 field = signedDistanceField2D(dataset.map, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);
 
-% save field
-csvwrite("map1/field.csv", field);
-% save map
-csvwrite("map1/map.csv", dataset.map);
+% % save field
+% csvwrite("map1/field.csv", field);
+% % save map
+% csvwrite("map1/map.csv", dataset.map);
 
 % plot sdf
 figure(2)

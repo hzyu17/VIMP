@@ -51,11 +51,11 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 _eps(eps), 
                 _radius(radius)
             {
+                std::cout << "sdf file: " << sdf_file << std::endl;
+                std::cout << "map name: " << map_name << std::endl;
                 if (!sdf_file.empty()){
-                    std::cout << "sdf_file.data()" << std::endl << sdf_file.data() << std::endl;
-                    std::string sdf_path = "../vimp" + sdf_file + ".bin";
-                    Base::_sdf.loadSDF(sdf_path);
-                    
+                    std::cout << "Load SDF file: " << sdf_file << std::endl;
+                    Base::_sdf.loadSDF(sdf_file);
                     Base::_psdf = std::make_shared<SDF>(Base::_sdf);
                 }
                 else{
@@ -63,7 +63,7 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 }
 
                 generateArm();
-                default_sdf();
+                // default_sdf();
                 Base::_psdf_factor = std::make_shared<ObsArmSDF>(ObsArmSDF(sym('x', 0), Base::_robot, Base::_sdf, 0.0, _eps));
             }
 
@@ -135,7 +135,6 @@ using Base = RobotSDFBase<ArmModel, SDF, ObsArmSDF>;
                 Base::_sdf.loadSDF(sdf_file);
                 Base::_psdf = std::make_shared<SDF>(Base::_sdf);
             }
-
             
             // SDF sdf() const { return Base::_sdf; }
             int ndof() const {return _ndof; }

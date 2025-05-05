@@ -232,5 +232,3 @@ corner = [corner; ...
 
 
 end
-
-

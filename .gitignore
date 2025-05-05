@@ -24,4 +24,4 @@ vimp/data/WAM/*
 vimp/quadrature/SparseGHQuadratureWeights.bin
 vimp/python/debug/*
 vimp/python/sdf_robot/map/planar/MultiObstacleLongRangeMap_field.csv
-vimp/python/sdf_robot/map/planar/MultiObstacleLongRangeMap.csv
+vimp/python/sdf_robot/map/planar/MultiObstacleLongRangeMap.csv**/*.bin

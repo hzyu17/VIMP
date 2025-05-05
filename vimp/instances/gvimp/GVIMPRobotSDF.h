@@ -29,7 +29,7 @@ public:
 
     GVIMPRobotSDF(){}
 
-    GVIMPRobotSDF(GVIMPParams& params):
+    GVIMPRobotSDF(const GVIMPParams& params):
     _robot_sdf(params.eps_sdf(), params.radius(), params.map_name(), params.sdf_file())
     {}
 
