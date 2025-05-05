@@ -80,9 +80,6 @@ class OccpuancyGrid:
                         voxel_grid.origin[1],
                         voxel_grid.origin[2])
         
-        # print("occupancy map:")
-        # print(self.map)
-
 
 def save_occmap_for_matlab(occup_map, filename):
     import scipy.io as sio

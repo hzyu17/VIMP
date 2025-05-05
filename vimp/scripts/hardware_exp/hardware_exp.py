@@ -2,8 +2,6 @@ import torch
 import numpy as np
 import open3d as o3d
 import os, sys
-from read_save_sdf import read_and_save_sdf
-
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
@@ -14,8 +12,12 @@ if vimp_dir not in sys.path:
     sys.path.insert(0, vimp_dir)
 if build_dir not in sys.path:            
     sys.path.insert(0, build_dir)
+    
+from scripts.hardware_exp.matlabengine_readsave_sdf import read_and_save_sdf
+from python.sdf_robot import save_occmap_for_matlab
 
-from python.sdf_robot import OccpuancyGrid, PointCloud, save_occmap_for_matlab, SignedDistanceField3D
+from python.sdf_robot import OccpuancyGrid, PointCloud, SignedDistanceField3D
+from bind_SDF import SignedDistanceField
 import json
 from pathlib import Path
 
@@ -71,7 +73,7 @@ voxels = voxel_grid.get_voxels()
 print("Voxel grid center:", center)
 print("min corner:", min_corner)
 print("max corner:", max_corner)
-print("voxels:", voxels)
+# print("voxels:", voxels)
 
 # -------------------------------
 #  From voxels to occupancy grid
@@ -82,9 +84,16 @@ occup_map = OccpuancyGrid(rows, cols, z, cell_size)
 occup_map.from_voxel_grid(voxel_grid)
 field3D = SignedDistanceField3D.generate_field3D(occup_map.map.detach().numpy(), cell_size=voxel_grid.voxel_size)
 
-from bind_SDF import SignedDistanceField
+# Construct SDF class
 sdf = SignedDistanceField(voxel_grid.origin, voxel_grid.voxel_size, 
                           field3D.shape[0], field3D.shape[1], field3D.shape[2])
+for z in range(field3D.shape[2]):
+        sdf.initFieldData(z, field3D[:,:,z])
+
+# An example signed distance 
+test_pt = np.array([0.5, 0.5, 0.5])
+sdf_val = sdf.getSignedDistance(test_pt)
+print("Signed distance value at point {}: {}".format(test_pt, sdf_val))
 
 # =========================================================================
 #  Alternatively: We can use files to save, read, and construct the SDF.
@@ -102,7 +111,8 @@ sdf = SignedDistanceField(voxel_grid.origin, voxel_grid.voxel_size,
 # sdf = SignedDistanceField()
 # sdf.loadSDF(this_dir+"/sdf.bin")
 
-# -----------------------------------------------
+
+# ==============================================
 # python bindings for GVIMP Planner C++ classes
 from bind_Params.core import GVIMPParams
 # from bind_WamSDF import GVIMPWAMArm # Does not work yet, figuring out why

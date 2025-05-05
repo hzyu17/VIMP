@@ -6,8 +6,8 @@
 #         build  --build-base=/tmp/engine_build \
 #         install --user
 
-import matlab.engine
 
+import matlab.engine
 import os, sys
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
