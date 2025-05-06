@@ -6,18 +6,20 @@ import os, sys
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
 build_dir = os.path.dirname(vimp_dir) + "/build/vimp"
+third_party_dir = vimp_dir + "/3rdparty"
 
 print("build_dir:", build_dir)
 if vimp_dir not in sys.path:            
     sys.path.insert(0, vimp_dir)
 if build_dir not in sys.path:            
     sys.path.insert(0, build_dir)
+if third_party_dir not in sys.path:            
+    sys.path.insert(0, third_party_dir)
     
-from scripts.hardware_experiment.matlabengine_readsave_sdf import read_and_save_sdf
-from python.sdf_robot import save_occmap_for_matlab
+# from matlabengine_readsave_sdf import read_and_save_sdf
+# from python.sdf_robot import save_occmap_for_matlab
 
-from python.sdf_robot import OccpuancyGrid, PointCloud, SignedDistanceField3D
-from bind_SDF import SignedDistanceField
+from sensor3D_tools import OccpuancyGrid, PointCloud, SignedDistanceField, generate_field3D
 import json
 from pathlib import Path
 
@@ -82,7 +84,7 @@ rows, cols, z = 100, 100, 100
 cell_size = 0.05
 occup_map = OccpuancyGrid(rows, cols, z, cell_size)
 occup_map.from_voxel_grid(voxel_grid)
-field3D = SignedDistanceField3D.generate_field3D(occup_map.map.detach().numpy(), cell_size=voxel_grid.voxel_size)
+field3D = generate_field3D(occup_map.map.detach().numpy(), cell_size=voxel_grid.voxel_size)
 
 # Construct SDF class
 sdf = SignedDistanceField(voxel_grid.origin, voxel_grid.voxel_size, 
