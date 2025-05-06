@@ -13,6 +13,7 @@ if this_dir not in sys.path:
 from exlcm.pcd_t import pcd_t
 from exlcm.pose_t import pose_t
 
+
 def construct_pcdlcm_msg(pose, num_points, points, robot_base_offset):
     msg = pcd_t()
     msg.timestamp = int(time.time())
