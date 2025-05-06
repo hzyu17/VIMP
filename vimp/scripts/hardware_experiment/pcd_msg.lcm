@@ -8,3 +8,10 @@ struct pcd_t
     double   points[num_points][3];
     double   robot_base_offset[3];
 }
+
+
+struct pose_t
+{
+    int64_t  timestamp;
+    double   pose[4][4];
+}

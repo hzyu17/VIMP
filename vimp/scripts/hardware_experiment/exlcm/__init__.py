@@ -5,3 +5,4 @@ lcm-gen 1.5.1
 """
 
 from .pcd_t import pcd_t as pcd_t
+from .pose_t import pose_t as pose_t

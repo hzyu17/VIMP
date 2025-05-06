@@ -1,7 +1,6 @@
 import lcm
 import time
 import numpy as np
-
 import os, sys
 
 this_file = os.path.abspath(__file__)
@@ -12,9 +11,9 @@ print("this_dir:", this_dir)
 if this_dir not in sys.path:            
     sys.path.insert(0, this_dir)
 from exlcm.pcd_t import pcd_t
+from exlcm.pose_t import pose_t
 
-
-def construct_lcm_msg(pose, num_points, points, robot_base_offset):
+def construct_pcdlcm_msg(pose, num_points, points, robot_base_offset):
     msg = pcd_t()
     msg.timestamp = int(time.time())
     msg.pose = pose
@@ -22,6 +21,14 @@ def construct_lcm_msg(pose, num_points, points, robot_base_offset):
     msg.points = points
     msg.robot_base_offset = robot_base_offset
 
+    return msg
+
+
+def construct_poselcm_msg(pose):
+    msg = pose_t()
+    msg.timestamp = int(time.time())
+    msg.pose = pose
+    
     return msg
 
 
@@ -44,5 +51,8 @@ if __name__ == '__main__':
     points = np.random.rand(num_points, 3).astype(np.float32)
     robot_base_offset = np.array([0, 0, 0], dtype=np.float32)
     
-    msg = construct_lcm_msg(T_CO, num_points, points, robot_base_offset)
+    msg = construct_pcdlcm_msg(T_CO, num_points, points, robot_base_offset)
     publish_lcm_msg(msg)
+    
+    
+    

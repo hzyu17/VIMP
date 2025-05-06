@@ -13,7 +13,7 @@ if vimp_dir not in sys.path:
 if build_dir not in sys.path:            
     sys.path.insert(0, build_dir)
     
-from scripts.hardware_exp.matlabengine_readsave_sdf import read_and_save_sdf
+from scripts.hardware_experiment.matlabengine_readsave_sdf import read_and_save_sdf
 from python.sdf_robot import save_occmap_for_matlab
 
 from python.sdf_robot import OccpuancyGrid, PointCloud, SignedDistanceField3D
