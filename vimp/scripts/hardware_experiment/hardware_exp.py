@@ -21,8 +21,6 @@ if third_party_dir not in sys.path:
 # from matlabengine_readsave_sdf import read_and_save_sdf
 # from python.sdf_robot import save_occmap_for_matlab
 
-from python.sdf_robot import OccpuancyGrid, PointCloud, SignedDistanceField3D
-from bind_SDF import SignedDistanceField
 from bind_FK import ForwardKinematics, DHType
 from sensor3D_tools import OccpuancyGrid, PointCloud, SignedDistanceField, generate_field3D
 import json
