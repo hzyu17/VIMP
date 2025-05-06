@@ -21,6 +21,11 @@ python trajectory_displayer_ros_WAM.py
 python show_trajectories_paper.py --algorithm gpmp2(or)gvi-mp(or)pgcs-mp --exp 1(or)2
 ```
 
+7. To visualize a voxel grid converted from the point cloud obtained from the camera:
+  a. First, click `Add' button in RViz, add `Marker' under `By display type';
+  b. Change the topic name to /obstacle_voxel
+  c. Publish a voxel message: Check example code: https://github.com/hzyu17/VIMP/blob/cuda/vimp/scripts/vimp_ros/voxel_to_rviz.py
+
 ## Citing
 If you use this repository in your research, please cite the following publications:
 ```
