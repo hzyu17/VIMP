@@ -2,5 +2,6 @@
 	path = vimp/GaussianVI
 	url = https://github.com/hzyu17/GaussianVI.git
 
+[submodule "vimp/3rdparty/sensor3D_tools"]
 	path=vimp/3rdparty/sensor3D_tools
 	url=https://github.com/hzyu17/sensor3D_tools.git
