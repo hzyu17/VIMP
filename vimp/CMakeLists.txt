@@ -27,8 +27,8 @@ endforeach(subdir)
 # ----------------------- options -----------------------
 # Add a flag to control whether to build CPU executables
 option(BUILD_CPU_GVIMP "Build CPU version GVIMP executables from src/gvimp" OFF)
-option(BUILD_GPU_GVIMP "Build GPU version GVIMP executables from src/gvimp_cuda" OFF)
-option(BUILD_KL_PROXIMAL "Build KL-Proximal executables from src/proxkl" ON)
+option(BUILD_GPU_GVIMP "Build GPU version GVIMP executables from src/gvimp_cuda" ON)
+option(BUILD_KL_PROXIMAL "Build KL-Proximal executables from src/proxkl" OFF)
 
 # ---------------------- CPU Executables (Optional) ----------------------
 if(BUILD_CPU_GVIMP)
@@ -63,6 +63,18 @@ if(BUILD_GPU_GVIMP)
                             ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
                             ${CUDA_cusparse_LIBRARY}) 
   endforeach()
+
+  # add_executable(Franka src/gvimp_cuda/gvi_FrankaArm_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
+  # set_target_properties(Franka PROPERTIES LINKER_LANGUAGE CXX)
+  # set_target_properties(Franka PROPERTIES
+  #                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+  #                         )   
+  # target_include_directories(Franka PRIVATE ${Matlab_INCLUDE_DIRS})
+  # target_link_libraries(Franka ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+  #                           ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+  #                           ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
+  #                           ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
+  #                           ${CUDA_cusparse_LIBRARY}) 
 endif()
 
 if(BUILD_KL_PROXIMAL)
@@ -85,12 +97,18 @@ endif()
 
 pybind11_add_module(bind_Params
     pybinds/bind_params.cpp)
+
 # pybind11_add_module(bind_WamSDF
 #     pybinds/bind_WAMSDF.cpp)
+
 pybind11_add_module(bind_SDF
     pybinds/bind_sdf.cpp)
 
-# target_link_libraries(bind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+pybind11_add_module(bind_FK
+    pybinds/bind_fk.cpp)
+
+# # target_link_libraries(bind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+
 
 # # Add all the source files in src/pgcs as a separate executable
 # file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)

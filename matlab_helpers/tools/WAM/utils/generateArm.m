@@ -119,10 +119,11 @@ elseif strcmp(arm_str, 'WAMArm')
 % 7 DOF PR2 right arm
 elseif strcmp(arm_str, 'PR2Arm')
     % arm: PR2 arm
-    alpha = [-1.5708, 1.5708, -1.5708, 1.5708, -1.5708, 1.5708, 0]';
+    % printf('PR2 arm\n');
+    alpha = [-pi/2, pi/2, -pi/2, pi/2, -pi/2, pi/2, 0]';
     a = [0.1, 0, 0, 0, 0, 0, 0]';
     d = [0, 0, 0.4, 0, 0.321, 0, 0]';
-    theta = [0, 1.5708, 0, 0, 0, 0, 0]'; % Theta Bias
+    theta = [0, pi/2, 0, 0, 0, 0, 0]'; % Theta Bias
     abs_arm = Arm(7, a, alpha, d, base_pose, theta);
     % physical arm
     % sphere data [id x y z r]
@@ -156,6 +157,38 @@ elseif strcmp(arm_str, 'PR2Arm')
           6 0 -0.00900 0.18 0.030000
           6 0 -0.00950 0.205 0.020000];
 
+    nr_body = size(spheres_data, 1);
+    
+    sphere_vec = BodySphereVector;
+    for i=1:nr_body
+        sphere_vec.push_back(BodySphere(spheres_data(i,1), spheres_data(i,5), ...
+            Point3(spheres_data(i,2:4)')));
+    end
+    arm_model = ArmModel(abs_arm, sphere_vec);
+
+% 7 link WAM arm
+elseif strcmp(arm_str, 'PandaArm')
+    % arm: WAM arm
+    a = [0, 0, 0, 0.0825, -0.0825, 0, 0.088]';
+    d = [0.333, 0, 0.316, 0, 0.384, 0, 0]';
+    alpha = [0, -pi/2, pi/2, pi/2, -pi/2, pi/2, pi/2]';
+    theta = [0, 0, 0, 0, 0, 0, 0]';
+    abs_arm = Arm(7, a, alpha, d, base_pose, theta);
+    
+    % physical arm
+    % sphere data [id x y z r]
+    spheres_data = [
+      0,  0.00,   0.00,  0.12, 0.06;   % link0
+      1,  0.00,   0.00,  0.24, 0.06;   % link1
+      2,  0.00,   0.00,  0.20, 0.06;   % link2
+      3,  0.00,   0.00,  0.20, 0.06;   % link3
+      4,  0.00,   0.00,  0.20, 0.06;   % link4
+      5,  0.00,   0.00,  0.20, 0.06;   % link5
+      6,  0.00,   0.00,  0.15, 0.08;   % link6 (wrist) 本体
+      6,  0.03,   0.00,  0.15, 0.02;   % frame6 上的 finger1
+      6, -0.03,   0.00,  0.15, 0.02    % frame6 上的 finger2
+    ];
+    
     nr_body = size(spheres_data, 1);
     
     sphere_vec = BodySphereVector;

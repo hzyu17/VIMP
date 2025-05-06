@@ -132,6 +132,9 @@ i_covs = reshape(i_covs, [dim_state, dim_state, nt]);
 hold on 
 view(3)
 plotMap3D(dataset.corner_idx, origin, cell_size);
+
+[Ux, Uy, Uz] = sphere(20);
+
 for j = 1:nt
     % gradual changing colors
     alpha = (j / nt)^(1.15);
@@ -140,6 +143,23 @@ for j = 1:nt
     mean = [i_means(1:2, j); 0; i_means(3:4, j); 0; i_means(5:end, j)];
     % means
     plotArm3D(arm.fk_model(), mean, color, 4, true);
+
+    centers = arm.sphereCentersMat(mean);
+    plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
+    % for k = 1:size(centers, 2)
+    %     r = arm.sphere_radius(k-1);
+    
+    %     % Scale and translate the unit sphere
+    %     X = centers(1,k) + r * Ux;
+    %     Y = centers(2,k) + r * Uy;
+    %     Z = centers(3,k) + r * Uz;
+    
+    %     % Plot a semi-transparent sphere on the same axes
+    %     surf(X, Y, Z, ...
+    %          'FaceColor', 'r', ...
+    %          'FaceAlpha', 0.2, ...    % 20% transparency
+    %          'EdgeColor', 'none');    % No grid lines
+    % end
 end
 
 plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
@@ -148,8 +168,6 @@ plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
 centers = arm.sphereCentersMat(start_conf);
 center_display = centers';
 plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
-
-[Ux, Uy, Uz] = sphere(20);
 
 for k = 1:size(centers, 2)
     r = arm.sphere_radius(k-1);
@@ -167,9 +185,8 @@ for k = 1:size(centers, 2)
 end
 
 centers = arm.sphereCentersMat(end_conf);
+center_display = centers';
 plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
-
-[Ux, Uy, Uz] = sphere(20);
 
 for k = 1:size(centers, 2)
     r = arm.sphere_radius(k-1);

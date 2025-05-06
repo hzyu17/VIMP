@@ -1,5 +1,5 @@
 <Commons>
-    <total_time>3.0</total_time>
+    <total_time>2.0</total_time>
     <n_states>30</n_states>
     <map_name>map_bookshelf</map_name>
     <coeff_Qc>1.0</coeff_Qc>
@@ -18,6 +18,7 @@
     <low_temp_iterations>20</low_temp_iterations>
     <max_n_backtracking>5</max_n_backtracking>
     <sdf_file>/maps/WAM/FrankaDeskDataset</sdf_file>
+    <!-- <sdf_file>/scripts/hardware_exp/sdf</sdf_file> -->
 </Commons>
 
 <Experiment1>

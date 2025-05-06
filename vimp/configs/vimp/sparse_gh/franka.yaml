@@ -3,7 +3,7 @@ n_states:            20
 map_name:            map_bookshelf
 coeff_Qc:            1.0
 GH_deg:              3
-sig_obs:             0.02
+sig_obs:             20.5
 eps_sdf:             0.2
 radius:              0.0
 step_size:           0.7

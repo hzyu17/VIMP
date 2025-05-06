@@ -101,7 +101,7 @@ public:
         radii << 0.1, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
                 0.05, 0.03, 0.05, 0.05, 0.05, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03;
         VectorXi frames(20);
-        frames << 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 5, 7, 8, 8, 8, 8, 8, 8;
+        frames << 0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 6, 7, 7, 7, 7, 7, 7;
         MatrixXd centers(20, 3); // Each row is a center; transpose when inputting to CUDA
         centers <<  0.0, 0.0,  -0.3,
                     0.0, 0.0,  -0.1,
@@ -126,6 +126,12 @@ public:
 
         std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         std::shared_ptr<CudaOperation_3dArm> cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sdf_file(), params.sig_obs(), params.eps_sdf(), dh_type});
+
+        // ::ForwardKinematics fk{a, alpha, d, theta_bias, frames, centers.transpose(), dh_type};
+        // MatrixXd pose;
+        // std::cout << "Start theta: " << goal_theta.transpose() << std::endl;
+        // fk.compute_transformed_sphere_centers(goal_theta, pose);
+        // std::cout << "Start collision points: " << std::endl << pose.transpose() << std::endl;
         
         _sig_obs = params.sig_obs();
         _eps_sdf = params.eps_sdf();
@@ -264,7 +270,7 @@ public:
         radii << 0.1, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
                 0.05, 0.03, 0.05, 0.05, 0.05, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03;
         VectorXi frames(20);
-        frames << 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 5, 7, 8, 8, 8, 8, 8, 8;
+        frames << 0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 6, 7, 7, 7, 7, 7, 7;
         MatrixXd centers(20, 3); // Each row is a center; transpose when inputting to CUDA
         centers <<  0.0, 0.0,  -0.3,
                     0.0, 0.0,  -0.1,
@@ -389,7 +395,7 @@ public:
     //     for (int i = 0; i < frames.size(); i++)
     //     {
     //         VectorXd center = centers.col(i);
-    //         Matrix4d T = dh_matrices[frames[i]-1];
+    //         Matrix4d T = dh_matrices[frames[i]];
     //         Vector4d center_homogeneous(center(0), center(1), center(2), 1.0);
     //         Vector4d transformed_center = T * center_homogeneous;
     //         std::cout << "Transformed center" << i << ": " << transformed_center.transpose().segment(0,3) << std::endl;
