@@ -4,7 +4,7 @@ build/*
 vimp/latex/*
 vimp/html/*
 vimp/doxygen/*
-vimp/build/*
+**/build
 vimp/.vscode/*
 vimp_python/vimp/*
 vimp_python/CMakeFiles/*
@@ -17,3 +17,4 @@ vimp/python/debug/*
 vimp/python/sdf_robot/map/planar/MultiObstacleLongRangeMap_field.csv
 **/*.bin
 **/*.pyc
+**/__pycache__

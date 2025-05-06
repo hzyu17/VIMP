@@ -169,7 +169,6 @@ sdf.loadSDF(os.path.join(this_dir, "../../maps/WAM/FrankaDeskDataset_cereal.bin"
 # sdf = SignedDistanceField()
 # sdf.loadSDF(this_dir+"/sdf.bin")
 
-
 # ==============================================
 # python bindings for GVIMP Planner C++ classes
 from bind_Params.core import GVIMPParams

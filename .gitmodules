@@ -6,6 +6,6 @@
 	path=vimp/3rdparty/sensor3D_tools
 	url=https://github.com/hzyu17/sensor3D_tools.git
 
-[submodule "vimp/3rdparty/sensor3D_tools"]
+[submodule "vimp/3rdparty/AprilTag"]
 	path=vimp/3rdparty/AprilTag
-	url=https://github.com/Tinker-Twins/AprilTag.git
+	url=https://github.com/hzyu17/AprilTag.git
