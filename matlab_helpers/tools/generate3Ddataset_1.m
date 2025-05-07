@@ -116,6 +116,22 @@ elseif strcmp(dataset_str, 'FrankaDeskDataset')
     [dataset.map, dataset.corner_idx] = add_obstacle([250 140 140], [60, 100, 5], dataset.map, dataset.corner_idx);
     [dataset.map, dataset.corner_idx] = add_obstacle([250 140 90], [60, 100, 5], dataset.map, dataset.corner_idx);
 
+elseif strcmp(dataset_str, 'FrankaBoxDataset')
+    % params
+    dataset.cols = 300;
+    dataset.rows = 300;
+    dataset.z = 300;
+    dataset.origin_x = -1.5;
+    dataset.origin_y = -1.5;
+    dataset.origin_z = 0;
+    dataset.cell_size = 0.01;
+    % map
+    dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
+    % obstacles
+    dataset.corner_idx = [];
+    [dataset.map, dataset.corner_idx] = add_obstacle([200 140 20], [20, 20, 40], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([200 140 42], [60, 60, 4], dataset.map, dataset.corner_idx);
+
 
 elseif strcmp(dataset_str, 'PR2DeskDataset')
     % params
@@ -261,6 +277,5 @@ corner = [corner; ...
    [position(1)-half_size_row , position(1)+half_size_row, ...
     position(2)-half_size_col , position(2)+half_size_col,...
     position(3)-half_size_z   , position(3)+half_size_z]];
-
 
 end

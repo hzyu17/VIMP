@@ -1,0 +1,46 @@
+<Commons>
+    <total_time>2.25</total_time>
+    <n_states>200</n_states>
+    <map_name>map_bookshelf</map_name>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>3</GH_deg>
+    <sig_obs>10</sig_obs>
+    <eps_sdf>0.1</eps_sdf>
+    <radius>0.01</radius>
+    <step_size>0.45</step_size>
+    <alpha>1.0</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>10000.0</boundary_penalties>
+    <temperature>0.5</temperature>
+    <high_temperature>3.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <max_iterations>30</max_iterations>
+    <low_temp_iterations>20</low_temp_iterations>
+    <max_n_backtracking>5</max_n_backtracking>
+    <sdf_file>/maps/WAM/FrankaBoxDataset</sdf_file>
+</Commons>
+
+<Experiment1>
+    <start_pos>
+        <1>-1.691</1>
+        <2>-1.326</2>
+        <3>2.048</3>
+        <4>-1.781</4>
+        <5>1.105</5>
+        <6>2.478</6>
+        <7>-1.340</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>-1.848</1>
+        <2>0.970</2>
+        <3>0.832</3>
+        <4>-2.228</4>
+        <5>2.033</5>
+        <6>2.236</6>
+        <7>0.637</7>
+    </goal_pos>
+
+    <saving_prefix>matlab_helpers/GVIMP-examples/Franka/sparse_gh/case2/</saving_prefix>
+
+</Experiment1>

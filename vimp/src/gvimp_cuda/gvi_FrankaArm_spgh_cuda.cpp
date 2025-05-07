@@ -23,7 +23,7 @@ int main(int argc, char* argv[]){
     GVIMPParams params;
     // no experiment argument, run the default scripts
     if (argc == 1){
-        std::string config_file{source_root+"/configs/vimp/sparse_gh/franka.xml"};
+        std::string config_file{source_root+"/configs/vimp/sparse_gh/franka_box.xml"};
         GVIMPRunner7D<GVIMPFrankaSDF> runner(num_exp, config_file);
         runner.read_config(params);
         runner.run();
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
     else if (argc == 18) {
-        std::string config_file{source_root+"/configs/vimp/wam_map1_new.xml"};
+        std::string config_file{source_root+"/configs/vimp/sparse_gh/franka_box.xml"};
         GVIMPRunner7D<GVIMPFrankaSDF> runner(num_exp, config_file);
 
         int i_exp = std::stoi(argv[1]);

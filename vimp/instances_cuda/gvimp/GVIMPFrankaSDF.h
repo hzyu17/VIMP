@@ -110,8 +110,8 @@ public:
                     0.0, 0.0,  -0.10,
                     0.0, 0.0,  -0.175,
                     0.0, 0.0,  -0.25,
-                    0.0, 0.0,  -0.07,
-                    0.0, 0.0,   0.07,
+                    0.0, 0.0,  -0.05,
+                    0.0, 0.0,   0.05,
                     0.0, 0.0,  -0.30,
                     0.0, 0.08, -0.15,
                     0.0, 0.10,  0.00,
@@ -241,7 +241,7 @@ public:
 
         optimizer.set_step_size_base(params.step_size()); // a local optima
         optimizer.set_alpha(params.alpha());
-        // optimizer.set_save_covariance(false);
+        optimizer.set_save_covariance(false);
         
         optimizer.classify_factors();
 

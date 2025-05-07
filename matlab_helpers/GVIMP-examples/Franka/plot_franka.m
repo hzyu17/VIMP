@@ -14,15 +14,15 @@ import gpmp2.*
 % =============================
 % sparse GH quadrature results 
 % =============================
-i_exp = 1;
+i_exp = 2;
 
 switch i_exp
     case 1
         prefix = "sparse_gh/case1";
         map_name = "FrankaDeskDataset";
-    % case 2
-    %     prefix = "sparse_gh/case2";
-    %     map_name = "PR2IndustrialDataset";
+    case 2
+        prefix = "sparse_gh/case2";
+        map_name = "FrankaBoxDataset";
 end
 
 %% ******************* Start and goal configurations ******************
@@ -34,13 +34,20 @@ end
 % end_confs = [0.22, 0.22, 0.7, -1.673, -0.157, 1.8, 1.74];
 % end_confs = [-1.73, 1.5, -2.56, -1.65, 1.027, 0.611, 1.911];
 
-start_confs = [-0.351, -0.521, 2.436, -1.402, 0.315, 1.783, -1.824];
-end_confs = [-0.602, 0.721, 0.832, -0.908, -0.511, 1.457, 0.811];
+start_confs = [
+    -0.351, -0.521, 2.436, -1.402, 0.315, 1.783, -1.824;
+    -2.005, 1.160, 1.058, -1.953, -1.441, 2.179, 1.274
+];
+
+end_confs = [
+    -0.602, 0.721, 0.832, -0.908, -0.511, 1.457, 0.811;
+    -2.144, -0.952, 2.649, -1.502, 0.551, 2.318, -1.835
+];
 
 %% read experiment results
 means = csvread([prefix+"/mean.csv"]);
 covs = csvread([prefix+"/cov.csv"]);
-precisions = csvread([prefix+"/joint_precision.csv"]);
+% precisions = csvread([prefix+"/joint_precision.csv"]);
 costs = csvread([prefix+"/cost.csv"]);
 factor_costs = csvread([prefix+"/factor_costs.csv"]);
 
@@ -72,9 +79,9 @@ origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
 
-disp('calculating signed distance field ...');
-field = signedDistanceField3D(dataset.map, dataset.cell_size);
-disp('calculating signed distance field done');
+% disp('calculating signed distance field ...');
+% field = signedDistanceField3D(dataset.map, dataset.cell_size);
+% disp('calculating signed distance field done');
 
 %% ******************* PR2Arm ******************
 arm = generatePandaArm('PandaArm');

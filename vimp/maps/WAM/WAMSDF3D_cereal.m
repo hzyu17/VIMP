@@ -12,7 +12,7 @@ addpath("../../../matlab_helpers/tools")
 addpath("..")
 
 %% dataset
-dataset = generate3Ddataset_1('FrankaDeskDataset');
+dataset = generate3Ddataset_1('FrankaBoxDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 % origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
@@ -52,7 +52,7 @@ zlim([-0, 0.9])
 %% save SDF
 disp('saving sdf to .bin file...');
 % sdf.saveSDF('WAMDeskDataset.bin');
-SignedDistanceField_mex('save', sdf, 'FrankaDeskDataset_cereal.bin');
+SignedDistanceField_mex('save', sdf, 'FrankaBoxDataset_cereal.bin');
 
 % %% create the mesh for visualization
 % [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);
