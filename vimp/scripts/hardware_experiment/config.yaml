@@ -1,0 +1,15 @@
+Field:
+  field_origin: [0, 0, 0] # [x, y, z] The origin of the field in the april tag's frame
+  field_size: [500, 500, 500]
+  cell_size: 0.01
+  obstacle:
+    center: [200, 200] # [row, col], only consider on the table
+    size: [50, 50, 50] # [row, col, z]
+
+Camera:
+  config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
+  apriltag_lcm_topic: "EXAMPLE"
+  apriltag_families: 'tag25h9' # Change in vimp/3rdparty/AprilTag/scripts/apriltag.py
+
+Planning:
+  config_file: "vimp/configs/vimp/sparse_gh/franka.yaml"

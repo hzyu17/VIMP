@@ -20,6 +20,9 @@ cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
 
+
+publish_ros = True
+
 while True:
     ret, frame = cap.read()        
     if not ret:
@@ -41,7 +44,29 @@ while True:
         msg = construct_poselcm_msg(pose)
         publish_lcm_msg(msg)
         
-    time.sleep(1.0)  # Add a small delay to control the loop speed
+        if publish_ros:
+            import rospy
+            from geometry_msgs.msg import PoseStamped
+            import tf.transformations as tf
+            rospy.init_node('apriltag_webcam', anonymous=True)
+            pub = rospy.Publisher('/apriltag_pose', PoseStamped, queue_size=10)
+            pose_msg = PoseStamped()
+            pose_msg.header.stamp = rospy.Time.now()
+            pose_msg.header.frame_id = "camera_frame"
+            
+            t = pose[:3, 3]
+            q = tf.quaternion_from_matrix(pose)
+
+            pose_msg.pose.position.x, pose_msg.pose.position.y, pose_msg.pose.position.z = t
+            
+            pose_msg.pose.orientation.x = q[0]
+            pose_msg.pose.orientation.y = q[1]
+            pose_msg.pose.orientation.z = q[2]
+            pose_msg.pose.orientation.w = q[3]
+            pub.publish(pose_msg)
+            print("Published pose to ROS topic /apriltag_pose")
+        
+    time.sleep(0.1)  # Add a small delay to control the loop speed
     
 
 cap.release()

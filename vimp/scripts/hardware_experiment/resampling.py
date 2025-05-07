@@ -23,15 +23,13 @@ if third_party_dir not in sys.path:
 from bind_FK import ForwardKinematics, DHType
 from sensor3D_tools import SignedDistanceField
 
-result_dir = os.path.join(this_dir, "../../../matlab_helpers/GVIMP-examples/Franka/sparse_gh/case1")
-config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
 
-
-
-def collision_checking_and_resampling(mean_path: str,
-                        cov_path: str,
-                        sdf: SignedDistanceField,
-                        max_iters: int = 1000):
+def collision_checking_and_resampling(config_file: str,
+                                      result_dir: str,
+                                      mean_path: str,
+                                      cov_path: str,
+                                      sdf: SignedDistanceField,
+                                      max_iters: int = 1000):
     # ---------------- Forward Kinematics and Parameters----------------
     with config_file.open("r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
@@ -127,6 +125,9 @@ def collision_checking_and_resampling(mean_path: str,
 
 
 if __name__ == "__main__":
+    result_dir = os.path.join(this_dir, "../../../matlab_helpers/GVIMP-examples/Franka/sparse_gh/case1")
+    config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
+
     # Load the signed distance field
     sdf = SignedDistanceField()
     sdf.loadSDF(os.path.join(this_dir, "../../maps/WAM/FrankaDeskDataset_cereal.bin"))
@@ -136,47 +137,5 @@ if __name__ == "__main__":
     cov_path = os.path.join(result_dir, "Sk_sdf.csv")
 
     # Perform collision checking and resampling
-    collision_checking_and_resampling(mean_path, cov_path, sdf, 1000)
+    collision_checking_and_resampling(config_file, result_dir, mean_path, cov_path, sdf, 1000)
 
-
-
-# dh_type = DHType.Modified
-
-# a           = np.array([0.0, 0.0, 0.0,  0.0825, -0.0825, 0.0,   0.088, 0.0  ], dtype=np.float64)
-# alpha       = np.array([0,    -np.pi/2,  np.pi/2,  np.pi/2, -np.pi/2, np.pi/2, np.pi/2, 0.0], dtype=np.float64)
-# d           = np.array([0.333, 0.0,      0.316,    0.0,      0.384,    0.0,     0.0,     0.107], dtype=np.float64)
-# theta_bias  = np.array([0,     0,        0,        0,        0,        0,       0,      -np.pi/4], dtype=np.float64)
-# radii       = np.array([
-#     0.1,  0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 
-#     0.05, 0.03, 0.05, 0.05, 0.05, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03
-# ], dtype=np.float64)
-# frames      = np.array([
-#     0, 0, 1, 1, 2, 2, 2, 3, 3, 4,
-#     4, 4, 4, 6, 7, 7, 7, 7, 7, 7
-# ], dtype=np.int32)
-# centers     = np.array([
-#     [ 0.0,  0.0,  -0.3],
-#     [ 0.0,  0.0,  -0.1],
-#     [ 0.0,  0.0,  -0.07],
-#     [ 0.0,  0.0,   0.07],
-#     [ 0.0,  0.0,  -0.10],
-#     [ 0.0,  0.0,  -0.175],
-#     [ 0.0,  0.0,  -0.25],
-#     [ 0.0,  0.0,  -0.07],
-#     [ 0.0,  0.0,   0.07],
-#     [ 0.0,  0.0,  -0.30],
-#     [ 0.0,  0.08, -0.15],
-#     [ 0.0,  0.10,  0.00],
-#     [ 0.0,  0.00,  0.00],
-#     [ 0.0,  0.0,  -0.05],
-#     [ 0.0,  0.0,   0.00],
-#     [ 0.0,  0.06,  0.00],
-#     [ 0.0, -0.06,  0.00],
-#     [ 0.0,  0.0,   0.04],
-#     [ 0.0,  0.07,  0.04],
-#     [ 0.0, -0.07,  0.04]
-# ], dtype=np.float64)
-
-
-# start_confs = np.array([-0.351, -0.521, 2.436, -1.402, 0.315, 1.783, -1.824], dtype=np.float64)
-# poses = fk.compute_sphere_centers(start_confs)
