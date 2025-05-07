@@ -13,6 +13,7 @@ from AprilTag.scripts.apriltag_image import apriltag_image, apriltag_image2pose
 from sensor3D_tools.lcm.pcd_lcm_sender import construct_poselcm_msg, publish_lcm_msg
 
 import cv2
+import time
 
 
 cap = cv2.VideoCapture(0)         
@@ -39,6 +40,8 @@ while True:
     if pose is not None:
         msg = construct_poselcm_msg(pose)
         publish_lcm_msg(msg)
+        
+    time.sleep(1.0)  # Add a small delay to control the loop speed
     
 
 cap.release()
