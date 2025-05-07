@@ -10,6 +10,7 @@ if thirdparty_dir not in sys.path:
     sys.path.insert(0, thirdparty_dir)
 
 from AprilTag.scripts.apriltag_image import apriltag_image, apriltag_image2pose
+from sensor3D_tools.lcm.pcd_lcm_sender import construct_poselcm_msg, publish_lcm_msg
 
 import cv2
 
@@ -32,7 +33,13 @@ while True:
                                 detection_window_name='AprilTag',
                                 camera_params=(3156.71852, 3129.52243, 359.097908, 239.736909))
     
+    
     print("pose: ", pose)
+    
+    if pose is not None:
+        msg = construct_poselcm_msg(pose)
+        publish_lcm_msg(msg)
+    
 
 cap.release()
 cv2.destroyAllWindows()
