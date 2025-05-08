@@ -36,12 +36,12 @@ end
 
 start_confs = [
     -0.351, -0.521, 2.436, -1.402, 0.315, 1.783, -1.824;
-    -2.005, 1.160, 1.058, -1.953, -1.441, 2.179, 1.274
+    -1.691, -1.326, 2.048, -1.781, 1.105, 2.478, -1.340
 ];
 
 end_confs = [
     -0.602, 0.721, 0.832, -0.908, -0.511, 1.457, 0.811;
-    -2.144, -0.952, 2.649, -1.502, 0.551, 2.318, -1.835
+    -1.848, 0.970, 0.832, -2.228, 2.033, 2.236, 0.637
 ];
 
 %% read experiment results
@@ -50,6 +50,7 @@ covs = csvread([prefix+"/cov.csv"]);
 % precisions = csvread([prefix+"/joint_precision.csv"]);
 costs = csvread([prefix+"/cost.csv"]);
 factor_costs = csvread([prefix+"/factor_costs.csv"]);
+good_means = csvread([prefix+"/good_zk.csv"]);
 
 %% ******************* Define parameters ******************
 % ----- parameters -----
@@ -88,11 +89,8 @@ arm = generatePandaArm('PandaArm');
 
 % start and goal 
 
-% start_conf = start_confs(i_exp, 1:end)';
-% end_conf = end_confs(i_exp, 1:end)';
-
-start_conf = [start_confs(i_exp, 1:2), 0, start_confs(i_exp, 3:4), 0, start_confs(i_exp, 5:end)]';
-end_conf = [end_confs(i_exp, 1:2), 0, end_confs(i_exp, 3:4), 0, end_confs(i_exp, 5:end)]';
+start_conf = start_confs(i_exp, 1:end)';
+end_conf = end_confs(i_exp, 1:end)';
 
 start_vel = zeros(7,1);
 end_vel = zeros(7,1);
@@ -146,27 +144,14 @@ for j = 1:nt
     % gradual changing colors
     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, alpha];
-    % mean = i_means(1:7, j)';
-    mean = [i_means(1:2, j); 0; i_means(3:4, j); 0; i_means(5:end, j)];
-    % means
+    mean = i_means(1:7, j);
+    % mean_resample = good_means(:, j);
     plotArm3D(arm.fk_model(), mean, color, 4, true);
+    % plotArm3D(arm.fk_model(), mean_resample, color, 4, true);
 
     centers = arm.sphereCentersMat(mean);
+    % centers = arm.sphereCentersMat(mean_resample);
     plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
-    % for k = 1:size(centers, 2)
-    %     r = arm.sphere_radius(k-1);
-    
-    %     % Scale and translate the unit sphere
-    %     X = centers(1,k) + r * Ux;
-    %     Y = centers(2,k) + r * Uy;
-    %     Z = centers(3,k) + r * Uz;
-    
-    %     % Plot a semi-transparent sphere on the same axes
-    %     surf(X, Y, Z, ...
-    %          'FaceColor', 'r', ...
-    %          'FaceAlpha', 0.2, ...    % 20% transparency
-    %          'EdgeColor', 'none');    % No grid lines
-    % end
 end
 
 plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);

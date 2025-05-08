@@ -123,7 +123,7 @@ elseif strcmp(dataset_str, 'FrankaBoxDataset')
     dataset.z = 300;
     dataset.origin_x = -1.5;
     dataset.origin_y = -1.5;
-    dataset.origin_z = 0;
+    dataset.origin_z = 0.0;
     dataset.cell_size = 0.01;
     % map
     dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
@@ -131,6 +131,23 @@ elseif strcmp(dataset_str, 'FrankaBoxDataset')
     dataset.corner_idx = [];
     [dataset.map, dataset.corner_idx] = add_obstacle([200 140 20], [20, 20, 40], dataset.map, dataset.corner_idx);
     [dataset.map, dataset.corner_idx] = add_obstacle([200 140 42], [60, 60, 4], dataset.map, dataset.corner_idx);
+
+
+elseif strcmp(dataset_str, 'FrankaBoxDatasetOffset')
+    % params
+    dataset.cols = 300;
+    dataset.rows = 300;
+    dataset.z = 300;
+    dataset.origin_x = -1.5;
+    dataset.origin_y = -1.5;
+    dataset.origin_z = 0;
+    dataset.cell_size = 0.01;
+    % map
+    dataset.map = zeros(dataset.rows, dataset.cols, dataset.z);
+    % obstacles
+    dataset.corner_idx = [];
+    [dataset.map, dataset.corner_idx] = add_obstacle([200 150 20], [20, 20, 40], dataset.map, dataset.corner_idx);
+    [dataset.map, dataset.corner_idx] = add_obstacle([200 150 42], [60, 60, 4], dataset.map, dataset.corner_idx);
 
 
 elseif strcmp(dataset_str, 'PR2DeskDataset')

@@ -25,11 +25,9 @@ from sensor3D_tools import SignedDistanceField
 
 
 def collision_checking_and_resampling(config_file: str,
-                                      result_dir: str,
-                                      mean_path: str,
-                                      cov_path: str,
                                       sdf: SignedDistanceField,
-                                      max_iters: int = 1000):
+                                      max_iters: int = 1000,
+                                      threshold: float = 0.0):
     # ---------------- Forward Kinematics and Parameters----------------
     with config_file.open("r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
@@ -45,47 +43,49 @@ def collision_checking_and_resampling(config_file: str,
     frames     = np.array(dh["frames"],     dtype=np.int32)
     centers    = np.array(dh["centers"],    dtype=np.float64)  # shape (20,3)
 
+    result_dir = Path(vimp_dir + "/" + cfg["saving_prefix"])
+
+    # Load the mean and covariance matrices
+    mean_path = os.path.join(result_dir, "zk_sdf.csv")
+    cov_path = os.path.join(result_dir, "Sk_sdf.csv")
+
     # Create FK object
     fk = ForwardKinematics(a, alpha, d, theta_bias, frames, centers.T, dh_type)
 
     # ---------------- Load VIMP Results ----------------
     zk_matrix = np.loadtxt(mean_path, delimiter=',')
     joint_means = zk_matrix[:7, :].T
-
+    num_states = joint_means.shape[0]
+    
     covariance_matrix = np.loadtxt(cov_path, delimiter=',')
-    covariance_matrix = covariance_matrix.reshape(14, 14, 30)
+    covariance_matrix = covariance_matrix.reshape(14, 14, num_states)
     covariance_matrix = covariance_matrix[:7, :7, :]
 
     # ----------------- Collision Checking ----------------
-    sig_obs = cfg["sig_obs"]
-    eps_sdf = cfg["eps_sdf"]
     n_states = joint_means.shape[0]
     costs = np.zeros(n_states)
 
     for i in range(n_states):
         pts = fk.compute_sphere_centers(joint_means[i]).T
         signed_distances = np.array([sdf.getSignedDistance(point) for point in pts])
-        n_balls = signed_distances.shape[0]
-        distances = np.maximum(0, (eps_sdf + radii[:n_balls]) - signed_distances)
-        identity = np.eye(distances.shape[0])
-        collision_cost = distances @ (sig_obs * identity) @ distances.T
-        costs[i] = collision_cost
+        # Compute difference between the signed distance and the sum of epsilon and radius
+        margins = signed_distances - radii
+        costs[i] = np.min(margins)
     costs = np.array(costs)
+    # print(f"Collision costs: {costs}")
 
     means = joint_means
     covs = covariance_matrix
 
-
     # ----------------- Resampling ------------------------
     it = 0
-    threshold = 1e-4
 
     # Resample until all intermediate states are collision-free
     # or until max iterations is reached
     while True:
         # Only consider the intermediate states (exclude the first and last points).
         indices = np.arange(costs.shape[0])
-        bad_idx = indices[(costs > threshold) & (indices != 0) & (indices != costs.shape[0] - 1)]
+        bad_idx = indices[(costs < threshold) & (indices != 0) & (indices != costs.shape[0] - 1)]
         if bad_idx.size == 0:
             print("All intermediate states are collision-free, ending resampling.")
             break
@@ -93,7 +93,7 @@ def collision_checking_and_resampling(config_file: str,
             print(f"Reached maximum iterations {max_iters}, and some states still have collisions: {bad_idx}")
             break
         it += 1
-        print(f"Iteration {it}: {bad_idx.size} states need resampling -> indices {bad_idx}")
+        # print(f"Iteration {it}: {bad_idx.size} states need resampling -> indices {bad_idx}")
 
         for i in bad_idx:
             # Use the original mean from joint_means for sampling
@@ -101,6 +101,11 @@ def collision_checking_and_resampling(config_file: str,
             cov_i  = covs[:, :, i]
             # Ensure the covariance is positive-definite by adding a small jitter.
             cov_i += 1e-6 * np.eye(mean_i.size)
+
+            eig_vals = np.linalg.eigvals(cov_i)
+            max_eig = np.max(eig_vals)
+            print(f"Largest eigenvalue for state {i}: {max_eig}")
+
             new_theta = np.random.multivariate_normal(mean_i, cov_i)
 
             # Update the mean for this state.
@@ -112,11 +117,10 @@ def collision_checking_and_resampling(config_file: str,
             # If SignedDistanceField returns voxel units, convert them to meters:
             # dists_m = raw_dists * voxel_grid.voxel_size
             dists_m = raw_dists  # assume it's already in meters
-            dists = np.maximum(0, (eps_sdf + radii[:dists_m.size]) - dists_m)
-            # Compute the collision cost as a quadratic form.
-            costs[i] = dists @ (sig_obs * dists)
+            margins = dists_m - radii
+            costs[i] = np.min(margins)
 
-        print(f"  End of iteration {it}, remaining collision costs: {costs[bad_idx]}")
+        # print(f"  End of iteration {it}, remaining collision costs: {costs[bad_idx]}")
 
     # Save the valid mean trajectory to a csv file.
     output_file = os.path.join(result_dir, "good_zk.csv")
@@ -125,17 +129,21 @@ def collision_checking_and_resampling(config_file: str,
 
 
 if __name__ == "__main__":
-    result_dir = os.path.join(this_dir, "../../../matlab_helpers/GVIMP-examples/Franka/sparse_gh/case1")
-    config_file = Path(vimp_dir + "/configs/vimp/sparse_gh/franka.yaml")
+
+    experiment_config = this_dir + "/config.yaml"
+    path_to_yaml = Path(experiment_config)
+
+    with path_to_yaml.open("r") as f:
+        cfg = yaml.safe_load(f)            # cfg is now a nested dict
+
+    planning_cfg_path   = Path(cfg["Planning"]["config_file"])
+    max_iters           = cfg["Sampling"]["max_iters"]
+    threshold          = cfg["Sampling"]["threshold"]
 
     # Load the signed distance field
     sdf = SignedDistanceField()
-    sdf.loadSDF(os.path.join(this_dir, "../../maps/WAM/FrankaDeskDataset_cereal.bin"))
-
-    # Load the mean and covariance matrices
-    mean_path = os.path.join(result_dir, "zk_sdf.csv")
-    cov_path = os.path.join(result_dir, "Sk_sdf.csv")
+    sdf.loadSDF(os.path.join(this_dir, "../../maps/WAM/FrankaBoxDataset_cereal.bin"))
 
     # Perform collision checking and resampling
-    collision_checking_and_resampling(config_file, result_dir, mean_path, cov_path, sdf, 1000)
+    collision_checking_and_resampling(planning_cfg_path, sdf, max_iters, threshold)
 

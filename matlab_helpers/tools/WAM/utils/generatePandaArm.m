@@ -168,6 +168,53 @@ elseif strcmp(arm_str, 'PR2Arm')
 
 % 7 link Panda arm
 elseif strcmp(arm_str, 'PandaArm')
+    d = [0.333, 0, 0.316, 0, 0.384, 0, 0.107]';
+    theta = [0, 0, 0, 0, 0, 0, -pi/4]';
+    a = [0, 0, 0.0825, -0.0825, 0, 0.088, 0]';
+    alpha = [-pi/2, pi/2, pi/2, -pi/2, pi/2, pi/2, 0]';
+
+    abs_arm = Arm(7, a, alpha, d, base_pose, theta);
+    
+    % physical arm
+    % sphere data [id x y z r]
+    spheres_data = [...
+    0,  0.0,  0.3,  0,  0.1;
+    0,  0.0, 0.1, 0, 0.05;
+    0,  0,  0.0,  -0.07,  0.05;
+    0,  0,  0.0,  0.07,  0.05;
+
+    1, 0.0, 0, 0.1, 0.05;
+    1, 0.0, 0, 0.175, 0.05;
+    1, 0.0, 0, 0.25, 0.05;
+
+    2, 0, 0.0,  -0.05,  0.050;
+    2, 0, 0.0,  0.05,  0.050;
+
+    4, 0, -0.3, 0, 0.05;
+    4, 0, -0.15, -0.08, 0.03;
+    4, 0, 0, -0.1, 0.05;
+    4, 0, 0.0, 0, 0.05;
+
+    5, 0, 0, -0.05, 0.05;
+
+    6, 0, 0, 0, 0.03;
+    6, 0, 0.06, 0, 0.03;
+    6, 0, -0.06, 0, 0.03;
+    6, 0, 0, 0.04, 0.03;
+    6, 0, 0.07, 0.04, 0.03;
+    6, 0, -0.07, 0.04, 0.03;];
+    
+    nr_body = size(spheres_data, 1);
+    
+    sphere_vec = BodySphereVector;
+    for i=1:nr_body
+        sphere_vec.push_back(BodySphere(spheres_data(i,1), spheres_data(i,5), ...
+            Point3(spheres_data(i,2:4)')));
+    end
+    arm_model = ArmModel(abs_arm, sphere_vec);
+
+% 7 link Panda arm
+elseif strcmp(arm_str, 'PandaArm1')
     d = [0.333, 0, 0.316, 0, 0, 0.384, 0, 0, 0.107]';
     theta = [0, 0, 0, 0, 0, 0, 0, 0, -pi/4]';
     a = [0, 0, 0, 0.0825, 0, -0.0825, 0, 0.088, 0]';
