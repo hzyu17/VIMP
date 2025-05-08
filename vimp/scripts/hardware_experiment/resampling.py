@@ -55,24 +55,23 @@ def collision_checking_and_resampling(config_file: str,
     # ---------------- Load VIMP Results ----------------
     zk_matrix = np.loadtxt(mean_path, delimiter=',')
     joint_means = zk_matrix[:7, :].T
-    num_states = joint_means.shape[0]
+    n_states = joint_means.shape[0]
+    n_spheres = frames.size
     
     covariance_matrix = np.loadtxt(cov_path, delimiter=',')
-    covariance_matrix = covariance_matrix.reshape(14, 14, num_states)
+    covariance_matrix = covariance_matrix.reshape(14, 14, n_states)
     covariance_matrix = covariance_matrix[:7, :7, :]
 
     # ----------------- Collision Checking ----------------
-    n_states = joint_means.shape[0]
-    costs = np.zeros(n_states)
+    margins_matrix = np.zeros((n_spheres, n_states))
 
     for i in range(n_states):
         pts = fk.compute_sphere_centers(joint_means[i]).T
         signed_distances = np.array([sdf.getSignedDistance(point) for point in pts])
-        # Compute difference between the signed distance and the sum of epsilon and radius
-        margins = signed_distances - radii
-        costs[i] = np.min(margins)
-    costs = np.array(costs)
-    # print(f"Collision costs: {costs}")
+        # Compute margins as the difference between the signed distances and the radii
+        margins_matrix[:, i] = signed_distances - radii
+    min_margin = np.min(margins_matrix, axis=0)
+    # print(f"Minimum margin for each state: {min_margin}")
 
     means = joint_means
     covs = covariance_matrix
@@ -84,8 +83,8 @@ def collision_checking_and_resampling(config_file: str,
     # or until max iterations is reached
     while True:
         # Only consider the intermediate states (exclude the first and last points).
-        indices = np.arange(costs.shape[0])
-        bad_idx = indices[(costs < threshold) & (indices != 0) & (indices != costs.shape[0] - 1)]
+        indices = np.arange(n_states)
+        bad_idx = indices[(min_margin < threshold) & (indices != 0) & (indices != n_states - 1)]
         if bad_idx.size == 0:
             print("All intermediate states are collision-free, ending resampling.")
             break
@@ -96,29 +95,33 @@ def collision_checking_and_resampling(config_file: str,
         # print(f"Iteration {it}: {bad_idx.size} states need resampling -> indices {bad_idx}")
 
         for i in bad_idx:
-            # Use the original mean from joint_means for sampling
-            mean_i = joint_means[i]
-            cov_i  = covs[:, :, i]
+            state_margins = margins_matrix[:, i]
+            first_collision = np.where(state_margins < threshold)[0][0]
+            frame = frames[first_collision]
+            joint_idx = max(frame - 1, 0)
+            # joint_idx = 0
+
+            # Sample from the original distribution
+            mean_i = joint_means[i, joint_idx:]
+            cov_i  = covs[joint_idx:, joint_idx:, i]
+
             # Ensure the covariance is positive-definite by adding a small jitter.
             cov_i += 1e-6 * np.eye(mean_i.size)
 
-            eig_vals = np.linalg.eigvals(cov_i)
-            max_eig = np.max(eig_vals)
-            print(f"Largest eigenvalue for state {i}: {max_eig}")
+            # eig_vals = np.linalg.eigvals(cov_i)
+            # max_eig = np.max(eig_vals)
+            # print(f"Largest eigenvalue for state {i}: {max_eig}")
 
             new_theta = np.random.multivariate_normal(mean_i, cov_i)
 
             # Update the mean for this state.
-            means[i] = new_theta
+            means[i, joint_idx:] = new_theta
 
             # Recompute the collision cost for the new sample.
-            poses = fk.compute_sphere_centers(new_theta)
-            raw_dists = np.array([sdf.getSignedDistance(pt) for pt in poses.T])
-            # If SignedDistanceField returns voxel units, convert them to meters:
-            # dists_m = raw_dists * voxel_grid.voxel_size
-            dists_m = raw_dists  # assume it's already in meters
-            margins = dists_m - radii
-            costs[i] = np.min(margins)
+            pts = fk.compute_sphere_centers(means[i]).T
+            raw_dists = np.array([sdf.getSignedDistance(pt) for pt in pts])
+            margins_matrix[:, i] = raw_dists - radii
+            min_margin[i] = np.min(margins_matrix[:, i])
 
         # print(f"  End of iteration {it}, remaining collision costs: {costs[bad_idx]}")
 
