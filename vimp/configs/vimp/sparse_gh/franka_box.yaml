@@ -1,0 +1,25 @@
+Commons:
+  total_time:            2.25
+  n_states:              200
+  map_name:              map_bookshelf
+  coeff_Qc:              1.0
+  GH_deg:                3
+  sig_obs:               10
+  eps_sdf:               0.1
+  radius:                0.01
+  step_size:             0.45
+  alpha:                 1.0
+  init_precision_factor: 10000.0
+  boundary_penalties:    10000.0
+  temperature:           0.1
+  high_temperature:      0.5
+  stop_err:              1e-5
+  max_iterations:        20
+  low_temp_iterations:   20
+  max_n_backtracking:    5
+  sdf_file:              "/maps/WAM/FrankaBoxDataset"
+
+Experiment1:
+  start_pos: [-1.691, -1.326,  2.048, -1.781, 1.105, 2.478, -1.340]
+  goal_pos:  [-1.848,  0.970,  0.832, -2.228, 2.033, 2.236,  0.637]
+  saving_prefix: "vimp/scripts/hardware_experiment/Data/"
