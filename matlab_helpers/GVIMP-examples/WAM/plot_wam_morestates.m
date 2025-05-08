@@ -55,7 +55,7 @@ n_states = floor(ttl_dim / dim_theta);
 
 
 %% ******************* Define map dataset ******************
-dataset = generate3Ddataset('WAMDeskDataset');
+dataset = generate3Ddataset_1('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 % origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;

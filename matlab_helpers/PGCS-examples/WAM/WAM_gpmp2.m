@@ -19,7 +19,7 @@ end_confs = [-0.0,    0.94,     0,     1.6,     0,   -0.919,   1.55;
 for i_exp = 1:1
 
 %% dataset
-dataset = generate3Ddataset('WAMDeskDataset');
+dataset = generate3Ddataset_1('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
