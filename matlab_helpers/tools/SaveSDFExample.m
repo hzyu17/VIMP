@@ -12,6 +12,9 @@ import gpmp2.*
 % addpath('utils')
 %% dataset
 dataset = generate3Ddataset_1('WAMDeskDataset');
+
+save_field_to_json(dataset, 'WAMDeskDataset.json');
+
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
