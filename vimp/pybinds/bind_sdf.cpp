@@ -2,12 +2,13 @@
 #include <pybind11/eigen.h>    // Eigen ⇄ numpy support
 #include <pybind11/stl.h>      // std::vector/std::string support
 
-#include "maps/SignedDistanceField.h"  // your header
+#include "maps/SignedDistanceField.h"  // SDF header
+#include "maps/PlanarSDF.h"  // PlanarSDF header
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(bind_SDF, m) {
-    m.doc() = "Python bindings for SignedDistanceField";
+    m.doc() = "Python bindings for SignedDistanceField and planar SDF classes";
 
     py::class_<SignedDistanceField, SignedDistanceField::shared_ptr>(m, "SignedDistanceField")
         // -- constructors --
@@ -31,11 +32,11 @@ PYBIND11_MODULE(bind_SDF, m) {
 
         .def("convertPoint3toCell", &SignedDistanceField::convertPoint3toCell,
              py::arg("point"),
-             "Convert a world‐coordinate point to fractional cell indices")
+             "Convert a world-coordinate point to fractional cell indices")
 
         .def("convertCelltoPoint2", &SignedDistanceField::convertCelltoPoint2,
              py::arg("cell"),
-             "Convert cell indices back to world‐coordinate point")
+             "Convert cell indices back to world-coordinate point")
 
         .def("loadSDF", &SignedDistanceField::loadSDF,
              py::arg("filename"),
@@ -59,4 +60,42 @@ PYBIND11_MODULE(bind_SDF, m) {
         .def("raw_data", &SignedDistanceField::raw_data,
              py::return_value_policy::reference_internal,
              "Access to the underlying vector of Eigen::MatrixXd");
+
+     
+     py::class_<PlanarSDF, PlanarSDF::shared_ptr>(m, "PlanarSDF")
+          // -- constructors --
+          .def(py::init<>(), "Default constructor")
+          .def(py::init<const Eigen::Vector2d&, double, const Eigen::MatrixXd&>(),
+               py::arg("origin"), py::arg("cell_size"), py::arg("data"),
+               "Construct from origin, cell size, and a 2D field layer")
+
+          // -- methods --
+          .def("getSignedDistance", &PlanarSDF::getSignedDistance,
+               py::arg("point"),
+               "Query the interpolated signed distance at a 2D point")
+
+          .def("getGradient", &PlanarSDF::getGradient,
+               py::arg("point"),
+               "Query the gradient at a 2D point")
+
+          .def("convertPoint2toCell", &PlanarSDF::convertPoint2toCell,
+               py::arg("point"),
+               "Convert a world-coordinate point to fractional cell indices")
+
+          .def("convertCelltoPoint2", &PlanarSDF::convertCelltoPoint2,
+               py::arg("cell"),
+               "Convert cell indices back to world-coordinate point")
+
+          // -- read‐only properties / accessors --
+          .def_property_readonly("origin", &PlanarSDF::origin,
+               "The origin of the grid")
+          .def("x_count", &PlanarSDF::x_count,
+               "Number of columns")
+          .def("y_count", &PlanarSDF::y_count,
+               "Number of rows")
+          .def("cell_size", &PlanarSDF::cell_size,
+               "Grid cell size")
+          .def("raw_data", &PlanarSDF::raw_data,
+               py::return_value_policy::reference_internal,
+               "Access to the underlying Eigen matrix");
 }
