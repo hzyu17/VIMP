@@ -373,7 +373,9 @@ def main():
             
             full_path = os.path.realpath(__file__)
             path, filename = os.path.split(full_path)
-            tutorial.update_trajectory(path+"/Franka/zk_sdf.csv")
+            # tutorial.update_trajectory(path+"/Franka/zk_sdf.csv")
+            tutorial.update_trajectory("/home/hzyu/git/VIMP/vimp/scripts/hardware_experiment/Data/good_zk.csv")
+            
             # tutorial.update_trajectory(path+"/Franka/zk_gpmp2.csv")
         
         if (len(sys.argv) == 2):

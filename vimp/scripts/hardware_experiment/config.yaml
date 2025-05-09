@@ -15,5 +15,5 @@ Planning:
   config_file: "vimp/scripts/hardware_experiment/franka_hardware.yaml"
 
 Sampling:
-  max_iters: 1000
+  max_iters: 100000
   threshold: 0.05

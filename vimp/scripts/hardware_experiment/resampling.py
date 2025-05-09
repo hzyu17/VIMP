@@ -102,8 +102,8 @@ def collision_checking_and_resampling(config_file: str,
             # joint_idx = 0
 
             # Sample from the original distribution
-            mean_i = joint_means[i, joint_idx:]
-            cov_i  = covs[joint_idx:, joint_idx:, i]
+            mean_i = joint_means[i, joint_idx].flatten()
+            cov_i  = covs[joint_idx, joint_idx, i]
 
             # Ensure the covariance is positive-definite by adding a small jitter.
             cov_i += 1e-6 * np.eye(mean_i.size)
@@ -113,15 +113,18 @@ def collision_checking_and_resampling(config_file: str,
             # print(f"Largest eigenvalue for state {i}: {max_eig}")
 
             new_theta = np.random.multivariate_normal(mean_i, cov_i)
+            
+            print("diff norm: ", np.linalg.norm(means[i, joint_idx] - new_theta))
+            
+            if np.linalg.norm(means[i, joint_idx] - new_theta) < 0.01:
+                # Update the mean for this state.
+                means[i, joint_idx] = new_theta
 
-            # Update the mean for this state.
-            means[i, joint_idx:] = new_theta
-
-            # Recompute the collision cost for the new sample.
-            pts = fk.compute_sphere_centers(means[i]).T
-            raw_dists = np.array([sdf.getSignedDistance(pt) for pt in pts])
-            margins_matrix[:, i] = raw_dists - radii
-            min_margin[i] = np.min(margins_matrix[:, i])
+                # Recompute the collision cost for the new sample.
+                pts = fk.compute_sphere_centers(means[i]).T
+                raw_dists = np.array([sdf.getSignedDistance(pt) for pt in pts])
+                margins_matrix[:, i] = raw_dists - radii
+                min_margin[i] = np.min(margins_matrix[:, i])
 
         # print(f"  End of iteration {it}, remaining collision costs: {costs[bad_idx]}")
 
