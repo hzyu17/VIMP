@@ -13,6 +13,7 @@ Camera:
 
 Planning:
   config_file: "vimp/scripts/hardware_experiment/franka_hardware.yaml"
+  
 
 Sampling:
   max_iters: 100000

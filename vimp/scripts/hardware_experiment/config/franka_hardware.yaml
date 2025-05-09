@@ -22,6 +22,21 @@ goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
 
 saving_prefix: scripts/hardware_experiment/Data
 
+SDF_boxe_relative_poses:
+  boxes:
+    - frame_id: B1
+      name: sdf_box_1
+      center: [0.120, -0.300, 0.050]    # [x, y, z] in metres (wrt frame B)
+      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+    - frame_id: B2
+      name: sdf_box_2
+      center: [0.420,  0.170, 0.050]
+      orientation: [0.0,   0.0,   0.0, 1.0]
+
+Baselines:
+  moveit_config_pkg: panda_moveit_config
+  planner_ID: ['RRT', 'RRTConnect', 'RRTstar', 'PRM', 'LBKPIECE']
+
 
 dh_type: "Modified"
 dh_params:
