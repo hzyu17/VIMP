@@ -10,7 +10,7 @@ class Sdf2D():
         self.height = height
         self.cell_size = cell_size
         self.field = jnp.zeros((height, width), dtype=jnp.float64)
-        
+    
     def signed_distance(self, point):
         index = self.point2index(point)
         return self.signed_distance(index)

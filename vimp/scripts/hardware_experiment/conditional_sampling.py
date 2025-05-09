@@ -8,10 +8,10 @@ def conditional_sample(joint_mean, joint_cov, state_dim):
     # mean : (N*d,)
     # cov  : (N*d, N*d)
     
-    N = joint_mean.size() // state_dim                  # total number of states
+    N = len(joint_mean) // state_dim             # total number of states
     
     x1_val = joint_mean[:state_dim]              # shape (d,)
-    xN_val = joint_mean[(N-1)*state_dim:]              # shape (d,)
+    xN_val = joint_mean[(N-1)*state_dim:]        # shape (d,)
     # --------------------------------------------------------------------
 
     d = x1_val.numel()
@@ -32,7 +32,7 @@ def conditional_sample(joint_mean, joint_cov, state_dim):
     Sigma_zy = joint_cov[idx_z][:, idx_y]          # (d*(N-2), 2d)
     Sigma_yy = joint_cov[idx_y][:, idx_y]          # (2d, 2d)
 
-    y0 = torch.cat([x1_val, xN_val])         # (2d,)
+    y0 = torch.cat([x1_val, xN_val])               # (2d,)
 
     # conditional mean / cov ------------------------------------------------
     # Solve with a linear system instead of explicit inverse for stability.

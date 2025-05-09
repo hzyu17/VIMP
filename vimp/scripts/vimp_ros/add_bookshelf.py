@@ -25,6 +25,11 @@ class CollisionSceneExample(object):
         # TODO: need to replace this sleep by explicitly waiting for the scene to be updated.
         rospy.sleep(2)
 
+
+    def clear_all_objects(self):
+        self._scene.clear()
+        
+        
     def add_one_box(self):
         box1_pose = [0.25, 0.25, 0.0, 0, 0, 0, 1]
         box1_dimensions = [0.25, 0.25, 0.75]
@@ -501,6 +506,8 @@ if __name__ == "__main__":
         load_scene.add_bookshelf_pr2_1()
     elif sys.argv[1] == "bookshelf_pr2_2":
         load_scene.add_bookshelf_pr2_2()
+    elif sys.argv[1] == "clear":
+        load_scene.clear_all_objects()
     else:
         print("Please specify correct type of scene as cluttered or sparse")
         sys.exit()

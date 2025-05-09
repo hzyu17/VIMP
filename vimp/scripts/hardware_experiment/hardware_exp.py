@@ -34,11 +34,28 @@ from add_bookshelf import CollisionSceneExample
 
 
 def publish_transformed_obstacle(sdf_json_file, pose):
-    vg_T, occmap_T = transform_sdf(sdf_json_file, pose)
+    vg_T, occmap_T = transform_sdf(sdf_json_file, pose, visualize=False)
     
     rospy.init_node("collision_scene_example_cluttered")
     while (
         not rospy.search_param("robot_description_semantic") and not rospy.is_shutdown()
     ):
         time.sleep(0.5)
+        
     load_scene = CollisionSceneExample()
+    load_scene.clear_all_objects()
+    
+    
+    
+    
+if __name__ == "__main__":
+    # Load the SDF file
+    sdf_json_file = third_party_dir+"/sensor3D_tools/scripts/WAMDeskDataset.json"
+    
+    # Define the transformation pose
+    T_example = np.eye(4)
+    T_example[:3, 3] = [0.0, 0.0, 0.0]
+    T_example[:3, [0,1]] = T_example[:3, [1,0]]
+    
+    # Publish the transformed obstacle
+    publish_transformed_obstacle(sdf_json_file, T_example)
