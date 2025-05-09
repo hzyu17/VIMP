@@ -149,6 +149,18 @@ def draw_map_track(planarmap, track_data, origin_x=0.0, origin_y=0.0, fig=None, 
     # plt.show()
     
     return fig, ax
+
+
+def draw_pquad_trj_cov_2d(x_trj, cov_matrix, L, H, n_balls, fig, ax, step, draw_ball, save_fig=True, file_name="pquad_trj2d.pdf"):
+    nt, nx = x_trj.shape
+    for i in range(0, nt, step):
+        x = x_trj[i]
+        cov = cov_matrix[i].reshape(nx, nx)
+        fig, ax = draw_quad_balls_cov(x, cov, i, L, H, n_balls, fig, ax, draw_ball, patch_color='b')
+    
+    if save_fig:
+        fig.savefig(file_name, dpi=1000, bbox_inches='tight')
+    return fig, ax
     
 
 def draw_pquad_map_trj_2d(x0, xT, x_trj, L, H, n_balls, fig, ax, planarmap,

@@ -33,6 +33,21 @@ def find_blocks(bad_idx):
     blocks = np.split(bad_idx, gaps + 1)
     return blocks
 
+def collision_checking(sdf: SignedDistanceField,
+                        fk: ForwardKinematics,
+                        joint_means: np.ndarray):
+    n_states, dim_conf = joint_means.shape
+    n_spheres = fk.num_spheres
+
+    margins_matrix = np.zeros((n_spheres, n_states))
+    for i in range(n_states):
+        pts = fk.compute_sphere_centers(joint_means[i]).T
+        signed_distances = np.array([sdf.getSignedDistance(p) for p in pts])
+        margins_matrix[:, i] = signed_distances
+    min_margin = np.min(margins_matrix, axis=0)
+
+    return min_margin
+
 
 def collision_checking_and_resampling(config_file: str,
                                       sdf: SignedDistanceField,
@@ -66,12 +81,12 @@ def collision_checking_and_resampling(config_file: str,
     zk_matrix = np.loadtxt(mean_path, delimiter=',')
     joint_means = zk_matrix[:7, :].T
 
+    n_states = joint_means.shape[0]
+    n_spheres = frames.size
+
     Sk_matrix = np.loadtxt(cov_path, delimiter=',')
     Sk_matrix = Sk_matrix.reshape(14, 14, n_states)
     covariance_matrix = Sk_matrix[:7, :7, :]
-
-    n_states = joint_means.shape[0]
-    n_spheres = frames.size
 
     # ----------------- Collision Checking ----------------
     margins_matrix = np.zeros((n_spheres, n_states))

@@ -62,8 +62,8 @@ except Exception as e:
     sys.exit(1)
 
 # Transpose data to match the original code
-mean = mean_pd.values.T
-cov  = cov_pd.values.T
+mean = mean_pd.values.T         # shape (n_states, dim_state)
+cov  = cov_pd.values.T          # shape (n_states, dim_state^2)
 
 # Set trajectory drawing parameters
 n_balls = 5
