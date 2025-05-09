@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 import open3d as o3d
 from pathlib import Path
+from conditional_sampling import conditional_sample
 
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
@@ -22,6 +23,15 @@ if third_party_dir not in sys.path:
 
 from bind_FK import ForwardKinematics, DHType
 from sensor3D_tools import SignedDistanceField
+
+
+def find_blocks(bad_idx):
+    """Split a sorted array of collision indices into contiguous runs."""
+    # where the gap between consecutive indices is >1
+    gaps = np.where(np.diff(bad_idx) > 2)[0]
+    # split at those gap positions (+1 for the right-side start)
+    blocks = np.split(bad_idx, gaps + 1)
+    return blocks
 
 
 def collision_checking_and_resampling(config_file: str,
@@ -55,12 +65,13 @@ def collision_checking_and_resampling(config_file: str,
     # ---------------- Load VIMP Results ----------------
     zk_matrix = np.loadtxt(mean_path, delimiter=',')
     joint_means = zk_matrix[:7, :].T
+
+    Sk_matrix = np.loadtxt(cov_path, delimiter=',')
+    Sk_matrix = Sk_matrix.reshape(14, 14, n_states)
+    covariance_matrix = Sk_matrix[:7, :7, :]
+
     n_states = joint_means.shape[0]
     n_spheres = frames.size
-    
-    covariance_matrix = np.loadtxt(cov_path, delimiter=',')
-    covariance_matrix = covariance_matrix.reshape(14, 14, n_states)
-    covariance_matrix = covariance_matrix[:7, :7, :]
 
     # ----------------- Collision Checking ----------------
     margins_matrix = np.zeros((n_spheres, n_states))
@@ -94,6 +105,7 @@ def collision_checking_and_resampling(config_file: str,
         it += 1
         # print(f"Iteration {it}: {bad_idx.size} states need resampling -> indices {bad_idx}")
 
+        # Individual resampling
         for i in bad_idx:
             state_margins = margins_matrix[:, i]
             first_collision = np.where(state_margins < threshold)[0][0]
@@ -134,6 +146,132 @@ def collision_checking_and_resampling(config_file: str,
     print(f"Saved good mean to {output_file}")
 
 
+
+
+def resample_block_trajectory(config_file: str,
+                                sdf: SignedDistanceField,
+                                max_iters: int = 1000,
+                                threshold: float = 0.0):
+    # ---------------- Forward Kinematics and Parameters----------------
+    with config_file.open("r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+
+    dh_type = getattr(DHType, cfg["dh_type"])
+
+    dh = cfg["dh_params"]
+    a          = np.array(dh["a"],          dtype=np.float64)
+    alpha      = np.array(dh["alpha"],      dtype=np.float64)
+    d          = np.array(dh["d"],          dtype=np.float64)
+    theta_bias = np.array(dh["theta_bias"], dtype=np.float64)
+    radii      = np.array(dh["radii"],      dtype=np.float64)
+    frames     = np.array(dh["frames"],     dtype=np.int32)
+    centers    = np.array(dh["centers"],    dtype=np.float64)  # shape (20,3)
+
+    start_pos = np.array(cfg["start_pos"], dtype=np.float64)
+
+    result_dir = Path(vimp_dir + "/" + cfg["saving_prefix"])
+
+    # Load the mean and covariance matrices
+    mean_path = os.path.join(result_dir, "zk_sdf.csv")
+    prec_path = os.path.join(result_dir, "joint_precision.csv")
+
+    # Create FK object
+    fk = ForwardKinematics(a, alpha, d, theta_bias, frames, centers.T, dh_type)
+
+    # ---------------- Load VIMP Results ----------------
+    zk_matrix = np.loadtxt(mean_path, delimiter=',').T
+    zk_vector = zk_matrix.flatten()
+    print(f"zk_vector shape: {zk_vector.shape}")
+    joint_means = zk_matrix[:, :7]
+
+    joint_precision = np.loadtxt(prec_path, delimiter=',')
+    joint_cov = np.linalg.inv(joint_precision)
+
+    n_states = joint_means.shape[0]
+    n_spheres = frames.size
+    dim_state = 2 * start_pos.size
+
+    # ----------------- Collision Checking ----------------
+    margins_matrix = np.zeros((n_spheres, n_states))
+
+    for i in range(n_states):
+        pts = fk.compute_sphere_centers(joint_means[i]).T
+        signed_distances = np.array([sdf.getSignedDistance(p) for p in pts])
+        # Compute margins as the difference between the signed distances and the radii
+        margins_matrix[:, i] = signed_distances - radii
+    min_margin = np.min(margins_matrix, axis=0)
+    # print(f"Minimum margin for each state: {min_margin}")
+
+    means = joint_means
+
+    # Only consider the intermediate states (exclude the first and last points).
+    indices = np.arange(n_states)
+    bad_idx = indices[(min_margin < threshold) & (indices != 0) & (indices != n_states - 1)]
+
+    if bad_idx.size == 0:
+        print("All intermediate states are collision-free, ending resampling.")
+    else:
+        blocks = find_blocks(bad_idx)
+
+
+    # ----------------- Resampling ------------------------
+    it = 0
+
+    for block in blocks:
+        # Resample the block of states
+        start_state = max(block[0] - 1, 0)
+        end_state = min(block[-1] + 1, n_states - 1)
+        start_vector_idx = start_state * dim_state
+        end_vector_idx = (end_state + 1) * dim_state  # include the end state
+        
+        block_means = zk_vector[start_vector_idx:end_vector_idx]
+        block_covs = joint_cov[start_vector_idx:end_vector_idx, start_vector_idx:end_vector_idx]
+
+        # Ensure the covariance is positive-definite by adding a small jitter.
+        block_covs += 1e-7 * np.eye(block_covs.shape[0])
+
+        # Sample from the multivariate normal distribution
+        [cond_mean, cond_cov] = conditional_sample(block_means, block_covs, dim_state)
+
+        block_iter = 0
+
+        engenvalue = np.max(np.linalg.eigvals(cond_cov))
+        print(f"Largest eigenvalue for block {block}: {engenvalue}")
+
+        engenvalue = np.max(np.linalg.eigvals(block_covs))
+        print(f"Largest eigenvalue for joint covariance: {engenvalue}")
+
+        while True:
+            # Check if the new sample is valid
+            block_iter += 1
+            print(f"Block is being resampled, iteration {block_iter}.")
+
+            # Sample from the original distribution
+            new_theta = np.random.multivariate_normal(cond_mean, cond_cov)
+
+            # Compute the signed distances for the new sample
+            means_new = new_theta.reshape(-1, 14)[:, :7]
+            block_margins = np.zeros((n_spheres, means_new.shape[0]))
+
+            for i in range(means_new.shape[0]):
+                pts = fk.compute_sphere_centers(means_new[i]).T
+                signed_distances = np.array([sdf.getSignedDistance(p) for p in pts])
+                block_margins[:, i] = signed_distances - radii
+            min_block_margin = np.min(block_margins, axis=0)
+            print(f"Minimum margin: {min_block_margin.min()}")
+
+            # Check if the new sample is valid
+            if np.all(min_block_margin > threshold):
+                print(f"Block {block} is valid after {block_iter} iterations.")
+                means[block[0]:block[-1] + 1] = means_new
+                break
+
+    # Save the valid mean trajectory to a csv file.
+    output_file = os.path.join(result_dir, "good_zk.csv")
+    np.savetxt(output_file, means.T, delimiter=",")
+    print(f"Saved good mean to {output_file}")
+
+
 if __name__ == "__main__":
 
     experiment_config = this_dir + "/config.yaml"
@@ -153,3 +291,4 @@ if __name__ == "__main__":
     # Perform collision checking and resampling
     collision_checking_and_resampling(planning_cfg_path, sdf, max_iters, threshold)
 
+    # resample_block_trajectory(planning_cfg_path, sdf, max_iters, threshold)

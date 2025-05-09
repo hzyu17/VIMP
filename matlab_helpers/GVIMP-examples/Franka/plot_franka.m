@@ -6,7 +6,8 @@ clc
 addpath('../../tools')
 addpath ('../../tools/WAM/utils')
 addpath('../../tools/gtsam_toolbox')
-addpath("../../tools/error_ellipse");
+addpath("../../tools/error_ellipse")
+addpath("../../../vimp/3rdparty/yaml")
 
 import gtsam.*
 import gpmp2.*
@@ -14,6 +15,8 @@ import gpmp2.*
 % =============================
 % sparse GH quadrature results 
 % =============================
+matlabData = yaml.loadFile("../../../vimp/scripts/hardware_experiment/franka_hardware.yaml");
+
 i_exp = 2;
 
 switch i_exp
@@ -21,7 +24,7 @@ switch i_exp
         prefix = "sparse_gh/case1";
         map_name = "FrankaDeskDataset";
     case 2
-        prefix = "sparse_gh/case2";
+        prefix = "../../../vimp/" + matlabData.saving_prefix;
         map_name = "FrankaBoxDataset";
 end
 
@@ -145,13 +148,17 @@ for j = 1:nt
     alpha = (j / nt)^(1.15);
     color = [0, 0, 1, alpha];
     mean = i_means(1:7, j);
-    % mean_resample = good_means(:, j);
-    plotArm3D(arm.fk_model(), mean, color, 4, true);
-    % plotArm3D(arm.fk_model(), mean_resample, color, 4, true);
+    mean_resample = good_means(:, j);
+    % plotArm3D(arm.fk_model(), mean, color, 4, true);
 
-    centers = arm.sphereCentersMat(mean);
+    if ~isequal(mean_resample, mean)
+        color = [1, 0, 0, alpha];  % Change color to red if not equal
+    end
+    plotArm3D(arm.fk_model(), mean_resample, color, 4, true);
+
+    % centers = arm.sphereCentersMat(mean);
     % centers = arm.sphereCentersMat(mean_resample);
-    plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
+    % plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
 end
 
 plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
