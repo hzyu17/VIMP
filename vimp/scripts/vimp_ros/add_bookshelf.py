@@ -195,6 +195,23 @@ class CollisionSceneExample(object):
 
         self.add_box_object("box1", box1_dimensions, box1_pose)
         self.add_box_object("box2", box2_dimensions, box2_pose)
+        
+        
+    def add_narrow_passage_panda(self):
+        from operator import add
+
+        offset = [-1.5, -1.5, 0, 0, 0, 0, 0]
+        
+        box1_pose = [2.1, 1.25, 0.2, 0, 0, 0, 1]
+        box1_pose = [box1_pose[i] + offset[i] for i in range(7)]
+        box1_dimensions = [0.2, 0.2, 0.4]
+
+        box2_pose = [2.1, 1.75, 0.2, 0, 0, 0, 1]
+        box2_pose = [box2_pose[i] + offset[i] for i in range(7)]
+        box2_dimensions = [0.2, 0.2, 0.4]
+
+        self.add_box_object("box1", box1_dimensions, box1_pose)
+        self.add_box_object("box2", box2_dimensions, box2_pose)
 
     
     def add_bookshelf_pr2(self):
@@ -500,6 +517,8 @@ if __name__ == "__main__":
         load_scene.add_bookshelf_panda()
     elif sys.argv[1] == "box_panda":
         load_scene.add_box_panda()
+    elif sys.argv[1] == "gap_panda":
+        load_scene.add_narrow_passage_panda()
     elif sys.argv[1] == "bookshelf_pr2":
         load_scene.add_bookshelf_pr2()
     elif sys.argv[1] == "bookshelf_pr2_1":

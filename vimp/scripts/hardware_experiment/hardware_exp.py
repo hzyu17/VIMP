@@ -28,9 +28,10 @@ if third_party_dir not in sys.path:
 if vimp_ros_dir not in sys.path:            
     sys.path.insert(0, vimp_ros_dir)
     
-from sensor3D_tools import OccpuancyGrid, PointCloud, SignedDistanceField, generate_field3D, transform_sdf
+from sensor3D_tools import transform_sdf, o3d_voxelgrid_to_ros, rosvoxel_to_octomap
 from resampling import collision_checking_and_resampling
 from add_bookshelf import CollisionSceneExample
+from moveit_msgs.msg import PlanningScene
 
 
 def publish_transformed_obstacle(sdf_json_file, pose):
@@ -45,8 +46,24 @@ def publish_transformed_obstacle(sdf_json_file, pose):
     load_scene = CollisionSceneExample()
     load_scene.clear_all_objects()
     
+    voxel_rosmsg = o3d_voxelgrid_to_ros(vg_T, frame_id="map")
+    octomap = rosvoxel_to_octomap(voxel_rosmsg)
     
     
+    scene_pub = rospy.Publisher(
+        "planning_scene", PlanningScene, queue_size=1, latch=True
+    )
+    rospy.sleep(0.5)
+    
+    ps = PlanningScene()
+    ps.is_diff = True
+    # attach the OctoMap under the “world” field:
+    ps.world.octomap = octomap
+    scene_pub.publish(ps)
+    
+    # print("vg_T.data: ", vg_T.data)
+    
+
     
 if __name__ == "__main__":
     # Load the SDF file
