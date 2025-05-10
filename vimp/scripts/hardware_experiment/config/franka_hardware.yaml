@@ -22,17 +22,27 @@ goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
 
 saving_prefix: scripts/hardware_experiment/Data
 
-SDF_box_bodyframes:
-  boxes:
-    - frame_id: B1
+body_frames:
+  - frame_id: B1
+    position: [0.0, 0.0, 0.0]    
+    orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+    monitor_topic: "/B1_pose"
+    box:
       name: sdf_box_1
       center: [0.120, -0.300, 0.050]    # [x, y, z] in metres (wrt frame B)
       orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-    - frame_id: B2
+      size: [ 18, 18, 38 ]
+  - frame_id: B2
+    position: [0.0, 0.0, 0.0]
+    orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+    monitor_topic: "/B2_pose"
+    box:
       name: sdf_box_2
       center: [0.420,  0.170, 0.050]
-      orientation: [0.0,   0.0,   0.0, 1.0]
+      orientation: [0.0,   0.0,   0.0, 1.0]   
+      size: [ 58, 58, 2 ]
 
+      
 Baselines:
   moveit_config_pkg: panda_moveit_config
   planner_ID: ['RRT', 'RRTConnect', 'RRTstar', 'PRM', 'LBKPIECE']

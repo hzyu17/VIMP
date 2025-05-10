@@ -1,0 +1,19 @@
+body_frames:
+  - frame_id: B1
+    position: [0.0, 0.0, 0.0]    
+    orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+    monitor_topic: "/B1_pose"
+    box:
+      name: sdf_box_1
+      center: [0.120, -0.300, 0.050]    # [x, y, z] in metres (wrt frame B)
+      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+      size: [ 0.18, 0.18, 0.38 ]
+  - frame_id: B2
+    position: [0.0, 0.0, 0.0]
+    orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+    monitor_topic: "/B2_pose"
+    box:
+      name: sdf_box_2
+      center: [0.420,  0.170, 0.050]
+      orientation: [0.0,   0.0,   0.0, 1.0]   
+      size: [ 0.58, 0.58, 0.02 ]
