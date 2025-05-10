@@ -15,7 +15,7 @@ import gpmp2.*
 % =============================
 % sparse GH quadrature results 
 % =============================
-matlabData = yaml.loadFile("../../../vimp/scripts/hardware_experiment/franka_hardware.yaml");
+matlabData = yaml.loadFile("../../../vimp/scripts/hardware_experiment/config/franka_hardware.yaml");
 
 i_exp = 2;
 

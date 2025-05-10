@@ -13,13 +13,18 @@ Field:
       size:   [  7, 10 ]
     - center: [ -10, 13 ]
       size:   [  8,  5 ]
+    # - center: [ -9, 11 ]
+    #   size:   [  8,  5 ]
     - center: [   1,  0 ]
       size:   [ 10,  5 ]
     - center: [   5, 12 ]
       size:   [  7,  8 ]
+    # - center: [  4, 12 ]
+    #   size:   [  7,  8 ]
     
   sdf_dir: "/maps/2dpR/map2/field_multiobs_map2.csv"
 
 Sampling:
+  window_size: 4
   max_iters: 100000
   threshold: 1.5

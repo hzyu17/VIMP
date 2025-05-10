@@ -98,7 +98,7 @@ def getpoints(C, clipping_radius=np.inf):
     
     return x, y
 
-def plot_cov_ellipse(cov, mu, i, conf=0.997, scale=1, ax=None, style='r-.', clipping_radius=np.inf):
+def plot_cov_ellipse(cov, mu, i, conf=0.997, scale=1, ax=None, style='r-.', linewidth=1, clipping_radius=np.inf):
     
     x0, y0 = mu[0:2]
     cov_2d = cov[0:2, 0:2]
@@ -112,9 +112,9 @@ def plot_cov_ellipse(cov, mu, i, conf=0.997, scale=1, ax=None, style='r-.', clip
     x, y = getpoints(cov_2d, clipping_radius)
     
     if i == 0:
-        ax.plot(scale * (x0 + k * x), scale * (y0 + k * y), style, linewidth=1, label=r"3$\sigma$ contour")
+        ax.plot(scale * (x0 + k * x), scale * (y0 + k * y), style, linewidth, label=r"3$\sigma$ contour")
     else:
-        ax.plot(scale * (x0 + k * x), scale * (y0 + k * y), style, linewidth=1)
+        ax.plot(scale * (x0 + k * x), scale * (y0 + k * y), style, linewidth)
     ax.set_aspect('equal')
 
     return ax
