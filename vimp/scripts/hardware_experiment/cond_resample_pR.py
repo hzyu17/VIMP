@@ -11,7 +11,6 @@ from conditional_sampling import conditional_sample
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
 
-# from vimp.python.sdf_robot.example.draw_planar_quad_sdf import plot_cov_ellipse
 from vimp.thirdparty.sensor3D_tools.scripts.SignedDistanceField2D import generate_field2D
 from vimp.thirdparty.sensor3D_tools import PlanarSDF
 
@@ -117,7 +116,7 @@ def build_sdf():
         c1 = max(0, c0 - dc)
         c2 = min(cols, c0 + dc + (w_c % 2))
 
-        grid[r1-1:r2, c1-1:c2] = 1 #Compatible with Matlab's 1-based indexing
+        grid[r1-1:r2, c1-1:c2] = 1 # Compatible with Matlab's 1-based indexing
         
     field = generate_field2D(grid, cell_size)
     sdf = PlanarSDF(np.array([origin_x, origin_y]), cell_size, field)
@@ -308,4 +307,3 @@ if __name__ == "__main__":
         if success:
             success_count += 1
             print("Resampling successful.")
-
