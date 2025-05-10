@@ -22,7 +22,7 @@ goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
 
 saving_prefix: scripts/hardware_experiment/Data
 
-SDF_boxe_relative_poses:
+SDF_box_bodyframes:
   boxes:
     - frame_id: B1
       name: sdf_box_1
