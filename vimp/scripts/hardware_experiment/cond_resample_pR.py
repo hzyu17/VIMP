@@ -11,9 +11,9 @@ from conditional_sampling import conditional_sample
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
 
-from vimp.python.sdf_robot.example.draw_planar_quad_sdf import plot_cov_ellipse
+# from vimp.python.sdf_robot.example.draw_planar_quad_sdf import plot_cov_ellipse
 from vimp.thirdparty.sensor3D_tools.scripts.SignedDistanceField2D import generate_field2D
-import libplanar_sdf
+from vimp.thirdparty.sensor3D_tools import PlanarSDF
 
 # ------------------------ Load parameters ---------------------------
 with open(this_dir + '/PointRobotConfig.yaml') as f:
@@ -309,79 +309,3 @@ if __name__ == "__main__":
             success_count += 1
             print("Resampling successful.")
 
-
-# plot_cov_ellipse(cov_i, x_i, 0, conf=0.997, scale=1, ax=ax, style='r-.', linewidth=1, clipping_radius=np.inf)
-
-# # Plot the conditional mean and covariance
-# nt = block.size + 2 * window_size - 2
-# cond_mean = cond_mean.reshape(-1, dim_state)[:, :dim_conf]
-# cond_cov = cond_cov.reshape(nt*dim_state, nt*dim_state)
-
-# for i in range(window_size, window_size + block.size):
-#     x_i = cond_mean[i]
-#     cov_i = cond_cov[i*dim_state:i*dim_state+dim_state, i*dim_state:i*dim_state+dim_state]
-#     plot_cov_ellipse(cov_i, x_i, 0, conf=0.997, scale=1, ax=ax, style='b-', clipping_radius=np.inf)
-    # for i in range(window_size, window_size + block.size):
-    #     x_i = cond_mean[i]
-    #     cov_i = cond_cov[i*dim_state:i*dim_state+dim_state, i*dim_state:i*dim_state+dim_state]
-    #     plot_cov_ellipse(cov_i, x_i, 0, conf=0.997, scale=1, ax=ax, style='b-', clipping_radius=np.inf)
-
-    block_iter = 0
-    while block_iter < max_iters:
-        block_iter += 1
-        if block_iter % 50 == 0:
-            print("Iteration:", block_iter)
-        new_theta = np.random.multivariate_normal(cond_mean, cond_cov)
-        means_new = new_theta.reshape(-1, dim_state)[:, :dim_conf]
-
-        signed_dist = np.zeros(means_new.shape[0], dtype=np.float32)
-        for i in range(means_new.shape[0]):
-            x = means_new[i]
-            signed_dist[i] = sdf.getSignedDistance(x)
-
-        # Check if any samples are in collision
-        collide_idx = np.where(signed_dist < threshold)[0]
-        if collide_idx.size == 0:
-            print("No collision detected in block after", block_iter, "iterations.")
-            means[start_state + 1:end_state] = means_new
-            break
-
-
-# ---------------------- Plotting -------------------------
-df_marginal_cov = np.loadtxt(cov_file, delimiter=",", dtype=np.float32)
-df_marginal_mean = np.loadtxt(mean_file, delimiter=",", dtype=np.float32)
-
-mean = df_marginal_mean.T
-cov = df_marginal_cov.T
-
-ax.plot(means_original[:, 0], means_original[:, 1], 's', markersize=4, label='Original Mean')
-ax.plot(means[:, 0], means[:, 1], 'o', markersize=4, label='Sampled Mean')
-
-plt.legend()
-
-nt, nx = mean.shape
-for i in range(0, nt):
-    x_i = mean[i]
-    cov_i = cov[i].reshape(nx, nx)
-    plot_cov_ellipse(cov_i, x_i, 0, conf=0.997, scale=1, ax=ax, style='r-.', linewidth=1, clipping_radius=np.inf)
-
-plt.show()
-
-
-
-# def plot_cov(Sigma, mu, k=3, ax=None):
-#     from matplotlib.patches import Ellipse
-#     eigvals, eigvecs = np.linalg.eigh(Sigma)   
-#     order = eigvals.argsort()[::-1]            
-#     eigvals, eigvecs = eigvals[order], eigvecs[:,order]
-
-#     a, b = k*np.sqrt(eigvals)                  
-#     theta = np.degrees(np.arctan2(*eigvecs[:,0][::-1]))  
-
-#     if ax is None:
-#         fig, ax = plt.subplots()
-#     ax.scatter(*mu, c='red', s=20, label='mean')
-#     ax.add_patch(Ellipse(mu, 2*a, 2*b, theta, fc='none', ec='blue', lw=2, label='3σ contour'))
-#     ax.set_aspect('equal')
-    
-#     plt.show()
