@@ -1,11 +1,9 @@
 import yaml
 import os, sys
 import numpy as np
-import torch
 import matplotlib.pyplot as plt
 from resampling import find_blocks
 from conditional_sampling import conditional_sample
-from torch.distributions.multivariate_normal import MultivariateNormal
 
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
@@ -13,7 +11,6 @@ vimp_dir = os.path.dirname(os.path.dirname(this_dir))
 build_dir = os.path.dirname(vimp_dir) + "/build/vimp"
 third_party_dir = vimp_dir + "/3rdparty"
 python_tools_dir = vimp_dir + "/python"
-data_dir = this_dir + "/../../../matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2"
 
 if vimp_dir not in sys.path:            
     sys.path.insert(0, vimp_dir)
@@ -23,7 +20,6 @@ if third_party_dir not in sys.path:
     sys.path.insert(0, third_party_dir)
 if python_tools_dir not in sys.path:
     sys.path.insert(0, python_tools_dir)
-
 
 from sdf_robot.example.draw_planar_quad_sdf import plot_cov_ellipse
 from sensor3D_tools.scripts.SignedDistanceField2D import generate_field2D
@@ -42,7 +38,9 @@ origin_x  = fld['origin']['x']
 origin_y  = fld['origin']['y']
 cell_size = fld['cell_size']
 obstacles = fld['obstacles']
-sdf_dir   = vimp_dir + fld['sdf_dir']
+result_dir = vimp_dir + fld['result_dir']
+center_noise = fld['obs_center_noise']
+size_noise = fld['obs_size_noise']
 
 # ------------------------ Map generation -------------------------
 def world_to_cell(x, y):
@@ -66,8 +64,13 @@ for obs in obstacles:
     cx, cy = obs['center']
     w, h   = obs['size']
 
-    r0, c0 = world_to_cell(cx, cy)
-    w_c, h_c = dim_to_cells(w, h)
+    cx_noisy = cx + np.random.normal(scale=center_noise)
+    cy_noisy = cy + np.random.normal(scale=center_noise)
+    w_noisy  = w  + np.random.normal(scale=size_noise)
+    h_noisy  = h  + np.random.normal(scale=size_noise)
+
+    r0, c0 = world_to_cell(cx_noisy, cy_noisy)
+    w_c, h_c = dim_to_cells(w_noisy, h_noisy)
     # compute half‐extents
     dr = (h_c - 1) // 2
     dc = (w_c - 1) // 2
@@ -78,12 +81,8 @@ for obs in obstacles:
     c2 = min(cols, c0 + dc + (w_c % 2))
     grid[r1-1:r2, c1-1:c2] = 1   #Compatile with Matlab's 1-based indexing
 
-extent = [
-origin_x,
-origin_x + cols * cell_size,
-origin_y,
-origin_y + rows * cell_size,
-]
+width, height = cols * cell_size, rows * cell_size
+extent = [origin_x, origin_x + width, origin_y, origin_y + height]
 
 ax.imshow(grid,
           origin='lower',
@@ -96,9 +95,9 @@ field = generate_field2D(grid, cell_size)
 sdf = libplanar_sdf.PlanarSDF(np.array([origin_x, origin_y]), cell_size, field)
 
 # ------------------------ Collision Checking -------------------------
-mean_file = data_dir+"/zk_sdf.csv"
-cov_file = data_dir+"/Sk_sdf.csv"
-joint_precision_file = data_dir+"/joint_precision.csv"
+mean_file = result_dir+"/zk_sdf.csv"
+cov_file = result_dir+"/Sk_sdf.csv"
+joint_precision_file = result_dir+"/joint_precision.csv"
 
 means = np.loadtxt(mean_file, delimiter=",", dtype=np.float32).T
 covs = np.loadtxt(cov_file, delimiter=",", dtype=np.float64)
@@ -131,8 +130,9 @@ collide_idx = indices[(signed_dist < threshold) & (indices != 0) & (indices != n
 
 if collide_idx.size == 0:
     print("No collision detected.")
+    blocks = []  # Initialize blocks as empty list when no collisions
 else:
-    blocks = find_blocks(collide_idx)
+    blocks = find_blocks(collide_idx, gap=2)
     print("Collision detected at indices:", collide_idx)
     print("Collision blocks:", blocks)
 
@@ -143,10 +143,15 @@ for block in blocks:
     end_vector_idx = (end_state + 1) * dim_state
 
     block_means = joint_means[start_vector_idx:end_vector_idx]
-    block_cov = joint_cov[start_vector_idx:end_vector_idx, start_vector_idx:end_vector_idx]
+    block_covs = joint_cov[start_vector_idx:end_vector_idx, start_vector_idx:end_vector_idx]
 
-    block_cov += np.eye(block_cov.shape[0]) * 1e-7
-    [cond_mean, cond_cov] = conditional_sample(block_means, block_cov, dim_state)
+    block_covs += np.eye(block_covs.shape[0]) * 1e-7
+    [cond_mean, cond_cov] = conditional_sample(block_means, block_covs, dim_state)
+
+    L = np.linalg.cholesky(cond_cov)  # Cholesky decomposition to speed up sampling
+
+    signed_dist_block = signed_dist[start_state + 1:end_state]
+    safety_metric = np.min(signed_dist_block)
 
     # # Plot the conditional mean and covariance
     # nt = block.size + 2 * window_size - 2
@@ -161,23 +166,31 @@ for block in blocks:
     block_iter = 0
     while block_iter < max_iters:
         block_iter += 1
-        if block_iter % 50 == 0:
+        if block_iter % 5000 == 0:
             print("Iteration:", block_iter)
-        new_theta = np.random.multivariate_normal(cond_mean, cond_cov)
+        # Fast sampling using Cholesky decomposition
+        z = np.random.standard_normal(cond_mean.shape)
+        new_theta = cond_mean + L @ z
+        
         means_new = new_theta.reshape(-1, dim_state)[:, :dim_conf]
 
-        signed_dist = np.zeros(means_new.shape[0], dtype=np.float32)
+        signed_dist_samples = np.zeros(means_new.shape[0], dtype=np.float32)
         for i in range(means_new.shape[0]):
             x = means_new[i]
-            signed_dist[i] = sdf.getSignedDistance(x)
+            signed_dist_samples[i] = sdf.getSignedDistance(x)
 
         # Check if any samples are in collision
-        collide_idx = np.where(signed_dist < threshold)[0]
+        collide_idx = np.where(signed_dist_samples < threshold)[0]
         if collide_idx.size == 0:
             print("No collision detected in block after", block_iter, "iterations.")
             means[start_state + 1:end_state] = means_new
             break
-
+        else:
+            new_metric = np.min(signed_dist_samples)
+            if new_metric > safety_metric:
+                safety_metric = new_metric
+                signed_dist_block = signed_dist_samples
+                means[start_state + 1:end_state] = means_new
 
 # ---------------------- Plotting -------------------------
 df_marginal_cov = np.loadtxt(cov_file, delimiter=",", dtype=np.float32)
@@ -191,29 +204,11 @@ ax.plot(means[:, 0], means[:, 1], 'o', markersize=4, label='Sampled Mean')
 
 plt.legend()
 
-nt, nx = mean.shape
-for i in range(0, nt):
-    x_i = mean[i]
-    cov_i = cov[i].reshape(nx, nx)
-    plot_cov_ellipse(cov_i, x_i, 0, conf=0.997, scale=1, ax=ax, style='r-.', linewidth=1, clipping_radius=np.inf)
+# Plot the original covariance ellipses
+# nt, nx = mean.shape
+# for i in range(0, nt):
+#     x_i = mean[i]
+#     cov_i = cov[i].reshape(nx, nx)
+#     plot_cov_ellipse(cov_i, x_i, 0, conf=0.997, scale=1, ax=ax, style='r-.', linewidth=1, clipping_radius=np.inf)
 
 plt.show()
-
-
-
-# def plot_cov(Sigma, mu, k=3, ax=None):
-#     from matplotlib.patches import Ellipse
-#     eigvals, eigvecs = np.linalg.eigh(Sigma)   # eigh → guaranteed sorted λ1≤λ2
-#     order = eigvals.argsort()[::-1]            # make λ1 ≥ λ2 for nicer handling
-#     eigvals, eigvecs = eigvals[order], eigvecs[:,order]
-
-#     a, b = k*np.sqrt(eigvals)                  # semi-axis lengths
-#     theta = np.degrees(np.arctan2(*eigvecs[:,0][::-1]))  # principal angle in deg
-
-#     if ax is None:
-#         fig, ax = plt.subplots()
-#     ax.scatter(*mu, c='red', s=20, label='mean')
-#     ax.add_patch(Ellipse(mu, 2*a, 2*b, theta, fc='none', ec='blue', lw=2, label='3σ contour'))
-#     ax.set_aspect('equal')
-    
-#     plt.show()
