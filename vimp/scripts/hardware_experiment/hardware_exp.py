@@ -89,3 +89,4 @@ if __name__ == "__main__":
     # Publish the transformed obstacle
     planning_scene_topic = "/planning_scene"
     publish_transformed_obstacle(sdf_json_file, T_example, planning_scene_topic)
+    

@@ -67,5 +67,7 @@ def publish_small_octomap():
 
     rospy.spin()
 
+
+
 if __name__=="__main__":
     publish_small_octomap()

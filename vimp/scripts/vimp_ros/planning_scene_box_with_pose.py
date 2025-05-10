@@ -8,10 +8,9 @@ import numpy as np
 import tf
 
 
-# ----------------------------------------------------------------------
-# Helpers
-# ----------------------------------------------------------------------
-
+# -----------
+#   Helpers
+# -----------
 class BoxObstcle:
     def __init__(self):
         self.geometry = None
@@ -28,6 +27,7 @@ class BoxObstcle:
 class BoxGeometry:
     def __init__(self, size=None):
         self.size = size
+
 
 class BodyFramePose:
     def __init__(self, position=None, orientation=None):
@@ -111,7 +111,6 @@ def read_boxes(geometry_json, bodyframe_config):
         
     return boxes
         
-    
 
 def box_world_pose(T_WB: Pose, boxe_in_B: Pose):
     """
@@ -160,7 +159,6 @@ def idx_to_world(idx: int, origin: float, cell_size: float):
     return origin + cell_size * (idx + 0.5)
 
 
-
 def add_box_with_pose(pose):
     rospy.init_node("scene_box_demo")
     planning_scene = PlanningSceneInterface(synchronous=True)
@@ -184,10 +182,8 @@ def add_box_with_pose(pose):
 
 if __name__ == "__main__":
     config_body_pose = Path(__file__).parent.parent / "hardware_experiment" / "config" / "franka_hardware.yaml"
+    config_geometry = Path(__file__).parent.parent.parent / "scripts" / "FrankaBoxDataset.json"
     
-    config_geometry = Path(__file__).parent.parent.parent / "3rdarty" / "sensor3D_tools" / "config" / "franka_hardware.yaml"
-    
-    print("config_file", config_file)
-    boxes = load_box_bodyposes_yaml(config_file)
+    boxes = read_boxes(config_geometry, config_body_pose)
     
     print(boxes)
