@@ -18,12 +18,13 @@ Field:
     - center: [   5, 12 ]
       size:   [  7,  8 ]
 
-  obs_center_noise: 1
-  obs_size_noise: 1
+  obs_center_noise: 0.5
+  obs_size_noise: 0.5
   
   result_dir: "/../matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2"
 
 Sampling:
-  window_size: 8
+  window_size: 6
   max_iters: 100000
-  threshold: 1.5
+  safe_threshold: 1.5
+  collision_threshold: 0.5

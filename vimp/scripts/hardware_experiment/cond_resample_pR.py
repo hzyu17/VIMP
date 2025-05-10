@@ -2,6 +2,8 @@ import yaml
 import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
+from scipy.stats import chi2
 from resampling import find_blocks
 from conditional_sampling import conditional_sample
 
@@ -54,6 +56,27 @@ def dim_to_cells(w, h):
     h_c = int(np.floor(h / cell_size))
     w_c = int(np.floor(w / cell_size))
     return w_c, h_c
+
+def plot_cov_shaded(cov, mu, ax=None, conf=0.997, facecolor='r', edgecolor='none', alpha=0.2, label=None):
+    # Calculate semi-axis lengths and angle
+    eigvals, eigvecs = np.linalg.eigh(cov[0:2,0:2])
+    order = eigvals.argsort()[::-1]
+    eigvals, eigvecs = eigvals[order], eigvecs[:,order]
+    # Major and minor semi-axes
+    k = np.sqrt(chi2.ppf(conf, 2))
+    width, height = 2 * k * np.sqrt(eigvals)  # in matplotlib width,height = 2a,2b
+    angle = np.degrees(np.arctan2(eigvecs[1,0], eigvecs[0,0]))
+    
+    ell = Ellipse(xy=mu[0:2],
+                  width=width, height=height,
+                  angle=angle,
+                  facecolor=facecolor,
+                  edgecolor=edgecolor,
+                  alpha=alpha,
+                  lw=0,
+                  label=label)
+    ax.add_patch(ell)
+    return ax
 
 fig, ax = plt.subplots(1, 1, figsize=(8, 8))
 
@@ -121,7 +144,7 @@ for i in range(n_states):
     signed_dist[i] = sdf.getSignedDistance(x)
 
 # ------------------------ Sampling -------------------------
-threshold = sp['threshold']
+threshold = sp['safe_threshold']
 max_iters = sp['max_iters']
 window_size = sp['window_size']
 
@@ -199,16 +222,35 @@ df_marginal_mean = np.loadtxt(mean_file, delimiter=",", dtype=np.float32)
 mean = df_marginal_mean.T
 cov = df_marginal_cov.T
 
-ax.plot(means_original[:, 0], means_original[:, 1], 's', markersize=4, label='Original Mean')
-ax.plot(means[:, 0], means[:, 1], 'o', markersize=4, label='Sampled Mean')
+# Plot the original covariance ellipses with more subtle styling
+nt, nx = mean.shape
+for i in range(0, nt):
+    x_i = mean[i]
+    cov_i = cov[i].reshape(nx, nx)
+    label = r'$3\sigma$ covariance' if i == 0 else None
+    # plot_cov_ellipse(cov_i, x_i, 0, conf=0.997, scale=1, ax=ax, style='r-.', linewidth=1, clipping_radius=np.inf)
+    plot_cov_shaded(cov_i, x_i, ax=ax, conf=0.997, facecolor='salmon', alpha=0.1, label=label)
+
+# Plot trajectory means with improved style and more descriptive labels
+ax.plot(means_original[:, 0], means_original[:, 1], 'ro', markersize=5, markeredgecolor='firebrick',
+        markeredgewidth=0.8, label='Initial trajectory', alpha=0.7)
+        
+ax.plot(means[:, 0], means[:, 1], 'b*', markersize=6, markeredgecolor='darkblue',
+        markeredgewidth=0.8, label='Resampled path', alpha=0.9)
+
+# Add start and end markers for clarity
+ax.plot(means[0, 0], means[0, 1], 'go', markersize=7, markeredgecolor='darkgreen', 
+        markeredgewidth=1, label='Start point')
+        
+ax.plot(means[-1, 0], means[-1, 1], 'mo', markersize=7, markeredgecolor='darkmagenta',
+        markeredgewidth=1, label='Goal point')
+
+# Connect dots with lines to better visualize the path
+for i in range(len(means)-1):
+    ax.arrow(means[i, 0], means[i, 1], 
+             means[i+1, 0] - means[i, 0], means[i+1, 1] - means[i, 1],
+             head_width=0, head_length=0, fc='b', ec='b', alpha=0.3, linewidth=1)
 
 plt.legend()
-
-# Plot the original covariance ellipses
-# nt, nx = mean.shape
-# for i in range(0, nt):
-#     x_i = mean[i]
-#     cov_i = cov[i].reshape(nx, nx)
-#     plot_cov_ellipse(cov_i, x_i, 0, conf=0.997, scale=1, ax=ax, style='r-.', linewidth=1, clipping_radius=np.inf)
 
 plt.show()
