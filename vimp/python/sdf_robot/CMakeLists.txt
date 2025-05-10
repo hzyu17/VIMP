@@ -3,6 +3,7 @@ project(SDFLibrary)
 
 # Find Python and pybind11
 find_package(Python COMPONENTS Interpreter Development)
+# find_package(Python3 3.8 EXACT COMPONENTS Interpreter Development REQUIRED)
 find_package(pybind11 CONFIG)
 
 # Set the path to Eigen

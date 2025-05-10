@@ -12,7 +12,7 @@ Camera:
   apriltag_families: 'tag25h9' # Change in vimp/thirdparty/AprilTag/scripts/apriltag.py
 
 Planning:
-  config_file: "vimp/scripts/hardware_experiment/franka_hardware.yaml"
+  config_file: "vimp/scripts/hardware_experiment/config/franka_hardware.yaml"
 
 April_tags:
   - name: tag25h9
@@ -40,7 +40,9 @@ Body_frames:
       orientation: [0.0, 0.0, 0.0, 1.0]   
       size: [ 0.58, 0.58, 0.02 ]
       cell_size: 0.01 
+  
 
 Sampling:
   max_iters: 100000
-  threshold: 0.05
+  threshold: 0.075
+  window_size: 10

@@ -152,6 +152,7 @@ for j = 1:nt
     plotArm3D(arm.fk_model(), mean, color, 4, true);
 
     if ~isequal(mean_resample, mean)
+        plotArm3D(arm.fk_model(), mean, color, 4, true);
         color = [1, 0, 0, alpha];  % Change color to red if not equal
     end
 %     plotArm3D(arm.fk_model(), mean_resample, color, 4, true);
