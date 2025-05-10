@@ -11,5 +11,5 @@
 	url=https://github.com/hzyu17/AprilTag.git
 
 [submodule "vimp/3rdparty/yaml"]
-	path=vimp/3rdparty/yaml
-	url=https://github.com/ZinuoChang/yaml.git
+	path = vimp/3rdparty/yaml
+	url = https://github.com/ZinuoChang/yaml.git
