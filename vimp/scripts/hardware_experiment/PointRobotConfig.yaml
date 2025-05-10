@@ -24,7 +24,14 @@ Field:
   result_dir: "/../matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2"
 
 Sampling:
-  window_size: 6
+  window_size: 4
   max_iters: 100000
   safe_threshold: 1.5
-  collision_threshold: 0.5
+  collision_threshold: 1.5
+
+Fig_save:
+  save_fig: true
+  save_path: "/Figures"
+  save_name: "PointRobotConfig"
+  fig_dpi: 300
+  fig_format: "png"

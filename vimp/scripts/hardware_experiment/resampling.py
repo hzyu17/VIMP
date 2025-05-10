@@ -287,7 +287,7 @@ def resample_block_trajectory(config_file: str,
 
 if __name__ == "__main__":
 
-    experiment_config = this_dir + "/config.yaml"
+    experiment_config = this_dir + "/config/config.yaml"
     path_to_yaml = Path(experiment_config)
 
     with path_to_yaml.open("r") as f:

@@ -12,7 +12,7 @@ Camera:
   apriltag_families: 'tag25h9' # Change in vimp/3rdparty/AprilTag/scripts/apriltag.py
 
 Planning:
-  config_file: "vimp/scripts/hardware_experiment/franka_hardware.yaml"
+  config_file: "vimp/scripts/hardware_experiment/config/franka_hardware.yaml"
   
 
 Sampling:
