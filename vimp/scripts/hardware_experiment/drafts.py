@@ -5,27 +5,14 @@ import os, sys
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
-vimp_ros_dir = os.path.dirname(this_dir) + "/vimp_ros"
-build_dir = os.path.dirname(vimp_dir) + "/build/vimp"
-third_party_dir = vimp_dir + "/3rdparty"
 
 result_dir = os.path.join(this_dir, "../../../matlab_helpers/GVIMP-examples/Franka/sparse_gh/case1")
-
-print("build_dir:", build_dir)
-if vimp_dir not in sys.path:            
-    sys.path.insert(0, vimp_dir)
-if build_dir not in sys.path:            
-    sys.path.insert(0, build_dir)
-if third_party_dir not in sys.path:            
-    sys.path.insert(0, third_party_dir)
-if vimp_ros_dir not in sys.path:            
-    sys.path.insert(0, vimp_ros_dir)
     
 # from matlabengine_readsave_sdf import read_and_save_sdf
 # from python.sdf_robot import save_occmap_for_matlab
 
-from bind_FK import ForwardKinematics, DHType
-from sensor3D_tools import OccpuancyGrid, PointCloud, SignedDistanceField, generate_field3D
+from vimp.pybinds.bind_FK import ForwardKinematics, DHType
+from vimp.thirdparty.sensor3D_tools import OccpuancyGrid, PointCloud, SignedDistanceField, generate_field3D
 import json, yaml
 from pathlib import Path
 from resampling import collision_checking_and_resampling
@@ -34,7 +21,7 @@ from resampling import collision_checking_and_resampling
 # ------------------
 #   Configurations
 # ------------------
-experiment_config = this_dir + "/config.yaml"
+experiment_config = this_dir + "/config/config.yaml"
 
 path_to_yaml = Path(experiment_config)
 

@@ -8,12 +8,9 @@
 
 
 import matlab.engine
-import os, sys
+import os
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
-vimp_dir = os.path.dirname(os.path.dirname(this_dir))
-if vimp_dir not in sys.path:
-    sys.path.insert(0, vimp_dir)
     
 
 def read_and_save_sdf(in_map_file, out_bin_file):

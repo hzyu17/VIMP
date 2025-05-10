@@ -19,8 +19,8 @@
 
 #include "helpers/ExperimentParams.h"
 #include "dynamics/LinearDynamics.h"
-#include "3rdparty/rapidxml-1.13/rapidxml.hpp"
-#include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
+#include "thirdparty/rapidxml-1.13/rapidxml.hpp"
+#include "thirdparty/rapidxml-1.13/rapidxml_utils.hpp"
 #include <memory>
 #include "helpers/timer.h"
 

@@ -7,7 +7,7 @@ addpath('../../tools')
 addpath ('../../tools/WAM/utils')
 addpath('../../tools/gtsam_toolbox')
 addpath("../../tools/error_ellipse")
-addpath("../../../vimp/3rdparty/yaml")
+addpath("../../../vimp/thirdparty/yaml")
 
 import gtsam.*
 import gpmp2.*
@@ -149,12 +149,12 @@ for j = 1:nt
     color = [0, 0, 1, alpha];
     mean = i_means(1:7, j);
     mean_resample = good_means(:, j);
-    % plotArm3D(arm.fk_model(), mean, color, 4, true);
+    plotArm3D(arm.fk_model(), mean, color, 4, true);
 
     if ~isequal(mean_resample, mean)
         color = [1, 0, 0, alpha];  % Change color to red if not equal
     end
-    plotArm3D(arm.fk_model(), mean_resample, color, 4, true);
+%     plotArm3D(arm.fk_model(), mean_resample, color, 4, true);
 
     % centers = arm.sphereCentersMat(mean);
     % centers = arm.sphereCentersMat(mean_resample);

@@ -47,13 +47,13 @@ set(libSpGH_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/vimp/GaussianVI/quadrature/libS
 
 # GPMP2 and GTSAM
 message(STATUS "Finding GPMP2 and GTSAM Libraries")
-set(GPMP2_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gpmp2")
-set(GTSAM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gtsam")
-set(GPMP2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gpmp2/gpmp2/libgpmp2.so")
-set(GTSAM_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/gtsam/gtsam/libgtsam.so.4.0.0")
+set(GPMP2_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vimp/thirdparty/gpmp2")
+set(GTSAM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vimp/thirdparty/gtsam")
+set(GPMP2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vimp/thirdparty/gpmp2/gpmp2/libgpmp2.so")
+set(GTSAM_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/vimp/thirdparty/gtsam/gtsam/libgtsam.so.4.0.0")
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/3rdparty/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/thirdparty/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/GaussianVI")
 
 # Cereal

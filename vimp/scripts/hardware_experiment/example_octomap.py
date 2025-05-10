@@ -8,25 +8,8 @@ from moveit_msgs.srv     import ApplyPlanningScene, ApplyPlanningSceneRequest
 
 import os, sys
 import rospy, time
-
-# vimp root directory
-this_dir = os.path.dirname(os.path.abspath(__file__))
-vimp_dir = os.path.dirname(os.path.dirname(this_dir))
-vimp_ros_dir = os.path.dirname(this_dir) + "/vimp_ros"
-build_dir = os.path.dirname(vimp_dir) + "/build/vimp"
-third_party_dir = vimp_dir + "/3rdparty"
-
-if vimp_dir not in sys.path:            
-    sys.path.insert(0, vimp_dir)
-if build_dir not in sys.path:            
-    sys.path.insert(0, build_dir)
-if third_party_dir not in sys.path:            
-    sys.path.insert(0, third_party_dir)
-if vimp_ros_dir not in sys.path:            
-    sys.path.insert(0, vimp_ros_dir)
     
-    
-from sensor3D_tools import transform_sdf, o3d_voxelgrid_to_ros, rosvoxel_to_octomap
+from vimp.thirdparty.sensor3D_tools import transform_sdf, o3d_voxelgrid_to_ros, rosvoxel_to_octomap
 
 
 def make_small_voxelgrid(voxel_size=0.005):

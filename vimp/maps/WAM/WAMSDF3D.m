@@ -9,10 +9,12 @@ addpath("/usr/local/gtsam_toolbox")
 addpath("../../../matlab_helpers/tools")        
 
 %% dataset
-dataset = generate3Ddataset_1('WAMDeskDataset');
+dataset = generate3Ddataset_1('FrankaBoxDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
+
+save_field_to_json(dataset, 'FrankaBoxDataset.json');
 
 % init sdf
 disp('calculating signed distance field ...');
@@ -45,7 +47,7 @@ zlim([-0, 0.9])
 
 %% save SDF
 disp('saving sdf to .bin file...');
-sdf.saveSDF('WAMDeskDataset.bin');
+sdf.saveSDF('FrankaBoxDataset.bin');
 
 % %% create the mesh for visualization
 % [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);

@@ -11,18 +11,9 @@ from conditional_sampling import conditional_sample
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
-build_dir = os.path.dirname(vimp_dir) + "/build/vimp"
-third_party_dir = vimp_dir + "/3rdparty"
 
-if vimp_dir not in sys.path:            
-    sys.path.insert(0, vimp_dir)
-if build_dir not in sys.path:            
-    sys.path.insert(0, build_dir)
-if third_party_dir not in sys.path:            
-    sys.path.insert(0, third_party_dir)
-
-from bind_FK import ForwardKinematics, DHType
-from sensor3D_tools import SignedDistanceField
+from vimp.pybinds.bind_FK import ForwardKinematics, DHType
+from vimp.thirdparty.sensor3D_tools import SignedDistanceField
 
 
 def find_blocks(bad_idx):
@@ -289,7 +280,7 @@ def resample_block_trajectory(config_file: str,
 
 if __name__ == "__main__":
 
-    experiment_config = this_dir + "/config.yaml"
+    experiment_config = this_dir + "/config/config.yaml"
     path_to_yaml = Path(experiment_config)
 
     with path_to_yaml.open("r") as f:

@@ -1,12 +1,7 @@
-import os, sys
+import os
 this_dir = os.path.dirname(os.path.abspath(__file__))
-vimp_dir = os.path.dirname(os.path.dirname(this_dir))
-thirdparty_dir = vimp_dir + "/3rdparty"
 
-if thirdparty_dir not in sys.path:            
-    sys.path.insert(0, thirdparty_dir)
-
-from AprilTag.scripts.apriltag_image import apriltag_image, apriltag_image2pose
+from vimp.thirdparty.AprilTag.scripts.apriltag_image import apriltag_image, apriltag_image2pose
 
 import json
 from pathlib import Path
@@ -33,7 +28,7 @@ if __name__ == '__main__':
     # -------------------------
     #   Input is a .jpg image
     # -------------------------
-    input_images = [this_dir+'/single_tag.jpg']
+    input_images = [this_dir+'/april_tag.jpg']
     output_images = False
     display_images = True
     detection_window_name = 'AprilTag'

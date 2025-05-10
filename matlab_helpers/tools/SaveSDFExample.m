@@ -11,9 +11,9 @@ import gpmp2.*
 
 % addpath('utils')
 %% dataset
-dataset = generate3Ddataset_1('WAMDeskDataset');
+dataset = generate3Ddataset_1('FrankaBoxDataset');
 
-save_field_to_json(dataset, 'WAMDeskDataset.json');
+save_field_to_json(dataset, 'FrankaBoxDataset.json');
 
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
@@ -40,4 +40,4 @@ plotSDF3D(field, origin, cell_size, eps_dist, marker_size, ax);
 
 %% save SDF
 disp('saving sdf to .bin file...');
-sdf.saveSDF('WAMDeskDataset.bin');
+sdf.saveSDF('FrankaBoxDataset.bin');

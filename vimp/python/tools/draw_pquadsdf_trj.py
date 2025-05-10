@@ -13,8 +13,8 @@ file_path = os.path.abspath(__file__)
 current_dir = os.path.dirname(file_path)
 
 python_dir = os.path.abspath(os.path.join(current_dir, '..'))
-col_lib_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(python_dir, '..'), '..'), '3rdparty/sdf_robot/scripts'))
-col_example_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(python_dir, '..'), '..'), '3rdparty/sdf_robot/example'))
+col_lib_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(python_dir, '..'), '..'), 'thirdparty/sdf_robot/scripts'))
+col_example_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(python_dir, '..'), '..'), 'thirdparty/sdf_robot/example'))
 sys.path.append(python_dir)
 
 # import planar quadrotor dynamics

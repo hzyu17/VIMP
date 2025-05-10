@@ -1,8 +1,0 @@
-function [outputArg1,outputArg2] = save_field_to_json(dataset, json_file)
-% Save the constructed 3D field data set to json file. A python script can
-% re-construct the 3D field by 
-%   Detailed explanation goes here
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
-end
-

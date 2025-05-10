@@ -10,23 +10,9 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
-build_dir = os.path.dirname(vimp_dir) + "/build/vimp"
-third_party_dir = vimp_dir + "/3rdparty"
-python_tools_dir = vimp_dir + "/python"
-data_dir = this_dir + "/../../../matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2"
 
-if vimp_dir not in sys.path:            
-    sys.path.insert(0, vimp_dir)
-if build_dir not in sys.path:            
-    sys.path.insert(0, build_dir)
-if third_party_dir not in sys.path:            
-    sys.path.insert(0, third_party_dir)
-if python_tools_dir not in sys.path:
-    sys.path.insert(0, python_tools_dir)
-
-
-from sdf_robot.example.draw_planar_quad_sdf import plot_cov_ellipse
-from sensor3D_tools.scripts.SignedDistanceField2D import generate_field2D
+from vimp.python.sdf_robot.example.draw_planar_quad_sdf import plot_cov_ellipse
+from vimp.thirdparty.sensor3D_tools.scripts.SignedDistanceField2D import generate_field2D
 import libplanar_sdf
 
 # ------------------------ Load map parameters -------------------------
@@ -203,12 +189,12 @@ plt.show()
 
 # def plot_cov(Sigma, mu, k=3, ax=None):
 #     from matplotlib.patches import Ellipse
-#     eigvals, eigvecs = np.linalg.eigh(Sigma)   # eigh → guaranteed sorted λ1≤λ2
-#     order = eigvals.argsort()[::-1]            # make λ1 ≥ λ2 for nicer handling
+#     eigvals, eigvecs = np.linalg.eigh(Sigma)   
+#     order = eigvals.argsort()[::-1]            
 #     eigvals, eigvecs = eigvals[order], eigvecs[:,order]
 
-#     a, b = k*np.sqrt(eigvals)                  # semi-axis lengths
-#     theta = np.degrees(np.arctan2(*eigvecs[:,0][::-1]))  # principal angle in deg
+#     a, b = k*np.sqrt(eigvals)                  
+#     theta = np.degrees(np.arctan2(*eigvecs[:,0][::-1]))  
 
 #     if ax is None:
 #         fig, ax = plt.subplots()
