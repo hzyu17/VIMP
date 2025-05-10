@@ -17,4 +17,5 @@ Planning:
 
 Sampling:
   max_iters: 100000
-  threshold: 0.05
+  threshold: 0.075
+  window_size: 10
