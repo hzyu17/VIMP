@@ -10,15 +10,18 @@ import tf
 import threading
 from collections import deque
 
+# import lcm
+# from vimp.thirdparty.sensor3D_tools.lcm import construct_poselcm_msg
+
 # -----------
 #   Helpers
 # -----------
 
 def pose_to_matrix(p: Pose):
-    """geometry_msgs/Pose ➜ 4×4 homogeneous matrix."""
+    """geometry_msgs/Pose ➜ 4x4 homogeneous matrix."""
     q = p.orientation
     t = p.position
-    # quaternion (x,y,z,w)  ➜  3×3 rotation matrix
+    # quaternion (x,y,z,w)  ->  3×3 rotation matrix
     R = tf.transformations.quaternion_matrix([q.x, q.y, q.z, q.w])[:3, :3]
     T = np.eye(4)
     T[:3, :3] = R
@@ -27,7 +30,7 @@ def pose_to_matrix(p: Pose):
 
 
 def matrix_to_pose(T: np.ndarray):
-    """4×4 homogeneous matrix ➜ geometry_msgs/Pose."""
+    """4x4 homogeneous matrix ➜ geometry_msgs/Pose."""
     R = T[:3, :3]
     t = T[:3,  3]
     q = tf.transformations.quaternion_from_matrix(T)
@@ -39,28 +42,33 @@ def matrix_to_pose(T: np.ndarray):
 
 class RealTimeBoxUpdater:
     def __init__(self,
-                 body_topics: dict,
+                 body_box: dict,
+                 body_topic: dict,
                  box_sizes: dict,
                  box_rel_poses: dict,
                  buffer_size: int = 5,
                  update_hz: float = 1.0):
         """
-        body_topics:    {frame_name: topic_name} for incoming PoseStamped
-        box_sizes:      {frame_name: (sx,sy,sz)} in metres
-        box_rel_poses:  {frame_name: Pose()} of the box in the body frame
+        box_body:       {box_name: frame_name} mapping box name to its body frame
+        body_topic:     {frame_name: topic_name} for incoming PoseStamped
+        box_sizes:      {box_name: (sx,sy,sz)} in metres
+        box_rel_poses:  {box_name: Pose()} of the box in the body frame
         buffer_size:    how many old poses to keep
         update_hz:      how often to re-publish boxes into MoveIt!
         """
         # ring buffers for each body frame
         self._buffers = {
             name: deque(maxlen=buffer_size)
-            for name in body_topics
+            for name in body_topic
         }
         self._lock = threading.Lock()
 
         # store relative poses & sizes
         self._rel_poses = box_rel_poses
         self._sizes     = box_sizes
+        self._body_box  = body_box
+        
+        self._body_lcm_topic = body_topic
 
         # set up MoveIt planning scene
         rospy.init_node("scene_box_demo")
@@ -68,15 +76,14 @@ class RealTimeBoxUpdater:
         rospy.sleep(1.0)
 
         # subscribe to topics
-        for name, topic in body_topics.items():
+        for name, topic in body_topic.items():
             rospy.Subscriber(topic,
                              PoseStamped,
                              callback=self._make_cb(name),
                              queue_size=1)
 
         # timer to push updates at fixed rate
-        self._timer = rospy.Timer(rospy.Duration(1.0/update_hz),
-                                  callback=self._on_timer)
+        self._timer = rospy.Timer(rospy.Duration(1.0/update_hz), callback=self._on_timer)
 
     def _make_cb(self, name):
         def _cb(msg: PoseStamped):
@@ -93,11 +100,18 @@ class RealTimeBoxUpdater:
                 if not buf:
                     continue
                 latest: PoseStamped = buf[-1]
+                
+                bname = self._body_box[name]
 
                 # compose: T_world_box = T_world_body × T_body_box
                 T_w_b = pose_to_matrix(latest.pose)
-                T_b_box = pose_to_matrix(self._rel_poses[name])
+                T_b_box = pose_to_matrix(self._rel_poses[bname])
                 T_w_box = T_w_b @ T_b_box
+                
+                # Send out the lcm message for sdf construction
+                # lcm = lcm.LCM()
+                # msg = construct_poselcm_msg(name, T_w_b)
+                # lcm.publish(self._body_lcm_topic[name], msg)
 
                 # make a stamped pose in world
                 out = PoseStamped()
@@ -106,9 +120,9 @@ class RealTimeBoxUpdater:
                 out.pose = matrix_to_pose(T_w_box)
 
                 # update MoveIt!
-                self._scene.add_box(name,
+                self._scene.add_box(bname,
                                     out,
-                                    size=self._sizes[name])
+                                    size=self._sizes[bname])
 
     def spin(self):
         rospy.spin()
@@ -118,6 +132,17 @@ def load_body_frames_config(path: Path):
     """
     Reads a YAML of the form:
 
+    Field:
+        field_origin: [0, 0, 0] # [x, y, z] The origin of the field in the april tag's frame
+        field_size: [500, 500, 500]
+        cell_size: 0.01
+        obstacles:
+            - name: sdf_box_1
+            bodyframe: B1
+            center: [0.120, -0.300, 0.050]    # [x, y, z] in metres (wrt frame B)
+            orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+            size: [ 0.18, 0.18, 0.38 ]
+      
     body_frames:
       - frame_id: B1
         position:    [x, y, z]
@@ -130,46 +155,83 @@ def load_body_frames_config(path: Path):
           size: [sx, sy, sz]
 
     Returns three dicts:
-      • body_topics:    { box_name: monitor_topic }
-      • box_rel_poses:  { box_name: Pose() }            # Pose in its body frame
-      • box_sizes:      { box_name: (sx, sy, sz) }
+        box_bodyframe: {box_name: bodyframe_id}
+        body_topic:    { bodyframe_id: monitor_topic }
+        box_rel_poses:  { box_name: Pose() }            # Pose in its body frame
+        box_sizes:      { box_name: (sx, sy, sz) }
+        body_default_pose: {bodyframe_id: Pose() }
     """
     data = yaml.safe_load(path.read_text())
-    body_topics   = {}
+    body_box   = {}
+    body_topic = {}
     box_rel_poses = {}
     box_sizes     = {}
+    body_default_pose = {}
 
-    for entry in data["body_frames"]:
+    for entry in data["Body_frames"]:
         topic = entry["monitor_topic"]
+        fname = entry["frame_id"]
         bname = entry["box"]["name"]
-
-        # 1) map box → topic
-        body_topics[bname] = topic
-
-        # 2) build a Pose for the box centre in its body frame
+        
+        # map box : topic
+        body_topic[fname] = topic
+        
+        body_box[fname] = bname
+        
+        # bodyframe : default pose
         p = Pose()
-        cx, cy, cz = entry["box"]["center"]
+        cx, cy, cz = entry["position"]
         p.position.x, p.position.y, p.position.z = cx, cy, cz
-        qx, qy, qz, qw = entry["box"]["orientation"]
+        qx, qy, qz, qw = entry["orientation"]
+        p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w = (
+            qx, qy, qz, qw
+        )
+        
+        body_default_pose[fname] = p
+
+        
+    for entry in data["Field"]["obstacles"]:
+        # build a Pose for the box centre in its body frame
+        bname = entry["name"]
+        frame_id = entry["bodyframe"]
+        
+        # box_bodyframe[bname] = frame_id
+        
+        p = Pose()
+        cx, cy, cz = entry["center"]
+        p.position.x, p.position.y, p.position.z = cx, cy, cz
+        qx, qy, qz, qw = entry["orientation"]
         p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w = (
             qx, qy, qz, qw
         )
         box_rel_poses[bname] = p
 
         # 3) read out the size (you’ll need to add this in your YAML!)
-        sx, sy, sz = entry["box"]["size"]
+        sx, sy, sz = entry["size"]
         box_sizes[bname] = (sx, sy, sz)
+        
+    print("body_box")
+    print(body_box)
+    print("body_topic")
+    print(body_topic)
+    print("box_rel_poses")
+    print(box_rel_poses)
+    print("box_sizes")
+    print(box_sizes)
+    print("body_default_pose")
+    print(body_default_pose)
 
-    return body_topics, box_rel_poses, box_sizes
+    return body_box, body_topic, box_rel_poses, box_sizes, body_default_pose
 
 
 if __name__ == "__main__":
-    cfg_path = Path(__file__).parent / "config" / "body_frames.yaml"
-    body_topics, rel_poses, sizes = load_body_frames_config(cfg_path)
+    cfg_path = Path(__file__).parent / "config" / "config.yaml"
+    body_box, body_topic, rel_poses, sizes, body_default_pose = load_body_frames_config(cfg_path)
 
     # 2) Spin up the updater (from the previous example)
     updater = RealTimeBoxUpdater(
-        body_topics=body_topics,
+        body_box = body_box,
+        body_topic=body_topic,
         box_sizes=sizes,
         box_rel_poses=rel_poses,
         buffer_size=10,

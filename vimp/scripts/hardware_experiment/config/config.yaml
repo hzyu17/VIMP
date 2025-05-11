@@ -2,9 +2,12 @@ Field:
   field_origin: [0, 0, 0] # [x, y, z] The origin of the field in the april tag's frame
   field_size: [500, 500, 500]
   cell_size: 0.01
-  obstacle:
-    center: [200, 200] # [row, col], only consider on the table
-    size: [50, 50, 50] # [row, col, z]
+  obstacles:
+    - name: sdf_box_1
+      bodyframe: B1
+      center: [0.120, -0.300, 0.050]    # [x, y, z] in metres (wrt frame B)
+      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+      size: [ 0.18, 0.18, 0.38 ]
 
 Camera:
   config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
@@ -26,20 +29,16 @@ Body_frames:
     monitor_topic: "/B1_pose"
     box:
       name: sdf_box_1
-      center: [0.120, -0.300, 0.050]    # [x, y, z] in metres (wrt frame B)
-      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-      size: [ 0.18, 0.18, 0.38 ]
-      cell_size: 0.01
-  - frame_id: B2
-    position: [-1.0, 0.0, 0.0]
-    orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-    monitor_topic: "/B2_pose"
-    box:
-      name: sdf_box_2
-      center: [0.420, 0.170, 0.050]
-      orientation: [0.0, 0.0, 0.0, 1.0]   
-      size: [ 0.58, 0.58, 0.02 ]
-      cell_size: 0.01 
+  # - frame_id: B2
+  #   position: [-1.0, 0.0, 0.0]
+  #   orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+  #   monitor_topic: "/B2_pose"
+  #   box:
+  #     name: sdf_box_2
+  #     center: [0.420, 0.170, 0.050]
+  #     orientation: [0.0, 0.0, 0.0, 1.0]   
+  #     size: [ 0.58, 0.58, 0.02 ]
+  #     cell_size: 0.01 
   
 
 Sampling:

@@ -3,7 +3,7 @@
 
 import sys
 
-from vimp.thirdparty.AprilTag.scripts.apriltag_image import apriltag_image, apriltag_image2pose
+from vimp.thirdparty.AprilTag.scripts.apriltag_image import apriltag_image2pose
 from vimp.thirdparty.sensor3D_tools.lcm.pcd_lcm_sender import construct_poselcm_msg, publish_lcm_msg
 
 import cv2
@@ -63,7 +63,7 @@ class CameraAprilTagReader:
                 pose = self._buffer.popleft()
 
                 msg = construct_poselcm_msg(pose)
-                publish_lcm_msg(msg)
+                publish_lcm_msg(msg, topic=self._topic_name)
                 
                 # Publish ROS message for RViz
                 pose_msg = PoseStamped()
@@ -84,7 +84,7 @@ class CameraAprilTagReader:
                 print("Published pose to ROS topic ", self._topic_name)
 
 
-    def run(self, topic_name='/apriltag_pose'):
+    def run(self):
         """
         This function captures video from the webcam, detects AprilTags in the frames,
         and publishes the pose of the detected AprilTags to LCM and ROS.
