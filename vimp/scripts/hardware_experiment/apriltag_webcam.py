@@ -62,7 +62,7 @@ class CameraAprilTagReader:
             if self._buffer:
                 pose = self._buffer.popleft()
 
-                msg = construct_poselcm_msg(pose)
+                msg = construct_poselcm_msg(pose, name='B1')
                 publish_lcm_msg(msg, topic=self._topic_name)
                 
                 # Publish ROS message for RViz
