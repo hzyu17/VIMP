@@ -10,7 +10,8 @@ Field:
       size: [ 0.18, 0.18, 0.38 ]
 
 Camera:
-  config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
+  # config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
+  config_file: "vimp/scripts/hardware_experiment/UTF-fake_camera.json"
   apriltag_lcm_topic: "EXAMPLE"
   apriltag_families: 'tag25h9' # Change in vimp/thirdparty/AprilTag/scripts/apriltag.py
 
