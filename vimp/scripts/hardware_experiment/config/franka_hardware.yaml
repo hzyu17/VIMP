@@ -15,7 +15,7 @@ low_temp_iterations: 20
 stop_err:            1e-5
 max_iterations:      30
 max_n_backtracking:  5
-sdf_file:            /home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin
+sdf_file:            ../../thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetOffset_cereal.bin
 
 start_pos: [-0.8, -1.70, 1.64, 1.29, 1.1, -0.106, 2.2]
 goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]

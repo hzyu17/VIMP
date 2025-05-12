@@ -32,6 +32,11 @@ PYBIND11_MODULE(bind_FK, m) {
             &ForwardKinematics::compute_sphere_centers,
             py::arg("theta"),
             "Return a 3*N matrix with world-space positions of all collision spheres")
+        
+        .def("compute_sphere_centers_batched",
+            &ForwardKinematics::compute_sphere_centers_batched,
+            py::arg("thetas"),
+            "Return a 3*N matrix with world-space positions of all collision spheres for a batch of joint angles")
 
         /* (Forward‑kinematics helpers are left unexposed; add if needed) */
 

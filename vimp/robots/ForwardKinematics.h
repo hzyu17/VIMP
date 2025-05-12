@@ -41,8 +41,7 @@ class ForwardKinematics{
         inline MatrixXd compute_sphere_centers(const VectorXd& theta) const {
             // Precompute DH matrices for all joints.
             MatrixXd dh_mats(4, 4 * _num_joints);
-            MatrixXd pose(3, _num_spheres);
-
+            MatrixXd pose(_num_spheres, 3);
             VectorXd theta_full = theta;
 
             if (theta.size() < _num_joints) {
@@ -50,16 +49,29 @@ class ForwardKinematics{
                 theta_full.head(theta.size()) = theta;
             } 
 
-            precompute_dh_matrices(theta_full, dh_mats, _num_joints);
+            precompute_dh_matrices(theta_full, dh_mats);
     
             for (int i = 0; i < _num_spheres; ++i) {
                 int frame = _frames(i);
                 Vector3d center = _centers.col(i);
                 Vector3d pos;
                 forward_kinematics(dh_mats, frame, center, pos);
-                pose.col(i) = pos;
+                pose.row(i) = pos;
             }
             return pose;
+        }
+
+        inline MatrixXd compute_sphere_centers_batched(const Eigen::MatrixXd& thetas) const {
+            const int N = thetas.rows();
+            MatrixXd pts(_num_spheres * N, 3);
+            pts.setZero();
+
+            for (int i = 0; i < N; ++i) {
+                VectorXd theta = thetas.row(i);
+                MatrixXd pose = compute_sphere_centers(theta);
+                pts.block(i * _num_spheres, 0, _num_spheres, 3) = pose;
+            }
+            return pts;
         }
     
         inline void forward_kinematics(const MatrixXd& dh_mats, int frame, const Vector3d& center, Vector3d& pos) const {
@@ -72,11 +84,11 @@ class ForwardKinematics{
             pos = transformed.segment(0, 3);
         }
     
-        inline void precompute_dh_matrices(const VectorXd& theta, MatrixXd& dh_mats, int n) const {
+        inline void precompute_dh_matrices(const VectorXd& theta, MatrixXd& dh_mats) const {
             Matrix4d T = Matrix4d::Identity();
             Matrix4d mul_result = Matrix4d::Zero();
             
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < _num_joints; i++) {
                 double th = theta(i) + _theta_bias(i);
                 Matrix4d dh_mat = Matrix4d::Zero();
                 if (_dh_type == Classical)

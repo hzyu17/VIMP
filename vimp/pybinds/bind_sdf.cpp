@@ -30,6 +30,10 @@ PYBIND11_MODULE(bind_SDF, m) {
              py::arg("point"),
              "Query the interpolated signed distance at a 3D point")
 
+        .def("getSignedDistanceBatched",
+             &SignedDistanceField::getSignedDistanceBatched, py::arg("point_vec"),
+                "Query the interpolated signed distance at a batch of 3D points")
+
         .def("convertPoint3toCell", &SignedDistanceField::convertPoint3toCell,
              py::arg("point"),
              "Convert a world-coordinate point to fractional cell indices")

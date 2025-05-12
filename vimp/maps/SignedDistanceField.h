@@ -43,9 +43,23 @@ public:
 
   /// give a point, search for signed distance field and (optional) gradient
   /// return signed distance
-  inline double getSignedDistance(const Eigen::MatrixXd& point) const {
+  inline double getSignedDistance(const Eigen::Vector3d& point) const {
     const float_index pidx = convertPoint3toCell(point);
     return signed_distance(pidx);
+  }
+
+  Eigen::VectorXd getSignedDistanceBatched(const MatrixXd& points) const
+  {
+    const int N = points.rows();
+    Eigen::VectorXd dists(N);
+    for (int i = 0; i < N; ++i) {
+      // extract the i-th row as a 3-vector
+      Eigen::Vector3d p = points.row(i);
+      // reuse your single‐point logic
+      const float_index pidx = convertPoint3toCell(p);
+      dists[i] = signed_distance(pidx);
+    }
+    return dists;
   }
 
   /// convert between point and cell corrdinate

@@ -16,6 +16,7 @@ Camera:
 
 Planning:
   config_file: "vimp/scripts/hardware_experiment/config/franka_hardware.yaml"
+  sdf_file: "vimp/thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetOffset_cereal.bin"
 
 April_tags:
   - name: tag25h9
@@ -43,5 +44,6 @@ Body_frames:
 
 Sampling:
   max_iters: 100000
-  threshold: 0.075
+  collision_threshold: 0.02
+  safety_threshold: 0.05
   window_size: 10

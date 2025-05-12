@@ -13,8 +13,7 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
 
 from vimp.pybinds.bind_FK import ForwardKinematics, DHType
-from vimp.thirdparty.sensor3D_tools import SignedDistanceField
-
+from vimp.pybinds.bind_SDF import SignedDistanceField
 
 def find_blocks(bad_idx, gap = 2):
     """Split a sorted array of collision indices into contiguous runs."""
@@ -32,7 +31,7 @@ def collision_checking(sdf: SignedDistanceField,
 
     margins_matrix = np.zeros((n_spheres, n_states))
     for i in range(n_states):
-        pts = fk.compute_sphere_centers(joint_means[i]).T
+        pts = fk.compute_sphere_centers(joint_means[i])
         signed_distances = np.array([sdf.getSignedDistance(p) for p in pts])
         margins_matrix[:, i] = signed_distances
     min_margin = np.min(margins_matrix, axis=0)
@@ -83,7 +82,7 @@ def collision_checking_and_resampling(config_file: str,
     margins_matrix = np.zeros((n_spheres, n_states))
 
     for i in range(n_states):
-        pts = fk.compute_sphere_centers(joint_means[i]).T
+        pts = fk.compute_sphere_centers(joint_means[i])
         signed_distances = np.array([sdf.getSignedDistance(point) for point in pts])
         # Compute margins as the difference between the signed distances and the radii
         margins_matrix[:, i] = signed_distances - radii
@@ -139,7 +138,7 @@ def collision_checking_and_resampling(config_file: str,
                 means[i, joint_idx] = new_theta
 
                 # Recompute the collision cost for the new sample.
-                pts = fk.compute_sphere_centers(means[i]).T
+                pts = fk.compute_sphere_centers(means[i])
                 raw_dists = np.array([sdf.getSignedDistance(pt) for pt in pts])
                 margins_matrix[:, i] = raw_dists - radii
                 min_margin[i] = np.min(margins_matrix[:, i])
@@ -154,9 +153,7 @@ def collision_checking_and_resampling(config_file: str,
 
 def resample_block_trajectory(config_file: str,
                                 sdf: SignedDistanceField,
-                                max_iters: int = 1000,
-                                threshold: float = 0.1,
-                                window_size: int = 2):
+                                sampling_cfg: dict):
     # ---------------- Forward Kinematics and Parameters----------------
     with config_file.open("r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
@@ -171,6 +168,11 @@ def resample_block_trajectory(config_file: str,
     radii      = np.array(dh["radii"],      dtype=np.float64)
     frames     = np.array(dh["frames"],     dtype=np.int32)
     centers    = np.array(dh["centers"],    dtype=np.float64)  # shape (20,3)
+
+    max_iters = sampling_cfg["max_iters"]
+    collision_threshold = sampling_cfg["collision_threshold"]
+    safety_threshold = sampling_cfg["safety_threshold"]
+    window_size = sampling_cfg["window_size"]
 
     result_dir = Path(vimp_dir + "/" + cfg["saving_prefix"])
 
@@ -187,33 +189,29 @@ def resample_block_trajectory(config_file: str,
 
     n_states, dim_state = zk_matrix.shape
     dim_conf = dim_state // 2
-    n_spheres = frames.size
+    n_spheres = fk.num_spheres
     
-    joint_means = zk_matrix.flatten()
-    joint_cov = np.linalg.inv(joint_prec)    
+    joint_means = torch.from_numpy(zk_matrix).flatten()
+    joint_cov = torch.inverse(torch.from_numpy(joint_prec)).numpy()
 
     means = zk_matrix[:, :dim_conf]
     means_sample = means.copy()
 
     # ----------------- Collision Checking ----------------
-    margins_matrix = np.zeros((n_spheres, n_states))
-
-    for i in range(n_states):
-        pts = fk.compute_sphere_centers(means[i]).T
-        signed_distances = np.array([sdf.getSignedDistance(p) for p in pts])
-        # Compute margins as the difference between the signed distances and the radii
-        margins_matrix[:, i] = signed_distances - radii
+    pts = fk.compute_sphere_centers_batched(means)
+    signed_distances = sdf.getSignedDistanceBatched(pts)
+    margins_matrix = signed_distances.reshape(n_spheres, n_states, order='F') - radii[:, None]
     min_margin = np.min(margins_matrix, axis=0)
     # print(f"Minimum margin for each state: {min_margin}")
-
 
     # ----------------- Sampling --------------------------
     # Only consider the intermediate states (exclude the first and last points).
     indices = np.arange(n_states)
-    bad_idx = indices[(min_margin < threshold) & (indices != 0) & (indices != n_states - 1)]
+    bad_idx = indices[(min_margin < collision_threshold) & (indices != 0) & (indices != n_states - 1)]
 
     if bad_idx.size == 0:
         print("All intermediate states are collision-free, ending resampling.")
+        blocks = []
     else:
         blocks = find_blocks(bad_idx)
         print("Collision detected at indices:", bad_idx)
@@ -236,18 +234,15 @@ def resample_block_trajectory(config_file: str,
         [cond_mean, cond_cov] = conditional_sample(block_means, block_covs, dim_state)
         L = np.linalg.cholesky(cond_cov)  # Cholesky decomposition to speed up sampling
 
-        engenvalue = np.max(np.linalg.eigvals(cond_cov))
-        print(f"Largest eigenvalue for block {block}: {engenvalue}")
-
-        engenvalue = np.max(np.linalg.eigvals(block_covs))
-        print(f"Largest eigenvalue for joint covariance: {engenvalue}")
+        signed_dist_block = min_margin[start_state + 1:end_state]
+        safety_metric = np.min(signed_dist_block)
 
         block_iter = 0
 
         while block_iter < max_iters:
             # Check if the new sample is valid
             block_iter += 1
-            if block_iter % 10 == 0:
+            if block_iter % 5000 == 0:
                 print(f"Block is being resampled, iteration {block_iter}.")
 
             z = np.random.standard_normal(cond_mean.shape)
@@ -255,20 +250,23 @@ def resample_block_trajectory(config_file: str,
 
             # Compute the signed distances for the new sample
             means_new = new_theta.reshape(-1, dim_state)[:, :dim_conf]
-            block_margins = np.zeros((n_spheres, means_new.shape[0]))
 
-            for i in range(means_new.shape[0]):
-                pts = fk.compute_sphere_centers(means_new[i]).T
-                signed_distances = np.array([sdf.getSignedDistance(p) for p in pts])
-                block_margins[:, i] = signed_distances - radii
+            pts = fk.compute_sphere_centers_batched(means_new)
+            signed_distances = sdf.getSignedDistanceBatched(pts)
+            block_margins = signed_distances.reshape(n_spheres, means_new.shape[0], order='F') - radii[:, None]
             min_block_margin = np.min(block_margins, axis=0)
-            print(f"Minimum margin: {min_block_margin.min()}")
+            # print(f"Minimum margin: {min_block_margin.min()}")
 
             # Check if the new sample is valid
-            if np.all(min_block_margin > threshold):
+            if np.all(min_block_margin > safety_threshold):
                 print(f"Block {block} is valid after {block_iter} iterations.")
                 means_sample[start_state + 1:end_state] = means_new
                 break
+            else:
+                new_metric = np.min(min_block_margin)
+                if new_metric > safety_metric:
+                    safety_metric = new_metric
+                    means_sample[start_state + 1:end_state] = means_new
 
     # Save the valid mean trajectory to a csv file.
     output_file = os.path.join(result_dir, "good_zk.csv")
@@ -285,15 +283,14 @@ if __name__ == "__main__":
         cfg = yaml.safe_load(f)            # cfg is now a nested dict
 
     planning_cfg_path   = Path(cfg["Planning"]["config_file"])
-    max_iters           = cfg["Sampling"]["max_iters"]
-    threshold          = cfg["Sampling"]["threshold"]
-    window_size        = cfg["Sampling"]["window_size"]
+    sdf_path            = cfg["Planning"]["sdf_file"]
 
     # Load the signed distance field
     sdf = SignedDistanceField()
-    sdf.loadSDF(os.path.join(this_dir, "../../maps/WAM/FrankaBoxDataset_cereal.bin"))
+    # sdf.loadSDF(os.path.join(this_dir, "../../maps/WAM/FrankaBoxDataset_cereal.bin"))
+    sdf.loadSDF(sdf_path)
 
     # Perform collision checking and resampling
     # collision_checking_and_resampling(planning_cfg_path, sdf, max_iters, threshold)
 
-    resample_block_trajectory(planning_cfg_path, sdf, max_iters, threshold, window_size)
+    resample_block_trajectory(planning_cfg_path, sdf, cfg["Sampling"])
