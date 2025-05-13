@@ -27,7 +27,7 @@ April_tags:
 
 Body_frames:
   - frame_id: B1
-    position: [1.0, 0.0, 0.0]    
+    position: [0.4, 0.0, 0.0]    
     orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
     monitor_topic: "/B1_pose"
     box:

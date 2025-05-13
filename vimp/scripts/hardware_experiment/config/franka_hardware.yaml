@@ -24,7 +24,7 @@ saving_prefix: scripts/hardware_experiment/Data
 
 body_frames:
   - frame_id: B1
-    position: [0.0, 0.0, 0.0]    
+    position: [0.0, 0.0, 0.0]
     orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
     monitor_topic: "/B1_pose"
     box:
@@ -39,7 +39,7 @@ body_frames:
     box:
       name: sdf_box_2
       center: [0.420,  0.170, 0.050]
-      orientation: [0.0,   0.0,   0.0, 1.0]   
+      orientation: [0.0,   0.0,   0.0, 1.0]
       size: [ 58, 58, 2 ]
 
       

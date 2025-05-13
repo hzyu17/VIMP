@@ -18,8 +18,9 @@ class ForwardKinematics{
       // Body sphere variables
       int _num_spheres;
       int _num_joints;
-      Eigen::VectorXi _frames;
-      Eigen::MatrixXd _centers; // Note: centers must be constructed in row-major form (each center belongs to a row)
+      VectorXi _frames;
+      MatrixXd _centers;
+      VectorXd _radii;
     
       DHType _dh_type;
     
@@ -29,16 +30,17 @@ class ForwardKinematics{
         // Constructors/Destructor
         ForwardKinematics() {}
     
-        ForwardKinematics(const Eigen::VectorXd& a, const Eigen::VectorXd& alpha,
-                          const Eigen::VectorXd& d, const Eigen::VectorXd& theta_bias,
-                          const Eigen::VectorXi& frames, const Eigen::MatrixXd& centers, DHType dh_type) :
+        ForwardKinematics(const VectorXd& a, const VectorXd& alpha,
+                          const VectorXd& d, const VectorXd& theta_bias,
+                          const VectorXi& frames, const MatrixXd& centers, 
+                          const VectorXd& radii, DHType dh_type) :
           _a(a), _alpha(alpha), _d(d), _theta_bias(theta_bias), _frames(frames),
-          _num_joints(a.size()), _num_spheres(frames.size()), _dh_type(dh_type)
+          _num_joints(a.size()), _num_spheres(frames.size()), _radii(radii), _dh_type(dh_type)
           {
-            if (_centers.rows() == _num_spheres && _centers.cols() == 3)
-                _centers = _centers.transpose();
-            else if (_centers.rows() == 3 && _centers.cols() == _num_spheres)
-                _centers = _centers;
+            if (centers.cols() == 3)
+                _centers = centers.transpose();
+            else if (centers.rows() == 3)
+                _centers = centers;
             else
                 throw std::runtime_error("[ForwardKinematics] centers must be a 3xN matrix");
           }
@@ -68,7 +70,7 @@ class ForwardKinematics{
             return pose;
         }
 
-        inline MatrixXd compute_sphere_centers_batched(const Eigen::MatrixXd& thetas) const {
+        inline MatrixXd compute_sphere_centers_batched(const MatrixXd& thetas) const {
             const int N = thetas.rows();
             MatrixXd pts(_num_spheres * N, 3);
             pts.setZero();
@@ -137,12 +139,13 @@ class ForwardKinematics{
             return mat;
         }
 
-        const Eigen::VectorXd& a() const { return _a; }
-        const Eigen::VectorXd& alpha() const { return _alpha; }
-        const Eigen::VectorXd& d() const { return _d; }
-        const Eigen::VectorXd& theta_bias() const { return _theta_bias; }
-        const Eigen::VectorXi& frames() const { return _frames; }
-        const Eigen::MatrixXd& centers() const { return _centers; }
+        const VectorXd& a() const { return _a; }
+        const VectorXd& alpha() const { return _alpha; }
+        const VectorXd& d() const { return _d; }
+        const VectorXd& theta_bias() const { return _theta_bias; }
+        const VectorXi& frames() const { return _frames; }
+        const MatrixXd& centers() const { return _centers; }
+        const VectorXd& radii() const { return _radii; }
         int num_joints() const { return _num_joints; }
         int num_spheres() const { return _num_spheres; }
         DHType dh_type() const { return _dh_type; }

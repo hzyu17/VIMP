@@ -21,10 +21,11 @@ PYBIND11_MODULE(bind_FK, m) {
         .def(py::init<>(), "Default constructor")
         .def(py::init< const Eigen::VectorXd&, const Eigen::VectorXd&,
                  const Eigen::VectorXd&, const Eigen::VectorXd&,
-                 const Eigen::VectorXi&, const Eigen::MatrixXd&, DHType>(),
+                 const Eigen::VectorXi&, const Eigen::MatrixXd&, 
+                 const Eigen::VectorXd&, DHType>(),
              py::arg("a"), py::arg("alpha"), py::arg("d"),
              py::arg("theta_bias"), py::arg("frames"),
-             py::arg("centers"), py::arg("dh_type") = DHType::Modified,
+             py::arg("centers"), py::arg("radii"), py::arg("dh_type") = DHType::Modified,
              "Fully specified constructor")
 
         /* -- methods ----------------------------------------------------- */
@@ -54,6 +55,8 @@ PYBIND11_MODULE(bind_FK, m) {
         .def_property_readonly("centers",     &ForwardKinematics::centers,
              py::return_value_policy::reference_internal,
              "Sphere centers expressed in their local joint frames")
+        .def_property_readonly("radii",       &ForwardKinematics::radii,
+             "Collision sphere radius")
         .def_property_readonly("num_joints",  &ForwardKinematics::num_joints,
              "Number of actuated joints")
         .def_property_readonly("num_spheres", &ForwardKinematics::num_spheres,

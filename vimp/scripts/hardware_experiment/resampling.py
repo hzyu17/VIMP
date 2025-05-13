@@ -169,7 +169,7 @@ def read_forwardkinematic_from_config(config_file):
     centers    = np.array(dh["centers"],    dtype=np.float64)  # shape (20,3)
     
     # Create FK object
-    return ForwardKinematics(a, alpha, d, theta_bias, frames, centers.T, dh_type)
+    return ForwardKinematics(a, alpha, d, theta_bias, frames, centers, radii, dh_type)
 
 
 def resample_block_trajectory(config_file: str,
@@ -182,6 +182,9 @@ def resample_block_trajectory(config_file: str,
     collision_threshold = sampling_cfg["collision_threshold"]
     safety_threshold = sampling_cfg["safety_threshold"]
     window_size = sampling_cfg["window_size"]
+
+    with config_file.open("r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
 
     result_dir = Path(vimp_dir + "/" + cfg["saving_prefix"])
 
@@ -206,7 +209,7 @@ def resample_block_trajectory(config_file: str,
     # ----------------- Collision Checking ----------------
     pts = fk.compute_sphere_centers_batched(means)
     signed_distances = sdf.getSignedDistanceBatched(pts)
-    margins_matrix = signed_distances.reshape(n_spheres, n_states, order='F') - radii[:, None]
+    margins_matrix = signed_distances.reshape(n_spheres, n_states, order='F') - fk.radii[:, None]
     min_margin = np.min(margins_matrix, axis=0)
     # print(f"Minimum margin for each state: {min_margin}")
 
@@ -259,7 +262,7 @@ def resample_block_trajectory(config_file: str,
 
             pts = fk.compute_sphere_centers_batched(means_new)
             signed_distances = sdf.getSignedDistanceBatched(pts)
-            block_margins = signed_distances.reshape(n_spheres, means_new.shape[0], order='F') - radii[:, None]
+            block_margins = signed_distances.reshape(n_spheres, means_new.shape[0], order='F') - fk.radii[:, None]
             min_block_margin = np.min(block_margins, axis=0)
             # print(f"Minimum margin: {min_block_margin.min()}")
 
