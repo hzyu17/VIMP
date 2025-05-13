@@ -19,8 +19,8 @@
 
 #include "helpers/ExperimentParams.h"
 #include "dynamics/LinearDynamics.h"
-#include "3rdparty/rapidxml-1.13/rapidxml.hpp"
-#include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
+#include "thirdparty/rapidxml-1.13/rapidxml.hpp"
+#include "thirdparty/rapidxml-1.13/rapidxml_utils.hpp"
 #include <memory>
 #include "helpers/timer.h"
 
@@ -118,10 +118,14 @@ public:
         int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
 
         std::string map_name = static_cast<std::string>(commonParams->first_node("map_name")->value());
+        std::string sdf_file = "";
+        if (commonParams->first_node("sdf_file")){
+            sdf_file = static_cast<std::string>(commonParams->first_node("sdf_file")->value());
+        }
 
         params = GVIMPParams(this->_nx, this->_nu, total_time, nt, coeff_Qc, gh_degree, sig_obs, eps_sdf, radius, 
                             step_size, max_iterations, init_precision_factor, boundary_penalties, 
-                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name, "", alpha);
+                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name, sdf_file, alpha);
     }
 
     void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& params) override {
@@ -212,6 +216,16 @@ public:
             params.update_step_size(step_size);
         }
 
+        if (paramNode->first_node("boundary_penalties")){
+            double boundary_penalties = atof(paramNode->first_node("boundary_penalties")->value());
+            params.update_boundary_penalties(boundary_penalties);
+        }
+
+        if (paramNode->first_node("alpha")){
+            double alpha = atof(paramNode->first_node("alpha")->value());
+            params.update_alpha(alpha);
+        }
+
         std::string source_root{XSTRING(SOURCE_ROOT)};
         std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
@@ -261,13 +275,54 @@ private:
 
 
 template <typename GVIMPOptimizer>
-class GVIMPRunner_Quadrotor : public GVIMPRunner<GVIMPOptimizer> {
+class GVIMPRunner_Quadrotor : public ExperimentRunner<GVIMPParams_nonlinear>{
 public:
     virtual ~GVIMPRunner_Quadrotor(){}
     GVIMPRunner_Quadrotor(int nx, int nu, int num_exp, const std::string & config)
-        : GVIMPRunner<GVIMPOptimizer>(nx, nu, num_exp, config) {}
+        : ExperimentRunner<GVIMPParams_nonlinear>(nx, nu, num_exp, config) 
+        {
+            read_config(_params);
+            _gvimp_robotsdf = GVIMPOptimizer(_params);
+        }
 
-    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams& params) override {
+    void read_config(GVIMPParams_nonlinear& params) override {
+        rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
+        rapidxml::xml_document<> doc;
+        doc.parse<0>(xmlFile.data());
+        
+        // Common parameters
+        std::string CommonNodeName = "Commons";
+        char * c_commons = CommonNodeName.data();
+        rapidxml::xml_node<>* commonParams = doc.first_node(c_commons);
+
+        double total_time = atof(commonParams->first_node("total_time")->value());
+        double coeff_Qc = atof(commonParams->first_node("coeff_Qc")->value());
+        double sig_obs = atof(commonParams->first_node("sig_obs")->value());
+        double eps_sdf = atof(commonParams->first_node("eps_sdf")->value());
+        double radius = atof(commonParams->first_node("radius")->value());
+        double step_size = atof(commonParams->first_node("step_size")->value());
+        double stop_err = atof(commonParams->first_node("stop_err")->value());
+        double alpha = atof(commonParams->first_node("alpha")->value());
+        double init_precision_factor = atof(commonParams->first_node("init_precision_factor")->value());
+        double boundary_penalties = atof(commonParams->first_node("boundary_penalties")->value());
+        double temperature = atof(commonParams->first_node("temperature")->value());
+        double high_temperature = atof(commonParams->first_node("high_temperature")->value());
+        
+        int gh_degree = atoi(commonParams->first_node("GH_deg")->value());
+        int nt = atoi(commonParams->first_node("n_states")->value());
+        int low_temp_iterations = atoi(commonParams->first_node("low_temp_iterations")->value());
+        int max_iterations = atoi(commonParams->first_node("max_iterations")->value());
+        int max_n_backtracking = atoi(commonParams->first_node("max_n_backtracking")->value());
+        int max_linear_iter = atoi(commonParams->first_node("max_linear_iter")->value());
+
+        std::string map_name = static_cast<std::string>(commonParams->first_node("map_name")->value());
+
+        params = GVIMPParams_nonlinear(this->_nx, this->_nu, total_time, nt, coeff_Qc, gh_degree, sig_obs, eps_sdf, radius, 
+                            step_size, max_iterations, init_precision_factor, boundary_penalties, 
+                            temperature, high_temperature, low_temp_iterations, stop_err, max_n_backtracking, map_name, "", alpha, max_linear_iter);
+    }
+
+    void read_boundary_conditions(const rapidxml::xml_node<>* paramNode, GVIMPParams_nonlinear& params) override {
         VectorXd m0(this->_nx), mT(this->_nx); 
 
         double start_x = atof(paramNode->first_node("start_pos")->first_node("x")->value());
@@ -337,11 +392,70 @@ public:
             params.update_step_size(step_size);
         }
 
+        if (paramNode->first_node("boundary_penalties")){
+            double boundary_penalties = atof(paramNode->first_node("boundary_penalties")->value());
+            params.update_boundary_penalties(boundary_penalties);
+        }
+
+        if (paramNode->first_node("alpha")){
+            double alpha = atof(paramNode->first_node("alpha")->value());
+            params.update_alpha(alpha);
+        }
+
+        if (paramNode->first_node("max_linear_iter")){
+            int max_linear_iter = atoi(paramNode->first_node("max_linear_iter")->value());
+            params.update_max_linear_iter(max_linear_iter);
+        }
+
+        if (paramNode->first_node("map_name")){
+            std::string map_name = static_cast<std::string>(paramNode->first_node("map_name")->value());
+            params.update_map_name(map_name);
+        }
+
         std::string source_root{XSTRING(SOURCE_ROOT)};
         std::string saving_prefix_relative = static_cast<std::string>(paramNode->first_node("saving_prefix")->value());
         std::string saving_prefix = source_root + "/../" + saving_prefix_relative;
         params.set_saving_prefix(saving_prefix);
     }
+
+    double run_one_exp(int exp, GVIMPParams_nonlinear& params, bool verbose=true) override {
+        rapidxml::file<> xmlFile(_config_file.data()); // Default template is char
+        rapidxml::xml_document<> doc;
+        doc.parse<0>(xmlFile.data());
+        std::string ExpNodeName = "Experiment" + std::to_string(exp);
+
+        char * c_expname = ExpNodeName.data();
+        rapidxml::xml_node<>* paramNode = doc.first_node(c_expname);
+
+        std::cout << ExpNodeName.data() << std::endl;
+        
+        std::cout << "----- Reading Boundary Conditions -----" << std::endl;
+        
+        this->read_boundary_conditions(paramNode, params);
+
+        if (verbose){
+            params.print_params();
+        }
+        
+        return _gvimp_robotsdf.run_optimization_withtime(params, verbose);
+    }
+
+    // Run one experiment, return the optimized means and precision matrices.
+    std::tuple<Eigen::VectorXd, SpMat> run_one_exp_return(GVIMPParams_nonlinear& params, bool verbose=true) 
+    {
+        params.print_params();
+        return _gvimp_robotsdf.run_optimization_return(params, verbose);
+    }
+
+    std::tuple<VectorXd, SpMat> get_mu_precision() {
+        return  _gvimp_robotsdf.get_mu_precision();
+    }
+
+    GVIMPOptimizer optimizer_robot_sdf() const { return _gvimp_robotsdf; }
+
+private:
+    GVIMPOptimizer _gvimp_robotsdf;
+
 };
 
 
@@ -417,6 +531,16 @@ public:
         if (paramNode->first_node("sig_obs")){
             double cost_sigma = atof(paramNode->first_node("sig_obs")->value());
             params.update_sig_obs(cost_sigma);
+        }
+
+        if (paramNode->first_node("total_time")){
+            double total_time = atof(paramNode->first_node("total_time")->value());
+            params.set_total_time(total_time);
+        }
+
+        if (paramNode->first_node("alpha")){
+            double alpha = atof(paramNode->first_node("alpha")->value());
+            params.update_alpha(alpha);
         }
 
         std::string source_root{XSTRING(SOURCE_ROOT)};

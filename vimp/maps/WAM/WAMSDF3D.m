@@ -3,32 +3,28 @@
 close all
 clear
 
-% import gtsam.*
-% import gpmp2.*
-% addpath("/usr/local/gtsam_toolbox")
-% addpath("../../../matlab_helpers/tools")      
-
-addpath("../../../matlab_helpers/tools")
-addpath("..")
+import gtsam.*
+import gpmp2.*
+addpath("/usr/local/gtsam_toolbox")
+addpath("../../../matlab_helpers/tools")        
 
 %% dataset
-dataset = generate3Ddataset_1('WAMDeskDataset');
+dataset = generate3Ddataset_1('FrankaBoxDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
-% origin_point3 = Point3(origin');
+origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
+
+save_field_to_json(dataset, 'FrankaBoxDataset.json');
 
 % init sdf
 disp('calculating signed distance field ...');
 field = signedDistanceField3D(dataset.map, dataset.cell_size);
 disp('calculating signed distance field done');
 
-% sdf = SignedDistanceField(origin_point3, cell_size, size(field, 1), ...
-%     size(field, 2), size(field, 3));
-
-sdf = SignedDistanceField_mex('new', origin, cell_size, size(field, 1), size(field, 2), size(field, 3));
+sdf = SignedDistanceField(origin_point3, cell_size, size(field, 1), ...
+    size(field, 2), size(field, 3));
 for z = 1:size(field, 3)
-    % sdf.initFieldData(z-1, field(:,:,z)');
-    SignedDistanceField_mex('initFieldData', sdf, z-1, field(:, :, z));
+    sdf.initFieldData(z-1, field(:,:,z)');
 end
 
 % plot 3D SDF
@@ -51,8 +47,7 @@ zlim([-0, 0.9])
 
 %% save SDF
 disp('saving sdf to .bin file...');
-% sdf.saveSDF('WAMDeskDataset.bin');
-SignedDistanceField_mex('save', sdf, 'WAMDeskDataset.bin');
+sdf.saveSDF('FrankaBoxDataset.bin');
 
 % %% create the mesh for visualization
 % [X,Y,Z] = meshgrid(-10:1:20,-10:1:20,-10:1:20);

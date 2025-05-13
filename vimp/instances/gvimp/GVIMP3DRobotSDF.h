@@ -106,7 +106,7 @@ public:
 
             // initial velocity: must have initial velocity for the fitst state??
             theta_i.segment(dim_conf, dim_conf) = avg_vel;
-            joint_init_theta.segment(i*dim_state, dim_state) = std::move(theta_i);   
+            joint_init_theta.segment(i*dim_state, dim_state) = theta_i; 
 
             gvi::MinimumAccGP lin_gp{Qc, i, delt_t, start_theta};
 

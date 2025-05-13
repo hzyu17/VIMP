@@ -1,0 +1,36 @@
+Field: 
+  cols: 400        # number of columns (X direction)
+  rows: 300        # number of rows    (Y direction)
+  origin:
+    x: -20.0       # world X of lower‐left corner
+    y: -10.0       # world Y of lower‐left corner
+  cell_size: 0.1  # size of each grid cell in meters
+
+  obstacles:
+    - center: [ 12,  0 ]
+      size:   [  5, 10 ]
+    - center: [ -12,  0 ]
+      size:   [  7, 10 ]
+    - center: [ -10, 13 ]
+      size:   [  8,  5 ]
+    - center: [   1,  0 ]
+      size:   [ 10,  5 ]
+    - center: [   5, 12 ]
+      size:   [  7,  8 ]
+
+  obs_center_noise: 0.5
+  obs_size_noise: 0.5
+  
+  result_dir: "/../matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2"
+
+Sampling:
+  window_size: 4
+  max_iters: 100000
+  safe_threshold: 1.5
+  collision_threshold: 1.25
+
+Fig_save:
+  save_path: "/Figures"
+  fig_dpi: 300
+  num_figs: 30
+  fig_format: "png"

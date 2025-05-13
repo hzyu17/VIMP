@@ -4,6 +4,8 @@
 close all
 clear
 
+addpath("/usr/local/gtsam_toolbox")
+
 import gtsam.*
 import gpmp2.*
 
@@ -14,10 +16,10 @@ start_confs = [-0.8,   -1.70,   1.64,  1.29,   1.1, -0.106,    2.2;
 end_confs = [-0.0,    0.94,     0,     1.6,     0,   -0.919,   1.55;
               -0.7,   1.35,    1.2,    1.0,   -0.7,  -0.1,   1.2];
 
-for i_exp = 1:2 
+for i_exp = 1:1
 
 %% dataset
-dataset = generate3Ddataset('WAMDeskDataset');
+dataset = generate3Ddataset_1('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
@@ -50,8 +52,8 @@ hold off
 
 %% settings
 total_time_sec = 2;
-total_time_step = 50;
-total_check_step = 100;
+total_time_step = 750;
+total_check_step = 1500;
 delta_t = total_time_sec / total_time_step;
 check_inter = total_check_step / total_time_step - 1;
 
@@ -164,7 +166,7 @@ fprintf('Initial Collision Cost: %d\n', graph_obs.error(init_values))
 optimizer.optimize();
 
 result = optimizer.values();
-% result.print('Final results')
+result.print('Final results')
 
 fprintf('Error = %d\n', graph.error(result))
 fprintf('Collision Cost End: %d\n', graph_obs.error(result))

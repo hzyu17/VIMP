@@ -13,8 +13,8 @@ file_path = os.path.abspath(__file__)
 current_dir = os.path.dirname(file_path)
 
 python_dir = os.path.abspath(os.path.join(current_dir, '..'))
-col_lib_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(python_dir, '..'), '..'), '3rdparty/sdf_robot/scripts'))
-col_example_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(python_dir, '..'), '..'), '3rdparty/sdf_robot/example'))
+col_lib_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(python_dir, '..'), '..'), 'thirdparty/sdf_robot/scripts'))
+col_example_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(python_dir, '..'), '..'), 'thirdparty/sdf_robot/example'))
 sys.path.append(python_dir)
 
 # import planar quadrotor dynamics
@@ -139,18 +139,6 @@ def draw_pquad_trj_2d(x_trj, L, H, n_balls, fig, ax, step, draw_ball, save_fig=T
     return fig, ax
 
 
-def draw_pquad_trj_cov_2d(x_trj, cov_matrix, L, H, n_balls, fig, ax, step, draw_ball, save_fig=True, file_name="pquad_trj2d.pdf"):
-    nt, nx = x_trj.shape
-    for i in range(0, nt, step):
-        x = x_trj[i]
-        cov = cov_matrix[i].reshape(nx, nx)
-        fig, ax = draw_quad_balls_cov(x, cov, i, L, H, n_balls, fig, ax, draw_ball, patch_color='b')
-    
-    if save_fig:
-        fig.savefig(file_name, dpi=1000, bbox_inches='tight')
-    return fig, ax
-
-
 def draw_map_track(planarmap, track_data, origin_x=0.0, origin_y=0.0, fig=None, ax=None):
     if ax is None:
         fig, ax = plt.subplots()
@@ -160,6 +148,18 @@ def draw_map_track(planarmap, track_data, origin_x=0.0, origin_y=0.0, fig=None, 
     
     # plt.show()
     
+    return fig, ax
+
+
+def draw_pquad_trj_cov_2d(x_trj, cov_matrix, L, H, n_balls, fig, ax, step, draw_ball, save_fig=True, file_name="pquad_trj2d.pdf"):
+    nt, nx = x_trj.shape
+    for i in range(0, nt, step):
+        x = x_trj[i]
+        cov = cov_matrix[i].reshape(nx, nx)
+        fig, ax = draw_quad_balls_cov(x, cov, i, L, H, n_balls, fig, ax, draw_ball, patch_color='b')
+    
+    if save_fig:
+        fig.savefig(file_name, dpi=1000, bbox_inches='tight')
     return fig, ax
     
 

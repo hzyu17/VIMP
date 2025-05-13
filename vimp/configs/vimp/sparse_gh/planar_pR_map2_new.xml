@@ -1,5 +1,5 @@
 <Commons>
-    <total_time>3.0</total_time>
+    <total_time>3.5</total_time>
     <n_states>50</n_states>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>6</GH_deg>
@@ -20,7 +20,7 @@
 
 </Commons>
 
-<Experiment1>    
+<Experiment1>
     <start_pos>
         <x>7.0</x>
         <y>-5.0</y>
@@ -34,12 +34,13 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
- 
+
     <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case1/</saving_prefix>
 
 </Experiment1>
 
-<Experiment2>   
+<Experiment2>
+    <total_time>3.0</total_time>
     <start_pos>
         <x>-7.0</x>
         <y>-5.0</y>
@@ -53,13 +54,14 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-    
-    <step_size>0.4</step_size>
+
     <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case2/</saving_prefix>
 
 </Experiment2>
 
-<Experiment3>   
+<!-- First two experiments don't need to tune the parameters when change state to 300 -->
+
+<Experiment3>
     <total_time>3.5</total_time>
     <start_pos>
         <x>-7.0</x>
@@ -74,14 +76,15 @@
         <vx>0.0</vx>
         <vy>0.0</vy>
     </goal_pos>
-    <temperature>50.0</temperature>
-    <high_temperature>80.0</high_temperature>
+    <temperature>15.0</temperature>
+    <high_temperature>40.0</high_temperature>
     <sig_obs>20.0</sig_obs>
-    <step_size>0.4</step_size>
+    <step_size>0.425</step_size>
+    <boundary_penalties>2000.0</boundary_penalties>
     <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case3/</saving_prefix>
 </Experiment3>
 
-<Experiment4>   
+<Experiment4>
     <total_time>3.0</total_time>
     <start_pos>
         <x>13.0</x>
@@ -98,8 +101,8 @@
     </goal_pos>
     <temperature>10.0</temperature>
     <high_temperature>30.0</high_temperature>
-    <sig_obs>20</sig_obs>
     <step_size>0.45</step_size>
+    <boundary_penalties>10000.0</boundary_penalties>
     <saving_prefix>matlab_helpers/GVIMP-examples/2d_pR/sparse_gh/map2/case4/</saving_prefix>
 
 </Experiment4>

@@ -17,7 +17,7 @@ is_sparse = 1;
 %% ============ 
 % read map
 % ============
-sdfmap = csvread("../../../vimp/maps/2dQuad/map_multiobs.csv");
+sdfmap = csvread("../../../vimp/python/sdf_robot/map/planar/MultiObstacleMap.csv");
 
 dim_state = 6;
 dim_theta = 3;
@@ -28,18 +28,24 @@ save_figure = 0;
 % plot costs 
 % =================
 
-prefix = "Multi_Obs/";
+prefix = "Multi_Obs/Go_around/";
 
 means = csvread([prefix + "mean.csv"]);
 joint_precisions = csvread([prefix + "joint_precision.csv"]);
 costs = csvread([prefix + "cost.csv"]);
+means = csvread([prefix + "mean.csv"]);
+joint_precisions = csvread([prefix + "joint_precision.csv"]);
+costs = csvread([prefix + "cost.csv"]);
 
+factor_costs = csvread([prefix + "factor_costs.csv"]);
 factor_costs = csvread([prefix + "factor_costs.csv"]);
 
 [ttl_dim, ~] = size(means);
 niters = find_niters(means);
 n_states = floor(ttl_dim / dim_state);
 
+output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
+% output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state, save_figure);
 output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
 % output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state, save_figure);
 

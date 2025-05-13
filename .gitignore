@@ -4,7 +4,7 @@ build/*
 vimp/latex/*
 vimp/html/*
 vimp/doxygen/*
-vimp/build/*
+**/build
 vimp/.vscode/*
 vimp_python/vimp/*
 vimp_python/CMakeFiles/*
@@ -12,8 +12,11 @@ vimp/data/debug/*
 matlab_helpers/.vscode/*
 matlab_helpers/+gtsam/*
 matlab_helpers/+gpmp2/*
-vimp/maps/WAM/WAMDeskDataset.bin
-vimp/maps/3dpR/pRSDF3D.bin
 vimp/data/WAM/*
-vimp/quadrature/SparseGHQuadratureWeights.bin
 vimp/python/debug/*
+vimp/python/sdf_robot/map/planar/MultiObstacleLongRangeMap_field.csv
+**/*.bin
+**/*.pyc
+**/__pycache__
+**/*.csv
+**/*.png

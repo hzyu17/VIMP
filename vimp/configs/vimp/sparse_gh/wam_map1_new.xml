@@ -4,7 +4,7 @@
     <map_name>map_bookshelf</map_name>
     <coeff_Qc>1.0</coeff_Qc>
     <GH_deg>3</GH_deg>
-    <sig_obs>21.0</sig_obs>
+    <sig_obs>20.5</sig_obs>
     <eps_sdf>0.2</eps_sdf>
     <radius>0.01</radius>
     <step_size>0.45</step_size>
@@ -17,10 +17,10 @@
     <max_iterations>30</max_iterations>
     <low_temp_iterations>20</low_temp_iterations>
     <max_n_backtracking>5</max_n_backtracking>
-    <sdf_file>/home/hzyu/git/VIMP/vimp/maps/WAM/WAMDeskDataset.bin</sdf_file>
+    <sdf_file>/maps/WAM/WAMDeskDataset</sdf_file>
 </Commons>
 
-<Experiment1>    
+<Experiment1>
     <start_pos>
         <1>-0.8</1>
         <2>-1.70</2>
@@ -45,7 +45,7 @@
 
 </Experiment1>
 
-<Experiment2>    
+<Experiment2>
     <start_pos>
         <1>-0.9</1>
         <2>-1.70</2>
@@ -68,6 +68,57 @@
 
     <temperature>1.0</temperature>
     <high_temperature>8.0</high_temperature>
+    <sig_obs>22.0</sig_obs>
     <saving_prefix>matlab_helpers/GVIMP-examples/WAM/sparse_gh/case2/</saving_prefix>
 
 </Experiment2>
+
+
+
+<!-- 750 States -->
+<!-- <Commons>
+    <total_time>1.95</total_time>
+    <n_states>750</n_states>
+    <map_name>map_bookshelf</map_name>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>3</GH_deg>
+    <sig_obs>20.0</sig_obs>
+    <eps_sdf>0.2</eps_sdf>
+    <radius>0.01</radius>
+    <step_size>0.45</step_size>
+    <alpha>1.0</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>10000.0</boundary_penalties>
+    <temperature>0.5</temperature>
+    <high_temperature>5.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <max_iterations>30</max_iterations>
+    <low_temp_iterations>20</low_temp_iterations>
+    <max_n_backtracking>5</max_n_backtracking>
+    <sdf_file>/maps/WAM/WAMDeskDataset</sdf_file>
+</Commons>
+
+<Experiment1>
+    <start_pos>
+        <1>-0.8</1>
+        <2>-1.70</2>
+        <3>1.64</3>
+        <4>1.29</4>
+        <5>1.1</5>
+        <6>-0.106</6>
+        <7>2.2</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>-0.0</1>
+        <2>0.94</2>
+        <3>0.00</3>
+        <4>1.6</4>
+        <5>0.0</5>
+        <6>-0.919</6>
+        <7>1.55</7>
+    </goal_pos>
+
+    <saving_prefix>matlab_helpers/GVIMP-examples/WAM/sparse_gh/case3/</saving_prefix>
+
+</Experiment1> -->

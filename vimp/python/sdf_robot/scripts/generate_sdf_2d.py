@@ -129,8 +129,8 @@ def generate_map(map_name, save_map=False):
         # map range: (x: [-20.0, 60.0]; y: [-20.0, 60.0])
         m = map2d(origin, cell_size, width, height)
         # obstacle range: (x: [10.0, 18.0]; y: [10.0, 16.0])
-        m.add_box_xy(-5, 10.0, [8.0, 10.0])
-        m.add_box_xy(9.5, 15.0, [8.0, 10.0])
+        m.add_box_xy(-5.5, 10.0, [8.0, 10.0])
+        m.add_box_xy(10, 15.0, [8.0, 10.0])
 
         
     if save_map:

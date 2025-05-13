@@ -4,8 +4,8 @@ clc
 
 %% ******************* Read datas ******************
 addpath('../../tools')
-addpath('../../tools/gtsam_toolbox')
 addpath ('../../tools/WAM/utils')
+addpath('../../tools/gtsam_toolbox')
 addpath("../../tools/error_ellipse");
 
 import gtsam.*
@@ -64,7 +64,7 @@ n_states = floor(ttl_dim / dim_theta);
 [vec_means, vec_covs] = get_vec_means_covs(means, covs, niters, nsteps, dim_theta);
 
 %% ******************* Define map dataset ******************
-dataset = generate3Ddataset('WAMDeskDataset');
+dataset = generate3Ddataset_1('WAMDeskDataset');
 origin = [dataset.origin_x, dataset.origin_y, dataset.origin_z];
 origin_point3 = Point3(origin');
 cell_size = dataset.cell_size;
@@ -84,7 +84,7 @@ start_vel = zeros(7,1);
 end_vel = zeros(7,1);
 
 % ============= plot sampled states for n iterations =============
-% plotArmSamples3D(arm, vec_means, vec_covs, n_states, niters, nsteps, dataset, start_conf, end_conf);
+plotArmSamples3D(arm, vec_means, vec_covs, n_states, niters, nsteps, dataset, start_conf, end_conf);
 
 %% ================= plot the final iteration, only mean value ===================
 % ----- parameters -----
@@ -93,26 +93,27 @@ dim_state = 14;
 nt = size(means, 1) / dim_state;
 
 % ----- figure settings -----
+
+% x0 = 50;
+% y0 = 50;
+% width = 400;
+% height = 350;
+% figure
+% set(gcf,'position',[x0,y0,width,height])
+% tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
+
+% nexttile
+% t=title(['Supported state mean values']);
+% t.FontSize = 14;
+
 x0 = 50;
 y0 = 50;
 width = 400;
 height = 350;
-
 figure
 set(gcf,'position',[x0,y0,width,height])
 tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 
-nexttile
-t=title(['Supported state mean values']);
-t.FontSize = 14;
-
-x0 = 50;
-y0 = 50;
-width = 400;
-height = 350;
-figure
-set(gcf,'position',[x0,y0,width,height])
-tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'none')
 nexttile
 t=title(['Iteration ', num2str(niters)]);
 t.FontSize = 16;
@@ -138,37 +139,37 @@ hold off
 %% ================= plot costs ===================
 output = plot_costs(costs, factor_costs, precisions, niters, n_states, dim_state);
 
-%% ==== plot iterations ==== 
-x0 = 500;
-y0 = 500;
-width = 1000;
-height = 550;
-figure
-set(gcf,'position',[x0,y0,width,height])
+% %% ==== plot iterations ==== 
+% x0 = 500;
+% y0 = 500;
+% width = 1000;
+% height = 550;
+% figure
+% set(gcf,'position',[x0,y0,width,height])
 
-tiledlayout(floor(niters/5), 5, 'TileSpacing', 'tight', 'Padding', 'tight')
-for i_iter = 1:2:niters
-    nexttile
-    t=title(['Iteration ', num2str(i_iter)]);
-    t.FontSize = 16;
-    i_means = means(:, i_iter);
-    i_means = reshape(i_means, [dim_state, nt]);
-    i_covs = covs(:, i_iter);
-    i_covs = reshape(i_covs, [dim_state, dim_state, nt]);
+% tiledlayout(floor(niters/5), 5, 'TileSpacing', 'tight', 'Padding', 'tight')
+% for i_iter = 1:2:niters
+%     nexttile
+%     t=title(['Iteration ', num2str(i_iter)]);
+%     t.FontSize = 16;
+%     i_means = means(:, i_iter);
+%     i_means = reshape(i_means, [dim_state, nt]);
+%     i_covs = covs(:, i_iter);
+%     i_covs = reshape(i_covs, [dim_state, dim_state, nt]);
 
-    hold on 
-    view(3)
-    plotMap3D(dataset.corner_idx, origin, cell_size);
-    for j = 1:nt
-        % gradual changing colors
-        alpha = (j / nt)^(1.15);
-        color = [0, 0, 1, alpha];
-        % means
-        plotArm3D(arm.fk_model(), i_means(1:7, j), color, 4, true);
-    end
-    plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
-    plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
-end
+%     hold on 
+%     view(3)
+%     plotMap3D(dataset.corner_idx, origin, cell_size);
+%     for j = 1:nt
+%         % gradual changing colors
+%         alpha = (j / nt)^(1.15);
+%         color = [0, 0, 1, alpha];
+%         % means
+%         plotArm3D(arm.fk_model(), i_means(1:7, j), color, 4, true);
+%     end
+%     plotArm3D(arm.fk_model(), start_conf, 'r', 6, true);
+%     plotArm3D(arm.fk_model(), end_conf, 'g', 6, true);
+% end
 
 
 % %% ==== plot sampled covariance for the supported states seperately ==== 

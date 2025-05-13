@@ -25,6 +25,11 @@ class CollisionSceneExample(object):
         # TODO: need to replace this sleep by explicitly waiting for the scene to be updated.
         rospy.sleep(2)
 
+
+    def clear_all_objects(self):
+        self._scene.clear()
+        
+        
     def add_one_box(self):
         box1_pose = [0.25, 0.25, 0.0, 0, 0, 0, 1]
         box1_dimensions = [0.25, 0.25, 0.75]
@@ -58,8 +63,6 @@ class CollisionSceneExample(object):
         box5_pose = [box5_pose[i] + offset[i] for i in range(7)]
         box5_dimensions = [0.1, 0.1, 0.8]
         
-        
-        
         box6_pose = [2.5, 1.9, 1.45, 0, 0, 0, 1]
         box6_pose = [box6_pose[i] + offset[i] for i in range(7)]
         box6_dimensions = [0.6, 0.05, 1.9]
@@ -68,7 +71,6 @@ class CollisionSceneExample(object):
         box7_pose = [box7_pose[i] + offset[i] for i in range(7)]
         box7_dimensions = [0.6, 0.05, 1.9]
         
-        
         box8_pose = [2, 1.9, 1.45, 0, 0, 0, 1]
         box8_pose = [box8_pose[i] + offset[i] for i in range(7)]
         box8_dimensions = [0.4, 0.05, 1.9]
@@ -76,8 +78,6 @@ class CollisionSceneExample(object):
         # box9_pose = [1.3, 0.4, 0.95, 0, 0, 0, 1]
         # box9_pose = [box9_pose[i] + offset[i] for i in range(7)]
         # box9_dimensions = [0.6, 0.05, 1.9]
-        
-        
         
         box10_pose = [2.5, 1.4, 2.4, 0, 0, 0, 1]
         box10_pose = [box10_pose[i] + offset[i] for i in range(7)]
@@ -108,7 +108,357 @@ class CollisionSceneExample(object):
         self.add_box_object("box11", box11_dimensions, box11_pose)
         self.add_box_object("box12", box12_dimensions, box12_pose)
         self.add_box_object("box13", box13_dimensions, box13_pose)
+
+    def add_bookshelf_panda(self):
+        from operator import add
+
+        offset = [-1.75, -1.5, -1, 0, 0, 0, 0]
+        
+        box1_pose = [1.7, 2.2, 1.3, 0, 0, 0, 1]
+        box1_pose = [box1_pose[i] + offset[i] for i in range(7)]
+        box1_dimensions = [1.4, 0.6, 0.05]
+        
+        box2_pose = [1.05, 1.95, 0.9, 0, 0, 0, 1]
+        box2_pose = [box2_pose[i] + offset[i] for i in range(7)]
+        box2_dimensions = [0.1, 0.1, 0.8]
+
+        box3_pose = [2.35, 1.95, 0.9, 0, 0, 0, 1]
+        box3_pose = [box3_pose[i] + offset[i] for i in range(7)]
+        box3_dimensions = [0.1, 0.1, 0.8]
+
+        box4_pose = [1.05, 2.45, 0.9, 0, 0, 0, 1]
+        box4_pose = [box4_pose[i] + offset[i] for i in range(7)]
+        box4_dimensions = [0.1, 0.1, 0.8]
+        
+        box5_pose = [2.35, 2.45, 0.9, 0, 0, 0, 1]
+        box5_pose = [box5_pose[i] + offset[i] for i in range(7)]
+        box5_dimensions = [0.1, 0.1, 0.8]
+        
+        
+        
+        box6_pose = [2.5, 1.9, 1.45, 0, 0, 0, 1]
+        box6_pose = [box6_pose[i] + offset[i] for i in range(7)]
+        box6_dimensions = [0.6, 0.05, 1.9]
+        
+        box7_pose = [2.5, 0.9, 1.45, 0, 0, 0, 1]
+        box7_pose = [box7_pose[i] + offset[i] for i in range(7)]
+        box7_dimensions = [0.6, 0.05, 1.9]
+        
+        
+        box8_pose = [2.1, 1.9, 1.45, 0, 0, 0, 1]
+        box8_pose = [box8_pose[i] + offset[i] for i in range(7)]
+        box8_dimensions = [0.3, 0.05, 1.9]
+        
+        
+        box10_pose = [2.5, 1.4, 2.4, 0, 0, 0, 1]
+        box10_pose = [box10_pose[i] + offset[i] for i in range(7)]
+        box10_dimensions = [0.6, 1.0, 0.05]
+        
+        box11_pose = [2.5, 1.4, 1.9, 0, 0, 0, 1]
+        box11_pose = [box11_pose[i] + offset[i] for i in range(7)]
+        box11_dimensions = [0.6, 1.0, 0.05]
+        
+        box12_pose = [2.5, 1.4, 1.4, 0, 0, 0, 1]
+        box12_pose = [box12_pose[i] + offset[i] for i in range(7)]
+        box12_dimensions = [0.6, 1.0, 0.05]
+        
+        box13_pose = [2.5, 1.4, 0.9, 0, 0, 0, 1]
+        box13_pose = [box13_pose[i] + offset[i] for i in range(7)]
+        box13_dimensions = [0.6, 1.0, 0.05]
+
+        self.add_box_object("box1", box1_dimensions, box1_pose)
+        self.add_box_object("box2", box2_dimensions, box2_pose)
+        self.add_box_object("box3", box3_dimensions, box3_pose)
+        self.add_box_object("box4", box4_dimensions, box4_pose)
+        self.add_box_object("box5", box5_dimensions, box5_pose)
+        self.add_box_object("box6", box6_dimensions, box6_pose)
+        self.add_box_object("box7", box7_dimensions, box7_pose)
+        self.add_box_object("box8", box8_dimensions, box8_pose)
+        # self.add_box_object("box10", box10_dimensions, box10_pose)
+        # self.add_box_object("box11", box11_dimensions, box11_pose)
+        self.add_box_object("box12", box12_dimensions, box12_pose)
+        self.add_box_object("box13", box13_dimensions, box13_pose)
+
+
+    def add_box_panda(self):
+        from operator import add
+
+        offset = [-1.5, -1.5, 0, 0, 0, 0, 0]
+        
+        box1_pose = [2.0, 1.4, 0.2, 0, 0, 0, 1]
+        box1_pose = [box1_pose[i] + offset[i] for i in range(7)]
+        box1_dimensions = [0.2, 0.2, 0.4]
+
+        box2_pose = [2.0, 1.4, 0.42, 0, 0, 0, 1]
+        box2_pose = [box2_pose[i] + offset[i] for i in range(7)]
+        box2_dimensions = [0.6, 0.6, 0.04]
+
+        self.add_box_object("box1", box1_dimensions, box1_pose)
+        self.add_box_object("box2", box2_dimensions, box2_pose)
+        
+        
+    def add_narrow_passage_panda(self):
+        from operator import add
+
+        offset = [-1.5, -1.5, 0, 0, 0, 0, 0]
+        
+        box1_pose = [2.1, 1.25, 0.2, 0, 0, 0, 1]
+        box1_pose = [box1_pose[i] + offset[i] for i in range(7)]
+        box1_dimensions = [0.2, 0.2, 0.4]
+
+        box2_pose = [2.1, 1.75, 0.2, 0, 0, 0, 1]
+        box2_pose = [box2_pose[i] + offset[i] for i in range(7)]
+        box2_dimensions = [0.2, 0.2, 0.4]
+
+        self.add_box_object("box1", box1_dimensions, box1_pose)
+        self.add_box_object("box2", box2_dimensions, box2_pose)
+
     
+    def add_bookshelf_pr2(self):
+        from operator import add
+
+        # [Front, Left, Up]
+        offset = [-1.4, -1.5, -0.55, 0, 0, 0, 0]
+        
+        # Box 1-5 are the table
+        # y dimension -1.6
+        box1_pose = [1.7, 0.5, 1.15, 0, 0, 0, 1]
+        box1_pose = [box1_pose[i] + offset[i] for i in range(7)]
+        box1_dimensions = [1.4, 0.6, 0.05]
+        
+        box2_pose = [1.05, 0.25, 0.85, 0, 0, 0, 1]
+        box2_pose = [box2_pose[i] + offset[i] for i in range(7)]
+        box2_dimensions = [0.1, 0.1, 0.6]
+
+        box3_pose = [2.35, 0.25, 0.85, 0, 0, 0, 1]
+        box3_pose = [box3_pose[i] + offset[i] for i in range(7)]
+        box3_dimensions = [0.1, 0.1, 0.6]
+
+        box4_pose = [1.05, 0.75, 0.85, 0, 0, 0, 1]
+        box4_pose = [box4_pose[i] + offset[i] for i in range(7)]
+        box4_dimensions = [0.1, 0.1, 0.6]
+        
+        box5_pose = [2.35, 0.75, 0.85, 0, 0, 0, 1]
+        box5_pose = [box5_pose[i] + offset[i] for i in range(7)]
+        box5_dimensions = [0.1, 0.1, 0.6]
+        
+        
+        
+        box6_pose = [2.45, 1.9, 1.45, 0, 0, 0, 1]
+        box6_pose = [box6_pose[i] + offset[i] for i in range(7)]
+        box6_dimensions = [0.6, 0.05, 1.9]
+        
+        box7_pose = [2.45, 0.9, 1.45, 0, 0, 0, 1]
+        box7_pose = [box7_pose[i] + offset[i] for i in range(7)]
+        box7_dimensions = [0.6, 0.05, 1.9]
+        
+        
+        # y dimension -1.0
+        box8_pose = [2.05, 0.9, 1.45, 0, 0, 0, 1]
+        box8_pose = [box8_pose[i] + offset[i] for i in range(7)]
+        box8_dimensions = [0.25, 0.05, 1.9]
+        
+        # box9_pose = [1.3, 0.4, 0.95, 0, 0, 0, 1]
+        # box9_pose = [box9_pose[i] + offset[i] for i in range(7)]
+        # box9_dimensions = [0.6, 0.05, 1.9]
+
+        # box9_pose = [2, 0, 0, 0, 0, 0, 1]
+        # box9_pose = [box9_pose[i] + offset[i] for i in range(7)]
+        # box9_dimensions = [0.6, 0.05, 1.9]
+        
+        
+        # Adding a shelf to the bookshelf
+        box10_pose = [2.45, 1.4, 2.4, 0, 0, 0, 1]
+        box10_pose = [box10_pose[i] + offset[i] for i in range(7)]
+        box10_dimensions = [0.6, 1.0, 0.05]
+        
+        box11_pose = [2.45, 1.4, 1.9, 0, 0, 0, 1]
+        box11_pose = [box11_pose[i] + offset[i] for i in range(7)]
+        box11_dimensions = [0.6, 1.0, 0.05]
+        
+        box12_pose = [2.45, 1.4, 1.4, 0, 0, 0, 1]
+        box12_pose = [box12_pose[i] + offset[i] for i in range(7)]
+        box12_dimensions = [0.6, 1.0, 0.05]
+        
+        box13_pose = [2.45, 1.4, 0.9, 0, 0, 0, 1]
+        box13_pose = [box13_pose[i] + offset[i] for i in range(7)]
+        box13_dimensions = [0.6, 1.0, 0.05]
+
+        self.add_box_object("box1", box1_dimensions, box1_pose)
+        self.add_box_object("box2", box2_dimensions, box2_pose)
+        self.add_box_object("box3", box3_dimensions, box3_pose)
+        self.add_box_object("box4", box4_dimensions, box4_pose)
+        self.add_box_object("box5", box5_dimensions, box5_pose)
+        self.add_box_object("box6", box6_dimensions, box6_pose)
+        self.add_box_object("box7", box7_dimensions, box7_pose)
+        self.add_box_object("box8", box8_dimensions, box8_pose)
+        # self.add_box_object("box9", box9_dimensions, box9_pose)
+        self.add_box_object("box10", box10_dimensions, box10_pose)
+        self.add_box_object("box11", box11_dimensions, box11_pose)
+        self.add_box_object("box12", box12_dimensions, box12_pose)
+        self.add_box_object("box13", box13_dimensions, box13_pose)
+
+    def add_bookshelf_pr2_1(self):
+        from operator import add
+
+        # [Front, Left, Up]
+        offset = [-1.5, -1.5, 0.0, 0, 0, 0, 0]
+
+        # # Box 1-5 are the table
+        # # y dimension -1.6
+        # box1_pose = [1.7, 0.5, 0.6, 0, 0, 0, 1]
+        # box1_pose = [box1_pose[i] + offset[i] for i in range(7)]
+        # box1_dimensions = [1.4, 0.6, 0.05]
+
+        # box2_pose = [1.05, 0.25, 0.3, 0, 0, 0, 1]
+        # box2_pose = [box2_pose[i] + offset[i] for i in range(7)]
+        # box2_dimensions = [0.1, 0.1, 0.6]
+
+        # box3_pose = [2.35, 0.25, 0.3, 0, 0, 0, 1]
+        # box3_pose = [box3_pose[i] + offset[i] for i in range(7)]
+        # box3_dimensions = [0.1, 0.1, 0.6]
+
+        # box4_pose = [1.05, 0.75, 0.3, 0, 0, 0, 1]
+        # box4_pose = [box4_pose[i] + offset[i] for i in range(7)]
+        # box4_dimensions = [0.1, 0.1, 0.6]
+
+        # box5_pose = [2.35, 0.75, 0.3, 0, 0, 0, 1]
+        # box5_pose = [box5_pose[i] + offset[i] for i in range(7)]
+        # box5_dimensions = [0.1, 0.1, 0.6]
+
+
+        box6_pose = [2.45, 1.95, 0.7, 0, 0, 0, 1]
+        box6_pose = [box6_pose[i] + offset[i] for i in range(7)]
+        box6_dimensions = [0.6, 0.05, 1.35]
+
+        box7_pose = [2.45, 0.75, 0.7, 0, 0, 0, 1]
+        box7_pose = [box7_pose[i] + offset[i] for i in range(7)]
+        box7_dimensions = [0.6, 0.05, 1.35]
+
+        # # y dimension -1.0
+        # box8_pose = [2.05, 0.9, 0.9, 0, 0, 0, 1]
+        # box8_pose = [box8_pose[i] + offset[i] for i in range(7)]
+        # box8_dimensions = [0.25, 0.05, 1.8]
+
+
+
+        # Adding a shelf to the bookshelf
+        box10_pose = [2.45, 1.35, 1.35, 0, 0, 0, 1]
+        box10_pose = [box10_pose[i] + offset[i] for i in range(7)]
+        box10_dimensions = [0.6, 1.2, 0.05]
+
+        box11_pose = [2.45, 1.35, 0.95, 0, 0, 0, 1]
+        box11_pose = [box11_pose[i] + offset[i] for i in range(7)]
+        box11_dimensions = [0.6, 1.2, 0.05]
+
+        box12_pose = [2.45, 1.35, 0.55, 0, 0, 0, 1]
+        box12_pose = [box12_pose[i] + offset[i] for i in range(7)]
+        box12_dimensions = [0.6, 1.2, 0.05]
+
+        box13_pose = [2.45, 1.35, 0.15, 0, 0, 0, 1]
+        box13_pose = [box13_pose[i] + offset[i] for i in range(7)]
+        box13_dimensions = [0.6, 1.2, 0.05]
+
+
+        # box14_pose = [2.75, 1.35,  0.7, 0, 0, 0, 1]
+        # box14_pose = [box14_pose[i] + offset[i] for i in range(7)]
+        # box14_dimensions = [0.05, 1.3, 1.35]
+
+        # self.add_box_object("box1", box1_dimensions, box1_pose)
+        # self.add_box_object("box2", box2_dimensions, box2_pose)
+        # self.add_box_object("box3", box3_dimensions, box3_pose)
+        # self.add_box_object("box4", box4_dimensions, box4_pose)
+        # self.add_box_object("box5", box5_dimensions, box5_pose)
+        self.add_box_object("box6", box6_dimensions, box6_pose)
+        self.add_box_object("box7", box7_dimensions, box7_pose)
+        # self.add_box_object("box8", box8_dimensions, box8_pose)
+        self.add_box_object("box10", box10_dimensions, box10_pose)
+        self.add_box_object("box11", box11_dimensions, box11_pose)
+        self.add_box_object("box12", box12_dimensions, box12_pose)
+        self.add_box_object("box13", box13_dimensions, box13_pose)
+        # self.add_box_object("box14", box14_dimensions, box14_pose)
+
+
+    def add_bookshelf_pr2_2(self):
+        from operator import add
+
+        # [Front, Left, Up]
+        offset = [-1.7, -1.5, 0.0, 0, 0, 0, 0]
+
+        # # Box 1-5 are the table
+        # # y dimension -1.6
+        box1_pose = [1.7, 0.45, 0.65, 0, 0, 0, 1]
+        box1_pose = [box1_pose[i] + offset[i] for i in range(7)]
+        box1_dimensions = [1.4, 0.6, 0.05]
+
+        box2_pose = [1.7, 0.25, 0.75, 0, 0, 0, 1]
+        box2_pose = [box2_pose[i] + offset[i] for i in range(7)]
+        box2_dimensions = [0.85, 0.05, 0.2]
+
+
+        box3_pose = [2.1, 0.45, 0.75, 0, 0, 0, 1]
+        box3_pose = [box3_pose[i] + offset[i] for i in range(7)]
+        box3_dimensions = [0.05, 0.4, 0.25]
+
+        box4_pose = [1.7, 0.45, 0.75, 0, 0, 0, 1]
+        box4_pose = [box4_pose[i] + offset[i] for i in range(7)]
+        box4_dimensions = [0.05, 0.4, 0.25]
+
+        box5_pose = [1.3, 0.45, 0.75, 0, 0, 0, 1]
+        box5_pose = [box5_pose[i] + offset[i] for i in range(7)]
+        box5_dimensions = [0.05, 0.4, 0.25]
+
+
+        box6_pose = [2.65, 1.65, 0.85, 0, 0, 0, 1]
+        box6_pose = [box6_pose[i] + offset[i] for i in range(7)]
+        box6_dimensions = [0.4, 0.05, 0.35]
+
+        box7_pose = [2.65, 1.05, 0.85, 0, 0, 0, 1]
+        box7_pose = [box7_pose[i] + offset[i] for i in range(7)]
+        box7_dimensions = [0.4, 0.05, 0.35]
+
+        # # y dimension -1.0
+        # box8_pose = [2.05, 0.9, 0.9, 0, 0, 0, 1]
+        # box8_pose = [box8_pose[i] + offset[i] for i in range(7)]
+        # box8_dimensions = [0.25, 0.05, 1.8]
+
+
+        # Adding a shelf to the bookshelf
+        # box10_pose = [2.45, 1.35, 1.35, 0, 0, 0, 1]
+        # box10_pose = [box10_pose[i] + offset[i] for i in range(7)]
+        # box10_dimensions = [0.6, 1.2, 0.05]
+
+        box11_pose = [2.65, 1.35, 1.0, 0, 0, 0, 1]
+        box11_pose = [box11_pose[i] + offset[i] for i in range(7)]
+        box11_dimensions = [0.4, 0.6, 0.05]
+
+        box12_pose = [2.55, 1.35, 0.65, 0, 0, 0, 1]
+        box12_pose = [box12_pose[i] + offset[i] for i in range(7)]
+        box12_dimensions = [0.6, 1.2, 0.05]
+
+        # box13_pose = [2.45, 1.35, 0.15, 0, 0, 0, 1]
+        # box13_pose = [box13_pose[i] + offset[i] for i in range(7)]
+        # box13_dimensions = [0.6, 1.2, 0.05]
+
+
+        # box14_pose = [2.75, 1.35,  0.7, 0, 0, 0, 1]
+        # box14_pose = [box14_pose[i] + offset[i] for i in range(7)]
+        # box14_dimensions = [0.05, 1.3, 1.35]
+
+        self.add_box_object("box1", box1_dimensions, box1_pose)
+        self.add_box_object("box2", box2_dimensions, box2_pose)
+        self.add_box_object("box3", box3_dimensions, box3_pose)
+        self.add_box_object("box4", box4_dimensions, box4_pose)
+        self.add_box_object("box5", box5_dimensions, box5_pose)
+        self.add_box_object("box6", box6_dimensions, box6_pose)
+        self.add_box_object("box7", box7_dimensions, box7_pose)
+        # self.add_box_object("box8", box8_dimensions, box8_pose)
+        # self.add_box_object("box10", box10_dimensions, box10_pose)
+        self.add_box_object("box11", box11_dimensions, box11_pose)
+        self.add_box_object("box12", box12_dimensions, box12_pose)
+        # self.add_box_object("box13", box13_dimensions, box13_pose)
+        # self.add_box_object("box14", box14_dimensions, box14_pose)
+
     def add_four_boxes(self):
         box1_pose = [0.20, 0.50, 0.25, 0, 0, 0, 1]
         box1_dimensions = [0.2, 0.2, 0.5]
@@ -163,6 +513,20 @@ if __name__ == "__main__":
         load_scene.add_one_box()
     elif sys.argv[1] == "bookshelf":
         load_scene.add_bookshelf()
+    elif sys.argv[1] == "bookshelf_panda":
+        load_scene.add_bookshelf_panda()
+    elif sys.argv[1] == "box_panda":
+        load_scene.add_box_panda()
+    elif sys.argv[1] == "gap_panda":
+        load_scene.add_narrow_passage_panda()
+    elif sys.argv[1] == "bookshelf_pr2":
+        load_scene.add_bookshelf_pr2()
+    elif sys.argv[1] == "bookshelf_pr2_1":
+        load_scene.add_bookshelf_pr2_1()
+    elif sys.argv[1] == "bookshelf_pr2_2":
+        load_scene.add_bookshelf_pr2_2()
+    elif sys.argv[1] == "clear":
+        load_scene.clear_all_objects()
     else:
         print("Please specify correct type of scene as cluttered or sparse")
         sys.exit()

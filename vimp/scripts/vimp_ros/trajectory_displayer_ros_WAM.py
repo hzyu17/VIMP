@@ -134,6 +134,8 @@ class MoveGroupPythonInterfaceTutorial(object):
         
         start_state = [-0.800000000000000, -1.70000000000000, 1.64000000000000, 
                        1.29000000000000, 1.10000000000000, -0.106000000000000, 2.20000000000000]
+        # start_state = [-0.900000000000000, -1.70000000000000, 1.34000000000000, 
+        #                1.19000000000000, 0.80000000000000, -0.126000000000000, 2.50000000000000]
         move_group.go(start_state, wait=True)
         # move_group.setStartState(start_state);
 
@@ -223,6 +225,20 @@ class MoveGroupPythonInterfaceTutorial(object):
                 col_list = df[df.columns[i_col]].values.tolist()
                 trajectory.append([float(val) for val in col_list[0:7]])
         return trajectory
+
+    # # Read trajectory from each row
+    # def read_trajectory_from_csv(self, file_path):
+    #     # Read the trajectory from a CSV file
+    #     print("Reading planned trajectory from file: ", file_path)
+    #     trajectory = []
+    #     import pandas as pd
+    #     with open(file_path, 'r') as file:
+    #         df = pd.read_csv(file, header=None) 
+    #         print("df len: ", len(df.columns))
+    #         for index, row in df.iterrows():
+    #             point = [float(val) for val in row[:7]]
+    #             trajectory.append(point)
+    #     return trajectory
     
     def update_trajectory(self, file_path):
         self.trajectory = self.read_trajectory_from_csv(file_path)
@@ -344,7 +360,7 @@ def main():
             
             full_path = os.path.realpath(__file__)
             path, filename = os.path.split(full_path)
-            tutorial.update_trajectory(path+"/zk_sdf.csv")
+            tutorial.update_trajectory(path+"/WAM/zk_sdf.csv")
         
         if (len(sys.argv) == 2):
             trj_file = sys.argv[1]

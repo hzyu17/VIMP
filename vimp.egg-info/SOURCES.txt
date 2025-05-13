@@ -1,0 +1,7 @@
+LICENSE
+README.md
+setup.py
+vimp.egg-info/PKG-INFO
+vimp.egg-info/SOURCES.txt
+vimp.egg-info/dependency_links.txt
+vimp.egg-info/top_level.txt

@@ -24,8 +24,7 @@ public:
             double sigma_obs, double eps_sdf, double radius,
             double step_size, int num_iter, double stop_err,
             double backtracking_ratio, int max_n_backtracking, 
-            std::string map_name="map0", std::string sdf_file="", 
-            double alpha = 1):
+            std::string map_name="map0", std::string sdf_file=""):
             _nx(nx),
             _nu(nu),
             _total_time(total_time),
@@ -42,8 +41,8 @@ public:
             _mT(VectorXd::Zero(nx)),
             _Sig0(MatrixXd::Zero(nx, nx)),
             _SigT(MatrixXd::Zero(nx, nx)),
-            _map_name(map_name),
-            _alpha(alpha)
+            _map_name(map_name), 
+            _sdf_file(sdf_file)
             {}
 
 public:
@@ -76,6 +75,7 @@ public:
     inline MatrixXd SigT() const { return _SigT; }
 
     // setters
+    inline void set_nt(int nt){ _nt = nt; }
     inline void set_m0(const VectorXd& m0){ _m0 = m0; }
     inline void set_mT(const VectorXd& mT){ _mT = mT; }
 
@@ -86,7 +86,6 @@ public:
     inline void update_sig_obs(double sig_obs){_sig_obs = sig_obs;}
     inline void update_step_size(double step_size){ _step_size = step_size; }
     inline void update_max_iter(int max_iter){ _max_iterations = max_iter; }
-    inline void update_lowtemp_iter(int low_temp_iter){ _lowtemp_iterations = low_temp_iter; }
 
     inline void set_saving_prefix(const std::string& save_prefix){ _save_prefix = save_prefix; }
 
@@ -98,11 +97,11 @@ public:
     virtual inline void print_params() = 0; 
 
 protected:
-    double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio, _alpha;
+    double _total_time, _sig0, _sigT, _eta, _step_size, _stop_err, _backtrack_ratio;
     int _nt, _nx, _nu;
     double _eps_sdf, _radius, _sig_obs;
 
-    int _max_iterations, _max_n_backtrack, _lowtemp_iterations;
+    int _max_iterations, _max_n_backtrack;
 
     gvi::MatrixIO _m_io;
     gvi::EigenWrapper _ei;
@@ -152,8 +151,7 @@ public:
                         1,
                         max_n_backtracking,
                         map_name,
-                        sdf_file,
-                        alpha),
+                        sdf_file),
                 _coeff_Qc(coeff_Qc),
                 _initial_precision_factor(initial_precision_factor),
                 _boundary_penalties(boundary_penalties),
@@ -180,6 +178,8 @@ public:
     inline void set_boundary_penalties(double boundary_penalties){ _boundary_penalties = boundary_penalties; }
     inline void update_initial_precision_factor(double initial_precision_factor){ _initial_precision_factor =  initial_precision_factor; }
     inline void update_boundary_penalties(double boundary_penalties) { _boundary_penalties = boundary_penalties; }
+    inline void update_lowtemp_iter(int low_temp_iter){ _max_iter_lowtemp = low_temp_iter; }
+    inline void update_alpha(double alpha) { _alpha = alpha; }
     
     void inline print_params() override {
         std::cout << "================ Experiment Parameters for GVI-MP ================" << std::endl 
@@ -215,6 +215,95 @@ protected:
     double _coeff_Qc, _initial_precision_factor, _boundary_penalties, _temperature, _high_temperature, _alpha;
     int _GH_degree;
 
+};
+
+class GVIMPParams_nonlinear: public GVIMPParams{
+public:
+    GVIMPParams_nonlinear(){}
+
+    GVIMPParams_nonlinear(int nx,
+                int nu,
+                double total_time, 
+                int n_states, 
+                double coeff_Qc, 
+                int GH_degree,
+                double sig_obs, 
+                double eps_sdf, 
+                double radius,
+                double step_size,
+                int num_iter,
+                double initial_precision_factor,
+                double boundary_penalties,
+                double temperature,
+                double high_temperature,
+                int low_temp_iterations,
+                double stop_err,
+                int max_n_backtracking,
+                std::string map_name="map0",
+                std::string sdf_file="", 
+                double alpha = 1,
+                int max_linear_iter = 1
+                ):
+                GVIMPParams(nx,
+                        nu,
+                        total_time, 
+                        n_states, 
+                        coeff_Qc, 
+                        GH_degree,
+                        sig_obs, 
+                        eps_sdf, 
+                        radius,
+                        step_size,
+                        num_iter,
+                        initial_precision_factor,
+                        boundary_penalties,
+                        temperature,
+                        high_temperature,
+                        low_temp_iterations,
+                        stop_err,
+                        max_n_backtracking,
+                        map_name,
+                        sdf_file,
+                        alpha),
+                _max_linear_iter(max_linear_iter)
+                { }
+
+    // getters
+    inline int max_linear_iter() const { return _max_linear_iter; }
+    
+    inline void update_max_linear_iter(int max_linear_iter){ _max_linear_iter = max_linear_iter; }
+
+    void inline print_params() override {
+        std::cout << "================ Experiment Parameters for GVI-MP ================" << std::endl 
+        << " State dimension:           " << this->nx() << std::endl 
+        << " Control dimension:         " << this->nu() << std::endl 
+        << " Total time span:           " << this->total_time() << std::endl 
+        << " coeff_Qc:                  " << this->coeff_Qc() << std::endl 
+        << " GH_degree:                 " << this->GH_degree() << std::endl 
+        << " Time discretizations:      " << this->nt() << std::endl 
+        << " Temperature:               " << this->temperature() << std::endl 
+        << " High temperature:          " << this->high_temperature() << std::endl 
+        << " Map name:                  " << this->map_name() << std::endl 
+        << " Map eps:                   " << this->eps_sdf() << std::endl 
+        << " Cost sigma:                " << this->sig_obs() << std::endl 
+        << " Robot radius:              " << this->radius() << std::endl 
+        << " initial_precision_factor:  " << this->initial_precision_factor() << std::endl
+        << " boundary_penalties:        " << this->boundary_penalties() << std::endl 
+        << " step size:                 " << this->step_size() << std::endl 
+        << " alpha:                     " << this->alpha() << std::endl 
+        << " max iterations:            " << this->max_iter() << std::endl 
+        << " max iterations lowtemp:    " << this->max_iter_lowtemp() << std::endl 
+        << " Backtrack ratio:           " << this->backtrack_ratio() << std::endl 
+        << " backtrack iterations:      " << this->max_n_backtrack() << std::endl
+        << " Max linearizations:        " << this->max_linear_iter() << std::endl
+        << " initial conditions:        " << std::endl;
+        _ei.print_matrix(this->m0(), "m0");
+        std::cout << " terminal conditions:       " << std::endl;
+        _ei.print_matrix(this->mT(), "mT");
+    }
+
+    protected:    
+    int _max_linear_iter;
 };
 
 class PGCSParams: public Params{

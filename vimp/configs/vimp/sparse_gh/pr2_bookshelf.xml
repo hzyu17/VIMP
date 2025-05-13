@@ -1,0 +1,46 @@
+<Commons>
+    <total_time>2.5</total_time>
+    <n_states>30</n_states>
+    <map_name>map_bookshelf</map_name>
+    <coeff_Qc>1.0</coeff_Qc>
+    <GH_deg>3</GH_deg>
+    <sig_obs>7.5</sig_obs>
+    <eps_sdf>0.2</eps_sdf>
+    <radius>0.01</radius>
+    <step_size>0.45</step_size>
+    <alpha>1.0</alpha>
+    <init_precision_factor>10000.0</init_precision_factor>
+    <boundary_penalties>10000.0</boundary_penalties>
+    <temperature>0.5</temperature>
+    <high_temperature>5.0</high_temperature>
+    <stop_err>1e-5</stop_err>
+    <max_iterations>25</max_iterations>
+    <low_temp_iterations>20</low_temp_iterations>
+    <max_n_backtracking>5</max_n_backtracking>
+    <sdf_file>/maps/PR2/PR2DeskDataset_cereal.bin</sdf_file>
+</Commons>
+
+<Experiment1>    
+    <start_pos>
+        <1>-1.57</1>
+        <2>-0.261</2>
+        <3>-3.14</3>
+        <4>-1.047</4>
+        <5>3.14</5>
+        <6>-0.785</6>
+        <7>0.0</7>
+    </start_pos>
+
+    <goal_pos>
+        <1>0.0</1>
+        <2>0.0</2>
+        <3>0.0</3>
+        <4>-0.261</4>
+        <5>3.14</5>
+        <6>-0.261</6>
+        <7>0.0</7>
+    </goal_pos>
+
+    <saving_prefix>matlab_helpers/GVIMP-examples/PR2/sparse_gh/case1/</saving_prefix>
+
+</Experiment1>

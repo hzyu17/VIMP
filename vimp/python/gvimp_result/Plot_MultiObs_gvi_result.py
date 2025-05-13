@@ -7,7 +7,8 @@ costfunction_dir = os.path.dirname(file_path)
 py_dir = os.path.abspath(os.path.join(os.path.join(file_path, '..'),'..'))
 collision_cost_dir = os.path.abspath(os.path.join(os.path.join(py_dir, 'sdf_robot'), 'scripts'))
 VIMP_dir = os.path.abspath(os.path.join(os.path.join(py_dir, '..'), '..'))
-result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'GVIMP-examples'), '2d_Quad'))
+# result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'GVIMP-examples'), '2d_Quad'))
+result_dir = os.path.abspath(os.path.join(os.path.join(os.path.join(VIMP_dir, 'matlab_helpers'), 'ProxKL-examples'), '2d_Quad'))
 
 sys.path.append(collision_cost_dir)
 sys.path.append(py_dir)
@@ -32,11 +33,8 @@ if __name__ == '__main__':
     H = 0.35
     i = 4
     
-    # case_dirs = [os.path.join(result_dir, f'case{i+1}') for i in range(4)]
     case_dir = os.path.join(os.path.join(result_dir, 'Multi_Obs'), 'Go_around')
     # case_dir = os.path.join(os.path.join(result_dir, 'Multi_Obs'), 'Go_through')
-
-    # fig, axes = plt.subplots(2, 2, frameon=False)
 
     mean_pd = pd.read_csv(os.path.join(case_dir,'zk_sdf.csv'), header=None)
     mean = mean_pd.values.T
@@ -48,20 +46,19 @@ if __name__ == '__main__':
 
     fig, ax = planarmap.draw_map(fig, ax, plot=False)
     fig, ax = draw_pquad_trj_cov_2d(mean, cov, L, H, n_balls, fig, ax, 1, False, False)
-    ax.set_xlim(-12.5, 27.5)
-    ax.set_ylim(-2.5, 40)
+    ax.set_xlim(-8.5, 33.5) # (-8.5, 33.5) for go around, (-14.5, 27.5) for go throughs
+    ax.set_ylim(-2.5, 37.5)
 
-    ax.axis('off') 
-    ax.set_title('Go Around Plan', fontsize=18, fontweight='bold', fontdict={'family': 'serif'})
-    # ax.set_title('Go Through Plan', fontsize=18, fontweight='bold', fontdict={'family': 'serif'})
+    ax.axis('off')
+    # ax.set_title('Go Through Plan', fontsize=22, fontdict={'family': 'serif'})
+    ax.set_title('Go Around Plan', fontsize=22, fontdict={'family': 'serif'})
 
     # ax.tick_params(axis='both', which='major', labelsize=16)
-
     # ax.legend(loc='best', prop={'family': 'serif', 'size': 18})
     
     plt.tight_layout() 
 
-    # fig.savefig(case_dir+f'/Go_Around_updated.pdf', format='pdf', dpi=2000, bbox_inches='tight')
+    # fig.savefig(case_dir+f'/Go_Around_KL.pdf', format='pdf', dpi=2000, bbox_inches='tight')
 
 
     plt.show()  

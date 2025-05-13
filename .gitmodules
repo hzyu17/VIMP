@@ -1,3 +1,15 @@
 [submodule "vimp/GaussianVI"]
 	path = vimp/GaussianVI
 	url = https://github.com/hzyu17/GaussianVI.git
+
+[submodule "vimp/thirdparty/sensor3D_tools"]
+	path=vimp/thirdparty/sensor3D_tools
+	url=https://github.com/hzyu17/sensor3D_tools.git
+
+[submodule "vimp/thirdparty/AprilTag"]
+	path=vimp/thirdparty/AprilTag
+	url=https://github.com/hzyu17/AprilTag.git
+
+[submodule "vimp/thirdparty/yaml"]
+	path = vimp/thirdparty/yaml
+	url = https://github.com/ZinuoChang/yaml.git

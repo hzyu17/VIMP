@@ -11,8 +11,8 @@
 
 #include <gtest/gtest.h>
 #include "robots/PlanarPointRobotSDF_pgcs.h"
-#include "3rdparty/rapidxml-1.13/rapidxml.hpp"
-#include "3rdparty/rapidxml-1.13/rapidxml_utils.hpp"
+#include "thirdparty/rapidxml-1.13/rapidxml.hpp"
+#include "thirdparty/rapidxml-1.13/rapidxml_utils.hpp"
 #include "GaussianVI/helpers/EigenWrapper.h"
 
 using namespace rapidxml;
