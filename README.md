@@ -25,10 +25,10 @@ A higher entropy will trade off the short distance risky plan, and gives a longe
 
 Our method generates a distribution over trajectories rather than a single deterministic one. Therefore, when the environment model is imprecise or unexpected disturbances occur, we can resample from this distribution to obtain a collision‑free trajectory.
 
-<img src="figures/Point_Robot_Resampling_1.gif" width="300">
-<img src="figures/Point_Robot_Resampling_2.gif" width="300">
-<img src="figures/Point_Robot_Resampling_3.gif" width="300">
-<img src="figures/Point_Robot_Resampling_4.gif" width="300">
+<img src="figures/Point_Robot_Resampling_1.gif" width="280">
+<img src="figures/Point_Robot_Resampling_2.gif" width="280">
+<img src="figures/Point_Robot_Resampling_3.gif" width="280">
+<img src="figures/Point_Robot_Resampling_4.gif" width="280">
 
 
 **3. Variational Mmotion planning for a 7-DOF WAM robot arm**
