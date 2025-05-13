@@ -45,7 +45,7 @@ Body_frames:
   
 
 Sampling:
-  max_iters: 100000
+  max_iters: 30000
   collision_threshold: 0.02
-  safety_threshold: 0.05
-  window_size: 10
+  safety_threshold: 0.1
+  window_size: 5

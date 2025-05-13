@@ -25,7 +25,8 @@ switch i_exp
         map_name = "FrankaDeskDataset";
     case 2
         prefix = "../../../vimp/" + matlabData.saving_prefix;
-        map_name = "FrankaBoxDataset";
+        % map_name = "FrankaBoxDataset";
+        map_name = "FrankaBoxDatasetOffset";
 end
 
 %% ******************* Start and goal configurations ******************
@@ -149,15 +150,16 @@ for j = 1:nt
     color = [0, 0, 1, alpha];
     mean = i_means(1:7, j);
     mean_resample = good_means(:, j);
-    plotArm3D(arm.fk_model(), mean, color, 4, true);
 
     if ~isequal(mean_resample, mean)
-        plotArm3D(arm.fk_model(), mean, color, 4, true);
         color = [1, 0, 0, alpha];  % Change color to red if not equal
+        plotArm3D(arm.fk_model(), mean_resample, color, 4, true);
+        color = [0, 0, 1, alpha/3];
+        % centers = arm.sphereCentersMat(mean_resample);
+        % plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
     end
-%     plotArm3D(arm.fk_model(), mean_resample, color, 4, true);
+    plotArm3D(arm.fk_model(), mean, color, 4, true);
 
-    % centers = arm.sphereCentersMat(mean);
     % centers = arm.sphereCentersMat(mean_resample);
     % plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
 end
