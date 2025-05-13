@@ -1,5 +1,5 @@
 # Generate SDF for the hardware experiment
-from vimp.thirdparty.sensor3D_tools import SignedDistanceField, SignedDistanceField3D, OccpuancyGrid
+from vimp.thirdparty.sensor3D_tools import SignedDistanceField, SignedDistanceField3D
 import numpy as np
 
 import lcm
@@ -8,7 +8,7 @@ import threading
 import tf.transformations as tft
 from read_defaul_poses import *
 
-from moveit_planning import read_plan_json_to_numpy
+from vimp.scripts.hardware_experiment.moveit_baselines import read_plan_json_to_numpy
 from resampling import read_forwardkinematic_from_config, collision_checking
 
 from pathlib import Path
