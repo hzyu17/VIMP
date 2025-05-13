@@ -19,3 +19,4 @@ vimp/python/sdf_robot/map/planar/MultiObstacleLongRangeMap_field.csv
 **/*.pyc
 **/__pycache__
 **/*.csv
+**/*.png

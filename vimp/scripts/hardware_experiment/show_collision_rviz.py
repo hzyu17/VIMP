@@ -12,15 +12,12 @@ import yaml
 
 
 class ForwardKinematicsCollisionPublisher:
-    def __init__(self, config_file):
-        with open(config_file) as f:
-            cfg = yaml.safe_load(f)
-        
-        planning_cfg = Path(cfg["Planning"]["config_file"])
-        self._cfg = planning_cfg
-        self._fk = read_forwardkinematic_from_config(planning_cfg)    
+    def __init__(self, config_file):       
+        hardware_cfg = Path(config_file)
+        self._cfg = hardware_cfg
+        self._fk = read_forwardkinematic_from_config(hardware_cfg)    
 
-        rospy.init_node("Publishing collision checking balls")
+        rospy.init_node("publishing_collision_checking_balls")
         self._scene = PlanningSceneInterface(synchronous=True)
         rospy.sleep(1.0)
         
@@ -125,7 +122,7 @@ class ForwardKinematicsCollisionPublisher:
 
 
 if __name__ == "__main__":    
-    config_file = Path(__file__).parent / 'config' / 'config.yaml'
+    config_file = Path(__file__).parent / 'config' / 'franka_hardware.yaml'
     
     pub = ForwardKinematicsCollisionPublisher(config_file)
     pub.publish_fk_checking_spheres(moveit_group="panda_arm")
