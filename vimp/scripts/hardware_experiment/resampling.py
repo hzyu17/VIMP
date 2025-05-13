@@ -2,6 +2,7 @@ import os, sys
 import yaml
 import torch
 import json
+import time
 from pathlib import Path
 import numpy as np
 import open3d as o3d
@@ -26,16 +27,15 @@ def find_blocks(bad_idx, gap = 2):
 
 def collision_checking(sdf: SignedDistanceField,
                         fk: ForwardKinematics,
-                        joint_means: np.ndarray):
-    n_states, dim_conf = joint_means.shape
+                        means: np.ndarray):
+    n_states = means.shape[0]
     n_spheres = fk.num_spheres
 
-    margins_matrix = np.zeros((n_spheres, n_states))
-    for i in range(n_states):
-        pts = fk.compute_sphere_centers(joint_means[i])
-        signed_distances = np.array([sdf.getSignedDistance(p) for p in pts])
-        margins_matrix[:, i] = signed_distances
+    pts = fk.compute_sphere_centers_batched(means)
+    signed_distances = sdf.getSignedDistanceBatched(pts)
+    margins_matrix = signed_distances.reshape(n_spheres, n_states, order='F')
     min_margin = np.min(margins_matrix, axis=0)
+    print(f"Minimum margin for each state: {min_margin}")
 
     return min_margin
 
@@ -198,20 +198,15 @@ def resample_block_trajectory(config_file: str,
 
     n_states, dim_state = zk_matrix.shape
     dim_conf = dim_state // 2
-    n_spheres = fk.num_spheres
     
-    joint_means = torch.from_numpy(zk_matrix).flatten()
+    joint_means = zk_matrix.flatten()
     joint_cov = torch.inverse(torch.from_numpy(joint_prec)).numpy()
 
     means = zk_matrix[:, :dim_conf]
     means_sample = means.copy()
 
     # ----------------- Collision Checking ----------------
-    pts = fk.compute_sphere_centers_batched(means)
-    signed_distances = sdf.getSignedDistanceBatched(pts)
-    margins_matrix = signed_distances.reshape(n_spheres, n_states, order='F') - fk.radii[:, None]
-    min_margin = np.min(margins_matrix, axis=0)
-    # print(f"Minimum margin for each state: {min_margin}")
+    min_margin = collision_checking(sdf, fk, means)
 
     # ----------------- Sampling --------------------------
     # Only consider the intermediate states (exclude the first and last points).
@@ -245,6 +240,7 @@ def resample_block_trajectory(config_file: str,
 
         signed_dist_block = min_margin[start_state + 1:end_state]
         safety_metric = np.min(signed_dist_block)
+        safe_block_means = joint_means[start_vector_idx + dim_state: end_vector_idx - dim_state] # The means of the block without condition states
 
         block_iter = 0
 
@@ -259,23 +255,20 @@ def resample_block_trajectory(config_file: str,
 
             # Compute the signed distances for the new sample
             means_new = new_theta.reshape(-1, dim_state)[:, :dim_conf]
+            min_block_margin = collision_checking(sdf, fk, means_new)
 
-            pts = fk.compute_sphere_centers_batched(means_new)
-            signed_distances = sdf.getSignedDistanceBatched(pts)
-            block_margins = signed_distances.reshape(n_spheres, means_new.shape[0], order='F') - fk.radii[:, None]
-            min_block_margin = np.min(block_margins, axis=0)
-            # print(f"Minimum margin: {min_block_margin.min()}")
-
-            # Check if the new sample is valid
             if np.all(min_block_margin > safety_threshold):
                 print(f"Block {block} is valid after {block_iter} iterations.")
                 means_sample[start_state + 1:end_state] = means_new
+                safe_block_means = new_theta
                 break
-            else:
-                new_metric = np.min(min_block_margin)
-                if new_metric > safety_metric:
-                    safety_metric = new_metric
-                    means_sample[start_state + 1:end_state] = means_new
+            elif np.min(min_block_margin) > safety_metric:
+                safety_metric = np.min(min_block_margin)
+                means_sample[start_state + 1:end_state] = means_new
+                safe_block_means = new_theta
+
+        # Update trajectory with best means found
+        joint_means[start_vector_idx + dim_state: end_vector_idx - dim_state] = safe_block_means
 
     # Save the valid mean trajectory to a csv file.
     output_file = os.path.join(result_dir, "good_zk.csv")
@@ -287,6 +280,7 @@ if __name__ == "__main__":
 
     experiment_config = this_dir + "/config/config.yaml"
     path_to_yaml = Path(experiment_config)
+    start = time.time()
 
     with path_to_yaml.open("r") as f:
         cfg = yaml.safe_load(f)            # cfg is now a nested dict
@@ -296,10 +290,12 @@ if __name__ == "__main__":
 
     # Load the signed distance field
     sdf = SignedDistanceField()
-    # sdf.loadSDF(os.path.join(this_dir, "../../maps/WAM/FrankaBoxDataset_cereal.bin"))
     sdf.loadSDF(sdf_path)
 
     # Perform collision checking and resampling
     # collision_checking_and_resampling(planning_cfg_path, sdf, max_iters, threshold)
 
     resample_block_trajectory(planning_cfg_path, sdf, cfg["Sampling"])
+
+    end = time.time()
+    print(f"Time taken: {end - start:.2f} seconds")
