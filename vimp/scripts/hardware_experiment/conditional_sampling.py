@@ -1,6 +1,5 @@
 import torch
 import numpy as np
-from torch.distributions.multivariate_normal import MultivariateNormal
 
 def conditional_sample(joint_mean, joint_cov, state_dim):
     # ---- inputs ---------------------------------------------------------

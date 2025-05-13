@@ -44,7 +44,7 @@ class SDFUpdaterListener:
             T[:3, 3] = np.array([pose.position.x, pose.position.y, pose.position.z])
             # rotation from quaternion
             quat = np.array([pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
-            T[:3, :3] = tft.quaternion_matrix(quat)[:3, :3]
+            T[:3, :3] = tft.quaternion_matrix(quat)[:3, :3] # From quaternion to rotation matrix
             self._T_world_body[body] = T
             
             # Insert obstacle
@@ -52,6 +52,7 @@ class SDFUpdaterListener:
             box_rel_pose = self._rel_poses[bname]
             box_size = self._sizes[bname]
             
+            # construct the box's pose in the body frame
             C = np.eye(4)
             C[:3, 3] = np.array([box_rel_pose.position.x, box_rel_pose.position.y, box_rel_pose.position.z])
             # Default assumed to be parallel to the axis
@@ -85,9 +86,12 @@ class SDFUpdaterListener:
         print("   pose    = %s" % str(msg.pose))
         
         subgrid = self._body_occ[msg.frame_name]
+        old_pose = self._T_world_body[msg.frame_name]
+        transform_pose = msg.pose @ np.linalg.inv(old_pose)
+        self._T_world_body[msg.frame_name] = msg.pose
         
         # Apply the pose transformation
-        subgrid.transform(msg.pose, visualize=True)
+        subgrid.transform(transform_pose, visualize=True)
         
         self._body_occ[msg.frame_name] = subgrid
         

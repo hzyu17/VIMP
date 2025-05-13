@@ -32,9 +32,16 @@ class ForwardKinematics{
         ForwardKinematics(const Eigen::VectorXd& a, const Eigen::VectorXd& alpha,
                           const Eigen::VectorXd& d, const Eigen::VectorXd& theta_bias,
                           const Eigen::VectorXi& frames, const Eigen::MatrixXd& centers, DHType dh_type) :
-          _a(a), _alpha(alpha), _d(d), _theta_bias(theta_bias), _frames(frames), _centers(centers), 
+          _a(a), _alpha(alpha), _d(d), _theta_bias(theta_bias), _frames(frames),
           _num_joints(a.size()), _num_spheres(frames.size()), _dh_type(dh_type)
-          {}
+          {
+            if (_centers.rows() == _num_spheres && _centers.cols() == 3)
+                _centers = _centers.transpose();
+            else if (_centers.rows() == 3 && _centers.cols() == _num_spheres)
+                _centers = _centers;
+            else
+                throw std::runtime_error("[ForwardKinematics] centers must be a 3xN matrix");
+          }
     
         ~ForwardKinematics() {}
     

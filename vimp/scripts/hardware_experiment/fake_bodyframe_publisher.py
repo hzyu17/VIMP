@@ -72,7 +72,11 @@ class PosePublisher:
                         ch = sys.stdin.read(1)
                         if ch == '\n': # if 'Enter' key is pressed
                             rospy.loginfo("Enter pressed — publishing one pose")
-                            self.publish_pose(self._pose)
+                            pose = np.eye(4, dtype=np.float32)
+                            pose[0, 3] = 0.5
+                            pose[1, 3] = 0.5
+                            pose[2, 3] = 0.5
+                            self.publish_pose(pose)
                             
                 time.sleep(0.1)  # Add a small delay to control the loop speed
             

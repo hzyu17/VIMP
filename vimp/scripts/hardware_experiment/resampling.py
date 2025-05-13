@@ -13,7 +13,7 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
 
 from vimp.pybinds.bind_FK import ForwardKinematics, DHType
-from vimp.pybinds.bind_SDF import SignedDistanceField
+from vimp.thirdparty.sensor3D_tools import SignedDistanceField
 
 def find_blocks(bad_idx, gap = 2):
     """Split a sorted array of collision indices into contiguous runs."""
