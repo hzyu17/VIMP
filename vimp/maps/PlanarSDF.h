@@ -37,6 +37,19 @@ class PlanarSDF {
         const float_index pidx = convertPoint2toCell(point);
         return signed_distance(pidx);
       }
+
+      inline VectorXd getSignedDistanceBatched(const Eigen::MatrixXd& points) const
+      {
+        const int N = points.rows();
+        Eigen::VectorXd dists(N);
+        for (int i = 0; i < N; i++) {
+          // extract the i-th row as a 2-vector
+          Eigen::Vector2d p = points.row(i);
+          const float_index pidx = convertPoint2toCell(p);
+          dists[i] = signed_distance(pidx);
+        }
+        return dists;
+      }
     
       inline Eigen::Vector2d getGradient(const Eigen::Vector2d& point) const {
         const float_index pidx = convertPoint2toCell(point);    

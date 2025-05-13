@@ -27,11 +27,11 @@ Sampling:
   window_size: 4
   max_iters: 100000
   safe_threshold: 1.5
-  collision_threshold: 1.5
+  collision_threshold: 1.25
 
 Fig_save:
   save_fig: true
   save_path: "/Figures"
   save_name: "PointRobotConfig"
-  fig_dpi: 300
+  fig_dpi: 500
   fig_format: "png"

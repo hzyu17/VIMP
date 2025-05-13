@@ -77,6 +77,11 @@ PYBIND11_MODULE(bind_SDF, m) {
           .def("getSignedDistance", &PlanarSDF::getSignedDistance,
                py::arg("point"),
                "Query the interpolated signed distance at a 2D point")
+          
+          .def("getSignedDistanceBatched",
+               &PlanarSDF::getSignedDistanceBatched,
+               py::arg("point_vec"),
+               "Query the interpolated signed distance at a batch of 2D points")
 
           .def("getGradient", &PlanarSDF::getGradient,
                py::arg("point"),

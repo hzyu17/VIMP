@@ -2,7 +2,7 @@ import yaml
 import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
+from matplotlib.patches import Ellipse, Patch
 from scipy.stats import chi2
 from resampling import find_blocks
 from conditional_sampling import conditional_sample
@@ -15,7 +15,7 @@ from vimp.thirdparty.sensor3D_tools.scripts.SignedDistanceField2D import generat
 from vimp.thirdparty.sensor3D_tools import PlanarSDF
 
 # ------------------------ Load parameters ---------------------------
-with open(this_dir + '/PointRobotConfig.yaml') as f:
+with open(this_dir + '/config/PointRobotConfig.yaml') as f:
     cfg = yaml.safe_load(f)
 
 fld       = cfg['Field']
@@ -90,7 +90,7 @@ def plot_cov_shaded(cov, mu, ax=None, conf=0.997, facecolor='r', edgecolor='none
     ax.add_patch(ell)
     return ax
 
-def build_sdf():
+def build_sdf(noise=True, return_sdf=True):
     # Allocate empty map (0 = free, 1 = obstacle)
     grid = np.zeros((rows, cols), dtype=int)
 
@@ -99,10 +99,10 @@ def build_sdf():
         w, h = obs['size']
 
         # Add noise
-        cx_noisy = cx + np.random.normal(scale=fld['obs_center_noise'])
-        cy_noisy = cy + np.random.normal(scale=fld['obs_center_noise'])
-        w_noisy  = w  + np.random.normal(scale=fld['obs_size_noise'])
-        h_noisy  = h  + np.random.normal(scale=fld['obs_size_noise'])
+        cx_noisy = cx + (np.random.normal(scale=fld['obs_center_noise']) if noise else 0)
+        cy_noisy = cy + (np.random.normal(scale=fld['obs_center_noise']) if noise else 0)
+        w_noisy  = w  + (np.random.normal(scale=fld['obs_size_noise']) if noise else 0)
+        h_noisy  = h  + (np.random.normal(scale=fld['obs_size_noise']) if noise else 0)
 
         # World coordinates to grid indices
         r0, c0 = world_to_cell(cx_noisy, cy_noisy)
@@ -117,21 +117,22 @@ def build_sdf():
         c2 = min(cols, c0 + dc + (w_c % 2))
 
         grid[r1-1:r2, c1-1:c2] = 1 # Compatible with Matlab's 1-based indexing
-        
-    field = generate_field2D(grid, cell_size)
-    sdf = PlanarSDF(np.array([origin_x, origin_y]), cell_size, field)
-    return grid, sdf
+    
+    if return_sdf:
+        field = generate_field2D(grid, cell_size)
+        sdf = PlanarSDF(np.array([origin_x, origin_y]), cell_size, field)
+        return grid, sdf
+    else:
+        return grid
 
 
 def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = True):
     # ------------------------ Collision Checking -------------------------
-    grid, sdf = build_sdf()
+    grid, sdf = build_sdf(noise=True)
     resample_means = means.copy()
-
-    signed_dist = np.zeros(n_states, dtype=np.float32)
-    for i in range(n_states):
-        x = resample_means[i]
-        signed_dist[i] = sdf.getSignedDistance(x)
+    resample_joint_means = joint_means.copy()
+    
+    signed_dist = sdf.getSignedDistanceBatched(resample_means)
 
     # Check if start or goal positions are in collision
     if signed_dist[0] < collision_threshold or signed_dist[n_states - 1] < collision_threshold:
@@ -147,8 +148,6 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
         return False # No collision, no need for resampling, jump to the next iteration
     else:
         blocks = find_blocks(collide_idx, gap=2)
-        # print("Collision detected at indices:", collide_idx)
-        # print("Collision blocks:", blocks)
         print("Number of blocks:", len(blocks))
 
     # Container to store the block distribution for plotting
@@ -163,7 +162,7 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
         start_vector_idx = start_state * dim_state
         end_vector_idx = (end_state + 1) * dim_state
 
-        block_means = joint_means[start_vector_idx:end_vector_idx]
+        block_means = resample_joint_means[start_vector_idx:end_vector_idx]
         block_covs = joint_cov[start_vector_idx:end_vector_idx, start_vector_idx:end_vector_idx]
 
         block_covs += np.eye(block_covs.shape[0]) * 1e-7
@@ -172,14 +171,13 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
         block_distribution.append({
             'cond_mean': cond_mean.copy(),
             'cond_cov': cond_cov.copy(),
-            'block_size': block.size,
-            'block_start_idx': block[0] - start_state
         })
 
         L = np.linalg.cholesky(cond_cov)  # Cholesky decomposition to speed up sampling
 
         signed_dist_block = signed_dist[start_state + 1:end_state]
         safety_metric = np.min(signed_dist_block)
+        safe_block_means = resample_joint_means[start_vector_idx + dim_state: end_vector_idx - dim_state]
 
         block_iter = 0
         while block_iter < max_iters:
@@ -192,16 +190,14 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
             
             # Collision checking for the new samples
             means_new = new_theta.reshape(-1, dim_state)[:, :dim_conf]
-            signed_dist_samples = np.zeros(means_new.shape[0], dtype=np.float32)
-            for i in range(means_new.shape[0]):
-                x = means_new[i]
-                signed_dist_samples[i] = sdf.getSignedDistance(x)
+            signed_dist_samples = sdf.getSignedDistanceBatched(means_new)
 
             # Check if any samples are in collision
             collide_idx = np.where(signed_dist_samples < safe_threshold)[0]
             if collide_idx.size == 0:
                 # print("No collision detected in block after", block_iter, "iterations.")
                 resample_means[start_state + 1:end_state] = means_new
+                safe_block_means = new_theta
                 block_success = True
                 break
             else:
@@ -210,55 +206,64 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
                     safety_metric = new_metric
                     signed_dist_block = signed_dist_samples
                     resample_means[start_state + 1:end_state] = means_new
+                    safe_block_means = new_theta
         
         # If this block failed, the overall success is False
         if not block_success:
             Success = False
+        resample_joint_means[start_vector_idx + dim_state: end_vector_idx - dim_state] = safe_block_means
 
     # ------------------------ Plotting -------------------------
     if Success:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+        grid_fixed = build_sdf(noise=False, return_sdf=False)
 
         extent = [origin_x, origin_x + cols * cell_size, 
                   origin_y, origin_y + rows * cell_size]
+        
+        ax.imshow(grid_fixed, origin='lower', cmap='gray_r', # obstacles in black, free in white
+                  interpolation='nearest', extent=extent, alpha=0.8)
 
-        ax.imshow(grid, origin='lower', cmap='gray_r', # obstacles in black, free in white
-                  interpolation='nearest', extent=extent)
+        grid_noisy_masked = np.ma.masked_where(grid == 0, grid)
+        ax.imshow(grid_noisy_masked, origin='lower', cmap='Reds',
+                  interpolation='nearest', extent=extent, alpha=0.8, vmin=0, vmax=1)
+        
+        fixed_patch = Patch(color='lightgrey', label='Fixed obstacles')
+        noisy_patch = Patch(color='red', alpha=0.5, label='Noisy obstacles')
 
         # Plot the original covariance ellipses with more subtle styling
         for i in range(0, n_states):
             x_i = means[i]
             cov_i = covs[:, :, i]
-            label = r'$3\sigma$ covariance' if i == 0 else None
-            plot_cov_shaded(cov_i, x_i, ax=ax, conf=0.997, facecolor='salmon', alpha=0.1, label=label)
+            plot_cov_shaded(cov_i, x_i, ax=ax, conf=0.997, facecolor='salmon', alpha=0.1)
         
-        for res in block_distribution:
-            block_size = res['block_size']
+        for j, res in enumerate(block_distribution):
             cond_mean = res['cond_mean'].reshape(-1, dim_state)[:, :dim_conf]
             nt = cond_mean.shape[0]
             cond_cov = res['cond_cov'].reshape(nt*dim_state, nt*dim_state)
-            block_start_idx = res['block_start_idx']
 
             # Plot the conditional covariance ellipses
-            # for i in range(block_start_idx - 1, block_start_idx + block_size - 1):
             for i in range(nt):
                 x_i = cond_mean[i]
                 cov_i = cond_cov[i*dim_state:i*dim_state+dim_state, i*dim_state:i*dim_state+dim_state]
                 plot_cov_shaded(cov_i, x_i, ax=ax, conf=0.997, facecolor='blue', alpha=0.15)
+        
+        traj_cov_patch = Patch(facecolor='salmon', alpha=0.1, label='Trajectory covariance')
+        resamp_cov_patch = Patch(facecolor='blue', alpha=0.15, label='Resample covariance')
 
         # Plot trajectory means with improved style and more descriptive labels
-        ax.plot(means[:, 0], means[:, 1], 'ro', markersize=5, markeredgecolor='firebrick',
-                markeredgewidth=0.8, label='Initial trajectory', alpha=0.7)
+        original_line, = ax.plot(means[:, 0], means[:, 1], 'ro', markersize=5, markeredgecolor='firebrick',
+                markeredgewidth=0.8, label='Original trajectory', alpha=0.7)
                 
-        ax.plot(resample_means[:, 0], resample_means[:, 1], 'b*', markersize=6, markeredgecolor='darkblue',
-                markeredgewidth=0.8, label='Resampled path', alpha=0.9)
+        resample_line, = ax.plot(resample_means[:, 0], resample_means[:, 1], 'b*', markersize=6, markeredgecolor='darkblue',
+                markeredgewidth=0.8, label='Resampled trajectory', alpha=0.9)
 
         # Add start and end markers for clarity
-        ax.plot(means[0, 0], means[0, 1], 'go', markersize=7, markeredgecolor='darkgreen', 
-                markeredgewidth=1, label='Start point')
+        start_point, = ax.plot(means[0, 0], means[0, 1], 'go', markersize=7, markeredgecolor='darkgreen', 
+                markeredgewidth=1, label='Start')
                 
-        ax.plot(means[-1, 0], means[-1, 1], 'mo', markersize=7, markeredgecolor='darkmagenta',
-                markeredgewidth=1, label='Goal point')
+        goal_point, = ax.plot(means[-1, 0], means[-1, 1], 'mo', markersize=7, markeredgecolor='darkmagenta',
+                markeredgewidth=1, label='Goal')
 
         # Connect dots with lines to better visualize the path
         for i in range(len(resample_means)-1):
@@ -266,7 +271,12 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
                     resample_means[i+1, 0] - resample_means[i, 0], resample_means[i+1, 1] - resample_means[i, 1],
                     head_width=0, head_length=0, fc='b', ec='b', alpha=0.3, linewidth=1)
             
-        plt.legend()
+        # plt.legend()
+        handles = [fixed_patch, noisy_patch, traj_cov_patch, resamp_cov_patch,
+                   original_line, resample_line, start_point, goal_point]
+        labels = [h.get_label() for h in handles]
+        ax.legend(handles, labels, loc='lower right')
+        ax.set_axis_off()
 
         if save_fig:
             if not os.path.isdir(save_dir):
@@ -275,7 +285,7 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
             full_path = os.path.join(save_dir, file_name)
 
             try:
-                fig.savefig(full_path, dpi=300, bbox_inches='tight')
+                fig.savefig(full_path, dpi=500, bbox_inches='tight')
                 print("Figure saved to:", full_path)
 
             except Exception as e:
@@ -297,13 +307,13 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
 if __name__ == "__main__":
     success_count = 0
     map_iter = 0
-    figure_dir = this_dir + "/figures"
-    while success_count < 1:
+    figure_dir = this_dir + "/figures/case2"
+    while success_count < 50:
         map_iter += 1
         print("Map iteration:", map_iter)
-        filename = f"trajectories{success_count}.png"
+        filename = f"trajectories_{success_count}.png"
 
-        success = sample_and_save(save_dir=figure_dir, file_name=filename, save_fig=False, show_fig=True)
+        success = sample_and_save(save_dir=figure_dir, file_name=filename, save_fig=True, show_fig=False)
         if success:
             success_count += 1
             print("Resampling successful.")

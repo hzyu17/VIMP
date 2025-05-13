@@ -15,7 +15,7 @@ import gpmp2.*
 % =============================
 % sparse GH quadrature results 
 % =============================
-matlabData = yaml.loadFile("../../../vimp/scripts/hardware_experiment/config/franka_hardware.yaml");
+matlabData = yaml.loadFile("../../../vimp/scripts/hardware_experiment/config/config.yaml");
 
 i_exp = 2;
 
@@ -24,7 +24,7 @@ switch i_exp
         prefix = "sparse_gh/case1";
         map_name = "FrankaDeskDataset";
     case 2
-        prefix = "../../../vimp/" + matlabData.saving_prefix;
+        prefix = "../../../vimp/" + matlabData.Planning.saving_prefix;
         % map_name = "FrankaBoxDataset";
         map_name = "FrankaBoxDatasetOffset";
 end
