@@ -1,6 +1,6 @@
 Field:
-  field_origin: [-1.5, -1.5, 0] # [x, y, z] The origin of the field in the april tag's frame
-  field_size: [300, 300, 300]
+  field_origin: [-2.5, -2.5, 0] # [x, y, z] The origin of the field in the april tag's frame
+  field_size: [500, 500, 500]
   cell_size: 0.01
   obstacles:
     - name: sdf_box_1
@@ -70,6 +70,9 @@ Planning:
   max_n_backtracking:  5
   sdf_file:            ../../thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetOffset_cereal.bin
 
+  start_degrees: [-14, -99, 96, -145, 30, 145, 88]
+  goal_degrees: [-33, 54, 23, -101, 113, 100, -72]
+
   start_pos: [-0.8, -1.70, 1.64, 1.29, 1.1, -0.106, 2.2]
   goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
 
@@ -77,4 +80,4 @@ Planning:
 
   config_file: "vimp/scripts/hardware_experiment/config/franka_dh.yaml"
   disturbed_sdf: "vimp/thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetOffset_cereal.bin"
-  baseline_trj: "vimp/scripts/hardware_experiment/Data/plan_trj.yaml"
+  
