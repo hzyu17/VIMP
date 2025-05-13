@@ -6,6 +6,7 @@ import tf.transformations as tf
 import time, select, sys, os
 import numpy as np
 import yaml
+from pathlib import Path
 
 
 def make_random_msg():
@@ -27,11 +28,11 @@ class PosePublisher:
         self._wait_key = wait_key
         self._topic_name = topic_name
 
-        self.output_file = output_file
+        self.output_file = str(Path(__file__).parent / output_file)
         self._pose = np.eye(4, dtype=np.float32)
         os.makedirs(os.path.dirname(self.output_file) or '.', exist_ok=True)
         self._output_yaml = open(self.output_file, 'a')
-        
+                
         rospy.init_node('apriltag_webcam', anonymous=True)
         self._pub = rospy.Publisher(topic_name, PoseStamped, queue_size=10)
         
@@ -43,8 +44,14 @@ class PosePublisher:
             
     def publish_pose(self, pose):
 
-        msg = construct_poselcm_msg(pose, name='B1')
-        publish_lcm_msg(msg, topic=self._topic_name)
+        lcm_msg = construct_poselcm_msg(pose, name='B1')
+        publish_lcm_msg(lcm_msg, topic=self._topic_name)
+        
+        print("LCM stamped pose message")
+        print("   frame name  = %s" % str(lcm_msg.frame_name))
+        print("   timestamp   = %s" % str(lcm_msg.timestamp))
+        print("   pose    = %s" % str(lcm_msg.pose))
+        
         
         # Publish ROS message for RViz
         pose_msg = PoseStamped()
@@ -66,7 +73,7 @@ class PosePublisher:
         
         # Record the poses in the json file
         entry = {
-            "timestamp": float(pose_msg.header.stamp.to_sec()),
+            "timestamp": lcm_msg.timestamp, # Use lcm message timestamp
             "position": {
                 "x": float(pose_msg.pose.position.x),
                 "y": float(pose_msg.pose.position.y),

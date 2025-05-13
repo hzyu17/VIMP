@@ -32,6 +32,11 @@ class BaselinePlanner:
         
         rospy.init_node("Baseline planning in moveit...", anonymous=True)
 
+    
+    def set_planner(self, planner_id):
+        self._planner = planner_id
+        
+    
     def plan_from_start_to_goal_joints(self, 
                                        start_degrees, 
                                        goal_degrees, 
@@ -177,10 +182,6 @@ class BaselinePlanner:
 
     
 if __name__ == '__main__':
-    # save_moveit_plan()
-    start_degrees = [165, 80, -70, -138, 26, 148, 152]
-    goal_degrees = [-33, 54, 23, -101, 113, 100, -72]
-    
     this_dir = os.path.dirname(os.path.abspath(__file__))
     result_dir = this_dir + "/Data"
     
@@ -192,15 +193,21 @@ if __name__ == '__main__':
     with open(exp_cfg_file) as f:
         cfg = yaml.safe_load(f)
         
+    start_degrees = cfg["Planning"]["start_degrees"]
+    goal_degrees = cfg["Planning"]["goal_degrees"]
     
     baseline = BaselinePlanner(ros_config_file, exp_cfg_file, planner_id='RRTConnect')
     baseline.print_available_planners()
     
-    # Do the plan
-    baseline.plan_from_start_to_goal_joints(start_degrees, 
-                                            goal_degrees,
-                                            result_dir=result_dir)
+    planners = cfg["Baselines"]["planner_ID"]
     
-    pos_trj = read_plan_json_to_numpy(result_dir + "/plan_trj.yaml")
-    print("pos_trj.shape: ", pos_trj.shape)
-    
+    for planner_id in planners:
+        print("Switching to planner: ", planner_id)
+        
+        baseline.set_planner(planner_id)
+        
+        # Do the plan
+        baseline.plan_from_start_to_goal_joints(start_degrees, 
+                                                goal_degrees,
+                                                result_dir=result_dir)
+            

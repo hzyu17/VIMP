@@ -45,10 +45,7 @@ class SDFUpdaterListener:
             cfg = yaml.safe_load(f)
         planning_cfgfile = Path(cfg["Planning"]["config_file"])
         
-        with planning_cfgfile.open("r", encoding="utf-8") as f:
-            planning_cfg = yaml.safe_load(f)
-
-        baseline_IDs = planning_cfg["Baselines"]["planner_ID"]
+        baseline_IDs = cfg["Planning"]["Baselines"]["planner_ID"]
         
         self._baslines = {}
         for id in baseline_IDs:
@@ -140,7 +137,8 @@ class SDFUpdaterListener:
             # Record the poses in the json file
             entry = {
                 "timestamp": msg.timestamp,
-                "planner id": id,
+                "planner_id": id,
+                "body_frame_pose": np.array(msg.pose).tolist(),
                 "min_dist_baseline":
                     min_dist_baseline.tolist()
             }
