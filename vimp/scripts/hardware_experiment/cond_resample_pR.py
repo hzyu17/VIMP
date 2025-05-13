@@ -20,6 +20,7 @@ with open(this_dir + '/config/PointRobotConfig.yaml') as f:
 
 fld       = cfg['Field']
 sp        = cfg['Sampling']
+sf        = cfg['Fig_save']
 
 cols      = fld['cols']
 rows      = fld['rows']
@@ -35,6 +36,9 @@ safe_threshold = sp['safe_threshold']
 collision_threshold = sp['collision_threshold']
 max_iters = sp['max_iters']
 window_size = sp['window_size']
+
+figure_dpi = sf['fig_dpi']
+num_figs = sf['num_figs']
 
 mean_file = result_dir+"/zk_sdf.csv"
 cov_file = result_dir+"/Sk_sdf.csv"
@@ -228,7 +232,7 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
         ax.imshow(grid_noisy_masked, origin='lower', cmap='Reds',
                   interpolation='nearest', extent=extent, alpha=0.8, vmin=0, vmax=1)
         
-        fixed_patch = Patch(color='lightgrey', label='Fixed obstacles')
+        fixed_patch = Patch(color='lightgrey', label='Original obstacles')
         noisy_patch = Patch(color='red', alpha=0.5, label='Noisy obstacles')
 
         # Plot the original covariance ellipses with more subtle styling
@@ -248,8 +252,8 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
                 cov_i = cond_cov[i*dim_state:i*dim_state+dim_state, i*dim_state:i*dim_state+dim_state]
                 plot_cov_shaded(cov_i, x_i, ax=ax, conf=0.997, facecolor='blue', alpha=0.15)
         
-        traj_cov_patch = Patch(facecolor='salmon', alpha=0.1, label='Trajectory covariance')
-        resamp_cov_patch = Patch(facecolor='blue', alpha=0.15, label='Resample covariance')
+        traj_cov_patch = Patch(facecolor='salmon', alpha=0.2, label='Trajectory covariance')
+        resamp_cov_patch = Patch(facecolor='blue', alpha=0.25, label='Resample covariance')
 
         # Plot trajectory means with improved style and more descriptive labels
         original_line, = ax.plot(means[:, 0], means[:, 1], 'ro', markersize=5, markeredgecolor='firebrick',
@@ -271,7 +275,6 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
                     resample_means[i+1, 0] - resample_means[i, 0], resample_means[i+1, 1] - resample_means[i, 1],
                     head_width=0, head_length=0, fc='b', ec='b', alpha=0.3, linewidth=1)
             
-        # plt.legend()
         handles = [fixed_patch, noisy_patch, traj_cov_patch, resamp_cov_patch,
                    original_line, resample_line, start_point, goal_point]
         labels = [h.get_label() for h in handles]
@@ -285,7 +288,7 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
             full_path = os.path.join(save_dir, file_name)
 
             try:
-                fig.savefig(full_path, dpi=500, bbox_inches='tight')
+                fig.savefig(full_path, dpi=300, bbox_inches='tight')
                 print("Figure saved to:", full_path)
 
             except Exception as e:
@@ -308,7 +311,7 @@ if __name__ == "__main__":
     success_count = 0
     map_iter = 0
     figure_dir = this_dir + "/figures/case2"
-    while success_count < 50:
+    while success_count < 30:
         map_iter += 1
         print("Map iteration:", map_iter)
         filename = f"trajectories_{success_count}.png"

@@ -18,12 +18,20 @@ $$\mathbb{E}_q [J(q)] + H(q).$$
 
 A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
 
-<img src="figures/compare_go_through_go_around.png" width="600">
-
 <img src="figures/Quad_go_through.png" width="300"> <img src="figures/Quad_go_around.png" width="300">
 
 
-**2. Variational Mmotion planning for a 7-DOF WAM robot arm**
+**2. Sampling Trajectory Distributions for Collision Avoidance**
+
+Our method generates a distribution over trajectories rather than a single deterministic one. Therefore, when the environment model is imprecise or unexpected disturbances occur, we can resample from this distribution to obtain a collision‑free trajectory.
+
+<img src="figures/Point_Robot_Resampling_1.gif" width="300">
+<img src="figures/Point_Robot_Resampling_2.gif" width="300">
+<img src="figures/Point_Robot_Resampling_3.gif" width="300">
+<img src="figures/Point_Robot_Resampling_4.gif" width="300">
+
+
+**3. Variational Mmotion planning for a 7-DOF WAM robot arm**
 
 Our method leverages the factor graph structure of the probabilistic motion planning formulation, and the closed-form expressions for Gaussian posterior expectation computations that does not need other expectation techniques such as Gauss-Hermite quadratures. These structures helped our method to be scalable to higher DOF system such as a industrial robot arm. 
 
@@ -33,7 +41,7 @@ In a bookshelf senario below, the animated trajectory is the mean of the traject
 
 <img src="figures/WAM_GVI_RVIZ_2.gif" width="300"> <img src="figures/WAM_RVIZ_2.gif" width="300">
 
-**3. Variational Mmotion planning for a linearized 2D quadrotor (LTV system)**
+**4. Variational Mmotion planning for a linearized 2D quadrotor (LTV system)**
 
 The experiment settings
 
