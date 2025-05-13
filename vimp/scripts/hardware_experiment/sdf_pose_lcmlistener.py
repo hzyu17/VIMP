@@ -43,10 +43,25 @@ class SDFUpdaterListener:
         
         with open(config_file,"r") as f:
             cfg = yaml.safe_load(f)
-        planning_cfg = Path(cfg["Planning"]["config_file"])
-        baseline_file = cfg["Planning"]["baseline_trj"]
-        self._fk = read_forwardkinematic_from_config(planning_cfg)
-        self._baseline_trj = read_plan_json_to_numpy(baseline_file)
+        planning_cfgfile = Path(cfg["Planning"]["config_file"])
+        
+        with planning_cfgfile.open("r", encoding="utf-8") as f:
+            planning_cfg = yaml.safe_load(f)
+
+        baseline_IDs = planning_cfg["Baselines"]["planner_ID"]
+        
+        self._baslines = {}
+        for id in baseline_IDs:
+            filename = f"{id}_plan_trj.yaml"
+            baseline_file = Path(__file__).parent / "Data" / filename
+            
+            if not baseline_file.is_file():
+                continue
+            
+            self._baslines[id] = read_plan_json_to_numpy(baseline_file)
+        
+        
+        self._fk = read_forwardkinematic_from_config(planning_cfgfile)
         
         for body, pose in self._body_default_pose.items():
             grid = default_occmap_from_yaml(config_file)
@@ -104,7 +119,7 @@ class SDFUpdaterListener:
         self._T_world_body[msg.frame_name] = msg.pose
         
         # Apply the pose transformation
-        subgrid.transform(transform_pose, visualize=True)
+        subgrid.transform(transform_pose, visualize=False)
         
         self._body_occ[msg.frame_name] = subgrid
         
@@ -115,22 +130,26 @@ class SDFUpdaterListener:
         for z in range(field3D.shape[2]):
             sdf.initFieldData(z, field3D[:,:,z])
             
-
-        min_dist_baseline = collision_checking(sdf, self._fk, self._baseline_trj)
-        
-        print("min_dist baseline: ", min_dist_baseline)
-        
-        # Record the poses in the json file
-        entry = {
-            "timestamp": float(msg.timestamp),
-            "min_dist_baseline":
-                min_dist_baseline.tolist()
-        }
-        # write exactly one JSON object per line
-        yaml.safe_dump(entry, self._output_yaml)
-        # add document separator
-        self._output_yaml.write('---\n')
-        self._output_yaml.flush()
+        print("==== SDF created! ====")
+            
+        for id, trj in self._baslines.items():
+            min_dist_baseline = collision_checking(sdf, self._fk, trj)
+            
+            print("min_dist baseline: ", min_dist_baseline)
+            
+            # Record the poses in the json file
+            entry = {
+                "timestamp": msg.timestamp,
+                "planner id": id,
+                "min_dist_baseline":
+                    min_dist_baseline.tolist()
+            }
+            print("Saving baseline collision checking result!")
+            # write exactly one JSON object per line
+            yaml.safe_dump(entry, self._output_yaml)
+            # add document separator
+            self._output_yaml.write('---\n')
+            self._output_yaml.flush()
         
         # save_path = str(Path(__file__).parent / "Data" / "RandomSDF.bin")
         # sdf.saveSDF(save_path)
@@ -162,8 +181,7 @@ if __name__ == '__main__':
     
     listener = SDFUpdaterListener(cfg_path, output_file)
     
-    listener.visualize_boxes()
-    
+    # listener.visualize_boxes()
     
     listener.run()
     
