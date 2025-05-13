@@ -3,8 +3,9 @@ from geometry_msgs.msg import PoseStamped
 import random
 from vimp.thirdparty.sensor3D_tools.lcm.pcd_lcm_sender import construct_poselcm_msg, publish_lcm_msg
 import tf.transformations as tf
-import time, select, sys
+import time, select, sys, os
 import numpy as np
+import yaml
 
 
 def make_random_msg():
@@ -22,17 +23,22 @@ def make_random_msg():
 
 
 class PosePublisher:
-    def __init__(self, topic_name, wait_key=False):
+    def __init__(self, topic_name, wait_key=False, output_file: str = 'Data/poses.yaml'):
         self._wait_key = wait_key
         self._topic_name = topic_name
-        
+
+        self.output_file = output_file
         self._pose = np.eye(4, dtype=np.float32)
+        os.makedirs(os.path.dirname(self.output_file) or '.', exist_ok=True)
+        self._output_yaml = open(self.output_file, 'a')
         
         rospy.init_node('apriltag_webcam', anonymous=True)
         self._pub = rospy.Publisher(topic_name, PoseStamped, queue_size=10)
         
         rospy.loginfo(f"[{rospy.get_name()}] listening to {topic_name},"
                   " hit ENTER to pop & publish on {output_topic}")
+        
+        self._random_poses = []
             
             
     def publish_pose(self, pose):
@@ -58,6 +64,31 @@ class PosePublisher:
         self._pub.publish(pose_msg)
         print("Published pose to ROS topic ", self._topic_name)
         
+        # Record the poses in the json file
+        entry = {
+            "timestamp": float(pose_msg.header.stamp.to_sec()),
+            "position": {
+                "x": float(pose_msg.pose.position.x),
+                "y": float(pose_msg.pose.position.y),
+                "z": float(pose_msg.pose.position.z),
+            },
+            "orientation": {
+                "x": float(pose_msg.pose.orientation.x),
+                "y": float(pose_msg.pose.orientation.y),
+                "z": float(pose_msg.pose.orientation.z),
+                "w": float(pose_msg.pose.orientation.w),
+            },
+        }
+        # write exactly one JSON object per line
+        yaml.safe_dump(entry, self._output_yaml)
+        # add document separator
+        self._output_yaml.write('---\n')
+        self._output_yaml.flush()
+        
+    
+    def _on_shutdown(self):
+        self._json.close()
+        
         
     def run(self):
             """
@@ -73,10 +104,12 @@ class PosePublisher:
                         if ch == '\n': # if 'Enter' key is pressed
                             rospy.loginfo("Enter pressed — publishing one pose")
                             pose = np.eye(4, dtype=np.float32)
-                            pose[0, 3] = 0.5
-                            pose[1, 3] = 0.5
-                            pose[2, 3] = 0.5
+                            pose[0, 3] = 0.25
+                            pose[1, 3] = 0.0
+                            pose[2, 3] = 0.0
                             self.publish_pose(pose)
+                            
+                            self._random_poses.append(pose)
                             
                 time.sleep(0.1)  # Add a small delay to control the loop speed
             

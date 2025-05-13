@@ -8,6 +8,7 @@ import open3d as o3d
 from pathlib import Path
 from conditional_sampling import conditional_sample
 
+
 # vimp root directory
 this_dir = os.path.dirname(os.path.abspath(__file__))
 vimp_dir = os.path.dirname(os.path.dirname(this_dir))
@@ -151,9 +152,7 @@ def collision_checking_and_resampling(config_file: str,
     print(f"Saved good mean to {output_file}")
 
 
-def resample_block_trajectory(config_file: str,
-                                sdf: SignedDistanceField,
-                                sampling_cfg: dict):
+def read_forwardkinematic_from_config(config_file):
     # ---------------- Forward Kinematics and Parameters----------------
     with config_file.open("r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
@@ -168,7 +167,17 @@ def resample_block_trajectory(config_file: str,
     radii      = np.array(dh["radii"],      dtype=np.float64)
     frames     = np.array(dh["frames"],     dtype=np.int32)
     centers    = np.array(dh["centers"],    dtype=np.float64)  # shape (20,3)
+    
+    # Create FK object
+    return ForwardKinematics(a, alpha, d, theta_bias, frames, centers.T, dh_type)
 
+
+def resample_block_trajectory(config_file: str,
+                                sdf: SignedDistanceField,
+                                sampling_cfg: dict):
+    
+    fk = read_forwardkinematic_from_config(config_file)
+    
     max_iters = sampling_cfg["max_iters"]
     collision_threshold = sampling_cfg["collision_threshold"]
     safety_threshold = sampling_cfg["safety_threshold"]
@@ -179,9 +188,6 @@ def resample_block_trajectory(config_file: str,
     # Load the mean and covariance matrices
     mean_path = os.path.join(result_dir, "zk_sdf.csv")
     prec_path = os.path.join(result_dir, "joint_precision.csv")
-
-    # Create FK object
-    fk = ForwardKinematics(a, alpha, d, theta_bias, frames, centers.T, dh_type)
 
     # ---------------- Load VIMP Results ----------------
     zk_matrix = np.loadtxt(mean_path, delimiter=',').T
@@ -283,7 +289,7 @@ if __name__ == "__main__":
         cfg = yaml.safe_load(f)            # cfg is now a nested dict
 
     planning_cfg_path   = Path(cfg["Planning"]["config_file"])
-    sdf_path            = cfg["Planning"]["sdf_file"]
+    sdf_path            = cfg["Planning"]["disturbed_sdf"]
 
     # Load the signed distance field
     sdf = SignedDistanceField()

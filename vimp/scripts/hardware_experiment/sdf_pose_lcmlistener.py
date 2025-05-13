@@ -5,13 +5,12 @@ import numpy as np
 import lcm
 from vimp.thirdparty.sensor3D_tools.lcm import pose_t
 import threading
-
 import tf.transformations as tft
 from read_defaul_poses import *
 
+from moveit_planning import read_plan_json_to_numpy
 
-from resampling import collision_checking
-
+from pathlib import Path
 
 import time
 def lcm_thread(lc):
@@ -34,6 +33,10 @@ class SDFUpdaterListener:
         
         self._T_cam = read_cam_pose(config_file)
         
+        with open(config_file,"r") as f:
+            cfg = yaml.safe_load(f)
+        baseline_file = cfg["Planning"]["baseline_trj"]
+        self._baseline_trj = read_plan_json_to_numpy(baseline_file)
         
         for body, pose in self._body_default_pose.items():
             grid = default_occmap_from_yaml(config_file)
@@ -101,7 +104,15 @@ class SDFUpdaterListener:
                                   field3D.shape[0], field3D.shape[1], field3D.shape[2])
         for z in range(field3D.shape[2]):
             sdf.initFieldData(z, field3D[:,:,z])
+            
+            
+        baseline_trj = read_plan_json_to_numpy(trj_file)
+        min_dist = collision_checking(sdf, fk, baseline_trj)
         
+        # save_path = str(Path(__file__).parent / "Data" / "RandomSDF.bin")
+        # sdf.saveSDF(save_path)
+        
+        # print("Saved new SDF!")
         
 
     def run(self):

@@ -125,7 +125,8 @@ def print_available_planners(moveit_config_pkg):
     
 if __name__ == '__main__':
     # save_moveit_plan()
-    goal_degrees = [0.0, 58, 1, -69, 35, 170, -30]
+    # goal_degrees = [0.0, 58, 1, -69, 35, 170, -30]
+    goal_degrees = [-33, 54, 23, -101, 113, 100, -72]
     import os
     this_dir = os.path.dirname(os.path.abspath(__file__))
     result_dir = this_dir + "/Data"
@@ -140,6 +141,6 @@ if __name__ == '__main__':
     # Do the plan
     plan_from_current_to_goal_joints(goal_degrees, result_dir)
     
-    pos_trj = read_plan_json_to_numpy(result_dir + "/baseline_plan_trj.yaml")
+    pos_trj = read_plan_json_to_numpy(result_dir + "/plan_trj.yaml")
     print("pos_trj.shape: ", pos_trj.shape)
     
