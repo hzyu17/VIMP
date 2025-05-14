@@ -9,6 +9,8 @@ from geometry_msgs.msg import PoseStamped
 import tf.transformations as tf
 import json 
 from pathlib import Path
+import pyrealsense2 as rs
+import numpy as np
 
 
 def read_camera_params(json_path: str):
@@ -48,20 +50,32 @@ class D435AprilTagReader:
         rospy.loginfo(f"[{rospy.get_name()}] listening to {topic_name},"
                   " hit ENTER to pop & publish on {output_topic}")
 
-        self._cap = cv2.VideoCapture(0)         
+        self._cap = cv2.VideoCapture(2, cv2.CAP_V4L2)    
+        
+        # RealSense camera
+        self._pipeline = rs.pipeline()
+        self._rs_cfg = rs.config()
+        self._rs_cfg.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+        self._pipeline.start(self._rs_cfg)
+        
+        # set desired resolution
+        self._cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        self._cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  
+          
         if not self._cap.isOpened():
-            raise IOError("Cannot open webcam")
+            raise IOError("Cannot open D435 camera")
         
         self._camera_params = read_camera_params(camera_config)
         print("Camera params: ", self._camera_params)
     
     
     def read_april_tag(self):
-        ret, frame = self._cap.read()        
-        if not ret:
-            return False
+        frames = self._pipeline.wait_for_frames()
+        
+        color_frame = frames.get_color_frame()
+        frame = np.asanyarray(color_frame.get_data())
 
-        cv2.imshow("live", frame)     
+        cv2.imshow("D435 Color (via V4L2)", frame)     
         if cv2.waitKey(1) == 27:      
             return False
         
@@ -127,10 +141,9 @@ class D435AprilTagReader:
                         
             time.sleep(0.1)  # Add a small delay to control the loop speed
             
-        self._cap.release()
+        self._pipeline.stop()
         cv2.destroyAllWindows()
     
-    
+
 if __name__ == '__main__':
-    buffer_size = 10
-    reader = D435AprilTagReader(buffer_size, wait_key=True)
+    reader = D435AprilTagReader(buffer_size=10, topic_name='/B1_pose', wait_key=True)
