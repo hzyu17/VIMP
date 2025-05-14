@@ -176,11 +176,25 @@ class SDFUpdaterListener:
         vimp_dir = os.path.dirname(os.path.dirname(this_dir))
         result_dir = Path(vimp_dir + "/" + cfg["Planning"]["saving_prefix"])
 
-        min_dist_resample = resample_block_trajectory(planning_cfg_path, result_dir, sdf, cfg["Sampling"])
+        min_dist_planning, min_dist_resample = resample_block_trajectory(planning_cfg_path, result_dir, sdf, cfg["Sampling"])
 
         entry = {
             msg.timestamp: {
                 "planner_id":         "GVIMP",
+                "body_frame_pose":    np.array(msg.pose).tolist(),
+                "min_dist_plan":      float(min_dist_planning)
+            }
+        }
+
+        # write exactly one JSON object per line
+        yaml.safe_dump(entry, self._output_yaml)
+        # add document separator
+        self._output_yaml.write('---\n')
+        self._output_yaml.flush()
+
+        entry = {
+            msg.timestamp: {
+                "planner_id":         "GVIMP_Resample",
                 "body_frame_pose":    np.array(msg.pose).tolist(),
                 "min_dist_resample":  float(min_dist_resample)
             }

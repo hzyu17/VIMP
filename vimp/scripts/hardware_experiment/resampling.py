@@ -205,6 +205,7 @@ def resample_block_trajectory(config_file: str,
     min_margin = collision_checking(sdf, fk, means)
     print(f"Minimum margin: {min(min_margin)}")
     print(f"Index of the minimum margin: {np.argmin(min_margin)}")
+    original_signed_distance = min(min_margin)
 
     # ----------------- Sampling --------------------------
     # Only consider the intermediate states (exclude the first and last points).
@@ -276,7 +277,7 @@ def resample_block_trajectory(config_file: str,
     result_distance = collision_checking(sdf, fk, means_sample)
     print(f"Minimum margin after resampling: {min(result_distance)}")
     print(f"Index of the minimum margin after resampling: {np.argmin(result_distance)}")
-    return min(result_distance)
+    return original_signed_distance, min(result_distance)
 
 
 if __name__ == "__main__":
