@@ -86,6 +86,8 @@ class RealTimeBoxUpdater:
 
     def _make_cb(self, name):
         def _cb(msg: PoseStamped):
+            rospy.loginfo("Received pose message in the planning scene listener!")
+            print("Received pose: ", msg.pose)
             with self._lock:
                 self._buffers[name].append(msg)
                 self._received_newpose = True

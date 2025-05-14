@@ -48,7 +48,7 @@ class PosePublisher:
         self._lc.subscribe(ack_topic, self.ack_handler)
         
         self._ready_to_publish = False
-            
+        self._first_time = True
             
     def publish_pose(self, pose):
 
@@ -122,9 +122,15 @@ class PosePublisher:
                             self._ready_to_publish = True
                 
                 if self._ready_to_publish:
+                    if self._first_time:
+                        x_rand, y_rand = 0, 0
+                        self._first_time = False
+                    else:
+                        x_rand = random.random()*0.05
+                        y_rand = random.random()*0.05
                     pose = np.eye(4, dtype=np.float32)
-                    pose[0, 3] = 0.25 + random.random()*0.01
-                    pose[1, 3] = 0.0
+                    pose[0, 3] = 0.25 + x_rand
+                    pose[1, 3] = 0.0 + y_rand
                     pose[2, 3] = 0.0
                     self.publish_pose(pose)
                     

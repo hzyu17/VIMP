@@ -54,10 +54,10 @@ class SDFUpdaterListener:
             baseline_file = Path(__file__).parent / "Data" / filename
             
             if not baseline_file.is_file():
+                print("There is no baseline trajectory file!")
                 continue
             
             self._baslines[id] = read_plan_json_to_numpy(baseline_file)
-        
         
         self._fk = read_forwardkinematic_from_config(planning_cfgfile)
         
@@ -128,6 +128,9 @@ class SDFUpdaterListener:
         for z in range(field3D.shape[2]):
             sdf.initFieldData(z, field3D[:,:,z])
             
+        pt = np.zeros(3)
+        print("Test signed distance of a new sdf: ", sdf.getSignedDistance(pt))
+            
         print("==== SDF created! ====")
                
         for id, trj in self._baslines.items():
@@ -151,6 +154,8 @@ class SDFUpdaterListener:
             # add document separator
             self._output_yaml.write('---\n')
             self._output_yaml.flush()
+            
+            print("Added new data to the result file!")
             
         # create acknowledgment
         ack = ack_t()
