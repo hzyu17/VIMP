@@ -21,11 +21,13 @@ def lcm_thread(lc):
         lc.handle()
         time.sleep(0.01)
 
+
 this_dir = os.path.dirname(os.path.abspath(__file__))
 sdf_dir = this_dir + "/../../thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetHardware_cereal.bin"
 
-sdf_original = SignedDistanceField()
-sdf_original.loadSDF(sdf_dir)
+# # For debug SDF
+# sdf_original = SignedDistanceField()
+# sdf_original.loadSDF(sdf_dir)
         
 
 class SDFUpdaterListener:
@@ -94,6 +96,8 @@ class SDFUpdaterListener:
             T_w_box = self._T_cam @ T @ C
             center_w = T_w_box[:3, 3]
             
+            
+            
             cs = self._grid.cell_size
             center_idx = np.rint((center_w - self._grid.origin()) / cs).astype(int)
             
@@ -136,10 +140,10 @@ class SDFUpdaterListener:
             
         pt = np.zeros(3)
         print("Test signed distance of a new sdf: ", sdf.getSignedDistance(pt))
-        print("Test signed distance of the original sdf: ", sdf_original.getSignedDistance(pt))
+        # print("Test signed distance of the original sdf: ", sdf_original.getSignedDistance(pt))
         
         print("==== SDF created! ====")
-               
+        
         for id, trj in self._baslines.items():
             
             print("Checking collisions for the baseline planner: ", id)
@@ -206,7 +210,7 @@ class SDFUpdaterListener:
         # add document separator
         self._output_yaml.write('---\n')
         self._output_yaml.flush()
-            
+        
         # create acknowledgment
         ack = ack_t()
         ack.timestamp   = int(time.time() * 1e6)  # µs
@@ -238,8 +242,7 @@ class SDFUpdaterListener:
         
     
 
-if __name__ == '__main__':
-    
+if __name__ == '__main__':       
     
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
     output_file = Path(__file__).parent / "Data" / "disturbed_results.yaml"

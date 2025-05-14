@@ -8,7 +8,7 @@ import numpy as np
 import yaml
 from pathlib import Path
 from ack_lcm.acknowledgment.ack_t import ack_t
-import lcm, threading
+import lcm
 
 
 def make_random_msg():
@@ -126,8 +126,8 @@ class PosePublisher:
                         x_rand, y_rand = 0, 0
                         self._first_time = False
                     else:
-                        x_rand = random.random()*0.05
-                        y_rand = random.random()*0.05
+                        x_rand = (random.random()-0.5)*2*0.05
+                        y_rand = (random.random()-0.5)*2*0.05
                     pose = np.eye(4, dtype=np.float32)
                     pose[0, 3] = 0.25 + x_rand
                     pose[1, 3] = 0.0 + y_rand
