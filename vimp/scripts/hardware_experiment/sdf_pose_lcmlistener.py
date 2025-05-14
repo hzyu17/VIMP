@@ -128,19 +128,21 @@ class SDFUpdaterListener:
             sdf.initFieldData(z, field3D[:,:,z])
             
         print("==== SDF created! ====")
-            
+               
         for id, trj in self._baslines.items():
             
             print("Checking collisions for the baseline planner: ", id)
             min_dist_baseline = collision_checking(sdf, self._fk, trj)
-                        
+            
+            min_dist_name = "min_dist"+"_"+id
+            min_dist = float(np.min(min_dist_baseline))
             # Record the poses in the json file
             entry = {
-                "timestamp": msg.timestamp,
-                "planner_id": id,
-                "body_frame_pose": np.array(msg.pose).tolist(),
-                "min_dist_baseline":
-                    min_dist_baseline.tolist()
+                msg.timestamp: {
+                        "planner_id":         id,
+                        "body_frame_pose":    np.array(msg.pose).tolist(),
+                         min_dist_name:       min_dist
+                    }
             }
             print("Saving baseline collision checking result!")
             # write exactly one JSON object per line
