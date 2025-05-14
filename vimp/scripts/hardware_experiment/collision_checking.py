@@ -52,6 +52,8 @@ def gather_results(poses_file: Path,
             if result_key in entry:
                 min_dists[planner_id].append(entry[result_key])
             elif planner_id == "GVIMP":
+                min_dists[planner_id].append(entry["min_dist_plan"])
+            elif planner_id == "GVIMP_Resample":
                 min_dists[planner_id].append(entry["min_dist_resample"])
 
     # Calculate success ratios and create bar plot
@@ -78,7 +80,6 @@ def gather_results(poses_file: Path,
     plt.xlabel('Planner ID')
     plt.legend()
     plt.show()
-    
 
     print("Average distances:", averages)
 
