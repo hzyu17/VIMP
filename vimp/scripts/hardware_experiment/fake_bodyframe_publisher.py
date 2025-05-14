@@ -7,6 +7,8 @@ import time, select, sys, os
 import numpy as np
 import yaml
 from pathlib import Path
+from ack_lcm.acknowledgment.ack_t import ack_t
+import lcm, threading
 
 
 def make_random_msg():
@@ -39,7 +41,11 @@ class PosePublisher:
         rospy.loginfo(f"[{rospy.get_name()}] listening to {topic_name},"
                   " hit ENTER to pop & publish on {output_topic}")
         
-        self._random_poses = []
+        
+        # Acknowledgment
+        self._lc = lcm.LCM()
+        ack_topic = "ACK_" + self._topic_name
+        self._lc.subscribe(ack_topic, self.ack_handler)
         
         self._ready_to_publish = False
             
@@ -104,18 +110,16 @@ class PosePublisher:
             This function captures video from the webcam, detects AprilTags in the frames,
             and publishes the pose of the detected AprilTags to LCM and ROS.
             """
-            
+                        
             while True:
-                            
+                self._lc.handle_timeout(0)
+                
                 if self._wait_key:
                     if select.select([sys.stdin], [], [], 0.0)[0]:
                         ch = sys.stdin.read(1)
                         if ch == '\n': # if 'Enter' key is pressed
                             rospy.loginfo("Enter pressed — publishing one pose")
                             self._ready_to_publish = True
-                
-                else:
-                    self._ready_to_publish = True
                 
                 if self._ready_to_publish:
                     pose = np.eye(4, dtype=np.float32)
@@ -124,12 +128,16 @@ class PosePublisher:
                     pose[2, 3] = 0.0
                     self.publish_pose(pose)
                     
-                    self._random_poses.append(pose)
                     self._ready_to_publish = False
                             
                 time.sleep(0.1)  # Add a small delay to control the loop speed
             
-
+            
+    def ack_handler(self, channel, data):
+        ack = ack_t.decode(data)
+        print(f"Publisher got Ack for msg #{ack.msg_id} (sent at {ack.timestamp})")
+        self._ready_to_publish = True
+        
 
 if __name__ == '__main__':
     pose_publisher = PosePublisher('/B1_pose', wait_key=True)

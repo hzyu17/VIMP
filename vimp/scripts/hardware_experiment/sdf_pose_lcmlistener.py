@@ -3,6 +3,7 @@ from vimp.thirdparty.sensor3D_tools import SignedDistanceField, SignedDistanceFi
 import numpy as np
 
 import lcm
+from ack_lcm.acknowledgment.ack_t import ack_t
 from vimp.thirdparty.sensor3D_tools.lcm import pose_t
 import threading
 import tf.transformations as tft
@@ -150,6 +151,15 @@ class SDFUpdaterListener:
             # add document separator
             self._output_yaml.write('---\n')
             self._output_yaml.flush()
+            
+        # create acknowledgment
+        ack = ack_t()
+        ack.timestamp   = int(time.time() * 1e6)  # µs
+        ack.src_channel = channel
+
+        # publish it back on an ACK channel
+        lc = lcm.LCM()
+        lc.publish("ACK_"+channel, ack.encode())
         
         # save_path = str(Path(__file__).parent / "Data" / "RandomSDF.bin")
         # sdf.saveSDF(save_path)
@@ -170,7 +180,7 @@ class SDFUpdaterListener:
                 time.sleep(0.02)       
         except KeyboardInterrupt:
             pass
-    
+        
     
 
 if __name__ == '__main__':
