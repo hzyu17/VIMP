@@ -45,7 +45,7 @@ class SDFUpdaterListener:
             cfg = yaml.safe_load(f)
         planning_cfgfile = Path(cfg["Planning"]["config_file"])
         
-        baseline_IDs = cfg["Planning"]["Baselines"]["planner_ID"]
+        baseline_IDs = cfg["Baselines"]["planner_ID"]
         
         self._baslines = {}
         for id in baseline_IDs:
@@ -130,10 +130,10 @@ class SDFUpdaterListener:
         print("==== SDF created! ====")
             
         for id, trj in self._baslines.items():
+            
+            print("Checking collisions for the baseline planner: ", id)
             min_dist_baseline = collision_checking(sdf, self._fk, trj)
-            
-            print("min_dist baseline: ", min_dist_baseline)
-            
+                        
             # Record the poses in the json file
             entry = {
                 "timestamp": msg.timestamp,

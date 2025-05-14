@@ -40,6 +40,8 @@ class PosePublisher:
                   " hit ENTER to pop & publish on {output_topic}")
         
         self._random_poses = []
+        
+        self._ready_to_publish = False
             
             
     def publish_pose(self, pose):
@@ -110,18 +112,25 @@ class PosePublisher:
                         ch = sys.stdin.read(1)
                         if ch == '\n': # if 'Enter' key is pressed
                             rospy.loginfo("Enter pressed — publishing one pose")
-                            pose = np.eye(4, dtype=np.float32)
-                            pose[0, 3] = 0.25
-                            pose[1, 3] = 0.0
-                            pose[2, 3] = 0.0
-                            self.publish_pose(pose)
-                            
-                            self._random_poses.append(pose)
+                            self._ready_to_publish = True
+                
+                else:
+                    self._ready_to_publish = True
+                
+                if self._ready_to_publish:
+                    pose = np.eye(4, dtype=np.float32)
+                    pose[0, 3] = 0.25 + random.random()*0.01
+                    pose[1, 3] = 0.0
+                    pose[2, 3] = 0.0
+                    self.publish_pose(pose)
+                    
+                    self._random_poses.append(pose)
+                    self._ready_to_publish = False
                             
                 time.sleep(0.1)  # Add a small delay to control the loop speed
             
 
 
 if __name__ == '__main__':
-    pose_publisher = PosePublisher('/B1_pose', True)
+    pose_publisher = PosePublisher('/B1_pose', wait_key=True)
     pose_publisher.run()
