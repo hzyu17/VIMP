@@ -20,6 +20,12 @@ def lcm_thread(lc):
     while True:
         lc.handle()
         time.sleep(0.01)
+
+this_dir = os.path.dirname(os.path.abspath(__file__))
+sdf_dir = this_dir + "/../../thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetHardware_cereal.bin"
+
+sdf_original = SignedDistanceField()
+sdf_original.loadSDF(sdf_dir)
         
 
 class SDFUpdaterListener:
@@ -92,7 +98,7 @@ class SDFUpdaterListener:
             center_idx = np.rint((center_w - self._grid.origin()) / cs).astype(int)
             
             size_vox = np.ceil(np.array(box_size, float) / cs).astype(int)
-            size_vox = (size_vox // 2) * 2 + 1
+            size_vox = (size_vox // 2) * 2
 
             grid.add_obstacle(center_idx, size_vox)
             
@@ -126,11 +132,12 @@ class SDFUpdaterListener:
         sdf = SignedDistanceField(subgrid.origin(), subgrid.cell_size,
                                   field3D.shape[0], field3D.shape[1], field3D.shape[2])
         for z in range(field3D.shape[2]):
-            sdf.initFieldData(z, field3D[:,:,z])
+            sdf.initFieldData(z, field3D[:,:,z].T)
             
         pt = np.zeros(3)
         print("Test signed distance of a new sdf: ", sdf.getSignedDistance(pt))
-            
+        print("Test signed distance of the original sdf: ", sdf_original.getSignedDistance(pt))
+        
         print("==== SDF created! ====")
                
         for id, trj in self._baslines.items():
@@ -158,7 +165,6 @@ class SDFUpdaterListener:
             print("Added new data to the result file!")
         
         # Resample the trajectory
-        this_dir = os.path.dirname(os.path.abspath(__file__))
         experiment_config = this_dir + "/config/config.yaml"
         path_to_yaml = Path(experiment_config)
 
@@ -167,7 +173,6 @@ class SDFUpdaterListener:
         
         planning_cfg_path = Path(cfg["Planning"]["config_file"])
 
-        this_dir = os.path.dirname(os.path.abspath(__file__))
         vimp_dir = os.path.dirname(os.path.dirname(this_dir))
         result_dir = Path(vimp_dir + "/" + cfg["Planning"]["saving_prefix"])
 

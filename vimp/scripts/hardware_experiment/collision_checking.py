@@ -51,10 +51,13 @@ def gather_results(poses_file: Path,
             result_key = f"min_dist_{planner_id}"
             if result_key in entry:
                 min_dists[planner_id].append(entry[result_key])
+            elif planner_id == "GVIMP":
+                min_dists[planner_id].append(entry["min_dist_resample"])
 
     # Calculate success ratios and create bar plot
     import matplotlib.pyplot as plt
 
+    # Calculate averages
     averages = {}
     for planner_id, dists in min_dists.items():
         averages[planner_id] = np.mean(dists) if dists else 0
@@ -65,6 +68,17 @@ def gather_results(poses_file: Path,
     plt.ylabel('Average Distance')
     plt.xlabel('Planner ID')
     plt.show()
+        
+    # Create scatter plot
+    plt.figure(figsize=(10, 6))
+    for planner_id, dists in min_dists.items():
+        plt.scatter([planner_id] * len(dists), dists, alpha=0.5, label=planner_id)
+    plt.title('Minimum Distances by Planner')
+    plt.ylabel('Distance')
+    plt.xlabel('Planner ID')
+    plt.legend()
+    plt.show()
+    
 
     print("Average distances:", averages)
 

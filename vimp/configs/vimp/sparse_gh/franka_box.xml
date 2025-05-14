@@ -11,8 +11,8 @@
     <alpha>1.0</alpha>
     <init_precision_factor>20000.0</init_precision_factor>
     <boundary_penalties>10000.0</boundary_penalties>
-    <temperature>0.5</temperature>
-    <high_temperature>3</high_temperature>
+    <temperature>1</temperature>
+    <high_temperature>5</high_temperature>
     <stop_err>1e-5</stop_err>
     <max_iterations>25</max_iterations>
     <low_temp_iterations>20</low_temp_iterations>
