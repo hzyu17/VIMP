@@ -15,6 +15,7 @@
 #include "GaussianVI/gp/cost_functions.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
+#include <yaml-cpp/yaml.h>
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
 
@@ -87,42 +88,43 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
+        // YAML::Node cfg = YAML::LoadFile("config.yaml");
+
         DHType dh_type = DHType::Modified;
         VectorXd a(8);
         a << 0.0, 0.0, 0.0, 0.0825, -0.0825, 0.0, 0.088, 0.0;
         VectorXd alpha(8);
         alpha << 0, -M_PI/2.0, M_PI/2.0, M_PI/2.0, -M_PI/2.0, M_PI/2.0, M_PI/2.0, 0.0;
         VectorXd d(8);
-        d << 0.333, 0, 0.316, 0.0, 0.384, 0.0, 0.0, 0.107;
+        d << 0.333, 0.0, 0.316, 0.0, 0.384, 0.0, 0.0, 0.107;
         VectorXd theta_bias(8);
         theta_bias << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -M_PI/4;
 
-        VectorXd radii(20);
-        radii << 0.1, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
-                0.05, 0.03, 0.05, 0.05, 0.05, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03;
-        VectorXi frames(20);
-        frames << 0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 6, 7, 7, 7, 7, 7, 7;
-        MatrixXd centers(20, 3); // Each row is a center; transpose when inputting to CUDA
-        centers <<  0.0, 0.0,  -0.3,
-                    0.0, 0.0,  -0.1,
-                    0.0, 0.0,  -0.07,
-                    0.0, 0.0,   0.07,
-                    0.0, 0.0,  -0.10,
-                    0.0, 0.0,  -0.175,
-                    0.0, 0.0,  -0.25,
-                    0.0, 0.0,  -0.05,
-                    0.0, 0.0,   0.05,
-                    0.0, 0.0,  -0.30,
-                    0.0, 0.08, -0.15,
-                    0.0, 0.10,  0.00,
-                    0.0, 0.00,  0.00,
-                    0.0, 0.0,  -0.05,
-                    0.0, 0.0,   0.00,
-                    0.0, 0.06,  0.00,
-                    0.0, -0.06, 0.00,
-                    0.0, 0.0,   0.04,
-                    0.0, 0.07,  0.04,
-                    0.0, -0.07, 0.04;
+        VectorXd radii(18);
+        radii << 0.125, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 
+            0.1, 0.05, 0.05, 0.075, 0.075, 0.075, 0.075, 0.08, 0.08;
+        VectorXi frames(18);
+        frames << 0, 0, 1, 1, 2, 2, 3, 3, 4, 4,
+                  4, 4, 4, 4, 6, 6, 7, 7;
+        MatrixXd centers(18, 3); // Each row is a center; transpose when inputting to CUDA
+        centers << -0.03, 0.0,  -0.3,
+                    0.0,  0.0,  -0.15,
+                    0.0,  0.0,  -0.07,
+                    0.0,  0.0,   0.07,
+                    0.0,  0.0,  -0.075,
+                    0.0,  0.0,  -0.175,
+                    0.0,  0.0,  -0.05,
+                    0.0,  0.0,   0.05,
+                    0.0,  0.0,  -0.3,
+                    0.0,  0.0,  -0.2,
+                    0.0,  0.08, -0.125,
+                    0.0,  0.09, -0.075,
+                    0.0,  0.075, 0.00,
+                    0.0, -0.015, 0.00,
+                    0.0,  0.0,  -0.04,
+                    0.0,  0.0,   0.04,
+                    0.0,  0.05,  0.03,
+                    0.0, -0.05,  0.03;
 
         std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         std::shared_ptr<CudaOperation_3dArm> cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sdf_file(), params.sig_obs(), params.eps_sdf(), dh_type});

@@ -43,7 +43,7 @@ if(BUILD_CPU_GVIMP)
       target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
       target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
                             ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9)
+                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 yaml-cpp)
   endforeach()
 endif()
 
@@ -61,7 +61,7 @@ if(BUILD_GPU_GVIMP)
                             ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
                             ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
                             ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
-                            ${CUDA_cusparse_LIBRARY}) 
+                            ${CUDA_cusparse_LIBRARY} yaml-cpp) 
   endforeach()
 
   # add_executable(Franka src/gvimp_cuda/gvi_FrankaArm_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
@@ -91,7 +91,7 @@ if(BUILD_KL_PROXIMAL)
                             ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
                             ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
                             ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
-                            ${CUDA_cusparse_LIBRARY})  
+                            ${CUDA_cusparse_LIBRARY} yaml-cpp)  
   endforeach()
 endif()
 
@@ -101,8 +101,8 @@ pybind11_add_module(bind_Params
 # pybind11_add_module(bind_WamSDF
 #     pybinds/bind_WAMSDF.cpp)
 
-pybind11_add_module(bind_SDF
-    pybinds/bind_sdf.cpp)
+# pybind11_add_module(bind_SDF
+#     pybinds/bind_sdf.cpp)
 
 pybind11_add_module(bind_FK
     pybinds/bind_fk.cpp)

@@ -33,9 +33,8 @@ def collision_checking(sdf: SignedDistanceField,
 
     pts = fk.compute_sphere_centers_batched(means)
     signed_distances = sdf.getSignedDistanceBatched(pts)
-    margins_matrix = signed_distances.reshape(n_spheres, n_states, order='F')
+    margins_matrix = signed_distances.reshape(n_spheres, n_states, order='F') - fk.radii[:, None]
     min_margin = np.min(margins_matrix, axis=0)
-    print(f"Minimum margin for each state: {min_margin}")
 
     return min_margin
 
@@ -173,8 +172,10 @@ def read_forwardkinematic_from_config(config_file):
 
 
 def resample_block_trajectory(config_file: str,
-                                sdf: SignedDistanceField,
-                                sampling_cfg: dict):
+                              result_dir: str,
+                              sdf: SignedDistanceField,
+                              sampling_cfg: dict,
+                              output: bool = False):
     
     fk = read_forwardkinematic_from_config(config_file)
     
@@ -182,11 +183,6 @@ def resample_block_trajectory(config_file: str,
     collision_threshold = sampling_cfg["collision_threshold"]
     safety_threshold = sampling_cfg["safety_threshold"]
     window_size = sampling_cfg["window_size"]
-
-    with config_file.open("r", encoding="utf-8") as f:
-        cfg = yaml.safe_load(f)
-
-    result_dir = Path(vimp_dir + "/" + cfg["saving_prefix"])
 
     # Load the mean and covariance matrices
     mean_path = os.path.join(result_dir, "zk_sdf.csv")
@@ -207,6 +203,7 @@ def resample_block_trajectory(config_file: str,
 
     # ----------------- Collision Checking ----------------
     min_margin = collision_checking(sdf, fk, means)
+    print(f"Minimum margin: {min(min_margin)}")
 
     # ----------------- Sampling --------------------------
     # Only consider the intermediate states (exclude the first and last points).
@@ -270,10 +267,14 @@ def resample_block_trajectory(config_file: str,
         # Update trajectory with best means found
         joint_means[start_vector_idx + dim_state: end_vector_idx - dim_state] = safe_block_means
 
-    # Save the valid mean trajectory to a csv file.
-    output_file = os.path.join(result_dir, "good_zk.csv")
-    np.savetxt(output_file, means_sample.T, delimiter=",")
-    print(f"Saved good mean to {output_file}")
+    if output:
+        output_file = os.path.join(result_dir, "good_zk.csv")
+        np.savetxt(output_file, means_sample.T, delimiter=",")
+        print(f"Saved good mean to {output_file}")
+
+    result_distance = collision_checking(sdf, fk, means_sample)
+    print(f"Minimum margin after resampling: {min(result_distance)}")
+    return min(result_distance)
 
 
 if __name__ == "__main__":
@@ -287,6 +288,7 @@ if __name__ == "__main__":
 
     planning_cfg_path   = Path(cfg["Planning"]["config_file"])
     sdf_path            = cfg["Planning"]["disturbed_sdf"]
+    result_dir = Path(vimp_dir + "/" + cfg["Planning"]["saving_prefix"])
 
     # Load the signed distance field
     sdf = SignedDistanceField()
@@ -295,7 +297,7 @@ if __name__ == "__main__":
     # Perform collision checking and resampling
     # collision_checking_and_resampling(planning_cfg_path, sdf, max_iters, threshold)
 
-    resample_block_trajectory(planning_cfg_path, sdf, cfg["Sampling"])
+    resample_block_trajectory(planning_cfg_path, result_dir, sdf, cfg["Sampling"], output=True)
 
     end = time.time()
     print(f"Time taken: {end - start:.2f} seconds")

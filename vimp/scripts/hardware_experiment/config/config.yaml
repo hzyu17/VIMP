@@ -22,7 +22,7 @@ April_tags:
 
 Body_frames:
   - frame_id: B1
-    position: [0.4, 0.0, 0.0]    
+    position: [0.25, 0.0, 0.0]    
     orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
     monitor_topic: "/B1_pose"
     box:
@@ -41,8 +41,8 @@ Body_frames:
 
 Sampling:
   max_iters: 30000
-  collision_threshold: 0.02
-  safety_threshold: 0.1
+  collision_threshold: 0
+  safety_threshold: 0.05
   window_size: 5
 
 Baselines:
@@ -78,6 +78,6 @@ Planning:
 
   saving_prefix: scripts/hardware_experiment/Data
 
-  config_file: "vimp/scripts/hardware_experiment/config/franka_hardware.yaml"
-  disturbed_sdf: "vimp/thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetOffset_cereal.bin"
+  config_file: "vimp/scripts/hardware_experiment/config/franka_dh.yaml"
+  disturbed_sdf: "vimp/thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetHardware_cereal.bin"
   

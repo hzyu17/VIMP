@@ -10,7 +10,7 @@ import tf.transformations as tft
 from read_defaul_poses import *
 
 from vimp.scripts.hardware_experiment.moveit_baselines import read_plan_json_to_numpy
-from resampling import read_forwardkinematic_from_config, collision_checking
+from resampling import read_forwardkinematic_from_config, collision_checking, resample_block_trajectory
 
 from pathlib import Path
 import os
@@ -156,6 +156,37 @@ class SDFUpdaterListener:
             self._output_yaml.flush()
             
             print("Added new data to the result file!")
+        
+        # Resample the trajectory
+        this_dir = os.path.dirname(os.path.abspath(__file__))
+        experiment_config = this_dir + "/config/config.yaml"
+        path_to_yaml = Path(experiment_config)
+
+        with path_to_yaml.open("r") as f:
+            cfg = yaml.safe_load(f)
+        
+        planning_cfg_path = Path(cfg["Planning"]["config_file"])
+
+        this_dir = os.path.dirname(os.path.abspath(__file__))
+        vimp_dir = os.path.dirname(os.path.dirname(this_dir))
+        result_dir = Path(vimp_dir + "/" + cfg["Planning"]["saving_prefix"])
+
+        min_dist_resample = resample_block_trajectory(planning_cfg_path, result_dir, sdf, cfg["Sampling"])
+
+        entry = {
+            msg.timestamp: {
+                "planner_id":         "GVIMP",
+                "body_frame_pose":    np.array(msg.pose).tolist(),
+                "min_dist_resample":  float(min_dist_resample)
+            }
+        }
+
+        print("Saving baseline collision checking result!")
+        # write exactly one JSON object per line
+        yaml.safe_dump(entry, self._output_yaml)
+        # add document separator
+        self._output_yaml.write('---\n')
+        self._output_yaml.flush()
             
         # create acknowledgment
         ack = ack_t()

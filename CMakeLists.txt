@@ -65,6 +65,8 @@ find_package(GSL REQUIRED)
 include_directories(${GSL_INCLUDE_DIRS})
 link_libraries(${GSL_LIBRARIES})
 
+# YAML
+find_package(yaml-cpp REQUIRED)
 
 # To avoid some conflicts and re-definitions that are already existed in GTSAM.
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}/vimp")
