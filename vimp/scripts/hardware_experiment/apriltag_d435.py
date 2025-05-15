@@ -31,7 +31,7 @@ class CameraAprilTagReader:
 
         self._output = []
         self._count_output = 0
-        output_file = Path(__file__).parent / "box_poses.yaml"
+        output_file = Path(__file__).parent / "Data" / "box_poses.yaml"
         self._output_yaml = open(output_file, 'a')
         
         rospy.init_node('apriltag_D435', anonymous=True)
@@ -141,10 +141,44 @@ class CameraAprilTagReader:
         # self._cap.release()
         cv2.destroyAllWindows()
     
-    
+
+def read_poses_from_yaml(yaml_path):
+    """
+    Reads a multi-document YAML file where each document has a 'pose'
+    (a 4-by-4 nested list) and a 'timestamp' field.
+
+    Returns a list of (pose_matrix, timestamp) tuples:
+      - pose_matrix: a (4,4) numpy array
+      - timestamp: the integer timestamp
+    """
+    poses = []
+    with open(yaml_path, 'r') as f:
+        # safe_load_all will iterate over each document separated by '---'
+        for doc in yaml.safe_load_all(f):
+            if doc is None:
+                continue
+            pose_list = doc.get('pose')
+            timestamp = doc.get('timestamp')
+            if pose_list is None or timestamp is None:
+                continue  # skip docs without the expected fields
+
+            # convert nested Python lists to a NumPy array
+            pose_mat = np.array(pose_list, dtype=float)
+            if pose_mat.shape != (4,4):
+                raise ValueError(f"Unexpected pose shape: {pose_mat.shape}")
+
+            poses.append(pose_mat)
+
+    return poses
+
+
     
 if __name__ == "__main__":
-    reader = CameraAprilTagReader(buffer_size=10, topic_name='/B1_pose', wait_key=True)
-    reader.run()
+    # --- Obtain and save box poses ---
+    # reader = CameraAprilTagReader(buffer_size=10, topic_name='/B1_pose', wait_key=True)
+    # reader.run()
     
-    
+    # --- Read box poses in D435 coordinate ---
+    box_pose_file = Path(__file__).parent / "Data" / "box_poses.yaml"
+    poses = read_poses_from_yaml(box_pose_file)
+    print("box poses: ", poses)
