@@ -40,6 +40,19 @@ class CameraAprilTagReader:
         
         rospy.loginfo(f"[{rospy.get_name()}] listening to {topic_name},"
                   " hit ENTER to pop & publish on {output_topic}")
+        
+        import json
+        json_path = Path(__file__).parent / "UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"          # change the filename if needed
+        with json_path.open("r") as f:
+            cfg = json.load(f) 
+        K = np.asarray(cfg["K"], dtype=np.float32)
+        fx = K[0, 0]
+        fy = K[1, 1]
+        cx = K[0, 2]
+        cy = K[1, 2]
+        self._d435_params = (fx, fy, cx, cy)
+        
+        self._tag_size = 0.0778
 
         # self._cap = cv2.VideoCapture(0)         
         # if not self._cap.isOpened():
@@ -63,7 +76,8 @@ class CameraAprilTagReader:
         pose = apriltag_image2pose(input_img_numpy=rgb_img,
                                     display_images=False,
                                     detection_window_name='AprilTag',
-                                    camera_params=(3156.71852, 3129.52243, 359.097908, 239.736909))
+                                    tag_size=self._tag_size,
+                                    camera_params=self._d435_params)
                 
         if pose is not None:
             with self._lock:
