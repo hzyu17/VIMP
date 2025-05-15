@@ -98,7 +98,7 @@ class BaselinePlanner:
         group.set_joint_value_target(target_dict)
 
         # 5) (Optional) tweak planning parameters
-        group.set_planning_time( 5.0 )      # seconds
+        group.set_planning_time( 2.0 )      # seconds
         group.set_num_planning_attempts(10)
 
         # 6) Plan and execute

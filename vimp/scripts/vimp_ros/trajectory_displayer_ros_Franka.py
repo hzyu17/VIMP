@@ -136,7 +136,9 @@ class MoveGroupPythonInterfaceTutorial(object):
 
         # start_state = [-1.691, -1.326, 2.048, -1.781, 1.105, 2.478, -1.340]
 
-        start_state = [-0.244, -1.728, 1.676, -2.531, 0.524, 2.531, 1.536]
+        # start_state = [-0.244, -1.728, 1.676, -2.531, 0.524, 2.531, 1.536]
+
+        start_state = [-0.699, 0.693, -0.365, -2.219, 0.902, 2.941, 1.921]
 
         move_group.go(start_state, wait=True)
         # move_group.setStartState(start_state);
@@ -376,8 +378,8 @@ def main():
             full_path = os.path.realpath(__file__)
             path, filename = os.path.split(full_path)
             # tutorial.update_trajectory(path+"/Franka/zk_sdf.csv")
-            # tutorial.update_trajectory(path + "/../hardware_experiment/Data/zk_sdf.csv")
-            tutorial.update_trajectory(path + "/../hardware_experiment/Data/good_zk.csv")
+            tutorial.update_trajectory(path + "/../hardware_experiment/Data/zk_sdf.csv")
+            # tutorial.update_trajectory(path + "/../hardware_experiment/Data/good_zk.csv")
 
             
             # tutorial.update_trajectory(path+"/Franka/zk_gpmp2.csv")

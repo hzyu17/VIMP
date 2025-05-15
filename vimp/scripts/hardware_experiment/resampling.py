@@ -204,7 +204,7 @@ def resample_block_trajectory(config_file: str,
     # ----------------- Collision Checking ----------------
     min_margin = collision_checking(sdf, fk, means)
     print(f"Minimum margin: {min(min_margin)}")
-    print(f"Index of the minimum margin: {np.argmin(min_margin)}")
+    # print(f"Index of the minimum margin: {np.argmin(min_margin)}")
     original_signed_distance = min(min_margin)
 
     # ----------------- Sampling --------------------------
@@ -217,7 +217,7 @@ def resample_block_trajectory(config_file: str,
         blocks = []
     else:
         blocks = find_blocks(bad_idx)
-        print("Collision detected at indices:", bad_idx)
+        # print("Collision detected at indices:", bad_idx)
         print("Collision blocks:", blocks)
 
     for block in blocks:
@@ -246,7 +246,7 @@ def resample_block_trajectory(config_file: str,
         while block_iter < max_iters:
             # Check if the new sample is valid
             block_iter += 1
-            if block_iter % 5000 == 0:
+            if block_iter % 10000 == 0:
                 print(f"Block is being resampled, iteration {block_iter}.")
 
             z = np.random.standard_normal(cond_mean.shape)
@@ -276,7 +276,7 @@ def resample_block_trajectory(config_file: str,
 
     result_distance = collision_checking(sdf, fk, means_sample)
     print(f"Minimum margin after resampling: {min(result_distance)}")
-    print(f"Index of the minimum margin after resampling: {np.argmin(result_distance)}")
+    # print(f"Index of the minimum margin after resampling: {np.argmin(result_distance)}")
     return original_signed_distance, min(result_distance)
 
 
