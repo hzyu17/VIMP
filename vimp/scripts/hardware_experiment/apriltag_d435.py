@@ -20,6 +20,7 @@ import numpy as np
 import yaml
 from pathlib import Path
 
+from scipy.spatial.transform import Rotation as R
 
 class CameraAprilTagReader:
     def __init__(self, buffer_size, topic_name, wait_key=False):
@@ -204,5 +205,10 @@ if __name__ == "__main__":
     mean_q_lin = quat_array.mean(axis=0)
     mean_q_lin /= np.linalg.norm(mean_q_lin)
     
+    rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
+    mean_rot = rots.mean()
+    mean_q_scipy = mean_rot.as_quat()
+    
     print("mean position: ", mean_pos)
     print("mean quaternion: ", mean_q_lin)
+    print("mean q_scipy: ", mean_q_lin)
