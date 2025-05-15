@@ -5,9 +5,9 @@ Field:
   obstacles:
     - name: sdf_box_1               # PC box
       bodyframe: B1
-      center: [0.185, 0.05, -0.1525]    # [x, y, z] in metres (wrt frame B)
+      center: [0.05, -0.185, 0.1525]    # [x, y, z] in metres (wrt frame B)
       orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-      size: [ 0.46, 0.095, 0.35 ]
+      size: [0.095, 0.46, 0.35 ]
     # - name: sdf_box_2               # ROBOTIC Box
     #   bodyframe: B2
     #   center: [0.10, 0.10, 0.26]    # [x, y, z] in metres (wrt frame B)
@@ -15,14 +15,14 @@ Field:
     #   size: [ 0.425, 0.325, 0.11 ]
 
 Camera:
-  # config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
-  config_file: "vimp/scripts/hardware_experiment/config/fake_camera.json"
+  config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
+  # config_file: "vimp/scripts/hardware_experiment/config/fake_camera.json"
   apriltag_lcm_topic: "EXAMPLE"
   apriltag_families: 'tag25h9' # Change in vimp/thirdparty/AprilTag/scripts/apriltag.py
 
 April_tags:
   - name: tag25h9
-    size: 100
+    size: 75
     attached_frame: B1
 
 Body_frames:
@@ -75,8 +75,11 @@ Planning:
   max_n_backtracking:  5
   sdf_file:            ../../thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetOffset_cereal.bin
 
-  start_degrees: [-14, -99, 96, -145, 30, 145, 88]
-  goal_degrees: [-33, 54, 23, -101, 113, 100, -72]
+  # start_degrees: [-14, -99, 96, -145, 30, 145, 88]
+  # goal_degrees: [-33, 54, 23, -101, 113, 100, -72]
+
+  start_degrees: [15, 24, 20, -133, -29, 153, 104]
+  goal_degrees: [-90, 42, 43, -113, -40, 131, 4]
 
   start_pos: [-0.8, -1.70, 1.64, 1.29, 1.1, -0.106, 2.2]
   goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]

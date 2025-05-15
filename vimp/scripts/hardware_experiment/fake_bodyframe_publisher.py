@@ -9,6 +9,7 @@ import yaml
 from pathlib import Path
 from ack_lcm.acknowledgment.ack_t import ack_t
 import lcm
+from apriltag_d435 import read_poses_from_yaml
 
 
 def make_random_msg():
@@ -122,19 +123,59 @@ class PosePublisher:
                             self._ready_to_publish = True
                 
                 if self._ready_to_publish:
-                    if self._first_time:
-                        x_rand, y_rand = 0, 0
-                        self._first_time = False
-                    else:
-                        x_rand = (random.random()-0.5)*2*0.05
-                        y_rand = (random.random()-0.5)*2*0.05
-                    pose = np.eye(4, dtype=np.float32)
-                    pose[0, 3] = 0.25 + x_rand
-                    pose[1, 3] = 0.0 + y_rand
-                    pose[2, 3] = 0.0
-                    self.publish_pose(pose)
+                    # if self._first_time:
+                    #     x_rand, y_rand = 0, 0
+                    #     self._first_time = False
+                    # else:
+                    #     x_rand = (random.random()-0.5)*2*0.05
+                    #     y_rand = (random.random()-0.5)*2*0.05
+                    # pose = np.eye(4, dtype=np.float32)
+                    # pose[0, 3] = 0.25 + x_rand
+                    # pose[1, 3] = 0.0 + y_rand
+                    # pose[2, 3] = 0.0
+                    # self.publish_pose(pose)
+
+                    from bodyframe_pose_listener import matrix_to_pose, pose_to_matrix
+                    from scipy.spatial.transform import Rotation as R
+                    from geometry_msgs.msg import Pose
+
+                    box_pose_file = Path(__file__).parent / "Data" / "box_poses.yaml"
+                    pose_mats = read_poses_from_yaml(box_pose_file)
+
+                    poses = []
+                    for pose_mat in pose_mats:
+                        poses.append(matrix_to_pose(pose_mat))
+                    
+                    pos_array = np.array([
+                        [p.position.x, p.position.y, p.position.z]
+                        for p in poses
+                    ])
+                    mean_pos = pos_array.mean(axis=0)
+                    
+                    quat_array = np.array([
+                        [p.orientation.x,
+                        p.orientation.y,
+                        p.orientation.z,
+                        p.orientation.w]
+                        for p in poses
+                    ])                    
+                    
+                    rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
+                    mean_rot = rots.mean()
+                    mean_q_scipy = mean_rot.as_quat()
+
+                    mean_pose = Pose()
+                    mean_pose.position.x, mean_pose.position.y, mean_pose.position.z = mean_pos
+                    mean_pose.orientation.x, mean_pose.orientation.y, mean_pose.orientation.z, mean_pose.orientation.w = mean_q_scipy
+
+                    mean_pose_mat = pose_to_matrix(mean_pose)
+                    
+                    print(mean_pose_mat)
+                    self.publish_pose(mean_pose_mat)
                     
                     self._ready_to_publish = False
+
+                    
                             
                 time.sleep(0.1)  # Add a small delay to control the loop speed
             
