@@ -180,5 +180,29 @@ if __name__ == "__main__":
     
     # --- Read box poses in D435 coordinate ---
     box_pose_file = Path(__file__).parent / "Data" / "box_poses.yaml"
-    poses = read_poses_from_yaml(box_pose_file)
-    print("box poses: ", poses)
+    pose_mats = read_poses_from_yaml(box_pose_file)
+    
+    from bodyframe_pose_listener import matrix_to_pose
+    poses = []
+    for pose_mat in pose_mats:
+        poses.append(matrix_to_pose(pose_mat))
+    
+    pos_array = np.array([
+        [p.position.x, p.position.y, p.position.z]
+        for p in poses
+    ])
+    mean_pos = pos_array.mean(axis=0)
+    
+    
+    quat_array = np.array([
+        [p.orientation.x,
+        p.orientation.y,
+        p.orientation.z,
+        p.orientation.w]
+        for p in poses
+    ])
+    mean_q_lin = quat_array.mean(axis=0)
+    mean_q_lin /= np.linalg.norm(mean_q_lin)
+    
+    print("mean position: ", mean_pos)
+    print("mean quaternion: ", mean_q_lin)
