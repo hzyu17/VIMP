@@ -3,11 +3,16 @@ Field:
   field_size: [500, 500, 500]
   cell_size: 0.01
   obstacles:
-    - name: sdf_box_1
+    - name: sdf_box_1               # PC box
       bodyframe: B1
-      center: [0.10, 0.10, 0.26]    # [x, y, z] in metres (wrt frame B)
+      center: [0.185, 0.05, -0.1525]    # [x, y, z] in metres (wrt frame B)
       orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-      size: [ 0.18, 0.18, 0.5 ]
+      size: [ 0.46, 0.095, 0.35 ]
+    # - name: sdf_box_2               # ROBOTIC Box
+    #   bodyframe: B2
+    #   center: [0.10, 0.10, 0.26]    # [x, y, z] in metres (wrt frame B)
+    #   orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+    #   size: [ 0.425, 0.325, 0.11 ]
 
 Camera:
   # config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
