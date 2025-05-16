@@ -3,7 +3,7 @@ Field:
   field_size: [500, 500, 500]
   cell_size: 0.01
   obstacles:
-    - name: sdf_box_1               # PC box
+    - name: sdf_box_1                   # PC box
       bodyframe: B1
       center: [0.05, -0.185, 0.1525]    # [x, y, z] in metres (wrt frame B)
       orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)

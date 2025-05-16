@@ -10,6 +10,7 @@ from pathlib import Path
 from ack_lcm.acknowledgment.ack_t import ack_t
 import lcm
 from apriltag_d435 import read_poses_from_yaml
+import argparse
 
 
 def make_random_msg():
@@ -26,8 +27,8 @@ def make_random_msg():
     return msg
 
 
-class PosePublisher:
-    def __init__(self, topic_name, wait_key=False, output_file: str = 'Data/poses.yaml'):
+class BodyFramePosePublisher:
+    def __init__(self, topic_name, wait_key=True, listen_to_ack=True, output_file: str = 'Data/poses.yaml'):
         self._wait_key = wait_key
         self._topic_name = topic_name
 
@@ -42,11 +43,14 @@ class PosePublisher:
         rospy.loginfo(f"[{rospy.get_name()}] listening to {topic_name},"
                   " hit ENTER to pop & publish on {output_topic}")
         
+        self._listen_ack = listen_to_ack
         
-        # Acknowledgment
-        self._lc = lcm.LCM()
-        ack_topic = "ACK_" + self._topic_name
-        self._lc.subscribe(ack_topic, self.ack_handler)
+        # Automatically generate new random noise upon receiving acknowledgment from the receiver
+        if listen_to_ack: 
+            # Acknowledgment
+            self._lc = lcm.LCM()
+            ack_topic = "ACK_" + self._topic_name
+            self._lc.subscribe(ack_topic, self.ack_handler)
         
         self._ready_to_publish = False
         self._first_time = True
@@ -113,7 +117,8 @@ class PosePublisher:
             """
                         
             while True:
-                self._lc.handle_timeout(0)
+                if self._listen_ack:
+                    self._lc.handle_timeout(0)
                 
                 if self._wait_key:
                     if select.select([sys.stdin], [], [], 0.0)[0]:
@@ -174,8 +179,6 @@ class PosePublisher:
                     self.publish_pose(mean_pose_mat)
                     
                     self._ready_to_publish = False
-
-                    
                             
                 time.sleep(0.1)  # Add a small delay to control the loop speed
             
@@ -185,7 +188,19 @@ class PosePublisher:
         print(f"Publisher got Ack for msg #{ack.msg_id} (sent at {ack.timestamp})")
         self._ready_to_publish = True
         
+        
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    v = v.lower()
+    if v in ('yes', 'true',  't', 'y', '1'):
+        return True
+    if v in ('no',  'false', 'f', 'n', '0'):
+        return False
+    raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 
 if __name__ == '__main__':
-    pose_publisher = PosePublisher('/B1_pose', wait_key=True)
+    pose_publisher = BodyFramePosePublisher('/B1_pose', wait_key=True, listen_to_ack=True)
     pose_publisher.run()
