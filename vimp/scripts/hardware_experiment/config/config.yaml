@@ -1,6 +1,6 @@
 Field:
-  field_origin: [-2.5, -2.5, 0] # [x, y, z] The origin of the field in the april tag's frame
-  field_size: [500, 500, 500]
+  field_origin: [-0.25, -0.75, -0.2] # [x, y, z] The origin of the field in the april tag's frame
+  field_size: [150, 150, 120]
   cell_size: 0.01
   obstacles:
     - name: sdf_box_1                   # PC box
@@ -8,6 +8,7 @@ Field:
       center: [0.05, -0.185, 0.1525]    # [x, y, z] in metres (wrt frame B)
       orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
       size: [0.095, 0.46, 0.35 ]
+      world_size: [0.35, 0.095, 0.46]
     # - name: sdf_box_2               # ROBOTIC Box
     #   bodyframe: B2
     #   center: [0.10, 0.10, 0.26]    # [x, y, z] in metres (wrt frame B)
@@ -27,8 +28,8 @@ April_tags:
 
 Body_frames:
   - frame_id: B1
-    position: [0.25, 0.0, 0.0]    
-    orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+    position: [-0.1078, -0.1260, 0.5463]    
+    orientation: [0.48560889, 0.00818733, 0.0144703, 0.87401807] # quaternion (qx, qy, qz, qw)
     monitor_topic: "/B1_pose"
     box:
       name: sdf_box_1
@@ -47,7 +48,7 @@ Body_frames:
 Sampling:
   max_iters: 30000
   collision_threshold: 0
-  safety_threshold: 0.05
+  safety_threshold: 0.03
   window_size: 5
 
 Baselines:
@@ -78,8 +79,8 @@ Planning:
   # start_degrees: [-14, -99, 96, -145, 30, 145, 88]
   # goal_degrees: [-33, 54, 23, -101, 113, 100, -72]
 
-  start_degrees: [15, 24, 20, -133, -29, 153, 104]
-  goal_degrees: [-90, 42, 43, -113, -40, 131, 4]
+  start_degrees: [-40, 40, -21, -127, 52, 168, 110]
+  goal_degrees: [37, 69, -7, -75, 3, 149, -112]
 
   start_pos: [-0.8, -1.70, 1.64, 1.29, 1.1, -0.106, 2.2]
   goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
@@ -87,5 +88,6 @@ Planning:
   saving_prefix: scripts/hardware_experiment/Data
 
   config_file: "vimp/scripts/hardware_experiment/config/franka_dh.yaml"
-  disturbed_sdf: "vimp/thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetHardware_cereal.bin"
+  # disturbed_sdf: "vimp/thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetHardware_cereal.bin"
+  disturbed_sdf: "vimp/scripts/hardware_experiment/Data/FrankaHardware_cereal.bin"
   

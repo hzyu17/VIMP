@@ -52,7 +52,7 @@ class RealTimeBoxUpdater:
         
         # store relative poses & sizes
         (self._body_box, self._body_topic, 
-         self._rel_poses, self._sizes, self._body_default_pose) = load_body_frames_config(config_file)
+         self._rel_poses, self._sizes, self._body_default_pose, _) = load_body_frames_config(config_file)
         
         self._T_cam = read_cam_pose(config_file)
         
@@ -132,7 +132,7 @@ class RealTimeBoxUpdater:
 
 if __name__ == "__main__":
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    body_box, body_topic, rel_poses, sizes, body_default_pose = load_body_frames_config(cfg_path)
+    body_box, body_topic, rel_poses, sizes, body_default_pose, _ = load_body_frames_config(cfg_path)
 
     # 2) Spin up the updater (from the previous example)
     updater = RealTimeBoxUpdater(

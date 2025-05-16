@@ -2,6 +2,7 @@ import json, yaml
 from vimp.thirdparty.sensor3D_tools import OccpuancyGrid
 from pathlib import Path
 from geometry_msgs.msg import Pose
+import numpy as np
 
 # ----------
 #  Helpers
@@ -45,6 +46,7 @@ def load_body_frames_config(path: Path):
     body_topic = {}
     box_rel_poses = {}
     box_sizes     = {}
+    world_box_sizes = {}
     body_default_pose = {}
 
     for entry in data["Body_frames"]:
@@ -88,6 +90,9 @@ def load_body_frames_config(path: Path):
         # 3) read out the size (you’ll need to add this in your YAML!)
         sx, sy, sz = entry["size"]
         box_sizes[bname] = (sx, sy, sz)
+
+        wsx, wsy, wsz = entry["world_size"]
+        world_box_sizes[bname] = (wsx, wsy, wsz)
         
     print("body_box")
     print(body_box)
@@ -99,8 +104,30 @@ def load_body_frames_config(path: Path):
     print(box_sizes)
     print("body_default_pose")
     print(body_default_pose)
+    
 
-    return body_box, body_topic, box_rel_poses, box_sizes, body_default_pose
+    return body_box, body_topic, box_rel_poses, box_sizes, body_default_pose, world_box_sizes
+
+def read_body_pose(path: Path):
+    """
+    Reads the poses from a YAML file of the form
+    """
+    data = yaml.safe_load(path.read_text())
+
+    for entry in data["Body_frames"]:       
+        # bodyframe : default pose
+        p = Pose()
+        cx, cy, cz = entry["position"]
+        p.position.x, p.position.y, p.position.z = cx, cy, cz
+        qx, qy, qz, qw = entry["orientation"]
+        p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w = (
+            qx, qy, qz, qw
+        )
+        
+        pose = p
+    
+    return pose
+
 
 
 def default_occmap_from_yaml(yaml_file):
@@ -127,4 +154,4 @@ def read_cam_pose(config_file):
     print("Cam pose:")
     print(cam_pose)
         
-    return cam_pose
+    return np.array(cam_pose)
