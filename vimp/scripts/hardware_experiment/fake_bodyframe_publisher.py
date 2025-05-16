@@ -201,7 +201,7 @@ class PosePublisher:
         from geometry_msgs.msg import Pose
 
         # Read the box poses from the yaml file
-        box_pose_file = Path(__file__).parent / "Data" / "box_poses.yaml"
+        box_pose_file = Path(__file__).parent / "Data" / "box_poses_hardware.yaml"
         pose_mats = read_poses_from_yaml(box_pose_file)
         
         poses = []
@@ -220,7 +220,7 @@ class PosePublisher:
             p.orientation.z,
             p.orientation.w]
             for p in poses
-        ])                    
+        ])
         
         rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
         mean_rot = rots.mean()
@@ -230,7 +230,12 @@ class PosePublisher:
         mean_pose.position.x, mean_pose.position.y, mean_pose.position.z = mean_pos
         mean_pose.orientation.x, mean_pose.orientation.y, mean_pose.orientation.z, mean_pose.orientation.w = mean_q_scipy
 
+        # print("Mean pose in body frame:")
+        # print(mean_pose)
+
         mean_pose_mat = pose_to_matrix(mean_pose)
+        # print("Mean pose in body frame (matrix):")
+        # print(mean_pose_mat)
         
         return mean_pose_mat
     
@@ -244,3 +249,4 @@ class PosePublisher:
 if __name__ == '__main__':
     pose_publisher = PosePublisher('/B1_pose', wait_key=True)
     pose_publisher.run()
+    # pose_publisher.obtain_box_pose()

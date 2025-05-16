@@ -151,7 +151,7 @@ class SDFUpdaterListener:
         # Transform the occupancy map to the new pose
         old_pose = self._T_cam_body[msg.frame_name]
         transform_pose = self._T_cam @ msg.pose @ np.linalg.inv(old_pose) @ np.linalg.inv(self._T_cam)
-        
+
         # Apply the pose transformation
         subgrid.transform(transform_pose, visualize=False)
         
@@ -273,8 +273,8 @@ class SDFUpdaterListener:
 if __name__ == '__main__':       
     
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    # output_file = Path(__file__).parent / "Data" / "disturbed_results.yaml"
-    output_file = Path(__file__).parent / "Data" / "poses_result.yaml"
+    output_file = Path(__file__).parent / "Data" / "disturbed_results.yaml"
+    # output_file = Path(__file__).parent / "Data" / "poses_result.yaml"
     
     listener = SDFUpdaterListener(cfg_path, output_file)
     
