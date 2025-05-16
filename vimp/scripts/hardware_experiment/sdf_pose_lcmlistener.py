@@ -86,6 +86,7 @@ class SDFUpdaterListener:
             bname = self._body_box[body]
             box_rel_pose = self._rel_poses[bname]
             box_size = self._world_sizes[bname]
+            box_size_body_frame = self._sizes[bname]
             
             # construct the box's pose in the body frame
             C = np.eye(4)
@@ -95,6 +96,7 @@ class SDFUpdaterListener:
             C[:3, :3] = tft.quaternion_matrix(quat)[:3, :3]
             
             T_w_box = self._T_cam @ T @ C
+
             center_w = T_w_box[:3, 3]
             self._box_center[bname] = center_w
             
@@ -105,6 +107,16 @@ class SDFUpdaterListener:
             size_vox = (size_vox // 2) * 2
 
             grid.add_obstacle(center_idx, size_vox)
+
+            # cs = self._grid.cell_size
+            # center = np.zeros(3)
+            # center_idx = np.rint((center - self._grid.origin()) / cs).astype(int)
+
+            # size_vox = np.ceil(np.array(box_size_body_frame, float) / cs).astype(int)
+            # size_vox = (size_vox // 2) * 2
+
+            # grid.add_obstacle(center_idx, size_vox)
+            # grid.transform(T_w_box, visualize=True)
             
             self._body_occ[body] = grid
     
@@ -261,7 +273,8 @@ class SDFUpdaterListener:
 if __name__ == '__main__':       
     
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    output_file = Path(__file__).parent / "Data" / "disturbed_results.yaml"
+    # output_file = Path(__file__).parent / "Data" / "disturbed_results.yaml"
+    output_file = Path(__file__).parent / "Data" / "poses_result.yaml"
     
     listener = SDFUpdaterListener(cfg_path, output_file)
     

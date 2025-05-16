@@ -54,7 +54,6 @@ class PosePublisher:
         rospy.loginfo(f"[{rospy.get_name()}] listening to {topic_name},"
                   " hit ENTER to pop & publish on {output_topic}")
         
-        
         # Acknowledgment
         self._lc = lcm.LCM()
         ack_topic = "ACK_" + self._topic_name
@@ -172,6 +171,29 @@ class PosePublisher:
                         
             time.sleep(0.1)  # Add a small delay to control the loop speed
     
+
+    def run_with_given_poses(self, poses):
+        idx = 0
+        total_poses = len(poses)
+
+        while idx < total_poses and not rospy.is_shutdown():
+            self._lc.handle_timeout(0)
+            
+            if self._wait_key:
+                if select.select([sys.stdin], [], [], 0.0)[0]:
+                    ch = sys.stdin.read(1)
+                    if ch == '\n':
+                        rospy.loginfo("Enter pressed — publishing one pose")
+                        self._ready_to_publish = True
+                
+            if self._ready_to_publish:
+                pose = poses[idx]
+                self.publish_pose(pose)
+                idx += 1
+                self._ready_to_publish = False
+                
+            time.sleep(0.2)  # Add a small delay to control the loop speed
+
 
     def obtain_box_pose(self):
         from bodyframe_pose_listener import matrix_to_pose, pose_to_matrix
