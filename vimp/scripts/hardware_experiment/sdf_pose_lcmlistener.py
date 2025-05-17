@@ -273,7 +273,7 @@ class SDFUpdaterListener:
 if __name__ == '__main__':       
     
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    output_file = Path(__file__).parent / "Data" / "disturbed_results.yaml"
+    output_file = Path(__file__).parent / "Data" / "hardware_results.yaml"
     # output_file = Path(__file__).parent / "Data" / "poses_result.yaml"
     
     listener = SDFUpdaterListener(cfg_path, output_file)
