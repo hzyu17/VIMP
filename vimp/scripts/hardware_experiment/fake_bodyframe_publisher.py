@@ -27,8 +27,8 @@ def make_random_msg():
     return msg
 
 
-class BodyFramePosePublisher:
-    def __init__(self, topic_name, wait_key=True, listen_to_ack=True, output_file: str = 'Data/poses.yaml'):
+class PosePublisher:
+    def __init__(self, topic_name, wait_key=False, output_file: str = 'Data/poses.yaml'):
         self._wait_key = wait_key
         self._topic_name = topic_name
 
@@ -220,7 +220,7 @@ class BodyFramePosePublisher:
             p.orientation.z,
             p.orientation.w]
             for p in poses
-        ])
+        ])                    
         
         rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
         mean_rot = rots.mean()
@@ -230,12 +230,7 @@ class BodyFramePosePublisher:
         mean_pose.position.x, mean_pose.position.y, mean_pose.position.z = mean_pos
         mean_pose.orientation.x, mean_pose.orientation.y, mean_pose.orientation.z, mean_pose.orientation.w = mean_q_scipy
 
-        # print("Mean pose in body frame:")
-        # print(mean_pose)
-
         mean_pose_mat = pose_to_matrix(mean_pose)
-        # print("Mean pose in body frame (matrix):")
-        # print(mean_pose_mat)
         
         return mean_pose_mat
     
@@ -245,20 +240,8 @@ class BodyFramePosePublisher:
         print(f"Publisher got Ack for msg #{ack.msg_id} (sent at {ack.timestamp})")
         self._ready_to_publish = True
         
-        
-def str2bool(v):
-    if isinstance(v, bool):
-        return v
-    v = v.lower()
-    if v in ('yes', 'true',  't', 'y', '1'):
-        return True
-    if v in ('no',  'false', 'f', 'n', '0'):
-        return False
-    raise argparse.ArgumentTypeError('Boolean value expected.')
-
-
 
 if __name__ == '__main__':
-    pose_publisher = BodyFramePosePublisher('/B1_pose', wait_key=True, listen_to_ack=True)
+    pose_publisher = BodyFramePosePublisher('/B1_pose', wait_key=True)
     pose_publisher.run()
     # pose_publisher.obtain_box_pose()

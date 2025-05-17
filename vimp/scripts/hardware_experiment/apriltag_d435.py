@@ -32,7 +32,7 @@ class CameraAprilTagReader:
 
         self._output = []
         self._count_output = 0
-        output_file = Path(__file__).parent / "Data" / "box_poses.yaml"
+        output_file = Path(__file__).parent / "Data" / "box_poses_hardware.yaml"
         self._output_yaml = open(output_file, 'a')
         
         rospy.init_node('apriltag_D435', anonymous=True)
@@ -52,7 +52,7 @@ class CameraAprilTagReader:
         cy = K[1, 2]
         self._d435_params = (fx, fy, cx, cy)
         
-        self._tag_size = 0.0778
+        self._tag_size = 0.075
 
         # self._cap = cv2.VideoCapture(0)         
         # if not self._cap.isOpened():
@@ -114,7 +114,7 @@ class CameraAprilTagReader:
 
                 # save pose
                 save_pose = True
-                if save_pose and self._count_output < 10:
+                if save_pose and self._count_output < 100:
                     entry = {
                             "timestamp": int(pose_msg.header.stamp.to_sec()),
                             "pose": pose.tolist()
@@ -187,42 +187,65 @@ def read_poses_from_yaml(yaml_path):
     return poses
 
 
+from geometry_msgs.msg import Pose
+def pose_to_matrix(p: Pose):
+    """geometry_msgs/Pose ➜ 4x4 homogeneous matrix."""
+    q = p.orientation
+    t = p.position
+    # quaternion (x,y,z,w)  ->  3×3 rotation matrix
+    R = tf.quaternion_matrix([q.x, q.y, q.z, q.w])[:3, :3]
+    T = np.eye(4)
+    T[:3, :3] = R
+    T[:3,  3] = [t.x, t.y, t.z]
+    return T
+
+
+def matrix_to_pose(T: np.ndarray):
+    """4x4 homogeneous matrix ➜ geometry_msgs/Pose."""
+    R = T[:3, :3]
+    t = T[:3,  3]
+    q = tf.quaternion_from_matrix(T)
+    pose = Pose()
+    pose.position.x, pose.position.y, pose.position.z = t
+    pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w = q
+    return pose
+
     
 if __name__ == "__main__":
     # --- Obtain and save box poses ---
-    # reader = CameraAprilTagReader(buffer_size=10, topic_name='/B1_pose', wait_key=True)
-    # reader.run()
+    reader = CameraAprilTagReader(buffer_size=10, topic_name='/B1_pose', wait_key=True)
+    reader.run()
     
-    # --- Read box poses in D435 coordinate ---
-    box_pose_file = Path(__file__).parent / "Data" / "box_poses.yaml"
-    pose_mats = read_poses_from_yaml(box_pose_file)
+    # # --- Read box poses in D435 coordinate ---
+    # box_pose_file = Path(__file__).parent / "Data" / "box_poses.yaml"
+    # pose_mats = read_poses_from_yaml(box_pose_file)
     
-    from bodyframe_pose_listener import matrix_to_pose
-    poses = []
-    for pose_mat in pose_mats:
-        poses.append(matrix_to_pose(pose_mat))
+    # # from bodyframe_pose_listener import matrix_to_pose
+    # poses = []
+    # for pose_mat in pose_mats:
+    #     poses.append(matrix_to_pose(pose_mat))
     
-    pos_array = np.array([
-        [p.position.x, p.position.y, p.position.z]
-        for p in poses
-    ])
-    mean_pos = pos_array.mean(axis=0)
+    # pos_array = np.array([
+    #     [p.position.x, p.position.y, p.position.z]
+    #     for p in poses
+    # ])
+    # mean_pos = pos_array.mean(axis=0)
     
     
-    quat_array = np.array([
-        [p.orientation.x,
-        p.orientation.y,
-        p.orientation.z,
-        p.orientation.w]
-        for p in poses
-    ])
-    mean_q_lin = quat_array.mean(axis=0)
-    mean_q_lin /= np.linalg.norm(mean_q_lin)
+    # quat_array = np.array([
+    #     [p.orientation.x,
+    #     p.orientation.y,
+    #     p.orientation.z,
+    #     p.orientation.w]
+    #     for p in poses
+    # ])
+    # mean_q_lin = quat_array.mean(axis=0)
+    # mean_q_lin /= np.linalg.norm(mean_q_lin)
     
-    rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
-    mean_rot = rots.mean()
-    mean_q_scipy = mean_rot.as_quat()
+    # rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
+    # mean_rot = rots.mean()
+    # mean_q_scipy = mean_rot.as_quat()
     
-    print("mean position: ", mean_pos)
-    print("mean quaternion: ", mean_q_lin)
-    print("mean q_scipy: ", mean_q_lin)
+    # print("mean position: ", mean_pos)
+    # print("mean quaternion: ", mean_q_lin)
+    # print("mean q_scipy: ", mean_q_lin)
