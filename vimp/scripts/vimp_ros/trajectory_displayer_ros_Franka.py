@@ -136,9 +136,9 @@ class MoveGroupPythonInterfaceTutorial(object):
 
         # start_state = [-1.691, -1.326, 2.048, -1.781, 1.105, 2.478, -1.340]
 
-        # start_state = [-0.244, -1.728, 1.676, -2.531, 0.524, 2.531, 1.536]
+        # start_state = [-0.699, 0.693, -0.365, -2.219, 0.902, 2.941, 1.921]
 
-        start_state = [-0.699, 0.693, -0.365, -2.219, 0.902, 2.941, 1.921]
+        start_state = [-0.212, 0.463, -0.782, -2.690, 0.656, 2.851, 2.282]
 
         move_group.go(start_state, wait=True)
         # move_group.setStartState(start_state);
