@@ -242,6 +242,6 @@ class PosePublisher:
         
 
 if __name__ == '__main__':
-    pose_publisher = BodyFramePosePublisher('/B1_pose', wait_key=True)
+    pose_publisher = PosePublisher('/B1_pose', wait_key=True)
     pose_publisher.run()
     # pose_publisher.obtain_box_pose()

@@ -88,9 +88,8 @@ Planning:
   start_pos: [-0.8, -1.70, 1.64, 1.29, 1.1, -0.106, 2.2]
   goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
 
-  saving_prefix: scripts/hardware_experiment/Data
+  saving_prefix: scripts/hardware_experiment/Data/Paper_Result
 
   config_file: "vimp/scripts/hardware_experiment/config/franka_dh.yaml"
-  # disturbed_sdf: "vimp/thirdparty/sensor3D_tools/scripts/FrankaBoxDatasetHardware_cereal.bin"
   disturbed_sdf: "vimp/scripts/hardware_experiment/Data/FrankaHardware_cereal.bin"
   
