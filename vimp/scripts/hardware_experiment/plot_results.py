@@ -13,17 +13,6 @@ def load_multi_doc(file: Path) -> List[Dict[str, Any]]:
         return [doc for doc in yaml.safe_load_all(f) if doc]
 
 
-def collision_checking(timestamp: np.int64,
-                       trajectory_file: str):
-    """
-    Check for collisions for each trajectory in the baseline planner
-    return success rate
-    """
-
-    with pose_file.open("r", encoding="utf-8") as f:
-        pose = yaml.safe_load(f)
-
-
 def index_planner_results(planner_docs: List[Dict[str, Any]]) -> Dict[int, List[Dict[str, Any]]]:
     """Group each planner entry under its integer timestamp."""
     idx: Dict[int, List[Dict[str, Any]]] = defaultdict(list)

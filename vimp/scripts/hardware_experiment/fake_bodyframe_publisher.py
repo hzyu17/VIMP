@@ -9,8 +9,7 @@ import yaml
 from pathlib import Path
 from ack_lcm.acknowledgment.ack_t import ack_t
 import lcm
-from apriltag_d435 import read_poses_from_yaml
-from read_defaul_poses import read_cam_pose, read_body_pose
+from read_default_poses import read_cam_pose, read_body_pose
 
 
 def make_random_msg():
@@ -194,47 +193,6 @@ class PosePublisher:
                 
             time.sleep(0.2)  # Add a small delay to control the loop speed
 
-
-    def obtain_box_pose(self):
-        from bodyframe_pose_listener import matrix_to_pose, pose_to_matrix
-        from scipy.spatial.transform import Rotation as R
-        from geometry_msgs.msg import Pose
-
-        # Read the box poses from the yaml file
-        box_pose_file = Path(__file__).parent / "Data" / "box_poses_hardware.yaml"
-        pose_mats = read_poses_from_yaml(box_pose_file)
-        
-        poses = []
-        for pose_mat in pose_mats:
-            poses.append(matrix_to_pose(pose_mat))
-
-        pos_array = np.array([
-            [p.position.x, p.position.y, p.position.z]
-            for p in poses
-        ])
-        mean_pos = pos_array.mean(axis=0)
-        
-        quat_array = np.array([
-            [p.orientation.x,
-            p.orientation.y,
-            p.orientation.z,
-            p.orientation.w]
-            for p in poses
-        ])                    
-        
-        rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
-        mean_rot = rots.mean()
-        mean_q_scipy = mean_rot.as_quat()
-
-        mean_pose = Pose()
-        mean_pose.position.x, mean_pose.position.y, mean_pose.position.z = mean_pos
-        mean_pose.orientation.x, mean_pose.orientation.y, mean_pose.orientation.z, mean_pose.orientation.w = mean_q_scipy
-
-        mean_pose_mat = pose_to_matrix(mean_pose)
-        
-        return mean_pose_mat
-    
-
     def ack_handler(self, channel, data):
         ack = ack_t.decode(data)
         print(f"Publisher got Ack for msg #{ack.msg_id} (sent at {ack.timestamp})")
@@ -244,4 +202,3 @@ class PosePublisher:
 if __name__ == '__main__':
     pose_publisher = PosePublisher('/B1_pose', wait_key=True)
     pose_publisher.run()
-    # pose_publisher.obtain_box_pose()

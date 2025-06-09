@@ -7,7 +7,7 @@ import tf
 import threading
 from collections import deque
 
-from read_defaul_poses import *
+from read_default_poses import *
 
 # -----------
 #   Helpers

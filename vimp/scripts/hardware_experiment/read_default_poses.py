@@ -1,5 +1,6 @@
 import json, yaml
 from vimp.thirdparty.sensor3D_tools import OccpuancyGrid
+from apriltag_d435 import read_poses_from_yaml
 from pathlib import Path
 from geometry_msgs.msg import Pose
 import numpy as np
@@ -129,6 +130,45 @@ def read_body_pose(path: Path):
     return pose
 
 
+def read_body_pose_from_camera():
+    from bodyframe_pose_listener import matrix_to_pose, pose_to_matrix
+    from scipy.spatial.transform import Rotation as R
+    from geometry_msgs.msg import Pose
+
+    # Read the box poses from the yaml file
+    box_pose_file = Path(__file__).parent / "Data" / "box_poses_hardware.yaml"
+    pose_mats = read_poses_from_yaml(box_pose_file)
+    
+    poses = []
+    for pose_mat in pose_mats:
+        poses.append(matrix_to_pose(pose_mat))
+
+    pos_array = np.array([
+        [p.position.x, p.position.y, p.position.z]
+        for p in poses
+    ])
+    mean_pos = pos_array.mean(axis=0)
+    
+    quat_array = np.array([
+        [p.orientation.x,
+        p.orientation.y,
+        p.orientation.z,
+        p.orientation.w]
+        for p in poses
+    ])                    
+    
+    rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
+    mean_rot = rots.mean()
+    mean_q_scipy = mean_rot.as_quat()
+
+    mean_pose = Pose()
+    mean_pose.position.x, mean_pose.position.y, mean_pose.position.z = mean_pos
+    mean_pose.orientation.x, mean_pose.orientation.y, mean_pose.orientation.z, mean_pose.orientation.w = mean_q_scipy
+
+    mean_pose_mat = pose_to_matrix(mean_pose)
+    
+    return mean_pose_mat
+
 
 def default_occmap_from_yaml(yaml_file):
     with open(yaml_file,"r") as f:
@@ -155,3 +195,8 @@ def read_cam_pose(config_file):
     print(cam_pose)
         
     return np.array(cam_pose)
+
+if __name__ == "__main__":
+    mat = read_body_pose_from_camera()
+    print("Mean pose matrix from camera:")
+    print(mat)

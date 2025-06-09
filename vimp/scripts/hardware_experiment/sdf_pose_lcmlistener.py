@@ -7,7 +7,7 @@ from ack_lcm.acknowledgment.ack_t import ack_t
 from vimp.thirdparty.sensor3D_tools.lcm import pose_t
 import threading
 import tf.transformations as tft
-from read_defaul_poses import *
+from read_default_poses import *
 
 from vimp.scripts.hardware_experiment.moveit_baselines import read_plan_json_to_numpy
 from resampling import read_forwardkinematic_from_config, collision_checking, resample_block_trajectory
