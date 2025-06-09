@@ -49,7 +49,7 @@ python vimp/scripts/hardware_experiment/apriltag_d435.py
 ```
 Before running, change the output file in the script hardware_bodyframe_publisher.py to differentiate from Data/box_poses_hardware.yaml.
 
-4. Run signed distance checking on the disturbed sdf and save results. 
+4. Record the noisy pose and compute the collision‐checking distances of baselines, GVIMP, and resampled GVIMP
 ```
 python vimp/scripts/hardware_experiment/sdf_pose_lcmlistener.py
 python vimp/scripts/hardware_experiment/hardware_exp_pose_publisher.py
