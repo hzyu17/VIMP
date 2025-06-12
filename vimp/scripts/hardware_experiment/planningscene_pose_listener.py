@@ -1,6 +1,7 @@
 import rospy
 from geometry_msgs.msg import PoseStamped
 from moveit_commander import PlanningSceneInterface
+from pose_helpers import pose_to_matrix, matrix_to_pose
 import numpy as np
 import tf
 
@@ -9,32 +10,6 @@ from collections import deque
 
 from read_default_poses import *
 
-# -----------
-#   Helpers
-# -----------
-
-def pose_to_matrix(p: Pose):
-    """geometry_msgs/Pose ➜ 4x4 homogeneous matrix."""
-    q = p.orientation
-    t = p.position
-    # quaternion (x,y,z,w)  ->  3×3 rotation matrix
-    R = tf.transformations.quaternion_matrix([q.x, q.y, q.z, q.w])[:3, :3]
-    T = np.eye(4)
-    T[:3, :3] = R
-    T[:3,  3] = [t.x, t.y, t.z]
-    return T
-
-
-def matrix_to_pose(T: np.ndarray):
-    """4x4 homogeneous matrix ➜ geometry_msgs/Pose."""
-    R = T[:3, :3]
-    t = T[:3,  3]
-    q = tf.transformations.quaternion_from_matrix(T)
-    pose = Pose()
-    pose.position.x, pose.position.y, pose.position.z = t
-    pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w = q
-    return pose
-        
 
 class RealTimeBoxUpdater:
     def __init__(self,

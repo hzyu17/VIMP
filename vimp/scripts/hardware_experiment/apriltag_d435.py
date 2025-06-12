@@ -32,7 +32,7 @@ class CameraAprilTagReader:
 
         self._output = []
         self._count_output = 0
-        output_file = Path(__file__).parent / "Data" / "box_poses_hardware.yaml"
+        output_file = Path(__file__).parent / "Data" / "box_poses.yaml"
         self._output_yaml = open(output_file, 'a')
         
         rospy.init_node('apriltag_D435', anonymous=True)
@@ -155,60 +155,6 @@ class CameraAprilTagReader:
             
         # self._cap.release()
         cv2.destroyAllWindows()
-    
-
-def read_poses_from_yaml(yaml_path):
-    """
-    Reads a multi-document YAML file where each document has a 'pose'
-    (a 4-by-4 nested list) and a 'timestamp' field.
-
-    Returns a list of (pose_matrix, timestamp) tuples:
-      - pose_matrix: a (4,4) numpy array
-      - timestamp: the integer timestamp
-    """
-    poses = []
-    with open(yaml_path, 'r') as f:
-        # safe_load_all will iterate over each document separated by '---'
-        for doc in yaml.safe_load_all(f):
-            if doc is None:
-                continue
-            pose_list = doc.get('pose')
-            timestamp = doc.get('timestamp')
-            if pose_list is None or timestamp is None:
-                continue  # skip docs without the expected fields
-
-            # convert nested Python lists to a NumPy array
-            pose_mat = np.array(pose_list, dtype=float)
-            if pose_mat.shape != (4,4):
-                raise ValueError(f"Unexpected pose shape: {pose_mat.shape}")
-
-            poses.append(pose_mat)
-
-    return poses
-
-
-from geometry_msgs.msg import Pose
-def pose_to_matrix(p: Pose):
-    """geometry_msgs/Pose ➜ 4x4 homogeneous matrix."""
-    q = p.orientation
-    t = p.position
-    # quaternion (x,y,z,w)  ->  3×3 rotation matrix
-    R = tf.quaternion_matrix([q.x, q.y, q.z, q.w])[:3, :3]
-    T = np.eye(4)
-    T[:3, :3] = R
-    T[:3,  3] = [t.x, t.y, t.z]
-    return T
-
-
-def matrix_to_pose(T: np.ndarray):
-    """4x4 homogeneous matrix ➜ geometry_msgs/Pose."""
-    R = T[:3, :3]
-    t = T[:3,  3]
-    q = tf.quaternion_from_matrix(T)
-    pose = Pose()
-    pose.position.x, pose.position.y, pose.position.z = t
-    pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w = q
-    return pose
 
     
 if __name__ == "__main__":
@@ -220,7 +166,7 @@ if __name__ == "__main__":
     # box_pose_file = Path(__file__).parent / "Data" / "box_poses.yaml"
     # pose_mats = read_poses_from_yaml(box_pose_file)
     
-    # # from bodyframe_pose_listener import matrix_to_pose
+    # # from pose_helpers import matrix_to_pose
     # poses = []
     # for pose_mat in pose_mats:
     #     poses.append(matrix_to_pose(pose_mat))
