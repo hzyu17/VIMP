@@ -15,8 +15,10 @@
 #include "GaussianVI/gp/cost_functions.h"
 #include "GaussianVI/ngd/NGDFactorizedBaseGH_Cuda.h"
 #include "GaussianVI/ngd/NGD-GH-Cuda.h"
+#include <yaml-cpp/yaml.h>
 
 std::string GH_map_file{source_root+"/GaussianVI/quadrature/SparseGHQuadratureWeights_cereal.bin"};
+std::string dh_file{source_root+"/scripts/hardware_experiment/config/franka_dh.yaml"};
 
 namespace vimp{
 
@@ -87,42 +89,70 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
+        DHType dh_type_yaml;
+        VectorXd a_yaml;
+        VectorXd alpha_yaml;
+        VectorXd d_yaml;
+        VectorXd theta_bias_yaml;
+        VectorXd radii_yaml;
+        VectorXi frames_yaml;
+        MatrixXd centers_yaml;
+
+        read_dh_from_yaml(dh_file, a_yaml, alpha_yaml, d_yaml, theta_bias_yaml, radii_yaml, frames_yaml, centers_yaml, dh_type_yaml);
+
         DHType dh_type = DHType::Modified;
         VectorXd a(8);
         a << 0.0, 0.0, 0.0, 0.0825, -0.0825, 0.0, 0.088, 0.0;
         VectorXd alpha(8);
         alpha << 0, -M_PI/2.0, M_PI/2.0, M_PI/2.0, -M_PI/2.0, M_PI/2.0, M_PI/2.0, 0.0;
         VectorXd d(8);
-        d << 0.333, 0, 0.316, 0.0, 0.384, 0.0, 0.0, 0.107;
+        d << 0.333, 0.0, 0.316, 0.0, 0.384, 0.0, 0.0, 0.107;
         VectorXd theta_bias(8);
         theta_bias << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -M_PI/4;
 
-        VectorXd radii(20);
-        radii << 0.1, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
-                0.05, 0.03, 0.05, 0.05, 0.05, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03;
-        VectorXi frames(20);
-        frames << 0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 6, 7, 7, 7, 7, 7, 7;
-        MatrixXd centers(20, 3); // Each row is a center; transpose when inputting to CUDA
-        centers <<  0.0, 0.0,  -0.3,
-                    0.0, 0.0,  -0.1,
-                    0.0, 0.0,  -0.07,
-                    0.0, 0.0,   0.07,
-                    0.0, 0.0,  -0.10,
-                    0.0, 0.0,  -0.175,
-                    0.0, 0.0,  -0.25,
-                    0.0, 0.0,  -0.05,
-                    0.0, 0.0,   0.05,
-                    0.0, 0.0,  -0.30,
-                    0.0, 0.08, -0.15,
-                    0.0, 0.10,  0.00,
-                    0.0, 0.00,  0.00,
-                    0.0, 0.0,  -0.05,
-                    0.0, 0.0,   0.00,
-                    0.0, 0.06,  0.00,
-                    0.0, -0.06, 0.00,
-                    0.0, 0.0,   0.04,
-                    0.0, 0.07,  0.04,
-                    0.0, -0.07, 0.04;
+        VectorXd radii(18);
+        radii << 0.125, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 
+            0.1, 0.05, 0.05, 0.075, 0.075, 0.075, 0.075, 0.08, 0.08;
+        VectorXi frames(18);
+        frames << 0, 0, 1, 1, 2, 2, 3, 3, 4, 4,
+                  4, 4, 4, 4, 6, 6, 7, 7;
+        MatrixXd centers(18, 3); // Each row is a center; transpose when inputting to CUDA
+        centers << -0.03, 0.0,  -0.3,
+                    0.0,  0.0,  -0.15,
+                    0.0,  0.0,  -0.07,
+                    0.0,  0.0,   0.07,
+                    0.0,  0.0,  -0.075,
+                    0.0,  0.0,  -0.175,
+                    0.0,  0.0,  -0.05,
+                    0.0,  0.0,   0.05,
+                    0.0,  0.0,  -0.3,
+                    0.0,  0.0,  -0.2,
+                    0.0,  0.08, -0.125,
+                    0.0,  0.09, -0.075,
+                    0.0,  0.075, 0.00,
+                    0.0, -0.015, 0.00,
+                    0.0,  0.0,  -0.04,
+                    0.0,  0.0,   0.04,
+                    0.0,  0.05,  0.03,
+                    0.0, -0.05,  0.03;
+
+        // std::cout << "Error of a: " << (a - a_yaml).norm() << std::endl;
+        // std::cout << "Error of alpha: " << (alpha - alpha_yaml).norm() << std::endl;
+        // std::cout << "Error of d: " << (d - d_yaml).norm() << std::endl;
+        // std::cout << "Error of theta_bias: " << (theta_bias - theta_bias_yaml).norm() << std::endl;
+        // std::cout << "Error of radii: " << (radii - radii_yaml).norm() << std::endl;
+        // std::cout << "Error of frames: " << (frames - frames_yaml).norm() << std::endl;
+        // std::cout << "Error of centers: " << (centers - centers_yaml).norm() << std::endl;
+        // std::cout << "Error of dh_type: " << (int(dh_type) - int(dh_type_yaml)) << std::endl;
+
+        // a = a_yaml;
+        // alpha = alpha_yaml;
+        // d = d_yaml;
+        // theta_bias = theta_bias_yaml;
+        // radii = radii_yaml;
+        // frames = frames_yaml;
+        // centers = centers_yaml;
+        // dh_type = dh_type_yaml;
 
         std::shared_ptr<GH> gh_ptr = std::make_shared<GH>(GH{params.GH_degree(), dim_conf, _nodes_weights_map_pointer});
         std::shared_ptr<CudaOperation_3dArm> cuda_ptr = std::make_shared<CudaOperation_3dArm>(CudaOperation_3dArm{a, alpha, d, theta_bias, radii, frames, centers.transpose(), params.sdf_file(), params.sig_obs(), params.eps_sdf(), dh_type});
@@ -302,6 +332,46 @@ public:
 
     std::tuple<VectorXd, gvi::SpMat> get_mu_precision(){
         return _last_iteration_mean_precision;
+    }
+
+    void read_dh_from_yaml(const std::string& file_name, VectorXd& a, VectorXd& alpha, VectorXd& d, VectorXd& theta_bias, 
+                            VectorXd& radii, VectorXi& frames, MatrixXd& centers, DHType& dh_type) {
+        YAML::Node cfg = YAML::LoadFile(file_name);
+        YAML::Node dh = cfg["dh_params"];
+
+        std::string dt = cfg["dh_type"].as<std::string>();
+        if (dt == "Classical") {
+            dh_type = DHType::Classical;
+        } else if (dt == "Modified") {
+            dh_type = DHType::Modified;
+        } else {
+            std::cerr << "Invalid DH type in config.yaml. Use 'Classical' or 'Modified'." << std::endl;
+        }
+
+        std::vector<double> a_vec = dh["a"].as<std::vector<double>>();
+        std::vector<double> alpha_vec = dh["alpha"].as<std::vector<double>>();
+        std::vector<double> d_vec = dh["d"].as<std::vector<double>>();
+        std::vector<double> theta_bias_vec = dh["theta_bias"].as<std::vector<double>>();
+        std::vector<double> radii_vec = dh["radii"].as<std::vector<double>>();
+        std::vector<int> frames_vec = dh["frames"].as<std::vector<int>>();
+        auto centers_vec = dh["centers"].as<std::vector<std::vector<double>>>();
+        int N = int(centers_vec.size());
+
+
+        a = Eigen::Map<VectorXd>(a_vec.data(), a_vec.size());
+        alpha = Eigen::Map<VectorXd>(alpha_vec.data(), alpha_vec.size());
+        d = Eigen::Map<VectorXd>(d_vec.data(), d_vec.size());
+        theta_bias = Eigen::Map<VectorXd>(theta_bias_vec.data(), theta_bias_vec.size());
+        radii = Eigen::Map<VectorXd>(radii_vec.data(), radii_vec.size());
+        frames = Eigen::Map<VectorXi>(frames_vec.data(), frames_vec.size());
+        centers.resize(N, 3);
+        for (int i = 0; i < N; ++i) {
+            if (centers_vec[i].size() != 3)
+            throw std::runtime_error("Each center must have 3 elements");
+            centers(i,0) = centers_vec[i][0];
+            centers(i,1) = centers_vec[i][1];
+            centers(i,2) = centers_vec[i][2];
+        }
     }
 
     // void identity(double* M) {

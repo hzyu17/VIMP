@@ -1,0 +1,10 @@
+package acknowledgment;
+
+/**  
+ * A simple acknowledgment for a received message.  
+ */
+struct ack_t {
+    int64_t  msg_id;        // An identifier you echo back  
+    int64_t  timestamp;     // When the ack was sent (µs since epoch)  
+    string   src_channel;   // The channel on which we received the original
+}

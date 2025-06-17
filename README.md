@@ -25,10 +25,10 @@ A higher entropy will trade off the short distance risky plan, and gives a longe
 
 Our method generates a distribution over trajectories rather than a single deterministic one. Therefore, when the environment model is imprecise or unexpected disturbances occur, we can resample from this distribution to obtain a collision‑free trajectory.
 
-<img src="figures/Point_Robot_Resampling_1.gif" width="280">
-<img src="figures/Point_Robot_Resampling_2.gif" width="280">
-<img src="figures/Point_Robot_Resampling_3.gif" width="280">
-<img src="figures/Point_Robot_Resampling_4.gif" width="280">
+
+<img src="figures/Point_Robot_Resampling_1.gif" width="300"> <img src="figures/Point_Robot_Resampling_2.gif" width="300">
+
+<img src="figures/Point_Robot_Resampling_3.gif" width="300"> <img src="figures/Point_Robot_Resampling_4.gif" width="300">
 
 
 **3. Variational Mmotion planning for a 7-DOF WAM robot arm**
@@ -41,14 +41,26 @@ In a bookshelf senario below, the animated trajectory is the mean of the traject
 
 <img src="figures/WAM_GVI_RVIZ_2.gif" width="300"> <img src="figures/WAM_RVIZ_2.gif" width="300">
 
-**4. Variational Mmotion planning for a linearized 2D quadrotor (LTV system)**
+**4. Variational Motion planning for a linearized 2D quadrotor (LTV system)**
 
 The experiment settings
 
 <img src="figures/planar_quad_settings.jpg" width="300" >
 
 ### Examples
-<img src="figures/planar_quad_exp1.gif" height="200" width=180> <img src="figures/planar_quad_exp2.gif" height="200" width=180> <img src="figures/planar_quad_exp3.gif" height="200" width=180> <img src="figures/planar_quad_exp4.gif" height="200" width=180>
+<img src="figures/planar_quad_exp1.gif" height="200" width=180> <img src="figures/planar_quad_exp2.gif" height="200" width=180> 
+
+<img src="figures/planar_quad_exp3.gif" height="200" width=180> <img src="figures/planar_quad_exp4.gif" height="200" width=180>
+
+**5. Hardware Experiments**
+
+Here we compare different algorithms against GVIMP in environments experiencing unexpected disturbances. GVIMP’s ability to resample from the distribution enables obstacle avoidance and increases robustness.
+
+<a href="https://youtu.be/c4sFOlEki0Q?feature=shared">
+  <img src="figures/hardware_experiment.gif" width="500" alt="Hardware experiment preview">
+</a>
+
+Link to the video: [https://youtu.be/c4sFOlEki0Q?feature=shared](https://youtu.be/c4sFOlEki0Q?feature=shared)
 
 ## Dependencies
 MATLAB Runtime Library: Download **[MATLAB Runtime R2020b](https://www.mathworks.com/products/compiler/matlab-runtime.html)** and follow **[these instructions](https://www.mathworks.com/help/compiler/install-the-matlab-runtime.html)** to install the source files from the zip file.

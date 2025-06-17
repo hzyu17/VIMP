@@ -307,11 +307,13 @@ def sample_and_save(save_dir: str, file_name: str, show_fig = True, save_fig = T
         print("Resampling failed for this block.")
         return False
 
+
 if __name__ == "__main__":
     success_count = 0
     map_iter = 0
     figure_dir = this_dir + "/figures/case2"
-    while success_count < 30:
+    num_figures = 30
+    while success_count < num_figures:
         map_iter += 1
         print("Map iteration:", map_iter)
         filename = f"trajectories_{success_count}.png"

@@ -51,10 +51,3 @@ def conditional_sample(joint_mean, joint_cov, state_dim):
         return cond_mean.numpy(), cond_cov.numpy()
     else:
         return cond_mean, cond_cov
-
-    # # sample ---------------------------------------------------------------
-    # mvn = MultivariateNormal(cond_mean, covariance_matrix=cond_cov)
-    # sample = mvn.sample()                                  # (state_dim*(N-2),)
-    # x2_to_xNm1 = sample.reshape(N-2, state_dim)                    # convenient shape
-    
-    # return x2_to_xNm1

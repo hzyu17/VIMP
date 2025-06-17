@@ -1,40 +1,15 @@
 import rospy
 from geometry_msgs.msg import PoseStamped
 from moveit_commander import PlanningSceneInterface
+from pose_helpers import pose_to_matrix, matrix_to_pose
 import numpy as np
 import tf
 
 import threading
 from collections import deque
 
-from read_defaul_poses import *
+from read_default_poses import *
 
-# -----------
-#   Helpers
-# -----------
-
-def pose_to_matrix(p: Pose):
-    """geometry_msgs/Pose ➜ 4x4 homogeneous matrix."""
-    q = p.orientation
-    t = p.position
-    # quaternion (x,y,z,w)  ->  3×3 rotation matrix
-    R = tf.transformations.quaternion_matrix([q.x, q.y, q.z, q.w])[:3, :3]
-    T = np.eye(4)
-    T[:3, :3] = R
-    T[:3,  3] = [t.x, t.y, t.z]
-    return T
-
-
-def matrix_to_pose(T: np.ndarray):
-    """4x4 homogeneous matrix ➜ geometry_msgs/Pose."""
-    R = T[:3, :3]
-    t = T[:3,  3]
-    q = tf.transformations.quaternion_from_matrix(T)
-    pose = Pose()
-    pose.position.x, pose.position.y, pose.position.z = t
-    pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w = q
-    return pose
-        
 
 class RealTimeBoxUpdater:
     def __init__(self,
@@ -52,7 +27,7 @@ class RealTimeBoxUpdater:
         
         # store relative poses & sizes
         (self._body_box, self._body_topic, 
-         self._rel_poses, self._sizes, self._body_default_pose) = load_body_frames_config(config_file)
+         self._rel_poses, self._sizes, self._body_default_pose, _) = load_body_frames_config(config_file)
         
         self._T_cam = read_cam_pose(config_file)
         
@@ -86,6 +61,8 @@ class RealTimeBoxUpdater:
 
     def _make_cb(self, name):
         def _cb(msg: PoseStamped):
+            rospy.loginfo("Received pose message in the planning scene listener!")
+            print("Received pose: ", msg.pose)
             with self._lock:
                 self._buffers[name].append(msg)
                 self._received_newpose = True
@@ -130,7 +107,7 @@ class RealTimeBoxUpdater:
 
 if __name__ == "__main__":
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    body_box, body_topic, rel_poses, sizes, body_default_pose = load_body_frames_config(cfg_path)
+    body_box, body_topic, rel_poses, sizes, body_default_pose, _ = load_body_frames_config(cfg_path)
 
     # 2) Spin up the updater (from the previous example)
     updater = RealTimeBoxUpdater(
