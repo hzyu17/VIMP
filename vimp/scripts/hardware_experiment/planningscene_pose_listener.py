@@ -2,8 +2,6 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from moveit_commander import PlanningSceneInterface
 from pose_helpers import pose_to_matrix, matrix_to_pose
-import numpy as np
-import tf
 
 import threading
 from collections import deque
@@ -32,7 +30,6 @@ class RealTimeBoxUpdater:
         self._T_cam = read_cam_pose(config_file)
         
         self._body_lcm_topic = self._body_topic
-        
         
         # ring buffers for each body frame
         self._buffers = {
@@ -81,28 +78,26 @@ class RealTimeBoxUpdater:
                     if not buf:
                         continue
                     latest: PoseStamped = buf[-1]
-                    
-                    bname = self._body_box[name]
 
-                    # compose: T_world_box = T_world_body × T_body_box
-                    T_w_b = pose_to_matrix(latest.pose)
-                    T_b_box = pose_to_matrix(self._rel_poses[bname])
-                    T_w_box = self._T_cam @ T_w_b @ T_b_box
-                    
-                    # make a stamped pose in world
-                    out = PoseStamped()
-                    out.header.frame_id = "world"
-                    out.header.stamp = rospy.Time.now()
-                    out.pose = matrix_to_pose(T_w_box)
+                    for bname in self._body_box[name]:
+                        # compose: T_world_box = T_world_body × T_body_box
+                        T_w_b = pose_to_matrix(latest.pose)
+                        T_b_box = pose_to_matrix(self._rel_poses[bname])
+                        T_w_box = self._T_cam @ T_w_b @ T_b_box
+                        
+                        # make a stamped pose in world
+                        out = PoseStamped()
+                        out.header.frame_id = "world"
+                        out.header.stamp = rospy.Time.now()
+                        out.pose = matrix_to_pose(T_w_box)
 
-                    # update MoveIt!
-                    self._scene.add_box(bname,
-                                        out,
-                                        size=self._sizes[bname])
+                        # update MoveIt!
+                        self._scene.add_box(bname,
+                                            out,
+                                            size=self._sizes[bname])
 
     def spin(self):
         rospy.spin()
-
 
 
 if __name__ == "__main__":

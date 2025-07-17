@@ -37,6 +37,7 @@ def load_body_frames_config(path: Path):
         box_sizes:      { box_name: (sx, sy, sz) }
         body_default_pose: {bodyframe_id: Pose() }
     """
+    # Create dictionaries to store the data
     data = yaml.safe_load(path.read_text())
     body_box   = {}
     body_topic = {}
@@ -45,15 +46,16 @@ def load_body_frames_config(path: Path):
     world_box_sizes = {}
     body_default_pose = {}
 
+    # 1) read the pose of the body frames
     for entry in data["Body_frames"]:
         topic = entry["monitor_topic"]
         fname = entry["frame_id"]
-        bname = entry["box"]["name"]
+        # bname = entry["box"]["name"]
         
         # map box : topic
         body_topic[fname] = topic
-        
-        body_box[fname] = bname
+        # body_box[fname] = bname
+        body_box[fname] = []
         
         # bodyframe : default pose
         p = Pose()
@@ -66,21 +68,16 @@ def load_body_frames_config(path: Path):
         
         body_default_pose[fname] = p
 
-        
+    # 2) read the box poses
     for entry in data["Field"]["obstacles"]:
         # build a Pose for the box centre in its body frame
         bname = entry["name"]
         frame_id = entry["bodyframe"]
-        
-        # box_bodyframe[bname] = frame_id
+        body_box[frame_id].append(bname)  # map bodyframe to box name
         
         p = Pose()
-        cx, cy, cz = entry["center"]
-        p.position.x, p.position.y, p.position.z = cx, cy, cz
-        qx, qy, qz, qw = entry["orientation"]
-        p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w = (
-            qx, qy, qz, qw
-        )
+        p.position.x, p.position.y, p.position.z = entry["center"]
+        p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w = entry["orientation"]
         box_rel_poses[bname] = p
 
         # 3) read out the size (you’ll need to add this in your YAML!)
@@ -109,20 +106,21 @@ def read_body_pose(path: Path):
     Reads the poses from a YAML file of the form
     """
     data = yaml.safe_load(path.read_text())
+    body_topic = {}
+    body_default_pose = {}
 
-    for entry in data["Body_frames"]:       
-        # bodyframe : default pose
+    for entry in data["Body_frames"]:  
+        topic = entry["monitor_topic"]
+        fname = entry["frame_id"]
+
         p = Pose()
-        cx, cy, cz = entry["position"]
-        p.position.x, p.position.y, p.position.z = cx, cy, cz
-        qx, qy, qz, qw = entry["orientation"]
-        p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w = (
-            qx, qy, qz, qw
-        )
-        
-        pose = p
-    
-    return pose
+        p.position.x, p.position.y, p.position.z = entry["position"]
+        p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w = entry["orientation"]
+
+        body_default_pose[fname] = p
+        body_topic[fname] = topic
+
+    return body_default_pose, body_topic
 
 
 def default_occmap_from_yaml(yaml_file):

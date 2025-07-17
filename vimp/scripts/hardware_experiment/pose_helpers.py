@@ -18,7 +18,6 @@ def pose_to_matrix(p: Pose):
 
 def matrix_to_pose(T: np.ndarray):
     """4x4 homogeneous matrix ➜ geometry_msgs/Pose."""
-    R = T[:3, :3]
     t = T[:3,  3]
     q = tf.transformations.quaternion_from_matrix(T)
     pose = Pose()
