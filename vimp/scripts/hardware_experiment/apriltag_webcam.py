@@ -109,7 +109,6 @@ class CameraAprilTagReader:
         cv2.destroyAllWindows()
     
     
-    
 if __name__ == "__main__":
     reader = CameraAprilTagReader(buffer_size=10, topic_name='/B1_pose', wait_key=True)
     reader.run()

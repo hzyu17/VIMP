@@ -29,8 +29,6 @@ class RealTimeBoxUpdater:
         
         self._T_cam = read_cam_pose(config_file)
         
-        self._body_lcm_topic = self._body_topic
-        
         # ring buffers for each body frame
         self._buffers = {
             name: deque(maxlen=buffer_size)
@@ -49,7 +47,7 @@ class RealTimeBoxUpdater:
                              PoseStamped,
                              callback=self._make_cb(name),
                              queue_size=1)
-            
+        
         self._received_newpose = False
 
         # timer to push updates at fixed rate
@@ -58,7 +56,7 @@ class RealTimeBoxUpdater:
 
     def _make_cb(self, name):
         def _cb(msg: PoseStamped):
-            rospy.loginfo("Received pose message in the planning scene listener!")
+            rospy.loginfo("Received pose message in the planning scene listener from %s!", name)
             print("Received pose: ", msg.pose)
             with self._lock:
                 self._buffers[name].append(msg)

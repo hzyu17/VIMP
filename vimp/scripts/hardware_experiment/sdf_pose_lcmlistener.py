@@ -11,12 +11,15 @@ from read_default_poses import *
 from pose_helpers import pose_to_matrix, matrix_to_pose
 
 from vimp.scripts.hardware_experiment.moveit_baselines import read_plan_json_to_numpy
-from resampling import read_forwardkinematic_from_config, collision_checking, resample_block_trajectory
+from resampling import read_forwardkinematic_from_config, collision_checking, collision_checking_and_resampling
 
 from pathlib import Path
 import os
 
 import time
+
+from vimp.thirdparty.sensor3D_tools.scripts.OccupancyGrid import merge_same_shape
+
 def lcm_thread(lc):
     while True:
         lc.handle()
@@ -29,7 +32,6 @@ sdf_dir = this_dir + "/../../scripts/hardware_experiment/Data/FrankaHardware_cer
 # # For debug SDF
 # sdf_original = SignedDistanceField()
 # sdf_original.loadSDF(sdf_dir)
-        
 
 class SDFUpdaterListener:
     def __init__(self, config_file, output_file='disturbed_results_111.yaml', compute_distance=False, send_ack=True):
@@ -86,28 +88,7 @@ class SDFUpdaterListener:
             # Insert obstacle
             for bname in self._body_box[body]:
                 box_rel_pose = self._rel_poses[bname]
-                # box_size = self._world_sizes[bname]
                 box_size_body_frame = self._sizes[bname]
-                
-                # # construct the box's pose in the body frame
-                # C = np.eye(4)
-                # C[:3, 3] = np.array([box_rel_pose.position.x, box_rel_pose.position.y, box_rel_pose.position.z])
-                # # Default assumed to be parallel to the axis
-                # C[:3, :3] = np.eye(3)
-                
-                # T_w_box = self._T_cam @ T @ C
-                # print("T_w_box: ", T_w_box)
-
-                # center_w = T_w_box[:3, 3]
-                # self._box_center[bname] = center_w
-                
-                # cs = self._grid.cell_size
-                # center_idx = np.rint((center_w - self._grid.origin()) / cs).astype(int)
-                
-                # size_vox = np.ceil(np.array(box_size, float) / cs).astype(int)
-                # size_vox = (size_vox // 2) * 2
-
-                # grid.add_obstacle(center_idx, size_vox)
 
                 cs = self._grid.cell_size
                 # Use the relative position of the box in the body frame as the center
@@ -119,9 +100,12 @@ class SDFUpdaterListener:
 
                 grid.add_obstacle(center_idx, size_vox)
 
-            grid.transform(T_w_body, visualize=True)
+            grid.transform(T_w_body, visualize=False)
             self._body_occ[body] = grid
             # grid.visualize()
+        
+        self._grid = merge_same_shape(self._body_occ)
+        self._grid.visualize()
     
     
     def visualize_boxes(self):
@@ -140,29 +124,38 @@ class SDFUpdaterListener:
         subgrid = self._body_occ[msg.frame_name]
         subgrid.clear()
 
-        # Create a new occupancy map and add the original obstacle
-        bname = self._body_box[msg.frame_name]
-        center_obs = self._box_center[bname]
-        box_size = self._world_sizes[bname]
+        # Create a new occupancy map and add the original obstacles
+        # Build the sdf after receiving all the poses and merging all the subgrids
+        for bname in self._body_box[msg.frame_name]:
+            box_rel_pose = self._rel_poses[bname]
+            box_size_body_frame = self._sizes[bname]
 
-        cs = self._grid.cell_size
-        center_idx = np.rint((center_obs - self._grid.origin()) / cs).astype(int)
-        size_vox = np.ceil(np.array(box_size, float) / cs).astype(int)
-        size_vox = (size_vox // 2) * 2
-        subgrid.add_obstacle(center_idx, size_vox)
+            cs = self._grid.cell_size
+            center = np.array([box_rel_pose.position.x, box_rel_pose.position.y, box_rel_pose.position.z])
+            center_idx = np.rint((center - self._grid.origin()) / cs).astype(int)
+            size_vox = np.ceil(np.array(box_size_body_frame, float) / cs).astype(int)
+            size_vox = (size_vox // 2) * 2
 
-        # Transform the occupancy map to the new pose
-        old_pose = self._T_cam_body[msg.frame_name]
-        transform_pose = self._T_cam @ msg.pose @ np.linalg.inv(old_pose) @ np.linalg.inv(self._T_cam)
-
-        # Apply the pose transformation
+            subgrid.add_obstacle(center_idx, size_vox)
+        
+        transform_pose = self._T_cam @ msg.pose
         subgrid.transform(transform_pose, visualize=False)
         
         self._body_occ[msg.frame_name] = subgrid
-        
+
+
+    def sdf_handler(self, channel, data):
+        # Encode timestamp into the message
+        print("Received pose publish message on channel \"%s\"" % channel)
+        info = yaml.safe_load(data.decode("utf-8"))
+        print("Received info: ", info)
+
+        self._grid = merge_same_shape(self._body_occ)
+        self._grid.visualize()
+    
         # Generate new sdf after the pose transformation
-        field3D = SignedDistanceField3D.generate_field3D(subgrid.map.detach().numpy(), cell_size=subgrid.cell_size)
-        sdf = SignedDistanceField(subgrid.origin(), subgrid.cell_size,
+        field3D = SignedDistanceField3D.generate_field3D(self._grid.map.detach().numpy(), cell_size=self._grid.cell_size)
+        sdf = SignedDistanceField(self._grid.origin(), self._grid.cell_size,
                                   field3D.shape[0], field3D.shape[1], field3D.shape[2])
         for z in range(field3D.shape[2]):
             sdf.initFieldData(z, field3D[:,:,z].T)
@@ -172,7 +165,7 @@ class SDFUpdaterListener:
         # print("Test signed distance of the original sdf: ", sdf_original.getSignedDistance(pt))
         
         print("==== SDF created! ====")
-        
+    
         if self.compute_distance:
             for id, trj in self._baslines.items():
                 
@@ -211,7 +204,7 @@ class SDFUpdaterListener:
             vimp_dir = os.path.dirname(os.path.dirname(this_dir))
             result_dir = Path(vimp_dir + "/" + cfg["Planning"]["saving_prefix"])
 
-            min_dist_planning, min_dist_resample = resample_block_trajectory(planning_cfg_path, result_dir, sdf, cfg["Sampling"])
+            min_dist_planning, min_dist_resample = collision_checking_and_resampling(planning_cfg_path, result_dir, sdf, cfg["Sampling"])
 
             entry = {
                 msg.timestamp: {
@@ -262,6 +255,7 @@ class SDFUpdaterListener:
         lc = lcm.LCM()
         for name, topic in self._body_topic.items():
             lc.subscribe(topic, self.body_pose_handler)
+        lc.subscribe('/pose_publish', self.sdf_handler)
             
         # start LCM in background
         threading.Thread(target=lambda: lcm_thread(lc), daemon=True).start()
@@ -279,7 +273,7 @@ if __name__ == '__main__':
     output_file = Path(__file__).parent / "Data" / "hardware_results.yaml"
     # output_file = Path(__file__).parent / "Data" / "poses_result.yaml"
     
-    listener = SDFUpdaterListener(cfg_path, output_file, compute_distance=False, send_ack=False)
+    listener = SDFUpdaterListener(cfg_path, output_file, compute_distance=False, send_ack=True)
     
     # listener.visualize_boxes()
     
