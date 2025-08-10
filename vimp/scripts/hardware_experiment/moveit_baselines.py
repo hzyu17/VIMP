@@ -1,3 +1,4 @@
+from sympy import group
 import yaml
 from rosbridge_library.internal import message_conversion as mc
 from moveit_commander import MoveGroupCommander,RobotCommander
@@ -23,18 +24,60 @@ def read_plan_json_to_numpy(plan_trj_file):
     return pos_trajectory
 
 
+def print_available_pipelines():
+    pipelines = rospy.get_param("/move_group/planning_pipelines")
+    print("Available planning pipelines:", list(pipelines.keys()))
+
+    pipeline = rospy.get_param("/move_group/default_planning_pipeline")
+    print("Default planning pipeline:", pipeline)
+
+    plist = rospy.get_param(f"/move_group/planning_pipelines/{pipeline}/panda_arm/planner_configs")
+    print("Available planners for panda_arm:")
+    print("  " + ", ".join(plist))
+
+
+def print_request_adapters():
+    adapters = rospy.get_param("/move_group/planning_pipelines/ompl/request_adapters")
+    print("Available request adapters:", adapters)
+
+
 class BaselinePlanner:
     def __init__(self, ros_config, exp_config, planner_id='RRTConnect'):
         self._ros_config = ros_config
         self._exp_config = exp_config
 
         self._planner = planner_id
-        
-        rospy.init_node("Baseline planning in moveit...", anonymous=True)
+        rospy.init_node("baseline_planning_moveit", anonymous=True)
 
     
     def set_planner(self, planner_id):
         self._planner = planner_id
+    
+    def set_planning_pipeline_and_planner(self, group, planner_id):
+        planner_id = planner_id.lower()
+        if "+" in planner_id:
+            sampling, optimization = planner_id.replace(" ", "").split("+")
+            # Determine which adapter to use
+            if optimization == "chomp":
+                group.set_planning_pipeline_id("ompl_chomp")
+            elif optimization == "stomp":
+                group.set_planning_pipeline_id("ompl_stomp")
+            else:
+                raise ValueError("Unknown adapter in planner_id")
+            group.set_planner_id(sampling)
+        elif planner_id == "chomp":
+            group.set_planning_pipeline_id("chomp")
+        elif planner_id == "stomp":
+            group.set_planning_pipeline_id("stomp")
+        else:
+            group.set_planning_pipeline_id("ompl")
+            plist = rospy.get_param("/move_group/planning_pipelines/ompl/panda_arm/planner_configs")
+            plist_lower = [p.lower() for p in plist]
+            if planner_id not in plist_lower:
+                rospy.logerr(f"Planner {planner_id} not found in available planners: {plist}")
+                raise ValueError("Invalid planner")
+            orig_planner_id = plist[plist_lower.index(planner_id)]
+            group.set_planner_id(orig_planner_id)
         
     
     def plan_from_start_to_goal_joints(self, 
@@ -66,9 +109,9 @@ class BaselinePlanner:
 
         # 1) Initialize
         robot = RobotCommander()
-        group = MoveGroupCommander(move_group) 
-        group.set_planner_id(self._planner)
-            
+        group = MoveGroupCommander(move_group)
+        self.set_planning_pipeline_and_planner(group, self._planner)
+
         names = group.get_active_joints()
         # print("Active joints: ", names)
         
@@ -113,6 +156,7 @@ class BaselinePlanner:
                 traj_dict = mc.extract_values(traj_msg)
                 result_file = result_dir + "/" + self._planner + "_plan_trj.yaml"
                 
+                os.makedirs(result_dir, exist_ok=True)
                 with open(result_file,'w') as f:
                     yaml.safe_dump(traj_dict, f, default_flow_style=False)
                 print("Plan serialized to plan.yaml")
@@ -140,7 +184,6 @@ class BaselinePlanner:
 
             display_pub.publish(display)
             
-            
             # For visualization in RViz
             pub = rospy.Publisher('/joint_states', JointState, queue_size=1, latch=True)
             # rospy.init_node('start_state_publisher', anonymous=True)
@@ -153,41 +196,14 @@ class BaselinePlanner:
             # latch=True means RViz will get it even if it connects after you publish once
             pub.publish(js)
             rospy.loginfo("Published start joint state, exiting.")
-            
-
-    def print_available_planners(self):
-        
-        with open(self._ros_config) as f:
-            ros_cfg = yaml.safe_load(f)
-            
-        moveit_config_pkg = ros_cfg["moveit_config_pkg"]
-        
-        import rospkg
-        # 1) load ros_config.yaml to locate your moveit config package
-        
-        rospack = rospkg.RosPack()
-        pkg_path = rospack.get_path(moveit_config_pkg)
-        
-        # 2) load ompl_planning.yaml
-        yaml_path = os.path.join(pkg_path, "config", "ompl_planning.yaml")
-        with open(yaml_path) as f:
-            cfg = yaml.safe_load(f)
-        
-        # 3) extract the planner IDs
-        planner_ids = list(cfg["planner_configs"].keys())
-        print("Available planner IDs:")
-        for planner in planner_ids:
-            print("  ", planner)
-
 
     
 if __name__ == '__main__':
     this_dir = os.path.dirname(os.path.abspath(__file__))
-    result_dir = this_dir + "/Data"
-    
-    # Print abailable planners
+    result_dir = this_dir + "/Baselines"
+
+    # Print available planners
     ros_config_file = this_dir + "/config/config_ros.yaml"
-    
         
     exp_cfg_file = this_dir + "/config/config.yaml"
     with open(exp_cfg_file) as f:
@@ -197,17 +213,18 @@ if __name__ == '__main__':
     goal_degrees = cfg["Planning"]["goal_degrees"]
     
     baseline = BaselinePlanner(ros_config_file, exp_cfg_file, planner_id='RRTConnect')
-    baseline.print_available_planners()
-    
+    print_available_pipelines()
+    print_request_adapters()
+
     planners = cfg["Baselines"]["planner_ID"]
     
-    for planner_id in planners:
+    # for planner_id in ["STOMP", "CHOMP", "RRTConnect"]:
+    for planner_id in ["RRTConnect+STOMP"]:
         print("Switching to planner: ", planner_id)
         
         baseline.set_planner(planner_id)
         
-        # Do the plan
+        # Do the plans
         baseline.plan_from_start_to_goal_joints(start_degrees, 
                                                 goal_degrees,
                                                 result_dir=result_dir)
-            

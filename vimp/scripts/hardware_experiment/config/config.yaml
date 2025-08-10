@@ -2,18 +2,47 @@ Field:
   field_origin: [-0.25, -0.75, -0.2] # [x, y, z] The origin of the field in the april tag's frame
   field_size: [150, 150, 140]
   cell_size: 0.01
-  obstacles:
+  obstacles:   # Obstacles in the field corresponding to the bodyframe
     - name: sdf_box_1                   # PC box
       bodyframe: B1
       center: [0.00, -0.185, 0.1525]    # [x, y, z] in metres (wrt frame B)
       orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
       size: [0.095, 0.46, 0.35 ]
-      world_size: [0.35, 0.095, 0.46]
-    # - name: sdf_box_2               # ROBOTIC Box
-    #   bodyframe: B2
-    #   center: [0.10, 0.10, 0.26]    # [x, y, z] in metres (wrt frame B)
+
+    - name: bottom_box 
+      bodyframe: B2
+      center: [-0.0925, 0.0375, 0.14]
+      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+      size: [0.26, 0.015, 0.28]
+    - name: front_box
+      bodyframe: B2
+      center: [-0.0925, -0.0225, 0.0]
+      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+      size: [0.26, 0.12, 0.015]
+    - name: back_box                   # PC box
+      bodyframe: B2
+      center: [-0.0925, -0.0225, 0.28]
+      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+      size: [0.26, 0.12, 0.015]
+    - name: left_box                   # PC box
+      bodyframe: B2
+      center: [-0.2225, -0.0225, 0.14]
+      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+      size: [0.015, 0.12, 0.28]
+    - name: right_box                   # PC box
+      bodyframe: B2
+      center: [0.0375, -0.0225, 0.14]
+      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
+      size: [0.015, 0.12, 0.28]
+    
+    # - name: sdf_box_2                   # ROBOTIC Box
+    #   bodyframe: B1
+    #   center: [0.10, 0.10, 0.26]        # [x, y, z] in metres (wrt frame B)
     #   orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-    #   size: [ 0.425, 0.325, 0.11 ]
+    #   size: [ 0.425, 0.325, 0.11]
+    #   world_size: [0.11, 0.425, 0.325]
+
+    # April tag size is 0.075m, B2 box size is 0.28 x 0.14m x 0.28m, thickness is 0.01m (Cell Size)
 
 Camera:
   config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
@@ -31,12 +60,12 @@ Body_frames:
     position: [-0.0059, -0.0840, 0.4760]    
     orientation: [0.49384907, -0.01634737, 0.00527836, 0.86937794] # quaternion (qx, qy, qz, qw)
     monitor_topic: "/B1_pose"
-    box:
-      name: sdf_box_1
-  # - frame_id: B2
-  #   position: [-1.0, 0.0, 0.0]
-  #   orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-  #   monitor_topic: "/B2_pose"
+    tag_id: 0
+  - frame_id: B2
+    position: [-0.3329, -0.0401, 0.4356]    
+    orientation: [0.49384907, -0.01634737, 0.00527836, 0.86937794] # quaternion (qx, qy, qz, qw)
+    monitor_topic: "/B2_pose"
+    tag_id: 5
   #   box:
   #     name: sdf_box_2
   #     center: [0.420, 0.170, 0.050]
@@ -50,6 +79,7 @@ Sampling:
   collision_threshold: 0
   safety_threshold: 0.03
   window_size: 15
+
 
 Baselines:
   moveit_config_pkg: panda_moveit_config

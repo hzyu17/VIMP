@@ -178,11 +178,11 @@ class PosePublisher:
 
                 info = {
                     "timestamp": int(time.time()),
-                    "statues": "Done",
+                    "status": "Done",
                     # encode the new poses in the message
                 }
                 done_msg = yaml.safe_dump(info).encode('utf-8')
-                self._lc.publish(self._topic_name, done_msg)
+                self._lc.publish(self._topic_name, done_msg) # change to another topic
                 print(f"Published done message to topic {self._topic_name}")
 
                 self._ready_to_publish = False

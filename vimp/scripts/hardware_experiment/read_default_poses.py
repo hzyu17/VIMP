@@ -83,9 +83,6 @@ def load_body_frames_config(path: Path):
         # 3) read out the size (you’ll need to add this in your YAML!)
         sx, sy, sz = entry["size"]
         box_sizes[bname] = (sx, sy, sz)
-
-        wsx, wsy, wsz = entry["world_size"]
-        world_box_sizes[bname] = (wsx, wsy, wsz)
         
     print("body_box")
     print(body_box)
@@ -97,9 +94,8 @@ def load_body_frames_config(path: Path):
     print(box_sizes)
     print("body_default_pose")
     print(body_default_pose)
-    
 
-    return body_box, body_topic, box_rel_poses, box_sizes, body_default_pose, world_box_sizes
+    return body_box, body_topic, box_rel_poses, box_sizes, body_default_pose
 
 def read_body_pose(path: Path):
     """
@@ -121,6 +117,25 @@ def read_body_pose(path: Path):
         body_topic[fname] = topic
 
     return body_default_pose, body_topic
+
+
+def read_body_tags(path: Path):
+    """
+    Reads the tag IDs from a YAML file of the form
+    """
+    data = yaml.safe_load(path.read_text())
+    body_topic = {}
+    tag_body = {}
+
+    for entry in data["Body_frames"]:  
+        topic = entry["monitor_topic"]
+        fname = entry["frame_id"]
+        tag_id = entry["tag_id"]
+
+        body_topic[fname] = topic
+        tag_body[tag_id] = fname
+
+    return body_topic, tag_body
 
 
 def default_occmap_from_yaml(yaml_file):

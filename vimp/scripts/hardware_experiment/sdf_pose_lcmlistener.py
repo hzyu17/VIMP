@@ -39,7 +39,7 @@ class SDFUpdaterListener:
         self.send_ack = send_ack
 
         (self._body_box, self._body_topic, 
-         self._rel_poses, self._sizes, self._body_default_pose, self._world_sizes) = load_body_frames_config(config_file)
+         self._rel_poses, self._sizes, self._body_default_pose) = load_body_frames_config(config_file)
         
         self._grid = default_occmap_from_yaml(config_file)
         
