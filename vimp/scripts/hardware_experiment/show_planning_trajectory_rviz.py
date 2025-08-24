@@ -7,7 +7,7 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 
 def load_yaml_trajectory(yaml_file):
-    """Load a MoveIt‐dumped trajectory from YAML."""
+    """Load a MoveIt-dumped trajectory from YAML."""
     with open(yaml_file, 'r') as f:
         data = yaml.safe_load(f)
 
@@ -71,8 +71,8 @@ def publish_to_rviz(joint_traj):
 if __name__ == '__main__':
     import os
     this_dir = os.path.dirname(os.path.abspath(__file__))
-    result_dir = this_dir + "/Data"
+    result_dir = this_dir + "/Baselines"
     
-    pos_trj = load_yaml_trajectory(result_dir + "/PRM_plan_trj.yaml")
+    pos_trj = load_yaml_trajectory(result_dir + "/RRTConnect+CHOMP_plan_trj.yaml")
     publish_to_rviz(pos_trj)
     # rospy.spin()

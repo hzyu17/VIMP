@@ -18,6 +18,7 @@ def pose_to_matrix(p: Pose):
 
 def matrix_to_pose(T: np.ndarray):
     """4x4 homogeneous matrix ➜ geometry_msgs/Pose."""
+    T = np.asarray(T, dtype=float)
     t = T[:3,  3]
     q = tf.transformations.quaternion_from_matrix(T)
     pose = Pose()
@@ -26,34 +27,58 @@ def matrix_to_pose(T: np.ndarray):
     return pose
 
 
-def read_poses_from_yaml(yaml_path):
-    """
-    Reads a multi-document YAML file where each document has a 'pose'
-    (a 4-by-4 nested list) and a 'timestamp' field.
+def pose_to_dict(pose: Pose):
+    """Convert a geometry_msgs/Pose to a dictionary."""
+    return {
+        "position": {
+            "x": float(pose.position.x),
+            "y": float(pose.position.y),
+            "z": float(pose.position.z),
+        },
+        "orientation": {
+            "x": float(pose.orientation.x),
+            "y": float(pose.orientation.y),
+            "z": float(pose.orientation.z),
+            "w": float(pose.orientation.w),
+        }
+    }
 
-    Returns a list of (pose_matrix, timestamp) tuples:
-      - pose_matrix: a (4,4) numpy array
-      - timestamp: the integer timestamp
-    """
-    poses = []
+
+def dict_to_pose(d: dict):
+    """Convert a dictionary to a geometry_msgs/Pose."""
+    pose = Pose()
+    pose.position.x = d["position"]["x"]
+    pose.position.y = d["position"]["y"]
+    pose.position.z = d["position"]["z"]
+    pose.orientation.x = d["orientation"]["x"]
+    pose.orientation.y = d["orientation"]["y"]
+    pose.orientation.z = d["orientation"]["z"]
+    pose.orientation.w = d["orientation"]["w"]
+    return pose
+
+
+def read_poses_from_yaml(yaml_path):
+    frame_poses = {}
     with open(yaml_path, 'r') as f:
         # safe_load_all will iterate over each document separated by '---'
         for doc in yaml.safe_load_all(f):
             if doc is None:
                 continue
-            pose_list = doc.get('pose')
             timestamp = doc.get('timestamp')
-            if pose_list is None or timestamp is None:
-                continue  # skip docs without the expected fields
+            for frame_id, pose in doc.items():
+                if frame_id == 'timestamp':
+                    continue
+                if isinstance(pose, (list, tuple, np.ndarray)):
+                    pose_mat = np.array(pose, dtype=float)
+                    if pose_mat.shape != (4, 4):
+                        raise ValueError(f"Unexpected pose shape: {pose_mat.shape}")
+                    pose = matrix_to_pose(pose_mat)
+                elif isinstance(pose, dict):
+                    pose = dict_to_pose(pose)
+                
+                frame_poses.setdefault(frame_id, []).append(pose)
 
-            # convert nested Python lists to a NumPy array
-            pose_mat = np.array(pose_list, dtype=float)
-            if pose_mat.shape != (4,4):
-                raise ValueError(f"Unexpected pose shape: {pose_mat.shape}")
-
-            poses.append(pose_mat)
-
-    return poses
+    return frame_poses
 
 
 def get_average_pose(file_path: Path, return_type: str = "matrix"):
@@ -61,44 +86,37 @@ def get_average_pose(file_path: Path, return_type: str = "matrix"):
     from geometry_msgs.msg import Pose
 
     # Read the box poses from the yaml file
-    pose_mats = read_poses_from_yaml(file_path)
-    
-    poses = []
-    for pose_mat in pose_mats:
-        poses.append(matrix_to_pose(pose_mat))
+    frame_poses = read_poses_from_yaml(file_path)
 
-    pos_array = np.array([
-        [p.position.x, p.position.y, p.position.z]
-        for p in poses
-    ])
-    mean_pos = pos_array.mean(axis=0)
+    average_poses = {}
+    for frame_id, poses in frame_poses.items():
+        pos_array = np.array([[p.position.x, p.position.y, p.position.z] for p in poses])
+        mean_pos = pos_array.mean(axis=0)
     
-    quat_array = np.array([
-        [p.orientation.x,
-        p.orientation.y,
-        p.orientation.z,
-        p.orientation.w]
-        for p in poses
-    ])
+        quat_array = np.array([
+            [p.orientation.x, p.orientation.y, p.orientation.z, p.orientation.w]
+            for p in poses
+        ])
     
-    rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
-    mean_rot = rots.mean()
-    mean_q_scipy = mean_rot.as_quat()
+        rots = R.from_quat(quat_array)   # SciPy expects [x, y, z, w]
+        mean_rot = rots.mean()
+        mean_q_scipy = mean_rot.as_quat()
 
-    mean_pose = Pose()
-    mean_pose.position.x, mean_pose.position.y, mean_pose.position.z = mean_pos
-    mean_pose.orientation.x, mean_pose.orientation.y, mean_pose.orientation.z, mean_pose.orientation.w = mean_q_scipy
+        mean_pose = Pose()
+        mean_pose.position.x, mean_pose.position.y, mean_pose.position.z = mean_pos
+        mean_pose.orientation.x, mean_pose.orientation.y, mean_pose.orientation.z, mean_pose.orientation.w = mean_q_scipy
 
-    if return_type.lower() == "pose":
-        return mean_pose
-    elif return_type.lower() == "matrix":
-        # Convert the mean pose to a 4x4 matrix
-        return pose_to_matrix(mean_pose)
-    else:
-        raise ValueError("return_type must be 'pose' or 'matrix'.")
+        if return_type.lower() == "pose":
+            average_poses[frame_id] = mean_pose
+        elif return_type.lower() == "matrix":
+            average_poses[frame_id] = pose_to_matrix(mean_pose)
+        else:
+            raise ValueError("return_type must be 'pose' or 'matrix'.")
+
+    return average_poses
 
 if __name__ == "__main__":
-    box_pose_file = Path(__file__).parent / "Data" / "box_poses.yaml"
+    box_pose_file = Path(__file__).parent / "Data" / "box_poses_webcam.yaml"
     mat = get_average_pose(box_pose_file, "pose")
     print("Mean pose matrix from camera:")
     print(mat)

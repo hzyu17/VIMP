@@ -48,33 +48,33 @@ if(BUILD_CPU_GVIMP)
 endif()
 
 if(BUILD_GPU_GVIMP)
-  file(GLOB_RECURSE VIMP_SOURCES src/gvimp_cuda/*.cpp)
-  foreach(vimp_source ${VIMP_SOURCES})
-      get_filename_component(vimp_name ${vimp_source} NAME_WE)
-      add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/CudaOperation.cu)
-      set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
-      set_target_properties(${vimp_name} PROPERTIES
-                              RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-                              )   
-      target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
-      target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
-                            ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
-                            ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
-                            ${CUDA_cusparse_LIBRARY} yaml-cpp) 
-  endforeach()
-
-  # add_executable(Franka src/gvimp_cuda/gvi_FrankaArm_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
-  # set_target_properties(Franka PROPERTIES LINKER_LANGUAGE CXX)
-  # set_target_properties(Franka PROPERTIES
-  #                         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
-  #                         )   
-  # target_include_directories(Franka PRIVATE ${Matlab_INCLUDE_DIRS})
-  # target_link_libraries(Franka ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+  # file(GLOB_RECURSE VIMP_SOURCES src/gvimp_cuda/*.cpp)
+  # foreach(vimp_source ${VIMP_SOURCES})
+  #     get_filename_component(vimp_name ${vimp_source} NAME_WE)
+  #     add_executable(${vimp_name} ${vimp_source} GaussianVI/helpers/CudaOperation.cu)
+  #     set_target_properties(${vimp_name} PROPERTIES LINKER_LANGUAGE CXX)
+  #     set_target_properties(${vimp_name} PROPERTIES
+  #                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+  #                             )   
+  #     target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
+  #     target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
   #                           ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
   #                           ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
   #                           ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
-  #                           ${CUDA_cusparse_LIBRARY}) 
+  #                           ${CUDA_cusparse_LIBRARY} yaml-cpp) 
+  # endforeach()
+
+  add_executable(Franka src/gvimp_cuda/gvi_FrankaArm_spgh_cuda.cpp GaussianVI/helpers/CudaOperation.cu)
+  set_target_properties(Franka PROPERTIES LINKER_LANGUAGE CXX)
+  set_target_properties(Franka PROPERTIES
+                          RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/gvimp"
+                          )   
+  target_include_directories(Franka PRIVATE ${Matlab_INCLUDE_DIRS})
+  target_link_libraries(Franka ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
+                            ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
+                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 ${GSL_LIBRARIES} 
+                            ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_CUDART_LIBRARY} 
+                            ${CUDA_cusparse_LIBRARY}) 
 endif()
 
 if(BUILD_KL_PROXIMAL)

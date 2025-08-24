@@ -99,7 +99,7 @@ if __name__ == "__main__":
     exp_cfg_file = this_dir + "/config/config.yaml"
 
     pose_file = this_dir + "/Data/Worst_poses.yaml"
-    # pose_file = this_dir + "/Data/Exp_poses.yaml"
+    # pose_file = this_dir + "/Data/disturbed_poses.yaml"
     result_file = this_dir + "/Data/hardware_results.yaml"
 
     gather_results(Path(pose_file), Path(result_file))

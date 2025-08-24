@@ -9,7 +9,7 @@ from pathlib import Path
 from ack_lcm.acknowledgment.ack_t import ack_t
 import lcm
 from read_default_poses import read_cam_pose, read_body_pose
-from pose_helpers import matrix_to_pose, pose_to_matrix
+from pose_helpers import matrix_to_pose, pose_to_matrix, pose_to_dict
 
 
 def make_random_msg():
@@ -27,7 +27,7 @@ def make_random_msg():
 
 
 class PosePublisher:
-    def __init__(self, topic_name, wait_key=False, output_file: str = 'Data/poses_111.yaml'):
+    def __init__(self, topic_name, wait_key=False, output_file: str = 'Data/poses_123.yaml'):
         self._wait_key = wait_key
         self._topic_name = topic_name  # Send message to this topic when the pose publishing is done
 
@@ -91,26 +91,26 @@ class PosePublisher:
         self._pubs[frame_id].publish(pose_msg)
         print("Published pose to ROS topic ", self._topics[frame_id])
         
-        # Record the poses in the json file
-        entry = {
-            "timestamp": lcm_msg.timestamp, # Use lcm message timestamp
-            "position": {
-                "x": float(pose_msg.pose.position.x),
-                "y": float(pose_msg.pose.position.y),
-                "z": float(pose_msg.pose.position.z),
-            },
-            "orientation": {
-                "x": float(pose_msg.pose.orientation.x),
-                "y": float(pose_msg.pose.orientation.y),
-                "z": float(pose_msg.pose.orientation.z),
-                "w": float(pose_msg.pose.orientation.w),
-            },
-        }
-        # write exactly one JSON object per line
-        yaml.safe_dump(entry, self._output_yaml)
-        # add document separator
-        self._output_yaml.write('---\n')
-        self._output_yaml.flush()
+        # # Record the poses in the json file
+        # entry = {
+        #     "timestamp": lcm_msg.timestamp, # Use lcm message timestamp
+        #     "position": {
+        #         "x": float(pose_msg.pose.position.x),
+        #         "y": float(pose_msg.pose.position.y),
+        #         "z": float(pose_msg.pose.position.z),
+        #     },
+        #     "orientation": {
+        #         "x": float(pose_msg.pose.orientation.x),
+        #         "y": float(pose_msg.pose.orientation.y),
+        #         "z": float(pose_msg.pose.orientation.z),
+        #         "w": float(pose_msg.pose.orientation.w),
+        #     },
+        # }
+        # # write exactly one JSON object per line
+        # yaml.safe_dump(entry, self._output_yaml)
+        # # add document separator
+        # self._output_yaml.write('---\n')
+        # self._output_yaml.flush()
         
     
     def _on_shutdown(self):
@@ -134,7 +134,7 @@ class PosePublisher:
                         self._ready_to_publish = True
             
             if self._ready_to_publish:
-                
+                entry = {"timestamp": int(time.time())}
                 for frame_id, default_pose in self._default_poses.items():
                     if self._first_time:
                         x_rand, y_rand, theta_rand = 0, 0, 0
@@ -174,16 +174,23 @@ class PosePublisher:
 
                     self._new_poses[frame_id] = new_body_pose
                     self.publish_pose(new_body_pose, frame_id, topic)
+
+                    new_pose = matrix_to_pose(new_body_pose)
+                    entry[frame_id] = pose_to_dict(new_pose)
                     time.sleep(0.1)  # Add a small delay to control the loop speed
 
                 info = {
                     "timestamp": int(time.time()),
                     "status": "Done",
-                    # encode the new poses in the message
                 }
+                
                 done_msg = yaml.safe_dump(info).encode('utf-8')
                 self._lc.publish(self._topic_name, done_msg) # change to another topic
                 print(f"Published done message to topic {self._topic_name}")
+
+                yaml.safe_dump(entry, self._output_yaml)
+                self._output_yaml.write('---\n')
+                self._output_yaml.flush()
 
                 self._ready_to_publish = False
                 self._first_time = False

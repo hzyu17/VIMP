@@ -9,32 +9,59 @@ Field:
       orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
       size: [0.095, 0.46, 0.35 ]
 
+    # - name: bottom_box 
+    #   bodyframe: B2
+    #   center: [-0.03, 0.055, 0.085]
+    #   orientation: [0.0, 0.0, 0.0, 1.0]
+    #   size: [0.28, 0.015, 0.20]
+    # - name: front_box
+    #   bodyframe: B2
+    #   center: [-0.03, -0.01, -0.005]
+    #   orientation: [0.0, 0.0, 0.0, 1.0]
+    #   size: [0.28, 0.14, 0.02]
+    # - name: back_box
+    #   bodyframe: B2
+    #   center: [-0.03, -0.01, 0.175]
+    #   orientation: [0.0, 0.0, 0.0, 1.0]
+    #   size: [0.28, 0.14, 0.02]
+    # - name: left_box
+    #   bodyframe: B2
+    #   center: [-0.1525, -0.01, 0.085]
+    #   orientation: [0.0, 0.0, 0.0, 1.0]
+    #   size: [0.035, 0.14, 0.20]
+    # - name: right_box
+    #   bodyframe: B2
+    #   center: [0.0925, -0.01, 0.085]
+    #   orientation: [0.0, 0.0, 0.0, 1.0]
+    #   size: [0.035, 0.14, 0.20]
+
+
     - name: bottom_box 
       bodyframe: B2
-      center: [-0.0925, 0.0375, 0.14]
-      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-      size: [0.26, 0.015, 0.28]
+      center: [-0.0725, 0.035, 0.0925]
+      orientation: [0.0, 0.0, 0.0, 1.0]
+      size: [0.345, 0.02, 0.205]
     - name: front_box
       bodyframe: B2
-      center: [-0.0925, -0.0225, 0.0]
-      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-      size: [0.26, 0.12, 0.015]
-    - name: back_box                   # PC box
+      center: [-0.0725, -0.01375, 0.0]
+      orientation: [0.0, 0.0, 0.0, 1.0]
+      size: [0.345, 0.1175, 0.02]
+    - name: back_box
       bodyframe: B2
-      center: [-0.0925, -0.0225, 0.28]
-      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-      size: [0.26, 0.12, 0.015]
-    - name: left_box                   # PC box
+      center: [-0.0725, -0.01375, 0.185]
+      orientation: [0.0, 0.0, 0.0, 1.0]
+      size: [0.345, 0.1175, 0.02]
+    - name: left_box
       bodyframe: B2
-      center: [-0.2225, -0.0225, 0.14]
-      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-      size: [0.015, 0.12, 0.28]
-    - name: right_box                   # PC box
+      center: [-0.235, -0.01375, 0.0925]
+      orientation: [0.0, 0.0, 0.0, 1.0]
+      size: [0.02, 0.1175, 0.205]
+    - name: right_box
       bodyframe: B2
-      center: [0.0375, -0.0225, 0.14]
-      orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
-      size: [0.015, 0.12, 0.28]
-    
+      center: [0.09, -0.01375, 0.0925]
+      orientation: [0.0, 0.0, 0.0, 1.0]
+      size: [0.02, 0.1175, 0.205]
+
     # - name: sdf_box_2                   # ROBOTIC Box
     #   bodyframe: B1
     #   center: [0.10, 0.10, 0.26]        # [x, y, z] in metres (wrt frame B)
@@ -65,7 +92,7 @@ Body_frames:
     position: [-0.3329, -0.0401, 0.4356]    
     orientation: [0.49384907, -0.01634737, 0.00527836, 0.86937794] # quaternion (qx, qy, qz, qw)
     monitor_topic: "/B2_pose"
-    tag_id: 5
+    tag_id: 2
   #   box:
   #     name: sdf_box_2
   #     center: [0.420, 0.170, 0.050]
@@ -118,7 +145,7 @@ Planning:
   start_pos: [-0.8, -1.70, 1.64, 1.29, 1.1, -0.106, 2.2]
   goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
 
-  saving_prefix: scripts/hardware_experiment/Data/Paper_Result
+  saving_prefix: scripts/hardware_experiment/Data/GVIMP_Result
 
   config_file: "vimp/scripts/hardware_experiment/config/franka_dh.yaml"
   disturbed_sdf: "vimp/scripts/hardware_experiment/Data/FrankaHardware_cereal.bin"
