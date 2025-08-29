@@ -218,8 +218,7 @@ if __name__ == '__main__':
 
     planners = cfg["Baselines"]["planner_ID"]
     
-    # for planner_id in ["STOMP", "CHOMP", "RRTConnect"]:
-    for planner_id in ["RRTConnect+STOMP"]:
+    for planner_id in planners:
         print("Switching to planner: ", planner_id)
         
         baseline.set_planner(planner_id)

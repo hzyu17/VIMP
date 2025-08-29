@@ -71,8 +71,9 @@ def publish_to_rviz(joint_traj):
 if __name__ == '__main__':
     import os
     this_dir = os.path.dirname(os.path.abspath(__file__))
+    # result_dir = this_dir + "/Data/Paper_Result/Baselines"
     result_dir = this_dir + "/Baselines"
     
-    pos_trj = load_yaml_trajectory(result_dir + "/RRTConnect+CHOMP_plan_trj.yaml")
+    pos_trj = load_yaml_trajectory(result_dir + "/RRTConnect_plan_trj.yaml")
     publish_to_rviz(pos_trj)
     # rospy.spin()

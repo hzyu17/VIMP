@@ -9,33 +9,6 @@ Field:
       orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
       size: [0.095, 0.46, 0.35 ]
 
-    # - name: bottom_box 
-    #   bodyframe: B2
-    #   center: [-0.03, 0.055, 0.085]
-    #   orientation: [0.0, 0.0, 0.0, 1.0]
-    #   size: [0.28, 0.015, 0.20]
-    # - name: front_box
-    #   bodyframe: B2
-    #   center: [-0.03, -0.01, -0.005]
-    #   orientation: [0.0, 0.0, 0.0, 1.0]
-    #   size: [0.28, 0.14, 0.02]
-    # - name: back_box
-    #   bodyframe: B2
-    #   center: [-0.03, -0.01, 0.175]
-    #   orientation: [0.0, 0.0, 0.0, 1.0]
-    #   size: [0.28, 0.14, 0.02]
-    # - name: left_box
-    #   bodyframe: B2
-    #   center: [-0.1525, -0.01, 0.085]
-    #   orientation: [0.0, 0.0, 0.0, 1.0]
-    #   size: [0.035, 0.14, 0.20]
-    # - name: right_box
-    #   bodyframe: B2
-    #   center: [0.0925, -0.01, 0.085]
-    #   orientation: [0.0, 0.0, 0.0, 1.0]
-    #   size: [0.035, 0.14, 0.20]
-
-
     - name: bottom_box 
       bodyframe: B2
       center: [-0.0725, 0.035, 0.0925]
@@ -63,17 +36,15 @@ Field:
       size: [0.02, 0.1175, 0.205]
 
     # - name: sdf_box_2                   # ROBOTIC Box
-    #   bodyframe: B1
+    #   bodyframe: B3
     #   center: [0.10, 0.10, 0.26]        # [x, y, z] in metres (wrt frame B)
     #   orientation: [0.0, 0.0, 0.0, 1.0] # quaternion (qx, qy, qz, qw)
     #   size: [ 0.425, 0.325, 0.11]
     #   world_size: [0.11, 0.425, 0.325]
 
-    # April tag size is 0.075m, B2 box size is 0.28 x 0.14m x 0.28m, thickness is 0.01m (Cell Size)
 
 Camera:
   config_file: "vimp/scripts/hardware_experiment/UTF-8realsense_high_d435_no_table_tuned_p2048_w_icp.json"
-  # config_file: "vimp/scripts/hardware_experiment/config/fake_camera.json"
   apriltag_lcm_topic: "EXAMPLE"
   apriltag_families: 'tag25h9' # Change in vimp/thirdparty/AprilTag/scripts/apriltag.py
 
@@ -83,23 +54,39 @@ April_tags:
     attached_frame: B1
 
 Body_frames:
+  # - frame_id: B1
+  #   position: [-0.0059, -0.0840, 0.4760]    
+  #   orientation: [0.49384907, -0.01634737, 0.00527836, 0.86937794] # quaternion (qx, qy, qz, qw)
+  #   monitor_topic: "/B1_pose"
+  #   tag_id: 0
+  # - frame_id: B2
+  #   position: [-0.3329, -0.0401, 0.4356]    
+  #   orientation: [0.49384907, -0.01634737, 0.00527836, 0.86937794] # quaternion (qx, qy, qz, qw)
+  #   monitor_topic: "/B2_pose"
+  #   tag_id: 2
+
   - frame_id: B1
-    position: [-0.0059, -0.0840, 0.4760]    
-    orientation: [0.49384907, -0.01634737, 0.00527836, 0.86937794] # quaternion (qx, qy, qz, qw)
+    position: [0.059852714651860886, -0.050098688110900555, 0.49502800259602886]
+    orientation: [0.492072445658829, -0.014621735924011392, 0.004649765432167939, 0.8704190328475896] # quaternion (qx, qy, qz, qw)
     monitor_topic: "/B1_pose"
     tag_id: 0
   - frame_id: B2
-    position: [-0.3329, -0.0401, 0.4356]    
-    orientation: [0.49384907, -0.01634737, 0.00527836, 0.86937794] # quaternion (qx, qy, qz, qw)
+    position: [-0.16942416870181085, -0.09651367199740188, 0.5221008854555029]
+    orientation: [0.5091666484451798, -0.03295078781422578, 0.008378050191564132, 0.8599961499730752] # quaternion (qx, qy, qz, qw)
     monitor_topic: "/B2_pose"
     tag_id: 2
-  #   box:
-  #     name: sdf_box_2
-  #     center: [0.420, 0.170, 0.050]
-  #     orientation: [0.0, 0.0, 0.0, 1.0]   
-  #     size: [ 0.58, 0.58, 0.02 ]
-  #     cell_size: 0.01 
-  
+
+  # - frame_id: B1
+  #   position: [0.12632846779566242, -0.03494785508066773, 0.48343150932196927]
+  #   orientation: [0.4907476689392547, 0.08253720364564286, 0.05763016713099148, 0.8654669833572505] # quaternion (qx, qy, qz, qw)
+  #   monitor_topic: "/B1_pose"
+  #   tag_id: 0
+  # - frame_id: B2
+  #   position: [-0.1374176856968198, -0.11647305222815527, 0.5439849295748657]
+  #   orientation: [0.5259020940179194, -0.02746863702609207, 0.011878078675967753, 0.8500184543493533] # quaternion (qx, qy, qz, qw)
+  #   monitor_topic: "/B2_pose"
+  #   tag_id: 2
+
 
 Sampling:
   max_iters: 30000
@@ -110,7 +97,7 @@ Sampling:
 
 Baselines:
   moveit_config_pkg: panda_moveit_config
-  planner_ID: ['RRT', 'RRTConnect', 'RRTstar', 'PRM', 'LBKPIECE']
+  planner_ID: ['RRT', 'RRTConnect', 'RRTstar', 'PRM', 'LBKPIECE', "RRTConnect+CHOMP", "RRTConnect+STOMP"]
 
 
 Planning:
@@ -139,13 +126,17 @@ Planning:
   # start_degrees: [-40, 40, -21, -127, 52, 168, 110]
   # goal_degrees: [37, 69, -7, -75, 3, 149, -112]
 
-  start_degrees: [-23.2, 31.7, -27.2, -130.7, 35.1, 155.4, -39.5]
-  goal_degrees: [57.9, 55.2, -39.3, -86.4, 40.2, 130.0, 51.0]
+  # start_degrees: [-23.2, 31.7, -27.2, -130.7, 35.1, 155.4, -39.5]
+  # goal_degrees: [57.9, 55.2, -39.3, -86.4, 40.2, 130.0, 51.0]
 
   start_pos: [-0.8, -1.70, 1.64, 1.29, 1.1, -0.106, 2.2]
   goal_pos:  [-0.0,  0.94, 0.00, 1.6, 0.0, -0.919, 1.55]
 
-  saving_prefix: scripts/hardware_experiment/Data/GVIMP_Result
+
+  start_degrees: [-56, 21, 23, -141, -24, 162, 36]
+  goal_degrees: [57.9, 55.2, -39.3, -86.4, 40.2, 130.0, 51.0]
+
+  saving_prefix: scripts/hardware_experiment/Data/GVIMP_Hardware_Result
 
   config_file: "vimp/scripts/hardware_experiment/config/franka_dh.yaml"
   disturbed_sdf: "vimp/scripts/hardware_experiment/Data/FrankaHardware_cereal.bin"

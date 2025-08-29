@@ -34,7 +34,7 @@ sdf_dir = this_dir + "/../../scripts/hardware_experiment/Data/FrankaHardware_cer
 # sdf_original.loadSDF(sdf_dir)
 
 class SDFUpdaterListener:
-    def __init__(self, config_file, output_file='disturbed_results_new.yaml', compute_distance=False, send_ack=True, save_sdf=False):
+    def __init__(self, config_file, output_file='disturbed_results.yaml', compute_distance=False, send_ack=True, save_sdf=False):
         self.compute_distance = compute_distance  # If True, compute and compare the distances of the baseline and GVIMP
         self.send_ack = send_ack
         self.save_sdf = save_sdf
@@ -65,7 +65,7 @@ class SDFUpdaterListener:
         if self.compute_distance:
             baseline_IDs = cfg["Baselines"]["planner_ID"]
             
-            self._baslines = {}
+            self._baselines = {}
             for id in baseline_IDs:
                 filename = f"{id}_plan_trj.yaml"
                 baseline_file = Path(__file__).parent / "Baselines" / filename
@@ -74,7 +74,7 @@ class SDFUpdaterListener:
                     print("There is no baseline trajectory file!")
                     continue
                 
-                self._baslines[id] = read_plan_json_to_numpy(baseline_file)
+                self._baselines[id] = read_plan_json_to_numpy(baseline_file)
             
             self._fk = read_forwardkinematic_from_config(planning_cfgfile)
 
@@ -153,7 +153,7 @@ class SDFUpdaterListener:
         print("Received info: ", msg)
 
         self._grid = merge_same_shape(self._body_occ)
-        self._grid.visualize()
+        # self._grid.visualize()
     
         # Generate new sdf after the pose transformation
         field3D = SignedDistanceField3D.generate_field3D(self._grid.map.detach().numpy(), cell_size=self._grid.cell_size)
@@ -176,7 +176,7 @@ class SDFUpdaterListener:
         if self.compute_distance:
             first_body_pose = next(iter(self._body_poses.values()))
             timestamp = msg["timestamp"]
-            for id, trj in self._baslines.items():
+            for id, trj in self._baselines.items():
 
                 # print("Checking collisions for the baseline planner: ", id)
                 min_dist_baseline = collision_checking(sdf, self._fk, trj)
@@ -273,12 +273,9 @@ class SDFUpdaterListener:
 if __name__ == '__main__':       
     
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    output_file = Path(__file__).parent / "Data" / "hardware_results.yaml"
-    # output_file = Path(__file__).parent / "Data" / "poses_result.yaml"
-    
+    output_file = Path(__file__).parent / "Data" / "hardware_results_new.yaml"
+
     listener = SDFUpdaterListener(cfg_path, output_file, compute_distance=True, send_ack=False, save_sdf=False)
-    
-    # listener.visualize_boxes()
-    
+
     listener.run()
     

@@ -59,6 +59,7 @@ def dict_to_pose(d: dict):
 
 def read_poses_from_yaml(yaml_path):
     frame_poses = {}
+    timestamps = []
     with open(yaml_path, 'r') as f:
         # safe_load_all will iterate over each document separated by '---'
         for doc in yaml.safe_load_all(f):
@@ -77,8 +78,27 @@ def read_poses_from_yaml(yaml_path):
                     pose = dict_to_pose(pose)
                 
                 frame_poses.setdefault(frame_id, []).append(pose)
+                
+            timestamps.append(timestamp)
 
-    return frame_poses
+    return frame_poses, timestamps
+
+
+def read_poses_from_yaml_single_obstacle(yaml_path):
+    frame_id = 'B1'
+    frame_poses = {}
+    timestamps = []
+    with open(yaml_path, 'r') as f:
+        for doc in yaml.safe_load_all(f):
+            if doc is None:
+                continue
+            timestamp = doc.get('timestamp')
+            pose = dict_to_pose(doc)
+            frame_poses.setdefault(frame_id, []).append(pose)
+            timestamps.append(timestamp)
+
+    return frame_poses, timestamps
+
 
 
 def get_average_pose(file_path: Path, return_type: str = "matrix"):
@@ -116,7 +136,7 @@ def get_average_pose(file_path: Path, return_type: str = "matrix"):
     return average_poses
 
 if __name__ == "__main__":
-    box_pose_file = Path(__file__).parent / "Data" / "box_poses_webcam.yaml"
+    box_pose_file = Path(__file__).parent / "Data" / "disturbed_poses.yaml"
     mat = get_average_pose(box_pose_file, "pose")
     print("Mean pose matrix from camera:")
     print(mat)

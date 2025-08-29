@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 from collections import defaultdict
 from typing import Any, Dict, List
-from pose_helpers import pose_to_matrix
+from pose_helpers import pose_to_matrix, dict_to_pose
 from geometry_msgs.msg import Pose
 
 def load_multi_doc(file: Path) -> List[Dict[str, Any]]:
@@ -56,18 +56,11 @@ def gather_results(poses_file: Path,
     print("minimum index:", min_idx)
     pose_worse_dict = poses_doc[min_idx]
     print("pose_worse:", pose_worse_dict)
-    worst_pose = Pose()
-    worst_pose.position.x = pose_worse_dict["position"]["x"]
-    worst_pose.position.y = pose_worse_dict["position"]["y"]
-    worst_pose.position.z = pose_worse_dict["position"]["z"]
-    worst_pose.orientation.x = pose_worse_dict["orientation"]["x"]
-    worst_pose.orientation.y = pose_worse_dict["orientation"]["y"]
-    worst_pose.orientation.z = pose_worse_dict["orientation"]["z"]
-    worst_pose.orientation.w = pose_worse_dict["orientation"]["w"]
-    print("worst pose:", worst_pose)
+    # worst_pose = dict_to_pose(pose_worse_dict)
+    # print("worst pose:", worst_pose)
 
-    pose_mat = pose_to_matrix(worst_pose)
-    print("worst pose matrix:", pose_mat)
+    # pose_mat = pose_to_matrix(worst_pose)
+    # print("worst pose matrix:", pose_mat)
 
     
     for planner_id, dists in min_dists.items():
@@ -92,15 +85,16 @@ def gather_results(poses_file: Path,
 
     print("Average distances:", averages)
 
-    
 
 if __name__ == "__main__":
     this_dir = os.path.dirname(os.path.abspath(__file__))
     exp_cfg_file = this_dir + "/config/config.yaml"
 
-    pose_file = this_dir + "/Data/Worst_poses.yaml"
-    # pose_file = this_dir + "/Data/disturbed_poses.yaml"
-    result_file = this_dir + "/Data/hardware_results.yaml"
+    # # pose_file = this_dir + "/Data/Paper_Result/disturbed_poses.yaml"
+    # pose_file = this_dir + "/Data/Paper_Result/Worst_poses.yaml"
+    # result_file = this_dir + "/Data/Paper_Result/hardware_results.yaml"
+
+    pose_file = this_dir + "/Data/box_poses_d435_disturb.yaml"
+    result_file = this_dir + "/Data/hardware_results_new.yaml"
 
     gather_results(Path(pose_file), Path(result_file))
-        
