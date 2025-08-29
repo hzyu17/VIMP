@@ -17,7 +17,7 @@ class CameraRedisPubInterface():
     """
     This is the Python Interface for writing img info / img data buffer to redis server.
     """
-    def __init__(self, redis_host="172.16.0.1", redis_port=6379, camera_id=0):
+    def __init__(self, redis_host="localhost", redis_port=6379, camera_id=0):
         self.redis_host = redis_host
         self.redis_port = redis_port
         self.info_redis = redis.StrictRedis(
@@ -83,7 +83,7 @@ class CameraRedisSubInterface():
     """
     This is the Python Interface for getting image name from redis server. You need to make sure that camera processes are running and images are published to redis server.
     """
-    def __init__(self, redis_host="172.16.0.1", redis_port=6379, camera_id=0, use_color=True, use_depth=False):
+    def __init__(self, redis_host="localhost", redis_port=6379, camera_id=0, use_color=True, use_depth=False):
         self.redis_host = redis_host
         self.redis_port = redis_port
         self.info_redis = redis.StrictRedis(

@@ -25,6 +25,22 @@ from pathlib import Path
 
 from scipy.spatial.transform import Rotation as R
 
+import pyrealsense2 as rs
+import numpy as np
+import cv2
+from pupil_apriltags import Detector
+
+# Create pipeline
+pipeline = rs.pipeline()
+config = rs.config()
+
+# Enable color and depth streams
+config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+
+# Start streaming
+pipeline.start(config)
+
 class CameraAprilTagReader:
     def __init__(self, config_file, buffer_size, topic_name, wait_key=False):
         self._body_topic, self._tag_body = read_body_tags(config_file)
@@ -40,8 +56,18 @@ class CameraAprilTagReader:
 
         self._output = []
         self._count_output = 0
-        output_file = Path(__file__).parent / "Data" / "box_poses.yaml"
+        output_file = Path(__file__).parent / "Data" / "box_poses_d435_disturb.yaml"
         self._output_yaml = open(output_file, 'a')
+
+        self._dector = Detector(
+            families='tag25h9',
+            nthreads=1,
+            quad_decimate=1.0,
+            quad_sigma=0.0,
+            refine_edges=1,
+            decode_sharpening=0.25,
+            debug=0
+        )
         
         rospy.init_node('apriltag_D435', anonymous=True)
         self._pubs = {frame_id: rospy.Publisher(topic, PoseStamped, queue_size=10) 
@@ -69,24 +95,35 @@ class CameraAprilTagReader:
     
     
     def read_april_tag(self):
-        json_str = self._cam_receiver.info_redis.get(f"{self._cam_receiver.camera_name}::last_img_info")
-        if json_str is not None:
-            for _ in range(5):
-                self._cam_receiver.save_img(flag=True)
-                time.sleep(0.02)
+        # json_str = self._cam_receiver.info_redis.get(f"{self._cam_receiver.camera_name}::last_img_info")
+        # if json_str is not None:
+        #     for _ in range(5):
+        #         self._cam_receiver.save_img(flag=True)
+        #         time.sleep(0.02)
 
-        raw_frame = self._cam_receiver.get_img()
-        rgb_img = cv2.cvtColor(np.array(raw_frame["color"]), cv2.COLOR_BGR2RGB)
+        # raw_frame = self._cam_receiver.get_img()
+        # rgb_img = cv2.cvtColor(np.array(raw_frame["color"]), cv2.COLOR_BGR2RGB)
+
+        frames = pipeline.wait_for_frames()
+        color_frame = frames.get_color_frame()
+        # depth_frame = frames.get_depth_frame()
+
+        # Convert images to numpy arrays
+        rgb_img = np.asanyarray(color_frame.get_data())
+        # depth_image = np.asanyarray(depth_frame.get_data())
 
         cv2.imshow("live", rgb_img)     
         if cv2.waitKey(1) == 27:      
             return False
         
-        poses = apriltag_image2poses(input_img_numpy=rgb_img,
+        poses = apriltag_image2poses(detector=self._dector,
+                                    input_img_numpy=rgb_img,
                                     display_images=False,
                                     detection_window_name='AprilTag',
                                     tag_size=self._tag_size,
                                     camera_params=self._d435_params)
+        
+        # print(poses)
         
         if poses is not None:
             with self._lock:
@@ -119,7 +156,7 @@ class CameraAprilTagReader:
                 pose_msg.header.frame_id = "camera_frame"
                 pose_msg.pose = matrix_to_pose(pose)
 
-                self._pub[frame_id].publish(pose_msg)
+                self._pubs[frame_id].publish(pose_msg)
                 entry[frame_id] = pose_to_dict(pose_msg.pose)
                 print("Published pose to ROS topic ", self._body_topic[frame_id])
 
