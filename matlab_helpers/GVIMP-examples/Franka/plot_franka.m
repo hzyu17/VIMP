@@ -160,7 +160,7 @@ for j = 1:nt
     end
     plotArm3D(arm.fk_model(), mean, color, 4, true);
 
-    % centers = arm.sphereCentersMat(mean_resample);
+    % centers = arm.sphereCentersMat(mean);
     % plot3(centers(1,:), centers(2,:), centers(3,:), 'g.', 'MarkerSize', 25);
 end
 
