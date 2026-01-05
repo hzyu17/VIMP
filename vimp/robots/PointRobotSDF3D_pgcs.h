@@ -55,7 +55,7 @@ class PointRobot3DSDFExample:public RobotSDFBase<PRModel, SDF, pRSDF>{
             /// Robot model
             gpmp2::PointRobot pR(_ndof, _nlinks);
             gpmp2::BodySphereVector body_spheres;
-            body_spheres.push_back(gpmp2::BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
+            body_spheres.push_back(gpmp2::BodySphere(0, r, gtsam::Point3(0.0, 0.0, 0.0)));
             _robot = PRModel(pR, body_spheres);
 
             _psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), _robot, sdf, 0.0, _eps));

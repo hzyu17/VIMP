@@ -1,12 +1,10 @@
 /**
  * @file ProximalGradientCSLinearDyn.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Proximal gradient algorithm for nonlinear covariance steering, with linear dynamics. 
+ * @brief Proximal gradient covariance steering with linear dynamics.
  * @version 0.1
  * @date 2023-03-15
- * 
  * @copyright Copyright (c) 2023
- * 
  */
 
 #pragma once
@@ -14,101 +12,96 @@
 #include "dynamics/LinearDynamics.h"
 #include "ProximalGradientCovarianceSteering.h"
 
-using namespace Eigen;
+namespace vimp {
 
-namespace vimp{
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
 
-class ProxGradCovSteerLinDyn: public ProxGradCovSteer{
+/**
+ * @brief Proximal Gradient Covariance Steering for linear dynamics.
+ *
+ * Specializes ProxGradCovSteer for systems with known linear dynamics,
+ * where the linearization (hA, ha) comes directly from the dynamics model.
+ */
+class ProxGradCovSteerLinDyn : public ProxGradCovSteer {
 public:
-    ProxGradCovSteerLinDyn(){};
+    ProxGradCovSteerLinDyn() = default;
+    virtual ~ProxGradCovSteerLinDyn() = default;
 
-    virtual ~ProxGradCovSteerLinDyn(){}
-
-    ProxGradCovSteerLinDyn(const MatrixXd& A0, 
-                            const VectorXd& a0, 
-                            const MatrixXd& B,
-                            const std::shared_ptr<LinearDynamics>& pdyn,
-                            const PGCSParams& params):
-                            ProxGradCovSteer(A0, a0, B, params),
-                            _pdyn(pdyn){
-                                _hAkt = pdyn->At();
-                                _Bt = pdyn->Bt();
-                                _hakt = pdyn->at();
-                            }
-
-    /**
-     * @brief Solving a linear covariance steering at each iteration.
-     * @return none, but inside already compute (K, d).
-     */
-    void step(int indx) override{
-
-        // propagate the mean and the covariance
-        propagate_nominal();
-
-        MatrixXd Aprior = _Akt / (1+_eta) + _hAkt * _eta / (1+_eta);
-        MatrixXd aprior = _akt / (1+_eta) + _hakt * _eta / (1+_eta);
-        
-        // Update Qkt, rkt
-        update_Qrk();
-
-        // solve inner loop linear CS
-        solve_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
-
+    ProxGradCovSteerLinDyn(const MatrixXd& A0,
+                           const VectorXd& a0,
+                           const MatrixXd& B,
+                           const std::shared_ptr<LinearDynamics>& pdyn,
+                           const PGCSParams& params)
+        : ProxGradCovSteer(A0, a0, B, params)
+        , _pdyn(pdyn)
+    {
+        // Initialize linearization from dynamics model
+        _hAkt = pdyn->At();
+        _Bt = pdyn->Bt();
+        _hakt = pdyn->at();
     }
 
-    StepResult step(int indx, double step_size, 
-                    const Matrix3D& At, const Matrix3D& Bt, const Matrix3D& at, 
-                    const Matrix3D& zt, const Matrix3D& Sigt){}
+    /**
+     * @brief Perform one optimization step.
+     *
+     * 1. Propagate nominal mean and covariance
+     * 2. Compute proximal-weighted prior dynamics
+     * 3. Update cost matrices Qk, rk
+     * 4. Solve linear covariance steering subproblem
+     */
+    void step(int indx) override {
+        propagate_nominal();
+
+        // Proximal averaging: A_prior = (A + η*hA) / (1 + η)
+        MatrixXd Aprior = (_Akt + _hAkt * _eta) / (1 + _eta);
+        MatrixXd aprior = (_akt + _hakt * _eta) / (1 + _eta);
+
+        update_Qrk();
+        solve_linearCS(Aprior, _Bt, aprior, _Qkt, _rkt);
+    }
 
     /**
-     * @brief A step with given local matrices and a given step size;
-     * @return (Kkt, dkt, Akt, akt, zkt, Sigkt) 
+     * @brief Step with given matrices (unused variant).
      */
-    StepResult step(int indx, double step_size, 
+    StepResult step(int indx, double step_size,
                     const Matrix3D& At, const Matrix3D& Bt, const Matrix3D& at,
-                    const Matrix3D& hAt, const Matrix3D& hat, 
-                    const VectorXd& z0, const MatrixXd& Sig0) override
-    {
-        // propagate the mean and the covariance
-        
+                    const Matrix3D& zt, const Matrix3D& Sigt) {
+        return {};  // Not implemented for this class
+    }
+
+    /**
+     * @brief Step with given matrices and step size.
+     *
+     * @param indx       Iteration index
+     * @param step_size  Proximal step size (η)
+     * @param At, Bt, at Current dynamics matrices
+     * @param hAt, hat   Linearization matrices
+     * @param z0, Sig0   Initial conditions
+     * @return StepResult: (Kt, dt, At_cl, at_cl, zt, Sigt)
+     */
+    StepResult step(int indx, double step_size,
+                    const Matrix3D& At, const Matrix3D& Bt, const Matrix3D& at,
+                    const Matrix3D& hAt, const Matrix3D& hat,
+                    const VectorXd& z0, const MatrixXd& Sig0) override {
         std::cout << " propagate mean " << std::endl;
+        auto [zt_new, Sigt_new] = propagate_nominal(At, at, Bt, z0, Sig0);
 
-        std::tuple<Matrix3D, Matrix3D> ztSigt;
-        ztSigt = propagate_nominal(At, at, Bt, z0, Sig0);
+        // Proximal averaging of dynamics
+        MatrixXd Aprior = (At + hAt * step_size) / (1 + step_size);
+        MatrixXd aprior = (at + hat * step_size) / (1 + step_size);
 
-        Matrix3D ztnew(_nx, 1, _nt), Sigtnew(_nx, _nx, _nt);
-        ztnew = std::get<0>(ztSigt);
-        Sigtnew = std::get<1>(ztSigt);
-        
-        MatrixXd Aprior = At / (1 + step_size) + hAt * step_size / (1 + step_size);
-        MatrixXd aprior = at / (1 + step_size) + hat * step_size / (1 + step_size);
-
-        // Update Qkt, rkt
         std::cout << " Update Q, r " << std::endl;
+        auto [Qt, rt] = update_Qrk(zt_new, Sigt_new, At, at, Bt, hAt, hat, step_size);
 
-        std::tuple<Matrix3D, Matrix3D> Qtrt;
-        Qtrt = update_Qrk(ztnew, Sigtnew, At, at, Bt, hAt, hat, step_size);
-
-        Matrix3D Qt(_nx, _nx, _nt), rt(_nx, 1, _nt);
-        Qt.setZero(); rt.setZero();
-        Qt = std::get<0>(Qtrt);
-        rt = std::get<1>(Qtrt);
-
-        // solve inner loop linear CS
         std::cout << " Solve linear CS " << std::endl;
-        std::tuple<Matrix3D, Matrix3D, Matrix3D, Matrix3D> KtdtAtat;
-        KtdtAtat = solve_linearCS_return(Aprior, Bt, aprior, Qt, rt);
+        auto [Kt, dt, At_cl, at_cl] = solve_linearCS_return(Aprior, Bt, aprior, Qt, rt);
 
-        return std::make_tuple(std::get<0>(KtdtAtat), 
-                               std::get<1>(KtdtAtat), 
-                               std::get<2>(KtdtAtat), 
-                               std::get<3>(KtdtAtat), 
-                               std::get<0>(ztSigt), 
-                               std::get<1>(ztSigt));
+        return {Kt, dt, At_cl, at_cl, zt_new, Sigt_new};
     }
 
 protected:
     std::shared_ptr<LinearDynamics> _pdyn;
-    
 };
-}
+
+} // namespace vimp

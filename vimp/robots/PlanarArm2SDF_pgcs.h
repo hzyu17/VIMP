@@ -44,26 +44,26 @@ class PlanarArm2SDFExample: public BaseClass{
 
         void generate_arm_sdf(const gpmp2::PlanarSDF& sdf, double r){
             // 2 link simple example
-                gtsam::Pose3 arm_base(Rot3(), Point3(0.0, 0.0, 0.0));
+                gtsam::Pose3 arm_base(Rot3(), gtsam::Point3(0.0, 0.0, 0.0));
                 Vector2d a(0.5, 0.5), alpha(0, 0), d(0, 0);
                 Arm abs_arm(2, a, alpha, d, arm_base);
 
                 // body info, three spheres
                 BodySphereVector body_spheres;
 
-                body_spheres.push_back(BodySphere(0, r, Point3(-0.5,  0.0,  0.0)));
-                body_spheres.push_back(BodySphere(0, r, Point3(-0.4,  0.0,  0.0)));
-                body_spheres.push_back(BodySphere(0, r, Point3(-0.3,  0.0,  0.0)));
-                body_spheres.push_back(BodySphere(0, r, Point3(-0.2,  0.0,  0.0)));
-                body_spheres.push_back(BodySphere(0, r, Point3(-0.2,  0.0,  0.0)));
-                body_spheres.push_back(BodySphere(0, r, Point3(-0.1,  0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(0, r, gtsam::Point3(-0.5,  0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(0, r, gtsam::Point3(-0.4,  0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(0, r, gtsam::Point3(-0.3,  0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(0, r, gtsam::Point3(-0.2,  0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(0, r, gtsam::Point3(-0.2,  0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(0, r, gtsam::Point3(-0.1,  0.0,  0.0)));
 
-                body_spheres.push_back(BodySphere(1, r, Point3(-0.5, 0.0,  0.0)));
-                body_spheres.push_back(BodySphere(1, r, Point3(-0.4, 0.0,  0.0)));
-                body_spheres.push_back(BodySphere(1, r, Point3(-0.3, 0.0,  0.0)));
-                body_spheres.push_back(BodySphere(1, r, Point3(-0.2, 0.0,  0.0)));
-                body_spheres.push_back(BodySphere(1, r, Point3(-0.1, 0.0,  0.0)));
-                body_spheres.push_back(BodySphere(1, r, Point3( 0.0, 0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(1, r, gtsam::Point3(-0.5, 0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(1, r, gtsam::Point3(-0.4, 0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(1, r, gtsam::Point3(-0.3, 0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(1, r, gtsam::Point3(-0.2, 0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(1, r, gtsam::Point3(-0.1, 0.0,  0.0)));
+                body_spheres.push_back(gpmp2::BodySphere(1, r, gtsam::Point3( 0.0, 0.0,  0.0)));
 
                 BaseClass::_robot = gpmp2::ArmModel{abs_arm, body_spheres};
 

@@ -110,21 +110,21 @@ pybind11_add_module(bind_FK
 # # target_link_libraries(bind_WamSDF PRIVATE ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
 
 
-# # Add all the source files in src/pgcs as a separate executable
-# file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
-# foreach(pgcs_source ${PGCS_SOURCES})
-#     get_filename_component(pgcs_name ${pgcs_source} NAME_WE)
-#     add_executable(${pgcs_name} ${pgcs_source})
-#     set_target_properties(${pgcs_name} PROPERTIES LINKER_LANGUAGE CXX)
-#     set_target_properties(${pgcs_name} PROPERTIES
-#                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/pgcs"
-#                             )   
+# Add all the source files in src/pgcs as a separate executable
+file(GLOB_RECURSE PGCS_SOURCES src/pgcs/*.cpp)
+foreach(pgcs_source ${PGCS_SOURCES})
+    get_filename_component(pgcs_name ${pgcs_source} NAME_WE)
+    add_executable(${pgcs_name} ${pgcs_source})
+    set_target_properties(${pgcs_name} PROPERTIES LINKER_LANGUAGE CXX)
+    set_target_properties(${pgcs_name} PROPERTIES
+                            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/pgcs"
+                            )   
     
-#     target_link_libraries(${pgcs_name} ${EIGEN3_LIBRARIES} 
-#                           ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
-#                         #   Matplot++::matplot)
-#     target_include_directories(${pgcs_name} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/vimp")
-# endforeach()
+    target_link_libraries(${pgcs_name} ${EIGEN3_LIBRARIES} 
+                          ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES})
+                        #   Matplot++::matplot)
+    target_include_directories(${pgcs_name} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/vimp")
+endforeach()
  
 #% --------------------------------------------------------- Tests files ---------------------------------------------------------
 # find_package(GTest REQUIRED)

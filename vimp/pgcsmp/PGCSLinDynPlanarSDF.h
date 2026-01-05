@@ -1,161 +1,203 @@
 /**
  * @file PGCSLinDynPlanarSDF.h
  * @author Hongzhe Yu (hyu419@gatech.edu)
- * @brief Proximal gradient algorithm for nonlinear covariance steering with plannar obstacles, linear dynamics. 
+ * @brief Proximal gradient covariance steering with planar SDF obstacles and linear dynamics.
  * @version 0.1
  * @date 2023-03-15
- * 
  * @copyright Copyright (c) 2023
- * 
  */
+
+#pragma once
+
+// GTSAM types needed by gpmp2
+#include <gtsam/geometry/Point2.h>
+#include <gtsam/geometry/Point3.h>
+using gtsam::Point2;
+using gtsam::Point3;
 
 #include "ProximalGradientCSLinearDyn.h"
 #include "robots/PlanarPointRobotSDF_pgcs.h"
 #include "helpers/hinge2Dhelper.h"
 #include "helpers/CostHelper.h"
 
-using namespace Eigen;
+namespace vimp {
 
-namespace vimp{
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
 
-class PGCSLinDynPlanarSDF: public ProxGradCovSteerLinDyn{
+/**
+ * @brief Proximal Gradient Covariance Steering for linear dynamics with planar SDF obstacles.
+ * 
+ * Optimizes a trajectory that steers the state distribution while avoiding
+ * obstacles represented by a signed distance field (SDF).
+ */
+class PGCSLinDynPlanarSDF : public ProxGradCovSteerLinDyn {
 public:
-    PGCSLinDynPlanarSDF(const MatrixXd& A0, 
-                        const VectorXd& a0, 
-                        const MatrixXd& B, 
+    PGCSLinDynPlanarSDF(const MatrixXd& A0,
+                        const VectorXd& a0,
+                        const MatrixXd& B,
                         const PGCSParams& params,
                         const std::shared_ptr<LinearDynamics>& pdyn,
-                        const gpmp2::PlanarSDF & sdf):
-                        ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params),
-                        _eps_sdf(params.eps_sdf(), params.radius()),
-                        _sdf(sdf),
-                        _sig_obs(params.sig_obs()),
-                        _pRsdf(params.eps_sdf(), params.radius()),
-                        _cost_helper(params.max_iter())
-                        {
-                            _pRsdf.update_sdf(sdf);
-                        }
-
-
-    double total_hingeloss(){
-        double total_hingeloss = 0;
-        std::pair<double, VectorXd> hingeloss_gradient;
-        MatrixXd zi(_nx, 1);
-        for (int i=0; i<_nt; i++){
-            zi = _ei.decomp3d(_zkt, _nx, 1, i);
-            double zi_x = zi(0), zi_y = zi(1);
-            MatrixXd J_hxy(1, _nx/2);
-            hingeloss_gradient = hingeloss_gradient_point(zi_x, zi_y, _sdf, _eps_sdf, J_hxy);
-            double hinge = std::get<0>(hingeloss_gradient);
-            total_hingeloss += hinge;
-        }
-        return total_hingeloss;
-    }
-
-    double total_control_energy(){
-        double total_Eu = 0;
-        MatrixXd zi(_nx, 1), Ki(_nu, _nx);
-        for (int i=0; i<_nt; i++){
-            zi = _ei.decomp3d(_zkt, _nx, 1, i);
-            Ki = _ei.decomp3d(_Kt, _nu, _nx, i);
-            VectorXd u_i = Ki * zi;
-            double E_ui = u_i.dot(u_i) * _deltt;
-            total_Eu += E_ui;
-        }
-        return total_Eu;
+                        const gpmp2::PlanarSDF& sdf)
+        : ProxGradCovSteerLinDyn(A0, a0, B, pdyn, params)
+        , _sdf(sdf)
+        , _eps_sdf(params.eps_sdf(), params.radius())
+        , _sig_obs(params.sig_obs())
+        , _pRsdf(params.eps_sdf(), params.radius())
+        , _cost_helper(params.max_iter())
+    {
+        _pRsdf.update_sdf(sdf);
     }
 
     /**
-     * @brief The optimization process, including recording the costs.
-     * @return std::tuple<MatrixXd, MatrixXd>  representing (Kt, dt)
+     * @brief Compute total hinge loss over the trajectory.
      */
-    std::tuple<Matrix3D, Matrix3D> optimize() override{
-        double err = 1;
+    double total_hingeloss() {
+        double total = 0.0;
 
-        int i_step = 0;
-
-        double total_cost_prev = this->total_hingeloss() + this->total_control_energy();
-        double total_cost = 0.0, hingeloss = 0.0, control_energy=0.0;
-        while ((err > _stop_err) && (i_step < _max_iter)){
-            step(i_step);
-            hingeloss = this->total_hingeloss();
-            control_energy = this->total_control_energy();
-            total_cost = hingeloss + control_energy;
-            err = std::abs(total_cost - total_cost_prev);
-            
-            _cost_helper.add_cost(i_step, hingeloss, control_energy);
-            total_cost_prev = total_cost;
-            
-            i_step ++;
+        for (int i = 0; i < _nt; i++) {
+            MatrixXd zi = _ei.decomp3d(_zkt, _nx, 1, i);
+            double hinge = computeHingeLoss(zi(0), zi(1));
+            total += hinge;
         }
-        
-        return std::make_tuple(_Kt, _dt);
+        return total;
     }
 
-    void update_Qrk() override{
-        MatrixXd Aki(_nx, _nx), Bi(_nx, _nu), pinvBBTi(_nx, _nx), aki(_nx, 1), 
-                 hAi(_nx, _nx), hai(_nx, 1),
-                 Qti(_nx, _nx), Qki(_nx, _nx), rki(_nx, 1), zi(_nx, 1);
-        MatrixXd temp(_nx, _nx);
-        // for each time step
+    /**
+     * @brief Compute total control energy over the trajectory.
+     */
+    double total_control_energy() {
+        double total = 0.0;
+
+        for (int i = 0; i < _nt; i++) {
+            MatrixXd zi = _ei.decomp3d(_zkt, _nx, 1, i);
+            MatrixXd Ki = _ei.decomp3d(_Kt, _nu, _nx, i);
+
+            VectorXd u_i = Ki * zi;
+            total += u_i.squaredNorm() * _deltt;
+        }
+        return total;
+    }
+
+    /**
+     * @brief Run the optimization loop with cost recording.
+     * @return Tuple of (Kt, dt) feedback gains
+     */
+    std::tuple<Matrix3D, Matrix3D> optimize() override {
+        double total_cost_prev = total_hingeloss() + total_control_energy();
+        double err = 1.0;
+        int i_step = 0;
+
+        while (err > _stop_err && i_step < _max_iter) {
+            step(i_step);
+
+            double hingeloss = total_hingeloss();
+            double control_energy = total_control_energy();
+            double total_cost = hingeloss + control_energy;
+
+            err = std::abs(total_cost - total_cost_prev);
+            _cost_helper.add_cost(i_step, hingeloss, control_energy);
+
+            total_cost_prev = total_cost;
+            i_step++;
+        }
+
+        return {_Kt, _dt};
+    }
+
+    /**
+     * @brief Update the quadratic cost terms Qk and rk for covariance steering.
+     * 
+     * Incorporates obstacle hinge loss gradients and dynamics mismatch penalties.
+     */
+    void update_Qrk() override {
         _Qkt.setZero();
         _rkt.setZero();
-        for (int i=0; i<_nt; i++){
-            Aki = _ei.decomp3d(_Akt, _nx, _nx, i);
-            aki = _ei.decomp3d(_akt, _nx, 1, i);
-            hAi = _ei.decomp3d(_hAkt, _nx, _nx, i);
-            hai = _ei.decomp3d(_hakt, _nx, 1, i);
-            Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
-            Qti = _ei.decomp3d(_Qt, _nx, _nx, i);
-            pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
-            zi = _ei.decomp3d(_zkt, _nx, 1, i);
-            temp = (Aki - hAi).transpose();
 
-            // Compute hinge loss and its gradients
-            
-            double zi_x = zi(0), zi_y = zi(1);
-            std::pair<double, VectorXd> hingeloss_gradient;
-            MatrixXd J_hxy(1, _nx/2);
+        for (int i = 0; i < _nt; i++) {
+            // Extract matrices at timestep i
+            MatrixXd Aki = _ei.decomp3d(_Akt, _nx, _nx, i);
+            MatrixXd aki = _ei.decomp3d(_akt, _nx, 1, i);
+            MatrixXd hAi = _ei.decomp3d(_hAkt, _nx, _nx, i);
+            MatrixXd hai = _ei.decomp3d(_hakt, _nx, 1, i);
+            MatrixXd Bi = _ei.decomp3d(_Bt, _nx, _nu, i);
+            MatrixXd Qti = _ei.decomp3d(_Qt, _nx, _nx, i);
+            MatrixXd pinvBBTi = _ei.decomp3d(_pinvBBTt, _nx, _nx, i);
+            MatrixXd zi = _ei.decomp3d(_zkt, _nx, 1, i);
 
-            hingeloss_gradient = hingeloss_gradient_point(zi_x, zi_y, _sdf, _eps_sdf, J_hxy);
-            double hinge = std::get<0>(hingeloss_gradient);
+            // Dynamics mismatch: A - hA, a - ha
+            MatrixXd dA = Aki - hAi;
+            MatrixXd da = aki - hai;
+            MatrixXd dA_T_pinvBBT = dA.transpose() * pinvBBTi;
 
-            if (hinge > 0){
+            // Compute hinge loss and gradient
+            MatrixXd J_hxy(1, _nx / 2);
+            auto [hinge, grad] = hingeloss_gradient_point(zi(0), zi(1), _sdf, _eps_sdf, J_hxy);
+
+            if (hinge > 0) {
                 _ei.print_matrix(zi, "zi");
                 std::cout << "hinge loss " << hinge << std::endl;
                 _ei.print_matrix(J_hxy, "J_hxy");
             }
 
-            MatrixXd grad_h(_nx, 1), velocity(_nx/2, 1);
+            // Build full-state gradient: [∂h/∂pos; ∂h/∂pos ⊙ vel]
+            MatrixXd grad_h = buildObstacleGradient(zi, J_hxy);
 
-            velocity = zi.block(_nx/2, 0,_nx/2,1);
-            grad_h.block(0,0,_nx/2,1) = J_hxy.transpose();
-            grad_h.block(_nx/2,0,_nx/2,1) = J_hxy.transpose().cwiseProduct(velocity);
+            // Proximal weighting factor
+            double alpha = _eta / (1.0 + _eta);
+            double alpha_sq = alpha / (1.0 + _eta);
 
-            MatrixXd Hess(_nx, _nx);
-            Hess.setZero();
+            // Qki: Hessian term (zero here) + dynamics mismatch penalty
+            MatrixXd Qki = dA_T_pinvBBT * dA * alpha_sq;
 
-            // Qki
-            Qki = Hess * _eta / (1+_eta) + temp * pinvBBTi * (Aki - hAi) * _eta / (1+_eta) / (1+_eta);
-            // rki
-            rki = grad_h * hinge * _sig_obs * _eta / (1.0 + _eta) +  temp * pinvBBTi * (aki - hai) * _eta / (1+_eta) / (1+_eta);
+            // rki: obstacle gradient + dynamics mismatch penalty
+            MatrixXd rki = grad_h * hinge * _sig_obs * alpha
+                         + dA_T_pinvBBT * da * alpha_sq;
 
-            // update Qkt, rkt
             _ei.compress3d(Qki, _Qkt, i);
             _ei.compress3d(rki, _rkt, i);
         }
-        
     }
-
-
 
 protected:
     gpmp2::PlanarSDF _sdf;
     PlanarPRSDFExample _pRsdf;
 
-    double _eps_sdf;
-    double _sig_obs; // The inverse of Covariance matrix related to the obs penalty. 
-    // TODO: For simple 2D it's 1d (1 ball). Needs to be extended to multiple ball checking cases.
+    double _eps_sdf;   ///< SDF epsilon for hinge loss
+    double _sig_obs;   ///< Obstacle cost weight (inverse covariance)
+
     CostHelper _cost_helper;
+
+private:
+    /**
+     * @brief Compute hinge loss at a position.
+     */
+    double computeHingeLoss(double x, double y) {
+        MatrixXd J_hxy(1, _nx / 2);
+        auto [hinge, grad] = hingeloss_gradient_point(x, y, _sdf, _eps_sdf, J_hxy);
+        return hinge;
+    }
+
+    /**
+     * @brief Build the full-state obstacle cost gradient.
+     * 
+     * For a point robot, the gradient w.r.t. position is J_hxy.
+     * The gradient w.r.t. velocity is J_hxy ⊙ velocity (element-wise).
+     * 
+     * @param zi Current state [pos; vel]
+     * @param J_hxy Jacobian of hinge loss w.r.t. position
+     * @return Full state gradient [∂h/∂pos; ∂h/∂vel]
+     */
+    MatrixXd buildObstacleGradient(const MatrixXd& zi, const MatrixXd& J_hxy) {
+        const int half_nx = _nx / 2;
+        MatrixXd grad_h(_nx, 1);
+
+        VectorXd velocity = zi.block(half_nx, 0, half_nx, 1);
+        grad_h.topRows(half_nx) = J_hxy.transpose();
+        grad_h.bottomRows(half_nx) = J_hxy.transpose().cwiseProduct(velocity);
+
+        return grad_h;
+    }
 };
-}
+
+} // namespace vimp

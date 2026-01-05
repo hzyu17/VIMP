@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
     int nx=4, nu=2;
     int num_exp = 4;
 
-    PGCSRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
+    PCSRunner<PGCSLinDynPRModelPlanarSDF> runner(nx, nu, num_exp, config_file);
 
     // no experiment argument, run the default scripts
     if (argc == 1){
