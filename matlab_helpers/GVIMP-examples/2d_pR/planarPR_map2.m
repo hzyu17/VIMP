@@ -51,7 +51,7 @@ end
 x0 = 500;
 y0 = 500;
 width = 1290.427199;
-height = 800;
+height = 850;
 figure
 set(gcf,'position',[x0,y0,width,height])
 
@@ -66,6 +66,7 @@ goal_configs = [-10, 17, 0, 0;
                 -13, 8, 0, 0];
 
 tiledlayout(2, 2, 'TileSpacing', 'tight', 'Padding', 'tight')
+locations = {'northeast', 'northeast', 'northeast', 'northwest'};
 for i = 1:4 % 4 experiments  
     nexttile
     if is_sparse
@@ -87,15 +88,20 @@ for i = 1:4 % 4 experiments
     
     start_i = start_configs(i, :)';
     goal_i = goal_configs(i, :)';
-    % s1 = scatter(start_i(1), start_i(2), 200, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 500);
-    % s2 = scatter(goal_i(1), goal_i(2), 200, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 500);
-    
-    % lgd = legend([s1, s2], {'Start', 'Goal'});
-    % set(lgd, 'FontWeight', 'bold');
-    
+    s1 = scatter(start_i(1), start_i(2), 300, 'x', 'MarkerEdgeColor', 'r', 'LineWidth', 2.5);
+    s1.Annotation.LegendInformation.IconDisplayStyle = 'off';
+    s2 = scatter(goal_i(1), goal_i(2), 300, 'x', 'MarkerEdgeColor', 'g', 'LineWidth', 2.5);
+    s2.Annotation.LegendInformation.IconDisplayStyle = 'off';
+
+    h1 = plot(NaN,NaN,'xr','MarkerSize',15,'LineWidth',2.5);
+    h2 = plot(NaN,NaN,'xg','MarkerSize',15,'LineWidth',2.5);
+
+    lgd = legend([h1, h2], {'Start', 'Goal'});
+    set(lgd, 'FontWeight', 'bold', 'FontSize', 18, 'Location', locations{i});
+
     xlim([-15, 20])
     ylim([-10, 20])
     
-    % axis off
+    axis off
     
 end

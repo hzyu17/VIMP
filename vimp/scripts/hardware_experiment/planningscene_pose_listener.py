@@ -2,8 +2,6 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from moveit_commander import PlanningSceneInterface
 from pose_helpers import pose_to_matrix, matrix_to_pose
-import numpy as np
-import tf
 
 import threading
 from collections import deque
@@ -27,12 +25,9 @@ class RealTimeBoxUpdater:
         
         # store relative poses & sizes
         (self._body_box, self._body_topic, 
-         self._rel_poses, self._sizes, self._body_default_pose, _) = load_body_frames_config(config_file)
+         self._rel_poses, self._sizes, self._body_default_pose) = load_body_frames_config(config_file)
         
         self._T_cam = read_cam_pose(config_file)
-        
-        self._body_lcm_topic = self._body_topic
-        
         
         # ring buffers for each body frame
         self._buffers = {
@@ -52,7 +47,7 @@ class RealTimeBoxUpdater:
                              PoseStamped,
                              callback=self._make_cb(name),
                              queue_size=1)
-            
+        
         self._received_newpose = False
 
         # timer to push updates at fixed rate
@@ -61,7 +56,7 @@ class RealTimeBoxUpdater:
 
     def _make_cb(self, name):
         def _cb(msg: PoseStamped):
-            rospy.loginfo("Received pose message in the planning scene listener!")
+            rospy.loginfo("Received pose message in the planning scene listener from %s!", name)
             print("Received pose: ", msg.pose)
             with self._lock:
                 self._buffers[name].append(msg)
@@ -81,33 +76,31 @@ class RealTimeBoxUpdater:
                     if not buf:
                         continue
                     latest: PoseStamped = buf[-1]
-                    
-                    bname = self._body_box[name]
 
-                    # compose: T_world_box = T_world_body × T_body_box
-                    T_w_b = pose_to_matrix(latest.pose)
-                    T_b_box = pose_to_matrix(self._rel_poses[bname])
-                    T_w_box = self._T_cam @ T_w_b @ T_b_box
-                    
-                    # make a stamped pose in world
-                    out = PoseStamped()
-                    out.header.frame_id = "world"
-                    out.header.stamp = rospy.Time.now()
-                    out.pose = matrix_to_pose(T_w_box)
+                    for bname in self._body_box[name]:
+                        # compose: T_world_box = T_world_body × T_body_box
+                        T_w_b = pose_to_matrix(latest.pose)
+                        T_b_box = pose_to_matrix(self._rel_poses[bname])
+                        T_w_box = self._T_cam @ T_w_b @ T_b_box
+                        
+                        # make a stamped pose in world
+                        out = PoseStamped()
+                        out.header.frame_id = "world"
+                        out.header.stamp = rospy.Time.now()
+                        out.pose = matrix_to_pose(T_w_box)
 
-                    # update MoveIt!
-                    self._scene.add_box(bname,
-                                        out,
-                                        size=self._sizes[bname])
+                        # update MoveIt!
+                        self._scene.add_box(bname,
+                                            out,
+                                            size=self._sizes[bname])
 
     def spin(self):
         rospy.spin()
 
 
-
 if __name__ == "__main__":
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    body_box, body_topic, rel_poses, sizes, body_default_pose, _ = load_body_frames_config(cfg_path)
+    body_box, body_topic, rel_poses, sizes, body_default_pose = load_body_frames_config(cfg_path)
 
     # 2) Spin up the updater (from the previous example)
     updater = RealTimeBoxUpdater(

@@ -46,7 +46,7 @@ class PlanarPRSDFExample: public Base{
             /// Robot model
             gpmp2::PointRobot pR(_ndof, _nlinks);
             gpmp2::BodySphereVector body_spheres;
-            body_spheres.push_back(gpmp2::BodySphere(0, r, Point3(0.0, 0.0, 0.0)));
+            body_spheres.push_back(gpmp2::BodySphere(0, r, gtsam::Point3(0.0, 0.0, 0.0)));
             Base::_robot = gpmp2::PointRobotModel(pR, body_spheres);
 
             Base::_psdf_factor = std::make_shared<pRSDF>(pRSDF(gtsam::symbol('x', 0), Base::_robot, sdf, 0.0, _eps));

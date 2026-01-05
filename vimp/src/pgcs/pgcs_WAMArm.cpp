@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
     int num_exp = 3;
     std::string source_root{XSTRING(SOURCE_ROOT)};
     std::string config_file{source_root+"/configs/pgcs/wam_arm.xml"};
-    PGCSRunner7D<PGCSLinDynArmSDF> runner(num_exp, config_file);
+    PCSRunner7D<PGCSLinDynArmSDF> runner(num_exp, config_file);
     // no experiment argument, run the default scripts
     if (argc == 1){
         runner.run();

@@ -5,6 +5,7 @@ close all
 clear
 
 addpath("/usr/local/gtsam_toolbox")
+addpath('../../tools')
 
 import gtsam.*
 import gpmp2.*
@@ -52,8 +53,8 @@ hold off
 
 %% settings
 total_time_sec = 2;
-total_time_step = 750;
-total_check_step = 1500;
+total_time_step = 50;
+total_check_step = 100;
 delta_t = total_time_sec / total_time_step;
 check_inter = total_check_step / total_time_step - 1;
 
@@ -184,8 +185,66 @@ for i=0:total_plot_step
     conf = plot_values.atVector(symbol('x', i));
     gpmp2_result_confs(1:7, i+1) = conf;
 end
-prefix = ["case"+num2str(i_exp)+"/"];
-csvwrite([prefix+"zk_gpmp2.csv"], gpmp2_result_confs);
+
+
+% % Decompose the trajectory using DCT
+% joint_0 = gpmp2_result_confs(6, :);
+% size = size(joint_0);
+% N = size(2);
+
+% joint_dct = dct(joint_0);
+% k = 10;
+% joint_dct_filtered = zeros(size);
+% joint_dct_filtered(1:k+1) = joint_dct(1:k+1);
+% % joint_dct_filtered(2:2) = joint_dct(2:2);
+% joint_smooth = idct(joint_dct_filtered);
+
+% plot(joint_0, 'r', 'LineWidth', 2);
+% hold on
+% plot(joint_smooth, 'b', 'LineWidth', 2);
+
+
+
+% Store the trajectory using fft and save the low frequency components
+joint_0 = gpmp2_result_confs(7, :);
+size = size(joint_0);
+N = size(2);
+trend = linspace(joint_0(1), joint_0(end), N);
+x0 = joint_0 - trend;
+
+% stem(joint_0, 'r', 'LineWidth', 2);
+
+joint_fft = fft(x0);
+% figure
+% stem(joint_fft, 'r', 'LineWidth', 2);
+
+k = 1;
+joint_fft_filtered = zeros(size);
+joint_fft_filtered(1:k+1) = joint_fft(1:k+1);
+joint_fft_filtered(N-k+2:N) = joint_fft(N-k+2:N);
+
+joint_smooth = ifft(joint_fft_filtered, 'symmetric') + trend;
+% joint_smooth = ifft(joint_fft, 'symmetric');
+
+t_0 = linspace(0, 1, N);
+N_interp = 5000;
+t_interp = linspace(0, 1, N_interp);
+trend_interp = linspace(joint_0(1), joint_0(end), N_interp);
+% B-spline interpolation
+spl = spline(t_0, joint_0);
+joint_spline = ppval(spl, t_interp);
+
+% figure
+plot(t_0, joint_0, 'r', 'LineWidth', 2);
+hold on
+% plot(real(joint_smooth), 'b', 'LineWidth', 2);
+joint_interp = interpft(x0, N_interp) + trend_interp;
+plot(t_interp, joint_interp, 'b', 'LineWidth', 2);
+plot(t_interp, joint_spline, 'g', 'LineWidth', 2);
+
+
+% prefix = ["case"+num2str(i_exp)+"/"];
+% csvwrite([prefix+"zk_gpmp2.csv"], gpmp2_result_confs);
     
 
 end

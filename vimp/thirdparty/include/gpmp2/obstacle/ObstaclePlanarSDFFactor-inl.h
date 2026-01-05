@@ -23,7 +23,7 @@ gtsam::Vector ObstaclePlanarSDFFactor<ROBOT>::evaluateError(
   if (H1) *H1 = gtsam::Matrix::Zero(robot_.nr_body_spheres(), robot_.dof());
 
   // run forward kinematics of this configuration
-  vector<Point3> sph_centers;
+  vector<gtsam::Point3> sph_centers;
   vector<gtsam::Matrix> J_px_jp;
   if (H1)
     robot_.sphereCenters(conf, sph_centers, J_px_jp);
@@ -41,14 +41,14 @@ gtsam::Vector ObstaclePlanarSDFFactor<ROBOT>::evaluateError(
 
     if (H1) {
       Matrix12 Jerr_point;
-      const Point2 sph_center_2d(sph_centers[sph_idx].x(), sph_centers[sph_idx].y());
+      const gtsam::Point2 sph_center_2d(sph_centers[sph_idx].x(), sph_centers[sph_idx].y());
       err(sph_idx) = hingeLossObstacleCost(sph_center_2d, sdf_, total_eps, Jerr_point);
 
       // chain rules
       H1->row(sph_idx) = Jerr_point * J_px_jp[sph_idx].topRows<2>();
 
     } else {
-      const Point2 sph_center_2d(sph_centers[sph_idx].x(), sph_centers[sph_idx].y());
+      const gtsam::Point2 sph_center_2d(sph_centers[sph_idx].x(), sph_centers[sph_idx].y());
       err(sph_idx) = hingeLossObstacleCost(sph_center_2d, sdf_, total_eps);
     }
   }

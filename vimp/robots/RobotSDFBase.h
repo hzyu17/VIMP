@@ -28,6 +28,17 @@
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
+#include <gtsam/geometry/Point2.h>
+#include <gtsam/geometry/Point3.h>
+
+// Disambiguate for gpmp2 headers (they use unqualified Point2/Point3)
+#ifndef Point2
+using gtsam::Point2;
+#endif
+#ifndef Point3
+using gtsam::Point3;
+#endif
+
 #include "GaussianVI/helpers/MatrixHelper.h"
 #include <gpmp2/obstacle/ObstaclePlanarSDFFactor.h>
 #include <Eigen/Dense>
