@@ -8,7 +8,7 @@ from vimp.thirdparty.sensor3D_tools.lcm import pose_t
 import threading
 import tf.transformations as tft
 from read_default_poses import *
-from pose_helpers import pose_to_matrix, matrix_to_pose
+from pose_helpers import pose_to_matrix, matrix_to_pose, pose_to_dict
 
 from vimp.scripts.hardware_experiment.moveit_baselines import read_plan_json_to_numpy
 from resampling import read_forwardkinematic_from_config, collision_checking, collision_checking_and_resampling
@@ -34,9 +34,10 @@ sdf_dir = this_dir + "/../../scripts/hardware_experiment/Data/FrankaHardware_cer
 # sdf_original.loadSDF(sdf_dir)
 
 class SDFUpdaterListener:
-    def __init__(self, config_file, output_file='disturbed_results_111.yaml', compute_distance=False, send_ack=True):
+    def __init__(self, config_file, output_file='disturbed_results.yaml', compute_distance=False, send_ack=True, save_sdf=False):
         self.compute_distance = compute_distance  # If True, compute and compare the distances of the baseline and GVIMP
         self.send_ack = send_ack
+        self.save_sdf = save_sdf
 
         (self._body_box, self._body_topic, 
          self._rel_poses, self._sizes, self._body_default_pose) = load_body_frames_config(config_file)
@@ -47,12 +48,14 @@ class SDFUpdaterListener:
         self._body_occ = {} # body frame to an occupancy map
         self._T_cam_body = {} # body frame to a matrix pose
         self._box_center = {} # box name to its center in world coordinate
-        
         self._T_cam = read_cam_pose(config_file)
-        
+        self._body_poses = self._body_default_pose.copy()
+
         self.output_file = output_file
         os.makedirs(os.path.dirname(self.output_file) or '.', exist_ok=True)
         self._output_yaml = open(self.output_file, 'a')
+
+        self._lc = lcm.LCM()
         
         # Forward kinematics and baseline trajectories
         with open(config_file,"r") as f:
@@ -62,16 +65,16 @@ class SDFUpdaterListener:
         if self.compute_distance:
             baseline_IDs = cfg["Baselines"]["planner_ID"]
             
-            self._baslines = {}
+            self._baselines = {}
             for id in baseline_IDs:
                 filename = f"{id}_plan_trj.yaml"
-                baseline_file = Path(__file__).parent / "Data" / filename
-                
+                baseline_file = Path(__file__).parent / "Baselines" / filename
+
                 if not baseline_file.is_file():
                     print("There is no baseline trajectory file!")
                     continue
                 
-                self._baslines[id] = read_plan_json_to_numpy(baseline_file)
+                self._baselines[id] = read_plan_json_to_numpy(baseline_file)
             
             self._fk = read_forwardkinematic_from_config(planning_cfgfile)
 
@@ -102,10 +105,8 @@ class SDFUpdaterListener:
 
             grid.transform(T_w_body, visualize=False)
             self._body_occ[body] = grid
-            # grid.visualize()
         
         self._grid = merge_same_shape(self._body_occ)
-        self._grid.visualize()
     
     
     def visualize_boxes(self):
@@ -137,21 +138,22 @@ class SDFUpdaterListener:
             size_vox = (size_vox // 2) * 2
 
             subgrid.add_obstacle(center_idx, size_vox)
-        
+
         transform_pose = self._T_cam @ msg.pose
         subgrid.transform(transform_pose, visualize=False)
         
         self._body_occ[msg.frame_name] = subgrid
+        self._body_poses[msg.frame_name] = np.array(msg.pose)
 
 
     def sdf_handler(self, channel, data):
         # Encode timestamp into the message
         print("Received pose publish message on channel \"%s\"" % channel)
-        info = yaml.safe_load(data.decode("utf-8"))
-        print("Received info: ", info)
+        msg = yaml.safe_load(data.decode("utf-8"))
+        print("Received info: ", msg)
 
         self._grid = merge_same_shape(self._body_occ)
-        self._grid.visualize()
+        # self._grid.visualize()
     
         # Generate new sdf after the pose transformation
         field3D = SignedDistanceField3D.generate_field3D(self._grid.map.detach().numpy(), cell_size=self._grid.cell_size)
@@ -159,16 +161,23 @@ class SDFUpdaterListener:
                                   field3D.shape[0], field3D.shape[1], field3D.shape[2])
         for z in range(field3D.shape[2]):
             sdf.initFieldData(z, field3D[:,:,z].T)
+
+        print("==== SDF created! ====")
             
         # pt = np.zeros(3)
         # print("Test signed distance of a new sdf: ", sdf.getSignedDistance(pt))
         # print("Test signed distance of the original sdf: ", sdf_original.getSignedDistance(pt))
+
+        if self.save_sdf:
+            save_path = str(Path(__file__).parent / "SDF" / "FrankaHardware_cereal.bin")
+            sdf.saveSDF(save_path)
+            print("Saved new SDF!")
         
-        print("==== SDF created! ====")
-    
         if self.compute_distance:
-            for id, trj in self._baslines.items():
-                
+            first_body_pose = next(iter(self._body_poses.values()))
+            timestamp = msg["timestamp"]
+            for id, trj in self._baselines.items():
+
                 # print("Checking collisions for the baseline planner: ", id)
                 min_dist_baseline = collision_checking(sdf, self._fk, trj)
                 
@@ -176,11 +185,11 @@ class SDFUpdaterListener:
                 min_dist = float(np.min(min_dist_baseline))
                 # Record the poses in the json file
                 entry = {
-                    msg.timestamp: {
-                            "planner_id":         id,
-                            "body_frame_pose":    np.array(msg.pose).tolist(),
-                            min_dist_name:       min_dist
-                        }
+                    timestamp: {
+                        "planner_id":         id,
+                        "body_frame_pose":    first_body_pose.tolist(),
+                        min_dist_name:        min_dist
+                    }
                 }
                 # print("Saving baseline collision checking result!")
                 # write exactly one JSON object per line
@@ -207,9 +216,9 @@ class SDFUpdaterListener:
             min_dist_planning, min_dist_resample = collision_checking_and_resampling(planning_cfg_path, result_dir, sdf, cfg["Sampling"])
 
             entry = {
-                msg.timestamp: {
+                timestamp: {
                     "planner_id":         "GVIMP",
-                    "body_frame_pose":    np.array(msg.pose).tolist(),
+                    "body_frame_pose":    first_body_pose.tolist(),
                     "min_dist_plan":      float(min_dist_planning)
                 }
             }
@@ -221,9 +230,9 @@ class SDFUpdaterListener:
             self._output_yaml.flush()
 
             entry = {
-                msg.timestamp: {
+                timestamp: {
                     "planner_id":         "GVIMP_Resample",
-                    "body_frame_pose":    np.array(msg.pose).tolist(),
+                    "body_frame_pose":    first_body_pose.tolist(),
                     "min_dist_resample":  float(min_dist_resample)
                 }
             }
@@ -242,23 +251,17 @@ class SDFUpdaterListener:
             ack.src_channel = channel
 
             # publish it back on an ACK channel
-            lc = lcm.LCM()
-            lc.publish("ACK_"+channel, ack.encode())
+            self._lc.publish("ACK_"+channel, ack.encode())
             print("Published ack message on channel \"%s\"" % ("ACK_" + channel))
 
-        # save_path = str(Path(__file__).parent / "Data" / "FrankaHardware_cereal.bin")
-        # sdf.saveSDF(save_path)
-        # print("Saved new SDF!")
-        
 
     def run(self):
-        lc = lcm.LCM()
         for name, topic in self._body_topic.items():
-            lc.subscribe(topic, self.body_pose_handler)
-        lc.subscribe('/pose_publish', self.sdf_handler)
+            self._lc.subscribe(topic, self.body_pose_handler)
+        self._lc.subscribe('/pose_publish', self.sdf_handler)
             
         # start LCM in background
-        threading.Thread(target=lambda: lcm_thread(lc), daemon=True).start()
+        threading.Thread(target=lambda: lcm_thread(self._lc), daemon=True).start()
                
         try:
             while True:
@@ -270,12 +273,9 @@ class SDFUpdaterListener:
 if __name__ == '__main__':       
     
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    output_file = Path(__file__).parent / "Data" / "hardware_results.yaml"
-    # output_file = Path(__file__).parent / "Data" / "poses_result.yaml"
-    
-    listener = SDFUpdaterListener(cfg_path, output_file, compute_distance=False, send_ack=True)
-    
-    # listener.visualize_boxes()
-    
+    output_file = Path(__file__).parent / "Data" / "hardware_results_new.yaml"
+
+    listener = SDFUpdaterListener(cfg_path, output_file, compute_distance=True, send_ack=False, save_sdf=False)
+
     listener.run()
     

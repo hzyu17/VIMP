@@ -7,11 +7,12 @@ import sys
 from vimp.thirdparty.AprilTag.scripts.apriltag_image import apriltag_image2poses
 from vimp.thirdparty.sensor3D_tools.lcm.pcd_lcm_sender import construct_poselcm_msg, publish_lcm_msg
 from read_default_poses import read_body_tags
-from pose_helpers import matrix_to_pose
+from pose_helpers import matrix_to_pose, pose_to_dict
 
 import cv2
 import time
-import threading 
+import threading
+import lcm
 from collections import deque
 
 import rospy, select, yaml
@@ -26,7 +27,7 @@ class CameraAprilTagReader:
                  topic_name, 
                  wait_key=False):
 
-        self._body_topic, self._tag_body = read_body_tags(cfg_path) # {body_frame: topic}, {tag_id: body_frame}
+        self._body_topic, self._tag_body = read_body_tags(config_file) # {body_frame: topic}, {tag_id: body_frame}
         self._buffers = {
             name: deque(maxlen=buffer_size)
             for name in self._body_topic
@@ -35,7 +36,12 @@ class CameraAprilTagReader:
         self._lock = threading.Lock()
         self._wait_key = wait_key
         self._topic_name = topic_name
+        self._lc = lcm.LCM()
         
+        self._count_output = 0
+        output_file = Path(__file__).parent / "Data" / "box_poses_webcam.yaml"
+        self._output_yaml = open(output_file, 'a')
+
         rospy.init_node('apriltag_webcam', anonymous=True)
         self._pubs = {frame_id: rospy.Publisher(topic, PoseStamped, queue_size=10) 
                       for frame_id, topic in self._body_topic.items()}
@@ -70,10 +76,16 @@ class CameraAprilTagReader:
                         self._buffers[name].append(pose)
         
         return True
-                
-                
+
+
     def publish_pose(self):
         with self._lock:
+            # save pose
+            save_pose = True
+            timestamp = int(rospy.Time.now().to_sec())
+            entry = {"timestamp": timestamp}
+            print(self._buffers)
+
             for frame_id, buffer in self._buffers.items():
                 if not buffer:
                     continue
@@ -81,7 +93,7 @@ class CameraAprilTagReader:
                 pose = buffer.popleft()
                 msg = construct_poselcm_msg(pose, name=frame_id)
                 publish_lcm_msg(msg, topic=self._body_topic[frame_id])
-
+                
                 # Publish ROS message for RViz
                 pose_msg = PoseStamped()
                 pose_msg.header.stamp = rospy.Time.now()
@@ -89,14 +101,27 @@ class CameraAprilTagReader:
                 pose_msg.pose = matrix_to_pose(pose)
 
                 self._pubs[frame_id].publish(pose_msg)
+                entry[frame_id] = pose_to_dict(pose_msg.pose)
                 print("Published pose to ROS topic ", self._body_topic[frame_id])
             
             info = {
                     "timestamp": int(time.time()),
                     "status": "Done",
-                    # encode the new poses in the message
                 }
             done_msg = yaml.safe_dump(info).encode('utf-8')
+            self._lc.publish(self._topic_name, done_msg)
+
+            if save_pose and self._count_output < 10:
+                print("Saving box pose!")
+                yaml.safe_dump(entry, self._output_yaml)
+                # add document separator
+                self._output_yaml.write('---\n')
+                self._output_yaml.flush()
+                
+                self._count_output += 1
+            else:
+                self._output_yaml.close()
+                return 
 
 
     def run(self):
@@ -126,7 +151,7 @@ class CameraAprilTagReader:
     
 if __name__ == "__main__":
     cfg_path = Path(__file__).parent / "config" / "config.yaml"
-    reader = CameraAprilTagReader(cfg_path, buffer_size=10, topic_name='/B1_pose', wait_key=True)
+    reader = CameraAprilTagReader(cfg_path, buffer_size=10, topic_name='/pose_publish', wait_key=True)
     reader.run()
     
     

@@ -89,16 +89,16 @@ public:
         /// Vector of base factored optimizers
         vector<std::shared_ptr<gvi::GVIFactorizedBase_Cuda>> vec_factors;
 
-        DHType dh_type_yaml;
-        VectorXd a_yaml;
-        VectorXd alpha_yaml;
-        VectorXd d_yaml;
-        VectorXd theta_bias_yaml;
-        VectorXd radii_yaml;
-        VectorXi frames_yaml;
-        MatrixXd centers_yaml;
+        // DHType dh_type_yaml;
+        // VectorXd a_yaml;
+        // VectorXd alpha_yaml;
+        // VectorXd d_yaml;
+        // VectorXd theta_bias_yaml;
+        // VectorXd radii_yaml;
+        // VectorXi frames_yaml;
+        // MatrixXd centers_yaml;
 
-        read_dh_from_yaml(dh_file, a_yaml, alpha_yaml, d_yaml, theta_bias_yaml, radii_yaml, frames_yaml, centers_yaml, dh_type_yaml);
+        // read_dh_from_yaml(dh_file, a_yaml, alpha_yaml, d_yaml, theta_bias_yaml, radii_yaml, frames_yaml, centers_yaml, dh_type_yaml);
 
         DHType dh_type = DHType::Modified;
         VectorXd a(8);
