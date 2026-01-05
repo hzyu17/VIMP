@@ -525,6 +525,11 @@ public:
         std::string expNodeName = "Experiment" + std::to_string(exp);
         auto* paramNode = doc.first_node(expNodeName.data());
         
+        if (!paramNode) {
+            std::cerr << "Warning: " << expNodeName << " not found in config file, skipping." << std::endl;
+            return 0.0;
+        }
+        
         this->read_boundary_conditions(paramNode, params);
 
         auto pdyn = std::make_shared<ConstantVelDynamics>(params.nx(), params.nu(), params.nt());
