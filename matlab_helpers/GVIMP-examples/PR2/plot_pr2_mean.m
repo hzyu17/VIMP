@@ -2,11 +2,14 @@ clear all
 close all
 clc
 
-%% ******************* Read datas ******************
-addpath('../../tools')
-addpath ('../../tools/WAM/utils')
-addpath('../../tools/gtsam_toolbox')
-addpath("../../tools/error_ellipse");
+%% ******************* Setup paths ******************
+vimp_root = setup_vimp();
+matlab_helpers = fullfile(vimp_root, 'matlab_helpers');
+addpath(matlab_helpers);
+addpath(fullfile(matlab_helpers, 'tools'));
+addpath(fullfile(matlab_helpers, 'tools', 'gtsam_toolbox'));
+addpath(fullfile(matlab_helpers, 'tools', 'error_ellipse'));
+addpath(fullfile(matlab_helpers, 'tools', 'WAM', 'utils'));
 
 import gtsam.*
 import gpmp2.*
@@ -20,24 +23,22 @@ import gpmp2.*
 % sparse GH quadrature results 
 % =============================
 i_exp = 1;
-
-prefix = "sparse_gh/case2";
+prefix = fullfile(matlab_helpers, 'GVIMP-examples', 'PR2', 'sparse_gh', 'case1');
 
 %% ******************* Start and goal configurations ******************
 start_confs = [-1.57, -0.261, -3.14, -1.047, 3.14, -0.785, 0];
 end_confs = [0.0, 0.0, 0.0, -0.261, 3.14, -0.261, 0];
 
 %% read experiment results
-means = csvread([prefix+"/mean.csv"]);
-costs = csvread([prefix+"/cost.csv"]);
-factor_costs = csvread([prefix+"/factor_costs.csv"]);
+means = csvread(fullfile(prefix, 'mean.csv'));
+costs = csvread(fullfile(prefix, 'cost.csv'));
+factor_costs = csvread(fullfile(prefix, 'factor_costs.csv'));
 
 %% ******************* Define parameters ******************
 % ----- parameters -----
 [ttl_dim, niters] = size(means);
 dim_theta = 14;
 dim_conf = 14 / 2;
-
 nsteps = 4;
 
 % niters
@@ -50,7 +51,6 @@ for i=niters:-1:1
 end
 step_size = floor(niters / nsteps);
 n_states = floor(ttl_dim / dim_theta);
-
 
 %% ******************* Define map dataset ******************
 dataset = generate3Ddataset_1('PR2IndustrialDataset');
@@ -79,7 +79,6 @@ dim_state = 14;
 nt = size(means, 1) / dim_state;
 
 % ----- figure settings -----
-
 % x0 = 50;
 % y0 = 50;
 % width = 400;

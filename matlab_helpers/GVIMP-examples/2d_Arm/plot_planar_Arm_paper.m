@@ -3,31 +3,32 @@ close all
 clc
 
 %% ******************* Read datas ******************
-addpath('../../tools/gtsam_toolbox')
-addpath('../../tools/2dArm')
-addpath("../../tools/error_ellipse");
+vimp_root = setup_vimp();
+matlab_helpers = fullfile(vimp_root, 'matlab_helpers');
+addpath(matlab_helpers);
+addpath(fullfile(matlab_helpers, 'tools'));
+addpath(fullfile(matlab_helpers, 'tools', 'gtsam_toolbox'));
+addpath(fullfile(matlab_helpers, 'tools', '2dArm'));
+addpath(fullfile(matlab_helpers, 'tools', 'error_ellipse'));
+
 import gtsam.*
 import gpmp2.*
 
 map = 1;
 
-% prefix = "map1/case1";
-prefix = "sparse_gh/map1/case1";
-
 switch map
     case 1
-%         prefix = "map1/case1";
-        prefix = "sparse_gh/map1/case1";
+        prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Arm', 'sparse_gh', 'map1', 'case1');
     case 2
-        prefix = "map2";
+        prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Arm', 'sparse_gh', 'map2');
 end
 
-means = csvread([prefix+"/mean.csv"]);
-covs = csvread([prefix+"/cov.csv"]);
-precisions = csvread([prefix+"/joint_precision.csv"]);
-costs = csvread([prefix+"/cost.csv"]);
-sdfmap = csvread("../../../vimp/maps/2dArm/map.csv");
-factor_costs = csvread([prefix+"/factor_costs.csv"]);
+means = csvread(fullfile(prefix, 'mean.csv'));
+covs = csvread(fullfile(prefix, 'cov.csv'));
+precisions = csvread(fullfile(prefix, 'precision.csv'));
+costs = csvread(fullfile(prefix, 'cost.csv'));
+sdfmap = csvread(fullfile(vimp_root, 'vimp', 'maps', '2dArm', 'map.csv'));
+factor_costs = csvread(fullfile(prefix, 'factor_costs.csv'));
 
 % ----- parameters -----
 niters = find_niters(means);
@@ -285,4 +286,4 @@ hold off
 % cols = dataset.cols;
 % cell_size = dataset.cell_size;
 % origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
-% csvwrite( '../vimp/data/2d_Arm/map.csv', dataset.map);
+% csvwrite(fullfile(vimp_root, 'vimp', 'data', '2d_Arm', 'map.csv'), dataset.map);

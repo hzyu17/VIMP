@@ -2,6 +2,9 @@ function vimp_root = setup_vimp()
     % Get the directory where this script lives (matlab_helpers)
     script_path = fileparts(mfilename('fullpath'));
     
+    % Set up Boost library
+    setenv('LD_LIBRARY_PATH', ['/usr/local/bin/boost/lib:', getenv('LD_LIBRARY_PATH')]);
+    
     % Go up one level to VIMP root
     vimp_root = fileparts(script_path);
     

@@ -2,32 +2,33 @@ clear all
 close all
 clc
 
-%% ******************* Read datas ******************
-addpath('../../tools/gtsam_toolbox')
+%% ******************* Setup paths ******************
+vimp_root = setup_vimp();
+matlab_helpers = fullfile(vimp_root, 'matlab_helpers');
+addpath(matlab_helpers);
+addpath(fullfile(matlab_helpers, 'tools'));
+addpath(fullfile(matlab_helpers, 'tools', 'gtsam_toolbox'));
+addpath(fullfile(matlab_helpers, 'tools', 'error_ellipse'));
+addpath(fullfile(matlab_helpers, 'tools', '2dArm'));
+
 import gtsam.*
 import gpmp2.*
 
-addpath("../../tools/error_ellipse");
-addpath("../../tools/2dArm");
-
 map = 1;
 exp = 1;
-
-prefix = "map1";
+sdfmap = csvread(fullfile(vimp_root, 'vimp', 'maps', '2dArm', 'map.csv'));
 switch map
     case 1
-        prefix = "map1";
-        sdfmap = csvread("map1/map.csv");
         switch exp
             case 1
-                prefix = "map1/case1";
+                prefix = fullfile(matlab_helpers, 'PGCS-examples', '2d_Arm', 'map1', 'case1');
                 % boundary conditions
                 start_conf = [0, 0]';
                 start_vel = [0, 0]';
                 end_conf = [pi/2, 0]';
                 end_vel = [0, 0]';
             case 2
-                prefix = "map1/case2";
+                prefix = fullfile(matlab_helpers, 'PGCS-examples', '2d_Arm', 'map1', 'case2');
                 % boundary conditions
                 start_conf = [-pi/2, 0]';
                 start_vel = [0.1, 0]';
@@ -35,17 +36,17 @@ switch map
                 end_vel = [0, 0]';
         end
     case 2
-        sdfmap = csvread("map2/map.csv");
+%         sdfmap = csvread(fullfile(matlab_helpers, 'PGCS-examples', '2d_Arm', 'map2', 'map.csv'));
         switch exp
             case 1
-                prefix = "map2/case1";
+                prefix = fullfile(matlab_helpers, 'PGCS-examples', '2d_Arm', 'map2', 'case1');
                 % boundary conditions
                 start_conf = [0, 0]';
                 start_vel = [0, 0]';
                 end_conf = [pi/2, 0]';
                 end_vel = [0, 0]';
             case 2
-                prefix = "map2/case2";
+                prefix = fullfile(matlab_helpers, 'PGCS-examples', '2d_Arm', 'map2', 'case2');
                 % boundary conditions
                 start_conf = [-pi/2, 0]';
                 start_vel = [0.1, 0]';
@@ -54,8 +55,8 @@ switch map
         end
 end
 
-means = csvread([prefix+"/zk_sdf.csv"]);
-covs = csvread([prefix+"/Sk_sdf.csv"]);
+means = csvread(fullfile(prefix, 'zk_sdf.csv'));
+covs = csvread(fullfile(prefix, 'Sk_sdf.csv'));
 
 % ----- parameters -----
 [ndim, nt] = size(means);
@@ -217,21 +218,3 @@ hold off
 % plotPlanarArm1(arm.fk_model(), i_vec_means_2d{j}', color, 4, true);
 % for k = 1: size(samples, 1)
 %     k_sample = samples(k, 1:end)';
-%     plotPlanarArm1(arm.fk_model(), k_sample, color_sample, 3, false);
-% end
-% % means
-% %     plotPlanarArm1(arm.fk_model(), , color, 2);
-% plotPlanarArm1(arm.fk_model(), start_conf, 'r', 3, true);
-% plotPlanarArm1(arm.fk_model(), end_conf, 'g', 3, true);
-% xlim([-1 1.5])
-% ylim([-0.5 1.5])
-% 
-% hold off
-
-%% create map and save
-% dataset = generate2Ddataset('OneObstacleDataset');
-% rows = dataset.rows;
-% cols = dataset.cols;
-% cell_size = dataset.cell_size;
-% origin_point2 = Point2(dataset.origin_x, dataset.origin_y);
-% csvwrite( '../vimp/data/2d_Arm/map.csv', dataset.map);
