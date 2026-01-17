@@ -23,7 +23,7 @@ switch map
         switch exp
             case 1
                 prefix = "map1/case1";
-                prefix_gpmp2 = "map1/case1/gpmp2";
+                prefix_gpmp2 = map1"map1/case1/gpmp2";
                 prefix_gvimp = "../../GVIMP-examples/2d_Arm/sparse_gh/map1/case1";
                 % boundary conditions
                 start_conf = [0, 0]';

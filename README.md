@@ -6,6 +6,10 @@ and the details and complete proofs are included in the work
 **[Stochastic Motion Planning as Gaussian Variational Inference: Theory and Algorithms](https://arxiv.org/abs/2308.14985)**. 
 The latter work also showed the equivalence between the GVI-MP and a classical stochastic control problem. Leveraging the duality between inference and stochastic control, we present another algorithm in the latter paper, namely Proximal Covariance Steering Motion Planning (PCS-MP). 
 
+[![arXiv](https://img.shields.io/badge/arXiv-2209.05655-b31b1b.svg)](https://arxiv.org/abs/2209.05655)
+[![arXiv](https://img.shields.io/badge/arXiv-2308.14985-b31b1b.svg)](https://arxiv.org/abs/2308.14985)
+[![arXiv](https://img.shields.io/badge/arXiv-2411.03416-b31b1b.svg)](https://arxiv.org/pdf/2411.03416)
+
 ## Planning-as-inferencec
 The motion planning problem can be formulated as a probability inference, and the (sub-) optimal trajectory is modeled as a posterior probability $p(X|Z)$, $X$ being the trajecotry, and $Z$ is the environment, often represented by the joint space with obstacles. In this thread of research we use **[GaussianVI](vimp/gvimp/README.md)** to find a Gaussian distribution that is closest to the posterior. We can then sample from the solved Gaussian distribution.
 
@@ -18,18 +22,23 @@ $$\mathbb{E}_q [J(q)] + H(q).$$
 
 A higher entropy will trade off the short distance risky plan, and gives a longer but safer motion plan. On the right-hand side in the figures below is one illustrative example of this idea.
 
-<img src="figures/Quad_go_through.png" width="300"> <img src="figures/Quad_go_around.png" width="300">
-
+<p align="center">
+<img src="figures/Quad_go_through.png" width="300"> 
+<img src="figures/Quad_go_around.png"  width="300">
+</p>
 
 **2. Sampling Trajectory Distributions for Collision Avoidance**
 
 Our method generates a distribution over trajectories rather than a single deterministic one. Therefore, when the environment model is imprecise or unexpected disturbances occur, we can resample from this distribution to obtain a collision‑free trajectory.
 
-
-<img src="figures/Point_Robot_Resampling_1.gif" width="300"> <img src="figures/Point_Robot_Resampling_2.gif" width="300">
-
-<img src="figures/Point_Robot_Resampling_3.gif" width="300"> <img src="figures/Point_Robot_Resampling_4.gif" width="300">
-
+<p align="center">
+<img src="figures/Point_Robot_Resampling_1.gif" width="300"> 
+<img src="figures/Point_Robot_Resampling_2.gif" width="300">
+</p>
+<p align="center">
+<img src="figures/Point_Robot_Resampling_3.gif" width="300"> 
+<img src="figures/Point_Robot_Resampling_4.gif" width="300">
+</p>
 
 **3. Variational Mmotion planning for a 7-DOF WAM robot arm**
 
@@ -37,21 +46,31 @@ Our method leverages the factor graph structure of the probabilistic motion plan
 
 In a bookshelf senario below, the animated trajectory is the mean of the trajectory distribution obtained from GVI-MP and PGCS-MP planner, represented by dark gray and silver color, respectively.
 
+<p align="center">
 <img src="figures/WAM_GVI_RVIZ_1.gif" width="300" > <img src="figures/WAM_RVIZ_2.gif" width="300">
+</p>
 
+<p align="center">
 <img src="figures/WAM_GVI_RVIZ_2.gif" width="300"> <img src="figures/WAM_RVIZ_2.gif" width="300">
+</p>
 
 **4. Variational Motion planning for a linearized 2D quadrotor (LTV system)**
 
 The experiment settings
 
+<p align="center">
 <img src="figures/planar_quad_settings.jpg" width="300" >
+</p>
 
 ### Examples
-<img src="figures/planar_quad_exp1.gif" height="200" width=180> <img src="figures/planar_quad_exp2.gif" height="200" width=180> 
-
-<img src="figures/planar_quad_exp3.gif" height="200" width=180> <img src="figures/planar_quad_exp4.gif" height="200" width=180>
-
+<p align="center">
+<img src="figures/planar_quad_exp1.gif" height="200" width=180> 
+<img src="figures/planar_quad_exp2.gif" height="200" width=180> 
+</p>
+<p align="center">
+<img src="figures/planar_quad_exp3.gif" height="200" width=180> 
+<img src="figures/planar_quad_exp4.gif" height="200" width=180>
+</p>
 **5. Hardware Experiments**
 
 Here we compare different algorithms against GVIMP in environments experiencing unexpected disturbances. GVIMP’s ability to resample from the distribution enables obstacle avoidance and increases robustness.
@@ -71,7 +90,9 @@ VIMP utilizes a python script to install all necessary dependencies and check sy
 ```
 git clone https://github.com/hzyu17/VIMP.git
 cd VIMP/
-python3 build_GVIMP_modules.py
+mkdir build && cd build
+cmake ..
+make -j4
 ```
 ## Generate GH-quadratures before running experiments
 ```
@@ -131,22 +152,23 @@ If you find this repository useful in your won research, please kindly cite us:
   doi={10.1109/LRA.2023.3256134}}
 ```
 ```
-@misc{yu2023stochastic,
+@misc{yu2025stochasticmotionplanninggaussian,
       title={Stochastic Motion Planning as Gaussian Variational Inference: Theory and Algorithms}, 
-      author={Hongzhe Yu and Yongxin Chen},
-      year={2023},
+      author={Yu, Hongzhe and Chang, Zinuo and Chen, Yongxin},
+      year={2025},
       eprint={2308.14985},
       archivePrefix={arXiv},
-      primaryClass={cs.RO}
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2308.14985}, 
 }
 ```
 ```
-@misc{chang2024pgvimp,
-      title={Accelerating Gaussian Variational Inference for Motion Planning Under Uncertainty}, 
-      author={Zinuo Chang and Hongzhe Yu and Patricio Vela and Yongxin Chen},
-      year={2024},
-      eprint={2411.03416},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO}
+@article{chang2025efficient,
+  title={Efficient iterative proximal variational inference motion planning},
+  author={Chang, Zinuo and Yu, Hongzhe and Vela, Patricio and Chen, Yongxin},
+  journal={Robotics and Autonomous Systems},
+  pages={105267},
+  year={2025},
+  publisher={Elsevier}
 }
 ```

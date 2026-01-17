@@ -2,9 +2,13 @@ function output = plot_planarPR_oneiter(means, covs, sdfmap, i_iter)
 %% plot one iteration of the optimization process.
 % Hongzhe Yu
 
-addpath('../../tools/gtsam_toolbox');
-addpath("../../");
-addpath("../../tools/2dpR");
+vimp_root = setup_vimp();
+matlab_helpers = fullfile(vimp_root, 'matlab_helpers');
+addpath(matlab_helpers);
+addpath(fullfile(matlab_helpers, 'tools'));
+addpath(fullfile(matlab_helpers, 'tools', 'gtsam_toolbox'));
+addpath(fullfile(matlab_helpers, 'tools', 'error_ellipse'));
+addpath(fullfile(matlab_helpers, 'tools', '2dpR'));
 
 import gtsam.*
 import gpmp2.*

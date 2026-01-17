@@ -1,16 +1,17 @@
 %% Plot the results for planar robot in the paper
-
 close all
 clear all
 clc
-
 import gtsam.*
 import gpmp2.*
 
-addpath("../../");
-addpath("../../tools");
-addpath('../../tools/gtsam_toolbox');
-addpath("../../tools/error_ellipse");
+%% ******************* Setup paths ******************
+vimp_root = setup_vimp();
+matlab_helpers = fullfile(vimp_root, 'matlab_helpers');
+addpath(matlab_helpers);
+addpath(fullfile(matlab_helpers, 'tools'));
+addpath(fullfile(matlab_helpers, 'tools', 'gtsam_toolbox'));
+addpath(fullfile(matlab_helpers, 'tools', 'error_ellipse'));
 
 is_sparse = 1;
 save_figure = 0;
@@ -18,8 +19,7 @@ save_figure = 0;
 %% ============ 
 % read map
 % ============
-sdfmap = csvread("../../../vimp/python/sdf_robot/map/planar/SingleObstacleMap.csv");
-
+sdfmap = csvread(fullfile(vimp_root, 'vimp', 'python', 'sdf_robot', 'map', 'planar', 'SingleObstacleMap.csv'));
 dim_state = 6;
 dim_theta = 3;
 
@@ -28,23 +28,21 @@ dim_theta = 3;
 % =================
 for i = 2:2 % 4 experiments
     if is_sparse
-        prefix = ["case" + num2str(i)+"/"];
+        prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Quad', ['case' num2str(i)]);
     else
-        prefix = ["map2/case" + num2str(i)+"/"];
+        prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Quad', 'map2', ['case' num2str(i)]);
     end
-    means = csvread([prefix + "mean.csv"]);  %n_states*dim_state x niters
-    joint_precisions = csvread([prefix + "joint_precision.csv"]);  % n_states*dim_state*dim_state x niters
-    costs = csvread([prefix + "cost.csv"]);  % niters x 1
     
-    factor_costs = csvread([prefix + "factor_costs.csv"]);
+    means = csvread(fullfile(prefix, 'mean.csv'));  %n_states*dim_state x niters
+    joint_precisions = csvread(fullfile(prefix, 'joint_precision.csv'));  % n_states*dim_state*dim_state x niters
+    costs = csvread(fullfile(prefix, 'cost.csv'));  % niters x 1
+    factor_costs = csvread(fullfile(prefix, 'factor_costs.csv'));
     
     [ttl_dim, ~] = size(means);
     niters = find_niters(means);
     n_states = floor(ttl_dim / dim_state);
-
     output_costplot = plot_costs(costs, factor_costs, joint_precisions, niters, n_states, dim_state);
     % output_costplot = plot_costs_quadrotor(costs, factor_costs, joint_precisions, niters, n_states, dim_state, save_figure);
-
 end
 
 %% ================ 
@@ -71,16 +69,16 @@ tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
 for i = 2:2 % 4 experiments  
     nexttile
     if is_sparse
-        % prefix = ["case" + num2str(i)+"/"];
-        prefix = "Iter_GVIMP/";
+        % prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Quad', ['case' num2str(i)]);
+        prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Quad', 'Iter_GVIMP');
     else
-        prefix = ["map2/case" + num2str(i)+"/"];
+        prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Quad', 'map2', ['case' num2str(i)]);
     end
     
     % % --- high temperature ---
-    means = csvread([prefix + "mean.csv"]);
-    covs = csvread([prefix + "cov.csv"]);
-    precisions = csvread([prefix + "precision.csv"]);
+    means = csvread(fullfile(prefix, 'mean.csv'));
+    covs = csvread(fullfile(prefix, 'cov.csv'));
+    precisions = csvread(fullfile(prefix, 'precision.csv'));
        
     niters = find_niters(means);
     
@@ -104,33 +102,25 @@ for i = 2:2 % 4 experiments
     
 end
 
-
-% prefix = ["case2" + "/"];
-% norm_difference = csvread([prefix + "norm_differences.csv"]);
+% prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Quad', 'case2');
+% norm_difference = csvread(fullfile(prefix, 'norm_differences.csv'));
 % figure
 % plot(norm_difference, 'LineWidth', 2)
 
-
-
 % exportgraphics(gcf, strcat('Trajectory2_', num2str(niters), '_150_point.pdf'), 'ContentType', 'image');
-
-
 
 % figure
 % tiledlayout(2, 4, 'TileSpacing', 'tight', 'Padding', 'tight')
 % i = 1;
 % nexttile
 % if is_sparse
-%     prefix = ["case" + num2str(i)+"/"];
+%     prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Quad', ['case' num2str(i)]);
 % else
-%     prefix = ["map2/case" + num2str(i)+"/"];
+%     prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_Quad', 'map2', ['case' num2str(i)]);
 % end
-
-% sample = csvread([prefix + "samples.csv"]);
-% control = csvread([prefix + "controls.csv"]);
-% means = csvread([prefix + "zk_sdf.csv"]);
-
-
+% sample = csvread(fullfile(prefix, 'samples.csv'));
+% control = csvread(fullfile(prefix, 'controls.csv'));
+% means = csvread(fullfile(prefix, 'zk_sdf.csv'));
 % hold on
 % plot(sample(1,:))
 % plot(means(1,:), "r")

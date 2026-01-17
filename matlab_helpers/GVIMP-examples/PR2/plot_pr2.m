@@ -2,11 +2,14 @@ clear all
 close all
 clc
 
-%% ******************* Read datas ******************
-addpath('../../tools')
-addpath ('../../tools/WAM/utils')
-addpath('../../tools/gtsam_toolbox')
-addpath("../../tools/error_ellipse");
+%% ******************* Setup paths ******************
+vimp_root = setup_vimp();
+matlab_helpers = fullfile(vimp_root, 'matlab_helpers');
+addpath(matlab_helpers);
+addpath(fullfile(matlab_helpers, 'tools'));
+addpath(fullfile(matlab_helpers, 'tools', 'gtsam_toolbox'));
+addpath(fullfile(matlab_helpers, 'tools', 'error_ellipse'));
+addpath(fullfile(matlab_helpers, 'tools', 'WAM', 'utils'));
 
 import gtsam.*
 import gpmp2.*
@@ -23,9 +26,9 @@ i_exp = 1;
 
 switch i_exp
     case 1
-        prefix = "sparse_gh/case1";
+        prefix = fullfile(matlab_helpers, 'GVIMP-examples', 'PR2', 'sparse_gh', 'case1');
     case 2
-        prefix = "sparse_gh/case2";
+        prefix = fullfile(matlab_helpers, 'GVIMP-examples', 'PR2', 'sparse_gh', 'case2');
 end
 
 %% ******************* Start and goal configurations ******************
@@ -33,11 +36,11 @@ start_confs = [-1.57, -0.261, -3.14, -1.047, 3.14, -0.785, 0];
 end_confs = [0.0, 0.0, 0.0, -0.261, 3.14, -0.261, 0];
 
 %% read experiment results
-means = csvread([prefix+"/mean.csv"]);
-covs = csvread([prefix+"/cov.csv"]);
-precisions = csvread([prefix+"/joint_precision.csv"]);
-costs = csvread([prefix+"/cost.csv"]);
-factor_costs = csvread([prefix+"/factor_costs.csv"]);
+means = csvread(fullfile(prefix, 'mean.csv'));
+covs = csvread(fullfile(prefix, 'cov.csv'));
+precisions = csvread(fullfile(prefix, 'precision.csv'));
+costs = csvread(fullfile(prefix, 'cost.csv'));
+factor_costs = csvread(fullfile(prefix, 'factor_costs.csv'));
 
 %% ******************* Define parameters ******************
 % ----- parameters -----

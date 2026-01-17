@@ -1,13 +1,17 @@
 clear all
 close all
 clc
-addpath('../../tools/gtsam_toolbox')
+
+%% ******************* Setup paths ******************
+vimp_root = setup_vimp();
+matlab_helpers = fullfile(vimp_root, 'matlab_helpers');
+addpath(matlab_helpers);
+addpath(fullfile(matlab_helpers, 'tools'));
+addpath(fullfile(matlab_helpers, 'tools', 'gtsam_toolbox'));
+addpath(fullfile(matlab_helpers, 'tools', 'error_ellipse'));
+
 import gtsam.*
 import gpmp2.*
-addpath("../")
-addpath("../../tools/error_ellipse");
-addpath("../../");
-addpath("../../tools");
 
 %% generate SDF
 % dataset
@@ -39,14 +43,15 @@ for i = 1:4 % 4 experiments
     set(gcf,'position',[x0,y0,width,height])
     tiledlayout(1, 1, 'TileSpacing', 'tight', 'Padding', 'tight')
     t.FontSize = 16;
-
     nexttile
     grid on
     hold on 
-    prefix = ["map2/case"+num2str(i)+"/"];
+    
+    prefix = fullfile(matlab_helpers, 'PGCS-examples', '3d_pR', 'map2', ['case' num2str(i)]);
+    
     % % --- high temperature ---
-    means = csvread([prefix + "zk_sdf.csv"]);
-    covs = csvread([prefix + "Sk_sdf.csv"]);
+    means = csvread(fullfile(prefix, 'zk_sdf.csv'));
+    covs = csvread(fullfile(prefix, 'Sk_sdf.csv'));
     
     terminal_cov = reshape(covs, [6,6,50]);
     terminal_cov = terminal_cov(1:end, 1:end, end);
@@ -63,11 +68,8 @@ for i = 1:4 % 4 experiments
     % camera angle
     v = [-25 -15 10];
     [caz,cel] = view(v);
-
     set(gca,'fontsize',16);
     xlabel('Position $x$','Interpreter','latex'),ylabel('Position $y$','Interpreter','latex');
     zlabel('Position $z$','Interpreter','latex');
-
     axis off;
-
 end

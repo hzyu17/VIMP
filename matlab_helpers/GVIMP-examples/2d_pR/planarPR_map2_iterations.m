@@ -1,16 +1,20 @@
 clear all
 close all
 clc
-addpath('../../tools/gtsam_toolbox');
-addpath("../../tools/error_ellipse");
-addpath("../../");
-addpath("../../tools/");
+
+vimp_root = setup_vimp();
+matlab_helpers = fullfile(vimp_root, 'matlab_helpers');
+addpath(matlab_helpers);
+addpath(fullfile(matlab_helpers, 'tools'));
+addpath(fullfile(matlab_helpers, 'tools', 'gtsam_toolbox'));
+addpath(fullfile(matlab_helpers, 'tools', 'error_ellipse'));
+addpath(fullfile(matlab_helpers, 'tools', '2dpR'));
+
 import gtsam.*
 import gpmp2.*
 
-
 %% read map
-sdfmap = csvread("map2/map_multiobs_map2.csv");
+sdfmap = csvread(fullfile(vimp_root, 'vimp', 'maps', '2dpR', 'map2', 'map_multiobs_map2.csv'));
 
 v_niters = [18, 10, 18, 18];
 v_nsteps = [6, 10, 6, 6];
@@ -23,21 +27,19 @@ figure
 set(gcf,'position',[x0,y0,width,height])
 
 is_sparse = 1;
-
 i_exp = 3;
-if is_sparse
-    prefix = ["sparse_gh/map2/case" + num2str(i_exp)+"/"];
-else
-    prefix = ["map2/case" + num2str(i_exp)+"/"];
-end
-    
-% prefix = ["map2/case" + num2str(i_exp)+"/"];
 
-means = csvread([prefix + "mean.csv"]);
-covs = csvread([prefix + "cov.csv"]);
-precisions = csvread([prefix + "precision.csv"]);
-costs = csvread([prefix + "cost.csv"]);
-factor_costs = csvread([prefix + "factor_costs.csv"]);
+if is_sparse
+    prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_pR', 'sparse_gh', 'map2', ['case' num2str(i_exp)]);
+else
+    prefix = fullfile(matlab_helpers, 'GVIMP-examples', '2d_pR', 'map2', ['case' num2str(i_exp)]);
+end
+
+means = csvread(fullfile(prefix, 'mean.csv'));
+covs = csvread(fullfile(prefix, 'cov.csv'));
+precisions = csvread(fullfile(prefix, 'precision.csv'));
+costs = csvread(fullfile(prefix, 'cost.csv'));
+factor_costs = csvread(fullfile(prefix, 'factor_costs.csv'));
 
 niters = find_niters(means);
 
