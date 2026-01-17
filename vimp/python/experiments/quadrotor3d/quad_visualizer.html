@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Quadrotor Visualizer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #1a1a2e; overflow: hidden; }
+        #container { width: 100vw; height: 100vh; }
+        #controls {
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(0,0,0,0.85); padding: 20px;
+            border-radius: 10px; color: white; min-width: 280px;
+        }
+        #controls h3 { color: #4ecdc4; margin-bottom: 15px; }
+        .ctrl { margin-bottom: 12px; }
+        .ctrl label { display: block; font-size: 12px; color: #aaa; margin-bottom: 4px; }
+        input[type=range] { width: 100%; }
+        button {
+            background: #4ecdc4; color: #1a1a2e; border: none;
+            padding: 8px 16px; border-radius: 5px; cursor: pointer;
+            margin-right: 5px; margin-bottom: 5px; font-weight: bold;
+        }
+        button:hover { background: #3dbdb5; }
+        button.secondary { background: #555; color: white; }
+        #info {
+            position: absolute; bottom: 20px; left: 20px;
+            background: rgba(0,0,0,0.85); padding: 12px 16px;
+            border-radius: 8px; color: white; font-size: 13px;
+        }
+        #info span { color: #4ecdc4; }
+        #drop-zone {
+            border: 2px dashed #555; border-radius: 8px;
+            padding: 15px; text-align: center; margin-bottom: 12px;
+        }
+        #drop-zone.dragover { border-color: #4ecdc4; background: rgba(78,205,196,0.1); }
+        #drop-zone p { color: #888; font-size: 11px; margin-bottom: 8px; }
+        #file-input { display: none; }
+        #help {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(0,0,0,0.85); padding: 12px;
+            border-radius: 8px; color: #888; font-size: 11px;
+        }
+        kbd { background: #333; padding: 2px 5px; border-radius: 3px; color: #4ecdc4; }
+        #file-info {
+            background: rgba(78,205,196,0.1); border-radius: 5px;
+            padding: 8px; margin-bottom: 12px; font-size: 11px;
+            display: none;
+        }
+        #file-info.visible { display: block; }
+        #file-info span { color: #4ecdc4; }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <div id="controls">
+        <h3>🚁 Quadrotor Visualizer</h3>
+        <div id="drop-zone">
+            <p>Drop .traj or .csv file here</p>
+            <button onclick="document.getElementById('file-input').click()">Load File</button>
+            <input type="file" id="file-input" accept=".traj,.csv,.txt,.bin">
+        </div>
+        <div id="file-info">
+            <div>File: <span id="file-name">-</span></div>
+            <div>States: <span id="file-states">-</span> × <span id="file-dims">-</span></div>
+            <div>Duration: <span id="file-duration">-</span>s (dt=<span id="file-dt">-</span>s)</div>
+        </div>
+        <div class="ctrl">
+            <label>Frame: <span id="frame-lbl">0/0</span></label>
+            <input type="range" id="frame-slider" min="0" max="100" value="0">
+        </div>
+        <div class="ctrl">
+            <label>Speed: <span id="speed-lbl">1.0x</span></label>
+            <input type="range" id="speed-slider" min="0.1" max="3" step="0.1" value="1">
+        </div>
+        <div>
+            <button id="play-btn">▶ Play</button>
+            <button class="secondary" id="reset-btn">↺ Reset</button>
+        </div>
+        <div style="margin-top: 8px;">
+            <button class="secondary" id="demo-btn">Demo: Figure-8</button>
+            <button class="secondary" id="demo-helix-btn">Demo: Helix</button>
+        </div>
+    </div>
+    <div id="info">
+        Position: <span id="pos">-</span> | Attitude: <span id="att">-</span> | Time: <span id="time">-</span>
+    </div>
+    <div id="help">
+        <kbd>Space</kbd> Play/Pause | <kbd>R</kbd> Reset | <kbd>←→</kbd> Step<br>
+        Mouse: Drag=Orbit, Scroll=Zoom, Right=Pan<br>
+        <br>
+        Supports: <kbd>.traj</kbd> (binary) and <kbd>.csv</kbd>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+    // ==================== State ====================
+    let scene, camera, renderer, quadrotor, trajLine, travLine;
+    let trajectory = [], frame = 0, playing = false, speed = 1, dt = 0.05, totalTime = 0;
+    let lastT = 0, accum = 0;
+    let drag = false, prevMouse = {x:0, y:0};
+    let spherical = {r: 12, phi: Math.PI/4, theta: Math.PI/4};
+    let target = new THREE.Vector3(0, 0, 1);
+
+    // ==================== Binary Format Parser ====================
+    function parseBinaryTraj(arrayBuffer) {
+        const view = new DataView(arrayBuffer);
+        let offset = 0;
+        
+        // Read magic "TRAJ"
+        const magic = String.fromCharCode(
+            view.getUint8(0), view.getUint8(1), 
+            view.getUint8(2), view.getUint8(3)
+        );
+        offset += 4;
+        
+        if (magic !== 'TRAJ') {
+            throw new Error(`Invalid file format. Expected 'TRAJ', got '${magic}'`);
+        }
+        
+        // Read header (little-endian)
+        const version = view.getUint32(offset, true); offset += 4;
+        const nStates = view.getUint32(offset, true); offset += 4;
+        const dimState = view.getUint32(offset, true); offset += 4;
+        
+        console.log(`Binary .traj: version=${version}, states=${nStates}, dims=${dimState}`);
+        
+        // Read trajectory data (float64, little-endian)
+        const traj = [];
+        for (let i = 0; i < nStates; i++) {
+            const state = [];
+            for (let j = 0; j < dimState; j++) {
+                state.push(view.getFloat64(offset, true));
+                offset += 8;
+            }
+            traj.push(state);
+        }
+        
+        // Read metadata (version 2+)
+        let fileDt = 0.05, fileTotalTime = 0;
+        if (version >= 2 && offset + 16 <= arrayBuffer.byteLength) {
+            fileDt = view.getFloat64(offset, true); offset += 8;
+            fileTotalTime = view.getFloat64(offset, true); offset += 8;
+        } else {
+            fileTotalTime = nStates * fileDt;
+        }
+        
+        return { trajectory: traj, dt: fileDt, totalTime: fileTotalTime, nStates, dimState };
+    }
+
+    function parseCSV(text) {
+        const lines = text.trim().split('\n');
+        const traj = [];
+        for (const line of lines) {
+            const vals = line.split(',').map(v => parseFloat(v.trim()));
+            if (vals.length >= 6 && !vals.some(isNaN)) {
+                traj.push(vals);
+            }
+        }
+        const nStates = traj.length;
+        const dimState = traj[0]?.length || 0;
+        const fileDt = 0.05;
+        return { trajectory: traj, dt: fileDt, totalTime: nStates * fileDt, nStates, dimState };
+    }
+
+    // ==================== Three.js Setup ====================
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a2e);
+        
+        camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 500);
+        updateCam();
+        
+        renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setSize(innerWidth, innerHeight);
+        document.getElementById('container').appendChild(renderer.domElement);
+        
+        scene.add(new THREE.AmbientLight(0x404040, 0.6));
+        const dl = new THREE.DirectionalLight(0xffffff, 0.8);
+        dl.position.set(10, 20, 15);
+        scene.add(dl);
+        
+        // Grid (XY plane, Z up)
+        const grid = new THREE.GridHelper(20, 20, 0x444444, 0x333333);
+        grid.rotation.x = Math.PI/2;
+        scene.add(grid);
+        
+        // World axes
+        scene.add(new THREE.AxesHelper(2));
+        
+        quadrotor = createQuad();
+        scene.add(quadrotor);
+        
+        setupEvents();
+        animate();
+    }
+
+    function createQuad() {
+        const g = new THREE.Group();
+        const L = 0.25, R = 0.1;
+        const bodyMat = new THREE.MeshPhongMaterial({color: 0x2244aa});
+        const armMat = new THREE.MeshPhongMaterial({color: 0x444444});
+        const rotorMat = new THREE.MeshPhongMaterial({color: 0xcc3333});
+        const frontMat = new THREE.MeshPhongMaterial({color: 0x33cc33});
+        
+        // Body
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.04, 32), bodyMat);
+        body.rotation.x = Math.PI/2;
+        g.add(body);
+        
+        // Arms + rotors (+ configuration)
+        [0, Math.PI/2, Math.PI, 3*Math.PI/2].forEach((a, i) => {
+            const arm = new THREE.Mesh(new THREE.BoxGeometry(L, 0.02, 0.02), armMat);
+            arm.position.set(Math.cos(a)*L/2, Math.sin(a)*L/2, 0);
+            arm.rotation.z = a;
+            g.add(arm);
+            
+            const rotor = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 0.01, 32), i===0 ? frontMat : rotorMat);
+            rotor.position.set(Math.cos(a)*L, Math.sin(a)*L, 0.02);
+            rotor.rotation.x = Math.PI/2;
+            g.add(rotor);
+        });
+        
+        // Body frame axes
+        g.add(new THREE.AxesHelper(0.15));
+        return g;
+    }
+
+    function updateQuad(s) {
+        if (!s || s.length < 6) return;
+        quadrotor.position.set(s[0], s[1], s[2]);
+        quadrotor.rotation.set(0, 0, 0);
+        quadrotor.rotateZ(s[5]);  // psi (yaw)
+        quadrotor.rotateY(s[4]);  // theta (pitch)
+        quadrotor.rotateX(s[3]);  // phi (roll)
+        
+        document.getElementById('pos').textContent = 
+            `(${s[0].toFixed(2)}, ${s[1].toFixed(2)}, ${s[2].toFixed(2)})`;
+        document.getElementById('att').textContent = 
+            `(${(s[3]*180/Math.PI).toFixed(1)}°, ${(s[4]*180/Math.PI).toFixed(1)}°, ${(s[5]*180/Math.PI).toFixed(1)}°)`;
+        document.getElementById('time').textContent = `${(frame * dt).toFixed(2)}s`;
+    }
+
+    function updateTraj() {
+        if (trajLine) scene.remove(trajLine);
+        if (travLine) scene.remove(travLine);
+        if (trajectory.length < 2) return;
+        
+        // Full trajectory (gray)
+        const pts = trajectory.map(s => new THREE.Vector3(s[0], s[1], s[2]));
+        trajLine = new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints(pts), 
+            new THREE.LineBasicMaterial({color: 0x666666})
+        );
+        scene.add(trajLine);
+        
+        // Traversed portion (cyan)
+        if (frame > 0) {
+            const tpts = trajectory.slice(0, frame+1).map(s => new THREE.Vector3(s[0], s[1], s[2]));
+            travLine = new THREE.Line(
+                new THREE.BufferGeometry().setFromPoints(tpts), 
+                new THREE.LineBasicMaterial({color: 0x4ecdc4, linewidth: 2})
+            );
+            scene.add(travLine);
+        }
+    }
+
+    function updateCam() {
+        camera.position.set(
+            target.x + spherical.r * Math.sin(spherical.phi) * Math.cos(spherical.theta),
+            target.y + spherical.r * Math.sin(spherical.phi) * Math.sin(spherical.theta),
+            target.z + spherical.r * Math.cos(spherical.phi)
+        );
+        camera.lookAt(target);
+    }
+
+    function fitCamera() {
+        if (!trajectory.length) return;
+        let [minX, maxX, minY, maxY, minZ, maxZ] = [Infinity, -Infinity, Infinity, -Infinity, Infinity, -Infinity];
+        trajectory.forEach(s => {
+            minX = Math.min(minX, s[0]); maxX = Math.max(maxX, s[0]);
+            minY = Math.min(minY, s[1]); maxY = Math.max(maxY, s[1]);
+            minZ = Math.min(minZ, s[2]); maxZ = Math.max(maxZ, s[2]);
+        });
+        target.set((minX+maxX)/2, (minY+maxY)/2, (minZ+maxZ)/2);
+        spherical.r = Math.max(maxX-minX, maxY-minY, maxZ-minZ, 2) * 1.5;
+        updateCam();
+    }
+
+    // ==================== Event Handling ====================
+    function setupEvents() {
+        const c = renderer.domElement;
+        
+        // Mouse controls
+        c.addEventListener('mousedown', e => { drag = true; prevMouse = {x: e.clientX, y: e.clientY}; });
+        c.addEventListener('mouseup', () => drag = false);
+        c.addEventListener('mouseleave', () => drag = false);
+        c.addEventListener('mousemove', e => {
+            if (!drag) return;
+            const dx = e.clientX - prevMouse.x, dy = e.clientY - prevMouse.y;
+            if (e.buttons === 1) {
+                spherical.theta -= dx * 0.01;
+                spherical.phi = Math.max(0.1, Math.min(Math.PI-0.1, spherical.phi - dy*0.01));
+            } else if (e.buttons === 2) {
+                const right = new THREE.Vector3().crossVectors(camera.up, camera.position.clone().sub(target)).normalize();
+                target.addScaledVector(right, dx*0.02);
+                target.z += dy * 0.02;
+            }
+            updateCam();
+            prevMouse = {x: e.clientX, y: e.clientY};
+        });
+        c.addEventListener('wheel', e => { 
+            e.preventDefault(); 
+            spherical.r = Math.max(2, Math.min(50, spherical.r * (1 + e.deltaY*0.001))); 
+            updateCam(); 
+        });
+        c.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // File input
+        document.getElementById('file-input').addEventListener('change', e => { 
+            if (e.target.files.length) loadFile(e.target.files[0]); 
+        });
+        
+        // Drag and drop
+        const dz = document.getElementById('drop-zone');
+        dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+        dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+        dz.addEventListener('drop', e => { 
+            e.preventDefault(); 
+            dz.classList.remove('dragover'); 
+            if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]); 
+        });
+        
+        // Buttons
+        document.getElementById('play-btn').addEventListener('click', togglePlay);
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('demo-btn').addEventListener('click', () => loadDemo('figure8'));
+        document.getElementById('demo-helix-btn').addEventListener('click', () => loadDemo('helix'));
+        
+        // Sliders
+        document.getElementById('frame-slider').addEventListener('input', e => setFrame(parseInt(e.target.value)));
+        document.getElementById('speed-slider').addEventListener('input', e => { 
+            speed = parseFloat(e.target.value); 
+            document.getElementById('speed-lbl').textContent = speed.toFixed(1)+'x'; 
+        });
+        
+        // Keyboard
+        document.addEventListener('keydown', e => {
+            if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+            else if (e.code === 'KeyR') reset();
+            else if (e.code === 'ArrowLeft') setFrame(frame - 1);
+            else if (e.code === 'ArrowRight') setFrame(frame + 1);
+        });
+        
+        // Resize
+        window.addEventListener('resize', () => { 
+            camera.aspect = innerWidth/innerHeight; 
+            camera.updateProjectionMatrix(); 
+            renderer.setSize(innerWidth, innerHeight); 
+        });
+    }
+
+    // ==================== File Loading ====================
+    function loadFile(file) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        
+        if (ext === 'traj' || ext === 'bin') {
+            // Binary format
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const result = parseBinaryTraj(e.target.result);
+                    applyTrajectory(result, file.name);
+                } catch (err) {
+                    alert('Error loading binary file: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        } else {
+            // CSV format
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const result = parseCSV(e.target.result);
+                    applyTrajectory(result, file.name);
+                } catch (err) {
+                    alert('Error loading CSV file: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    function applyTrajectory(result, filename = 'demo') {
+        trajectory = result.trajectory;
+        dt = result.dt;
+        totalTime = result.totalTime;
+        
+        frame = 0;
+        document.getElementById('frame-slider').max = trajectory.length - 1;
+        document.getElementById('frame-slider').value = 0;
+        
+        // Update file info display
+        document.getElementById('file-info').classList.add('visible');
+        document.getElementById('file-name').textContent = filename;
+        document.getElementById('file-states').textContent = result.nStates;
+        document.getElementById('file-dims').textContent = result.dimState;
+        document.getElementById('file-duration').textContent = totalTime.toFixed(2);
+        document.getElementById('file-dt').textContent = dt.toFixed(6);
+        
+        // Debug: print key frame values
+        console.log(`=== Loaded: ${filename} ===`);
+        console.log(`dt=${dt}, totalTime=${totalTime}`);
+        [0, 50, 100, 150, 199].forEach(f => {
+            if (f < trajectory.length) {
+                const s = trajectory[f];
+                console.log(`Frame ${f}: pos=(${s[0].toFixed(4)}, ${s[1].toFixed(4)}, ${s[2].toFixed(4)}), att=(${(s[3]*180/Math.PI).toFixed(2)}°, ${(s[4]*180/Math.PI).toFixed(2)}°, ${(s[5]*180/Math.PI).toFixed(2)}°)`);
+            }
+        });
+        
+        updateQuad(trajectory[0]);
+        updateTraj();
+        updateFrameLbl();
+        fitCamera();
+        
+        console.log(`Loaded: ${result.nStates} states × ${result.dimState} dims, dt=${dt.toFixed(4)}s, T=${totalTime.toFixed(2)}s`);
+    }
+
+    // ==================== Demo Trajectories ====================
+    function loadDemo(type) {
+        const n = 200, T = 10, w = 2*Math.PI/T;
+        const traj = [];
+        
+        for (let i = 0; i < n; i++) {
+            const t = i * T / (n-1);
+            let state;
+            
+            if (type === 'figure8') {
+                // Figure-8 (lemniscate)
+                const x = 3 * Math.sin(w*t);
+                const y = 1.5 * Math.sin(w*t) * Math.cos(w*t);
+                const z = 2 + 0.3 * Math.sin(2*w*t);
+                const vx = 3*w*Math.cos(w*t), vy = 1.5*w*(Math.cos(w*t)**2 - Math.sin(w*t)**2);
+                const psi = Math.atan2(vy, vx);
+                const phi = 0.1 * Math.sin(2*w*t);
+                const theta = 0.05 * Math.cos(w*t);
+                state = [x, y, z, phi, theta, psi, 
+                         Math.sqrt(vx*vx+vy*vy), 0, 0.6*w*Math.cos(2*w*t),
+                         0.2*w*Math.cos(2*w*t), -0.05*w*Math.sin(w*t), w];
+            } else {
+                // Helix
+                const r = 2.0, h = 0.5, wh = 0.8;
+                const x = r * Math.cos(wh*t);
+                const y = r * Math.sin(wh*t);
+                const z = 1 + h*t;
+                const phi = 0.1 * Math.sin(wh*t);
+                const theta = 0.05;
+                const psi = wh*t + Math.PI/2;
+                state = [x, y, z, phi, theta, psi, 0.1, 0, h, 0.1*wh*Math.cos(wh*t), 0, wh];
+            }
+            traj.push(state);
+        }
+        
+        applyTrajectory({
+            trajectory: traj,
+            dt: T/(n-1),  // Match C++: dt = total_time / (n_states - 1)
+            totalTime: T,
+            nStates: n,
+            dimState: 12
+        }, `demo_${type}`);
+    }
+
+    // ==================== Playback ====================
+    function togglePlay() { 
+        playing = !playing; 
+        document.getElementById('play-btn').textContent = playing ? '⏸ Pause' : '▶ Play'; 
+    }
+    
+    function reset() { setFrame(0); }
+    
+    function setFrame(f) {
+        if (!trajectory.length) return;
+        frame = Math.max(0, Math.min(trajectory.length-1, f));
+        document.getElementById('frame-slider').value = frame;
+        updateQuad(trajectory[frame]);
+        updateTraj();
+        updateFrameLbl();
+    }
+    
+    function updateFrameLbl() { 
+        document.getElementById('frame-lbl').textContent = `${frame}/${Math.max(0, trajectory.length-1)}`; 
+    }
+
+    // ==================== Animation Loop ====================
+    function animate(t = 0) {
+        requestAnimationFrame(animate);
+        const delta = (t - lastT) / 1000;
+        lastT = t;
+        
+        if (playing && trajectory.length) {
+            accum += delta * speed;
+            if (accum >= dt) {
+                accum = 0;
+                frame = (frame + 1) % trajectory.length;
+                document.getElementById('frame-slider').value = frame;
+                updateQuad(trajectory[frame]);
+                updateTraj();
+                updateFrameLbl();
+            }
+        }
+        renderer.render(scene, camera);
+    }
+
+    // ==================== Start ====================
+    init();
+    loadDemo('figure8');
+    </script>
+</body>
+</html>

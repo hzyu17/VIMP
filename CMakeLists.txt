@@ -1,4 +1,6 @@
 # ----------------------- duplicated contents from the higher level CMakeLists ------------------------
+cmake_policy(SET CMP0000 NEW)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 cmake_minimum_required(VERSION 3.5)
 enable_testing()
 project(VIMP CXX C CUDA)
@@ -22,7 +24,13 @@ message("Finding Eigen3 Library")
 find_package(Eigen3 3.4.0 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
-# Find the OpenMP package
+# For Visualization
+find_package(OpenGL REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
+# Find the OpenMP package 
 find_package(OpenMP)
 
 # Cuda
@@ -72,19 +80,5 @@ find_package(yaml-cpp REQUIRED)
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}/vimp")
 add_compile_definitions(GTSAM_ENV)
 add_compile_definitions(GVI_SUBDUR_ENV)
-
-
-# matplotcpp
-# message("Fetching matplotplusplus Library")
-# include(FetchContent)
-# FetchContent_Declare(matplotplusplus
-#         GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus
-#         GIT_TAG origin/master) # or whatever tag you want
-
-# FetchContent_GetProperties(matplotplusplus)
-# if(NOT matplotplusplus_POPULATED)
-#     FetchContent_Populate(matplotplusplus)
-#     add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
-# endif()
 
 add_subdirectory(vimp)

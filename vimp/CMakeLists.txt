@@ -24,7 +24,7 @@ foreach(subdir ${vimp_subdirs})
 
 endforeach(subdir)
 
-# ----------------------- options -----------------------
+# ----------------------- options ----------------------- 
 # Add a flag to control whether to build CPU executables
 option(BUILD_CPU_GVIMP "Build CPU version GVIMP executables from src/gvimp" OFF)
 option(BUILD_GPU_GVIMP "Build GPU version GVIMP executables from src/gvimp_cuda" ON)
@@ -43,7 +43,12 @@ if(BUILD_CPU_GVIMP)
       target_include_directories(${vimp_name} PRIVATE ${Matlab_INCLUDE_DIRS})
       target_link_libraries(${vimp_name} ${EIGEN3_LIBRARIES} ${GTSAM_LIBRARIES} ${GPMP2_LIBRARIES} 
                             ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY} OpenMP::OpenMP_CXX
-                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 yaml-cpp)
+                            ${libSpGH_LIBRARY} ${MCR_LIBRARY_PATH}/libmwmclmcrrt.so.9.9 yaml-cpp
+                            OpenGL::GL
+                            OpenGL::GLU
+                            glfw
+                            GLEW::GLEW
+                            Eigen3::Eigen)
   endforeach()
 endif()
 
