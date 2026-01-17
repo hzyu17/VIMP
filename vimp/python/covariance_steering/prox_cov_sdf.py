@@ -1,266 +1,507 @@
+"""
+Proximal Covariance Steering for Planar Quadrotor with SDF-based Collision Avoidance.
+
+This module implements iterative covariance steering algorithms with obstacle avoidance
+using signed distance fields (SDF) for planar quadrotor systems.
+"""
+
+import os
+from datetime import datetime
+from dataclasses import dataclass
+from typing import Tuple, Optional, Callable
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Local imports
 from covariance_steering.compute_qr import *
 from covariance_steering.compute_qr_pquad import *
 from covariance_steering.linear_cov import *
 from covariance_steering.pcs_data import *
 from tools.propagations import *
-
-
-file_path = os.path.abspath(__file__)
-script_filename = os.path.splitext(os.path.basename(file_path))[0]
-cur_dir = os.path.dirname(file_path)
-py_dir = os.path.abspath(os.path.join(cur_dir, '..'))
-debug_dir = os.path.abspath(os.path.join(py_dir, 'debug'))
-    
-import numpy as np
 from tools.logger import *
-from covariance_steering.pcs_data import *
-from dynamics.planar_quad import *    
-
 from tools.draw_pquadsdf_trj import *
+from dynamics.planar_quad import *
 from sdf_robot.scripts.generate_sdf_2d import *
-import matplotlib.pyplot as plt
 
-def proximal_cov_pquadsdf_zkSk(linearize_trj, 
-                                zk, Sk, 
-                                As, Bs, as_, 
-                                Qt, rt, 
-                                eps_obs, slope, sig_obs, radius,
-                                epsilon, eta, iterations, iterations_linesearch,
-                                x0, Sig0, xT, SigT, tf, mapname="SingleObstacleMap"):
-    nt, nx, _ = As.shape
-    nu = Bs.shape[2]
+# ============================================================================
+# Path Configuration
+# ============================================================================
+_FILE_PATH = os.path.abspath(__file__)
+_SCRIPT_NAME = os.path.splitext(os.path.basename(_FILE_PATH))[0]
+_CUR_DIR = os.path.dirname(_FILE_PATH)
+_PY_DIR = os.path.abspath(os.path.join(_CUR_DIR, '..'))
+DEBUG_DIR = os.path.abspath(os.path.join(_PY_DIR, 'debug'))
+
+# ============================================================================
+# Constants
+# ============================================================================
+# Planar quadrotor geometry
+PQUAD_LENGTH = 5.0
+PQUAD_HEIGHT = 0.35
+PQUAD_NUM_BALLS = 5
+
+# Convergence thresholds
+LINEARIZATION_CONVERGENCE_TOL = 1e-5
+
+# Line search parameters
+LINE_SEARCH_DECAY = 0.9
+
+
+# ============================================================================
+# Visualization Helpers
+# ============================================================================
+@dataclass
+class VisualizationContext:
+    """Context for iterative visualization during optimization."""
+    fig: plt.Figure
+    ax: plt.Axes
+    planar_map: object
     
-    show_iterations = True
-    
-    # ## ====================================== logging ======================================  
-    # logger = Logger(nt, tf, epsilon, eta)
-    if show_iterations:
-        plt.ion()  # Turn on interactive plotting mode
+    @classmethod
+    def create(cls, map_name: str) -> 'VisualizationContext':
+        """Initialize visualization context with interactive plotting."""
+        plt.ion()
         fig, ax = plt.subplots()
-        _, planarmap = generate_2dsdf("SingleObstacleMap", savemap=False)
+        _, planar_map = generate_2dsdf(map_name, savemap=False)
+        return cls(fig=fig, ax=ax, planar_map=planar_map)
     
-    ## ====================================== end logging ======================================
-    pquadsdf = PQuadColSDF(eps_obs, slope, sig_obs, radius, map_name=mapname)
+    def update(self, x0: np.ndarray, xT: np.ndarray, mean_trajectory: np.ndarray, 
+               iteration: int, plot_step: int = 20) -> None:
+        """Update visualization with current trajectory."""
+        self.ax.clear()
+        draw_pquad_map_trj_2d(
+            x0, xT, mean_trajectory,
+            PQUAD_LENGTH, PQUAD_HEIGHT, PQUAD_NUM_BALLS,
+            self.fig, self.ax, self.planar_map,
+            step=plot_step,
+            draw_ball=False, save_fig=False,
+            file_name="pquad_trj2d.pdf"
+        )
+        self.ax.set_title(f"Iteration {iteration + 1}")
+        plt.draw()
+        plt.pause(0.1)
     
-    exp_data_io = PCSIterationData()
-    col_params = PquadCollisionParams(eps_obs, slope, sig_obs, radius, mapname)
-    pcs_params = PCSParams(nt, tf, x0, xT, Sig0, SigT, epsilon, eta)
-    exp_data_io.add_map_param(col_params)
-    exp_data_io.add_pcs_param(pcs_params)
+    def finalize(self) -> None:
+        """Finalize visualization and display final result."""
+        plt.ioff()
+        plt.show()
+
+
+def save_experiment_data(exp_data: PCSIterationData, script_name: str) -> str:
+    """Save experiment data to a timestamped pickle file."""
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"data_{timestamp}_{script_name}.pickle"
+    filepath = os.path.join(DEBUG_DIR, "PCS", filename)
+    exp_data.dump(filepath)
+    return filepath
+
+
+# ============================================================================
+# Core Algorithm
+# ============================================================================
+def _check_linearization_convergence(
+    hA_curr: np.ndarray, ha_curr: np.ndarray,
+    hA_prev: np.ndarray, ha_prev: np.ndarray,
+    tol: float = LINEARIZATION_CONVERGENCE_TOL
+) -> bool:
+    """Check if linearization has converged."""
+    hA_converged = np.linalg.norm(hA_curr - hA_prev) < tol
+    ha_converged = np.linalg.norm(ha_curr - ha_prev) < tol
+    return hA_converged and ha_converged
+
+
+def _perform_line_search_iteration(
+    # Current state
+    As: np.ndarray, as_: np.ndarray, Bs: np.ndarray,
+    mean_trj: np.ndarray,
+    # Linearization results  
+    hA: np.ndarray, hB: np.ndarray, ha: np.ndarray, nominal_trace: np.ndarray,
+    # Cost matrices
+    Qt: np.ndarray, rt: np.ndarray,
+    # Algorithm parameters
+    eta: float, epsilon: float,
+    # Boundary conditions
+    x0: np.ndarray, Sig0: np.ndarray, xT: np.ndarray, SigT: np.ndarray, tf: float,
+    # Collision model
+    pquad_sdf: PQuadColSDF
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, float, float]:
+    """
+    Perform one iteration of the line search optimization.
     
+    Returns:
+        Tuple containing:
+        - As_new: Updated closed-loop dynamics matrices
+        - as_new: Updated closed-loop affine terms
+        - mean_trj_new: Updated mean trajectory
+        - cov_trj_new: Updated covariance trajectory
+        - gradient_col: Collision cost gradients
+        - collision_cost: Total collision cost
+        - control_cost: Total control cost
+    """
+    nt, nx, _ = As.shape
     
-    # ======= For line search =======
-    cur_total_cost = np.inf
+    # Compute cost matrices with collision terms
+    Qk, rk, collision_cost, gradient_col = compute_qr_pquad(
+        As, as_, hA, ha, nominal_trace, eta, Bs, Qt, rt, mean_trj, pquad_sdf
+    )
+    
+    # Compute proximal dynamics (blend current and linearized)
+    A_proximal = (eta * As + hA) / (1 + eta)
+    a_proximal = (eta * as_ + ha) / (1 + eta)
+    
+    # Solve covariance steering problem
+    K, d, _, _ = linear_covcontrol(
+        A_proximal, Bs, a_proximal, epsilon, Qk, rk, x0, Sig0, xT, SigT, tf
+    )
+    
+    # Update closed-loop dynamics
+    As_new = np.zeros_like(As)
+    as_new = np.zeros_like(as_)
+    for i in range(nt):
+        As_new[i] = A_proximal[i] + hB[i] @ K[i]
+        as_new[i] = a_proximal[i] + hB[i] @ d[i]
+    
+    # Propagate mean and covariance
+    mean_trj_new, cov_trj_new = mean_cov_cl(As_new, Bs, as_new, epsilon, x0, Sig0, tf)
+    
+    # Compute control cost
+    control_signal = compute_control_signal(x0, K, d)
+    control_cost = np.linalg.norm(control_signal) / 2.0
+    
+    return As_new, as_new, mean_trj_new, cov_trj_new, gradient_col, collision_cost, control_cost
+
+
+def proximal_cov_pquadsdf_zkSk(
+    linearize_trj: Callable,
+    mean_trj: np.ndarray,
+    cov_trj: np.ndarray,
+    As: np.ndarray,
+    Bs: np.ndarray,
+    as_: np.ndarray,
+    Qt: np.ndarray,
+    rt: np.ndarray,
+    eps_obs: float,
+    slope: float,
+    sig_obs: float,
+    radius: float,
+    epsilon: float,
+    eta: float,
+    max_iterations: int,
+    max_linesearch_iterations: int,
+    x0: np.ndarray,
+    Sig0: np.ndarray,
+    xT: np.ndarray,
+    SigT: np.ndarray,
+    tf: float,
+    map_name: str = "SingleObstacleMap",
+    show_iterations: bool = True
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Proximal covariance steering with SDF collision avoidance.
+    
+    Solves the covariance steering problem for a planar quadrotor with obstacle
+    avoidance using signed distance fields. Uses an iterative linearization
+    approach with line search for convergence.
+    
+    Args:
+        linearize_trj: Function to linearize dynamics along trajectory
+        mean_trj: Initial mean trajectory (nt, nx)
+        cov_trj: Initial covariance trajectory (nt, nx, nx)
+        As: Closed-loop state transition matrices (nt, nx, nx)
+        Bs: Control input matrices (nt, nx, nu)
+        as_: Closed-loop affine terms (nt, nx)
+        Qt: State cost matrices (nt, nx, nx)
+        rt: State cost linear terms (nt, nx)
+        eps_obs: Obstacle avoidance epsilon parameter
+        slope: SDF slope parameter
+        sig_obs: Obstacle sigma parameter
+        radius: Robot collision radius
+        epsilon: Covariance steering regularization
+        eta: Proximal parameter
+        max_iterations: Maximum optimization iterations per linearization
+        max_linesearch_iterations: Maximum line search iterations
+        x0: Initial state mean
+        Sig0: Initial state covariance
+        xT: Target state mean
+        SigT: Target state covariance
+        tf: Final time
+        map_name: Name of the obstacle map
+        show_iterations: Whether to visualize iterations
+        
+    Returns:
+        Tuple containing:
+        - As: Final closed-loop dynamics matrices
+        - as_: Final closed-loop affine terms
+        - mean_trj: Final mean trajectory
+        - cov_trj: Final covariance trajectory
+        - gradient_col: Final collision cost gradients
+    """
+    nt, nx, _ = As.shape
+    
+    # Initialize collision model
+    pquad_sdf = PQuadColSDF(eps_obs, slope, sig_obs, radius, map_name=map_name)
+    
+    # Initialize experiment data logging
+    exp_data = PCSIterationData()
+    exp_data.add_map_param(PquadCollisionParams(eps_obs, slope, sig_obs, radius, map_name))
+    exp_data.add_pcs_param(PCSParams(nt, tf, x0, xT, Sig0, SigT, epsilon, eta))
+    
+    # Initialize visualization if enabled
+    vis_ctx = VisualizationContext.create(map_name) if show_iterations else None
+    
+    # Initialize tracking variables
+    hA_prev = np.zeros((nt, nx, nx))
+    ha_prev = np.zeros((nt, nx))
+    current_cost = np.inf
     eta_base = eta
+    gradient_col = None
     
-    hAk_prev = np.zeros((nt, nx, nx))
-    hak_prev = np.zeros((nt, nx))
-    
-    iter_linearization = 0
-    
+    # Main linearization loop
+    linearization_iter = 0
     while True:
-        print(" ========== Linearization iteration: ", str(iter_linearization), " ==========")
+        print(f" ========== Linearization iteration: {linearization_iter} ==========")
         
-        # ------------------- linearization -------------------
-        hAk, hBk, hak, nTr = linearize_trj(Sk, zk, As)
-        iter_linearization += 1
+        # Linearize dynamics along current trajectory
+        hA, hB, ha, nominal_trace = linearize_trj(cov_trj, mean_trj, As)
+        linearization_iter += 1
         
-        # -------------
-        # convergence
-        # -------------
-        if np.linalg.norm(hAk-hAk_prev) < 1e-5 and np.linalg.norm(hak-hak_prev) < 1e-5:
+        # Check convergence
+        if _check_linearization_convergence(hA, ha, hA_prev, ha_prev):
             print("Converged.")
             break
         
-        # ----------
-        # algorithm
-        # ----------
-        for k in range(iterations):
-            print(" ======= Optimizing iteration: ", str(k), " =======")
+        # Optimization iterations within current linearization
+        for opt_iter in range(max_iterations):
+            print(f" ======= Optimization iteration: {opt_iter} =======")
             
-            # ========================
-            # Plot the updated data
-            # ========================
-            if show_iterations:
-                # Clear the current plot
-                ax.clear()
-                
-                L = 5.0
-                H = 0.35
-                n_balls = 5
-                # fig, ax = draw_pquad_trj_2d(x_trj_k, L, H, n_balls, fig, ax, step = 2000, draw_ball=False, save_fig=False)
-                
-                fig, ax = draw_pquad_map_trj_2d(x0, xT, zk, 
-                                                L, H, n_balls, 
-                                                fig, ax, planarmap, 
-                                                step = 20, 
-                                                draw_ball=False, save_fig=False, file_name="pquad_trj2d.pdf")
-                
-                ax.set_title(f"Iteration {k+1}")
-                plt.draw()
-                plt.pause(0.1)  # Pause briefly so changes are visible
+            # Update visualization
+            if vis_ctx is not None:
+                vis_ctx.update(x0, xT, mean_trj, opt_iter)
             
-            # ================ / end plotting ================
-                    
-            k_linesearch = 1
+            # Reset line search parameters
             eta = eta_base
+            if opt_iter == 1:
+                current_cost = np.inf
             
-            # ================================================ 
-            #                   Line search
-            # ================================================ 
-            continue_iterations = True
-            if k == 1:
-                cur_total_cost = np.inf
-            
-            while (continue_iterations):
-                k_linesearch += 1
-                As_new = np.zeros_like(As)
-                as_new = np.zeros_like(as_)
+            # Line search loop
+            converged_linesearch = False
+            for ls_iter in range(1, max_linesearch_iterations + 1):
+                print(f"Line search iteration {ls_iter}")
+                eta *= LINE_SEARCH_DECAY
                 
-                print("Line search iteration ", k_linesearch)
-                eta = eta*0.9
+                # Perform optimization step
+                As_new, as_new, mean_new, cov_new, gradient_col, col_cost, ctrl_cost = \
+                    _perform_line_search_iteration(
+                        As, as_, Bs, mean_trj,
+                        hA, hB, ha, nominal_trace,
+                        Qt, rt, eta, epsilon,
+                        x0, Sig0, xT, SigT, tf,
+                        pquad_sdf
+                    )
                 
-                Qk, rk, col_costs, gradient_col_states_nt = compute_qr_pquad(As, as_, hAk, hak, nTr, eta, Bs, Qt, rt, zk, pquadsdf)
+                new_cost = col_cost + ctrl_cost
+                print(f"Collision cost: {col_cost:.6f}")
+                print(f"Control cost: {ctrl_cost:.6f}")
+                print(f"Total cost: {new_cost:.6f}")
                 
-                Aprior = (eta * As + hAk) / (1 + eta)
-                aprior = (eta * as_ + hak) / (1 + eta)
-                
-                K, d, _, _ = linear_covcontrol(Aprior, Bs, aprior, epsilon, Qk, rk, x0, Sig0, xT, SigT, tf)
-                
-                for i in range(nt):
-                    As_new[i] = Aprior[i] + hBk[i] @ K[i]
-                    as_new[i] = aprior[i] + hBk[i] @ d[i]
-                    
-                zk_new, Sk_new = mean_cov_cl(As_new, Bs, as_new, epsilon, x0, Sig0, tf)
-                ut = compute_control_signal(x0, K, d)
-                
-                control_costs = np.linalg.norm(ut) / 2.0
-                new_total_cost = control_costs + col_costs
-                
-                print("New collision cost: ", col_costs)
-                print("New control cost: ", control_costs)
-                print("New total cost: ", new_total_cost)
-                
-                # -------------
-                # update cost
-                # -------------
-                if (new_total_cost < cur_total_cost):
-                    zk = zk_new
-                    Sk = Sk_new
-                    As = As_new
-                    as_ = as_new
-                    cur_total_cost = new_total_cost
-                    
-                    break
-                
-                # --------------------------
-                # Line search reach limit 
-                # --------------------------
-                if (k_linesearch==iterations_linesearch):
-                    continue_iterations = False
-                    hAk_prev, hak_prev = hAk, hak
+                # Accept step if cost decreased
+                if new_cost < current_cost:
+                    mean_trj, cov_trj = mean_new, cov_new
+                    As, as_ = As_new, as_new
+                    current_cost = new_cost
+                    converged_linesearch = True
                     break
             
-            if not (continue_iterations):
+            # Exit optimization if line search failed
+            if not converged_linesearch:
+                hA_prev, ha_prev = hA, ha
                 break
             
-            # ## ================================== logging ==================================
-            data = PCSData(As, as_, hAk, hak, hBk, Qk, rk, zk, Sk, K, d)
-            exp_data_io.add_iteration_data(k, data)
-            
-            # if (np.linalg.norm(As_prev.reshape((nt,nx*nx)) - As.reshape((nt,nx*nx))) < 1e-4) and (np.linalg.norm((as_prev - as_)) < 1e-4):
-            #     print("Converged.")
-            #     break
-
-            # As_prev = As
-            # as_prev = as_
-            
-            # logger.log_wandb()   
-            # ## ================================== end logging ==================================
-    
-    
-    plt.ioff()  # Turn off interactive plotting mode
-    plt.show()  # Keep the window open
-
-    # shutdown wandb
-    # logger.shutdown_wandb()
-    # ================================== save data ==================================
-    from datetime import datetime
-    current_datetime = datetime.now()
-    formatted_datetime = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"data_{formatted_datetime}_{script_filename}.pickle"
-    exp_data_io.dump(f"{debug_dir}/PCS/{filename}")
-    
-    return As, as_, zk, Sk, gradient_col_states_nt
-
-
-def proximal_cov_pquadsdf_zkSkKd(linearize_trj, 
-                                zk, Sk, 
-                                As, Bs, as_, 
-                                Qt, rt, 
-                                eps_obs, slope, sig_obs, radius,
-                                epsilon, eta, iterations, iterations_linesearch,
-                                x0, Sig0, xT, SigT, tf, mapname="SingleObstacleMap", xr=None):
+            # Log iteration data
+            Qk, rk, _, _ = compute_qr_pquad(
+                As, as_, hA, ha, nominal_trace, eta, Bs, Qt, rt, mean_trj, pquad_sdf
+            )
+            K, d, _, _ = linear_covcontrol(
+                (eta * As + hA) / (1 + eta), Bs, (eta * as_ + ha) / (1 + eta),
+                epsilon, Qk, rk, x0, Sig0, xT, SigT, tf
+            )
+            exp_data.add_iteration_data(opt_iter, PCSData(As, as_, hA, ha, hB, Qk, rk, mean_trj, cov_trj, K, d))
         
-    As, as_, zk, Sk, gradient_col_states_nt = proximal_cov_pquadsdf_zkSk(linearize_trj, 
-                                                                        zk, Sk, 
-                                                                        As, Bs, as_, 
-                                                                        Qt, rt, 
-                                                                        eps_obs, slope, sig_obs, radius,
-                                                                        epsilon, eta, iterations, iterations_linesearch,
-                                                                        x0, Sig0, xT, SigT, tf, mapname)
+        if not converged_linesearch:
+            break
     
-    # Recover optimal control
-    zkstar, Skstar = mean_cov_cl(As, Bs, as_, epsilon, x0, Sig0, tf)
-    hAstar, hBstar, hastar, nTr = linearize_trj(Skstar, zkstar, As)
+    # Finalize visualization
+    if vis_ctx is not None:
+        vis_ctx.finalize()
+    
+    # Save experiment data
+    save_experiment_data(exp_data, _SCRIPT_NAME)
+    
+    return As, as_, mean_trj, cov_trj, gradient_col
 
-    # Costs for recovering optimal control
-    Qstar = Qt
-    rstar = nTr / 2.0 + gradient_col_states_nt
+
+def proximal_cov_pquadsdf_zkSkKd(
+    linearize_trj: Callable,
+    mean_trj: np.ndarray,
+    cov_trj: np.ndarray,
+    As: np.ndarray,
+    Bs: np.ndarray,
+    as_: np.ndarray,
+    Qt: np.ndarray,
+    rt: np.ndarray,
+    eps_obs: float,
+    slope: float,
+    sig_obs: float,
+    radius: float,
+    epsilon: float,
+    eta: float,
+    max_iterations: int,
+    max_linesearch_iterations: int,
+    x0: np.ndarray,
+    Sig0: np.ndarray,
+    xT: np.ndarray,
+    SigT: np.ndarray,
+    tf: float,
+    map_name: str = "SingleObstacleMap",
+    xr: Optional[np.ndarray] = None
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Proximal covariance steering with optimal feedback gain recovery.
+    
+    Extends proximal_cov_pquadsdf_zkSk by recovering the optimal feedback gains
+    K and d, along with the costate matrices Pi and lambda.
+    
+    Args:
+        linearize_trj: Function to linearize dynamics along trajectory
+        mean_trj: Initial mean trajectory
+        cov_trj: Initial covariance trajectory
+        As, Bs, as_: System dynamics
+        Qt, rt: Cost matrices
+        eps_obs, slope, sig_obs, radius: Collision parameters
+        epsilon, eta: Algorithm parameters
+        max_iterations, max_linesearch_iterations: Iteration limits
+        x0, Sig0, xT, SigT, tf: Boundary conditions
+        map_name: Obstacle map name
+        xr: Reference trajectory for tracking (optional)
+        
+    Returns:
+        Tuple containing:
+        - As, as_: Final dynamics
+        - mean_star, cov_star: Optimal trajectories
+        - K, d: Optimal feedback gains
+        - Pi_star, lambda_star: Costate matrices
+    """
+    # Run main optimization
+    As, as_, mean_trj, cov_trj, gradient_col = proximal_cov_pquadsdf_zkSk(
+        linearize_trj, mean_trj, cov_trj,
+        As, Bs, as_, Qt, rt,
+        eps_obs, slope, sig_obs, radius,
+        epsilon, eta, max_iterations, max_linesearch_iterations,
+        x0, Sig0, xT, SigT, tf, map_name
+    )
+    
+    # Recover optimal trajectory and linearization
+    mean_star, cov_star = mean_cov_cl(As, Bs, as_, epsilon, x0, Sig0, tf)
+    hA_star, hB_star, ha_star, nominal_trace = linearize_trj(cov_star, mean_star, As)
+    
+    # Compute cost matrices for optimal control recovery
+    Q_star = Qt
+    r_star = nominal_trace / 2.0 + gradient_col
+    
+    # Add reference tracking term if provided
     if xr is not None:
-        for i_r in range(Qt.shape[0]):
-            rstar[i_r] = rstar[i_r] -  Qt[i_r]@xr[i_r]
-            
-    Ks, ds, Pi_star, lbd_star = linear_covcontrol(hAstar, hBstar, hastar, epsilon, Qstar, rstar, x0, Sig0, xT, SigT, tf)
+        for i in range(Qt.shape[0]):
+            r_star[i] = r_star[i] - Qt[i] @ xr[i]
     
-    return As, as_, zkstar, Skstar, Ks, ds, Pi_star, lbd_star
+    # Solve for optimal feedback gains
+    K, d, Pi_star, lambda_star = linear_covcontrol(
+        hA_star, hB_star, ha_star, epsilon, Q_star, r_star, x0, Sig0, xT, SigT, tf
+    )
+    
+    return As, as_, mean_star, cov_star, K, d, Pi_star, lambda_star
 
-def proximal_cov_pquadsdf(linearize_pt, linearize_trj, 
-                            Qt, rt, 
-                            eps_obs, slope, sig_obs, radius,
-                            epsilon, eta, iterations, iterations_linesearch,
-                            x0, Sig0, xT, SigT, tf, nt):
+
+def proximal_cov_pquadsdf(
+    linearize_pt: Callable,
+    linearize_trj: Callable,
+    Qt: np.ndarray,
+    rt: np.ndarray,
+    eps_obs: float,
+    slope: float,
+    sig_obs: float,
+    radius: float,
+    epsilon: float,
+    eta: float,
+    max_iterations: int,
+    max_linesearch_iterations: int,
+    x0: np.ndarray,
+    Sig0: np.ndarray,
+    xT: np.ndarray,
+    SigT: np.ndarray,
+    tf: float,
+    nt: int
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Proximal covariance steering from initial conditions.
+    
+    Initializes the problem from scratch using only boundary conditions,
+    then solves for optimal trajectories and feedback gains.
+    
+    Args:
+        linearize_pt: Function to linearize dynamics at a point
+        linearize_trj: Function to linearize dynamics along trajectory
+        Qt, rt: Cost matrices
+        eps_obs, slope, sig_obs, radius: Collision parameters
+        epsilon, eta: Algorithm parameters
+        max_iterations, max_linesearch_iterations: Iteration limits
+        x0, Sig0, xT, SigT, tf: Boundary conditions
+        nt: Number of time steps
         
+    Returns:
+        Tuple containing:
+        - As, as_: Final dynamics
+        - K, d: Optimal feedback gains
+        - Pi_star, lambda_star: Costate matrices
+    """
     nx = x0.shape[0]
     
-    _, hB1, _ = linearize_pt(x0)
-
-    nu = hB1.shape[1]
+    # Get control input dimension from linearization
+    _, hB_init, _ = linearize_pt(x0)
+    nu = hB_init.shape[1]
     
+    # Initialize dynamics arrays
     As = np.zeros((nt, nx, nx), dtype=np.float64)
     Bs = np.zeros((nt, nx, nu), dtype=np.float64)
     as_ = np.zeros((nt, nx), dtype=np.float64)
     
+    # Set constant input matrix
     for i in range(nt):
-        Bs[i] = hB1
+        Bs[i] = hB_init
     
-    zk, Sk = mean_cov_cl(As, Bs, as_, epsilon, x0, Sig0, tf)
+    # Initialize trajectory from open-loop propagation
+    mean_init, cov_init = mean_cov_cl(As, Bs, as_, epsilon, x0, Sig0, tf)
     
-    As, as_, zk, Sk, gradient_col_states_nt = proximal_cov_pquadsdf_zkSk(linearize_trj, zk, Sk, 
-                                                                         As, Bs, as_, Qt, rt, 
-                                                                        eps_obs, slope, sig_obs, radius, 
-                                                                        epsilon, eta, iterations, iterations_linesearch,
-                                                                        x0, Sig0, xT, SigT, tf)
+    # Run main optimization
+    As, as_, mean_trj, cov_trj, gradient_col = proximal_cov_pquadsdf_zkSk(
+        linearize_trj, mean_init, cov_init,
+        As, Bs, as_, Qt, rt,
+        eps_obs, slope, sig_obs, radius,
+        epsilon, eta, max_iterations, max_linesearch_iterations,
+        x0, Sig0, xT, SigT, tf
+    )
     
-    # Recover optimal control
-    zkstar, Skstar = mean_cov_cl(As, Bs, as_, epsilon, x0, Sig0, tf)
-    hAstar, hBstar, hastar, nTr = linearize_trj(Skstar, zkstar, As)
-
-    # Costs for recovering optimal control
-    Qstar = Qt
-    rstar = nTr / 2.0 + gradient_col_states_nt
-    Ks, ds, Pi_star, lbd_star = linear_covcontrol(hAstar, hBstar, hastar, epsilon, Qstar, rstar, x0, Sig0, xT, SigT, tf)
+    # Recover optimal trajectory and linearization
+    mean_star, cov_star = mean_cov_cl(As, Bs, as_, epsilon, x0, Sig0, tf)
+    hA_star, hB_star, ha_star, nominal_trace = linearize_trj(cov_star, mean_star, As)
     
-    return As, as_, Ks, ds, Pi_star, lbd_star
-
-
+    # Compute cost matrices for optimal control recovery
+    Q_star = Qt
+    r_star = nominal_trace / 2.0 + gradient_col
+    
+    # Solve for optimal feedback gains
+    K, d, Pi_star, lambda_star = linear_covcontrol(
+        hA_star, hB_star, ha_star, epsilon, Q_star, r_star, x0, Sig0, xT, SigT, tf
+    )
+    
+    return As, as_, K, d, Pi_star, lambda_star

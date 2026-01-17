@@ -20,13 +20,6 @@ def compute_qr_pquad(As, as_, hAk, hak, nTr, eta, B, Qt, rt, zt, pquadsdf):
     print("np.linalg.norm(rk): ", np.linalg.norm(rk))
     print("np.linalg.norm(gradient_col_states_nt): ", np.linalg.norm(gradient_col_states_nt))
     
-    # # normalizing the costs
-    # if np.linalg.norm(gradient_col_states_nt) > 0:
-    #     print("np.linalg.norm(rk): ", np.linalg.norm(rk))
-    #     print("np.linalg.norm(gradient_col_states_nt): ", np.linalg.norm(gradient_col_states_nt))
-    #     col_costs = col_costs / np.linalg.norm(gradient_col_states_nt) * np.linalg.norm(rk) / 6.0
-    #     gradient_col_states_nt = gradient_col_states_nt / np.linalg.norm(gradient_col_states_nt) * np.linalg.norm(rk) / 6.0
-    
     rk = rk + gradient_col_states_nt
 
     return Qk, rk, col_costs, gradient_col_states_nt
