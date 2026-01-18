@@ -113,8 +113,8 @@ def generate_map(map_name, save_map=False):
     if map_name == "SingleObstacleMap":
         origin = np.array([-20.0, -20.0], dtype=np.float64)
         cell_size = 0.1
-        width = 700
-        height = 700
+        width = 1000
+        height = 1000
 
         # map range: (x: [-20.0, 60.0]; y: [-20.0, 60.0])
         m = map2d(origin, cell_size, width, height)

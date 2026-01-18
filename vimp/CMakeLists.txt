@@ -23,7 +23,7 @@ foreach(subdir ${vimp_subdirs})
   add_subdirectory(${subdir})
 
 endforeach(subdir)
-
+ 
 # ----------------------- options ----------------------- 
 # Add a flag to control whether to build CPU executables
 option(BUILD_CPU_GVIMP "Build CPU version GVIMP executables from src/gvimp" OFF)

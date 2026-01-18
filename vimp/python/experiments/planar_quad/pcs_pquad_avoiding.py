@@ -47,7 +47,7 @@ if __name__ == '__main__':
             # exp 1
             # -------
             x0 = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float64)
-            xT = np.array([25.0, 30.0, np.pi/6, -1.0, 2.0, 0.01], dtype=np.float64)
+            xT = np.array([25.0, 30.0, np.pi/8, -1.0, 2.0, 0.01], dtype=np.float64)
             eps_obs = 0.8
             slope = 5.0
             sig_obs = 80
@@ -95,7 +95,7 @@ if __name__ == '__main__':
         # boundary covariance
         # =====================
         coeff_Sig0 = 0.01
-        coeff_SigT = 0.01
+        coeff_SigT = 0.1
 
         Sig0 = np.eye(nx)*coeff_Sig0
         SigT = np.eye(nx)*coeff_SigT
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         epsilon = 1.0
         n_iter = 20
         n_iter_linesearch = 5
-        stepsize = 3e-1
+        stepsize = 5e-1
         
         # --------------------------------------------- 
         # Define the obstacle object and collision cost
