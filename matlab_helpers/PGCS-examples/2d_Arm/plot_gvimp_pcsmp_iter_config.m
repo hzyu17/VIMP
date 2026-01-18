@@ -51,12 +51,17 @@ nt_gvimp = floor(ttl_dim/dim_theta);
 % n_states = floor(ttl_dim / dim_theta);
 
 % =================== read pgcs results ====================
-means_pcsmp = csvread([prefix+"/zk_sdf.csv"]);
-covs_pgcs = csvread([prefix+"/Sk_sdf.csv"]);
+% means_pcsmp = csvread([prefix+"/zk_sdf.csv"]);
+% covs_pcsmp = csvread([prefix+"/Sk_sdf.csv"]);
 
-% ----- parameters -----
-[ndim, niters_pcs] = size(means_pcsmp);
-covs_pgcs = reshape(covs_pgcs, dim_theta, dim_theta, niters_pcs);
+% % ----- parameters -----
+% [ndim, niters_pcs] = size(means_pcsmp);
+% covs_pcsmp = reshape(covs_pcsmp, dim_theta, dim_theta, niters_pcs);
+
+means_pcsmp = csvread([prefix + "/mean.csv"]);
+covs_pcsmp = csvread([prefix + "/cov.csv"]);
+[ttl_dim_pcs, niters_pcs] = size(means_pcsmp);
+nt_pcsmp = floor(ttl_dim_pcs/dim_theta);
 
 %  ------- arm --------
 arm = generateArm('SimpleTwoLinksArm');
@@ -71,14 +76,15 @@ field = signedDistanceField2D(sdfmap, cell_size);
 sdf = PlanarSDF(origin_point2, cell_size, field);
 
 %% ================== Subplot grid for both methods ==================
-iter_step = 3;
+iter_step = 5;
+iter_step_pcs = 80;
 
 % GVI-MP iterations to plot
 iters_gvimp = 1:iter_step:niters;
 n_plots_gvimp = length(iters_gvimp);
 
 % PCS-MP iterations to plot
-iters_pcsmp = 1:iter_step:niters_pcs;
+iters_pcsmp = 2:iter_step_pcs:niters_pcs;
 n_plots_pcsmp = length(iters_pcsmp);
 
 % Use the same number of plots for fair comparison
@@ -144,7 +150,7 @@ for idx = 1:n_cols
         % Plot trajectory with uncertainty ellipses
         for i = 1:nt_pcsmp
             scatter(means_iter(1, i), means_iter(2, i), 15, [0.8500 0.3250 0.0980], 'fill');
-            error_ellipse(covs_iter(1:2, 1:2, i), means_iter(1:2, i), 'style', '-', 'Color', [0.8500 0.3250 0.0980]);
+            error_ellipse(covs_iter(1:2, 1:2, i), means_iter(1:2, i), 'style', 'r-');
         end
         
         title(['Iter ' num2str(iter)], 'FontSize', 11);

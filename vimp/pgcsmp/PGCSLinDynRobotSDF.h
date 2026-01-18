@@ -41,6 +41,11 @@ public:
         , _cost_helper(_max_iter)
     {}
 
+
+    int nx() const { return _nx; }
+    int nt() const { return _nt; }
+    int nu() const { return _nu; }
+
     // ==================== Cost Functions ====================
 
     /**
