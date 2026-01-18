@@ -19,11 +19,11 @@ prefix_gvimp = "map1";
 switch map
     case 1
         prefix = "map1";
-        sdfmap = csvread("map1/map.csv");
+        sdfmap = csvread("../../../vimp/maps/2dArm/map.csv");
         switch exp
             case 1
                 prefix = "map1/case1";
-                prefix_gpmp2 = map1"map1/case1/gpmp2";
+                prefix_gpmp2 = "map1/case1/gpmp2";
                 prefix_gvimp = "../../GVIMP-examples/2d_Arm/sparse_gh/map1/case1";
                 % boundary conditions
                 start_conf = [0, 0]';
@@ -136,6 +136,7 @@ hold on
 plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
 
 % read gpmp2 results
+
 means_gpmp2 = csvread([prefix_gpmp2+"/zt_gpmp2.csv"]);
 nt_gpmp2 = size(means_gpmp2, 2);
 % plot gpmp2 results

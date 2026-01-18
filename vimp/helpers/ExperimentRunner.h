@@ -432,38 +432,81 @@ public:
     }
 
     double run_and_save(PCSOptimizer& opt_sdf, const PGCSParams& params,
-                        const rapidxml::xml_node<>* paramNode) {
+                    const rapidxml::xml_node<>* paramNode) {
         Timer timer;
         timer.start();
-
         auto res_Kd = opt_sdf.backtrack();
         double time_spend = timer.end_sec();
 
         MatrixXd Kt = std::get<0>(res_Kd);
         MatrixXd dt = std::get<1>(res_Kd);
-
         NominalHistory ztSigt = std::get<2>(res_Kd);
-        Matrix3D h_zt = _ei.vec2mat3d(std::get<0>(ztSigt));
-        Matrix3D h_Sigt = _ei.vec2mat3d(std::get<1>(ztSigt));
 
+        // Get iteration history vectors
+        const auto& v_zt = std::get<0>(ztSigt);
+        const auto& v_Sigt = std::get<1>(ztSigt);
+        const int n_iters = static_cast<int>(v_zt.size());
+
+        // Get dimensions from optimizer
+        const int nx = opt_sdf.nx();
+        const int nt = opt_sdf.nt();
+        const int mean_rows = nx * nt;
+        const int cov_rows = nx * nx * nt;
+
+        // Build matrices: each column is one iteration (GVI-MP compatible format)
+        MatrixXd means_all(mean_rows, n_iters);
+        MatrixXd covs_all(cov_rows, n_iters);
+
+        for (int iter = 0; iter < n_iters; iter++) {
+            // Flatten mean trajectory for this iteration
+            VectorXd mean_flat(mean_rows);
+            for (int t = 0; t < nt; t++) {
+                MatrixXd zt = _ei.decomp3d(v_zt[iter], nx, 1, t);
+                mean_flat.segment(t * nx, nx) = zt;
+            }
+            means_all.col(iter) = mean_flat;
+
+            // Flatten covariance trajectory for this iteration
+            VectorXd cov_flat(cov_rows);
+            for (int t = 0; t < nt; t++) {
+                MatrixXd Sigt = _ei.decomp3d(v_Sigt[iter], nx, nx, t);
+                // Flatten column-major (consistent with Eigen default)
+                Eigen::Map<VectorXd> Sigt_vec(Sigt.data(), nx * nx);
+                cov_flat.segment(t * nx * nx, nx * nx) = Sigt_vec;
+            }
+            covs_all.col(iter) = cov_flat;
+        }
+
+        // Final iteration results
         MatrixXd zk_star = opt_sdf.zkt();
         MatrixXd Sk_star = opt_sdf.Sigkt();
 
         std::string saving_prefix = xml_helpers::getString(paramNode, "saving_prefix");
 
+        // Save final iteration (original format)
         m_io.saveData(saving_prefix + "zk_sdf.csv", zk_star);
         m_io.saveData(saving_prefix + "Sk_sdf.csv", Sk_star);
-        m_io.saveData(saving_prefix + "zk_history.csv", h_zt);
-        m_io.saveData(saving_prefix + "Sk_history.csv", h_Sigt);
+
+        // Save iteration history (GVI-MP compatible format)
+        m_io.saveData(saving_prefix + "mean.csv", means_all);
+        m_io.saveData(saving_prefix + "cov.csv", covs_all);
+
+        // Save control gains and dynamics
         m_io.saveData(saving_prefix + "Kt_sdf.csv", Kt);
         m_io.saveData(saving_prefix + "dt_sdf.csv", dt);
         m_io.saveData(saving_prefix + "hAkt_sdf.csv", opt_sdf.hAkt());
         m_io.saveData(saving_prefix + "hakt_sdf.csv", opt_sdf.hakt());
-        
+
+        // Save costs
         opt_sdf.save_costs(saving_prefix + "costs.csv");
+
+        std::cout << "Saved " << n_iters << " iterations:" << std::endl;
+        std::cout << "  mean.csv: " << mean_rows << " x " << n_iters << std::endl;
+        std::cout << "  cov.csv:  " << cov_rows << " x " << n_iters << std::endl;
 
         return time_spend;
     }
+
 
     virtual double run_one_exp(int exp, PGCSParams& params, bool verbose = true) = 0;
 

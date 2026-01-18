@@ -50,7 +50,7 @@ def stable_inverse(A, reg=1e-12):
 
 
 def linear_covcontrol(A, B, a, epsilon, Q, r, m0, Sig0, mT, SigT, tf,
-                      ode_method='RK45', ode_rtol=1e-8, ode_atol=1e-10,
+                      ode_method='DOP853', ode_rtol=1e-8, ode_atol=1e-10,
                       reg=1e-12, verbose=False):
     """
     Linear covariance steering with time normalization.

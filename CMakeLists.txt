@@ -66,7 +66,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/vimp/GaussianVI")
 
 # Cereal
 set(CEREAL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/vimp/GaussianVI/include/cereal/include")
-include_directories(${CEREAL_INCLUDE_DIR})
+include_directories(${CEREAL_INCLUDE_DIR}) 
 
 # GSL
 find_package(GSL REQUIRED)

@@ -1,0 +1,162 @@
+clear all
+close all
+clc
+
+%% ******************* Read datas ******************
+addpath("../../tools/error_ellipse");
+addpath('../../tools/2dArm');
+addpath('../../tools/gtsam_toolbox');
+
+import gtsam.*
+import gpmp2.*
+
+map = 1;
+exp = 1;
+
+prefix = "map1";
+prefix_gpmp2 = "map1";
+prefix_gvimp = "map1";
+switch map
+    case 1
+        prefix = "map1";
+        sdfmap = csvread("../../../vimp/maps/2dArm/map.csv");
+        switch exp
+            case 1
+                prefix = "map1/case1";
+                prefix_gpmp2 = "map1/case1/gpmp2";
+                prefix_gvimp = "../../GVIMP-examples/2d_Arm/sparse_gh/map1/case1";
+                % boundary conditions
+                start_conf = [0, 0]';
+                start_vel = [0, 0]';
+                end_conf = [pi/2, 0]';
+                end_vel = [0, 0]';
+            case 2
+                prefix = "map1/case2";
+                prefix_gpmp2 = "map1/case2/gpmp2";
+                % boundary conditions
+                start_conf = [-pi/2, 0]';
+                start_vel = [0.1, 0]';
+                end_conf = [pi/2, 0]';
+                end_vel = [0, 0]';
+        end
+end
+
+dim_theta = 4;
+% =================== read gvimp results ====================
+means_gvimp = csvread([prefix_gvimp+"/mean.csv"]);
+covs_gvimp = csvread([prefix_gvimp+"/cov.csv"]);
+costs_gvimp = csvread([prefix_gvimp+"/cost.csv"]);
+[ttl_dim, niters] = size(means_gvimp);
+nt_gvimp = floor(ttl_dim/dim_theta);
+% n_states = floor(ttl_dim / dim_theta);
+
+% =================== read pgcs results ====================
+means_pgcs = csvread([prefix+"/zk_sdf.csv"]);
+covs_pgcs = csvread([prefix+"/Sk_sdf.csv"]);
+
+% ----- parameters -----
+[ndim, nt] = size(means_pgcs);
+covs_pgcs = reshape(covs_pgcs, dim_theta, dim_theta, nt);
+
+%  ------- arm --------
+arm = generateArm('SimpleTwoLinksArm');
+
+%  ------- sdf --------
+cell_size = 0.01;
+origin_x = -1;
+origin_y = -1;
+origin_point2 = Point2(origin_x, origin_y);
+field = signedDistanceField2D(sdfmap, cell_size);
+% save field
+sdf = PlanarSDF(origin_point2, cell_size, field);
+
+%% ================= plot the final iteration ===================
+x0 = 50;
+y0 = 50;
+width = 400;
+height = 350;
+% ==================== plot GVIMP results ===================
+means_gvimp_lastiter = means_gvimp(:,end);
+means_gvimp_lastiter = reshape(means_gvimp_lastiter, [dim_theta,nt_gvimp]);
+covs_gvimp_lastiter = covs_gvimp(:, end);
+covs_gvimp_lastiter = reshape(covs_gvimp_lastiter, [dim_theta, dim_theta, nt_gvimp]);
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+nexttile
+
+hold on 
+plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+for j = 1:nt_gvimp
+    % gradual changing colors
+    alpha = (j / nt_gvimp)^(1.15);
+    color = [0, 0, 1, alpha];
+    % means
+    plotPlanarArm1(arm.fk_model(), means_gvimp_lastiter(1:2, j), color, 8, true);
+end
+plotPlanarArm(arm.fk_model(), start_conf, 'r', 8);
+plotPlanarArm(arm.fk_model(), end_conf, 'g', 8);
+xlim([-1, 1.5])
+ylim([-0.8, 1.5])
+hold off
+axis off
+
+% ==================== plot PCS-MP results ===================
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+nexttile
+
+hold on 
+plotEvidenceMap2D_arm(sdfmap, origin_x, origin_y, cell_size);
+
+for j = 1:2:nt
+    % gradual changing colors
+    alpha = (j / nt)^(1.15);
+    color = [0, 0, 1, alpha];
+    % means
+    plotPlanarArm1(arm.fk_model(), means_pgcs(1:2,j), color, 8, true);
+end
+plotPlanarArm1(arm.fk_model(), start_conf, 'r', 8, true);
+plotPlanarArm1(arm.fk_model(), end_conf, 'g', 8, true);
+xlim([-1, 1.5])
+ylim([-0.8, 1.5])
+axis off;
+hold off
+
+% ===================================== 
+% configuration space trajectory 
+% =====================================
+% -------------- plot configuration obstacles ----------------
+
+figure
+set(gcf,'position',[x0,y0,width,height])
+tiledlayout(1, 1, 'TileSpacing', 'none', 'Padding', 'none')
+nexttile
+hold on
+
+plot_configuration_obstacles()
+
+t.FontSize = 26;
+
+hold on 
+
+% plot pgcs results
+nt = size(means_pgcs, 2);
+for i=1:nt
+    scatter(means_pgcs(1, i), means_pgcs(2, i), 20, 'k', 'fill');
+    error_ellipse(covs_pgcs(1:2,1:2,i), means_pgcs(1:2, i));
+end
+
+% plot gvimp results
+nt_gvi = size(means_gvimp_lastiter, 2);
+for i=1:nt_gvi
+    scatter(means_gvimp_lastiter(1, i), means_gvimp_lastiter(2, i), 20, 'k', 'fill');
+    error_ellipse(covs_gvimp_lastiter(1:2,1:2,i), means_gvimp_lastiter(1:2, i), 'style', 'b-.');
+end
+
+% plot start and goal conf
+scatter(start_conf(1), start_conf(2), 100, 'r', 'fill');
+scatter(end_conf(1), end_conf(2), 100, 'g', 'fill');
+
+hold off

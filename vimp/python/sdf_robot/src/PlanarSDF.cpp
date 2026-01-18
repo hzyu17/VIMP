@@ -14,6 +14,7 @@
 #include <tuple>
 #include <memory>
 #include <stdexcept>
+#include <limits>
 
 #include <Eigen/Dense>
 #include <pybind11/stl.h>
@@ -33,6 +34,11 @@ public:
   typedef std::tuple<size_t, size_t> index;
   typedef std::tuple<double, double> float_index;
   typedef std::shared_ptr<PlanarSDF> shared_ptr;
+
+  // Sentinel value for invalid index
+  static inline constexpr double INVALID_INDEX = std::numeric_limits<double>::max();
+  // Return value when point is out of bounds
+  static inline constexpr double OUT_OF_BOUNDS_DISTANCE = 1000.0;
 
 private:
   Eigen::Vector2d origin_;
@@ -57,15 +63,15 @@ public:
   /// return signed distance
   inline double getSignedDistance(const Eigen::Vector2d& point) const {
     const float_index pidx = convertPoint2toCell(point);
-    if (std::get<0>(pidx) == 999.99){
-      return 999.99;
+    if (std::get<0>(pidx) == INVALID_INDEX) {
+      return OUT_OF_BOUNDS_DISTANCE;
     }
     return signed_distance(pidx);
   }
 
   inline Eigen::Vector2d getGradient(const Eigen::Vector2d& point) const {
     const float_index pidx = convertPoint2toCell(point);
-    if (std::get<0>(pidx) == 999.99){
+    if (std::get<0>(pidx) == INVALID_INDEX) {
       Eigen::Vector2d zero_vec;
       zero_vec.setZero();
       return zero_vec;
@@ -83,18 +89,14 @@ public:
     if (point.x() < origin_.x() || point.x() > (origin_.x() + (field_cols_-1.0)*cell_size_) ||
         point.y() < origin_.y() || point.y() > (origin_.y() + (field_rows_-1.0)*cell_size_)) {
         
-      // Convert the number to a string using std::to_string
-      std::string origin_x_Str = std::to_string(point.x());
-      std::string origin_y_Str = std::to_string(point.y());
+      // Log warning for debugging
+      std::cerr << "[PlanarSDF] Warning: Point out of bounds. point.x: " << point.x() 
+                << "; point.y: " << point.y() 
+                << " (valid range: x=[" << origin_.x() << ", " << origin_.x() + (field_cols_-1.0)*cell_size_ << "]"
+                << ", y=[" << origin_.y() << ", " << origin_.y() + (field_rows_-1.0)*cell_size_ << "])"
+                << std::endl;
 
-      // Concatenate the string and the number
-      std::string err_msg = "Index out of range. point.x: " + origin_x_Str + "; " + "point.y: " + origin_y_Str;
-      // throw std::out_of_range(err_msg);
-      std::cout << err_msg << std::endl;
-      const double col = 9999.99;
-      const double row = 9999.99;
-
-      return std::make_tuple(row, col);
+      return std::make_tuple(INVALID_INDEX, INVALID_INDEX);
     }
 
     const double col = (point.x() - origin_.x()) / cell_size_;
@@ -150,14 +152,21 @@ public:
   double cell_size() const { return cell_size_; }
   const Eigen::MatrixXd& raw_data() const { return data_; }
 
-//   /// print
-//   void print(const std::string& str = "") const {
-//     std::cout << str;
-//     // std::cout << "field origin:     "; origin_.print();
-//     std::cout << "field resolution: " << cell_size_ << std::endl;
-//     std::cout << "field size:       " << field_cols_ << " x "
-//         << field_rows_ << std::endl;
-//   }
+  /// Get the bounds of the SDF
+  double x_min() const { return origin_.x(); }
+  double x_max() const { return origin_.x() + (field_cols_ - 1.0) * cell_size_; }
+  double y_min() const { return origin_.y(); }
+  double y_max() const { return origin_.y() + (field_rows_ - 1.0) * cell_size_; }
+
+  /// print
+  void print(const std::string& str = "") const {
+    std::cout << str;
+    std::cout << "field origin:     [" << origin_.x() << ", " << origin_.y() << "]" << std::endl;
+    std::cout << "field resolution: " << cell_size_ << std::endl;
+    std::cout << "field size:       " << field_cols_ << " x " << field_rows_ << std::endl;
+    std::cout << "x range:          [" << x_min() << ", " << x_max() << "]" << std::endl;
+    std::cout << "y range:          [" << y_min() << ", " << y_max() << "]" << std::endl;
+  }
 
 };
 
@@ -167,5 +176,13 @@ PYBIND11_MODULE(libplanar_sdf, m) {
         .def("origin", &PlanarSDF::origin)
         .def("raw_data", &PlanarSDF::raw_data)
         .def("getSignedDistance", &PlanarSDF::getSignedDistance)
-        .def("getGradient", &PlanarSDF::getGradient);
+        .def("getGradient", &PlanarSDF::getGradient)
+        .def("x_min", &PlanarSDF::x_min)
+        .def("x_max", &PlanarSDF::x_max)
+        .def("y_min", &PlanarSDF::y_min)
+        .def("y_max", &PlanarSDF::y_max)
+        .def("x_count", &PlanarSDF::x_count)
+        .def("y_count", &PlanarSDF::y_count)
+        .def("cell_size", &PlanarSDF::cell_size)
+        .def("print", &PlanarSDF::print, py::arg("str") = "");
 }
